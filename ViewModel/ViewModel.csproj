@@ -95,6 +95,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
     <ProjectReference Include="..\Functions\Functions.csproj" />
+    <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>

@@ -375,6 +375,14 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:MapWindowControlVM }" >
             <UtilitiesView:MapWindowWrapper/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AggregatedVM:ImportStageDamageFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
         
         <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
             <UtilitiesView:Rename/>

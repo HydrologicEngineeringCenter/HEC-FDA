@@ -4,6 +4,7 @@ using System.Windows;
 using ViewModel.Editors;
 using ViewModel.ImpactArea;
 using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
@@ -24,11 +25,16 @@ namespace ViewModel.AggregatedStageDamage
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addDamageCurve = new NamedAction();
-            addDamageCurve.Header = "Create New Aggregated Stage Damage Relationship";
+            addDamageCurve.Header = "Create New Aggregated Stage Damage Relationship...";
             addDamageCurve.Action = AddNewStageDamageCurveSet;
+
+            NamedAction importDamageCurve = new NamedAction();
+            importDamageCurve.Header = "Import Aggregated Stage Damage From FDA 1.0...";
+            importDamageCurve.Action = ImportNewStageDamageCurveSet;
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addDamageCurve);
+            localActions.Add(importDamageCurve);
 
             Actions = localActions;
 
@@ -50,6 +56,27 @@ namespace ViewModel.AggregatedStageDamage
         {
             RemoveElement(e.Element);
         }
+
+        public void ImportNewStageDamageCurveSet(object arg1, EventArgs arg2)
+        {
+            //this option is not allowed if you do not have an impact areas.
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count > 0)
+            {
+                EditorActionManager actionManager = new EditorActionManager()
+                            .WithSiblingRules(this);
+
+                ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM(actionManager);
+                string header = "Import Aggregated Stage Damage Curve";
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStageDamageCurve");
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show("An impact area set is required to create aggregated stage damage curves.", "Impact Area Set Required", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         public void AddNewStageDamageCurveSet(object arg1, EventArgs arg2)
         {
             //An impact area is required

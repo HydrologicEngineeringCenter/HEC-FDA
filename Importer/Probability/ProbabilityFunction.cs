@@ -1,10 +1,6 @@
-﻿using Functions;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ViewModel.FlowTransforms;
-using ViewModel.Saving.PersistenceManagers;
 using static System.Console;
 
 namespace Importer
@@ -859,42 +855,42 @@ namespace Importer
             return;
         }
 
-        private List<IDistributedOrdinate> GetUncertaintyValues()
-        {
-            List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>(); 
-            if (ErrorTypeTransformFlow == ErrorType.NORMAL)
-            {
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                {
-                    //todo: what is the mean here? i am using the outflow for now.
-                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(TransFlowOutflow[i], TransFlowStdDev[i]));
-                }
-            }
-            else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
-            {
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                {
-                    //todo: need a log normal
-                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(TransFlowOutflow[i], TransFlowStdDev[i]));
-                }                
-            }
-            else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
-            {
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                {
-                    ords.Add(IDistributedOrdinateFactory.FactoryTriangular(TransFlowOutflow[i],TransFlowLower[i], TransFlowUpper[i]));
-                }
-            }
-            else if (ErrorTypeTransformFlow == ErrorType.UNIFORM)
-            {
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                {
-                    ords.Add(IDistributedOrdinateFactory.FactoryUniform(TransFlowLower[i], TransFlowUpper[i]));
-                }
-            }
+        //private List<IDistributedOrdinate> GetUncertaintyValues()
+        //{
+        //    List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>(); 
+        //    if (ErrorTypeTransformFlow == ErrorType.NORMAL)
+        //    {
+        //        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+        //        {
+        //            //todo: what is the mean here? i am using the outflow for now.
+        //            ords.Add(IDistributedOrdinateFactory.FactoryNormal(TransFlowOutflow[i], TransFlowStdDev[i]));
+        //        }
+        //    }
+        //    else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
+        //    {
+        //        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+        //        {
+        //            //todo: need a log normal
+        //            ords.Add(IDistributedOrdinateFactory.FactoryNormal(TransFlowOutflow[i], TransFlowStdDev[i]));
+        //        }                
+        //    }
+        //    else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
+        //    {
+        //        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+        //        {
+        //            ords.Add(IDistributedOrdinateFactory.FactoryTriangular(TransFlowOutflow[i],TransFlowLower[i], TransFlowUpper[i]));
+        //        }
+        //    }
+        //    else if (ErrorTypeTransformFlow == ErrorType.UNIFORM)
+        //    {
+        //        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+        //        {
+        //            ords.Add(IDistributedOrdinateFactory.FactoryUniform(TransFlowLower[i], TransFlowUpper[i]));
+        //        }
+        //    }
 
-            return ords;
-        }
+        //    return ords;
+        //}
 
         public void SaveToSqlite()
         {
@@ -999,31 +995,31 @@ namespace Importer
             //Transform Flow Function
             if (NumberOfTransFlowPoints > 0)
             {
-                List<double> inflows = new List<double>();
-                List<double> outflows = new List<double>();
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                {
-                    inflows.Add(TransFlowInflow[i]);
-                    outflows.Add(TransFlowOutflow[i]);
-                }
+                //List<double> inflows = new List<double>();
+                //List<double> outflows = new List<double>();
+                //for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                //{
+                //    inflows.Add(TransFlowInflow[i]);
+                //    outflows.Add(TransFlowOutflow[i]);
+                //}
 
-                List<IDistributedOrdinate> distributedOrdinates = GetUncertaintyValues();
-                ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
-                ICoordinatesFunction coordFunc = null;
-                if (distributedOrdinates.Count>0)
-                {
-                    coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
-                }
-                else
-                {
-                    coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, outflows, InterpolationEnum.Linear);
-                }
+                //List<IDistributedOrdinate> distributedOrdinates = GetUncertaintyValues();
+                //ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
+                //ICoordinatesFunction coordFunc = null;
+                //if (distributedOrdinates.Count>0)
+                //{
+                //    coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
+                //}
+                //else
+                //{
+                //    coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, outflows, InterpolationEnum.Linear);
+                //}
 
-                IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
-                InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString(), description, func);
+                //IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
+                //InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString(), description, func);
 
-                InflowOutflowPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetInflowOutflowManager();
-                manager.SaveNew(elem);
+                //InflowOutflowPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetInflowOutflowManager();
+                //manager.SaveNew(elem);
 
 
                 WriteLine("\n\tTransform Flow Function");

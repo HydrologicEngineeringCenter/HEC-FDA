@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
-
-using Functions;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Inventory.DamageCategory;
-using Functions.CoordinatesFunctions;
-using Functions.Ordinates;
-using ViewModel.Saving.PersistenceManagers;
+using System.Linq;
+using static System.Console;
 
 namespace Importer
 {
@@ -638,198 +629,198 @@ namespace Importer
             return theCode;
         }
 
-        public IOccupancyType GetFDA2OccupancyType()
-        {
-            List<string> errorMessages = new List<string>();
-            //translate from old occtype to new occtype
-            IOccupancyType ot = OccupancyTypeFactory.Factory();
+        //public IOccupancyType GetFDA2OccupancyType()
+        //{
+        //    List<string> errorMessages = new List<string>();
+        //    //translate from old occtype to new occtype
+        //    IOccupancyType ot = OccupancyTypeFactory.Factory();
 
-            //what do i need for a new ot
-            ot.Name = Name;
-            ot.Description = Description;
-            ot.DamageCategory = DamageCategoryFactory.Factory(CategoryName);
+        //    //what do i need for a new ot
+        //    ot.Name = Name;
+        //    ot.Description = Description;
+        //    ot.DamageCategory = DamageCategoryFactory.Factory(CategoryName);
 
-            //the single damage functions will always be in this order
-            //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
-            //this list is in the order of the enum
-            List<ICoordinatesFunction> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(_SingleDamageFunction, errorMessages);
-            ot.StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
-            ot.ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
-            ot.VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
-            ot.OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
+        //    //the single damage functions will always be in this order
+        //    //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
+        //    //this list is in the order of the enum
+        //    List<ICoordinatesFunction> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(_SingleDamageFunction, errorMessages);
+        //    ot.StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
+        //    ot.ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
+        //    ot.VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
+        //    ot.OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
 
-            //the error distributions are in the following order:
-            //public enum OccTypeStrucComponent { FFLOOR, STRUCTURE, CONTENT, OTHER, AUTO};
-            List<IOrdinate> uncertainties = TranslateErrorDistributionsToIOrdinates(_ErrorDistribution);
-            ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
-            ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
-            ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
-            ot.OtherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
-            ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
+        //    //the error distributions are in the following order:
+        //    //public enum OccTypeStrucComponent { FFLOOR, STRUCTURE, CONTENT, OTHER, AUTO};
+        //    List<IOrdinate> uncertainties = TranslateErrorDistributionsToIOrdinates(_ErrorDistribution);
+        //    ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
+        //    ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
+        //    ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
+        //    ot.OtherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
+        //    ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
 
-            //there is no concept of a value uncertainty type in old FDA, so default to percent of mean
-            ot.StructureUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.ContentUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.VehicleUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.OtherUncertaintyType = ValueUncertaintyType.PercentOfMean;
+        //    //there is no concept of a value uncertainty type in old FDA, so default to percent of mean
+        //    ot.StructureUncertaintyType = ValueUncertaintyType.PercentOfMean;
+        //    ot.ContentUncertaintyType = ValueUncertaintyType.PercentOfMean;
+        //    ot.VehicleUncertaintyType = ValueUncertaintyType.PercentOfMean;
+        //    ot.OtherUncertaintyType = ValueUncertaintyType.PercentOfMean;
 
-            ot.CalculateStructureDamage = true;
-            ot.CalculateContentDamage = true;
-            ot.CalculateVehicleDamage = true;
-            ot.CalculateOtherDamage = false;
+        //    ot.CalculateStructureDamage = true;
+        //    ot.CalculateContentDamage = true;
+        //    ot.CalculateVehicleDamage = true;
+        //    ot.CalculateOtherDamage = false;
 
-            return ot;
-        }
+        //    return ot;
+        //}
 
 
-        private List<IOrdinate> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
-        {
-            List<IOrdinate> ordinates = new List<IOrdinate>();
-            foreach(ErrorDistribution errDist in errorDists)
-            {
-                ordinates.Add(TranslateErrorDistToOrdinate(errDist));
-            }
-            return ordinates;
-        }
+        //private List<IOrdinate> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
+        //{
+        //    List<IOrdinate> ordinates = new List<IOrdinate>();
+        //    foreach(ErrorDistribution errDist in errorDists)
+        //    {
+        //        ordinates.Add(TranslateErrorDistToOrdinate(errDist));
+        //    }
+        //    return ordinates;
+        //}
 
-        private IOrdinate TranslateErrorDistToOrdinate(ErrorDistribution errorDist)
-        {
-            double mean = errorDist.GetCentralValue();
-            //st dev gets reused as min
-            double stDev = errorDist.GetStdDev();
-            double max = errorDist.GetUpper();
-            ErrorType type = errorDist.GetErrorType();
-            switch(type)
-            {
-                case ErrorType.NONE:
-                    {
-                        return new Constant(mean);
-                    }
-                case ErrorType.NORMAL:
-                    {
-                        return IDistributedOrdinateFactory.FactoryNormal(mean, stDev);
-                    }
-                case ErrorType.TRIANGULAR:
-                    {
-                        return IDistributedOrdinateFactory.FactoryTriangular(mean, stDev, max);
-                    }
-                case ErrorType.UNIFORM:
-                    {
-                        return IDistributedOrdinateFactory.FactoryUniform(stDev, max);
-                    }
-                case ErrorType.LOGNORMAL:
-                    {
-                        throw new NotImplementedException();
-                    }
-                default:
-                    {
-                        //todo: do what
-                        //something went wrong, lets just make it a constant?
-                        return new Constant(mean);
-                    }
-            }
-        }
+        //private IOrdinate TranslateErrorDistToOrdinate(ErrorDistribution errorDist)
+        //{
+        //    double mean = errorDist.GetCentralValue();
+        //    //st dev gets reused as min
+        //    double stDev = errorDist.GetStdDev();
+        //    double max = errorDist.GetUpper();
+        //    ErrorType type = errorDist.GetErrorType();
+        //    switch(type)
+        //    {
+        //        case ErrorType.NONE:
+        //            {
+        //                return new Constant(mean);
+        //            }
+        //        case ErrorType.NORMAL:
+        //            {
+        //                return IDistributedOrdinateFactory.FactoryNormal(mean, stDev);
+        //            }
+        //        case ErrorType.TRIANGULAR:
+        //            {
+        //                return IDistributedOrdinateFactory.FactoryTriangular(mean, stDev, max);
+        //            }
+        //        case ErrorType.UNIFORM:
+        //            {
+        //                return IDistributedOrdinateFactory.FactoryUniform(stDev, max);
+        //            }
+        //        case ErrorType.LOGNORMAL:
+        //            {
+        //                throw new NotImplementedException();
+        //            }
+        //        default:
+        //            {
+        //                //todo: do what
+        //                //something went wrong, lets just make it a constant?
+        //                return new Constant(mean);
+        //            }
+        //    }
+        //}
 
-        private List<ICoordinatesFunction> TranslateSingleDamageFunctionToCoordinatesFunctions(SingleDamageFunction[] singleDamageFunctions, List<string> errorMessages)
-        {
-            //the single damage functions will always be in this order
-            //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
-            List<ICoordinatesFunction> coordinatesFunctions = new List<ICoordinatesFunction>();
-            //if an occtype fails to read in properly we will make a message and keep trying
-            //to import other occtypes.
-            for (int i = 0; i < _SingleDamageFunction.Length; i++)
-            {
-                SingleDamageFunction func = _SingleDamageFunction[i];
-                StructureValueType type = (StructureValueType)i;
-                ICoordinatesFunction function = null;
+        //private List<ICoordinatesFunction> TranslateSingleDamageFunctionToCoordinatesFunctions(SingleDamageFunction[] singleDamageFunctions, List<string> errorMessages)
+        //{
+        //    //the single damage functions will always be in this order
+        //    //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
+        //    List<ICoordinatesFunction> coordinatesFunctions = new List<ICoordinatesFunction>();
+        //    //if an occtype fails to read in properly we will make a message and keep trying
+        //    //to import other occtypes.
+        //    for (int i = 0; i < _SingleDamageFunction.Length; i++)
+        //    {
+        //        SingleDamageFunction func = _SingleDamageFunction[i];
+        //        StructureValueType type = (StructureValueType)i;
+        //        ICoordinatesFunction function = null;
 
-                if(IsEmptyFunction(func))
-                {
-                    //create a function with just (0,0)
-                    function = CreateEmptyFunction();
-                }
-                else
-                {
-                    function = CreateCoordinatesFunction(func, type, errorMessages);
+        //        if(IsEmptyFunction(func))
+        //        {
+        //            //create a function with just (0,0)
+        //            function = CreateEmptyFunction();
+        //        }
+        //        else
+        //        {
+        //            function = CreateCoordinatesFunction(func, type, errorMessages);
 
-                }
+        //        }
 
-                //the coordinates function will be null if it was not able to be created
-                if (function == null)
-                {
-                    //create an empty coord function?
-                    function = CreateEmptyFunction();
-                }
+        //        //the coordinates function will be null if it was not able to be created
+        //        if (function == null)
+        //        {
+        //            //create an empty coord function?
+        //            function = CreateEmptyFunction();
+        //        }
               
-                coordinatesFunctions.Add(function);
-            }
-            return coordinatesFunctions;
-        }
+        //        coordinatesFunctions.Add(function);
+        //    }
+        //    return coordinatesFunctions;
+        //}
 
-        private ICoordinatesFunction CreateEmptyFunction()
-        {
-            List<double> xs = new List<double>() { 1 ,2,3};
-            List<double> ys = new List<double>() { 1,2,3 };
-            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-        }
+        //private ICoordinatesFunction CreateEmptyFunction()
+        //{
+        //    List<double> xs = new List<double>() { 1 ,2,3};
+        //    List<double> ys = new List<double>() { 1,2,3 };
+        //    return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+        //}
 
-        private bool IsEmptyFunction(SingleDamageFunction function)
-        {
-            List<double> depths = function.Depth.ToList<double>();
-            List<double> damages = function.Damage.ToList<double>();
+        //private bool IsEmptyFunction(SingleDamageFunction function)
+        //{
+        //    List<double> depths = function.Depth.ToList<double>();
+        //    List<double> damages = function.Damage.ToList<double>();
 
-            for(int i = 0; i<depths.Count;i++)
-            {
-                double depth = depths[i];
-                double damage = damages[i];
-                if(depth != 0 || damage != 0)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        //    for(int i = 0; i<depths.Count;i++)
+        //    {
+        //        double depth = depths[i];
+        //        double damage = damages[i];
+        //        if(depth != 0 || damage != 0)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
-        private ICoordinatesFunction CreateCoordinatesFunction(SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)
-        {
-            List<double> depths = function.Depth.ToList<double>();
-            List<double> damages = function.Damage.ToList<double>();
-            //stDevs get reused as min values if the type is triangular
-            List<double> stDevs = function.StdDev.ToList<double>();
-            List<double> maxValues = function.ErrHi.ToList<double>();
-            //todo: should i check the lists are the same size?
-            switch(function.GetTypeError())
-            {
-                case ErrorType.NONE:
-                    {
-                        return CreateNoneFunction(depths, damages, structureValueType, errors);
-                    }
-                case ErrorType.NORMAL:
-                    {
-                        //search for constant values up front (ie: 0,0)
-                        FindConstantValuesForNormal(depths, damages, stDevs);
-                        return CreateNormalFunction(depths, damages, stDevs, structureValueType, errors);
-                    }
-                case ErrorType.TRIANGULAR:
-                    {
-                        return CreateTriangularFunction(depths, damages, stDevs, maxValues, structureValueType, errors);
-                    }
-                case ErrorType.UNIFORM:
-                    {
-                        return CreateUniformFunction(depths, stDevs, maxValues, structureValueType, errors);
-                    }
-                case ErrorType.LOGNORMAL:
-                    {
-                        throw new NotImplementedException("");
-                    }
-                default:
-                    {
-                        errors.Add("Could not create a '" + structureValueType + "' coordinates function for the occupancy type: " + Name + " because '" + structureValueType + "' is" +
-                            " not defined in FDA.");
-                        return null;
-                    }
-            }
-        }
+        //private ICoordinatesFunction CreateCoordinatesFunction(SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)
+        //{
+        //    List<double> depths = function.Depth.ToList<double>();
+        //    List<double> damages = function.Damage.ToList<double>();
+        //    //stDevs get reused as min values if the type is triangular
+        //    List<double> stDevs = function.StdDev.ToList<double>();
+        //    List<double> maxValues = function.ErrHi.ToList<double>();
+        //    //todo: should i check the lists are the same size?
+        //    switch(function.GetTypeError())
+        //    {
+        //        case ErrorType.NONE:
+        //            {
+        //                return CreateNoneFunction(depths, damages, structureValueType, errors);
+        //            }
+        //        case ErrorType.NORMAL:
+        //            {
+        //                //search for constant values up front (ie: 0,0)
+        //                FindConstantValuesForNormal(depths, damages, stDevs);
+        //                return CreateNormalFunction(depths, damages, stDevs, structureValueType, errors);
+        //            }
+        //        case ErrorType.TRIANGULAR:
+        //            {
+        //                return CreateTriangularFunction(depths, damages, stDevs, maxValues, structureValueType, errors);
+        //            }
+        //        case ErrorType.UNIFORM:
+        //            {
+        //                return CreateUniformFunction(depths, stDevs, maxValues, structureValueType, errors);
+        //            }
+        //        case ErrorType.LOGNORMAL:
+        //            {
+        //                throw new NotImplementedException("");
+        //            }
+        //        default:
+        //            {
+        //                errors.Add("Could not create a '" + structureValueType + "' coordinates function for the occupancy type: " + Name + " because '" + structureValueType + "' is" +
+        //                    " not defined in FDA.");
+        //                return null;
+        //            }
+        //    }
+        //}
 
         /// <summary>
         /// Gets all the indexes from the lists that have constant values. (ie: y = stdev)
@@ -851,44 +842,44 @@ namespace Importer
             return indexOfConstants;
         }
 
-        private void FindConstantValuesForNormal(List<double> xs, List<double> ys, List<double> stDevs)
-        {
-            List<List<int>> masterListOfConstantIndexes = new List<List<int>>();
-            List<int> indexOfConstants = GetIndexesWithConstantValuesForNormal( ys, stDevs);
+        //private void FindConstantValuesForNormal(List<double> xs, List<double> ys, List<double> stDevs)
+        //{
+        //    List<List<int>> masterListOfConstantIndexes = new List<List<int>>();
+        //    List<int> indexOfConstants = GetIndexesWithConstantValuesForNormal( ys, stDevs);
 
-            //so now we have all the indexes of constant values.
-            //if there are any then we know we need to do a linked function
-            //add the first point to a list
-            List<int> currentConstantFunction = new List<int>();
-            currentConstantFunction.Add(indexOfConstants[0]);
-            for(int i = 0;i<indexOfConstants.Count-1;i++)
-            {
-                int currentIndex = indexOfConstants[i];
-                int nextIndex = indexOfConstants[i + 1];
-                if(currentIndex+1 == nextIndex)
-                {
-                    //then they are next to each other and should be added to the same function\
-                    currentConstantFunction.Add(nextIndex);
-                }
-                else
-                {
-                    //these two indexes are not next to each other
-                    //add the current list to master and start a new one
-                    masterListOfConstantIndexes.Add(currentConstantFunction);
-                    currentConstantFunction = new List<int>();
-                    currentConstantFunction.Add(nextIndex);
-                }
-            }
-            //the factory that makes the linked function will sort the functions by the min x value of each function
-            //i don't need them in the correct order.
-            //flush whatever is in the current list
-            masterListOfConstantIndexes.Add(currentConstantFunction);
-        }
+        //    //so now we have all the indexes of constant values.
+        //    //if there are any then we know we need to do a linked function
+        //    //add the first point to a list
+        //    List<int> currentConstantFunction = new List<int>();
+        //    currentConstantFunction.Add(indexOfConstants[0]);
+        //    for(int i = 0;i<indexOfConstants.Count-1;i++)
+        //    {
+        //        int currentIndex = indexOfConstants[i];
+        //        int nextIndex = indexOfConstants[i + 1];
+        //        if(currentIndex+1 == nextIndex)
+        //        {
+        //            //then they are next to each other and should be added to the same function\
+        //            currentConstantFunction.Add(nextIndex);
+        //        }
+        //        else
+        //        {
+        //            //these two indexes are not next to each other
+        //            //add the current list to master and start a new one
+        //            masterListOfConstantIndexes.Add(currentConstantFunction);
+        //            currentConstantFunction = new List<int>();
+        //            currentConstantFunction.Add(nextIndex);
+        //        }
+        //    }
+        //    //the factory that makes the linked function will sort the functions by the min x value of each function
+        //    //i don't need them in the correct order.
+        //    //flush whatever is in the current list
+        //    masterListOfConstantIndexes.Add(currentConstantFunction);
+        //}
 
-        private string CreateFailedCoordFunctionErrorMsg(StructureValueType type, string occtypeName, string exceptionMsg)
-        {
-            return "Could not create a '" + type + "' coordinates function for the occupancy type: " + Name + ". " + exceptionMsg;
-        }
+        //private string CreateFailedCoordFunctionErrorMsg(StructureValueType type, string occtypeName, string exceptionMsg)
+        //{
+        //    return "Could not create a '" + type + "' coordinates function for the occupancy type: " + Name + ". " + exceptionMsg;
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -897,73 +888,73 @@ namespace Importer
         /// <param name="structureValueType">This is just to add more info to the error msg if there is one</param>
         /// <param name="errors"></param>
         /// <returns></returns>
-        private ICoordinatesFunction CreateNoneFunction(List<double> xs, List<double> ys, StructureValueType structureValueType, List<string> errors)
-        {           
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            }
-            catch(ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
-                return null;
-            }
-        }
+        //private ICoordinatesFunction CreateNoneFunction(List<double> xs, List<double> ys, StructureValueType structureValueType, List<string> errors)
+        //{           
+        //    try
+        //    {
+        //        return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+        //    }
+        //    catch(ArgumentException e)
+        //    {
+        //        errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
+        //        return null;
+        //    }
+        //}
 
 
-        private ICoordinatesFunction CreateNormalFunction(List<double> xs, List<double> ys, List<double> stDevs, StructureValueType structureValueType, List<string> errors)
-        {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            for (int i = 0; i < xs.Count; i++)
-            {
-                ordinates.Add( IDistributedOrdinateFactory.FactoryNormal(ys[i], stDevs[i]));
-            }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch(ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
-                return null;
-            }
-        }
+        //private ICoordinatesFunction CreateNormalFunction(List<double> xs, List<double> ys, List<double> stDevs, StructureValueType structureValueType, List<string> errors)
+        //{
+        //    List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+        //    for (int i = 0; i < xs.Count; i++)
+        //    {
+        //        ordinates.Add( IDistributedOrdinateFactory.FactoryNormal(ys[i], stDevs[i]));
+        //    }
+        //    try
+        //    {
+        //        return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+        //    }
+        //    catch(ArgumentException e)
+        //    {
+        //        errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
+        //        return null;
+        //    }
+        //}
 
-        private ICoordinatesFunction CreateTriangularFunction(List<double> xs, List<double> ys, List<double> mins,List<double> maxs, StructureValueType structureValueType, List<string> errors)
-        {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            for (int i = 0; i < xs.Count; i++)
-            {
-                ordinates.Add(IDistributedOrdinateFactory.FactoryTriangular(ys[i], mins[i], maxs[i]));
-            }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch (ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
-                return null;
-            }
-        }
+        //private ICoordinatesFunction CreateTriangularFunction(List<double> xs, List<double> ys, List<double> mins,List<double> maxs, StructureValueType structureValueType, List<string> errors)
+        //{
+        //    List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+        //    for (int i = 0; i < xs.Count; i++)
+        //    {
+        //        ordinates.Add(IDistributedOrdinateFactory.FactoryTriangular(ys[i], mins[i], maxs[i]));
+        //    }
+        //    try
+        //    {
+        //        return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
+        //        return null;
+        //    }
+        //}
 
-        private ICoordinatesFunction CreateUniformFunction(List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
-        {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            for (int i = 0; i < xs.Count; i++)
-            {
-                ordinates.Add(IDistributedOrdinateFactory.FactoryUniform(mins[i], maxs[i]));
-            }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch (ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
-                return null;
-            }
-        }
+        //private ICoordinatesFunction CreateUniformFunction(List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
+        //{
+        //    List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+        //    for (int i = 0; i < xs.Count; i++)
+        //    {
+        //        ordinates.Add(IDistributedOrdinateFactory.FactoryUniform(mins[i], maxs[i]));
+        //    }
+        //    try
+        //    {
+        //        return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, Name, e.Message));
+        //        return null;
+        //    }
+        //}
 
         #endregion
     }

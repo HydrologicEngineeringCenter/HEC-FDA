@@ -24,21 +24,7 @@ namespace View.Study
     {
         public ImportFromOldFda()
         {
-            InitializeComponent();
-            
-        }
-
-        private void Vm_Import(object sender, EventArgs e)
-        {
-            if (sender is ImportFromOldFdaVM)
-            {
-                ImportFromOldFdaVM vm = (ImportFromOldFdaVM)sender;
-                AsciiImport import = new AsciiImport();
-                //this line should write all the applicable data to the database.
-                //It creates the view model objects and then writes them to the sqlite db in the "flush" 
-                //for each fda element type. The sqlite db needs to already exist.
-                import.ImportAsciiData(vm.ImportFilePath, AsciiImport.ImportOptions.ImportEverything);
-            }
+            InitializeComponent();        
         }
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
@@ -54,10 +40,5 @@ namespace View.Study
             txtbox.Text = fullpath;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            ImportFromOldFdaVM vm = (ImportFromOldFdaVM)this.DataContext;
-            vm.Import += Vm_Import;
-        }
     }
 }

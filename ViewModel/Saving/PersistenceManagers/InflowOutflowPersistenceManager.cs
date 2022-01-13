@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Importer;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -109,6 +110,73 @@ namespace ViewModel.Saving.PersistenceManagers
 
         #endregion
 
+        public void SaveFDA1Element(ProbabilityFunction probFunction)
+        {
+            string pysr = "(" + probFunction.PlanName + " " + probFunction.YearName + " " + probFunction.StreamName + " " + probFunction.DamageReachName + ") ";
+            string description = pysr + probFunction.Description;
+
+            List<double> inflows = new List<double>();
+            List<double> outflows = new List<double>();
+            for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+            {
+                inflows.Add(probFunction.TransFlowInflow[i]);
+                outflows.Add(probFunction.TransFlowOutflow[i]);
+            }
+
+            List<IDistributedOrdinate> distributedOrdinates = GetUncertaintyValues(probFunction);
+            ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
+            ICoordinatesFunction coordFunc = null;
+            if (distributedOrdinates.Count > 0)
+            {
+                coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
+            }
+            else
+            {
+                coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, outflows, InterpolationEnum.Linear);
+            }
+
+            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
+            InflowOutflowElement elem = new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, description, func);
+
+            SaveNew(elem);
+        }
+
+        private List<IDistributedOrdinate> GetUncertaintyValues(ProbabilityFunction probFunction)
+        {
+            List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+            if (probFunction.ErrorTypeTransformFlow == ErrorType.NORMAL)
+            {
+                for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+                {
+                    //todo: what is the mean here? i am using the outflow for now.
+                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
+                }
+            }
+            else if (probFunction.ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
+            {
+                for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+                {
+                    //todo: need a log normal
+                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
+                }
+            }
+            else if (probFunction.ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
+            {
+                for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+                {
+                    ords.Add(IDistributedOrdinateFactory.FactoryTriangular(probFunction.TransFlowOutflow[i], probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                }
+            }
+            else if (probFunction.ErrorTypeTransformFlow == ErrorType.UNIFORM)
+            {
+                for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+                {
+                    ords.Add(IDistributedOrdinateFactory.FactoryUniform(probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                }
+            }
+
+            return ords;
+        }
 
         public void SaveNew(ChildElement element)
         {

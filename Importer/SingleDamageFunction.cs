@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-//John's Code
-using Functions;
 
 namespace Importer
 {
@@ -26,7 +19,7 @@ namespace Importer
         private double[] _Damage;
         private double[] _StdDev;
         private double[] _ErrHi;
-        private ICoordinatesFunction _theFunction;
+        //private ICoordinatesFunction _theFunction;
 
         #endregion
         #region Properties
@@ -188,10 +181,10 @@ namespace Importer
         //{ return this._StdDev; }
         //public double[] GetTriangularUpper()
         //{ return this._ErrHi; }
-        public ICoordinatesFunction getFunctionV2()
-        {
-            return _theFunction;
-        }
+        //public ICoordinatesFunction getFunctionV2()
+        //{
+        //    return _theFunction;
+        //}
         //Cody commented this out on 2/5/20 because it wasn't being used and i don't think it is needed.
         //public ICoordinatesFunction ConvertToV2()
         //{

@@ -99,35 +99,9 @@ namespace View.Inventory.OccupancyTypes
             import.ImportAsciiData(vm.SelectedPath, AsciiImport.ImportOptions.ImportOcctypesOnly);
             //vm.Import(import.OccupancyTypes);
 
-            if (vm.Import(import.OccupancyTypes) == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
+            //if (vm.Import(import.OccupancyTypes) == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
             {
                 DrawAllTheRows();
-               
-
-                //{
-
-                //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row = vm.ListOfRowVMs.Last();
-
-                    
-
-                //    RowDefinition newRow = new RowDefinition();
-                //    newRow.Height = new GridLength(27);
-
-                //    grd_rows.RowDefinitions.Add(newRow);
-
-                //    ContentControl cc = new ContentControl();
-                    
-
-                //    Grid.SetRow(cc, grd_rows.RowDefinitions.Count - 1);
-                //    Grid.SetColumn(cc, 0);
-                //    Grid.SetColumnSpan(cc, 3);
-
-                //    cc.Content = row;
-
-
-                //    grd_rows.Children.Add(cc);
-                //}
-
             }
 
             cmb_Path.Text = "";

@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using System.IO;
 using static System.Console;
-using Functions;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving.PersistenceManagers;
-using System.Data;
-using ViewModel.Inventory;
-using ViewModel.WaterSurfaceElevation;
 
 namespace Importer
 {
@@ -61,7 +53,7 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
-        private string _FileName;
+        public string _FileName;
 
         public enum ImportOptions
         {
@@ -71,9 +63,6 @@ namespace Importer
 
         #endregion
         #region Properties
-        public DataTable StructuresForFDA2 { get; set; }
-        public List<IOccupancyType> OccupancyTypes { get; set; }
-        public List<WaterSurfaceElevationElement> WaterSurfaceElevs {get;set;}
         public bool UsesDollar
         { get; set; }
         #endregion
@@ -167,13 +156,11 @@ namespace Importer
                 case ImportOptions.ImportEverything:
                     {
                         //write everything you can to sqlite
-                        SaveOccupancyTypes(_FileName);
-                        //flow-freq 
-                        SaveProbabilityFunctions();
-                        SaveLevees();
-                        SaveRatingCurvesToNewFDA();
-                        SaveAggregatedStageDamageToNewFDA();
-                        //SaveWaterSurfaceProfilesToNewFDA();
+                       // SaveOccupancyTypes(_FileName);
+                        //SaveProbabilityFunctions();
+                        //SaveLevees();
+                        //SaveRatingCurvesToNewFDA();
+                        //SaveAggregatedStageDamageToNewFDA();
 
                         break;
                     }
@@ -221,13 +208,13 @@ namespace Importer
         /// </summary>
         private void ReadOccTypes()
         {
-            List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
-            OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
-            foreach (OccupancyType ot in occtypes.Occtypes)
-            {
-                fda2Occtypes.Add(ot.GetFDA2OccupancyType());
-            }
-            OccupancyTypes = fda2Occtypes;
+            //List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+            //OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+            //foreach (OccupancyType ot in occtypes.Occtypes)
+            //{
+            //    fda2Occtypes.Add(ot.GetFDA2OccupancyType());
+            //}
+            //OccupancyTypes = fda2Occtypes;
         }
 
         /// <summary>
@@ -274,9 +261,9 @@ namespace Importer
 
         private void SaveOccupancyTypes(string groupName)
         {
-            ReadOccTypes();
-            OccTypePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetOccTypeManager();
-            manager.SaveNewOcctypes(OccupancyTypes, groupName);
+            //ReadOccTypes();
+            //OccTypePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            //manager.SaveNewOcctypes(OccupancyTypes, groupName);
         }
 
         #region findFields

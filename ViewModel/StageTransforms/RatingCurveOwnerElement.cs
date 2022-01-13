@@ -10,7 +10,7 @@ using Model;
 
 namespace ViewModel.StageTransforms
 {
-    public class RatingCurveOwnerElement : Utilities.ParentElement
+    public class RatingCurveOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -25,18 +25,19 @@ namespace ViewModel.StageTransforms
         {
             Name = "Rating Curves";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addRatingCurve = new Utilities.NamedAction();
+            NamedAction addRatingCurve = new NamedAction();
             addRatingCurve.Header = "Create New Rating Curve";
             addRatingCurve.Action = AddNewRatingCurve;
 
-            Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
+            NamedAction ImportRatingCurve = new NamedAction();
             ImportRatingCurve.Header = "Import Rating Curve From ASCII";
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addRatingCurve);
+            localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
 
@@ -61,7 +62,13 @@ namespace ViewModel.StageTransforms
         }
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
-            throw new NotImplementedException();
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSiblingRules(this);
+
+            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM(actionManager);
+            string header = "Import Rating Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
+            Navigate(tab, false, true);
         }
 
       

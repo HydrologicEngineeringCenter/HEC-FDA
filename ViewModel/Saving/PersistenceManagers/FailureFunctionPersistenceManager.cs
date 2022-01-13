@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Importer;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -153,6 +154,26 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         #endregion
 
+        public void SaveFDA1Elements(Levee lev)
+        {
+            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
+            string description = pysr + lev.Description;
+
+            List<ICoordinate> failureCoords = new List<ICoordinate>();
+            foreach (Pair_xy xy in lev.FailureFunctionPairs)
+            {
+                double x = xy.GetX();
+                double y = xy.GetY();
+                failureCoords.Add(ICoordinateFactory.Factory(x, y));
+            }
+
+            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
+            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
+            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.LateralStructureFailure, function);
+            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, description, lev.ElevationTopOfLevee, false, func);
+            PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
+
+        }
 
         /// <summary>
         /// Saves a new element to the parent table and the change table

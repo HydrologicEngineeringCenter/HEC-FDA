@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Functions;
+using Importer;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml.Linq;
 using ViewModel.AggregatedStageDamage;
+using ViewModel.ImpactArea;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
@@ -107,6 +111,101 @@ namespace ViewModel.Saving.PersistenceManagers
             //    object[] data = GetRowDataForAssetTable(element, type, nameOfTotalFunctionInParentTable);
             //}
         }
+
+        #region save from old fda1
+
+        public void SaveFDA1Elements(AggregateDamageFunctionList stageDamages)
+        {
+            //StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
+
+            //convert the list of all the curves into FDA 2.0 curves
+            IList<AggregateDamageFunction> curves = stageDamages.GetAggDamageFunctions.Values;
+
+            //the damage reach name needs to match an existing impact area to be included.
+            //message user if it does not.
+
+            //sort the curves by their plan and year.
+            List<List< AggregateDamageFunction>> groupedCurves = curves.GroupBy(curve => new { curve.PlanName, curve.YearName })
+                .Select(group => group.ToList())
+                .ToList();
+            
+            //now create elements from the groups of curves
+            foreach(List<AggregateDamageFunction> funcs in groupedCurves)
+            {
+                AggregatedStageDamageElement elem = CreateElement(funcs);
+                SaveNew(elem);
+            }
+        }
+
+        private AggregatedStageDamageElement CreateElement( List<AggregateDamageFunction> funcs)
+        {
+            //for the creation date, i am grabbing the creation date from one of the curves
+
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            foreach(AggregateDamageFunction func in funcs)
+            {
+                SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
+                StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName);
+                if(stageDamageCurve != null)
+                {
+                    curves.Add(stageDamageCurve);
+                }
+            }
+
+            //todo what if the count is zero
+            string name = funcs[0].PlanName.Trim() + " - " + funcs[0].YearName.Trim();
+
+            //ImpactAreaRowItem ri = new ImpactAreaRowItem(-1, "testImpactArea");
+            //StageDamageCurve curve = new StageDamageCurve(ri, "testDamCat", func);
+            if(curves.Count>0)
+            {
+                return new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat)
+        {
+            StageDamageCurve curve = null;
+            double[] depths = sdf.Depth;
+            double[] damages = sdf.Damage;
+
+            //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
+            List<double> depthsList = new List<double>();
+            List<double> damagesList = new List<double>();
+            for (int i = 0; i < sdf.GetNumRows(); i++)
+            {
+                depthsList.Add(depths[i]);
+                damagesList.Add(damages[i]);
+            }
+            //always use linear. This is the only option in Old Fda.
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
+            //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
+
+            //there should only ever be 0 or 1 impact area elements
+            List<ChildElement> impactElems = StudyCache.GetChildElementsOfType(typeof(ImpactAreaElement));
+            if(impactElems.Count>0)
+            {
+                ObservableCollection<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)impactElems[0]).ImpactAreaRows;
+                ImpactAreaRowItem selectedRow = null;
+                foreach(ImpactAreaRowItem row in impactAreaRows)
+                {
+                    if(row.Name.Equals(damageReachName))
+                    {
+                        curve = new StageDamageCurve(row, damCat, func);
+                        break;
+                    }
+                }
+            }
+
+            return curve;
+        }
+
+
+        #endregion
 
         public void SaveNew(ChildElement element)
         {
