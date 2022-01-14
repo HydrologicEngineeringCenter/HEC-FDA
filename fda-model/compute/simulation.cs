@@ -57,7 +57,7 @@ namespace compute{
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
             if (computeDefaultThreshold == true)
-            {
+            {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
             Int64 progressChunks = 1;

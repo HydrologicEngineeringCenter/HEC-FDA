@@ -18,7 +18,13 @@ namespace metrics
     private Histogram _aep = null;
     private Dictionary<double, Histogram> _cnep;
 
-
+    public Histogram HistogramOfAEPs
+        {
+            get
+            {
+                return _aep;
+            }
+        }
 
     public ProjectPerformance(ThresholdEnum thresholdType, double thresholdValue)
     {

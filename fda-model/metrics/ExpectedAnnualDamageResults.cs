@@ -9,6 +9,14 @@ namespace metrics
         //needs access to get AEP and EAD results.
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
         private Dictionary<string, Histogram> _ead; 
+
+        public Dictionary<string, Histogram> HistogramsOfEADs
+        {
+            get
+            {
+                return _ead;
+            }
+        }
    
         public ExpectedAnnualDamageResults(){
             _ead = new Dictionary<string, Histogram>();
