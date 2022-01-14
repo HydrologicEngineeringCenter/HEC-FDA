@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using ead;
+using compute;
 using paireddata;
 using Statistics;
 
@@ -72,7 +72,7 @@ namespace fda_model_test
 
             alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa);
 
-            ead.MeanRandomProvider mrp = new MeanRandomProvider();
+            compute.MeanRandomProvider mrp = new MeanRandomProvider();
             double actual = alternative.ComputeEEAD(mrp, iterations, discountRate);
             double relativeDifference = (actual - expected) / expected;
             double tolerance = 0.01;

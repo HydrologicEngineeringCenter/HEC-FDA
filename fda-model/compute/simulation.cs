@@ -7,7 +7,7 @@ using metrics;
 using System.Linq;
 using Base.Events;
 
-namespace ead{
+namespace compute{
     public class Simulation: Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;

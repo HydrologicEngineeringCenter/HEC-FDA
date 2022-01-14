@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using metrics;
-using ead;
+using compute;
 using paireddata;
 using Statistics;
 
@@ -89,11 +89,11 @@ namespace fda_model_test
             paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
             Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
-            ead.Simulation simulation = Simulation.builder()
+            compute.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withAdditionalThreshold(threshold)
                 .build();
-            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             metrics.Results results = simulation.Compute(meanRandomProvider,iterations,false);
             double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
@@ -120,11 +120,11 @@ namespace fda_model_test
             paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
             Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
-            ead.Simulation simulation = Simulation.builder()
+            compute.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withAdditionalThreshold(threshold)
                 .build();
-            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             metrics.Results results = simulation.Compute(meanRandomProvider, iterations,false);
             double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.LongTermExceedanceProbability(years);
@@ -154,7 +154,7 @@ namespace fda_model_test
                 .withLevee(levee_curve)
                 .withAdditionalThreshold(threshold)
                 .build();
-            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             Results results = simulation.Compute(meanRandomProvider, iterations,false);
             double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
