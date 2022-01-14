@@ -6,12 +6,12 @@ namespace metrics
 {
     public class Results: IContainResults
     {
-        public Thresholds Thresholds { get; set; }
+        public PerformanceByThresholds PerformanceByThresholds { get; set; }
         public ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; set; }
 
         public Results()
         {
-            Thresholds = new Thresholds();
+            PerformanceByThresholds = new PerformanceByThresholds();
             ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
         }
 

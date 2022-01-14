@@ -58,7 +58,7 @@ namespace compute{
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
             if (computeDefaultThreshold == true)
             {
-                _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
+                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
             Int64 progressChunks = 1;
             if (iterations > 100)
@@ -207,7 +207,7 @@ namespace compute{
         public void ComputePerformance(IPairedData frequency_stage)
         {
 
-            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
@@ -238,7 +238,7 @@ namespace compute{
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
-            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
                 thresholdEntry.Value.Performance.AddAEPEstimate(aep);
                 ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
@@ -431,7 +431,7 @@ namespace compute{
             }
             public SimulationBuilder withAdditionalThreshold(Threshold threshold)
             {
-                _sim._results.Thresholds.AddThreshold(threshold);
+                _sim._results.PerformanceByThresholds.AddThreshold(threshold);
                 return new SimulationBuilder(_sim);
             }
         }
