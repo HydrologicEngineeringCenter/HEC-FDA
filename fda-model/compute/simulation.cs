@@ -211,7 +211,7 @@ namespace compute{
             {
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
                 ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
         }
@@ -240,7 +240,7 @@ namespace compute{
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
-                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
                 ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
             
@@ -253,7 +253,7 @@ namespace compute{
             for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.Performance.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
+                threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
 

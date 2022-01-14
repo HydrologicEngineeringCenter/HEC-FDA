@@ -8,11 +8,11 @@ using Statistics.Histograms;
 
 namespace metrics
 {
-    public class ProjectPerformance
+    public class ProjectPerformanceResults
 {
-        //TODO: Everything should be written in terms on non-exceedance probability 
     private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
     private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
+        //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
     private Histogram _aep = null;
@@ -26,7 +26,7 @@ namespace metrics
             }
         }
 
-    public ProjectPerformance(ThresholdEnum thresholdType, double thresholdValue)
+    public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue)
     {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
@@ -66,7 +66,7 @@ namespace metrics
         }
 
         public double AssuranceOfAEP(double exceedanceProbability)
-        {   //assurance of AEP is a non-exceedance probability
+        {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
             double assuranceOfAEP = _aep.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }

@@ -62,7 +62,7 @@ namespace fda_model_test
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations,false);
 
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
+            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             
             double difference = expected - actual;
             double relativeDifference = difference / expected;
@@ -96,7 +96,7 @@ namespace fda_model_test
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             metrics.Results results = simulation.Compute(meanRandomProvider,iterations,false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
+            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             //TODO: why do both of these work? Richard did something wrong, it needs to be fixed.
             //double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             double difference = expected - actual;
@@ -127,7 +127,7 @@ namespace fda_model_test
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             metrics.Results results = simulation.Compute(meanRandomProvider, iterations,false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].Performance.LongTermExceedanceProbability(years);
+            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.LongTermExceedanceProbability(years);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -157,7 +157,7 @@ namespace fda_model_test
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
             Results results = simulation.Compute(meanRandomProvider, iterations,false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
+            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -186,7 +186,7 @@ namespace fda_model_test
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations,false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].Performance.ConditionalNonExceedanceProbability(nonExceedanceProbability);
+            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(nonExceedanceProbability);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
