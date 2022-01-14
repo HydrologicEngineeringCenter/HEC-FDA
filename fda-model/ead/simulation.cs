@@ -29,15 +29,6 @@ namespace ead{
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
 
-        public Thresholds PerformanceThresholds
-        {
-            get
-            {
-                return _results.Thresholds;
-            }
-          
-        }
-
         public bool HasLevee
         {
             get
@@ -436,6 +427,11 @@ namespace ead{
             public SimulationBuilder withPerformanceMetrics(Results mr)
             {
                 _sim._results = mr;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withAdditionalThreshold(Threshold threshold)
+            {
+                _sim._results.Thresholds.AddThreshold(threshold);
                 return new SimulationBuilder(_sim);
             }
         }

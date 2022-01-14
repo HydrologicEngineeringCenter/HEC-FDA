@@ -48,8 +48,8 @@ namespace fda_model_test
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
+                .withAdditionalThreshold(threshold)
                 .build();
-            s.PerformanceThresholds.AddThreshold(threshold);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp,1);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
