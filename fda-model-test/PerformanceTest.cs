@@ -151,7 +151,7 @@ namespace fda_model_test
             Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
-                .withLevee(levee_curve)
+                .withLevee(levee_curve, 45)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();

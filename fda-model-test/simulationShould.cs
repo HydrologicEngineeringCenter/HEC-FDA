@@ -127,7 +127,7 @@ namespace fda_model_test
             Simulation s = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
-                .withLevee(levee)
+                .withLevee(levee, 100000.0d)
                 .withStageDamages(upd)
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();

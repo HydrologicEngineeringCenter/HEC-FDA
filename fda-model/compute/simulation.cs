@@ -18,12 +18,8 @@ namespace compute{
         private UncertainPairedData _frequency_stage;
         private UncertainPairedData _channelstage_floodplainstage;
         private UncertainPairedData _levee_curve;
+        private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
-
-        //TODO: Have a conversation about results being a simulation field 
-        //versus passing results into a results object 
-        //are these things the same?
-
         private Results _results = new Results();
 
         public event MessageReportedEventHandler MessageReport;
@@ -414,9 +410,10 @@ namespace compute{
                 _sim._channelstage_floodplainstage = upd;
                 return new SimulationBuilder(_sim);
             }
-            public SimulationBuilder withLevee(UncertainPairedData upd)
+            public SimulationBuilder withLevee(UncertainPairedData upd, double topOfLeveeElevation)
             {
                 _sim._levee_curve = upd;
+                _sim._topOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> upd)
