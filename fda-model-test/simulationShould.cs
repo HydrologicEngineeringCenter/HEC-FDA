@@ -1,7 +1,7 @@
 ﻿
 
 using Xunit;
-using ead;
+using compute;
 using paireddata;
 using Statistics;
 using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace fda_model_test
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
+                .withAdditionalThreshold(threshold)
                 .build();
-            s.PerformanceThresholds.AddThreshold(threshold);
-            ead.MeanRandomProvider mrp = new MeanRandomProvider();
+            compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp,1);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
@@ -130,7 +130,7 @@ namespace fda_model_test
                 .withStageDamages(upd)
                 .build();
             //Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
-            ead.MeanRandomProvider mrp = new MeanRandomProvider();
+            compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp, 1);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;

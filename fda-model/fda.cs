@@ -1,5 +1,5 @@
 using System;
-using ead;
+using compute;
 namespace fda
 {
     //we should absolutely use the c# statistics library we already have. this is just to mock in something.

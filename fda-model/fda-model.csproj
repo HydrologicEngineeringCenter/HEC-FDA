@@ -16,7 +16,7 @@
 
 	
   <ItemGroup>
-    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2021.12.28.2103" />
+    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.13.2222" />
     <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022.1.6.2050" />
   </ItemGroup>
 

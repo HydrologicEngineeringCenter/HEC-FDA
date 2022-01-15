@@ -5,21 +5,29 @@ using System.Text;
 using System.Threading.Tasks;
 using interfaces;
 
-namespace ead
+namespace compute
 {
-    public class MeanRandomProvider : IProvideRandomNumbers
+    public class RandomProvider : IProvideRandomNumbers
     {
+        private Random _rng;
+        public RandomProvider()
+        {
+            _rng = new Random();
+        }
+        public RandomProvider(int seed)
+        {
+            _rng = new Random(seed);
+        }
         public double NextRandom()
         {
-            return .5;
+            return _rng.NextDouble();
         }
-
         public double[] NextRandomSequence(int size)
         {
             double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < size; i++)
             {
-                randyPacket[i] = (double)i / (double)size;
+                randyPacket[i] = _rng.NextDouble();
             }
             return randyPacket;
         }

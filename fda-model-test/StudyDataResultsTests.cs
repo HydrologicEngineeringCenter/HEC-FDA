@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using metrics;
-using ead;
+using compute;
 using paireddata;
 using Statistics;
 
@@ -65,7 +65,7 @@ namespace fda_model_test
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
-            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.Results results = simulation.Compute(meanRandomProvider, 1);
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
@@ -87,7 +87,7 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .build();
 
-            ead.RandomProvider randomProvider = new RandomProvider(seed);
+            compute.RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations);
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");

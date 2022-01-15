@@ -5,8 +5,8 @@ namespace impactarea
     {
         public string Name { get; }
         public int ID { get; }
-        public ead.Simulation Simulation { get; }
-        public ImpactAreaSimulation(String name, ead.Simulation sim, int id){
+        public compute.Simulation Simulation { get; }
+        public ImpactAreaSimulation(String name, compute.Simulation sim, int id){
             Name = name;
             Simulation = sim;
             ID = id;

@@ -7,7 +7,7 @@ using metrics;
 using System.Linq;
 using Base.Events;
 
-namespace ead{
+namespace compute{
     public class Simulation: Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
@@ -28,15 +28,6 @@ namespace ead{
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
-
-        public Thresholds PerformanceThresholds
-        {
-            get
-            {
-                return _results.Thresholds;
-            }
-          
-        }
 
         public bool HasLevee
         {
@@ -66,8 +57,8 @@ namespace ead{
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
             if (computeDefaultThreshold == true)
-            {
-                _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
+            {//I am not sure if there is a better way to add the default threshold
+                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
             Int64 progressChunks = 1;
             if (iterations > 100)
@@ -216,11 +207,11 @@ namespace ead{
         public void ComputePerformance(IPairedData frequency_stage)
         {
 
-            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
                 ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
         }
@@ -247,9 +238,9 @@ namespace ead{
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
-            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
-                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
                 ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
             
@@ -262,7 +253,7 @@ namespace ead{
             for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.Performance.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
+                threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
 
@@ -436,6 +427,11 @@ namespace ead{
             public SimulationBuilder withPerformanceMetrics(Results mr)
             {
                 _sim._results = mr;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withAdditionalThreshold(Threshold threshold)
+            {
+                _sim._results.PerformanceByThresholds.AddThreshold(threshold);
                 return new SimulationBuilder(_sim);
             }
         }
