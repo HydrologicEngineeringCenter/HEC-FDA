@@ -268,7 +268,7 @@ namespace compute{
         private Threshold ComputeDefaultThreshold()
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            IPairedData frequencyStage = new PairedData(null,null);
+            IPairedData frequencyStage = new PairedData(null, null);
             IPairedData frequencyDamage = new PairedData(null, null, "Total");
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_levee_curve.IsNull)
@@ -317,28 +317,8 @@ namespace compute{
             }
             else
             {
-                double topOfLevee = FindTopOfLevee(_levee_curve);
-                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.ExteriorStage, topOfLevee);
+                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
             }
-        }
-
-        internal double FindTopOfLevee(UncertainPairedData uncertainPairedData)
-        {
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            List<double> stageList = new List<double>();
-            IPairedData leveePairedData = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
-            for (int i=0; i<leveePairedData.Xvals.Length; i++)
-            {
-                if (leveePairedData.Yvals[i] == 1)
-                {
-                    stageList.Add(leveePairedData.Xvals[i]);
-                }
-            }
-            if (stageList.Count == 0)
-            {
-                throw new ArgumentNullException("The levee curve is invalid. The top of levee must have probability = 1");
-            }
-            return stageList.Min();
         }
 
         internal PairedData ComputeTotalStageDamage(List<UncertainPairedData> listOfUncertainPairedData)
