@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Statistics;
+using Statistics.Distributions;
 using paireddata;
 using metrics;
 using System.Linq;
@@ -127,10 +128,14 @@ namespace compute{
                 }
                 else
                 {
-                    IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
-                    //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
-                    ComputeLeveePerformance(frequency_stage, levee_curve_sample);
+                    if (LeveeIsValid())
+                    {
+                        IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
+                        //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
+                        ComputeLeveePerformance(frequency_stage, levee_curve_sample);
+                    }
+
                 }
                 
             }
@@ -146,10 +151,14 @@ namespace compute{
                 }
                 else
                 {
-                    IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
-                    //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);                  
-                    ComputeLeveePerformance(frequency_stage,levee_curve_sample);
+                    if (LeveeIsValid())
+                    {
+                        IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
+                        //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);
+                        ComputeLeveePerformance(frequency_stage, levee_curve_sample);
+                    }
+
                 }
                 
             }
@@ -333,7 +342,7 @@ namespace compute{
             return totalStageDamage;
         }
         
-        public IPairedData ComputeDamageFrequency(IPairedData frequency_stage, IPairedData stageDamage)
+        public IPairedData PreviewCompute(IPairedData frequency_stage, IPairedData stageDamage)
         {
             return stageDamage.compose(frequency_stage);
         }
@@ -342,6 +351,40 @@ namespace compute{
             return new SimulationBuilder(new Simulation());
         }
 
+        private bool LeveeIsValid()
+        {
+            if (_levee_curve.ys().Last().Type != IDistributionEnum.Deterministic)
+            {
+                throw new ArgumentException("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution");
+            }
+            else if (_levee_curve.ys().Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
+            { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
+              //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
+              //this has been communicated 
+                throw new ArgumentException("The fragility curve must have stage at which the probability of failure of the levee is 1");
+            }
+            else
+            {
+                TopOfLeveehasCertainFailure();
+                return true;
+            }
+        }
+
+        private void TopOfLeveehasCertainFailure()
+        {
+            int idx = Array.BinarySearch(_levee_curve.xs(), _topOfLeveeElevation);
+            if (idx > 0) 
+            {
+                if (_levee_curve.ys()[idx].InverseCDF(0.5) != 1)
+                {//top of levee elevation has some probability other than 1
+                      ReportMessage(this, new MessageEventArgs(new LeveeMessage(_topOfLeveeElevation)));
+                }
+            } else
+            {   //top of levee elevation is not included in the fragility curve
+                ReportMessage(this, new MessageEventArgs(new LeveeMessage(_topOfLeveeElevation)));
+            }
+        }
+        
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender,e);
