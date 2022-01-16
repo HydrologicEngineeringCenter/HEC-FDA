@@ -364,7 +364,9 @@ namespace compute{
                 throw new ArgumentException("The fragility curve must have stage at which the probability of failure of the levee is 1");
             }
             else
-            {
+            {   //right here or somewhere we need to do validation to handle a top of levee elevation above all stages 
+                //how would that play in with a fragility function?
+                //
                 TopOfLeveehasCertainFailure();
                 return true;
             }
