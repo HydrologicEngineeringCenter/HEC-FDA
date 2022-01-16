@@ -326,7 +326,7 @@ namespace compute{
             }
             else
             {
-                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
+                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.ExteriorStage, _topOfLeveeElevation, _levee_curve);
             }
         }
 
@@ -344,6 +344,8 @@ namespace compute{
         
         public IPairedData PreviewCompute(IPairedData frequency_stage, IPairedData stageDamage)
         {
+            //this needs to handle any case for a constructed simulation 
+            //should probably use the compute method and the mean random provider 
             return stageDamage.compose(frequency_stage);
         }
         public static SimulationBuilder builder()

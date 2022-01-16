@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using paireddata;
 
 namespace metrics
 {
@@ -25,6 +26,14 @@ namespace metrics
             ThresholdID = thresholdID;
         }
 
-      
+        public Threshold(int thresholdID, ThresholdEnum thresholdType = 0, double thresholdValue = 0, UncertainPairedData leveeCurve)
+        {
+            ThresholdType = thresholdType;
+            ThresholdValue = thresholdValue;
+            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, leveeCurve);
+            ThresholdID = thresholdID;
+        }
+
+
     }
 }
