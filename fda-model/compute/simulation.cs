@@ -217,7 +217,7 @@ namespace compute{
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
                 thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
-                ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
@@ -246,12 +246,12 @@ namespace compute{
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
                 thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
-                ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
             
         }
 
-        public void ComputeConditionalNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold)
+        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold)
         {
             double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
