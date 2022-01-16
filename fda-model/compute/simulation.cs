@@ -21,10 +21,19 @@ namespace compute{
         private UncertainPairedData _levee_curve;
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
+        private List<PairedData> _damage_category_frequency_damage;
         private Results _results = new Results();
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
+
+        public List<PairedData> DamageFrequencyFunctions
+        {
+            get
+            {
+                return _damage_category_frequency_damage;
+            }
+        }
 
         public bool HasLevee
         {
@@ -52,7 +61,7 @@ namespace compute{
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
+        public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false){
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
@@ -80,7 +89,7 @@ namespace compute{
                         {
                             IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());
                             IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(rp, frequency_stage);
+                            ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
                         }
  
                     }
@@ -97,7 +106,7 @@ namespace compute{
                             {
                                 IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
                                 IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(rp, frequency_stage);
+                                ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
                             }
                     }
 
@@ -105,7 +114,7 @@ namespace compute{
                 else
                 {
                     IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
-                    ComputeFromStageFrequency(rp, frequency_stage_sample);
+                    ComputeFromStageFrequency(rp, frequency_stage_sample, giveMeADamageFrequency);
                 }
                 if (i % progressChunks == 0)
                 {
@@ -115,7 +124,7 @@ namespace compute{
             }
             return _results;
         }
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage){
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency){
 
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
@@ -123,7 +132,7 @@ namespace compute{
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(rp, frequency_stage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
                     ComputePerformance(frequency_stage);
                 }
                 else
@@ -132,7 +141,7 @@ namespace compute{
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample, giveMeADamageFrequency);
                         ComputeLeveePerformance(frequency_stage, levee_curve_sample);
                     }
 
@@ -146,7 +155,7 @@ namespace compute{
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage, giveMeADamageFrequency);
                     ComputePerformance(frequency_floodplainstage);
                 }
                 else
@@ -155,7 +164,7 @@ namespace compute{
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample, giveMeADamageFrequency);
                         ComputeLeveePerformance(frequency_stage, levee_curve_sample);
                     }
 
@@ -181,7 +190,7 @@ namespace compute{
 
             return new PairedData(x, y);
         }
-        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage)
+        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency)
         {
             double totalEAD = 0.0;
             foreach(UncertainPairedData pd in _damage_category_stage_damage){
@@ -190,10 +199,19 @@ namespace compute{
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
+                if(giveMeADamageFrequency)
+                {
+                    _damage_category_frequency_damage.Add((PairedData)frequency_damage);
+                }
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
+            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
+            if (giveMeADamageFrequency)
+            {
+                _damage_category_frequency_damage.Add(ComputeTotalDamageFrequency(_damage_category_frequency_damage));
+            }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee)
+        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee, bool giveMeADamageFrequency)
         {
             double totalEAD = 0.0;
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
@@ -204,9 +222,17 @@ namespace compute{
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
+                if (giveMeADamageFrequency)
+                {
+                    _damage_category_frequency_damage.Add((PairedData)frequency_damage);
+                }
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
+            if (giveMeADamageFrequency)
+            {
+                _damage_category_frequency_damage.Add(ComputeTotalDamageFrequency(_damage_category_frequency_damage));
+            }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
         public void ComputePerformance(IPairedData frequency_stage)
@@ -264,15 +290,7 @@ namespace compute{
 
 
 
-        public IPairedData ComputeDamageFrequency(IDistribution flowFrequencyDistribution, UncertainPairedData flowStageUncertain, UncertainPairedData stageDamageUncertain)
-        {
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            IPairedData frequencyFlow = BootstrapToPairedData(meanRandomProvider, flowFrequencyDistribution, 1000);
-            IPairedData ratingCurve = flowStageUncertain.SamplePairedData(meanRandomProvider.NextRandom());
-            IPairedData frequencyStage = ratingCurve.compose(frequencyFlow);
-            IPairedData stageDamage = stageDamageUncertain.SamplePairedData(meanRandomProvider.NextRandom());
-            return stageDamage.compose(frequencyStage);
-        }
+
 
         private Threshold ComputeDefaultThreshold()
         {
@@ -341,12 +359,23 @@ namespace compute{
             }
             return totalStageDamage;
         }
-        
-        public IPairedData PreviewCompute(IPairedData frequency_stage, IPairedData stageDamage)
+
+        internal PairedData ComputeTotalDamageFrequency(List<PairedData> listOfPairedData)
         {
-            //this needs to handle any case for a constructed simulation 
-            //should probably use the compute method and the mean random provider 
-            return stageDamage.compose(frequency_stage);
+            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
+            foreach (PairedData pairedData in listOfPairedData)
+            {
+                totalDamageFrequency = totalDamageFrequency.SumYsForGivenX(pairedData);
+            }
+            return totalDamageFrequency;
+        }
+
+        public Results PreviewCompute()
+        {
+ 
+            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            Results results = this.Compute(meanRandomProvider, 1, false, true);
+            return results;
         }
         public static SimulationBuilder builder()
         {
