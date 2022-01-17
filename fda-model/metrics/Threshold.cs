@@ -26,7 +26,7 @@ namespace metrics
             ThresholdID = thresholdID;
         }
 
-        public Threshold(int thresholdID, ThresholdEnum thresholdType = 0, double thresholdValue = 0, UncertainPairedData leveeCurve)
+        public Threshold(int thresholdID, UncertainPairedData leveeCurve, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;

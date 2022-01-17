@@ -52,11 +52,50 @@ namespace fda_model_test
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            metrics.Results r = s.Compute(mrp,1);
+            metrics.Results r = s.Compute(mrp,1); //here we test compute, below we test preview compute 
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
-            double relativeDifference = difference / expected;
+            double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
+
+        [Theory]
+        [InlineData(150000)]
+        public void PreviewCompute_Test(double expectedEAD)
+        {
+
+            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
+            }
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id, "residential");
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+
+            metrics.Threshold threshold = new metrics.Threshold(1, metrics.ThresholdEnum.ExteriorStage, 150000);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .withAdditionalThreshold(threshold)
+                .build();
+            compute.MeanRandomProvider mrp = new MeanRandomProvider();
+            metrics.Results results = s.PreviewCompute(); //here we test preview compute 
+            double difference = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double relativeDifference = Math.Abs(difference / expectedEAD);
+            Assert.True(relativeDifference < .01);
+        }
+
+
         [Theory]
         [InlineData(1234, 100, 138098)]
         [InlineData(1234, 1, 336662)]

@@ -199,9 +199,17 @@ namespace compute{
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
+
                 if(giveMeADamageFrequency)
                 {
-                    _damage_category_frequency_damage.Add((PairedData)frequency_damage);
+                    if (_damage_category_frequency_damage == null)
+                    {
+                        _damage_category_frequency_damage = new List<PairedData> { (PairedData)frequency_damage };
+                    } else
+                    {
+                        _damage_category_frequency_damage.Add((PairedData)frequency_damage);
+
+                    }
                 }
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
@@ -344,7 +352,7 @@ namespace compute{
             }
             else
             {
-                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.ExteriorStage, _topOfLeveeElevation, _levee_curve);
+                return new Threshold(DEFAULT_THRESHOLD_ID, _levee_curve, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
             }
         }
 
