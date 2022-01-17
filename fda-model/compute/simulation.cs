@@ -480,6 +480,23 @@ namespace compute{
                 _sim._topOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_sim);
             }
+            public SimulationBuilder withLevee(bool useDefaultFunction, double topOfLeveeElevation)
+            {
+                double epsilon = 0.0001;
+                //TODO: What do we think about this? My main concern is hard-wiring the lowest stage
+                //also need to think about the ID
+                double[] leveestages = new double[] { 0.0d, topOfLeveeElevation - epsilon, topOfLeveeElevation };
+                IDistribution[] leveefailprobs = new IDistribution[3];
+                for (int i = 0; i < 2; i++)
+                {
+                    leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
+                }
+                leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
+                UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function", 0);
+                _sim._levee_curve = levee;
+                _sim._topOfLeveeElevation = topOfLeveeElevation;
+                return new SimulationBuilder(_sim);
+            }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> upd)
             {
                 _sim._damage_category_stage_damage = upd;

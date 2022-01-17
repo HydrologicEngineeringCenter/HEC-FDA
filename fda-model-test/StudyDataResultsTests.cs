@@ -8,11 +8,19 @@ using metrics;
 using compute;
 using paireddata;
 using Statistics;
+using Statistics.Distributions;
 
 namespace fda_model_test
 {
     public class StudyDataResultsTests
     {
+
+        /// <summary>
+        /// The expected values in this test class were computed using HEC-FDA Version 1.4.3
+        /// Let's plan on commenting out the tests below that take a long time to run, but not delete so that we may check from time to time
+        /// </summary>
+        /// 
+
         static IDistribution LP3Distribution = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
         static double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
 
@@ -50,6 +58,18 @@ namespace fda_model_test
             IDistributionFactory.FactoryNormal(124.82,13.87),
             IDistributionFactory.FactoryNormal(173.73,13.12),
         };
+
+        static double[] FragilityStages = { 470, 471, 472, 473, 474, 475 };
+        static IDistribution[] FragilityProbabilities =
+        {
+            new Deterministic(0),
+            new Deterministic(.1),
+            new Deterministic(.2),
+            new Deterministic(.5),
+            new Deterministic(.75),
+            new Deterministic(1)
+        };
+
 
         [Theory]
         [InlineData(20.74)]
@@ -91,8 +111,62 @@ namespace fda_model_test
             metrics.Results results = simulation.Compute(randomProvider, iterations);
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
-            double relativeDifference = difference / expected;
+            double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
+
+        [Theory]
+        [InlineData(10000, 2345, 19.46, 475, .2487)]
+        public void ComputeMeanEADAndPerformanceWithIterationsAndLevee_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
+        {
+            IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(stageDamage);
+            Simulation simulation = Simulation.builder()
+                .withFlowFrequency(flowFrequency)
+                .withFlowStage(flowStage)
+                .withStageDamages(stageDamageList)
+                .withLevee(true,topOfLeveeElevation)
+                .build();
+            compute.RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, iterations);
+
+            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
+            Assert.True(relativeDifferenceEAD < .01);
+
+            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
+        }
+
+        [Theory]
+        [InlineData(10000, 2345, 20.63, 475, .4225)]
+        public void ComputeMeanEADAndPerformanceWithIterationsAndLeveeAndFragility_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
+        {
+            IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(stageDamage);
+            UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name, description, id);
+            Simulation simulation = Simulation.builder()
+                .withFlowFrequency(flowFrequency)
+                .withFlowStage(flowStage)
+                .withStageDamages(stageDamageList)
+                .withLevee(fragilityCurve, topOfLeveeElevation)
+                .build();
+            compute.RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, iterations);
+
+            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
+            Assert.True(relativeDifferenceEAD < .01);
+
+            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
+        }
+
     }
 }
