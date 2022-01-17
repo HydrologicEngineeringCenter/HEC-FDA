@@ -19,7 +19,7 @@ namespace compute
             double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < size; i++)
             {
-                randyPacket[i] = (double)i / (double)size;
+                randyPacket[i] = (((double)i) +.5)/ (double)size;
             }
             return randyPacket;
         }
