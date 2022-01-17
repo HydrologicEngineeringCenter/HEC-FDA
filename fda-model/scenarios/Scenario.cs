@@ -11,6 +11,10 @@ namespace scenarios
         public Int64 Year{
             get{return _year;}
         }
+        public IList<ImpactAreaSimulation> ImpactAreas
+        {
+            get { return _impactAreas;  }
+        }
         public Scenario(Int64 year, IList<ImpactAreaSimulation> impactAreas){
             _year = year;
             _impactAreas = impactAreas;
