@@ -135,7 +135,7 @@ namespace fda_model_test
 
         [Theory]
         [InlineData(83333.33, 100000.0d)]
-        [InlineData(0.0, 400000.0d)]
+        [InlineData(0.0, 400000.0d)] //top of levee elevation above all stages
         public void ComputeEAD_withLevee(double expected, double topOfLeveeElevation)
         {
 
@@ -174,10 +174,11 @@ namespace fda_model_test
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp, 1);
             double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
-            if (actual == 0)
+            if (actual == 0) //handle assertion differently if EAD is zero
             {
                 Assert.Equal(expected, actual, 0);
-            } else
+            } 
+            else
             {
                 double difference = expected - actual;
                 double relativeDifference = Math.Abs(difference / expected);
