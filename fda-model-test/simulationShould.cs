@@ -134,8 +134,9 @@ namespace fda_model_test
         }
 
         [Theory]
-        [InlineData(83333.33)]
-        public void ComputeEAD_withLevee(double expected)
+        [InlineData(83333.33, 100000.0d)]
+        [InlineData(0.0, 400000.0d)]
+        public void ComputeEAD_withLevee(double expected, double topOfLeveeElevation)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -147,7 +148,7 @@ namespace fda_model_test
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
             double epsilon = 0.0001;
-            double[] leveestages = new double[] { 0.0d, 100000.0d - epsilon, 100000.0d };
+            double[] leveestages = new double[] { 0.0d, topOfLeveeElevation - epsilon, topOfLeveeElevation };
             IDistribution[] leveefailprobs = new IDistribution[3];
             for (int i = 0; i < 2; i++)
             {
@@ -172,10 +173,19 @@ namespace fda_model_test
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp, 1);
-            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
-            double relativeDifference = Math.Abs(difference / expected);
-            double tolerance = 0.01;
-            Assert.True(relativeDifference < tolerance);
+            double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
+            if (actual == 0)
+            {
+                Assert.Equal(expected, actual, 0);
+            } else
+            {
+                double difference = expected - actual;
+                double relativeDifference = Math.Abs(difference / expected);
+                double tolerance = 0.01;
+                Assert.True(relativeDifference < tolerance);
+            }
+
+            
         }
 
     }
