@@ -13,12 +13,19 @@ namespace alternatives
         private Scenario _futureYear;
         private Int64 _periodOfAnalysis;
         private double _discountRate;
+        private int _id;
+
+        public int ID
+        {
+            get { return _id; }
+        }
 
         //probably need getters and setters
-        public Alternative(Scenario currentYear, Scenario futureYear, Int64 periodOfAnalysis){
+        public Alternative(Scenario currentYear, Scenario futureYear, Int64 periodOfAnalysis, int id){
             _currentYear = currentYear;
             _futureYear = futureYear;
             _periodOfAnalysis = periodOfAnalysis;
+            _id = id;
         }
 
         public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate)
