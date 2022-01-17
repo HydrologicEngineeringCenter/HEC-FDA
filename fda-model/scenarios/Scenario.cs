@@ -29,7 +29,7 @@ namespace scenarios
             Dictionary<int,Results> returnDictionary = new Dictionary<int, Results>();
 
             foreach(ImpactAreaSimulation impactArea in _impactAreas){
-                returnDictionary.Add(impactArea.ID, impactArea.Compute(rp, iterations));
+                returnDictionary.Add(impactArea.ImpactArea.ID, impactArea.Compute(rp, iterations));
             }
             return returnDictionary;
         }
