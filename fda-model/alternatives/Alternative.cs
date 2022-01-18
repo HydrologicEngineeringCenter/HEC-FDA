@@ -20,14 +20,30 @@ namespace alternatives
             get { return _id; }
         }
 
-        //probably need getters and setters
+        public Scenario CurrentYearScenario
+        {
+            get { return _currentYear;  }
+        }
+
+        public Scenario FutureYearScenario
+        {
+            get { return _futureYear; }
+        }
+
+
         public Alternative(Scenario currentYear, Scenario futureYear, Int64 periodOfAnalysis, int id){
             _currentYear = currentYear;
             _futureYear = futureYear;
             _periodOfAnalysis = periodOfAnalysis;
             _id = id;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rp"></param> random number provider
+        /// <param name="iterations"></param> number of iterations to sample distributions
+        /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
+        /// <returns></returns>
         public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate)
         {
             _discountRate = discountRate;
