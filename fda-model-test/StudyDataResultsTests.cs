@@ -124,11 +124,22 @@ namespace fda_model_test
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
+
+            double epsilon = 0.0001;
+            double[] leveestages = new double[] { 0.0d, topOfLeveeElevation - epsilon, topOfLeveeElevation };
+            IDistribution[] leveefailprobs = new IDistribution[3];
+            for (int i = 0; i < 2; i++)
+            {
+                leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
+            }
+            leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
+            UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function", 0);
+
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
-                .withLevee(true,topOfLeveeElevation)
+                .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations);
