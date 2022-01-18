@@ -38,7 +38,10 @@ namespace alternatives
             _id = id;
         }
         /// <summary>
-        /// 
+        /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
+        /// nested dictionary. The first dictionary consists of a key of type int which is an impact area ID and a value which is itself a 
+        /// dictionary of damage results. This internal dictionary consists of a key of type string which is a damage category
+        /// and a value which is a histogram of damage in average annual equivalent terms.
         /// </summary>
         /// <param name="rp"></param> random number provider
         /// <param name="iterations"></param> number of iterations to sample distributions
@@ -50,11 +53,11 @@ namespace alternatives
             Dictionary<int,Results> baseYearResults = _currentYear.Compute(rp, iterations);//this is a list of impact area-specific ead
             Dictionary<int, Results> mlfYearResults = _futureYear.Compute(rp, iterations);
 
-            Dictionary<int, Dictionary<string, Histogram>> keyValuePairs = new Dictionary<int, Dictionary<string, Histogram>>();
+            Dictionary<int, Dictionary<string, Histogram>> damageByImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
 
             foreach (int impactAreaID in baseYearResults.Keys)
             {
-                Dictionary<string, Histogram> AaeqDamageHistogramDictionary = new Dictionary<string, Histogram>();
+                Dictionary<string, Histogram> damageByDamageCategories = new Dictionary<string, Histogram>();
                 foreach (string damageCategory in baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
                 {
                     double min = 0;
@@ -67,13 +70,14 @@ namespace alternatives
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         histogram.AddObservationToHistogram(aaeqDamage);
                     }
-                    AaeqDamageHistogramDictionary.Add(damageCategory, histogram);
+                    damageByDamageCategories.Add(damageCategory, histogram);
                 }
-                keyValuePairs.Add(impactAreaID, AaeqDamageHistogramDictionary);
+                damageByImpactAreas.Add(impactAreaID, damageByDamageCategories);
             }
-            return keyValuePairs;
+            return damageByImpactAreas;
         }
-
+        //TODO: these functions should be private, but currently have unit tests 
+        //so these will remain public until the unit tests are re-written on the above public method
         public double ComputeEEAD(double baseEAD, double mlfEAD){
 
             //probably instantiate a rng to seed each impact area differently
