@@ -9,7 +9,7 @@ using System.Linq;
 using Base.Events;
 
 namespace compute{
-    public class Simulation: Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
+    public class Simulation: Base.Implementations.Validation, Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
@@ -62,6 +62,21 @@ namespace compute{
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false){
+            Validate();
+            if (HasErrors)
+            {
+                if (ErrorLevel >= Base.Enumerations.ErrorLevel.Fatal)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation contains errors. The compute has been aborted.")));
+                    return _results;
+                }
+                else
+                {
+                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation contains warnings")));
+                }
+                //enumerate what the errors and warnings are 
+            }
+
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
@@ -193,35 +208,32 @@ namespace compute{
         private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency)
         {
             double totalEAD = 0.0;
-            foreach(UncertainPairedData pd in _damage_category_stage_damage){
-                IPairedData _stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
+            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
+
+            foreach (UncertainPairedData pairedData in _damage_category_stage_damage){
+                IPairedData _stage_damage_sample = pairedData.SamplePairedData(rp.NextRandom());//needs to be a random number
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.Category);
 
                 if(giveMeADamageFrequency)
                 {
-                    if (_damage_category_frequency_damage == null)
-                    {
-                        _damage_category_frequency_damage = new List<PairedData> { (PairedData)frequency_damage };
-                    } else
-                    {
-                        _damage_category_frequency_damage.Add((PairedData)frequency_damage);
-
-                    }
+                    ReportMessage(this, new MessageEventArgs( new FrequencyDamageMessage((PairedData)frequency_damage,frequency_damage.Category)));
                 }
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                _damage_category_frequency_damage.Add(ComputeTotalDamageFrequency(_damage_category_frequency_damage));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.Category)));
+
             }
         }
         private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee, bool giveMeADamageFrequency)
         {
             double totalEAD = 0.0;
+            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
                 IPairedData stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
@@ -232,14 +244,17 @@ namespace compute{
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
                 if (giveMeADamageFrequency)
                 {
-                    _damage_category_frequency_damage.Add((PairedData)frequency_damage);
+                    ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.Category)));
                 }
+
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                _damage_category_frequency_damage.Add(ComputeTotalDamageFrequency(_damage_category_frequency_damage));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.Category)));
+
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
@@ -368,14 +383,10 @@ namespace compute{
             return totalStageDamage;
         }
 
-        internal PairedData ComputeTotalDamageFrequency(List<PairedData> listOfPairedData)
+        internal PairedData ComputeTotalDamageFrequency(PairedData pairedDataTotal, PairedData pairedDataToBeAddedToTotal)
         {
-            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
-            foreach (PairedData pairedData in listOfPairedData)
-            {
-                totalDamageFrequency = totalDamageFrequency.SumYsForGivenX(pairedData);
-            }
-            return totalDamageFrequency;
+            pairedDataTotal = pairedDataTotal.SumYsForGivenX(pairedDataToBeAddedToTotal);
+            return pairedDataTotal;
         }
 
         public Results PreviewCompute()
@@ -418,11 +429,11 @@ namespace compute{
             {
                 if (_levee_curve.ys()[idx].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
-                      ReportMessage(this, new MessageEventArgs(new LeveeMessage(_topOfLeveeElevation)));
+                      ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
                 }
             } else
             {   //top of levee elevation is not included in the fragility curve
-                ReportMessage(this, new MessageEventArgs(new LeveeMessage(_topOfLeveeElevation)));
+                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
             }
         }
         
@@ -445,7 +456,8 @@ namespace compute{
             }
             public Simulation build()
             {
-
+                _sim.Validate();
+                
                 //probably do validation here.
                 return _sim;
             }
@@ -476,6 +488,7 @@ namespace compute{
             }
             public SimulationBuilder withLevee(UncertainPairedData upd, double topOfLeveeElevation)
             {
+                _sim.AddSinglePropertyRule("levee", new Base.Implementations.Rule(() => _sim.LeveeIsValid(), "Levee is invalid."));
                 _sim._levee_curve = upd;
                 _sim._topOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_sim);
