@@ -7,6 +7,7 @@ using Xunit;
 using compute;
 using paireddata;
 using Statistics;
+using Statistics.Histograms;
 
 namespace fda_model_test
 {
@@ -23,8 +24,8 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(208213.8061,50,.0275,2023,2072,1)]
-        [InlineData(239260.1814, 50, .0275, 2023, 2050, 1)]
+        [InlineData(208213.8061,50,.0275,2023,2072,1000)]
+        [InlineData(239260.1814, 50, .0275, 2023, 2050, 1000)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
 
@@ -42,8 +43,9 @@ namespace fda_model_test
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, xLabel, yLabel, name, description, id, "residential");
-            UncertainPairedData future_stage_damage = new UncertainPairedData(FutureStages, damages, xLabel, yLabel, name, description, id, "residential");
+            string damageCategory = "residential";
+            UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, xLabel, yLabel, name, description, id, damageCategory);
+            UncertainPairedData future_stage_damage = new UncertainPairedData(FutureStages, damages, xLabel, yLabel, name, description, id, damageCategory);
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
@@ -61,20 +63,24 @@ namespace fda_model_test
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
-            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id);
+            int impactAreaID = 17;
+            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", impactAreaID);
+            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaBase);
-            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture, id);
+            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture, id, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListFutureYear.Add(impactAreaFuture);
 
             scenarios.Scenario baseScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
             scenarios.Scenario futureScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
-
-            alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa);
+            int alternativeID = 23;
+            alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, alternativeID);
 
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            double actual = alternative.ComputeEEAD(mrp, iterations, discountRate);
+            Dictionary<int, Dictionary<string, Histogram>> alternativeResults = new Dictionary<int, Dictionary<string, Histogram>>();
+            alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
+            double actual = (alternativeResults[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
             double relativeDifference = (actual - expected) / expected;
             double tolerance = 0.01;
             Assert.True(relativeDifference < tolerance);
