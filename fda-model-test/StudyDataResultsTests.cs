@@ -146,7 +146,7 @@ namespace fda_model_test
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
-            Assert.True(relativeDifferenceEAD < .01);
+            Assert.True(relativeDifferenceEAD < .02);
 
             double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
