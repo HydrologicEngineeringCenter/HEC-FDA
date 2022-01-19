@@ -32,5 +32,5 @@ jobs:
       run: msbuild $env:Solution_Name /p:Configuration=Debug
         
     - name: Test
-      run: dotnet test --filter Catagory=Unit --no-build
+      run: dotnet test --filter Category=Unit --no-build
       

@@ -33,7 +33,7 @@ jobs:
       run: msbuild $env:Solution_Name /p:Configuration=Debug
         
     - name: Test
-      run: dotnet test --filter Catagory=Integration --no-build
+      run: dotnet test --filter Category=Integration --no-build
 
 
 
