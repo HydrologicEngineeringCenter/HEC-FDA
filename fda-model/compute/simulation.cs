@@ -13,7 +13,7 @@ namespace compute{
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
-        private IDistribution _frequency_flow;
+        private Statistics.ContinuousDistribution _frequency_flow;
         private UncertainPairedData _inflow_outflow;
         private UncertainPairedData _flow_stage;
         private UncertainPairedData _frequency_stage;
@@ -187,7 +187,7 @@ namespace compute{
                 
             }
         }
-        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, IDistribution dist, Int64 ordinates){
+        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, Statistics.ContinuousDistribution dist, Int64 ordinates){
             double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
             IDistribution bootstrap = dist.Sample(randyPacket);
             double[] x = new double[ordinates];
@@ -461,7 +461,7 @@ namespace compute{
                 //probably do validation here.
                 return _sim;
             }
-            public SimulationBuilder withFlowFrequency(Statistics.IDistribution dist)
+            public SimulationBuilder withFlowFrequency(Statistics.ContinuousDistribution dist)
             {
                 _sim._frequency_flow = dist;
                 return new SimulationBuilder(_sim);
