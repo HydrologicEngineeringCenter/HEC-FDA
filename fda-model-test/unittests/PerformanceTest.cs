@@ -31,7 +31,7 @@ namespace fda_model_test
         public void ComputePerformanceWithSimulation_Test(int seed, int iterations, double expected)
         {
 
-            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
+            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -151,7 +151,7 @@ namespace fda_model_test
             Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
-                .withLevee(levee_curve)
+                .withLevee(levee_curve, 45)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
