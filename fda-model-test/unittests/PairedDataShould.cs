@@ -2,6 +2,7 @@ using Xunit;
 using paireddata;
 namespace fda_model_test
 {
+    [Trait("Category", "Unit")]
     public class PairedDataShould
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };

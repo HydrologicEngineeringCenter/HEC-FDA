@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fda-model", "fda-model\fda-model.csproj", "{F9F9DA21-BF10-4F45-B988-88063002875C}"
 EndProject
@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.github\workflows\CI.yaml = .github\workflows\CI.yaml
 		.github\workflows\CICD.yml = .github\workflows\CICD.yml
+		.github\workflows\IntegrationTesting.yml = .github\workflows\IntegrationTesting.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

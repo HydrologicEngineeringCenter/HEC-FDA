@@ -9,6 +9,7 @@ using System;
 
 namespace fda_model_test
 {
+    [Trait("Category", "Unit")]
     public class SimulationShould
     {
         static double[] Flows = { 0, 100000 };
