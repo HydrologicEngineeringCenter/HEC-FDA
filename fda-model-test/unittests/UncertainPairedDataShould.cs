@@ -9,6 +9,7 @@ using System.Runtime.Remoting;
 
 namespace fda_model_test
 {
+    [Trait("Category", "Unit")]
     public class UncertainPairedDataShould
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };

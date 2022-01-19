@@ -11,6 +11,7 @@ using Statistics;
 
 namespace fda_model_test
 {
+    [Trait("Category","Integration")]
     public class StudyDataResultsTests
     {
         static IDistribution LP3Distribution = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
