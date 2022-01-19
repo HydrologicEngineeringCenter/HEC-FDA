@@ -115,7 +115,7 @@ namespace paireddata
                     }
                     else
                     {
-                        yValues[i] = Statistics.IDistributionExtensions.FromXML(ordinateElements);
+                        yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
                     }
                 }
                 i++;
