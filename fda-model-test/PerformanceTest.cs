@@ -11,7 +11,7 @@ using Statistics;
 
 namespace fda_model_test
 {
-   
+    [Trait("Category", "Unit")]
     public class PerformanceTest
     {
         static double[] Flows = { 0, 100000 };
