@@ -10,6 +10,7 @@ using Statistics;
 
 namespace fda_model_test
 {
+    [Trait("Category", "Unit")]
     public class AlternativeTest
     {
         static double[] Flows = { 0, 100000 };
@@ -27,7 +28,7 @@ namespace fda_model_test
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
 
-            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
+            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
