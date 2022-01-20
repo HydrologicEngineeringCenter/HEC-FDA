@@ -14,9 +14,7 @@ namespace View.NamedActionConverters
     {
         public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(Base.Interfaces.INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
         private RoutedEventHandler _ActionHandler;
-        private System.Timers.Timer _t = new System.Timers.Timer(1000);
         public event MessageReportedEventHandler MessageReport;
-        private int _pingCount = 0;
 
         public Base.Interfaces.INamedAction NamedAction
         {
@@ -33,16 +31,8 @@ namespace View.NamedActionConverters
         {
             InitializeComponent();
             Base.Implementations.MessageHub.Register(this);
-            _t.Elapsed += _t_Elapsed;
-            _t.Start();
-        }
 
-        private void _t_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            _pingCount += 1;
-            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Ping! " + _pingCount + "\n")));
         }
-
         private static void ButtonNamedActionPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             NamedActionButton nab = (NamedActionButton)d;
