@@ -9,7 +9,7 @@ using metrics;
 
 namespace alternativeComparisonReport
 {
-    class AlternativeComparisonReport
+    public class AlternativeComparisonReport
 {
         private List<Alternative> _withProjectAlternatives;
         private Alternative _withoutProjectAlternative;

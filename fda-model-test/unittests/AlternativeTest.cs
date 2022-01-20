@@ -34,14 +34,14 @@ namespace fda_model_test
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = new Statistics.Distributions.Uniform(0, 300000 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
+                damages[i] = new Statistics.Distributions.Uniform(0, 600000 * i, 10);
             }
             string damageCategory = "residential";
             UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, xLabel, yLabel, name, description, id, damageCategory);
@@ -81,7 +81,7 @@ namespace fda_model_test
             Dictionary<int, Dictionary<string, Histogram>> alternativeResults = new Dictionary<int, Dictionary<string, Histogram>>();
             alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
             double actual = (alternativeResults[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
-            double relativeDifference = (actual - expected) / expected;
+            double relativeDifference = Math.Abs((actual - expected) / expected);
             double tolerance = 0.01;
             Assert.True(relativeDifference < tolerance);
 
