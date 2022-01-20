@@ -16,7 +16,6 @@ namespace fda_model_test
     {
         static double[] FlowXs = { 0, 100000 };
         static double[] StageXs = { 0, 150000 };
-        //static double[] FutureStages = { 0, 300000 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -61,13 +60,13 @@ namespace fda_model_test
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
-            //it feels weird that the EAD for this simulation is 150k because probability 
-            //goes from 0 to 0.5
+ 
             Simulation sFuture = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
+
             int impactAreaID = 17;
             impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", impactAreaID);
             impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id, impactArea);
