@@ -51,7 +51,7 @@ namespace metrics
         {
             if (_aep == null)
             {
-                var histo = new Histogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new Histogram(aepEstimate, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
                 
             }
@@ -62,7 +62,7 @@ namespace metrics
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                var histo = new Histogram(null, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new Histogram(stageForCNEP, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
             _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
