@@ -14,9 +14,9 @@ namespace fda_model_test
     [Trait("Category", "Unit")]
     public class AlternativeTest
     {
-        static double[] Flows = { 0, 100000 };
-        static double[] BaseStages = { 0, 150000 };
-        static double[] FutureStages = { 0, 300000 };
+        static double[] FlowXs = { 0, 100000 };
+        static double[] StageXs = { 0, 150000 };
+        //static double[] FutureStages = { 0, 300000 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -36,16 +36,21 @@ namespace fda_model_test
             {
                 stages[i] = new Statistics.Distributions.Uniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
-            //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
+            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, xLabel, yLabel, name, description, id);
+            //create a damage distribution for base and future year (future year assumption is massive economic development) 
+            IDistribution[] baseDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                damages[i] = new Statistics.Distributions.Uniform(0, 600000 * i, 10);
+                baseDamages[i] = new Statistics.Distributions.Uniform(0, 600000 * i, 10);
+            }
+            IDistribution[] futureDamages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                futureDamages[i] = new Statistics.Distributions.Uniform(0, 1200000 * i, 10);
             }
             string damageCategory = "residential";
-            UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, xLabel, yLabel, name, description, id, damageCategory);
-            UncertainPairedData future_stage_damage = new UncertainPairedData(FutureStages, damages, xLabel, yLabel, name, description, id, damageCategory);
+            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, xLabel, yLabel, name, description, id, damageCategory);
+            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, xLabel, yLabel, name, description, id, damageCategory);
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();

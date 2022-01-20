@@ -118,14 +118,14 @@ namespace alternatives
         }
         private double[] Interpolate(double baseEAD, double mlfEAD, Int64 baseYear, Int64 mlfYear, Int64 periodOfAnalysis)
         {
-            Int64 yearsBetweenBaseAndMLFInclusive = mlfYear - baseYear;
-            Int64 yearsAfterMLF = periodOfAnalysis - mlfYear;
+            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mlfYear - baseYear);
+            //Int64 yearsAfterMLF = periodOfAnalysis - yearsBetweenBaseAndMLFInclusive;
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (Int64 i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseEAD + (i / yearsBetweenBaseAndMLFInclusive) * (baseEAD - mlfEAD);
+                interpolatedEADs[i] = baseEAD + i*(1 / yearsBetweenBaseAndMLFInclusive) * (mlfEAD - baseEAD);
             }
-            for (Int64 i = yearsBetweenBaseAndMLFInclusive; i<periodOfAnalysis; i++)
+            for (Int64 i = Convert.ToInt64(yearsBetweenBaseAndMLFInclusive); i<periodOfAnalysis; i++)
             {
                 interpolatedEADs[i] = mlfEAD;
             }
