@@ -60,9 +60,20 @@ namespace alternatives
                 Dictionary<string, Histogram> damageByDamageCategories = new Dictionary<string, Histogram>();
                 foreach (string damageCategory in baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
                 {
-                    double min = 0;
-                    double binWidth = 1; //guessing
-                    Histogram histogram = new Histogram(min,binWidth);
+                    //Sturges rule 
+                    double lowerBoundProbability = 0.0001;
+                    double upperBoundProbability = 0.9999;
+                    double eadSampledBaseYearLowerBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
+                    double eadSampledFutureYearLowerBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
+                    double eadSampledBaseYearUpperBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
+                    double eadSampledFutureYearUpperBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
+                    double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
+                    double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
+                    double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
+                    double binQuantity = 1 + 3.322 * Math.Log(iterations);
+                    double binWidth = Math.Ceiling(range / binQuantity);
+                    Histogram histogram = new Histogram(aaeqDamageLowerBound, binWidth);
+
                     for (int i = 0; i < iterations; i++)
                     {
                         double eadSampledBaseYear = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
