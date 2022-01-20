@@ -18,6 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Base\Base.csproj" />
 	  <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
 	</ItemGroup>
