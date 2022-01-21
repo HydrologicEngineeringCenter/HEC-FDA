@@ -29,7 +29,7 @@ namespace ViewModel.FrequencyRelationships
             createNew.Action = AddNewFlowFrequencyCurve;
 
             NamedAction importFlowFreq = new NamedAction();
-            importFlowFreq.Header = "Import Analyitical Flow Frequency Curve From FDA 1.0...";
+            importFlowFreq.Header = StringConstants.ImportFromOldFda("Analyitical Flow Frequency");
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();

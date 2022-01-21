@@ -34,7 +34,7 @@ namespace ViewModel.StageTransforms
             addExteriorInterior.Action = AddNewExteriorInteriorCurve;
 
            NamedAction ImportFromAscii = new NamedAction();
-            ImportFromAscii.Header = "Import Exterior Interior Relationship From ASCII";
+            ImportFromAscii.Header = StringConstants.ImportFromOldFda("Exterior Interior Relationship");
             ImportFromAscii.Action = ImportFromASCII;
 
             List<NamedAction> localActions = new List<NamedAction>();

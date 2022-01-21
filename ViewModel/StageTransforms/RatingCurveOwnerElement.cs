@@ -29,7 +29,7 @@ namespace ViewModel.StageTransforms
             addRatingCurve.Action = AddNewRatingCurve;
 
             NamedAction ImportRatingCurve = new NamedAction();
-            ImportRatingCurve.Header = "Import Rating Curve From ASCII";
+            ImportRatingCurve.Header = StringConstants.ImportFromOldFda("Rating Curve");
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();

@@ -44,15 +44,15 @@ namespace ViewModel.FlowTransforms
             Curve = inflowOutflowCurve;
 
             Utilities.NamedAction editInflowOutflowCurve = new Utilities.NamedAction();
-            editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve";
+            editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve...";
             editInflowOutflowCurve.Action = EditInflowOutflowCurve;
 
             Utilities.NamedAction removeInflowOutflowCurve = new Utilities.NamedAction();
-            removeInflowOutflowCurve.Header = "Remove";
+            removeInflowOutflowCurve.Header = StringConstants.REMOVE_MENU;
             removeInflowOutflowCurve.Action = RemoveElement;
 
             Utilities.NamedAction renameInflowOutflowCurve = new Utilities.NamedAction(this);
-            renameInflowOutflowCurve.Header = "Rename";
+            renameInflowOutflowCurve.Header = StringConstants.RENAME_MENU;
             renameInflowOutflowCurve.Action = Rename;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

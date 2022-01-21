@@ -27,15 +27,15 @@ namespace ViewModel.StageTransforms
             Description = desc;
             if (Description == null) Description = "";
             NamedAction editRatingCurve = new NamedAction();
-            editRatingCurve.Header = "Edit Rating Curve";
+            editRatingCurve.Header = "Edit Rating Curve...";
             editRatingCurve.Action = EditRatingCurve;
 
             NamedAction removeRatingCurve = new NamedAction();
-            removeRatingCurve.Header = "Remove";
+            removeRatingCurve.Header = StringConstants.REMOVE_MENU;
             removeRatingCurve.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localActions = new List<NamedAction>();

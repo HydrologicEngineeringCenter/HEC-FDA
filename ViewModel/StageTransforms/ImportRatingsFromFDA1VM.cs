@@ -1,10 +1,5 @@
-﻿using HEC.CS.Threading;
-using Importer;
-using System;
+﻿using Importer;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using ViewModel.Editors;
 using ViewModel.Utilities;
 using static Importer.AsciiImport;
 
@@ -22,8 +17,7 @@ namespace ViewModel.StageTransforms
             return ImportOptions.ImportRatings;
         }
         public override void SaveElements()
-        {
-            
+        {          
             Saving.PersistenceManagers.RatingElementPersistenceManager manager = Saving.PersistenceFactory.GetRatingManager();
             foreach(RatingCurveElement elem in ElementsToImport)
             {
@@ -31,31 +25,7 @@ namespace ViewModel.StageTransforms
             }
         }
 
-        //public override void Validate(Action<FdaValidationResult> validationCallback)
-        //{
-        //    Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
-        //    AsyncLogger logger = new AsyncLogger();
-        //    AsciiImport import = new AsciiImport(logger);//pass in the logger.
-        //    //put on background
-        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportRatings));
-
-        //    Timer timer = new Timer(500, 100, true);
-        //    timer.Tick += ()=>ImportLog += logger.PopLastMessages();
-
-        //    task.ContinueWith(t => {
-        //        timer.Stop();
-        //        ImportLog += logger.PopLastMessages();
-
-        //        string messages = "";
-        //        ElementsToImport.AddRange(CreateRatings(ref messages));
-        //        ImportLog += messages;
-
-        //        FdaValidationResult result = new FdaValidationResult();
-        //        dispatcher.BeginInvoke(validationCallback, result);
-        //    }) ;
-        //}
-
-        public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
+        public override void CreateElements(bool checkForNameConflict = true)
         {
             RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
             ElementsToImport.AddRange(ImportFromFDA1Helper.CreateRatingElements(ratings));
@@ -69,7 +39,6 @@ namespace ViewModel.StageTransforms
                     ImportLog += vr.ErrorMessage;
                 }
             }
-            return ElementsToImport;
         }
 
     }

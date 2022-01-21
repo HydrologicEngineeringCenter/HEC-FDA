@@ -3,10 +3,8 @@ using Importer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using ViewModel.Editors;
 using static Importer.AsciiImport;
 
 namespace ViewModel.Utilities
@@ -32,15 +30,11 @@ namespace ViewModel.Utilities
         public abstract void SaveElements();
 
         //public abstract void Validate(Action<FdaValidationResult> validationResult);
-        public abstract List<ChildElement> CreateElements(bool checkForNameConflict = true);
+        public abstract void CreateElements(bool checkForNameConflict = true);
         public abstract ImportOptions GetImportOptions();
-        public virtual void RunSetupLogic()
-        {
 
-        }
-        public void Import()
+        public virtual void Import()
         {
-            RunSetupLogic();
             ImportLog = "";
             ElementsToImport.Clear();
 
@@ -58,7 +52,7 @@ namespace ViewModel.Utilities
                 timer.Stop();
                 ImportLog += logger.PopLastMessages();
 
-                ElementsToImport.AddRange(CreateElements());
+                CreateElements();
 
                 FdaValidationResult result = new FdaValidationResult();
                 dispatcher.Invoke(new Action(() =>
@@ -66,32 +60,6 @@ namespace ViewModel.Utilities
                     SaveElements();
                 }));               
             });
-
-
-
-
-
-
-
-
-
-
-
-
-            //Validate(
-            //    vr =>
-            //    {
-            //        if (vr.IsValid)
-            //        {
-            //            SaveElements();
-            //        }
-            //        else
-            //        {
-            //            ImportUpdates += "Import Failed:" + Environment.NewLine + vr.ErrorMessage;
-
-            //        }
-            //    }
-            //    );
         }
 
         /// <summary>

@@ -38,7 +38,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             editOccupancyTypes.Action = EditOccupancyTypes;
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = "Import Occupancy Types from FDA 1.0...";
+            importFromFile.Header = StringConstants.ImportFromOldFda("Occupancy Types");
             importFromFile.Action = ImportFromFile;
 
             List<NamedAction> localActions = new List<NamedAction>();

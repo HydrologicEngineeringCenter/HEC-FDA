@@ -25,8 +25,7 @@ namespace ViewModel.FrequencyRelationships
             }
         }
 
-
-        public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
+        public override void CreateElements(bool checkForNameConflict = true)
         {
             ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
             ElementsToImport.AddRange(ImportFromFDA1Helper.CreateFlowFrequencyElements(probFuncs));
@@ -40,9 +39,7 @@ namespace ViewModel.FrequencyRelationships
                     ImportLog += vr.ErrorMessage;
                 }
             }
-            return ElementsToImport;
         }
-
 
     }
 }

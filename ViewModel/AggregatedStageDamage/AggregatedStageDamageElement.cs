@@ -49,15 +49,15 @@ namespace ViewModel.AggregatedStageDamage
             IsManual = isManual;
 
             NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship";
+            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
             editDamageCurve.Action = EditDamageCurve;
 
             NamedAction removeDamageCurve = new NamedAction();
-            removeDamageCurve.Header = "Remove";
+            removeDamageCurve.Header = StringConstants.REMOVE_MENU;
             removeDamageCurve.Action = RemoveElement;
 
             NamedAction renameDamageCurve = new NamedAction(this);
-            renameDamageCurve.Header = "Rename";
+            renameDamageCurve.Header = StringConstants.RENAME_MENU;
             renameDamageCurve.Action = Rename;
 
             NamedAction exportDetails = new NamedAction(this);

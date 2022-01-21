@@ -49,15 +49,15 @@ namespace ViewModel.FrequencyRelationships
             if (Description == null) Description = "";
             Curve = function;
             NamedAction editflowfreq = new NamedAction();
-            editflowfreq.Header = "Edit Analytical Flow Frequency Relationship";
+            editflowfreq.Header = "Edit Analytical Flow Frequency Relationship...";
             editflowfreq.Action = EditFlowFreq;
 
             NamedAction removeflowfreq = new NamedAction();
-            removeflowfreq.Header = "Remove";
+            removeflowfreq.Header = StringConstants.REMOVE_MENU;
             removeflowfreq.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction();
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localActions = new List<NamedAction>();

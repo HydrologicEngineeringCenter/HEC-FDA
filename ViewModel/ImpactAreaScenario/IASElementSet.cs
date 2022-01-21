@@ -85,23 +85,23 @@ namespace ViewModel.ImpactAreaScenario
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Impact Area Scenario";
+            edit.Header = "Edit Impact Area Scenario...";
             edit.Action = EditIASSet;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Compute Impact Area Scenario";
+            compute.Header = "Compute Impact Area Scenario...";
             compute.Action = ComputeScenario;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results";
+            viewResults.Header = "View Results...";
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = "Remove";
+            removeCondition.Header = StringConstants.REMOVE_MENU;
             removeCondition.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localActions = new List<NamedAction>();

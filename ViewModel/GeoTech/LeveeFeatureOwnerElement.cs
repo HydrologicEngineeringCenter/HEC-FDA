@@ -31,7 +31,7 @@ namespace ViewModel.GeoTech
             add.Action = AddNewLeveeFeature;
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = "Import Occupancy Types from FDA 1.0...";
+            importFromFile.Header = StringConstants.ImportFromOldFda("Levees");
             importFromFile.Action = ImportFromFile;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

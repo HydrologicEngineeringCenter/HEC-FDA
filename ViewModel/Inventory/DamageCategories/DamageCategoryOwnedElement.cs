@@ -32,7 +32,7 @@ namespace ViewModel.Inventory.DamageCategory
             _DamageCategories = new List<DamageCategoryRowItem>();
 
             Utilities.NamedAction editDamageCategory = new Utilities.NamedAction();
-            editDamageCategory.Header = "Edit Damage Categories";
+            editDamageCategory.Header = "Edit Damage Categories...";
             editDamageCategory.Action = EditDamageCategories;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

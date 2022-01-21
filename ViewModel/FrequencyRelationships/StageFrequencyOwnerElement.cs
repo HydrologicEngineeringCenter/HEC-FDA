@@ -24,15 +24,15 @@ namespace ViewModel.FrequencyRelationships
         {
             Name = "Stage Frequency Curves";
 
-            Utilities.NamedAction addRatingCurve = new Utilities.NamedAction();
+            NamedAction addRatingCurve = new NamedAction();
             addRatingCurve.Header = "Create New Stage Frequency Curve";
             addRatingCurve.Action = AddNewRatingCurve;
 
-            Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
-            ImportRatingCurve.Header = "Import Stage Frequency Curve From ASCII";
+            NamedAction ImportRatingCurve = new NamedAction();
+            ImportRatingCurve.Header = StringConstants.ImportFromOldFda("Stage Frequency Curve");
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addRatingCurve);
             localActions.Add(ImportRatingCurve);
 

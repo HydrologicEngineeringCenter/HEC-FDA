@@ -199,7 +199,7 @@ namespace Importer
             }
 
             //Geotechnical Function
-            if (_GeoTech.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportFailureFunction))
+            if (_GeoTech.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportLevees))
             {
                 logger.Log($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
                 logger.Append("\t\tExterior Elev: ");

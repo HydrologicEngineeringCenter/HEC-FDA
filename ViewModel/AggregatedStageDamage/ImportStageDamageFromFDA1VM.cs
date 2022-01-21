@@ -1,10 +1,5 @@
-﻿using HEC.CS.Threading;
-using Importer;
-using System;
+﻿using Importer;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using ViewModel.Editors;
 using ViewModel.ImpactArea;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
@@ -32,44 +27,7 @@ namespace ViewModel.AggregatedStageDamage
             }
         }
 
-        //public override void Validate(Action<FdaValidationResult> validationCallback)
-        //{
-        //    ElementsToImport.Clear();
-        //    Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
-        //    AsyncLogger logger = new AsyncLogger();
-        //    AsciiImport import = new AsciiImport(logger);//pass in the logger.
-        //    //put on background
-        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportStageDamages));
-
-        //    Timer timer = new Timer(500, 100, true);
-        //    timer.Tick += () => ImportLog += logger.PopLastMessages();
-
-        //    task.ContinueWith(t =>
-        //    {
-        //        timer.Stop();
-        //        ImportLog += logger.PopLastMessages();
-
-        //        AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-        //        List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-        //        string messages = "";
-        //        ElementsToImport.AddRange(ImportFromFDA1Helper.ImportStageDamages(aggDamageList, impAreaElems, ref messages));
-
-        //        ImportLog += messages;
-
-        //        FdaValidationResult result = new FdaValidationResult();
-        //        List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AggregatedStageDamageElement));
-        //        FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
-        //        if (!vr.IsValid)
-        //        {
-        //            ImportLog += vr.ErrorMessage;
-        //        }
-
-        //        dispatcher.BeginInvoke(validationCallback, result);
-        //    });
-
-        //}
-
-        public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
+        public override void CreateElements(bool checkForNameConflict = true)
         {
             AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
@@ -87,7 +45,6 @@ namespace ViewModel.AggregatedStageDamage
                     ImportLog += vr.ErrorMessage;
                 }
             }
-            return ElementsToImport;
         }
 
     }

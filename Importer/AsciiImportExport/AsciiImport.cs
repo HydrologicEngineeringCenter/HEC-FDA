@@ -64,7 +64,7 @@ namespace Importer
             ImportInflowOutflow,
             ImportStageDamages,
             ImportExteriorInterior,
-            ImportFailureFunction,
+            ImportLevees,
             ImportFrequency,
 
         }
@@ -181,11 +181,11 @@ namespace Importer
                 case ImportOptions.ImportExteriorInterior:
                     PrintExteriorInteriorFunctions();
                     break;
+                case ImportOptions.ImportLevees:
+                    PrintLevees();
+                    break;
                 case ImportOptions.ImportStageDamages:
                     PrintStageDamage();
-                    break;
-                case ImportOptions.ImportFailureFunction:
-                    PrintFailureFunctions();
                     break;
             }
 
@@ -215,10 +215,6 @@ namespace Importer
             {
                 ProbabilityFunction pf = kvp.Value;
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
-                //if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
-                //{
-                //    //pf.Print(_Logger);
-                //}
                 if (pf.NumberOfTransFlowPoints > 0)
                 {
                     pf.Print(_Logger, ImportOptions.ImportInflowOutflow);
@@ -230,26 +226,7 @@ namespace Importer
         {
             GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Print(_Logger);
         }
-        private void PrintStageDamage()
-        {
-            GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print(_Logger);
-        }
-        private void PrintOcctypes()
-        {
-            GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Print(_Logger);
-        }
-        private void PrintFailureFunctions()
-        {
-            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
-            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
-            {
-                Levee lev = kvp.Value;
-                //if (lev.FailureFunctionPairs.Count > 0)
-                {
-                    lev.Print(_Logger, ImportOptions.ImportFailureFunction);
-                }
-            }
-        }
+
         private void PrintExteriorInteriorFunctions()
         {
             LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
@@ -262,28 +239,34 @@ namespace Importer
                 }
             }
         }
-        
+
+        private void PrintLevees()
+        {
+            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
+            {
+                Levee lev = kvp.Value;
+                lev.Print(_Logger, ImportOptions.ImportLevees);              
+            }
+        }
+
+        private void PrintStageDamage()
+        {
+            GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print(_Logger);
+        }
+        private void PrintOcctypes()
+        {
+            GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Print(_Logger);
+        } 
 
         private void PrintEverything()
         {
-            GlobalVariables.mp_fdaStudy.GetPlanList().Print();
-            GlobalVariables.mp_fdaStudy.GetYearList().Print();
-            GlobalVariables.mp_fdaStudy.GetStreamList().Print();
-            GlobalVariables.mp_fdaStudy.GetDamageReachList().Print();
-            GlobalVariables.mp_fdaStudy.GetDamageCategoryList().Print();
-            GlobalVariables.mp_fdaStudy.GetStructureModuleList().Print();
-            PrintOcctypes();
-            GlobalVariables.mp_fdaStudy.GetStructureList().Print();
-            GlobalVariables.mp_fdaStudy.GetWspList().Print();
-
+            PrintFrequencyFunction();
             PrintInflowOutflowFunction();
-            PrintFailureFunctions();
-            PrintExteriorInteriorFunctions();
-            GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Print(_Logger);
-
             PrintRatings();
-
-            PrintStageDamage();
+            PrintExteriorInteriorFunctions();
+            PrintLevees();
+            PrintOcctypes();
         }
 
         /// <summary>

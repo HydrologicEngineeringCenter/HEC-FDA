@@ -65,23 +65,23 @@ namespace ViewModel.Alternatives
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Alternative";
+            edit.Header = "Edit Alternative...";
             edit.Action = EditAlternative;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Calculate Average Annual Equivalent Damage";
+            compute.Header = "Calculate Average Annual Equivalent Damage...";
             compute.Action = ComputeAlternative;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results";
+            viewResults.Header = "View Results...";
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = "Remove";
+            removeCondition.Header = StringConstants.REMOVE_MENU;
             removeCondition.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localActions = new List<NamedAction>();

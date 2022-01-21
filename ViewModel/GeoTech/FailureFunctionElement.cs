@@ -68,15 +68,15 @@ namespace ViewModel.GeoTech
             //}
 
             Utilities.NamedAction editFailureFunctionCurve = new Utilities.NamedAction();
-            editFailureFunctionCurve.Header = "Edit Failure Function Curve";
+            editFailureFunctionCurve.Header = "Edit Failure Function Curve...";
             editFailureFunctionCurve.Action = EditFailureFunctionCurve;
 
             Utilities.NamedAction removeFailureFunctionCurve = new Utilities.NamedAction();
-            removeFailureFunctionCurve.Header = "Remove";
+            removeFailureFunctionCurve.Header = StringConstants.REMOVE_MENU;
             removeFailureFunctionCurve.Action = RemoveElement;
 
             Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

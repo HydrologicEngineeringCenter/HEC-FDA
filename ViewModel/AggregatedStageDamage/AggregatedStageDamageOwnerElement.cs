@@ -4,7 +4,6 @@ using System.Windows;
 using ViewModel.Editors;
 using ViewModel.ImpactArea;
 using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
@@ -29,7 +28,7 @@ namespace ViewModel.AggregatedStageDamage
             addDamageCurve.Action = AddNewStageDamageCurveSet;
 
             NamedAction importDamageCurve = new NamedAction();
-            importDamageCurve.Header = "Import Aggregated Stage Damage From FDA 1.0...";
+            importDamageCurve.Header = StringConstants.ImportFromOldFda("Stage Damage");
             importDamageCurve.Action = ImportNewStageDamageCurveSet;
 
             List<NamedAction> localActions = new List<NamedAction>();

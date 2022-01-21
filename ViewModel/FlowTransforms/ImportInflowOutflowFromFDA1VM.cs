@@ -1,15 +1,8 @@
-﻿using HEC.CS.Threading;
-using Importer;
-using System;
+﻿using Importer;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using static Importer.AsciiImport;
-using static Importer.ProbabilityFunction;
 
 namespace ViewModel.FlowTransforms
 {
@@ -34,35 +27,10 @@ namespace ViewModel.FlowTransforms
             }
         }
 
-        //public override void Validate(Action<FdaValidationResult> validationCallback)
-        //{
-        //    Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
-        //    AsyncLogger logger = new AsyncLogger();
-        //    AsciiImport import = new AsciiImport(logger);//pass in the logger.
-        //    //put on background
-        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportInflowOutflow));
-
-        //    Timer timer = new Timer(500, 100, true);
-        //    timer.Tick += () => ImportUpdates += logger.PopLastMessages();
-
-        //    task.ContinueWith(t => {
-        //        timer.Stop();
-        //        ImportUpdates += logger.PopLastMessages();
-
-        //        string messages = "";
-        //        ElementsToImport.AddRange(CreateInflowOutflow(ref messages));
-        //        ImportUpdates += messages;
-
-        //        FdaValidationResult result = new FdaValidationResult();
-        //        dispatcher.BeginInvoke(validationCallback, result);
-        //    });
-        //}
-
-        public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
+        public override void CreateElements(bool checkForNameConflict = true)
         {
             ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
             ElementsToImport.AddRange(ImportFromFDA1Helper.CreateInflowOutflowElements(probFuncs));
-
 
             if (checkForNameConflict)
             {
@@ -73,7 +41,6 @@ namespace ViewModel.FlowTransforms
                     ImportLog += vr.ErrorMessage;
                 }
             }
-            return ElementsToImport;
         }
 
     }

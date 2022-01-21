@@ -55,17 +55,17 @@ namespace ViewModel.Inventory
             if (!isImportedFromOldFDA)
             {
                 NamedAction mapWindow = new NamedAction();
-                mapWindow.Header = "Add to Map Window";
+                mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                 mapWindow.Action = InventoryToMapWindow;
                 localactions.Add(mapWindow);
             }
 
             NamedAction removeInventory = new NamedAction();
-            removeInventory.Header = "Remove";
+            removeInventory.Header = StringConstants.REMOVE_MENU;
             removeInventory.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             localactions.Add(removeInventory);
@@ -124,9 +124,9 @@ namespace ViewModel.Inventory
 
             foreach (NamedAction a in Actions)
             {
-                if (a.Header.Equals("Add to Map Window"))
+                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Remove from Map Window";
+                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
                     a.Action = RemoveElementFromMapWindow;
                 }
             }
@@ -150,9 +150,9 @@ namespace ViewModel.Inventory
         {
             foreach (NamedAction a in Actions)
             {
-                if (a.Header.Equals("Remove from Map Window"))
+                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Add to Map Window";
+                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                     a.IsEnabled = true;
                     a.Action = InventoryToMapWindow;
                 }

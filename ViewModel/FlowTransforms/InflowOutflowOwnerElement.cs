@@ -32,7 +32,7 @@ namespace ViewModel.FlowTransforms
             addInflowOutflow.Action = AddInflowOutflow;
 
             NamedAction importInflowOutflow = new NamedAction();
-            importInflowOutflow.Header = "Import Inflow Outflow From FDA 1.0...";
+            importInflowOutflow.Header = StringConstants.ImportFromOldFda("Inflow-Outflow");
             importInflowOutflow.Action = ImportInflowOutflow;
 
             List<NamedAction> localActions = new List<NamedAction>();
