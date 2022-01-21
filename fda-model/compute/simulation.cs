@@ -21,20 +21,10 @@ namespace compute{
         private UncertainPairedData _levee_curve;
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
-        private List<PairedData> _damage_category_frequency_damage;
         private Results _results = new Results();
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
-
-        public List<PairedData> DamageFrequencyFunctions
-        {
-            get
-            {
-                return _damage_category_frequency_damage;
-            }
-        }
-
         public bool HasLevee
         {
             get
@@ -61,7 +51,7 @@ namespace compute{
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false){
+        public Results Compute(interfaces.IProvideRandomNumbers rp, Statistics.ConvergenceCriteria convergence_criteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false){
             Validate();
             if (HasErrors)
             {
@@ -82,12 +72,12 @@ namespace compute{
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
             Int64 progressChunks = 1;
-            if (iterations > 100)
+            if (convergence_criteria.MaxIterations > 100)
             {
-                progressChunks = iterations / 100;
+                progressChunks = convergence_criteria.MaxIterations / 100;
             }
             
-            for (int i = 0; i < iterations; i ++){
+            for (int i = 0; i < convergence_criteria.MaxIterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
@@ -393,7 +383,8 @@ namespace compute{
         {
  
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            Results results = this.Compute(meanRandomProvider, 1, false, true);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Results results = this.Compute(meanRandomProvider, cc, false, true);
             return results;
         }
         public static SimulationBuilder builder()
