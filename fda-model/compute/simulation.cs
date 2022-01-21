@@ -457,7 +457,7 @@ namespace compute{
             public Simulation build()
             {
                 _sim.Validate();
-                
+               
                 //probably do validation here.
                 return _sim;
             }

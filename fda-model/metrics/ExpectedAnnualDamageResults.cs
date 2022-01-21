@@ -25,7 +25,7 @@ namespace metrics
         {
             if (!_ead.ContainsKey(category))
             {
-                var histo = new Histogram(null, EAD_HISTOGRAM_BINWIDTH);
+                var histo = new Histogram(eadEstimate, EAD_HISTOGRAM_BINWIDTH);
                 _ead.Add(category, histo);
             }
             _ead[category].AddObservationToHistogram(eadEstimate);

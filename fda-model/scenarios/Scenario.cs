@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using impactarea;
+using metrics;
+
 namespace scenarios
 {
     public class Scenario
@@ -8,6 +10,13 @@ namespace scenarios
         private Int64 _year;
         private IList<ImpactAreaSimulation> _impactAreas;
         //probably need getters and setters
+        public IList<ImpactAreaSimulation> ImpactAreaSimulations
+        {
+            get
+            {
+                return _impactAreas;
+            }
+        }
         public Int64 Year{
             get{return _year;}
         }
@@ -19,14 +28,14 @@ namespace scenarios
             _year = year;
             _impactAreas = impactAreas;
         }
-        public List<metrics.Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+        public Dictionary<int, Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //probably instantiate a rng to seed each impact area differently
-            System.Collections.Generic.List<metrics.Results> ret = new System.Collections.Generic.List<metrics.Results>();
+            Dictionary<int,Results> returnDictionary = new Dictionary<int, Results>();
 
-            foreach(ImpactAreaSimulation ia in _impactAreas){
-                ret.Add(ia.Compute(rp, iterations));
+            foreach(ImpactAreaSimulation impactArea in _impactAreas){
+                returnDictionary.Add(impactArea.ImpactArea.ID, impactArea.Compute(rp, iterations));
             }
-            return ret;
+            return returnDictionary;
         }
     }
 }
