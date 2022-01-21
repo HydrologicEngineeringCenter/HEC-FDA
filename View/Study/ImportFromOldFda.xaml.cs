@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModel.Utilities;
 
 namespace View.Study
 {
@@ -36,8 +37,24 @@ namespace View.Study
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
             ImportFromOldFdaVM vm = (ImportFromOldFdaVM)this.DataContext;
-            vm.ImportFilePath = fullpath;
+            vm.Path = fullpath;
             txtbox.Text = fullpath;
+        }
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ImportFromFDA1VM vm)
+            {
+                vm.Import();
+                ImportBtn.IsEnabled = false;
+            }
+
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            window.Close();
         }
 
     }

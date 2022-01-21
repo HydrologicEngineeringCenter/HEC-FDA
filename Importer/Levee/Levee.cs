@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Importer.AsciiImport;
 using static System.Console;
 
 namespace Importer
@@ -173,41 +174,41 @@ namespace Importer
             }
             return;
         }
-        public void Print()
+        public void Print(AsyncLogger logger, ImportOptions importOptions = ImportOptions.ImportEverything)
         {
             //Basic Information
-            WriteLine($"\n\nLevee Name: {Name}");
-            WriteLine($"\tDescription: {Description}");
-            WriteLine($"\tPlan: {PlanName}");
-            WriteLine($"\tYear: {YearName}");
-            WriteLine($"\tStream: {StreamName}");
-            WriteLine($"\tReach: {DamageReachName}");
-            WriteLine($"\tTop of Levee: {ElevationTopOfLevee}");
+            logger.Log($"\n\nLevee Name: {Name}");
+            logger.Log($"\tDescription: {Description}");
+            logger.Log($"\tPlan: {PlanName}");
+            logger.Log($"\tYear: {YearName}");
+            logger.Log($"\tStream: {StreamName}");
+            logger.Log($"\tReach: {DamageReachName}");
+            logger.Log($"\tTop of Levee: {ElevationTopOfLevee}");
 
             //Interior-Exterior Function
-            if (_IntExt.Count > 0)
+            if (_IntExt.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportExteriorInterior))
             {
-                WriteLine($"\n\tInterior-Exterior Function, Number of Points {_IntExt.Count}");
-                Write("\t\tExterior Elev: ");
+                logger.Log($"\n\tInterior-Exterior Function, Number of Points {_IntExt.Count}");
+                logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _IntExt.Count; i++)
-                    Write($"\t{_IntExt.ElementAt(i).GetX()}");
-                Write("\n\t\tInterior Elev: ");
+                    logger.Append($"\t{_IntExt.ElementAt(i).GetX()}");
+                logger.Append("\n\t\tInterior Elev: ");
                 for (int i = 0; i < _IntExt.Count; i++)
-                    Write($"\t{_IntExt.ElementAt(i).GetY()}");
-                Write("\n");
+                    logger.Append($"\t{_IntExt.ElementAt(i).GetY()}");
+                logger.Append("\n");
             }
 
             //Geotechnical Function
-            if (_GeoTech.Count > 0)
+            if (_GeoTech.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportFailureFunction))
             {
-                WriteLine($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
-                Write("\t\tExterior Elev: ");
+                logger.Log($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
+                logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _GeoTech.Count; i++)
-                    Write($"\t{_GeoTech.ElementAt(i).GetX()}");
-                Write("\n\t\tFailure Probability: ");
+                    logger.Append($"\t{_GeoTech.ElementAt(i).GetX()}");
+                logger.Append("\n\t\tFailure Probability: ");
                 for (int i = 0; i < _GeoTech.Count; i++)
-                    Write($"\t{_GeoTech.ElementAt(i).GetY()}");
-                Write("\n");
+                    logger.Append($"\t{_GeoTech.ElementAt(i).GetY()}");
+                logger.Append("\n");
             }
 
             return;

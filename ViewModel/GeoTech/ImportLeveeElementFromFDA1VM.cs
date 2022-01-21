@@ -4,31 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.AggregatedStageDamage
+namespace ViewModel.GeoTech
 {
-    public class ImportStageDamageFromFDA1VM : ImportFromFDA1VM
+    public class ImportLeveeElementFromFDA1VM : ImportFromFDA1VM
     {
-        public ImportStageDamageFromFDA1VM() : base()
+        public ImportLeveeElementFromFDA1VM() : base()
         {
 
         }
 
         public override ImportOptions GetImportOptions()
         {
-            return ImportOptions.ImportStageDamages;
+            return ImportOptions.ImportFailureFunction;
         }
+
         public override void SaveElements()
         {
-            StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-            foreach (AggregatedStageDamageElement elem in ElementsToImport)
+            LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager();
+            foreach (LeveeFeatureElement elem in ElementsToImport)
             {
-                manager.SaveNewElement(elem);
+                manager.SaveNew(elem);
             }
         }
 
@@ -39,7 +38,7 @@ namespace ViewModel.AggregatedStageDamage
         //    AsyncLogger logger = new AsyncLogger();
         //    AsciiImport import = new AsciiImport(logger);//pass in the logger.
         //    //put on background
-        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportStageDamages));
+        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportFailureFunction));
 
         //    Timer timer = new Timer(500, 100, true);
         //    timer.Tick += () => ImportLog += logger.PopLastMessages();
@@ -49,15 +48,12 @@ namespace ViewModel.AggregatedStageDamage
         //        timer.Stop();
         //        ImportLog += logger.PopLastMessages();
 
-        //        AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-        //        List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-        //        string messages = "";
-        //        ElementsToImport.AddRange(ImportFromFDA1Helper.ImportStageDamages(aggDamageList, impAreaElems, ref messages));
-
-        //        ImportLog += messages;
+        //        LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+        //        string message = "";
+        //        ElementsToImport.AddRange(ImportFromFDA1Helper.CreateLeveeElements(leveeList, ref message));
 
         //        FdaValidationResult result = new FdaValidationResult();
-        //        List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AggregatedStageDamageElement));
+        //        List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LeveeFeatureElement));
         //        FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
         //        if (!vr.IsValid)
         //        {
@@ -66,21 +62,17 @@ namespace ViewModel.AggregatedStageDamage
 
         //        dispatcher.BeginInvoke(validationCallback, result);
         //    });
-
         //}
 
         public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
         {
-            AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-            List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            string additionalMessages = "";
-            ElementsToImport.AddRange(ImportFromFDA1Helper.ImportStageDamages(aggDamageList, impAreaElems, ref additionalMessages));
-
-            ImportLog += additionalMessages;
+            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+            string message = "";
+            ElementsToImport.AddRange(ImportFromFDA1Helper.CreateLeveeElements(leveeList, ref message));
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AggregatedStageDamageElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LeveeFeatureElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {

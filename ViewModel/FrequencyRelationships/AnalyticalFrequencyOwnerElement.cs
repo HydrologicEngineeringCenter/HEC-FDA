@@ -5,6 +5,7 @@ using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ViewModel.StageTransforms;
 
 namespace ViewModel.FrequencyRelationships
 {
@@ -24,11 +25,11 @@ namespace ViewModel.FrequencyRelationships
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             NamedAction createNew = new NamedAction();
-            createNew.Header = "Create New Analyitical Flow Frequency Curve";
+            createNew.Header = "Create New Analyitical Flow Frequency Curve...";
             createNew.Action = AddNewFlowFrequencyCurve;
 
             NamedAction importFlowFreq = new NamedAction();
-            importFlowFreq.Header = "Import Analyitical Flow Frequency Curve From ASCII";
+            importFlowFreq.Header = "Import Analyitical Flow Frequency Curve From FDA 1.0...";
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -60,13 +61,10 @@ namespace ViewModel.FrequencyRelationships
 
         private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this);
-
-            //ImportStructuresFromFDA1VM vm = new ImportStructuresFromFDA1VM(actionManager);
-            //string header = "Import Structure Inventory";
-            //DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventoryFromFDA1");
-            //Navigate(tab, false, false);
+            ImportFromFDA1VM vm = new ImportFrequencyFromFDA1VM();
+            string header = "Import Frequency Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequencyCurve");
+            Navigate(tab, false, true);
         }
 
         public void AddNewFlowFrequencyCurve(object arg1, EventArgs arg2)

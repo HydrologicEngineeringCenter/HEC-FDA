@@ -31,21 +31,24 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void Add(ProbabilityFunction theProbFunc)
+        public void Add(ProbabilityFunction theProbFunc, AsyncLogger logger)
         {
             ProbabilityFunction aProbFunc = ObjectCopier.Clone(theProbFunc);
             _ProbabilityFunctionListSort.Add(aProbFunc.Name.Trim(), aProbFunc);
             WriteLine($"Add Probability Function to SortList.  {aProbFunc.Name}");
-            if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aProbFunc.Print();
+            if(logger != null)
+            {
+                if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aProbFunc.Print(logger);
+            }
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             ProbabilityFunction aProbFunc;
-            WriteLine($"Number of Probability Functions {_ProbabilityFunctionListSort.Count}");
+            logger.Log($"Number of Probability Functions {_ProbabilityFunctionListSort.Count}");
             for (int i = 0; i < _ProbabilityFunctionListSort.Count; i++)
             {
                 aProbFunc = _ProbabilityFunctionListSort.ElementAt(i).Value;
-                aProbFunc.Print();
+                aProbFunc.Print(logger);
             }
         }
         public void PrintToFile()

@@ -31,21 +31,24 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void Add(AggregateDamageFunction theAggDamgFunc)
+        public void Add(AggregateDamageFunction theAggDamgFunc, AsyncLogger logger)
         {
             AggregateDamageFunction aAggDamgFunc = ObjectCopier.Clone(theAggDamgFunc);
             _AggDamgFuncListSort.Add(aAggDamgFunc.Name, aAggDamgFunc);
             WriteLine($"Add Aggregate Damage Function to SortList.  {aAggDamgFunc.Name}");
-            if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aAggDamgFunc.Print();
+            if(logger != null)
+            {
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aAggDamgFunc.Print(logger);
+            }
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             AggregateDamageFunction aAggDamgFunc;
-            WriteLine($"Number of Aggregate Damage Functions {_AggDamgFuncListSort.Count}");
+            logger.Log($"Number of Aggregate Damage Functions {_AggDamgFuncListSort.Count}");
             for (int i = 0; i < _AggDamgFuncListSort.Count; i++)
             {
                 aAggDamgFunc = _AggDamgFuncListSort.ElementAt(i).Value;
-                aAggDamgFunc.Print();
+                aAggDamgFunc.Print(logger);
             }
         }
         public void PrintToFile()

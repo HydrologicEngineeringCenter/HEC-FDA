@@ -111,64 +111,64 @@ namespace Importer
             }
             return;
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             //Basic Information
-            WriteLine($"\n\nStage-Discharge Function Name: {Name}");
-            WriteLine($"\tDescription: {Description}");
-            WriteLine($"\tPlan: {PlanName}");
-            WriteLine($"\tYear: {YearName}");
-            WriteLine($"\tStream: {StreamName}");
-            WriteLine($"\tReach: {DamageReachName}");
-            WriteLine($"\tError Type: {ErrorTypesId}");
-            WriteLine($"\tUses Global Error: {UsesGlobalError}");
+            logger.Log($"\n\nStage-Discharge Function Name: {Name}");
+            logger.Log($"\tDescription: {Description}");
+            logger.Log($"\tPlan: {PlanName}");
+            logger.Log($"\tYear: {YearName}");
+            logger.Log($"\tStream: {StreamName}");
+            logger.Log($"\tReach: {DamageReachName}");
+            logger.Log($"\tError Type: {ErrorTypesId}");
+            logger.Log($"\tUses Global Error: {UsesGlobalError}");
 
             if (UsesGlobalError)
             {
-                WriteLine($"\tBase Stage: {BaseStage}");
+                logger.Log($"\tBase Stage: {BaseStage}");
                 if (ErrorTypesId == ErrorType.NORMAL)
-                    WriteLine($"\tStd Dev: {GlobalStdDev}");
+                    logger.Log($"\tStd Dev: {GlobalStdDev}");
                 else if (ErrorTypesId == ErrorType.LOGNORMAL)
-                    WriteLine($"\tLog Std Dev: {GlobalStdDevLog}");
+                    logger.Log($"\tLog Std Dev: {GlobalStdDevLog}");
                 else if (ErrorTypesId == ErrorType.TRIANGULAR)
-                    WriteLine($"\tUpper Error: {GlobalStdDevHigh}\n\tLower Error: {GlobalStdDevLow}");
+                    logger.Log($"\tUpper Error: {GlobalStdDevHigh}\n\tLower Error: {GlobalStdDevLow}");
             }
             //Points
-            WriteLine($"\n\tRating Curve, Number of Points {NumberOfPoints}");
-            Write("\t\tDischarge: ");
+            logger.Log($"\n\tRating Curve, Number of Points {NumberOfPoints}");
+            logger.Log("\t\tDischarge: ");
             for (int i = 0; i < NumberOfPoints; i++)
-                Write($"\t{_Discharge[i]}");
-            Write("\n\t\tStage: ");
+                logger.Log($"\t{_Discharge[i]}");
+            logger.Log("\n\t\tStage: ");
             for (int i = 0; i < NumberOfPoints; i++)
-                Write($"\t{_Stage[i]}");
-            Write("\n");
+                logger.Log($"\t{_Stage[i]}");
+            logger.Log("\n");
 
             //Ordinate by Ordinate errors
             if (!UsesGlobalError)
             {
                 if (ErrorTypesId == ErrorType.NORMAL)
                 {
-                    Write("\t\tStd Dev:");
+                    logger.Log("\t\tStd Dev:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDev[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDev[i]}");
+                    logger.Log("\n");
                 }
                 else if (ErrorTypesId == ErrorType.LOGNORMAL)
                 {
-                    Write("\t\tLog Std Dev: ");
+                    logger.Log("\t\tLog Std Dev: ");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        WriteLine($"\t{_StdDevLog[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDevLog[i]}");
+                    logger.Log("\n");
                 }
                 else if (ErrorTypesId == ErrorType.TRIANGULAR)
                 {
-                    Write("\t\tUpper Error:");
+                    logger.Log("\t\tUpper Error:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDevHigh[i]}");
-                    Write("\n\t\tLower Error:");
+                        logger.Log($"\t{_StdDevHigh[i]}");
+                    logger.Log("\n\t\tLower Error:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDevLow[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDevLow[i]}");
+                    logger.Log("\n");
                 }
             }
             return;

@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using ViewModel.Utilities;
-using System.Xml.Linq;
-using System.Xml;
-using Functions;
-using ViewModel.Saving;
-using System.Collections.ObjectModel;
 using System.Windows;
-using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Editors;
+using ViewModel.Saving;
+using ViewModel.StageTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 6 / 2017 10:22:36 AM)]
-    public class OccupancyTypesOwnerElement : Utilities.ParentElement
+    public class OccupancyTypesOwnerElement : ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -25,39 +18,32 @@ namespace ViewModel.Inventory.OccupancyTypes
         #region Fields
         private OccupancyTypesEditorVM _OccTypeEditor;
         private bool _IsEditorOpen = false;
-        //private static List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfOccupancyTypes;
         #endregion
         #region Properties
-        //private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
         public OccupancyTypesElement SelectedOccTypeElement { get; set; }
        
         public List<OccupancyTypesElement> ListOfOccupancyTypesGroups { get;
             set; } = new List<OccupancyTypesElement>();
-        //public static List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes
-        //{
-        //    get { return _ListOfOccupancyTypes; }
-        //    set { _ListOfOccupancyTypes = value; }
-        //}
+
         #endregion
         #region Constructors
         public OccupancyTypesOwnerElement( ):base()
         {
             Name = "Occupancy Types";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-
-            Utilities.NamedAction editOccupancyTypes = new Utilities.NamedAction();
+            NamedAction editOccupancyTypes = new NamedAction();
             editOccupancyTypes.Header = "Edit Occupancy Types";
             editOccupancyTypes.Action = EditOccupancyTypes;
 
-            Utilities.NamedAction importFromFile = new Utilities.NamedAction();
-            importFromFile.Header = "Import From File";
+            NamedAction importFromFile = new NamedAction();
+            importFromFile.Header = "Import Occupancy Types from FDA 1.0...";
             importFromFile.Action = ImportFromFile;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
-            localActions.Add(importFromFile);
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(editOccupancyTypes);
+            localActions.Add(importFromFile);
 
             Actions = localActions;
 
@@ -67,9 +53,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             StudyCache.OccTypeElementUpdated += UpdateOccTypeElement;
 
         }
-
-
-
 
         #endregion
         #region Voids
@@ -103,7 +86,6 @@ namespace ViewModel.Inventory.OccupancyTypes
         }
         private void RemoveOccTypeElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            //RemoveElement(e.Element);
             ListOfOccupancyTypesGroups.Remove((OccupancyTypesElement)e.Element);
         }
         private void EditOccupancyTypes(object arg1, EventArgs arg2)
@@ -111,7 +93,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             //dont open the editor if there are no occtype groups to edit
             if (ListOfOccupancyTypesGroups.Count < 1)
             {
-                //Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
+                //CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
                 //string title = "No Occupancy Types";
                 //DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
                 //Navigate(tabb);
@@ -198,13 +180,13 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         //private async void SaveFilesOnBackgroundThread(object sender, DoWorkEventArgs e)
         //{
-        //    CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", " -Saving",true);
-        //    List<Utilities.NamedAction> tempActions = new List<Utilities.NamedAction>(Actions);
-        //    Actions = new List<Utilities.NamedAction>();
+        //    CustomTreeViewHeader = new CustomHeaderVM(Name, "", " -Saving",true);
+        //    List<NamedAction> tempActions = new List<NamedAction>(Actions);
+        //    Actions = new List<NamedAction>();
 
         //    object[] args = (object[])e.Argument;
         //    List<OccupancyTypesElement> elementsToSave = (List<OccupancyTypesElement>)args[0];
-        //    List<Utilities.NamedAction> actions = (List < Utilities.NamedAction >) args[1];
+        //    List<NamedAction> actions = (List < NamedAction >) args[1];
 
         //    actions.Clear();
 
@@ -215,49 +197,20 @@ namespace ViewModel.Inventory.OccupancyTypes
         //            elem.Save();
         //        }
         //            //owner.AddElement(ote);
-        //            //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ote.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
+        //            //AddTransaction(this, new Transactions.TransactionEventArgs(ote.Name, Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
 
         //    });
 
-        //    CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+        //    CustomTreeViewHeader = new CustomHeaderVM(Name);
         //    SaveTableWithoutSavingElements();
         //    Actions = tempActions;
         //}
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
-
-            ImportOccupancyTypesVM vm = new ImportOccupancyTypesVM();
+            ImportFromFDA1VM vm = new ImportOcctypesFromFDA1VM();
             string header = "Import Occupancy Types";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportOccupancyTypes");
-            Navigate(tab,false,false);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        //object[] arguments = new object[] { vm, this };
-
-
-            //        List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
-            //        foreach (OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
-            //        {
-            //            //create a dummy tabs checked dictionary
-            //            Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
-
-            //            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
-            //            {
-            //                bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-            //                _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
-
-            //            }
-
-            //            OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
-            //            OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
-            //            elementsToSave.Add(elem);
-            //        }
-            //        object[] args = new object[] { elementsToSave, Actions};
-            //        SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
-            //    }
-            //}
+            Navigate(tab, false, true);
         }
 
        

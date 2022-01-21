@@ -31,23 +31,27 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void Add(RatingFunction theFunc)
+        public void Add(RatingFunction theFunc, AsyncLogger logger)
         {
             RatingFunction aRatingFunc = Importer.ObjectCopier.Clone(theFunc);
             _RatingFunctionListSort.Add(aRatingFunc.Name.Trim(), aRatingFunc);
             WriteLine($"Add Rating Function to SortList.  {aRatingFunc.Name}");
-            if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aRatingFunc.Print();
+            if(logger != null)
+            {
+                if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aRatingFunc.Print(logger);
+            }
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
+
             RatingFunction aFunc;
             Write("\n\n\n\n");
             //for (int j = 0; j < 100; j++) Write("-");
-            WriteLine($"\nNumber of Rating Functions {_RatingFunctionListSort.Count}");
+            logger.Log($"\nNumber of Rating Functions {_RatingFunctionListSort.Count}");
             for (int i = 0; i < _RatingFunctionListSort.Count; i++)
             {
                 aFunc = _RatingFunctionListSort.ElementAt(i).Value;
-                aFunc.Print();
+                aFunc.Print(logger);
             }
         }
         public void PrintToFile()

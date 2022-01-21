@@ -2,33 +2,34 @@
 using Importer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.AggregatedStageDamage
+namespace ViewModel.Inventory.OccupancyTypes
 {
-    public class ImportStageDamageFromFDA1VM : ImportFromFDA1VM
+    public class ImportOcctypesFromFDA1VM : ImportFromFDA1VM
     {
-        public ImportStageDamageFromFDA1VM() : base()
+        public ImportOcctypesFromFDA1VM() : base()
         {
 
         }
 
         public override ImportOptions GetImportOptions()
         {
-            return ImportOptions.ImportStageDamages;
+            return ImportOptions.ImportOcctypes;
         }
         public override void SaveElements()
         {
-            StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-            foreach (AggregatedStageDamageElement elem in ElementsToImport)
+
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            foreach (OccupancyTypesElement elem in ElementsToImport)
             {
-                manager.SaveNewElement(elem);
+                manager.SaveNew(elem);
             }
         }
 
@@ -39,7 +40,7 @@ namespace ViewModel.AggregatedStageDamage
         //    AsyncLogger logger = new AsyncLogger();
         //    AsciiImport import = new AsciiImport(logger);//pass in the logger.
         //    //put on background
-        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportStageDamages));
+        //    Task task = Task.Run(() => import.ImportAsciiData(Path, AsciiImport.ImportOptions.ImportOcctypes));
 
         //    Timer timer = new Timer(500, 100, true);
         //    timer.Tick += () => ImportLog += logger.PopLastMessages();
@@ -49,15 +50,11 @@ namespace ViewModel.AggregatedStageDamage
         //        timer.Stop();
         //        ImportLog += logger.PopLastMessages();
 
-        //        AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-        //        List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-        //        string messages = "";
-        //        ElementsToImport.AddRange(ImportFromFDA1Helper.ImportStageDamages(aggDamageList, impAreaElems, ref messages));
-
-        //        ImportLog += messages;
+        //        OccupancyTypeList occupancyTypeList = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+        //        ElementsToImport.Add(ImportFromFDA1Helper.CreateOcctypes(occupancyTypeList, import._FileName));
 
         //        FdaValidationResult result = new FdaValidationResult();
-        //        List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AggregatedStageDamageElement));
+        //        List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
         //        FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
         //        if (!vr.IsValid)
         //        {
@@ -66,21 +63,17 @@ namespace ViewModel.AggregatedStageDamage
 
         //        dispatcher.BeginInvoke(validationCallback, result);
         //    });
-
         //}
 
         public override List<ChildElement> CreateElements(bool checkForNameConflict = true)
         {
-            AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-            List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            string additionalMessages = "";
-            ElementsToImport.AddRange(ImportFromFDA1Helper.ImportStageDamages(aggDamageList, impAreaElems, ref additionalMessages));
-
-            ImportLog += additionalMessages;
+            OccupancyTypeList occupancyTypeList = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+            string groupName = System.IO.Path.GetFileNameWithoutExtension(Path);
+            ElementsToImport.Add(ImportFromFDA1Helper.CreateOcctypes(occupancyTypeList, groupName));
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AggregatedStageDamageElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {
@@ -88,7 +81,10 @@ namespace ViewModel.AggregatedStageDamage
                 }
             }
             return ElementsToImport;
+
         }
+
+
 
     }
 }

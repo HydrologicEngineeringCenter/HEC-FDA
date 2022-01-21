@@ -128,6 +128,8 @@
             <GeoTechView:FailureFunctionEditor/>
         </DataTemplate>
         
+        
+        
         <!--Aggrgated Region-->
         <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
             <AggregatedView:AggregatedStageDamage/>
@@ -144,6 +146,10 @@
         <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
             <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
 
         <!--GeoTech Region-->
         <DataTemplate DataType="{x:Type GeoTechVM:LeveeFeatureEditorVM }" >
@@ -154,6 +160,10 @@
             <GeoTechView:FailureFunctionEditor/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+
         <!--StageTransforms Region-->
         <DataTemplate DataType="{x:Type StageTransformsVM:RatingCurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
@@ -161,7 +171,11 @@
         <DataTemplate DataType="{x:Type StageTransformsVM:ExteriorInteriorEditorVM }" >
             <StageTransformsView:ExteriorInteriorEditor/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+
         <!--FlowTransforms Region-->
         <DataTemplate DataType="{x:Type FlowTransformsVM:InflowOutflowEditorVM }" >
             <FlowTransformsView:InflowOutflowEditor/>
@@ -183,6 +197,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
             <OccupancyTypesView:OccTypeGroupRowItem/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportVM }" >
@@ -383,7 +400,9 @@
         <DataTemplate DataType="{x:Type AggregatedVM:ImportStageDamageFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
-        
+        <DataTemplate DataType="{x:Type FlowTransformsVM:ImportInflowOutflowFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
             <UtilitiesView:Rename/>
         </DataTemplate>

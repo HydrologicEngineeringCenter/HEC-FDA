@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Editors;
+using ViewModel.StageTransforms;
 
 namespace ViewModel.FlowTransforms
 {
@@ -67,12 +68,9 @@ namespace ViewModel.FlowTransforms
 
         public void ImportInflowOutflow(object arg1, EventArgs arg2)
         {
-            EditorActionManager actionManager = new EditorActionManager()
-                .WithSiblingRules(this);
-
-            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM(actionManager);
-            string header = "Import Rating Curve";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
+            ImportFromFDA1VM vm = new ImportInflowOutflowFromFDA1VM();
+            string header = "Import Inflow Outflow Curves";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportInflowOutflowCurve");
             Navigate(tab, false, true);
         }
 

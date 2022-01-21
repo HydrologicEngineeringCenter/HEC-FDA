@@ -31,6 +31,7 @@ namespace View.Utilities
             if(DataContext is ImportFromFDA1VM vm)
             {
                 vm.Path = fullpath;
+                ImportBtn.IsEnabled = true;
             }
             //grd_inventory.Visibility = Visibility.Visible;
             //ImportStructuresFromFDA1VM vm = (ImportStructuresFromFDA1VM)this.DataContext;
@@ -55,6 +56,22 @@ namespace View.Utilities
 
 
 
+        }
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ImportFromFDA1VM vm)
+            {
+                vm.Import();
+                ImportBtn.IsEnabled = false;
+            }
+
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            window.Close();
         }
     }
 }

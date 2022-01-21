@@ -54,44 +54,44 @@ namespace Importer
             int itype = (int)typeValue;
             _SingleDamageFunction[itype] = ObjectCopier.Clone(singleDamageFunction);
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
-            WriteLine($"\nAggregatted Damage Function Name: {this.Name}");
-            WriteLine($"\tDescription: {this.Description}");
-            WriteLine($"\tCategory Name: {this.CategoryName}");
+            logger.Log($"\nAggregatted Damage Function Name: {this.Name}");
+            logger.Log($"\tDescription: {this.Description}");
+            logger.Log($"\tCategory Name: {this.CategoryName}");
 
             //Depth-Damage Functions
-            for (int itype = (int)StructureValueType.STRUCTURE; itype <= (int)StructureValueType.TOTAL; itype++)
-            {
-                SingleDamageFunction sdf = _SingleDamageFunction[itype];
-                int numRows = sdf.GetNumRows();
-                if (numRows > 0)
-                {
-                    double[] depth = sdf.Depth;
-                    double[] damage = sdf.Damage;
-                    double[] stdDev = null;
+            //for (int itype = (int)StructureValueType.STRUCTURE; itype <= (int)StructureValueType.TOTAL; itype++)
+            //{
+            //    SingleDamageFunction sdf = _SingleDamageFunction[itype];
+            //    int numRows = sdf.GetNumRows();
+            //    if (numRows > 0)
+            //    {
+            //        double[] depth = sdf.Depth;
+            //        double[] damage = sdf.Damage;
+            //        double[] stdDev = null;
 
-                    Write($"\n\n\tType of Function: {(StructureValueType)itype}");
+            //        logger.Log($"\n\n\tType of Function: {(StructureValueType)itype}");
 
-                    Write($"\n\tStage:");
-                    for (int i = 0; i < numRows; i++) Write($"\t{depth[i]}");
-                    Write($"\n\tDamage:");
-                    for (int i = 0; i < numRows; i++) Write($"\t{damage[i]}");
-                    switch (sdf.GetTypeError())
-                    {
-                        case ErrorType.NONE:
-                            break;
-                        case ErrorType.NORMAL:
-                            stdDev = sdf.StdDev;
-                            Write($"\n\tNormal Error: ");
-                            for (int i = 0; i < numRows; i++) Write($"\t{stdDev[i]}");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            Write("\n");
+            //        logger.Log($"\n\tStage:");
+            //        for (int i = 0; i < numRows; i++) logger.Append($"{depth[i]}, ");
+            //        logger.Log($"\n\tDamage:");
+            //        for (int i = 0; i < numRows; i++) logger.Append($"\t{damage[i]}, ");
+            //        switch (sdf.GetTypeError())
+            //        {
+            //            case ErrorType.NONE:
+            //                break;
+            //            case ErrorType.NORMAL:
+            //                stdDev = sdf.StdDev;
+            //                logger.Log($"\n\tNormal Error: ");
+            //                for (int i = 0; i < numRows; i++) logger.Append($"{stdDev[i]}, ");
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //    }
+            //}
+            //logger.Log("\n");
         }
         public void PrintToFile()
         {

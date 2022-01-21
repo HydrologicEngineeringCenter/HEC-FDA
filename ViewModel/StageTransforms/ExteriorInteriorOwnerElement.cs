@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Editors;
 
 namespace ViewModel.StageTransforms
 {
-    public class ExteriorInteriorOwnerElement : Utilities.ParentElement
+    public class ExteriorInteriorOwnerElement :ParentElement
     {
         #region Notes
         #endregion
@@ -26,19 +27,19 @@ namespace ViewModel.StageTransforms
         {
             Name = "Exterior Interior Relationships";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addExteriorInterior = new Utilities.NamedAction();
+           NamedAction addExteriorInterior = new NamedAction();
             addExteriorInterior.Header = "Create New Exterior Interior Relationship";
             addExteriorInterior.Action = AddNewExteriorInteriorCurve;
 
-            //Utilities.NamedAction ImportFromAscii = new Utilities.NamedAction();
-            //ImportFromAscii.Header = "Import Exterior Interior Relationship From ASCII";
-            //ImportFromAscii.Action = ImportFromASCII;
+           NamedAction ImportFromAscii = new NamedAction();
+            ImportFromAscii.Header = "Import Exterior Interior Relationship From ASCII";
+            ImportFromAscii.Action = ImportFromASCII;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addExteriorInterior);
-            //localActions.Add(ImportFromAscii);
+            localActions.Add(ImportFromAscii);
 
             Actions = localActions;
 
@@ -62,7 +63,10 @@ namespace ViewModel.StageTransforms
         }
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
-            throw new NotImplementedException();
+            ImportFromFDA1VM vm = new ImportExteriorInteriorFromFDA1VM();
+            string header = "Import Exterior Interior Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportExteriorInteriorCurve");
+            Navigate(tab, false, true);
         }
 
         public void AddNewExteriorInteriorCurve(object arg1, EventArgs arg2)
@@ -105,7 +109,7 @@ namespace ViewModel.StageTransforms
 
             //        ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
             //        AddElement(ele);
-            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
+            //        AddTransaction(this, newTransactions.TransactionEventArgs(ele.Name,Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
             //    }
             //}
         }

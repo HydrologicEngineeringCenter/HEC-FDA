@@ -63,10 +63,7 @@ namespace ViewModel.AggregatedStageDamage
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count > 0)
             {
-                EditorActionManager actionManager = new EditorActionManager()
-                            .WithSiblingRules(this);
-
-                ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM(actionManager);
+                ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM();
                 string header = "Import Aggregated Stage Damage Curve";
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStageDamageCurve");
                 Navigate(tab, false, true);

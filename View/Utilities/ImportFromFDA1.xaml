@@ -5,9 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.Utilities"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:cmds="clr-namespace:View.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <cmds:OkCommand x:Key="ok"/>
+        <cmds:CloseCommand x:Key="close"/>
+        <cmds:OkCommandConverter x:Key="OkConverter"/>
+        <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
+        <cmds:ErrorLevelToBackgroundColorConverter x:Key="ErrorLevelConverter"/>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <DataTemplate x:Key="myTaskTemplate">
 
@@ -30,8 +36,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="FDA Version 1 File:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" SelectionMade="TextBoxFileBrowser_SelectionMade" HorizontalAlignment="Stretch"/>
-            </Grid>
+            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" SelectionMade="TextBoxFileBrowser_SelectionMade"  HorizontalAlignment="Stretch"/>
+
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5">
+            <TextBlock VerticalAlignment="Stretch" Text="{Binding ImportLog}" />
+        </ScrollViewer>
 
             <!--<Label Grid.Row="1" Content="Select Water Surface Profiles to Import" VerticalAlignment="Bottom" />-->
 
@@ -62,7 +72,19 @@
             </Grid>-->
 
 
-            <local:OKCloseControl HorizontalAlignment="Right" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom"/>
-
+            <!--<local:OKCloseControl HorizontalAlignment="Right" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom"/>-->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5" HorizontalAlignment="Right">
+            <Button Name="ImportBtn" Content="Import" Width="100" Click="ImportButton_Click" Height="22"/>
+            <!--<Button Content="Close" Width="100" Margin="5,0,0,0" Click="CloseButton_Click"/>-->
+            <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,2,5" Width="100" Height="22" 
+                    IsCancel="True" Command="{Binding Source={StaticResource close}}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource OkConverter}">
+                        <Binding/>
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+        </StackPanel>
         </Grid>
 </UserControl>

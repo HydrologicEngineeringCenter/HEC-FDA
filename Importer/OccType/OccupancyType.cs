@@ -64,17 +64,17 @@ namespace Importer
             int itype = (int)typeValue;
             _SingleDamageFunction[itype] = ObjectCopier.Clone(singleDamageFunction);
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
-            WriteLine($"\nOccupancy Name: {this.Name}");
-            WriteLine($"\tOccupancy ID: {Id}");
-            WriteLine($"\tDescription: {this.Description}");
-            WriteLine($"\tCategory Name: {this.CategoryName}");
-            WriteLine($"\tCategory ID: {CategoryId}");
-            WriteLine($"\tUses Direct Dollar: {this.UsesDollar}");
-            WriteLine($"\tContent-To-Structure Value Ratio: {this._ErrorDistribution[2].GetCentralValue()}");
-            WriteLine($"\tOther-To-Structure Value Ratio: {this._ErrorDistribution[3].GetCentralValue()}");
-            WriteLine($"\tAutomobile-To-Structure Value Ratio: {this._ErrorDistribution[4].GetCentralValue()}");
+            logger.Log($"\nOccupancy Name: {this.Name}");
+            logger.Log($"\tOccupancy ID: {Id}");
+            logger.Log($"\tDescription: {this.Description}");
+            logger.Log($"\tCategory Name: {this.CategoryName}");
+            logger.Log($"\tCategory ID: {CategoryId}");
+            logger.Log($"\tUses Direct Dollar: {this.UsesDollar}");
+            logger.Log($"\tContent-To-Structure Value Ratio: {this._ErrorDistribution[2].GetCentralValue()}");
+            logger.Log($"\tOther-To-Structure Value Ratio: {this._ErrorDistribution[3].GetCentralValue()}");
+            logger.Log($"\tAutomobile-To-Structure Value Ratio: {this._ErrorDistribution[4].GetCentralValue()}");
 
             //Depth-Damage Functions
             for (int itype = 0; itype < 4; itype++)
@@ -88,11 +88,11 @@ namespace Importer
                     double[] err = null;
                     double[] errLo = null;
 
-                    Write($"\n\n\tType of Function: {(StructureValueType)itype}");
+                    logger.Append($"\n\n\tType of Function: {(StructureValueType)itype}");
 
-                    Write($"\n\tStage:");
+                    logger.Append($"\n\tStage:");
                     for (int i = 0; i < numRows; i++) Write($"\t{depth[i]}");
-                    Write($"\n\tDamage:");
+                    logger.Append($"\n\tDamage:");
                     for (int i = 0; i < numRows; i++) Write($"\t{damage[i]}");
                     switch (sdf.GetTypeError())
                     {
@@ -100,21 +100,21 @@ namespace Importer
                             break;
                         case ErrorType.NORMAL:
                             err = sdf.StdDev;
-                            Write($"\n\tNormal Error: ");
+                            logger.Append($"\n\tNormal Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.LOGNORMAL:
                             err = sdf.StdDev;
-                            Write($"\n\tLog Normal Error: ");
+                            logger.Append($"\n\tLog Normal Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.TRIANGULAR:
                             err = sdf.ErrHi;
                             //errLo = sdf.GetTriangularLower();
                             errLo = sdf.StdDev;
-                            Write($"\n\tTriangular Upper Error: ");
+                            logger.Append($"\n\tTriangular Upper Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
-                            Write($"\n\tTriangular Lower Error: ");
+                            logger.Append($"\n\tTriangular Lower Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{errLo[i]}");
                             break;
                         default:
@@ -122,7 +122,7 @@ namespace Importer
                     }
                 }
             }
-            Write("\n");
+            logger.Append("\n");
 
             //Structure Information
             //!TODO; Need to export the structure information

@@ -24,7 +24,7 @@ namespace View.Study
         {
             FdaStudyVM vm = DataContext as FdaStudyVM;
             vm?.AddMapsTab(MapTreeView);
-            vm?.AddCreateNewStudyTab();
+            //vm?.AddCreateNewStudyTab();
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

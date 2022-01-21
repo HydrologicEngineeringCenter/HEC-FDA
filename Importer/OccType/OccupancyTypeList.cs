@@ -41,21 +41,24 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void Add(OccupancyType theOcctype)
+        public void Add(OccupancyType theOcctype, AsyncLogger logger)
         {
             OccupancyType aOccType = ObjectCopier.Clone(theOcctype);
             _OcctypeListSort.Add(aOccType.Name.Trim(), aOccType);
             WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");
-            if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aOccType.Print();
+            if (logger != null)
+            {
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aOccType.Print(logger);
+            }
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             OccupancyType aOcctype;
-            WriteLine($"Number of Occupancy Types {_OcctypeListSort.Count}");
+            logger.Log($"Number of Occupancy Types {_OcctypeListSort.Count}");
             for (int i = 0; i < _OcctypeListSort.Count; i++)
             {
                 aOcctype = _OcctypeListSort.ElementAt(i).Value;
-                aOcctype.Print();
+                aOcctype.Print(logger);
             }
         }
         public void PrintToTable()

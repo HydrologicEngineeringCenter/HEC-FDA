@@ -94,9 +94,10 @@ namespace View.Inventory.OccupancyTypes
             ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = cmb_Path.Text;
 
-            AsciiImport import = new AsciiImport();
+            AsyncLogger logger = new AsyncLogger();
+            AsciiImport import = new AsciiImport(logger);
             //the importer will read the file and load the occtype property with any occtypes it found
-            import.ImportAsciiData(vm.SelectedPath, AsciiImport.ImportOptions.ImportOcctypesOnly);
+            import.ImportAsciiData(vm.SelectedPath, AsciiImport.ImportOptions.ImportOcctypes);
             //vm.Import(import.OccupancyTypes);
 
             //if (vm.Import(import.OccupancyTypes) == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows

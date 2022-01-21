@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Functions;
+using Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Editors;
 using ViewModel.Utilities;
-using Functions;
-using Model;
 
 namespace ViewModel.StageTransforms
 {
@@ -62,10 +59,7 @@ namespace ViewModel.StageTransforms
         }
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
-            EditorActionManager actionManager = new EditorActionManager()
-                .WithSiblingRules(this);
-
-            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM(actionManager);
+            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM();
             string header = "Import Rating Curve";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
             Navigate(tab, false, true);
