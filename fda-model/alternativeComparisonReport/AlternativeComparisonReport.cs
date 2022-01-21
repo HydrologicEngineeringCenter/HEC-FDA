@@ -66,9 +66,24 @@ namespace alternativeComparisonReport
                     Dictionary<string, Histogram> damageReducedInImpactArea = new Dictionary<string, Histogram>();
                     foreach (string damageCategory in withProjectResults[impactAreaID].Keys)
                     {
-                        double min = 0;
-                        double binWidth = 1;
-                        Histogram damageReducedDamageCategory = new Histogram(min, binWidth);
+
+                        //Sturges rule 
+                        //double lowerBoundProbability = 0.0001;
+                        //double upperBoundProbability = 0.9999;
+
+                        double withProjectDamageAAEQLowerBound = (withProjectResults[impactAreaID])[damageCategory].Min; //InverseCDF(lowerBoundProbability);
+                        double withoutProjectDamageAAEQLowerBound = (withoutProjectResults[impactAreaID])[damageCategory].Min; //InverseCDF(lowerBoundProbability);
+                        double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQLowerBound;
+
+                        double withProjectDamageAAEQUpperBound = (withProjectResults[impactAreaID])[damageCategory].Max; //InverseCDF(upperBoundProbability);
+                        double withoutProjectDamageAAEQUpperBound = (withoutProjectResults[impactAreaID])[damageCategory].Max; //InverseCDF(upperBoundProbability);
+                        double damagesReducedUpperBound = withoutProjectDamageAAEQUpperBound - withProjectDamageAAEQUpperBound;
+
+                        double range = damagesReducedUpperBound - damagesReducedLowerBound;
+                        double binQuantity = 1 + 3.322 * Math.Log(iterations);
+                        double binWidth = Math.Ceiling(range / binQuantity);
+                        Histogram damageReducedDamageCategory = new Histogram(damagesReducedLowerBound, binWidth);
+
                         for (int i = 0; i < iterations; i++)
                         {
                             double withProjectDamageAAEQ = (withProjectResults[impactAreaID])[damageCategory].InverseCDF(rp.NextRandom());
