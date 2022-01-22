@@ -181,6 +181,7 @@ namespace paireddata
         ///Assumes X vals are non-exceedance probabilities increasing from 0. Assumes an additional x ord of 1, and y ordinate equal to the last one in the array.
         /// </summary>
         public double integrate(){
+
             double triangle;
             double square;
             double x1=1.0;
