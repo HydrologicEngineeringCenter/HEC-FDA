@@ -1,3 +1,4 @@
+using Statistics;
 using System;
 namespace impactarea
 {
@@ -20,7 +21,8 @@ namespace impactarea
             ImpactArea = impactArea;
         }
         public metrics.Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
-            return Simulation.Compute(rp,iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            return Simulation.Compute(rp,cc);
         }
 
     }

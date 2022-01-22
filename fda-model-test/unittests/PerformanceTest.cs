@@ -60,7 +60,8 @@ namespace fda_model_test
                 .build();
  
             RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.Results results = simulation.Compute(randomProvider, iterations,false);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(randomProvider, cc,false);
 
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             
@@ -95,7 +96,8 @@ namespace fda_model_test
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             int iterations = 1;
-            metrics.Results results = simulation.Compute(meanRandomProvider,iterations,false);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(meanRandomProvider,cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             //TODO: why do both of these work? Richard did something wrong, it needs to be fixed.
             //double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
@@ -125,8 +127,8 @@ namespace fda_model_test
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            int iterations = 1;
-            metrics.Results results = simulation.Compute(meanRandomProvider, iterations,false);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            metrics.Results results = simulation.Compute(meanRandomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.LongTermExceedanceProbability(years);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
@@ -155,8 +157,8 @@ namespace fda_model_test
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            int iterations = 1;
-            Results results = simulation.Compute(meanRandomProvider, iterations,false);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Results results = simulation.Compute(meanRandomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
@@ -185,7 +187,8 @@ namespace fda_model_test
                 .withAdditionalThreshold(threshold)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.Results results = simulation.Compute(randomProvider, iterations,false);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(randomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(nonExceedanceProbability);
             double difference = expected - actual;
             double relativeDifference = difference / expected;

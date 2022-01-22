@@ -53,7 +53,8 @@ namespace fda_model_test
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            metrics.Results r = s.Compute(mrp,1); //here we test compute, below we test preview compute 
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            metrics.Results r = s.Compute(mrp,cc); //here we test compute, below we test preview compute 
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
@@ -89,7 +90,6 @@ namespace fda_model_test
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results results = s.PreviewCompute(); //here we test preview compute 
             double difference = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = Math.Abs(difference / expectedEAD);
@@ -128,7 +128,8 @@ namespace fda_model_test
                 .withStageDamages(upd)
                 .build();
             RandomProvider rp = new RandomProvider(seed);
-            metrics.Results r = s.Compute(rp, iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results r = s.Compute(rp, cc);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
@@ -173,7 +174,8 @@ namespace fda_model_test
                 .withStageDamages(upd)
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            metrics.Results r = s.Compute(mrp, 1);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            metrics.Results r = s.Compute(mrp, cc);
             double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
             if (actual == 0) //handle assertion differently if EAD is zero
             {

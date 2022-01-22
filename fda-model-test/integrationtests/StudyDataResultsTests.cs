@@ -86,8 +86,7 @@ namespace fda_model_test
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
-            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            metrics.Results results = simulation.Compute(meanRandomProvider, 1);
+            metrics.Results results = simulation.PreviewCompute();
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
@@ -109,7 +108,8 @@ namespace fda_model_test
                 .build();
 
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.Results results = simulation.Compute(randomProvider, iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = Math.Abs(difference / expected);
@@ -143,7 +143,8 @@ namespace fda_model_test
                 .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.Results results = simulation.Compute(randomProvider, iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
@@ -170,7 +171,8 @@ namespace fda_model_test
                 .withLevee(fragilityCurve, topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.Results results = simulation.Compute(randomProvider, iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
