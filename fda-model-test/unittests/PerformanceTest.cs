@@ -27,7 +27,7 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(1234, 1, 0.5)]
+        [InlineData(1234, 1, 0.0005)]
         public void ComputePerformanceWithSimulation_Test(int seed, int iterations, double expected)
         {
 

@@ -9,6 +9,13 @@ namespace compute
 {
     public class MeanRandomProvider : IProvideRandomNumbers
     {
+        public int Seed
+        {
+            get
+            {
+                return 0;
+            }
+        }
         public double NextRandom()
         {
             return .5;

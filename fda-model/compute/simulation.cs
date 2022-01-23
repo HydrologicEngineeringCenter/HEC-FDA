@@ -68,6 +68,19 @@ namespace compute{
                 }
                 //enumerate what the errors and warnings are 
             }
+            int masterseed = 0;
+            if(rp is MeanRandomProvider)
+            {
+                if (convergence_criteria.MaxIterations != 1)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
+                    //return _results;
+                }
+            }
+            else
+            {
+                masterseed = rp.Seed;
+            }
 
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
@@ -78,13 +91,29 @@ namespace compute{
             {
                 progressChunks = convergence_criteria.MaxIterations / 100;
             }
-
+            Random masterSeedList = new Random(masterseed);//must be seeded.
+            int[] seeds = new int[convergence_criteria.MaxIterations];
+            for(int i = 0; i<convergence_criteria.MaxIterations; i++)
+            {
+                seeds[i] = masterSeedList.Next();
+            }
+            
             Parallel.For(0, convergence_criteria.MaxIterations, i =>
             {
+                //check if it is a mean random provider or not
+                interfaces.IProvideRandomNumbers threadlocalRandomProvider;
+                if(rp is MeanRandomProvider)
+                {
+                    threadlocalRandomProvider = new MeanRandomProvider();
+                }
+                else
+                {
+                    threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                }
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
-                    IPairedData ff = BootstrapToPairedData(rp, _frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                    IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                     //check if flow transform exists, and use it here
                     if (_inflow_outflow.IsNull)
                     {
@@ -96,15 +125,15 @@ namespace compute{
                         }
                         else
                         {
-                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());
+                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
                             IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
+                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency);
                         }
 
                     }
                     else
                     {
-                        IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(rp.NextRandom()); //should be a random number
+                        IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
                         IPairedData transformff = inflow_outflow_sample.compose(ff);
                         if (_flow_stage.IsNull)
                         {
@@ -114,17 +143,17 @@ namespace compute{
                         }
                         else
                         {
-                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
+                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
                             IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                            ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
+                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency);
                         }
                     }
 
                 }
                 else
                 {
-                    IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
-                    ComputeFromStageFrequency(rp, frequency_stage_sample, giveMeADamageFrequency);
+                    IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                    ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency);
                 }
                 if (i % progressChunks == 0)
                 {

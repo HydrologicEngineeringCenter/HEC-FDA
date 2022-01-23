@@ -98,10 +98,10 @@ namespace fda_model_test
 
 
         [Theory]
-        [InlineData(1234, 100, 138098)]
-        [InlineData(1234, 1, 336662)]
-        [InlineData(4321, 1, 150834)]
-        [InlineData(1111, 1, 78875)]
+        [InlineData(1234, 100, 125263.68)]
+        [InlineData(1234, 1, 139884.51)]
+        [InlineData(4321, 1, 8145.07)]
+        [InlineData(1111, 1, 271116.14)]
         public void ComputeEAD_Iterations(int seed, int iterations, double expected)
         {
 
@@ -130,9 +130,9 @@ namespace fda_model_test
             RandomProvider rp = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             metrics.Results r = s.Compute(rp, cc);
-            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
-            double relativeDifference = difference / expected;
-            Assert.True(relativeDifference < .03);
+            double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
+
+            Assert.Equal(expected, actual, 2);
         }
 
         [Theory]
