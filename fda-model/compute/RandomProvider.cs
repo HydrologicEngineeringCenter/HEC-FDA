@@ -10,6 +10,8 @@ namespace compute
     public class RandomProvider : IProvideRandomNumbers
     {
         private Random _rng;
+        private object _sampleLock = new object();
+        private object _sequenceLock = new object();
         public RandomProvider()
         {
             _rng = new Random();
@@ -20,16 +22,24 @@ namespace compute
         }
         public double NextRandom()
         {
-            return _rng.NextDouble();
+            lock (_sampleLock)
+            {
+                return _rng.NextDouble();
+            }
+            
         }
         public double[] NextRandomSequence(int size)
         {
-            double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
-            for (int i = 0; i < size; i++)
+            lock (_sequenceLock)
             {
-                randyPacket[i] = _rng.NextDouble();
+                double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
+                for (int i = 0; i < size; i++)
+                {
+                    randyPacket[i] = _rng.NextDouble();
+                }
+                return randyPacket;
             }
-            return randyPacket;
+
         }
     }
 }

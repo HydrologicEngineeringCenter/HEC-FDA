@@ -7,6 +7,7 @@ using paireddata;
 using metrics;
 using System.Linq;
 using Base.Events;
+using System.Threading.Tasks;
 
 namespace compute{
     public class Simulation: Base.Implementations.Validation, Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
@@ -22,6 +23,7 @@ namespace compute{
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private Results _results = new Results();
+        private object _bootstraplock = new object();
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -76,8 +78,9 @@ namespace compute{
             {
                 progressChunks = convergence_criteria.MaxIterations / 100;
             }
-            
-            for (int i = 0; i < convergence_criteria.MaxIterations; i ++){
+
+            Parallel.For(0, convergence_criteria.MaxIterations, i =>
+            {
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
@@ -88,7 +91,8 @@ namespace compute{
                         if (_flow_stage.IsNull)
                         {
                             //complain loudly
-                            return _results;
+                            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                            return; //_results;
                         }
                         else
                         {
@@ -96,23 +100,24 @@ namespace compute{
                             IPairedData frequency_stage = flow_stage_sample.compose(ff);
                             ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
                         }
- 
+
                     }
                     else
                     {
                         IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(rp.NextRandom()); //should be a random number
                         IPairedData transformff = inflow_outflow_sample.compose(ff);
-                            if (_flow_stage.IsNull)
-                            {
+                        if (_flow_stage.IsNull)
+                        {
                             //complain loudly
-                            return _results;
-                            }
-                            else
-                            {
-                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
-                                IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
-                            }
+                            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                            return;// _results;
+                        }
+                        else
+                        {
+                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
+                            IPairedData frequency_stage = flow_stage_sample.compose(transformff);
+                            ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
+                        }
                     }
 
                 }
@@ -125,8 +130,8 @@ namespace compute{
                 {
                     ReportProgress(this, new ProgressReportEventArgs((int)(i / progressChunks)));
                 }
-                
-            }
+
+            });
             return _results;
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency){
@@ -178,22 +183,27 @@ namespace compute{
             }
         }
         private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, Statistics.ContinuousDistribution dist, Int64 ordinates){
-            double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
-            IDistribution bootstrap = dist.Sample(randyPacket);
-            double[] x = new double[ordinates];
-            double[] y = new double[ordinates];
-            for(int i=0;i<ordinates; i++){
-                double val = (double) i + .5;
-                //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                double prob = (val)/((double)ordinates);
-                x[i] = prob;
+            
+            lock (_bootstraplock)
+            {
+                double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
+                IDistribution bootstrap = dist.Sample(randyPacket);
+                double[] x = new double[ordinates];
+                double[] y = new double[ordinates];
+                for(int i=0;i<ordinates; i++){
+                    double val = (double) i + .5;
+                    //equally spaced non-exceedance (cumulative) probabilities in increasing order
+                    double prob = (val)/((double)ordinates);
+                    x[i] = prob;
 
-                //y values in increasing order 
-                y[i] = bootstrap.InverseCDF(prob);
+                    //y values in increasing order 
+                    y[i] = bootstrap.InverseCDF(prob);
                 
+                }
+
+                return new PairedData(x, y);
             }
 
-            return new PairedData(x, y);
         }
         private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency)
         {

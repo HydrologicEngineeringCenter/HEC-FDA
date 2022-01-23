@@ -7,7 +7,8 @@ namespace metrics
     public class ExpectedAnnualDamageResults
     {
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private Dictionary<string, Histogram> _ead; 
+        private Dictionary<string, Histogram> _ead;
+        private object _eadLock = new object();
 
         public Dictionary<string, Histogram> HistogramsOfEADs
         {
@@ -23,12 +24,16 @@ namespace metrics
 
         public void AddEADEstimate(double eadEstimate, string category)
         {
-            if (!_ead.ContainsKey(category))
+            lock (_eadLock)
             {
-                var histo = new Histogram(eadEstimate, EAD_HISTOGRAM_BINWIDTH);
-                _ead.Add(category, histo);
+                if (!_ead.ContainsKey(category))
+                {
+                    var histo = new Histogram(eadEstimate, EAD_HISTOGRAM_BINWIDTH);
+                    _ead.Add(category, histo);
+                }
+                _ead[category].AddObservationToHistogram(eadEstimate);
             }
-            _ead[category].AddObservationToHistogram(eadEstimate);
+
         }
         public double MeanEAD(string category)
         {

@@ -113,7 +113,7 @@ namespace fda_model_test
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = Math.Abs(difference / expected);
-            Assert.True(relativeDifference < .01);
+            Assert.True(relativeDifference < .015);
         }
 
         [Theory]

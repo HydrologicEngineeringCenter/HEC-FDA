@@ -10,18 +10,20 @@ using paireddata;
 namespace metrics
 {
     public class ProjectPerformanceResults
-{
-    private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
-    private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
+    {
+        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
+        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
-    private Histogram _aep = null;
-    private Dictionary<double, Histogram> _cnep;
+        private Histogram _aep = null;
+        private Dictionary<double, Histogram> _cnep;
         private UncertainPairedData _leveeCurve;
+        private object _aepLock = new object();
+        private object _cneplock = new object();
 
-    public Histogram HistogramOfAEPs
+        public Histogram HistogramOfAEPs
         {
             get
             {
@@ -29,16 +31,16 @@ namespace metrics
             }
         }
 
-    public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue)
-    {
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue)
+        {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _aep = null; //is this necessary?
             _cnep = new Dictionary<double, Histogram>();
 
-    }
-            public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve)
-    {
+        }
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve)
+        {
             _leveeCurve = leveeCurve;
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
@@ -46,26 +48,34 @@ namespace metrics
             _aep = null; //is this necessary?
             _cnep = new Dictionary<double, Histogram>();
 
-    }
+        }
         public void AddAEPEstimate(double aepEstimate)
         {
-            if (_aep == null)
+            lock (_aepLock)
             {
-                var histo = new Histogram(aepEstimate, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
-                _aep = histo;
+                if (_aep == null)
+                {
+                    var histo = new Histogram(aepEstimate, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                    _aep = histo;
                 
+                }
+                _aep.AddObservationToHistogram(aepEstimate);
             }
-            _aep.AddObservationToHistogram(aepEstimate);
+
         }
 
         public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
         {
-            if (!_cnep.ContainsKey(standardNonExceedanceProbability))
+            lock (_cneplock)
             {
-                var histo = new Histogram(stageForCNEP, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
-                _cnep.Add(standardNonExceedanceProbability, histo);
+                if (!_cnep.ContainsKey(standardNonExceedanceProbability))
+                {
+                    var histo = new Histogram(stageForCNEP, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                    _cnep.Add(standardNonExceedanceProbability, histo);
+                }
+                _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
             }
-            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
+
         }
 
         public double MeanAEP()
