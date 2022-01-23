@@ -23,8 +23,8 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(208213.8061,50,.0275,2023,2072,1000)]
-        [InlineData(239260.1814, 50, .0275, 2023, 2050, 1000)]
+        [InlineData(204153.848,50,.0275,2023,2072,1000)]
+        [InlineData(234586.9959, 50, .0275, 2023, 2050, 1000)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
 
@@ -85,9 +85,7 @@ namespace fda_model_test
             Dictionary<int, Dictionary<string, Histogram>> alternativeResults = new Dictionary<int, Dictionary<string, Histogram>>();
             alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
             double actual = (alternativeResults[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
-            double relativeDifference = Math.Abs((actual - expected) / expected);
-            double tolerance = 0.01;
-            Assert.True(relativeDifference < tolerance);
+            Assert.Equal(expected,actual,3);
 
         }
     }

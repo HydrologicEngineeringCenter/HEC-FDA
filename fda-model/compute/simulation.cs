@@ -81,7 +81,11 @@ namespace compute{
             {
                 masterseed = rp.Seed;
             }
-
+            foreach (UncertainPairedData pd in _damage_category_stage_damage)
+            {
+                _results.ExpectedAnnualDamageResults.AddEADKey(pd.Category);
+            }
+            _results.ExpectedAnnualDamageResults.AddEADKey("Total");
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());

@@ -24,8 +24,8 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(51442, 50, .0275, 2023, 2072, 1000, 75000)]
-        [InlineData(59410, 50, .0275, 2023, 2050, 1000, 75000)]
+        [InlineData(50918.633, 50, .0275, 2023, 2072, 1000, 75000)]
+        [InlineData(58501.301, 50, .0275, 2023, 2050, 1000, 75000)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
 
@@ -133,9 +133,7 @@ namespace fda_model_test
 
             alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
             double actual = ((alternativeComparisonReportResults[withProjectAlternativeID])[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
-            double relativeDifference = Math.Abs((actual - expected) / expected);
-            double tolerance = 0.01;
-            Assert.True(relativeDifference < tolerance);
+            Assert.Equal(expected,actual,3);
 
         }
     }
