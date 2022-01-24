@@ -190,9 +190,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(nonExceedanceProbability);
-            double difference = expected - actual;
-            double relativeDifference = difference / expected;
-            Assert.True(relativeDifference < .02);
+            Assert.Equal(expected, actual, 1);
         }
     }
 

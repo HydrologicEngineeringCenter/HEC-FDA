@@ -86,10 +86,12 @@ namespace compute{
                 _results.ExpectedAnnualDamageResults.AddEADKey(pd.Category);
             }
             _results.ExpectedAnnualDamageResults.AddEADKey("Total");
+            
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
+            SetStageForNonExceedanceProbability();
             Int64 progressChunks = 1;
             if (convergence_criteria.MaxIterations > 100)
             {
@@ -343,7 +345,18 @@ namespace compute{
                 threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
-
+        public void SetStageForNonExceedanceProbability()
+        {
+            double[] stageOfEvent = new double[5];
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
+            {
+                for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
+                {
+                    thresholdEntry.Value.ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(er101RequiredNonExceedanceProbabilities[i]);
+                }
+            }
+        }
 
 
 

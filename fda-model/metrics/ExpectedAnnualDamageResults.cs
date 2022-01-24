@@ -8,7 +8,6 @@ namespace metrics
     {
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
         private Dictionary<string, ThreadsafeInlineHistogram> _ead;
-        private object _eadLock = new object();
 
         public Dictionary<string, ThreadsafeInlineHistogram> HistogramsOfEADs
         {
@@ -32,11 +31,7 @@ namespace metrics
         }
         public void AddEADEstimate(double eadEstimate, string category)
         {
-            lock (_eadLock)
-            {
-                _ead[category].AddObservationToHistogram(eadEstimate);
-            }
-
+            _ead[category].AddObservationToHistogram(eadEstimate);
         }
         public double MeanEAD(string category)
         {
