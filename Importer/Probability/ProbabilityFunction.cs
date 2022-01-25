@@ -398,13 +398,14 @@ namespace Importer
                         logger.Log($"\t\tStd. Dev.: {MomentsLp3[1]}");
                         logger.Log($"\t\tSkew: {MomentsLp3[2]}");
                     }
-                    else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
-                    {
-                        logger.Log($"\tAnalytical Synthetic Points:");
-                        logger.Log($"\t\tFlow @ 0.50: {PointsSynthetic[0]}");
-                        logger.Log($"\t\tFlow @ 0.10: {PointsSynthetic[1]}");
-                        logger.Log($"\t\tFlow @ 0.01: {PointsSynthetic[2]}");
-                    }
+                    //todo: we don't care about this option right now. 1/21/22 issue 250
+                    //else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
+                    //{
+                    //    logger.Log($"\tAnalytical Synthetic Points:");
+                    //    logger.Log($"\t\tFlow @ 0.50: {PointsSynthetic[0]}");
+                    //    logger.Log($"\t\tFlow @ 0.10: {PointsSynthetic[1]}");
+                    //    logger.Log($"\t\tFlow @ 0.01: {PointsSynthetic[2]}");
+                    //}
                 }
                 else if (ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
                 {
@@ -495,35 +496,36 @@ namespace Importer
                     }
                 }
             }
+            //todo: delete me
             //Calculation Points
-            if(_NumCalcPoints > 0)
-            {
-                logger.Log("\n\tCalculation Points");
-                logger.Append("\t\tQ05: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    logger.Append($"\t{Calc05[i]}");
-                logger.Append("\n");
+            //if(_NumCalcPoints > 0)
+            //{
+            //    logger.Log("\n\tCalculation Points");
+            //    logger.Append("\t\tQ05: ");
+            //    for (int i = 0; i < _NumCalcPoints; i++)
+            //        logger.Append($"\t{Calc05[i]}");
+            //    logger.Append("\n");
 
-                logger.Append("\t\tQ25: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    logger.Append($"\t{Calc25[i]}");
-                logger.Append("\n");
+            //    logger.Append("\t\tQ25: ");
+            //    for (int i = 0; i < _NumCalcPoints; i++)
+            //        logger.Append($"\t{Calc25[i]}");
+            //    logger.Append("\n");
 
-                logger.Append("\t\tQ50: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    logger.Append($"\t{Calc50[i]}");
-                logger.Append("\n");
+            //    logger.Append("\t\tQ50: ");
+            //    for (int i = 0; i < _NumCalcPoints; i++)
+            //        logger.Append($"\t{Calc50[i]}");
+            //    logger.Append("\n");
 
-                logger.Append("\t\tQ75: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    logger.Append($"\t{Calc75[i]}");
-                logger.Append("\n");
+            //    logger.Append("\t\tQ75: ");
+            //    for (int i = 0; i < _NumCalcPoints; i++)
+            //        logger.Append($"\t{Calc75[i]}");
+            //    logger.Append("\n");
 
-                logger.Append("\t\tQ95: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    logger.Append($"\t{Calc95[i]}");
-                logger.Append("\n");
-            }
+            //    logger.Append("\t\tQ95: ");
+            //    for (int i = 0; i < _NumCalcPoints; i++)
+            //        logger.Append($"\t{Calc95[i]}");
+            //    logger.Append("\n");
+            //}
             return;
         }
         public void PrintToFile()

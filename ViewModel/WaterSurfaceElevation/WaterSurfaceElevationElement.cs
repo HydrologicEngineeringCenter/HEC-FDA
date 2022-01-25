@@ -105,7 +105,7 @@ namespace ViewModel.WaterSurfaceElevation
             if (!hasMapLayers)
             {
                 mapWindow.IsEnabled = false;
-                mapWindow.ToolTip = "No map layers exist when imported from FDA 1.0";
+                mapWindow.ToolTip = "No map layers exist when imported from HEC-FDA 1.4.3";
             }
 
             List<NamedAction> localactions = new List<Utilities.NamedAction>();

@@ -7,6 +7,8 @@
         xmlns:Utils="clr-namespace:View.Utilities"
         xmlns:FunctionsView="clr-namespace:FunctionsView.View;assembly=FunctionsView"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+        xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+
         mc:Ignorable="d"
         xmlns:ViewModel="clr-namespace:ViewModel.Study;assembly=ViewModel"
         >
@@ -34,7 +36,9 @@
 
         <!--<TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=Path, ValidatesOnDataErrors=True}"/>-->
         <Label Grid.Row="2" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
-        <CA:TextBoxDescription Text="{Binding Path=Description}" Grid.Row="2" Grid.Column="1" Margin="5"/>
+        <UserControls:TextBoxDescription Text="{Binding Path=Description}" Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+
 
         <!--just for testing __ delete me-->
         <!--<Utils:CurveGenerator Grid.ColumnSpan="2" Grid.Row="3" Height="200" Width="Auto"/>-->

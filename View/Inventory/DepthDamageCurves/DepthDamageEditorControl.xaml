@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.Inventory.DepthDamageCurves"
-                          xmlns:ca="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
-                          xmlns:cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:utils="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900">
@@ -32,7 +31,7 @@
         <TextBox Name="DepthDamageNameBox" Grid.Column="1" Grid.Row="0" Text="{Binding Name}" LostFocus="DepthDamageNameBox_LostFocus" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
         <TextBlock Text="Description: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <cac:TextBoxDescription Name="StructureCurveDescriptionBox" Text="{Binding Description}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"></cac:TextBoxDescription>
+        <UserControls:TextBoxDescription Name="StructureCurveDescriptionBox" Text="{Binding Description}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
         <TextBlock Text="Damage Type: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <ComboBox Name="DamageTypeBox" Grid.Column="1" ItemsSource="{Binding DamageTypeEnums}" SelectedItem="{Binding DamageType, Converter={StaticResource enumToStringConverter}}"  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="DamageTypeBox_SelectionChanged" >

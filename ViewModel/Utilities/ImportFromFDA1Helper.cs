@@ -29,7 +29,7 @@ namespace ViewModel.Utilities
             List<RatingCurveElement> elems = new List<RatingCurveElement>();
             foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
             {
-                RatingCurveElement elem = ImportFromFDA1Helper.CreateRatingElement(rat.Value);
+                RatingCurveElement elem = CreateRatingElement(rat.Value);
                 if (elem != null)
                 {
                     elems.Add(elem);
@@ -39,7 +39,7 @@ namespace ViewModel.Utilities
         }
         private static RatingCurveElement CreateRatingElement(RatingFunction rat)
         {
-            string pysr = "(" + rat.PlanName + " " + rat.YearName + " " + rat.StreamName + " " + rat.DamageReachName + ") ";
+            string pysr = "(" + rat.PlanName.Trim() + " " + rat.YearName.Trim() + " " + rat.StreamName.Trim() + " " + rat.DamageReachName.Trim() + ") ";
             string description = pysr + rat.Description;
             double[] stages = rat.GetStage();
             double[] flows = rat.GetDischarge();
@@ -99,7 +99,7 @@ namespace ViewModel.Utilities
             {
 
                 SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements);
+                StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
                 if (stageDamageCurve != null)
                 {
                     curves.Add(stageDamageCurve);
@@ -120,7 +120,8 @@ namespace ViewModel.Utilities
             }
         }
 
-        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, List<ImpactAreaElement> impactAreaElements)
+        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
+            List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
             damageReachName = damageReachName.Trim();
             damCat = damCat.Trim();
@@ -158,12 +159,17 @@ namespace ViewModel.Utilities
                         curve = new StageDamageCurve(row, damCat, func);
                         break;
                     }
+                    else
+                    {
+                        messages += Environment.NewLine + "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
+
+                    }
                 }
-                if (!impactAreaMatches)
-                {
-                    string msg = "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
-                    MessageBox.Show(msg, "Could Not Import", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                //if (!impactAreaMatches)
+                //{
+                //    string msg = "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
+                //    MessageBox.Show(msg, "Could Not Import", MessageBoxButton.OK, MessageBoxImage.Information);
+                //}
             }
 
             return curve;
@@ -181,10 +187,20 @@ namespace ViewModel.Utilities
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
-                    elems.Add( CreateFrequencyElement(pf));
+                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf);
+                    if(freqElem != null)
+                    {
+                        elems.Add(freqElem);
+                    }
                 }
             }
             return elems;
+        }
+
+        private static string CreatePYSRDescription(ProbabilityFunction pf)
+        {
+            string pysr = "(" + pf.PlanName.Trim() + " " + pf.YearName.Trim() + " " + pf.StreamName.Trim() + " " + pf.DamageReachName.Trim() + ") ";
+            return pysr + pf.Description;
         }
 
         private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
@@ -197,69 +213,32 @@ namespace ViewModel.Utilities
             int por = pf.EquivalentLengthOfRecord;
 
             bool isAnalytical = true;
-            bool isStandard = true;//what is this.
-            bool isLogFlow = false;//todo: is this always false? What is the style of the old fda cuve?
+            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
+            bool isLogFlow = false;
+
+            //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
-            //foreach (FlowDoubleWrapper d in vm.AnalyticalFlows)
-            //{
-            //    analyticalFlows.Add(d.Flow);
-            //}
             List<double> graphicalFlows = new List<double>();
-            //foreach (FlowDoubleWrapper d in vm.GraphicalFlows)
-            //{
-            //    graphicalFlows.Add(d.Flow);
-            //}
 
-            //todo: create a real fda function?
-
-            string pysr = "(" + pf.PlanName + " " + pf.YearName + " " + pf.StreamName + " " + pf.DamageReachName + ") ";
-            string description = pysr + pf.Description;
-            return new AnalyticalFrequencyElement(pf.Name, editDate, description, por, isAnalytical, isStandard, mean, stDev, skew,
+            
+            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
                 isLogFlow, analyticalFlows, graphicalFlows, null);
         }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
         {
-            string pysr = "(" + pf.PlanName + " " + pf.YearName + " " + pf.StreamName + " " + pf.DamageReachName + ") ";
-            string description = pysr + pf.Description;
-
             AnalyticalFrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
                 {
-
-                    //LP3 moments
-                    double mean = pf.MomentsLp3[0];
-                    double stdDev = pf.MomentsLp3[1];
-                    double skew = pf.MomentsLp3[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
-
                     elem = CreateManualAnalyticalElement(pf);
-
-
-
-
-                }
-                else if (pf.SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
-                {
-                    //analytical synthetic points
-                    double flowPoint5 = pf.PointsSynthetic[0];
-                    double flowPoint1 = pf.PointsSynthetic[1];
-                    double flowPoint01 = pf.PointsSynthetic[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
                 }
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
+                //todo: graphical will be addressed in a future task.
+
                 ////get probabilities
                 //List<double> probabilities = new List<double>();
                 //for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
@@ -306,20 +285,6 @@ namespace ViewModel.Utilities
                 //}
             }
 
-
-            //if (pf._ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-            {
-                //List<ICoordinate> flowFreqCoords = new List<ICoordinate>();
-                //foreach (Pair_xy xy in )
-                //{
-                //    double x = xy.GetX();
-                //    double y = xy.GetY();
-                //    flowFreqCoords.Add(ICoordinateFactory.Factory(x, y));
-                //}
-                //ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(flowFreqCoords, InterpolationEnum.Linear);
-                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
-                //ImpactAreaFunctionFactory.FactoryFrequency(, ImpactAreaFunctionEnum.InflowFrequency);
-            }
             return elem;
         }
 
@@ -347,9 +312,6 @@ namespace ViewModel.Utilities
 
         private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction)
         {
-            string pysr = "(" + probFunction.PlanName + " " + probFunction.YearName + " " + probFunction.StreamName + " " + probFunction.DamageReachName + ") ";
-            string description = pysr + probFunction.Description;
-
             List<double> inflows = new List<double>();
             List<double> outflows = new List<double>();
             for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
@@ -371,7 +333,7 @@ namespace ViewModel.Utilities
             }
 
             IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
-            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, description, func);
+            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), func);
         }
 
         private static List<IDistributedOrdinate> GetUncertaintyValues(ProbabilityFunction probFunction)
@@ -777,11 +739,14 @@ namespace ViewModel.Utilities
             }
             return elems;
         }
+        private static string CreatePYSRDescription(Levee lev)
+        {
+            string pysr = "(" + lev.PlanName.Trim() + " " + lev.YearName.Trim() + " " + lev.StreamName.Trim() + " " + lev.DamageReachName.Trim() + ") ";
+            return pysr + lev.Description;
+        }
+
         private static ChildElement CreateLeveeElement(Levee lev, ref string message)
         {
-            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
-            string description = pysr + lev.Description;
-
             List<ICoordinate> failureCoords = new List<ICoordinate>();
             foreach (Pair_xy xy in lev.FailureFunctionPairs)
             {
@@ -810,7 +775,7 @@ namespace ViewModel.Utilities
 
             IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
             IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.LateralStructureFailure, function);
-            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, description, lev.ElevationTopOfLevee, isDefault, func);
+            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, func);
             return leveeFeatureElement;
         }
 
@@ -833,9 +798,6 @@ namespace ViewModel.Utilities
 
         private static ChildElement CreateExteriorInterior(Levee lev)
         {
-            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
-            string description = pysr + lev.Description;
-
             List<ICoordinate> extIntCoords = new List<ICoordinate>();
             foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
             {
@@ -846,7 +808,7 @@ namespace ViewModel.Utilities
             ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
             IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
             IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, description, func);
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), func);
             return elem;
         }
 

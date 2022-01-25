@@ -35,8 +35,8 @@
             </Style>
         </Grid.Resources>
         <TextBox  Name="TxtDescription"  Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" KeyDown="TxtDescription_KeyDown" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-        <Button ToolTip="Expand" Style="{StaticResource TransparentStyle}" HorizontalAlignment="right" Margin="0,3,3,0" Name="Expand" VerticalAlignment="Top" Height="18" Width="18" Padding="0">
+        <!--<Button ToolTip="Expand" Style="{StaticResource TransparentStyle}" HorizontalAlignment="right" Margin="0,3,3,0" Name="Expand" VerticalAlignment="Top" Height="18" Width="18" Padding="0">
             <Path Name="Arrow" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" Fill="#FF464646" StrokeThickness="0" Data="M 0,0 L 5,10 L 10,0 L 0,0 L 5,10" />
-        </Button>
+        </Button>-->
     </Grid>
 </UserControl>

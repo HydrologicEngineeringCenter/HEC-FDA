@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.Inventory.DamageCategory"
              xmlns:ca="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:Utils ="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="320" d:DesignWidth="300">
@@ -21,7 +22,7 @@
                 <ColumnDefinition Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description: "/>
-            <ca:TextBoxDescription Grid.Column="1" Margin="5" Text="{Binding Description}" Width="260"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Margin="5" Text="{Binding Description}" Width="260"/>
         </Grid>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Button Content="Add" Margin="5" Click="Add_Click"/>

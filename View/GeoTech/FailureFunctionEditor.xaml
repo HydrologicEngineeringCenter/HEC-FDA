@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Utilities="clr-namespace:View.Utilities"
-             xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"             
              Loaded="UserControl_Loaded"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
@@ -38,7 +38,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
