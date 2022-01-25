@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using static System.Console;
 
 namespace Importer
 {
     [Serializable]
-    public class RatingFunction : FdObjectData, ISaveToSqlite
+    public class RatingFunction : FdObjectData
     {
         #region Notes
         // Created By: q0hecrdc
@@ -392,29 +390,6 @@ namespace Importer
             return _Stage;
         }
         #endregion
-
-        public void SaveToSqlite()
-        {
-            //string pysr = "(" + PlanName + " " + YearName + " " + StreamName + " " + DamageReachName + ") ";
-            //string description = pysr + Description;
-            //double[] stages = GetStage();
-            //double[] flows = GetDischarge();
-            ////these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-            //List<double> stagesList = new List<double>();
-            //List<double> flowsList = new List<double>();
-            //for(int i = 0;i<NumberOfPoints;i++)
-            //{
-            //    stagesList.Add(stages[i]);
-            //    flowsList.Add(flows[i]);
-            //}
-            ////always use linear. This is the only option in Old Fda.
-            //ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-            //IFdaFunction rating = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
-            ////add the plan year stream reach for the description
-            //RatingCurveElement elem = new RatingCurveElement(Name, CalculationDate, description, rating);
-            //RatingElementPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetRatingManager();
-            //manager.SaveNew(elem);
-        }
 
     }
 }

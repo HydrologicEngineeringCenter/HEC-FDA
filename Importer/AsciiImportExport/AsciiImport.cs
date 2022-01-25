@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using static Importer.ProbabilityFunction;
 using static System.Console;
@@ -66,7 +65,6 @@ namespace Importer
             ImportExteriorInterior,
             ImportLevees,
             ImportFrequency,
-
         }
 
         #endregion
@@ -189,11 +187,11 @@ namespace Importer
                     break;
             }
 
-            #region print statements
             
-
-            #endregion
         }
+
+        #region print statements
+
         private void PrintFrequencyFunction()
         {
             ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
@@ -268,70 +266,7 @@ namespace Importer
             PrintLevees();
             PrintOcctypes();
         }
-
-        /// <summary>
-        /// Reads the occtypes from the ascii file and then converts them to FDA2.0 occtypes and sets them
-        /// to the OccupancyTypes property.
-        /// </summary>
-        private void ReadOccTypes()
-        {
-            //List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
-            //OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
-            //foreach (OccupancyType ot in occtypes.Occtypes)
-            //{
-            //    fda2Occtypes.Add(ot.GetFDA2OccupancyType());
-            //}
-            //OccupancyTypes = fda2Occtypes;
-        }
-
-        /// <summary>
-        /// This will save out the failure function and the ext int stage function
-        /// </summary>
-        private void SaveLevees()
-        {
-            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
-            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
-            {
-                kvp.Value.SaveToSqlite();
-            }
-        }
-
-        /// <summary>
-        /// This will save the discharge-frequency and ext-frequency functions
-        /// </summary>
-        private void SaveProbabilityFunctions()
-        {
-            ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
-            foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
-            {
-                kvp.Value.SaveToSqlite();
-            }
-        }
-
-        private void SaveAggregatedStageDamageToNewFDA()
-        {
-            AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-            foreach (KeyValuePair<string, AggregateDamageFunction> kvp in aggDamageList.GetAggDamageFunctions)
-            {
-                kvp.Value.SaveToSqlite();
-            }
-        }
-
-        private void SaveRatingCurvesToNewFDA()
-        {
-            RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
-            foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
-            {
-                rat.Value.SaveToSqlite();
-            }
-        }
-
-        private void SaveOccupancyTypes(string groupName)
-        {
-            //ReadOccTypes();
-            //OccTypePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetOccTypeManager();
-            //manager.SaveNewOcctypes(OccupancyTypes, groupName);
-        }
+        #endregion
 
         #region findFields
         void FindFields()
@@ -401,7 +336,6 @@ namespace Importer
                         _IxFieldPlan[ip] = jf;
                     }
                 }
-
             }
         }
         void FindYearNameFields()

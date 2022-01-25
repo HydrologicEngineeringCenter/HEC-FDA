@@ -1,14 +1,11 @@
-﻿using ViewModel.GeoTech;
-using ViewModel.Utilities;
-using Functions;
+﻿using Functions;
+using Importer;
 using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Importer;
+using ViewModel.GeoTech;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {

@@ -124,9 +124,9 @@
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
             <GeoTechView:FailureFunctionEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
         
         
         
@@ -156,9 +156,9 @@
             <GeoTechView:LeveeFeatureEditor/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type GeoTechVM:FailureFunctionEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type GeoTechVM:FailureFunctionEditorVM }" >
             <GeoTechView:FailureFunctionEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>

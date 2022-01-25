@@ -88,7 +88,6 @@ namespace ViewModel.Study
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; } = new List<ExteriorInteriorElement>();
         public List<LeveeFeatureElement> LeveeElements { get; } = new List<LeveeFeatureElement>();
-        public List<FailureFunctionElement> FailureFunctionElements { get; } = new List<FailureFunctionElement>();
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
@@ -176,11 +175,6 @@ namespace ViewModel.Study
             {
                 RemoveElementFromList(LeveeElements, elem);
                 LeveeRemoved?.Invoke(this, elementAddedEventArgs);
-            }
-            else if (elem.GetType() == typeof(FailureFunctionElement))
-            {
-                RemoveElementFromList(FailureFunctionElements, elem);
-                FailureFunctionRemoved?.Invoke(this, elementAddedEventArgs);
             }
             else if (elem.GetType() == typeof(OccupancyTypesElement))
             {
@@ -276,11 +270,6 @@ namespace ViewModel.Study
                 LeveeElements.Add((LeveeFeatureElement)elem);
                 LeveeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is FailureFunctionElement )
-            {
-                FailureFunctionElements.Add((FailureFunctionElement)elem);
-                FailureFunctionAdded?.Invoke(this, new ElementAddedEventArgs(elem));
-            }
             else if (elem is OccupancyTypesElement )
             {
                 OccTypeElements.Add((OccupancyTypesElement)elem);
@@ -354,10 +343,6 @@ namespace ViewModel.Study
             else if (oldElement is LeveeFeatureElement)
             {
                 UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)newElement);
-            }
-            else if (oldElement is FailureFunctionElement )
-            {
-                UpdateFailureFunctionElement((FailureFunctionElement)oldElement, (FailureFunctionElement)newElement);
             }
             else if (oldElement is AggregatedStageDamageElement )
             {
@@ -531,24 +516,7 @@ namespace ViewModel.Study
                 LeveeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
-        public void UpdateFailureFunctionElement(FailureFunctionElement oldElement, FailureFunctionElement newElement)
-        {
-            int index = -1;
-            for (int i = 0; i < FailureFunctionElements.Count; i++)
-            {
-                if (FailureFunctionElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if (index != -1)
-            {
-                FailureFunctionElements.RemoveAt(index);
-                FailureFunctionElements.Insert(index, newElement);
-                FailureFunctionUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
-            }
-        }
+        
         public void UpdateStageDamageElement(AggregatedStageDamageElement oldElement, AggregatedStageDamageElement newElement)
         {
             int index = -1;
@@ -701,10 +669,6 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(LeveeElements);
             }
-            else if (element is FailureFunctionOwnerElement )
-            {
-                retVal.AddRange(FailureFunctionElements);
-            }
             else if (element is StructureInventoryOwnerElement)
             {
                 retVal.AddRange(StructureInventoryElements);
@@ -822,10 +786,6 @@ namespace ViewModel.Study
             else if (childElementType == typeof(LeveeFeatureElement))
             {
                 retVal.AddRange(LeveeElements);
-            }
-            else if (childElementType == typeof(FailureFunctionElement))
-            {
-                retVal.AddRange(FailureFunctionElements);
             }
             else if (childElementType == typeof(OccupancyTypesElement))
             {

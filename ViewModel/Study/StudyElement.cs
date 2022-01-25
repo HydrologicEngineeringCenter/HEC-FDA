@@ -429,7 +429,6 @@ namespace ViewModel.Study
             PersistenceFactory.GetInflowOutflowManager().Load();
             PersistenceFactory.GetExteriorInteriorManager().Load();
             PersistenceFactory.GetLeveeManager().Load();
-            PersistenceFactory.GetFailureFunctionManager().Load();
             PersistenceFactory.GetStageDamageManager().Load();
             PersistenceFactory.GetStructureInventoryManager().Load();
             PersistenceFactory.GetIASManager().Load();

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static Importer.AsciiImport;
-using static System.Console;
 
 namespace Importer
 {
     [Serializable]
-    public class Levee : FdObjectDataLook, ISaveToSqlite
+    public class Levee : FdObjectDataLook
     {
         #region Notes
         // Created By: $username$
@@ -305,59 +304,6 @@ namespace Importer
             }
             return;
         }
-
-        public void SaveToSqlite()
-        {
-            if (FailureFunctionPairs.Count > 0)
-            {
-                SaveFailureFunction();
-            }
-            if (ExteriorInteriorPairs.Count > 0)
-            {
-                SaveExtIntFunction();
-            }
-        }
-
-        private void SaveExtIntFunction()
-        {
-            //List<ICoordinate> extIntCoords = new List<ICoordinate>();
-            //foreach (Pair_xy xy in ExteriorInteriorPairs)
-            //{
-            //    double x = xy.GetX();
-            //    double y = xy.GetY();
-            //    extIntCoords.Add(ICoordinateFactory.Factory(x, y));
-            //}
-            //ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            //IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            //Model.IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, function);
-            //string editDate = DateTime.Now.ToString("G");
-            //ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
-            //ViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
-        }
-
-        private void SaveFailureFunction()
-        {
-           // List<ICoordinate> failureCoords = new List<ICoordinate>();
-           // foreach (Pair_xy xy in FailureFunctionPairs)
-           // {
-           //     double x = xy.GetX();
-           //     double y = xy.GetY();
-           //     failureCoords.Add(ICoordinateFactory.Factory(x, y));
-           // }
-
-           // ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
-           // IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-           // IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, function);
-           // string editDate = DateTime.Now.ToString("G");
-           //// FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
-           // //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);
-           // LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(Name,editDate, Description, ElevationTopOfLevee, false,  func);
-           // ViewModel.Saving.PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
-
-        }
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

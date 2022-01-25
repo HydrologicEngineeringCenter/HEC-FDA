@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
+using static System.Console;
 
 namespace Importer
 {
     [Serializable]
-    public class DamageCategory : FdObjectData, ISaveToSqlite
+    public class DamageCategory : FdObjectData
     {
         #region Notes
         // Created By: q0hecrdc
@@ -70,13 +66,7 @@ namespace Importer
             wr.Write($"{this.CostFactor}{delimt}");
             wr.Write("\n");
         }
+        #endregion
 
-        public void SaveToSqlite()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-        #region Functions
-        #endregion
     }
 }

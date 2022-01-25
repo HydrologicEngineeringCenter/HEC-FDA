@@ -182,11 +182,6 @@ namespace ViewModel.Editors
                 StudyCache.LeveeAdded += SiblingWasAdded;
                 StudyCache.LeveeUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(FailureFunctionElement))
-            {
-                StudyCache.FailureFunctionAdded += SiblingWasAdded;
-                StudyCache.FailureFunctionUpdated += SiblingNameChanged;
-            }
             if (childElementType == typeof(InventoryElement))
             {
                 StudyCache.StructureInventoryAdded += SiblingWasAdded;

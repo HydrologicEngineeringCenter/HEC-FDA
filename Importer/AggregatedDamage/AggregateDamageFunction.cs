@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using static System.Console;
 
 namespace Importer
 {
     [Serializable]
-    public class AggregateDamageFunction : FdObjectDataLook, ISaveToSqlite
+    public class AggregateDamageFunction : FdObjectDataLook
     {
         #region Notes
         // Created By: q0hecrdc
@@ -59,39 +57,6 @@ namespace Importer
             logger.Log($"\nAggregatted Damage Function Name: {this.Name}");
             logger.Log($"\tDescription: {this.Description}");
             logger.Log($"\tCategory Name: {this.CategoryName}");
-
-            //Depth-Damage Functions
-            //for (int itype = (int)StructureValueType.STRUCTURE; itype <= (int)StructureValueType.TOTAL; itype++)
-            //{
-            //    SingleDamageFunction sdf = _SingleDamageFunction[itype];
-            //    int numRows = sdf.GetNumRows();
-            //    if (numRows > 0)
-            //    {
-            //        double[] depth = sdf.Depth;
-            //        double[] damage = sdf.Damage;
-            //        double[] stdDev = null;
-
-            //        logger.Log($"\n\n\tType of Function: {(StructureValueType)itype}");
-
-            //        logger.Log($"\n\tStage:");
-            //        for (int i = 0; i < numRows; i++) logger.Append($"{depth[i]}, ");
-            //        logger.Log($"\n\tDamage:");
-            //        for (int i = 0; i < numRows; i++) logger.Append($"\t{damage[i]}, ");
-            //        switch (sdf.GetTypeError())
-            //        {
-            //            case ErrorType.NONE:
-            //                break;
-            //            case ErrorType.NORMAL:
-            //                stdDev = sdf.StdDev;
-            //                logger.Log($"\n\tNormal Error: ");
-            //                for (int i = 0; i < numRows; i++) logger.Append($"{stdDev[i]}, ");
-            //                break;
-            //            default:
-            //                break;
-            //        }
-            //    }
-            //}
-            //logger.Log("\n");
         }
         public void PrintToFile()
         {
@@ -326,116 +291,6 @@ namespace Importer
             return theCode;
         }
         #endregion
-
-
-        public void SaveToSqlite()
-        {
-            ////todo: can we be guaranteed that there will always be 5 curves here?
-            ////and will they always be in this order?
-            ////StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
-
-            //bool hasAssetCar = false;
-            //bool hasAssetOther = false;
-            //bool hasAssetContent = false;
-            //bool hasAssetDamage = false;
-
-            //SingleDamageFunction totalDamageFunc = _SingleDamageFunction[(int)StructureValueType.TOTAL];
-            //SingleDamageFunction carDamageFunc = _SingleDamageFunction[(int)StructureValueType.CAR];
-            //SingleDamageFunction otherDamageFunc = _SingleDamageFunction[(int)StructureValueType.OTHER];
-            //SingleDamageFunction contentDamageFunc = _SingleDamageFunction[(int)StructureValueType.CONTENT];
-            //SingleDamageFunction structDamageFunc = _SingleDamageFunction[(int)StructureValueType.STRUCTURE];
-
-
-            ////right now we will only use the total in FDA 2.0 but will write the other curves
-            ////out so that the user can view them down the road.
-            //StageDamagePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStageDamageManager();
-            //SaveTotalFunction(totalDamageFunc,manager);
-            ////todo: i am using Name here is that correct, or do i need to add the PYSR stuff to the front of the name?
-            //if (carDamageFunc.GetNumRows() > 0)
-            //{
-            //    SaveAssetFunction(carDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CAR), manager);
-            //}
-            //if (otherDamageFunc.GetNumRows() > 0)
-            //{
-            //    SaveAssetFunction(otherDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.OTHER), manager);
-            //}
-            //if (contentDamageFunc.GetNumRows() > 0)
-            //{
-            //    SaveAssetFunction(contentDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CONTENT), manager);
-            //}
-            //if (structDamageFunc.GetNumRows() > 0)
-            //{
-            //    SaveAssetFunction(structDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.STRUCTURE), manager);
-            //}
-
-        }
-
-        //private StageDamageAssetType GetAssetTypeFromStructureValueType(StructureValueType valueType)
-        //    {
-        //        switch(valueType)
-        //        {
-        //            case StructureValueType.CAR:
-        //                {
-        //                    return StageDamageAssetType.CAR;
-        //                }
-        //            case StructureValueType.CONTENT:
-        //                {
-        //                    return StageDamageAssetType.CONTENT;
-        //                }
-        //            case StructureValueType.OTHER:
-        //                {
-        //                    return StageDamageAssetType.OTHER;
-        //                }
-        //            case StructureValueType.STRUCTURE:
-        //                {
-        //                    return StageDamageAssetType.STRUCTURE;
-        //                }
-        //            case StructureValueType.TOTAL:
-        //                {
-        //                    return StageDamageAssetType.TOTAL;
-        //                }
-        //            default:
-        //                {
-        //                    throw new ArgumentException("Could not translate the StructureValueType to a StageDamageAssetType.");
-        //                }
-
-        //        }
-        //    }
-
-        //private void SaveTotalFunction(SingleDamageFunction sdf, StageDamagePersistenceManager manager)
-        //{
-        //    AggregatedStageDamageElement elem = CreateStageDamageElement(sdf);
-        //    manager.SaveNewElement(elem);
-        //}
-
-        //private void SaveAssetFunction(SingleDamageFunction sdf, string nameOfTotalFunc, StageDamageAssetType type, StageDamagePersistenceManager manager)
-        //{
-        //    AggregatedStageDamageElement elem = CreateStageDamageElement(sdf);
-        //    manager.SaveAssetCurve(elem, type, nameOfTotalFunc);
-        //}
-
-        //private AggregatedStageDamageElement CreateStageDamageElement(SingleDamageFunction sdf)
-        //{
-        //    double[] depths = sdf.Depth;
-        //    double[] damages = sdf.Damage;
-
-        //    //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-        //    List<double> depthsList = new List<double>();
-        //    List<double> damagesList = new List<double>();
-        //    for (int i = 0; i < sdf.GetNumRows(); i++)
-        //    {
-        //        depthsList.Add(depths[i]);
-        //        damagesList.Add(damages[i]);
-        //    }
-        //    //always use linear. This is the only option in Old Fda.
-        //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
-        //    //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
-        //    List<StageDamageCurve> curves = new List<StageDamageCurve>();
-        //    ImpactAreaRowItem ri = new ImpactAreaRowItem(-1, "testImpactArea");
-        //    StageDamageCurve curve = new StageDamageCurve(ri, "testDamCat", func);
-        //    curves.Add(curve);
-        //    return new AggregatedStageDamageElement(Name, CalculationDate, Description, -1,-1, curves, true);
-        //}
 
     }
 }

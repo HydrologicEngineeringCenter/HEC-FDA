@@ -10,7 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
+    <Compile Remove="GeoTech\FailureFunctionEditorVM.cs" />
+    <Compile Remove="GeoTech\FailureFunctionElement.cs" />
+    <Compile Remove="GeoTech\FailureFunctionOwnerElement.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
+    <Compile Remove="Saving\PersistenceManagers\FailureFunctionPersistenceManager.cs" />
   </ItemGroup>
 	
   <ItemGroup>

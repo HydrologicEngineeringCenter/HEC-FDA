@@ -52,7 +52,6 @@
             <Label Grid.Column="2" Content="Elevation: " HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <Label Grid.Column="3"  Content="{Binding Path=SelectedLateralStructure.Elevation}" HorizontalAlignment="Left" VerticalAlignment="Center" />
         </Grid>
-        <!--<CA:TableWithPlot Name="TableWithPlot" MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="3" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Stage" yColumnHeader="Frequency" xAxisLabel="Stage" yAxisLabel="Frequency" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>-->
         <Grid x:Name="PlotGrid" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -61,7 +60,6 @@
             <functions:CoordinatesFunctionEditor Grid.Column="0" Margin="5" EditorVM="{Binding EditorVM}" />
         </Grid>
         <GridSplitter Grid.Row="4" Height="5" HorizontalAlignment="Stretch" />
-        <!--<Utilities:TransactionMessageControl Grid.Row="5" />-->
         <Utilities:OKCloseControl Grid.Row="6"/>
     </Grid>
 </UserControl>
