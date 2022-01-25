@@ -25,7 +25,7 @@ namespace metrics
             if (!_ead.ContainsKey(category))
             {
                 //double[] nullData = null;
-                var histo = new ThreadsafeInlineHistogram(null, EAD_HISTOGRAM_BINWIDTH);
+                var histo = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, new ConvergenceCriteria());
                 _ead.Add(category, histo);
             }
         }

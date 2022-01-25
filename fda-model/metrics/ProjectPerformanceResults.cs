@@ -33,7 +33,7 @@ namespace metrics
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
@@ -43,7 +43,7 @@ namespace metrics
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
@@ -55,7 +55,7 @@ namespace metrics
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                var histo = new ThreadsafeInlineHistogram(null, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
         }
