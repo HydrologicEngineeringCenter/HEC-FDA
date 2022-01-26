@@ -8,6 +8,7 @@ using metrics;
 using System.Linq;
 using Base.Events;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace compute{
     public class Simulation: Base.Implementations.Validation, Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
@@ -23,7 +24,6 @@ namespace compute{
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private Results _results = new Results();
-        private object _bootstraplock = new object();
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -83,16 +83,17 @@ namespace compute{
             }
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
-                _results.ExpectedAnnualDamageResults.AddEADKey(pd.Category);
+                _results.ExpectedAnnualDamageResults.AddEADKey(pd.Category, convergence_criteria);
             }
-            _results.ExpectedAnnualDamageResults.AddEADKey("Total");
+            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergence_criteria);
             
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
             }
-            SetStageForNonExceedanceProbability();
+            SetStageForNonExceedanceProbability(convergence_criteria);
             Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
             if (convergence_criteria.MaxIterations > 100)
             {
                 progressChunks = convergence_criteria.MaxIterations / 100;
@@ -161,9 +162,10 @@ namespace compute{
                     IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
                     ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency);
                 }
-                if (i % progressChunks == 0)
+                Interlocked.Increment(ref _completedIterations);
+                if (i % progressChunks == 0)//need an atomic integer count here.
                 {
-                    ReportProgress(this, new ProgressReportEventArgs((int)(i / progressChunks)));
+                    ReportProgress(this, new ProgressReportEventArgs((int)(_completedIterations / progressChunks)));
                 }
 
             });
@@ -219,8 +221,6 @@ namespace compute{
         }
         private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, Statistics.ContinuousDistribution dist, Int64 ordinates){
             
-            lock (_bootstraplock)
-            {
                 double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
                 IDistribution bootstrap = dist.Sample(randyPacket);
                 double[] x = new double[ordinates];
@@ -237,7 +237,6 @@ namespace compute{
                 }
 
                 return new PairedData(x, y);
-            }
 
         }
         private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency)
@@ -345,7 +344,7 @@ namespace compute{
                 threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
-        public void SetStageForNonExceedanceProbability()
+        public void SetStageForNonExceedanceProbability(ConvergenceCriteria c)
         {
             double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
@@ -353,7 +352,7 @@ namespace compute{
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
                 {
-                    thresholdEntry.Value.ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(er101RequiredNonExceedanceProbabilities[i]);
+                    thresholdEntry.Value.ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(er101RequiredNonExceedanceProbabilities[i], c);
                 }
             }
         }

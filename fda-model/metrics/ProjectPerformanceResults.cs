@@ -51,11 +51,11 @@ namespace metrics
         {
             _aep.AddObservationToHistogram(aepEstimate);
         }
-        public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability)
+        public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
+                var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
         }

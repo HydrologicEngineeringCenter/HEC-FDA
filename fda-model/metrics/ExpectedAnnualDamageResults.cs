@@ -20,12 +20,12 @@ namespace metrics
         public ExpectedAnnualDamageResults(){
             _ead = new Dictionary<string, ThreadsafeInlineHistogram>();
         }
-        public void AddEADKey(string category)
+        public void AddEADKey(string category, ConvergenceCriteria c)
         {
             if (!_ead.ContainsKey(category))
             {
                 //double[] nullData = null;
-                var histo = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, new ConvergenceCriteria());
+                var histo = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, c);
                 _ead.Add(category, histo);
             }
         }

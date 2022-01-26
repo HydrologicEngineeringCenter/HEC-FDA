@@ -12,7 +12,6 @@ namespace paireddata
         #region Fields 
         private double[] _xvals;
         private IDistribution[] _yvals;
-        private object _sampleLock = new object();
         #endregion
 
         #region Properties 
@@ -64,15 +63,12 @@ namespace paireddata
 
         #region Methods 
         public IPairedData SamplePairedData(double probability){
-            lock (_sampleLock)
-            {
                 double[] y = new double[_yvals.Length];
                 for (int i = 0; i < _xvals.Length; i++)
                 {
-                    y[i] = ys()[i].InverseCDF(probability);
+                    y[i] = _yvals[i].InverseCDF(probability);
                 }
-                return new PairedData(xs(), y, Category);
-            }
+                return new PairedData(_xvals, y, Category);//mutability leakage on xvals
         }
 
         public XElement WriteToXML()
