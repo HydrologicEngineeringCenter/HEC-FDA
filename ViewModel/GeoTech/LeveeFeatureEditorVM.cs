@@ -1,14 +1,9 @@
-﻿using FdaLogging;
-using ViewModel.Editors;
-using ViewModel.Utilities;
-using Functions;
+﻿using Functions;
 using FunctionsView.ViewModel;
 using Model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.GeoTech
 {

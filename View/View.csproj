@@ -15,6 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Plans\**" />
+    <EmbeddedResource Remove="Plans\**" />
+    <EntityDeploy Remove="Plans\**" />
+    <None Remove="Plans\**" />
+    <Page Remove="Plans\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="GeoTech\FailureFunctionEditor.xaml.cs" />
     <Compile Remove="Inventory\AttributeLinkingListRowItem.xaml.cs" />
     <Compile Remove="Inventory\OccupancyTypesFromFile.xaml.cs" />
@@ -278,10 +286,6 @@
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Plans\" />
   </ItemGroup>
  
   <PropertyGroup>
