@@ -29,40 +29,43 @@ namespace metrics
             }
         }
 
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue)
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+            _aep.SetIterationSize(c.MaxIterations);
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve)
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve, ConvergenceCriteria  c)
         {
             _leveeCurve = leveeCurve;
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, new ConvergenceCriteria());
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+            _aep.SetIterationSize(c.MaxIterations);
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
-        public void AddAEPEstimate(double aepEstimate)
+        public void AddAEPEstimate(double aepEstimate, Int64 iteration)
         {
-            _aep.AddObservationToHistogram(aepEstimate);
+            _aep.AddObservationToHistogram(aepEstimate, iteration);
         }
         public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
                 var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+                histo.SetIterationSize(c.MaxIterations);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
         }
 
-        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
+        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP, Int64 iteration)
         {
-            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
+            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP, iteration);
         }
 
         public double MeanAEP()

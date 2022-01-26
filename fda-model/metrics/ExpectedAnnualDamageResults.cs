@@ -26,12 +26,13 @@ namespace metrics
             {
                 //double[] nullData = null;
                 var histo = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, c);
+                histo.SetIterationSize(c.MaxIterations);
                 _ead.Add(category, histo);
             }
         }
-        public void AddEADEstimate(double eadEstimate, string category)
+        public void AddEADEstimate(double eadEstimate, string category, Int64 iteration)
         {
-            _ead[category].AddObservationToHistogram(eadEstimate);
+            _ead[category].AddObservationToHistogram(eadEstimate, iteration);
         }
         public double MeanEAD(string category)
         {
