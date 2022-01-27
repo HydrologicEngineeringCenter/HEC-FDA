@@ -19,16 +19,12 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Fields
         
-        private IFdaFunction _Curve;
         private ObservableCollection<double> _Probabilities = new ObservableCollection<double>();
         private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
-
         private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
-
         private double _Mean = 2;
         private double _StDev = 2;
         private double _Skew = 2;
-
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
         private string _FitToFlowMean = "Mean: N/A";
@@ -37,7 +33,6 @@ namespace ViewModel.FrequencyRelationships
         private int _POR = 200;
         #endregion
         #region Properties
-
         public string FitToFlowMean
         {
             get { return _FitToFlowMean; }
@@ -66,22 +61,22 @@ namespace ViewModel.FrequencyRelationships
         public double Mean
         {
             get { return _Mean; }
-            set { _Mean = value; UpdateChartLineData(); }
+            set { _Mean = value; UpdateChartLineData(); NotifyPropertyChanged(); }
         }
         public double StandardDeviation
         {
             get { return _StDev; }
-            set { _StDev = value; UpdateChartLineData(); }
+            set { _StDev = value; UpdateChartLineData(); NotifyPropertyChanged(); }
         }
         public double Skew
         {
             get { return _Skew; }
-            set { _Skew = value; UpdateChartLineData(); }
+            set { _Skew = value; UpdateChartLineData(); NotifyPropertyChanged(); }
         }
         public int PeriodOfRecord
         {
             get { return _POR; }
-            set { _POR = value; UpdateChartLineData(); }
+            set { _POR = value; UpdateChartLineData(); NotifyPropertyChanged(); }
         }
         public bool IsLogFlow { get; set; }
 
@@ -98,18 +93,11 @@ namespace ViewModel.FrequencyRelationships
             get { return _GraphicalFlows; }
             set { _GraphicalFlows = value; NotifyPropertyChanged(); }
         }
-
-     
-        public CoordinatesFunctionEditorVM EditorVM
-        {
-            get;
-            set;
-        }
  
         public ObservableCollection<double> Probabilities
         {
             get { return _Probabilities; }
-            set { _Probabilities = value; NotifyPropertyChanged(); UpdateItems(); }
+            set { _Probabilities = value; NotifyPropertyChanged();}
         }
        
 
@@ -165,85 +153,11 @@ namespace ViewModel.FrequencyRelationships
             }
             catch(Exception e)
             {
-                //todo: delete me
-                int test = 0;
+                //do nothing?
             }
         }
 
-
-        private ICoordinatesFunction CreateFunctionFromTable()
-        {
-            //list xs will be the probabilties
-            List<double> xs = new List<double>();
-            foreach(double d in  Probabilities)
-            {
-                xs.Add(d);
-            }
-
-            List<double> ys = new List<double>();
-            foreach(FlowDoubleWrapper d in AnalyticalFlows)
-            {
-                ys.Add(d.Flow);
-            }
-
-            //list of ys will be the flow data with the mean, st dev, skew on it.
-            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-        }
-
-        private void UpdateItems()
-        {
-            //todo: Refactor: CO
-            //System.Collections.ObjectModel.ObservableCollection<object> tmp = new System.Collections.ObjectModel.ObservableCollection<object>();
-            //if (_Curve == null) return;
-            //if (_Probabilities.Count <= 0) return;
-            //List<double> probs = new List<double>();
-            //foreach (double d in _Probabilities)
-            //{
-            //    probs.Add(d);
-            //}
-            //System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
-            //s.Start();
-            ////System.Diagnostics.Debug.Print(DateTime.Now.Millisecond.ToString());
-            //try
-            //{
-            //    List<Statistics.Histogram> histos = _Curve.CreateConfidenceInterval(probs, .05, .95, .01, 10000);
-            //    s.Stop();
-            //    System.Diagnostics.Debug.Print(s.ElapsedMilliseconds.ToString());
-            //    for (int i = 0; i < probs.Count; i++)
-            //    {
-            //        tmp.Add(new AnalyticalFrequencyRowItem(tmp, _Probabilities[i], histos[i]));
-            //    }
-            //    Items = tmp;
-            //}
-            //catch (Exception ex)
-            //{
-            //    s.Stop();
-            //    //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A value of mean standard deviation or skew was supplied that caused the confidence interval method to crash", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
-            //}
-        }
         #endregion
-        #region Functions
-        #endregion
-        public override void AddValidationRules()
-        {
-            //probs must be increasing?
-            //skew limits?
-            //variance limits?
-            //todo: Refactor: CO
-            //AddRule(nameof(Mean), () => Mean > 1, "Mean must be greater than 1");
-            //AddRule(nameof(Mean), () => Mean < 9, "Mean must be less than 9");
-            //AddRule(nameof(StandardDeviation), () => StandardDeviation > 0, "Standard Deviation must be greater than 0");
-            //AddRule(nameof(StandardDeviation), () => StandardDeviation < .5, "Standard Deviation must be less than .5");
-            //AddRule(nameof(Skew), () => Skew > -1.5, "Skew must be greater than -1.5");
-            //AddRule(nameof(Skew), () => Skew < 1.5, "Skew must be less than 1.5");
-
-            //AddRule(nameof(SampleSize), () => SampleSize > 5, "Sample size cannot be less than 5");
-            //AddRule(nameof(SampleSize), () => SampleSize < 300, "Sample size cannot be more than 300");
-
-           // AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } } , "Name cannot be blank");
-
-        }
-
 
         public override ICoordinatesFunction GetCoordinatesFunction()
         {
@@ -254,17 +168,12 @@ namespace ViewModel.FrequencyRelationships
                 if (IsAnalytical)
                 {
                     if (IsStandard)
-                    {
-                        //todo use mean, st dev, and skew to create the curve
-                        
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    {                        
                         IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if(dist.State < IMessageLevels.Error)
                         {
                             return IFunctionFactory.Factory(dist);
                         }
-
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                     }
                     else
                     {
@@ -287,7 +196,6 @@ namespace ViewModel.FrequencyRelationships
 
                             return IFunctionFactory.Factory(dist);
                         }
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                     }
                 }
             }
@@ -321,9 +229,6 @@ namespace ViewModel.FrequencyRelationships
                 {
                     if (IsStandard)
                     {
-                        //todo use mean, st dev, and skew to create the curve
-
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                         IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if (dist.State < IMessageLevels.Error)
                         {
@@ -336,8 +241,6 @@ namespace ViewModel.FrequencyRelationships
                                 return true;
                             }
                         }
-
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                     }
                     else
                     {
@@ -378,7 +281,6 @@ namespace ViewModel.FrequencyRelationships
             return null;
         }
 
-
         public override void SaveWhileEditing()
         {
             UpdateChartLineData();
@@ -410,11 +312,9 @@ namespace ViewModel.FrequencyRelationships
         /// <param name="startRow"></param>
         /// <param name="numRows"></param>
         public void AddRow()
-        {
-           
+        {          
             FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-            AnalyticalFlows.Add(emptyFlow);
-            
+            AnalyticalFlows.Add(emptyFlow);         
         }
 
         public void DeleteRows(List<int> indexes)
@@ -427,10 +327,7 @@ namespace ViewModel.FrequencyRelationships
             if (AnalyticalFlows.Count == 0)
             {
                 AnalyticalFlows.Add(new FlowDoubleWrapper(0));
-                //NoMoreRows?.Invoke(this, new EventArgs());
             }
-            //TableWasModified?.Invoke(this, new EventArgs());
         }
-
     }
 }

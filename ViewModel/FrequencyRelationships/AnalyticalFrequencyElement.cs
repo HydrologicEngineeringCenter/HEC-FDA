@@ -1,9 +1,12 @@
-﻿using Model;
+﻿using Functions;
+using Model;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Xml.Linq;
 using ViewModel.Editors;
+using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 
 namespace ViewModel.FrequencyRelationships
@@ -23,8 +26,8 @@ namespace ViewModel.FrequencyRelationships
         public double StDev { get; set; }
         public double Skew { get; set; }
         public bool IsLogFlow { get; set; }
-        public List<double> AnalyticalFlows { get; set; }
-        public List<double> GraphicalFlows { get; set; }
+        public List<double> AnalyticalFlows { get; } = new List<double>();
+        public List<double> GraphicalFlows { get; } = new List<double>();
 
         #endregion
         #region Constructors
@@ -40,14 +43,53 @@ namespace ViewModel.FrequencyRelationships
             IsLogFlow = isLogFlow;
             AnalyticalFlows = analyticalFlows;
             GraphicalFlows = graphicalFlows;
-
             LastEditDate = lastEditDate;
             Name = name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
-
             Description = desc;
             if (Description == null) Description = "";
-            Curve = function;
+            Curve = function; 
+            
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            AddActions();
+        }
+
+        public AnalyticalFrequencyElement(string xmlString)
+        {
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
+            Name = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.NAME);
+            Description = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.DESCRIPTION);
+            LastEditDate = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.LAST_EDIT_DATE);
+            IsAnalytical = (bool)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.IS_ANALYTICAL);
+
+            XElement analyticalElem = flowFreqElem.Element(FlowFrequencyPersistenceManager.ANALYTICAL_DATA);
+            IsStandard = (bool)analyticalElem.Attribute(FlowFrequencyPersistenceManager.USES_MOMENTS);
+            POR = (int)analyticalElem.Attribute(FlowFrequencyPersistenceManager.POR);
+
+            XElement momentsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.MOMENTS);
+            Mean = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.MEAN);
+            StDev = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.ST_DEV);
+            Skew = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.SKEW);
+
+            XElement fitToFlowsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.FIT_TO_FLOWS);
+            IsLogFlow = (bool)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.IS_LOG);
+            string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
+            AnalyticalFlows = ConvertStringToFlows(flows);
+
+            //this is hacky but i need to set the curve property on this child element so that the curve editor can get the correct 
+            //parameter type. I didn't want to mess with refactoring curve editor in any way because a lot of things use it.
+            //This curve is not being used to display the plot or for saving. It can be filled with dummy data.
+            //Cody 1/27/22
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(new List<double>() { 0, 1 }, new List<double>() { 0, 1 });
+            Curve = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, func);
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            AddActions();
+        }
+
+        #endregion
+        #region Voids
+        private void AddActions()
+        {
             NamedAction editflowfreq = new NamedAction();
             editflowfreq.Header = "Edit Analytical Flow Frequency Relationship...";
             editflowfreq.Action = EditFlowFreq;
@@ -66,21 +108,15 @@ namespace ViewModel.FrequencyRelationships
             localActions.Add(renameElement);
 
             Actions = localActions;
-
         }
-
-
-        #endregion
-        #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetFlowFrequencyManager().Remove(this);
         }
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
-
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
@@ -133,9 +169,12 @@ namespace ViewModel.FrequencyRelationships
         private ObservableCollection<FlowDoubleWrapper> ConvertDoublesToFlowWrappers(List<double> flows)
         {
             ObservableCollection<FlowDoubleWrapper> flowWrappers = new ObservableCollection<FlowDoubleWrapper>();
-            foreach(double d in flows)
+            if (flows != null)
             {
-                flowWrappers.Add(new FlowDoubleWrapper(d));
+                foreach (double d in flows)
+                {
+                    flowWrappers.Add(new FlowDoubleWrapper(d));
+                }
             }
             return flowWrappers;
         }
@@ -197,6 +236,25 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
 
+        List<double> ConvertStringToFlows(string flows)
+        {
+            List<double> flowDoubles = new List<double>();
+            try
+            {
+                string[] flowStrings = flows.Split(',');
+
+                foreach (string flow in flowStrings)
+                {
+                    double d = Convert.ToDouble(flow);
+                    flowDoubles.Add(d);
+                }
+            }
+            catch (Exception e)
+            {
+                //couldn't convert to doubles
+            }
+            return flowDoubles;
+        }
         public IDistribution GetDistribution()
         {
             return new Statistics.Distributions.LogPearson3(Mean, StDev, Skew, POR);
