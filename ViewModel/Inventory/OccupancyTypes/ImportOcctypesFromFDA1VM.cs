@@ -30,8 +30,9 @@ namespace ViewModel.Inventory.OccupancyTypes
         {
             OccupancyTypeList occupancyTypeList = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
             string groupName = System.IO.Path.GetFileNameWithoutExtension(Path);
-            ElementsToImport.Add(ImportFromFDA1Helper.CreateOcctypes(occupancyTypeList, groupName));
-
+            string messages = "";
+            ElementsToImport.Add(ImportFromFDA1Helper.CreateOcctypes(occupancyTypeList, groupName, ref messages));
+            ImportLog += messages;
             if (checkForNameConflict)
             {
                 List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
