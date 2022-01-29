@@ -9,8 +9,7 @@ namespace View.NamedActionConverters
     /// <summary>
     /// Interaction logic for NamedActionButton.xaml
     /// </summary>
-    [Base.Attributes.ReporterDisplayName("TestingWithNamedActionButtons")]
-    public partial class NamedActionButton : UserControl, Base.Interfaces.IReportMessage
+    public partial class NamedActionButton : UserControl
     {
         public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(Base.Interfaces.INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
         private RoutedEventHandler _ActionHandler;
@@ -30,7 +29,6 @@ namespace View.NamedActionConverters
         public NamedActionButton()
         {
             InitializeComponent();
-            Base.Implementations.MessageHub.Register(this);
 
         }
         private static void ButtonNamedActionPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -63,11 +61,6 @@ namespace View.NamedActionConverters
             }
             nab._ActionHandler = (ob, ev) => na.Action(ob, ev);
             btn.Click += nab._ActionHandler;
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
     }
 }
