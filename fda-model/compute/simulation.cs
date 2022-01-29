@@ -104,71 +104,85 @@ namespace compute{
             {
                 seeds[i] = masterSeedList.Next();
             }
-            
-            Parallel.For(0, convergence_criteria.MaxIterations, i =>
+            Int64 iterations = convergence_criteria.MinIterations;
+            while (!_results.IsConverged())
             {
-                //check if it is a mean random provider or not
-                interfaces.IProvideRandomNumbers threadlocalRandomProvider;
-                if(rp is MeanRandomProvider)
+                Parallel.For(0, iterations, i =>
                 {
-                    threadlocalRandomProvider = new MeanRandomProvider();
-                }
-                else
-                {
-                    threadlocalRandomProvider = new RandomProvider(seeds[i]);
-                }
-                if (_frequency_stage.IsNull)
-                {
-                    //if frequency_flow is not defined throw big errors.
-                    IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
-                    //check if flow transform exists, and use it here
-                    if (_inflow_outflow.IsNull)
+                    //check if it is a mean random provider or not
+                    interfaces.IProvideRandomNumbers threadlocalRandomProvider;
+                    if(rp is MeanRandomProvider)
                     {
-                        if (_flow_stage.IsNull)
+                        threadlocalRandomProvider = new MeanRandomProvider();
+                    }
+                    else
+                    {
+                        threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                    }
+                    if (_frequency_stage.IsNull)
+                    {
+                        //if frequency_flow is not defined throw big errors.
+                        IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                        //check if flow transform exists, and use it here
+                        if (_inflow_outflow.IsNull)
                         {
-                            //complain loudly
-                            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
-                            return; //_results;
+                            if (_flow_stage.IsNull)
+                            {
+                                //complain loudly
+                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                return; //_results;
+                            }
+                            else
+                            {
+                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                                IPairedData frequency_stage = flow_stage_sample.compose(ff);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                            }
+
                         }
                         else
                         {
-                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                            IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                            IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
+                            IPairedData transformff = inflow_outflow_sample.compose(ff);
+                            if (_flow_stage.IsNull)
+                            {
+                                //complain loudly
+                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                return;// _results;
+                            }
+                            else
+                            {
+                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
+                                IPairedData frequency_stage = flow_stage_sample.compose(transformff);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                            }
                         }
 
                     }
                     else
                     {
-                        IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
-                        IPairedData transformff = inflow_outflow_sample.compose(ff);
-                        if (_flow_stage.IsNull)
-                        {
-                            //complain loudly
-                            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
-                            return;// _results;
-                        }
-                        else
-                        {
-                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
-                            IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
-                        }
+                        IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                        ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i);
+                    }
+                    Interlocked.Increment(ref _completedIterations);
+                    if (i % progressChunks == 0)//need an atomic integer count here.
+                    {
+                        ReportProgress(this, new ProgressReportEventArgs((int)(_completedIterations / progressChunks)));
                     }
 
+                });
+                if(!_results.TestForConvergence(.95, .05))
+                {
+                    iterations = _results.RemainingIterations(.95,.05);
                 }
                 else
                 {
-                    IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                    ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i);
+                    iterations = 0;
+                    break;
                 }
-                Interlocked.Increment(ref _completedIterations);
-                if (i % progressChunks == 0)//need an atomic integer count here.
-                {
-                    ReportProgress(this, new ProgressReportEventArgs((int)(_completedIterations / progressChunks)));
-                }
+                
+            }
 
-            });
             return _results;
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration){

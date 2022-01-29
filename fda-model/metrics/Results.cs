@@ -14,18 +14,47 @@ namespace metrics
             PerformanceByThresholds = new PerformanceByThresholds();
             ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
         }
-        public ThreadsafeInlineHistogram[] ToList()
+        private bool IsEADConverged()
         {
-            List<ThreadsafeInlineHistogram> histos = new List<ThreadsafeInlineHistogram>();
-            foreach(ThreadsafeInlineHistogram h in ExpectedAnnualDamageResults.HistogramsOfEADs.Values)
+            return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
+        }
+        private bool IsPerformanceConverged()
+        {
+            //dont like this.
+            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                histos.Add(h);
+                return PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged();
             }
-            foreach (Threshold t in PerformanceByThresholds.ThresholdsDictionary.Values)
+            return true;
+        }
+        public bool IsConverged()
+        {
+            return IsEADConverged() && IsPerformanceConverged();
+        }
+        public bool TestForConvergence(double upper, double lower)
+        {
+            bool ead = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upper, lower);
+            bool cnp = false;
+            //dont like this.
+            foreach(var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                histos.Add(t.ProjectPerformanceResults.HistogramOfAEPs);
+                cnp = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upper, lower);
+                break;
             }
-            return histos.ToArray();
+            
+            return ead && cnp;
+        }
+        public Int64 RemainingIterations(double upper, double lower)
+        {
+            Int64 ead = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upper, lower);
+            Int64 performance = 0;
+            //i do not like this, but the keys are frustrating.
+            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
+            {
+                performance = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upper, lower);
+                break;
+            }
+            return Math.Max(ead, performance);
         }
 
     }

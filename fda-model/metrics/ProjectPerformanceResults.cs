@@ -83,7 +83,42 @@ namespace metrics
             double assuranceOfAEP = _aep.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
-
+        public bool ConditionalNonExceedanceProbabilityIsConverged()
+        {
+            //dont like this.
+            foreach (double key in _cnep.Keys)
+            {
+                if (key == 0.98)
+                {
+                    return _cnep[key].IsConverged;
+                }
+            }
+            return false;
+        }
+        public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upper, double lower)
+        {
+            //dont like this.
+            foreach( double key in _cnep.Keys)
+            {
+                if(key == 0.98)
+                {
+                    return _cnep[key].TestForConvergence(upper,lower);
+                }
+            }
+            return false;
+        }
+        public Int64 ConditionalNonExceedanceProbabilityRemainingIterations(double upper, double lower)
+        {
+            //dont like this
+            foreach (double key in _cnep.Keys)
+            {
+                if (key == 0.98)
+                {
+                    return _cnep[key].EstimateIterationsRemaining(upper, lower);
+                }
+            }
+            return 0;
+        }
         public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
             if (_calculatePerformanceForLevee)

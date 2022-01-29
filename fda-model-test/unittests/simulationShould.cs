@@ -98,7 +98,7 @@ namespace fda_model_test
 
 
         [Theory]
-        [InlineData(1234, 100, 124987.13)]
+        [InlineData(1234, 100, 139603.76)]
         [InlineData(1234, 1, 139603.76)]
         [InlineData(4321, 1, 8128.72)]
         [InlineData(1111, 1, 270510.77)]
