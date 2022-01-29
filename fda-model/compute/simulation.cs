@@ -120,7 +120,7 @@ namespace compute{
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
-                    IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                    IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                     //check if flow transform exists, and use it here
                     if (_inflow_outflow.IsNull)
                     {

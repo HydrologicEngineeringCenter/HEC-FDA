@@ -98,10 +98,10 @@ namespace fda_model_test
 
 
         [Theory]
-        [InlineData(1234, 100, 125263.68)]
-        [InlineData(1234, 1, 139884.51)]
-        [InlineData(4321, 1, 8145.07)]
-        [InlineData(1111, 1, 271116.14)]
+        [InlineData(1234, 100, 124987.13)]
+        [InlineData(1234, 1, 139603.76)]
+        [InlineData(4321, 1, 8128.72)]
+        [InlineData(1111, 1, 270510.77)]
         public void ComputeEAD_Iterations(int seed, int iterations, double expected)
         {
 

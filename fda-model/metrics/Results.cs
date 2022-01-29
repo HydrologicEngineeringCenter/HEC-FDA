@@ -14,6 +14,19 @@ namespace metrics
             PerformanceByThresholds = new PerformanceByThresholds();
             ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
         }
+        public ThreadsafeInlineHistogram[] ToList()
+        {
+            List<ThreadsafeInlineHistogram> histos = new List<ThreadsafeInlineHistogram>();
+            foreach(ThreadsafeInlineHistogram h in ExpectedAnnualDamageResults.HistogramsOfEADs.Values)
+            {
+                histos.Add(h);
+            }
+            foreach (Threshold t in PerformanceByThresholds.ThresholdsDictionary.Values)
+            {
+                histos.Add(t.ProjectPerformanceResults.HistogramOfAEPs);
+            }
+            return histos.ToArray();
+        }
 
     }
 }
