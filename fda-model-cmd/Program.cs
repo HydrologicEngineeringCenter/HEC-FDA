@@ -11,7 +11,7 @@ System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 sw.Start();
 int iterations = 1000000;
 int seed = 2345;
- IDistribution LP3Distribution = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
+ IDistribution LP3Distribution = new LogPearson3(3.537, .438, .075, 125);
  double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
 
 string xLabel = "x label";
@@ -23,30 +23,30 @@ int id = 1;
 
  IDistribution[] StageDistributions =
 {
-            IDistributionFactory.FactoryNormal(458,0.00001),
-            IDistributionFactory.FactoryNormal(468.33,.312),
-            IDistributionFactory.FactoryNormal(469.97,.362),
-            IDistributionFactory.FactoryNormal(471.95,.422),
-            IDistributionFactory.FactoryNormal(473.06,.456),
-            IDistributionFactory.FactoryNormal(473.66,.474),
-            IDistributionFactory.FactoryNormal(474.53,.5),
-            IDistributionFactory.FactoryNormal(475.11,.5),
-            IDistributionFactory.FactoryNormal(477.4,.5)
+            new Normal(458,0.00001),
+            new Normal(468.33,.312),
+            new Normal(469.97,.362),
+            new Normal(471.95,.422),
+            new Normal(473.06,.456),
+            new Normal(473.66,.474),
+            new Normal(474.53,.5),
+            new Normal(475.11,.5),
+            new Normal(477.4,.5)
                 //note that the rating curve domain lies within the stage-damage domain
         };
  double[] StageDamageStages = { 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
  IDistribution[] DamageDistrbutions =
 {
-            IDistributionFactory.FactoryNormal(0,0.00001),
-            IDistributionFactory.FactoryNormal(.04,.16),
-            IDistributionFactory.FactoryNormal(.66,1.02),
-            IDistributionFactory.FactoryNormal(2.83,2.47),
-            IDistributionFactory.FactoryNormal(7.48,3.55),
-            IDistributionFactory.FactoryNormal(17.82,7.38),
-            IDistributionFactory.FactoryNormal(39.87,12.35),
-            IDistributionFactory.FactoryNormal(76.91,13.53),
-            IDistributionFactory.FactoryNormal(124.82,13.87),
-            IDistributionFactory.FactoryNormal(173.73,13.12),
+            new Normal(0,0.00001),
+            new Normal(.04,.16),
+            new Normal(.66,1.02),
+            new Normal(2.83,2.47),
+            new Normal(7.48,3.55),
+            new Normal(17.82,7.38),
+            new Normal(39.87,12.35),
+            new Normal(76.91,13.53),
+            new Normal(124.82,13.87),
+            new Normal(173.73,13.12),
         };
 
  double[] FragilityStages = { 470, 471, 472, 473, 474, 475 };
