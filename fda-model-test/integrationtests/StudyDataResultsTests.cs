@@ -108,7 +108,7 @@ namespace fda_model_test
                 .build();
 
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
@@ -143,7 +143,7 @@ namespace fda_model_test
                 .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
@@ -171,7 +171,7 @@ namespace fda_model_test
                 .withLevee(fragilityCurve, topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");

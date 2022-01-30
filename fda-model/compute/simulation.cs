@@ -94,9 +94,10 @@ namespace compute{
             SetStageForNonExceedanceProbability(convergence_criteria);
             Int64 progressChunks = 1;
             Int64 _completedIterations = 0;
-            if (convergence_criteria.MaxIterations > 100)
+            Int64 _ExpectedIterations = convergence_criteria.MaxIterations;
+            if (_ExpectedIterations > 100)
             {
-                progressChunks = convergence_criteria.MaxIterations / 100;
+                progressChunks = _ExpectedIterations / 100;
             }
             Random masterSeedList = new Random(masterseed);//must be seeded.
             int[] seeds = new int[convergence_criteria.MaxIterations];
@@ -165,15 +166,18 @@ namespace compute{
                         ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i);
                     }
                     Interlocked.Increment(ref _completedIterations);
-                    if (i % progressChunks == 0)//need an atomic integer count here.
+                    if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                     {
-                        ReportProgress(this, new ProgressReportEventArgs((int)(_completedIterations / progressChunks)));
+                        double percentcomplete = ((double)_completedIterations)/((double)_ExpectedIterations)*100;
+                        ReportProgress(this, new ProgressReportEventArgs((int)percentcomplete));
                     }
 
                 });
                 if(!_results.TestForConvergence(.95, .05))
                 {
                     iterations = _results.RemainingIterations(.95,.05);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
                 }
                 else
                 {
