@@ -2,7 +2,10 @@
 using Model;
 using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using paireddata;
 
 namespace ViewModel.FlowTransforms
 {
@@ -78,7 +81,6 @@ namespace ViewModel.FlowTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-
             //.WithParentGuid(this.GUID)
             //.WithCanOpenMultipleTimes(true);
             UncertainPairedData defaultCurve = Utilities.DefaultPairedData.CreateDefaultNormalUncertainPairedData("Inflow", "Outflow", "Inflow-Outflow");
