@@ -1,14 +1,14 @@
-﻿using Functions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using static Importer.AsciiImport;
 using static System.Console;
 
 namespace Importer
 {
     [Serializable]
 
-    public class ProbabilityFunction : FdObjectData, ISaveToSqlite
+    public class ProbabilityFunction : FdObjectData
     {
         #region enums
         public enum FrequencyFunctionType { FF_UNKNOWN, ANALYTICAL, GRAPHICAL };
@@ -126,29 +126,7 @@ namespace Importer
             _StdDevLogUserDef = null;
             _StdDevLowerUserDef = null;
             _StdDevUpperUserDef = null;
-            /*
-            ExceedanceProbability = new double[NumberOfGraphicalPointsAllocated];
-            Discharge = new double[NumberOfGraphicalPointsAllocated];
-            Stage = new double[NumberOfGraphicalPointsAllocated];
-            for (int i = 0; i < NumberOfGraphicalPointsAllocated; i++)
-            {
-                ExceedanceProbability[i] = Study.badNumber;
-                Discharge[i] = Study.badNumber;
-                Stage[i] = Study.badNumber;
-            }
-            //User Defined Uncertainty
-            _StdDevNormalUserDef = new double[NumberOfGraphicalPointsAllocated];
-            _StdDevLogUserDef = new double[NumberOfGraphicalPointsAllocated];
-            _StdDevUpperUserDef = new double[NumberOfGraphicalPointsAllocated];
-            _StdDevLowerUserDef = new double[NumberOfGraphicalPointsAllocated];
-            for (int i = 0; i < NumberOfGraphicalPointsAllocated; i++)
-            {
-                _StdDevNormalUserDef[i] = Study.badNumber;
-                _StdDevLogUserDef[i] = Study.badNumber;
-                _StdDevUpperUserDef[i] = Study.badNumber;
-                _StdDevLowerUserDef[i] = Study.badNumber;
-            }
-            */
+            
             //Transform Flow
             ErrorTypeTransformFlow = ErrorType.NONE;
             NumberOfTransFlowPointsAllocated = 0;
@@ -372,151 +350,129 @@ namespace Importer
             }
             return;
         }
-        public void Print()
+        public void Print(AsyncLogger logger, ImportOptions importOptions = ImportOptions.ImportEverything)
         {
             //Basic Information
-            WriteLine($"\n\nProbability Function Name: {Name}");
-            WriteLine($"\tDescription: {this.Description}");
-            WriteLine($"\tPlan: {PlanName}");
-            WriteLine($"\tYear: {YearName}");
-            WriteLine($"\tStream: {StreamName}");
-            WriteLine($"\tReach: {DamageReachName}");
-            WriteLine($"\tEquiv. Length of Record: {EquivalentLengthOfRecord}");
-            WriteLine($"\tProbability Function Type: {ProbabilityFunctionTypeId}");
-            WriteLine($"\tData Type: {(ProbabilityDataTypeId)}");
-            WriteLine($"\tUncertainty Type: {UncertTypeSpecification}");
+            logger.Log($"\n\nProbability Function Name: {Name}");
+            logger.Log($"\tDescription: {this.Description}");
+            logger.Log($"\tPlan: {PlanName}");
+            logger.Log($"\tYear: {YearName}");
+            logger.Log($"\tStream: {StreamName}");
+            logger.Log($"\tReach: {DamageReachName}");
+            logger.Log($"\tEquiv. Length of Record: {EquivalentLengthOfRecord}");
+            logger.Log($"\tProbability Function Type: {ProbabilityFunctionTypeId}");
+            logger.Log($"\tData Type: {(ProbabilityDataTypeId)}");
+            logger.Log($"\tUncertainty Type: {UncertTypeSpecification}");
 
-            //Paired Data
-            if (ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
+            if (importOptions == ImportOptions.ImportEverything)
             {
-                if (SourceOfStatisticsId == SourceOfStatistics.ENTERED)
+                //Paired Data
+                if (ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
                 {
-                    WriteLine($"\tLog Pearson Type III moments:");
-                    WriteLine($"\t\tMean: {MomentsLp3[0]}");
-                    WriteLine($"\t\tStd. Dev.: {MomentsLp3[1]}");
-                    WriteLine($"\t\tSkew: {MomentsLp3[2]}");
+                    if (SourceOfStatisticsId == SourceOfStatistics.ENTERED)
+                    {
+                        logger.Log($"\tLog Pearson Type III moments:");
+                        logger.Log($"\t\tMean: {MomentsLp3[0]}");
+                        logger.Log($"\t\tStd. Dev.: {MomentsLp3[1]}");
+                        logger.Log($"\t\tSkew: {MomentsLp3[2]}");
+                    }
+                    //todo: we don't care about this option right now. 1/21/22 issue 250
+                    //else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
+                    //{
+                    //    logger.Log($"\tAnalytical Synthetic Points:");
+                    //    logger.Log($"\t\tFlow @ 0.50: {PointsSynthetic[0]}");
+                    //    logger.Log($"\t\tFlow @ 0.10: {PointsSynthetic[1]}");
+                    //    logger.Log($"\t\tFlow @ 0.01: {PointsSynthetic[2]}");
+                    //}
                 }
-                else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
+                else if (ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
                 {
-                    WriteLine($"\tAnalytical Synthetic Points:");
-                    WriteLine($"\t\tFlow @ 0.50: {PointsSynthetic[0]}");
-                    WriteLine($"\t\tFlow @ 0.10: {PointsSynthetic[1]}");
-                    WriteLine($"\t\tFlow @ 0.01: {PointsSynthetic[2]}");
-                }
-            }
-            else if (ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
-            {
-                WriteLine($"\tGraphical Points:");
-                Write("\t\tProbability: ");
-                for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                    Write($"\t{ExceedanceProbability[i]}");
-                Write("\n");
-                if (ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-                {
-                    Write("\t\tDischarge: ");
+                    logger.Log($"\tGraphical Points:");
+                    logger.Append("\t\tProbability: ");
                     for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{Discharge[i]}");
-                }
-                else if (ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
-                {
-                    Write("\t\tStage: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{Stage[i]}");
-                }
-                Write("\n");
+                        logger.Append($"\t{ExceedanceProbability[i]}");
+                    logger.Append("\n");
+                    if (ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
+                    {
+                        logger.Append("\t\tDischarge: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{Discharge[i]}");
+                    }
+                    else if (ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
+                    {
+                        logger.Append("\t\tStage: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{Stage[i]}");
+                    }
+                    logger.Append("\n");
 
-                //User Defined Uncertainty
-                if (UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
-                {
-                    Write("\t\tNormal: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevNormalUserDef[i]}");
-                    Write("\n");
-                }
-                else if (UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
-                {
-                    Write("\t\tLog Normal: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevLogUserDef[i]}");
-                    Write("\n");
-                }
-                else if (UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
-                {
-                    Write("\t\tTriangular High: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevUpperUserDef[i]}");
-                    Write("\n");
-                    Write("\t\tTriangular Low: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevLowerUserDef[i]}");
+                    //User Defined Uncertainty
+                    if (UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
+                    {
+                        logger.Append("\t\tNormal: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{_StdDevNormalUserDef[i]}");
+                        logger.Append("\n");
+                    }
+                    else if (UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
+                    {
+                        logger.Append("\t\tLog Normal: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{_StdDevLogUserDef[i]}");
+                        logger.Append("\n");
+                    }
+                    else if (UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
+                    {
+                        logger.Append("\t\tTriangular High: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{_StdDevUpperUserDef[i]}");
+                        logger.Append("\n");
+                        logger.Append("\t\tTriangular Low: ");
+                        for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                            logger.Append($"\t{_StdDevLowerUserDef[i]}");
+                    }
                 }
             }
             //Transform Flow Function
-            if (NumberOfTransFlowPoints > 0)
+            if (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportInflowOutflow)
             {
-                WriteLine("\n\tTransform Flow Function");
-                Write("\t\tInflow: ");
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                    Write($"\t{TransFlowInflow[i]}");
-                Write("\n");
-                Write("\t\tOutflow: ");
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                    Write($"\t{TransFlowOutflow[i]}");
-                Write("\n");
-                if (ErrorTypeTransformFlow == ErrorType.NORMAL)
+                if (NumberOfTransFlowPoints > 0)
                 {
-                    Write("\t\tNormal: ");
+                    logger.Log("\n\tTransform Flow Function");
+                    logger.Append("\t\tInflow: ");
                     for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowStdDev[i]}");
-                    Write("\n");
+                        logger.Append($"\t{TransFlowInflow[i]}");
+                    logger.Append("\n");
+                    logger.Append("\t\tOutflow: ");
+                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        logger.Append($"\t{TransFlowOutflow[i]}");
+                    logger.Append("\n");
+                    if (ErrorTypeTransformFlow == ErrorType.NORMAL)
+                    {
+                        logger.Append("\t\tNormal: ");
+                        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                            logger.Append($"\t{TransFlowStdDev[i]}");
+                        logger.Append("\n");
+                    }
+                    else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
+                    {
+                        logger.Append("\t\tLog Normal: ");
+                        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                            logger.Append($"\t{TransFlowLogStdDev[i]}");
+                        logger.Append("\n");
+                    }
+                    else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
+                    {
+                        logger.Append("\t\tTriangular High: ");
+                        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                            logger.Append($"\t{ TransFlowUpper[i]}");
+                        logger.Append("\n");
+                        logger.Append("\t\tTriangular Low: ");
+                        for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                            logger.Append($"\t{TransFlowLower[i]}");
+                        logger.Append("\n");
+                    }
                 }
-                else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
-                {
-                    Write("\t\tLog Normal: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowLogStdDev[i]}");
-                    Write("\n");
-                }
-                else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
-                {
-                    Write("\t\tTriangular High: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{ TransFlowUpper[i]}");
-                    Write("\n");
-                    Write("\t\tTriangular Low: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowLower[i]}");
-                    Write("\n");
-                }
-            }
-            //Calculation Points
-            if(_NumCalcPoints > 0)
-            {
-                WriteLine("\n\tCalculation Points");
-                Write("\t\tQ05: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc05[i]}");
-                Write("\n");
-
-                Write("\t\tQ25: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc25[i]}");
-                Write("\n");
-
-                Write("\t\tQ50: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc50[i]}");
-                Write("\n");
-
-                Write("\t\tQ75: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc75[i]}");
-                Write("\n");
-
-                Write("\t\tQ95: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc95[i]}");
-                Write("\n");
             }
             return;
         }
@@ -855,176 +811,6 @@ namespace Importer
             }
             return;
         }
-
-        public void SaveToSqlite()
-        {
-            if (ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
-            {
-                if (SourceOfStatisticsId == SourceOfStatistics.ENTERED)
-                {
-                    //LP3 moments
-                    double mean = MomentsLp3[0];
-                    double stdDev = MomentsLp3[1];
-                    double skew = MomentsLp3[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
-                
-                }
-                else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
-                {
-                    //analytical synthetic points
-                    double flowPoint5 = PointsSynthetic[0];
-                    double flowPoint1 = PointsSynthetic[1];
-                    double flowPoint01 = PointsSynthetic[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
-                }
-            }
-            else if(ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
-            {
-                //get probabilities
-                List<double> probabilities = new List<double>();
-                for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                {
-                    probabilities.Add(ExceedanceProbability[i]);
-                }
-
-                if (ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-                {
-                    Write("\t\tDischarge: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{Discharge[i]}");
-                }
-                else if (ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
-                {
-                    Write("\t\tStage: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{Stage[i]}");
-                }
-                //User Defined Uncertainty
-                if (UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
-                {
-                    Write("\t\tNormal: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevNormalUserDef[i]}");
-                    Write("\n");
-                }
-                else if (UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
-                {
-                    Write("\t\tLog Normal: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevLogUserDef[i]}");
-                    Write("\n");
-                }
-                else if (UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
-                {
-                    Write("\t\tTriangular High: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevUpperUserDef[i]}");
-                    Write("\n");
-                    Write("\t\tTriangular Low: ");
-                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
-                        Write($"\t{_StdDevLowerUserDef[i]}");
-                }
-            }
-
-
-            if (_ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-            {
-                //List<ICoordinate> flowFreqCoords = new List<ICoordinate>();
-                //foreach (Pair_xy xy in )
-                //{
-                //    double x = xy.GetX();
-                //    double y = xy.GetY();
-                //    flowFreqCoords.Add(ICoordinateFactory.Factory(x, y));
-                //}
-                //ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(flowFreqCoords, InterpolationEnum.Linear);
-                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
-                //ImpactAreaFunctionFactory.FactoryFrequency(, ImpactAreaFunctionEnum.InflowFrequency);
-            }
-            
-
-
-            //i think these are inflow outflow?
-            //Transform Flow Function
-            if (NumberOfTransFlowPoints > 0)
-            {
-                WriteLine("\n\tTransform Flow Function");
-                Write("\t\tInflow: ");
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                    Write($"\t{TransFlowInflow[i]}");
-                Write("\n");
-                Write("\t\tOutflow: ");
-                for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                    Write($"\t{TransFlowOutflow[i]}");
-                Write("\n");
-                if (ErrorTypeTransformFlow == ErrorType.NORMAL)
-                {
-                    Write("\t\tNormal: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowStdDev[i]}");
-                    Write("\n");
-                }
-                else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
-                {
-                    Write("\t\tLog Normal: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowLogStdDev[i]}");
-                    Write("\n");
-                }
-                else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
-                {
-                    Write("\t\tTriangular High: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{ TransFlowUpper[i]}");
-                    Write("\n");
-                    Write("\t\tTriangular Low: ");
-                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
-                        Write($"\t{TransFlowLower[i]}");
-                    Write("\n");
-                }
-            }
-
-
-            //Calculation Points
-            if (_NumCalcPoints > 0)
-            {
-                WriteLine("\n\tCalculation Points");
-                Write("\t\tQ05: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc05[i]}");
-                Write("\n");
-
-                Write("\t\tQ25: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc25[i]}");
-                Write("\n");
-
-                Write("\t\tQ50: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc50[i]}");
-                Write("\n");
-
-                Write("\t\tQ75: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc75[i]}");
-                Write("\n");
-
-                Write("\t\tQ95: ");
-                for (int i = 0; i < _NumCalcPoints; i++)
-                    Write($"\t{Calc95[i]}");
-                Write("\n");
-            }
-
-        }
-        #endregion
-        #region Functions
         #endregion
     }
 }

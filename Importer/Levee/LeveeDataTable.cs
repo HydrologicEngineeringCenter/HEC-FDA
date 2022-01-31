@@ -130,7 +130,7 @@ namespace Importer
                     else if (colName == "FU_INT")
                         ;// theFunc.xxxx = (int)dataTable.Rows[irec][ifield];
                 }
-                theFuncList.Add(theFunc);
+                theFuncList.Add(theFunc, null, AsciiImport.ImportOptions.ImportEverything);
             }
         }
     }

@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Functions;
+using Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Editors;
 using ViewModel.Utilities;
-using Functions;
-using Model;
 
 namespace ViewModel.StageTransforms
 {
-    public class RatingCurveOwnerElement : Utilities.ParentElement
+    public class RatingCurveOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -25,18 +22,19 @@ namespace ViewModel.StageTransforms
         {
             Name = "Rating Curves";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addRatingCurve = new Utilities.NamedAction();
+            NamedAction addRatingCurve = new NamedAction();
             addRatingCurve.Header = "Create New Rating Curve";
             addRatingCurve.Action = AddNewRatingCurve;
 
-            Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
-            ImportRatingCurve.Header = "Import Rating Curve From ASCII";
+            NamedAction ImportRatingCurve = new NamedAction();
+            ImportRatingCurve.Header = StringConstants.ImportFromOldFda("Rating Curve");
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addRatingCurve);
+            localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
 
@@ -61,7 +59,10 @@ namespace ViewModel.StageTransforms
         }
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
-            throw new NotImplementedException();
+            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM();
+            string header = "Import Rating Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
+            Navigate(tab, false, true);
         }
 
       

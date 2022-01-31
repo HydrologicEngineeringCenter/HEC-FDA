@@ -24,7 +24,6 @@ namespace View.Study
         {
             FdaStudyVM vm = DataContext as FdaStudyVM;
             vm?.AddMapsTab(MapTreeView);
-            vm?.AddCreateNewStudyTab();
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -32,12 +31,10 @@ namespace View.Study
             lbl_Study.ContextMenu.IsOpen = true;
         }
 
-
         private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             WasXClicked = true;
         }
-
 
         private void txt_PopOut_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

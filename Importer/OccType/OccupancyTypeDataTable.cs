@@ -366,7 +366,7 @@ namespace Importer
                     else if (colName == "LSD_CRVAL" && theFunc._ErrorDistribution[4].GetErrorType() == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[4].SetStdDev((double)dataTable.Rows[irec][ifield]);
                 }
-                theFuncList.Add(theFunc);
+                theFuncList.Add(theFunc, null);
             }
         }
 

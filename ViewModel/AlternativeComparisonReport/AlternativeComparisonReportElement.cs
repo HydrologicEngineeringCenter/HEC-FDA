@@ -69,11 +69,11 @@ namespace ViewModel.AlternativeComparisonReport
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = "Remove";
+            removeCondition.Header = StringConstants.REMOVE_MENU;
             removeCondition.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename...";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localActions = new List<NamedAction>();

@@ -76,19 +76,19 @@ namespace ViewModel.WaterSurfaceElevation
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
             NamedAction editElement = new NamedAction(this);
-            editElement.Header = "Edit...";
+            editElement.Header = "Edit Water Surface Elevations...";
             editElement.Action = EditElement;
 
             NamedAction remove = new NamedAction();
-            remove.Header = "Remove";
+            remove.Header = StringConstants.REMOVE_MENU;
             remove.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             NamedAction mapWindow = new NamedAction();
-            mapWindow.Header = "Add to Map Window";
+            mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
             mapWindow.Action = AddWSEToMapWindow;
 
             //"NA" has been placed in the "path" column of the database. That means that this WSE came
@@ -105,7 +105,7 @@ namespace ViewModel.WaterSurfaceElevation
             if (!hasMapLayers)
             {
                 mapWindow.IsEnabled = false;
-                mapWindow.ToolTip = "No map layers exist when imported from FDA 1.0";
+                mapWindow.ToolTip = "No map layers exist when imported from HEC-FDA 1.4.3";
             }
 
             List<NamedAction> localactions = new List<Utilities.NamedAction>();
@@ -147,9 +147,9 @@ namespace ViewModel.WaterSurfaceElevation
                 }
                 foreach (Utilities.NamedAction a in Actions)
                 {
-                    if (a.Header.Equals("Remove from Map Window"))
+                    if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                     {
-                        a.Header = "Add to Map Window";
+                        a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                         a.Action = AddWSEToMapWindow;
                     }
                 }
@@ -160,9 +160,9 @@ namespace ViewModel.WaterSurfaceElevation
         {
             foreach (Utilities.NamedAction a in Actions)
             {
-                if (a.Header.Equals("Remove from Map Window"))
+                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Add to Map Window";
+                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                     a.Action = AddWSEToMapWindow;
                 }
             }
@@ -186,9 +186,9 @@ namespace ViewModel.WaterSurfaceElevation
 
             foreach (Utilities.NamedAction a in Actions)
             {
-                if (a.Header.Equals("Add to Map Window"))
+                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Remove from Map Window";
+                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
                     a.Action = RemoveElementFromMapWindow;
                 }
             }

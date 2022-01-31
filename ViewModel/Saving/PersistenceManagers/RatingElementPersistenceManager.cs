@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Storage;
+using Importer;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -135,6 +136,40 @@ namespace ViewModel.Saving.PersistenceManagers
                 (string)rowData[DESC_COL], function);
             return rc;
         }
+
+        #endregion
+
+        #region Import from old fda
+        //public void SaveFDA1Elements(RatingFunctionList ratingCurves)
+        //{
+        //    foreach (KeyValuePair<string, RatingFunction> rat in ratingCurves.RatingFunctions)
+        //    {
+        //        SaveRatingFunction(rat.Value);
+        //    }
+        //}
+
+        //private void SaveRatingFunction(RatingFunction rat)
+        //{
+        //    string pysr = "(" + rat.PlanName + " " + rat.YearName + " " + rat.StreamName + " " + rat.DamageReachName + ") ";
+        //    string description = pysr + rat.Description;
+        //    double[] stages = rat.GetStage();
+        //    double[] flows = rat.GetDischarge();
+        //    //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
+        //    List<double> stagesList = new List<double>();
+        //    List<double> flowsList = new List<double>();
+        //    for (int i = 0; i < rat.NumberOfPoints; i++)
+        //    {
+        //        stagesList.Add(stages[i]);
+        //        flowsList.Add(flows[i]);
+        //    }
+        //    //always use linear. This is the only option in Old Fda.
+        //    ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
+        //    IFdaFunction rating = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)func);
+        //    //add the plan year stream reach for the description
+        //    RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, rating);
+        //    SaveNew(elem);
+        //}
+
 
         #endregion
 

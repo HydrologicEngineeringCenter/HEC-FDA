@@ -30,8 +30,13 @@ namespace ViewModel.GeoTech
             add.Header = "Create New Levee Feature";
             add.Action = AddNewLeveeFeature;
 
+            NamedAction importFromFile = new NamedAction();
+            importFromFile.Header = StringConstants.ImportFromOldFda("Levees");
+            importFromFile.Action = ImportFromFile;
+
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
             localActions.Add(add);
+            localActions.Add(importFromFile);
 
             Actions = localActions;
 
@@ -54,6 +59,15 @@ namespace ViewModel.GeoTech
         {
             AddElement(e.Element);
         }
+
+        public void ImportFromFile(object arg1, EventArgs arg2)
+        {
+            ImportFromFDA1VM vm = new ImportLeveeElementFromFDA1VM();
+            string header = "Import Levee";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportLevee");
+            Navigate(tab, false, true);
+        }
+
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(

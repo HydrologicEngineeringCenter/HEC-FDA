@@ -1,39 +1,38 @@
-﻿using ViewModel.Utilities;
-using Functions;
+﻿using Functions;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.FlowTransforms
 {
-    public class InflowOutflowOwnerElement : Utilities.ParentElement
+    public class InflowOutflowOwnerElement : ParentElement
     {
         #region Notes
         #endregion
         #region Fields
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
+
         #endregion
         #region Constructors
         public InflowOutflowOwnerElement( ) : base()
         {
             Name = "Inflow Outflow Relationships";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addInflowOutflow = new Utilities.NamedAction();
-            addInflowOutflow.Header = "Create New Inflow Outflow Relationship";
+            NamedAction addInflowOutflow = new NamedAction();
+            addInflowOutflow.Header = "Create New Inflow Outflow Relationship...";
             addInflowOutflow.Action = AddInflowOutflow;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            NamedAction importInflowOutflow = new NamedAction();
+            importInflowOutflow.Header = StringConstants.ImportFromOldFda("Inflow-Outflow");
+            importInflowOutflow.Action = ImportInflowOutflow;
+
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addInflowOutflow);
+            localActions.Add(importInflowOutflow);
 
             Actions = localActions;
 
@@ -41,8 +40,6 @@ namespace ViewModel.FlowTransforms
             StudyCache.InflowOutflowRemoved += RemoveInflowOutflowElement;
             StudyCache.InflowOutflowUpdated += UpdateInflowOutflowElement;
         }
-
-
         #endregion
         #region Voids
         private void UpdateInflowOutflowElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -57,21 +54,21 @@ namespace ViewModel.FlowTransforms
         {
             RemoveElement(e.Element);
         }
-        private void ImportFromASCII(object arg1, EventArgs arg2)
+
+        public void ImportInflowOutflow(object arg1, EventArgs arg2)
         {
-            throw new NotImplementedException();
+            ImportFromFDA1VM vm = new ImportInflowOutflowFromFDA1VM();
+            string header = "Import Inflow Outflow Curves";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportInflowOutflowCurve");
+            Navigate(tab, false, true);
         }
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
-
-            //double[] xValues = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
-            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
-            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
@@ -79,60 +76,25 @@ namespace ViewModel.FlowTransforms
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
-            //vm.ParentGUID = this.GUID;
-            //StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
+
             string title = "Create Inflow Outflow";
             DynamicTabVM tab = new DynamicTabVM(title, vm, "NewInflowOutflow" + Name);
             Navigate( tab, false, false);
-            //if (!vm.WasCancled)
-            //{
-            //    if (!vm.HasFatalError)
-            //    {
-
-            //        vm.SaveWhileEditing();
-
-            //    }
-            //}
-
         }
       
-        public override void AddValidationRules()
-        {
-            //AddRule(nameof(Name), () => Name != "test", "Name cannot be test.");
-
-            //throw new NotImplementedException();
-        }
         #endregion
-        #region Functions
-    
+        #region Functions  
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
 
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new InflowOutflowElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-           // return null;
         }
-        //public override ChildElement CreateElementFromRowData(object[] rowData)
-        //{
-        //    Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-        //    InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc, this);
-        //    inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
-        //    return inout;
-        //}
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-            
-        //    AddElement(CreateElementFromRowData(rowData),false);
-        //}
         #endregion
     }
 }

@@ -43,19 +43,19 @@ namespace ViewModel.ImpactArea
             SelectedPath = selectedPath;
 
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Impact Area Set";
+            edit.Header = "Edit Impact Area Set...";
             edit.Action = Edit;
 
             NamedAction addToMapWindow = new NamedAction();
-            addToMapWindow.Header = "Add Impact Area Set To Map Window";
+            addToMapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
             addToMapWindow.Action = ImpactAreasToMapWindow;
 
             NamedAction removeImpactArea = new NamedAction();
-            removeImpactArea.Header = "Remove";
+            removeImpactArea.Header = StringConstants.REMOVE_MENU;
             removeImpactArea.Action = RemoveElement;
 
             NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<NamedAction> localactions = new List<NamedAction>();

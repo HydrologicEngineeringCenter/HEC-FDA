@@ -39,15 +39,15 @@ namespace ViewModel.StageTransforms
             Curve = exteriorInteriorCurve;
 
             Utilities.NamedAction editExteriorInteriorCurve = new Utilities.NamedAction();
-            editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve";
+            editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve...";
             editExteriorInteriorCurve.Action = EditExteriorInteriorCurve;
 
             Utilities.NamedAction removeExteriorInteriorCurve = new Utilities.NamedAction();
-            removeExteriorInteriorCurve.Header = "Remove";
+            removeExteriorInteriorCurve.Header = StringConstants.REMOVE_MENU;
             removeExteriorInteriorCurve.Action = RemoveElement;
 
             Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

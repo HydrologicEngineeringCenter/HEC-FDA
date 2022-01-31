@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
-using ViewModel.Inventory;
-using ViewModel.Saving;
-using ViewModel.Saving.PersistenceManagers;
+using static System.Console;
 
 namespace Importer
 {
@@ -207,7 +201,6 @@ namespace Importer
         public void ExportHeader(StreamWriter wr, char delimt)
         {
             //fieldsStructures
-
             for (int i = 0; i < AsciiImportExport.FieldsStructure.Length; i++)
             {
                 wr.Write($"{ AsciiImportExport.FieldsStructure[i]}{ delimt}");
@@ -229,7 +222,6 @@ namespace Importer
             wr.Write($"{this.ValueOfContent}{delimt}");
             wr.Write($"{this.ValueOfOther}{delimt}");
             wr.Write($"{this.ValueOfCar}{delimt}");
-            //wr.Write($"{this.M_usesFirstFloorElev}{delimt}");
             if (this.UsesFirstFloorElev)
                 wr.Write($"1{delimt}");
             else
@@ -255,71 +247,6 @@ namespace Importer
             wr.Write($"{this.ParcelNumber}{delimt}");
             wr.Write("\n");
         }
-
-        //public void SaveToSqlite()
-        //{
-           
-
-        //    StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(Name, Description);
-        //    InventoryElement newElem = new InventoryElement(baseElem);
-        //    StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
-        //    manager.SaveNew(newElem);
-        //}
-        //Basically i am going to have to build the datatable from all these structures and do what i did in the "next" button click
-        //in "ImportStrucuturesFromShape...". Somehow i will have to use the northing and easting to fill the geometry blob. 
-        public object[] CreateFDA2DatabaseRow(string occTypeGroupName)
-        {
-            //geom, occtype, occtypeGroupName, found ht, struct value, cont value, other value, veh value, firstfloorelev, ground elev, year, module
-            object[] row = new object[14];
-            //fid
-            //this is not a concept that old fda has. I will just put -1 for now.
-            row[0] = -1;// SidReachId;
-            //geom, 
-            row[1] = -1;// NorthingCoordinate; //add easting coordinate
-            //occtype, 
-            row[2] = "??"; //CategoryName? - damage category - add dam cat column to db?
-            //dam cat
-            row[3] = GlobalVariables.mp_fdaStudy.GetDamageCategoryList().getName(CategoryId);
-            //occtypeGroupName, 
-            row[4] = occTypeGroupName;
-            //found ht, 
-            double foundHt = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR] - ElevationsStructure[(int)ElevationValue.GROUND];
-            row[5] = foundHt; //foundation height is first floor - ground elev.
-            //struct value, 
-            row[6] = UseValueOrZeroIfBadNumber(ValueOfStructure);
-            //cont value, 
-            row[7] = UseValueOrZeroIfBadNumber(ValueOfContent);
-            //other value, 
-            row[8] = UseValueOrZeroIfBadNumber(ValueOfOther);
-            //veh value, 
-            row[9] = UseValueOrZeroIfBadNumber(ValueOfCar);
-            //firstfloorelev, 
-            row[10] = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR];
-            //ground elev,
-            row[11] = ElevationsStructure[(int)ElevationValue.GROUND];
-            //year,
-            row[12] = YearInServiceInt;
-            //module
-            row[13] = StructureModuleName;
-
-            return row;
-
-        }
-
-        private double UseValueOrZeroIfBadNumber(double value)
-        {
-            if(value == Study.badNumber)
-            {
-                return 0;
-            }
-            else
-            {
-                return value;
-            }
-        }
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

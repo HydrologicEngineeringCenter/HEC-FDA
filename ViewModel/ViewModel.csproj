@@ -10,7 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
+    <Compile Remove="GeoTech\FailureFunctionEditorVM.cs" />
+    <Compile Remove="GeoTech\FailureFunctionElement.cs" />
+    <Compile Remove="GeoTech\FailureFunctionOwnerElement.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
+    <Compile Remove="Saving\PersistenceManagers\FailureFunctionPersistenceManager.cs" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -95,6 +100,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
     <ProjectReference Include="..\Functions\Functions.csproj" />
+    <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>

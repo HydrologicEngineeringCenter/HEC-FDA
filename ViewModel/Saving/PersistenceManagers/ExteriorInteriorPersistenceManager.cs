@@ -9,6 +9,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Importer;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -126,7 +127,24 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         #endregion
 
+        public void SaveFDA1Element(Levee lev)
+        {
+            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
+            string description = pysr + lev.Description;
 
+            List<ICoordinate> extIntCoords = new List<ICoordinate>();
+            foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
+            {
+                double x = xy.GetX();
+                double y = xy.GetY();
+                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
+            }
+            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
+            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
+            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, description, func);
+            SaveNewElement(elem);
+        }
         public void SaveNew(ChildElement element)
         {
             //save to parent table
@@ -135,7 +153,6 @@ namespace ViewModel.Saving.PersistenceManagers
             SaveToChangeTable(element);
             //log message
             Log(FdaLogging.LoggingLevel.Info, "Created new exterior interior curve: " + element.Name, element.Name);
-
         }
 
         public void Remove(ChildElement element)

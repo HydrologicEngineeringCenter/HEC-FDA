@@ -15,7 +15,6 @@ namespace ViewModel.Study
 {
     public class StudyElement : ParentElement
     {
-        private const string IMPORT_FROM_OLD_FDA = "Import Study From Fda 1";
 
         public event EventHandler RenameTreeViewElement;
         public event EventHandler AddBackInTreeViewElement;
@@ -52,7 +51,7 @@ namespace ViewModel.Study
             open.Action = OpenStudy;
 
             NamedAction importStudyFromOldFda = new NamedAction();
-            importStudyFromOldFda.Header = IMPORT_FROM_OLD_FDA;
+            importStudyFromOldFda.Header = StringConstants.IMPORT_FROM_OLD_FDA;
             importStudyFromOldFda.Action = ImportStudyFromOldFda;
 
             NamedAction create = new NamedAction();
@@ -334,7 +333,7 @@ namespace ViewModel.Study
         private void ImportStudyFromOldFda(object sender, EventArgs e)
         {
             ImportFromOldFdaVM vm = new ImportFromOldFdaVM(this);
-            string header = "Import Study From Fda 1.0";
+            string header = StringConstants.IMPORT_FROM_OLD_FDA;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStudy");
             Navigate(tab, false, false);
         }
@@ -430,7 +429,6 @@ namespace ViewModel.Study
             PersistenceFactory.GetInflowOutflowManager().Load();
             PersistenceFactory.GetExteriorInteriorManager().Load();
             PersistenceFactory.GetLeveeManager().Load();
-            PersistenceFactory.GetFailureFunctionManager().Load();
             PersistenceFactory.GetStageDamageManager().Load();
             PersistenceFactory.GetStructureInventoryManager().Load();
             PersistenceFactory.GetIASManager().Load();

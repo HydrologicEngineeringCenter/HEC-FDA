@@ -49,15 +49,15 @@ namespace ViewModel.Watershed
                 CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON);
 
                 Utilities.NamedAction remove = new Utilities.NamedAction();
-                remove.Header = "Remove Terrain";
+                remove.Header = StringConstants.REMOVE_MENU;
                 remove.Action = RemoveElement;
 
                 Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
-                renameElement.Header = "Rename";
+                renameElement.Header = StringConstants.RENAME_MENU;
                 renameElement.Action = Rename;
 
                 Utilities.NamedAction mapWindow = new Utilities.NamedAction();
-                mapWindow.Header = "Add to Map Window";
+                mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                 mapWindow.Action = AddTerrainToMapWindow;
 
                 List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
@@ -83,9 +83,9 @@ namespace ViewModel.Watershed
             RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(_featureHashCode));
             foreach (Utilities.NamedAction a in Actions)
             {
-                if (a.Header.Equals("Remove from Map Window"))
+                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Add to Map Window";
+                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                     a.Action = AddTerrainToMapWindow;
                 }
             }
@@ -94,9 +94,9 @@ namespace ViewModel.Watershed
         {
             foreach (Utilities.NamedAction a in Actions)
             {
-                if (a.Header.Equals("Remove from Map Window"))
+                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Add to Map Window";
+                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                     a.Action = AddTerrainToMapWindow;
                 }
             }
@@ -116,9 +116,9 @@ namespace ViewModel.Watershed
             _featureHashCode = args.MapFeatureHash;
             foreach (Utilities.NamedAction a in Actions)
             {
-                if (a.Header.Equals("Add to Map Window"))
+                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Remove from Map Window";
+                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
                     a.Action = RemoveElementFromMapWindow;
                 }
             }

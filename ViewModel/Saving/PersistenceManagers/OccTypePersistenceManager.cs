@@ -1,5 +1,7 @@
 ﻿using FdaLogging;
 using Functions;
+using Functions.Ordinates;
+using Importer;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -844,7 +846,7 @@ namespace ViewModel.Saving.PersistenceManagers
         //{
         //    OccupancyTypesOwnerElement owner = StudyCacheForSaving.GetParentElementOfType<OccupancyTypesOwnerElement>();
         //        owner.CustomTreeViewHeader = new CustomHeaderVM(owner.Name,"", " -saving", true);
-          
+
 
         //    await Task.Run(() =>
         //    {
@@ -862,15 +864,26 @@ namespace ViewModel.Saving.PersistenceManagers
         //            //add element to cache
         //            StudyCacheForSaving.AddOccTypesElement(element);
         //            owner.CustomTreeViewHeader = new CustomHeaderVM(owner.Name);
-                   
+
 
         //        }
         //    });
 
         //}
 
-        
+        #region import from old fda
+        //public void SaveFDA1Elements(OccupancyTypeList ots, string groupName)
+        //{
+        //    List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+        //    foreach (Importer.OccupancyType ot in ots.Occtypes)
+        //    {
+        //        fda2Occtypes.Add(GetFDA2OccupancyType(ot));
+        //    }
+        //    SaveNewOcctypes(fda2Occtypes, groupName);
+        //    //OccupancyTypes = fda2Occtypes;
+        //}
 
+        #endregion
         public void SaveNew(ChildElement element)
         {
             //OccupancyTypesOwnerElement owner = StudyCacheForSaving.GetParentElementOfType<OccupancyTypesOwnerElement>();

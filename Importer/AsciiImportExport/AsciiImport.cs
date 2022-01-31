@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using static Importer.ProbabilityFunction;
 using static System.Console;
-using Functions;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving.PersistenceManagers;
-using System.Data;
-using ViewModel.Inventory;
-using ViewModel.WaterSurfaceElevation;
 
 namespace Importer
 {
@@ -61,27 +53,30 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
-        private string _FileName;
+        public string _FileName;
 
         public enum ImportOptions
         {
             ImportEverything,
-            ImportOcctypesOnly,
-            ImportStructuresOnly,
-            ImportWaterSurfaceProfilesOnly
+            ImportOcctypes,
+            ImportRatings,
+            ImportInflowOutflow,
+            ImportStageDamages,
+            ImportExteriorInterior,
+            ImportLevees,
+            ImportFrequency,
         }
 
         #endregion
         #region Properties
-        public DataTable StructuresForFDA2 { get; set; }
-        public List<IOccupancyType> OccupancyTypes { get; set; }
-        public List<WaterSurfaceElevationElement> WaterSurfaceElevs {get;set;}
+        private AsyncLogger _Logger;
         public bool UsesDollar
         { get; set; }
         #endregion
         #region Constructors
-        public AsciiImport()
+        public AsciiImport(AsyncLogger logger)
         {
+            _Logger = logger;
             //clear the fda study. Because it is public static it hangs around forever.
             //This might not be the first time we are importing during an open session, so the study should be cleared.
             GlobalVariables.mp_fdaStudy = new Study();
@@ -164,183 +159,114 @@ namespace Importer
             }
             reader.Close();
 
-            switch(importOptions)
+            switch (importOptions)
             {
                 case ImportOptions.ImportEverything:
-                    {
-                        //write everything you can to sqlite
-                        SaveStructuresToNewFDA();
-                        SaveOccupancyTypes(_FileName);
-                        //flow-freq 
-                        SaveProbabilityFunctions();
-                        //failure function, ext-int stage
-                        SaveLevees();
-                        SaveRatingCurvesToNewFDA();
-                        SaveAggregatedStageDamageToNewFDA();
-                        SaveWaterSurfaceProfilesToNewFDA();
-
-                        break;
-                    }
-                case ImportOptions.ImportOcctypesOnly:
-                    {
-                        //I don't actually want to save here. I just want to grab them
-                        ReadOccTypes();
-                        break;
-                    }
-                case ImportOptions.ImportStructuresOnly:
-                    {
-                        ReadStructuresToNewFDA();
-                        break;
-                    }
-                case ImportOptions.ImportWaterSurfaceProfilesOnly:
-                    {
-                        //write only the wsp's out
-                        ReadWaterSurfaceProfiles();
-                        break;
-                    }
+                    PrintEverything();
+                    break;
+                case ImportOptions.ImportOcctypes:
+                    PrintOcctypes();
+                    break;
+                case ImportOptions.ImportFrequency:
+                    PrintFrequencyFunction();
+                    break;
+                case ImportOptions.ImportInflowOutflow:
+                    PrintInflowOutflowFunction();
+                    break;
+                case ImportOptions.ImportRatings:
+                    PrintRatings();
+                    break;
+                case ImportOptions.ImportExteriorInterior:
+                    PrintExteriorInteriorFunctions();
+                    break;
+                case ImportOptions.ImportLevees:
+                    PrintLevees();
+                    break;
+                case ImportOptions.ImportStageDamages:
+                    PrintStageDamage();
+                    break;
             }
 
-            #region print statements
-            WriteLine($"\n\nPrint Plans at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetPlanList().Print();
-            WriteLine($"\nPrint Years at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetYearList().Print();
-            WriteLine($"\nPrint Streams at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetStreamList().Print();
-            WriteLine($"\nPrint Damage Reaches at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetDamageReachList().Print();
-            WriteLine($"\nPrint Damage Categories at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetDamageCategoryList().Print();
-            WriteLine($"\nPrint Structure Modules at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetStructureModuleList().Print();
-            WriteLine($"\nPrint Occupancy Types at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Print();
-            WriteLine($"\nPrint Structures at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetStructureList().Print();
-            WriteLine($"\nPrint Water Surface Profiles at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetWspList().Print();
-            WriteLine($"\nPrint Probability Functions at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Print();
-            WriteLine($"\nPrint Rating Functions at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Print();
-            WriteLine($"\nPrint Levees at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetLeveeList().Print();
-            WriteLine($"\nPrint Aggregated Damage Functions at end of Import.");
-            GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print();
-            #endregion
+            
         }
 
-        /// <summary>
-        /// Reads the occtypes from the ascii file and then converts them to FDA2.0 occtypes and sets them
-        /// to the OccupancyTypes property.
-        /// </summary>
-        private void ReadOccTypes()
-        {
-            List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
-            OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
-            foreach (OccupancyType ot in occtypes.Occtypes)
-            {
-                fda2Occtypes.Add(ot.GetFDA2OccupancyType());
-            }
-            OccupancyTypes = fda2Occtypes;
-        }
+        #region print statements
 
-        /// <summary>
-        /// This will save out the failure function and the ext int stage function
-        /// </summary>
-        private void SaveLevees()
-        {
-            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
-            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
-            {
-                kvp.Value.SaveToSqlite();
-            }
-        }
-
-        /// <summary>
-        /// This will save the discharge-frequency and ext-frequency functions
-        /// </summary>
-        private void SaveProbabilityFunctions()
+        private void PrintFrequencyFunction()
         {
             ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
-                kvp.Value.SaveToSqlite();
+                ProbabilityFunction pf = kvp.Value;
+                FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
+                if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
+                {
+                    pf.Print(_Logger);
+                }
             }
         }
 
-        private void SaveAggregatedStageDamageToNewFDA()
+        private void PrintInflowOutflowFunction()
         {
-            AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
-            foreach (KeyValuePair<string, AggregateDamageFunction> kvp in aggDamageList.GetAggDamageFunctions)
+            ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
+            foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
-                kvp.Value.SaveToSqlite();
+                ProbabilityFunction pf = kvp.Value;
+                FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
+                if (pf.NumberOfTransFlowPoints > 0)
+                {
+                    pf.Print(_Logger, ImportOptions.ImportInflowOutflow);
+                }
             }
         }
 
-        private void ReadStructuresToNewFDA()
+        private void PrintRatings()
         {
-            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
-            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
-            DataTable dt = manager.CreateEmptyStructuresTable();
-            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
-            {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
-                dt.Rows.Add(structRow);
-            }
-            StructuresForFDA2 = dt;
+            GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Print(_Logger);
         }
 
-        private void SaveStructuresToNewFDA()
+        private void PrintExteriorInteriorFunctions()
         {
-            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
-            //move the create datatable into the pers manager and call it here
-            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
-            DataTable dt = manager.CreateEmptyStructuresTable();
-            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
+            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
-                dt.Rows.Add(structRow);
-            }
-            //the data table needs to be saved first.
-            manager.SaveNew(dt, _FileName);
-            manager.SaveNewInventoryToParentTable(_FileName);
-        }
-
-        private void ReadWaterSurfaceProfiles()
-        {
-            List<WaterSurfaceElevationElement> elems = new List<WaterSurfaceElevationElement>();
-            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
-            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
-            {
-                elems.Add( kvp.Value.ConvertToFDA2());
-            }
-            WaterSurfaceElevs = elems;
-        }
-
-        private void SaveWaterSurfaceProfilesToNewFDA()
-        {
-            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
-            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
-            {
-                kvp.Value.SaveToSqlite();
-            }
-        }
-        private void SaveRatingCurvesToNewFDA()
-        {
-            RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
-            foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
-            {
-                rat.Value.SaveToSqlite();
+                Levee lev = kvp.Value;
+                if (lev.ExteriorInteriorPairs.Count > 0)
+                {
+                    lev.Print(_Logger, ImportOptions.ImportExteriorInterior);
+                }
             }
         }
 
-        private void SaveOccupancyTypes(string groupName)
+        private void PrintLevees()
         {
-            ReadOccTypes();
-            OccTypePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetOccTypeManager();
-            manager.SaveNewOcctypes(OccupancyTypes, groupName);
+            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
+            {
+                Levee lev = kvp.Value;
+                lev.Print(_Logger, ImportOptions.ImportLevees);              
+            }
         }
+
+        private void PrintStageDamage()
+        {
+            GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print(_Logger);
+        }
+        private void PrintOcctypes()
+        {
+            GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Print(_Logger);
+        } 
+
+        private void PrintEverything()
+        {
+            PrintFrequencyFunction();
+            PrintInflowOutflowFunction();
+            PrintRatings();
+            PrintExteriorInteriorFunctions();
+            PrintLevees();
+            PrintOcctypes();
+        }
+        #endregion
 
         #region findFields
         void FindFields()
@@ -410,7 +336,6 @@ namespace Importer
                         _IxFieldPlan[ip] = jf;
                     }
                 }
-
             }
         }
         void FindYearNameFields()
@@ -1248,7 +1173,7 @@ namespace Importer
 
                 if (_OccupancyType.Name != "")
                 {
-                    GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Add(_OccupancyType);
+                    GlobalVariables.mp_fdaStudy.GetOccupancyTypeList().Add(_OccupancyType, _Logger);
 
                     ////rdc test;13Aug2018;rdc critical;Test conversion into Johns IEnumerator
                     //IFunction<double>[] test = new IFunction<double>[4];
@@ -1939,7 +1864,7 @@ namespace Importer
         protected void FlushProbFunction()
         {
             if (_MustFlushProbFunc)
-                GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Add(_FrequencyFunction);
+                GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Add(_FrequencyFunction, _Logger);
             _MustFlushProbFunc = false;
             _FrequencyFunction.Reset();
         }
@@ -2155,7 +2080,7 @@ namespace Importer
             if (_MustFlushRatingFunc)
             {
                // _RatingFunction.SaveToSqlite();
-                GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Add(_RatingFunction);
+                GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Add(_RatingFunction, _Logger);
             }
             _MustFlushRatingFunc = false;
             _RatingFunction.Reset();
@@ -2310,7 +2235,7 @@ namespace Importer
         protected void FlushLevee()
         {
             if (_MustFlushLevee)
-                GlobalVariables.mp_fdaStudy.GetLeveeList().Add(_Levee);
+                GlobalVariables.mp_fdaStudy.GetLeveeList().Add(_Levee, _Logger, ImportOptions.ImportEverything);
             _MustFlushLevee = false;
             _Levee.Reset();
         }
@@ -2552,7 +2477,7 @@ namespace Importer
         {
             if (_MustFlushAggDamgFunc)
             {
-                GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Add(_AggregateDamageFunction);
+                GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Add(_AggregateDamageFunction, _Logger);
             }
             _MustFlushAggDamgFunc = false;
             _AggregateDamageFunction.Reset();

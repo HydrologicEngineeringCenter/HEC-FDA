@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
-using ViewModel.WaterSurfaceElevation;
-using ViewModel.Saving.PersistenceManagers;
+using System.Linq;
+using static System.Console;
 
 namespace Importer
 {
     [Serializable]
-    public class WaterSurfaceProfile : FdObjectDataLook, ISaveToSqlite
+    public class WaterSurfaceProfile : FdObjectDataLook
     {
         #region Notes
         // Created By: $username$
@@ -295,32 +291,6 @@ namespace Importer
 
             return _WspSectionDataList.Count;
         }
-
-        public void SaveToSqlite()
-        {
-            //path and probability
-            List<double> probs = new List<double>();
-            for(int i = 0;i<NumberOfProfiles; i++)
-            {
-                probs.Add(wspProbs[i]);
-            }
-
-            WaterSurfaceElevationElement elem = new WaterSurfaceElevationElement(Name, Description, probs, true);
-            WaterSurfaceAreaPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetWaterSurfaceManager();
-            manager.SaveNew(elem);
-        }
-
-        public WaterSurfaceElevationElement ConvertToFDA2()
-        {
-            //path and probability
-            List<double> probs = new List<double>();
-            for (int i = 0; i < NumberOfProfiles; i++)
-            {
-                probs.Add(wspProbs[i]);
-            }
-            return new WaterSurfaceElevationElement(Name, Description, probs, false);
-        }
-
         #endregion
     }
 }

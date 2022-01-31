@@ -96,7 +96,7 @@ namespace Importer
                     }
 
                 }
-                theFuncList.Add(theFunc);
+                theFuncList.Add(theFunc, null);
             }
         }
     }

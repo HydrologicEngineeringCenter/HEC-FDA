@@ -69,10 +69,6 @@ namespace ViewModel.Saving
             {
                 manager = new LeveePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(FailureFunctionElement))
-            {
-                manager = new FailureFunctionPersistenceManager(StudyCacheForSaving);
-            }
             else if (element.GetType() == typeof(InventoryElement))
             {
                 manager = new StructureInventoryPersistenceManager(StudyCacheForSaving);
@@ -139,10 +135,6 @@ namespace ViewModel.Saving
         public static LeveePersistenceManager GetLeveeManager( )
         {
             return new LeveePersistenceManager(StudyCacheForSaving);
-        }
-        public static FailureFunctionPersistenceManager GetFailureFunctionManager( )
-        {
-            return new FailureFunctionPersistenceManager(StudyCacheForSaving);
         }
         public static StageDamagePersistenceManager GetStageDamageManager( )
         {

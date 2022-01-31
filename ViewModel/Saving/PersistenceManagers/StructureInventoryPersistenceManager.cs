@@ -164,10 +164,17 @@ namespace ViewModel.Saving.PersistenceManagers
         public void SaveNew(DataTable structureData, string structuresName)
         {  
             string tableName = STRUCTURE_INVENTORY_TABLE_CONSTANT + structuresName;
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            if (!Connection.Instance.IsConnectionNull)
             {
-                Storage.Connection.Instance.CreateTable(tableName, ChildTableColumns, ChildTableTypes);
-                DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+                List<string> colNames = new List<string>();
+                List<Type> colTypes = new List<Type>();
+                foreach(DataColumn col in structureData.Columns)
+                {
+                    colNames.Add( col.ColumnName);
+                    colTypes.Add(col.DataType);
+                }
+                Connection.Instance.CreateTable(tableName, colNames.ToArray(), colTypes.ToArray());
+                DataTableView tbl = Connection.Instance.GetTable(tableName);
                 
                 for(int i = 0;i<structureData.Rows.Count;i++)
                 {

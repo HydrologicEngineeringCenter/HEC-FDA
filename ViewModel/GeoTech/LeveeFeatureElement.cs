@@ -57,15 +57,15 @@ namespace ViewModel.GeoTech
             Elevation = elevation;
 
             Utilities.NamedAction editLeveeFeature = new Utilities.NamedAction();
-            editLeveeFeature.Header = "Edit Levee Feature";
+            editLeveeFeature.Header = "Edit Levee Feature...";
             editLeveeFeature.Action = EditLeveeFeature;
 
             Utilities.NamedAction removeLeveeFeature = new Utilities.NamedAction();
-            removeLeveeFeature.Header = "Remove";
+            removeLeveeFeature.Header = StringConstants.REMOVE_MENU;
             removeLeveeFeature.Action = RemoveElement;
 
             Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

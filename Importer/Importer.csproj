@@ -9,9 +9,4 @@
   <ItemGroup>
     <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.10.28.1541" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Functions\Functions.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
-  </ItemGroup>
 </Project>

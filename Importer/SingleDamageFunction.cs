@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-//John's Code
-using Functions;
 
 namespace Importer
 {
@@ -26,7 +19,6 @@ namespace Importer
         private double[] _Damage;
         private double[] _StdDev;
         private double[] _ErrHi;
-        private ICoordinatesFunction _theFunction;
 
         #endregion
         #region Properties
@@ -178,63 +170,6 @@ namespace Importer
         { return this._ErrorType; }
         public bool DirectDollar
         { get; set; }
-        //public double[] GetDepth()
-        //{ return this._Depth; }
-        //public double[] GetDamage()
-        //{ return this._Damage; }
-        //public double[] GetStdDev()
-        //{ return this._StdDev; }
-        //public double[] GetTriangularLower()
-        //{ return this._StdDev; }
-        //public double[] GetTriangularUpper()
-        //{ return this._ErrHi; }
-        public ICoordinatesFunction getFunctionV2()
-        {
-            return _theFunction;
-        }
-        //Cody commented this out on 2/5/20 because it wasn't being used and i don't think it is needed.
-        //public ICoordinatesFunction ConvertToV2()
-        //{
-        //    //IEnumerable<Pair_xy> itemp = (IEnumerable)new Pair_xy(_Depth[0], _Damage[0]); //Compile error
-        //    _theFunction = null;
-        //    if (_NumOrdinates < 1)
-        //    {
-        //        Console.WriteLine("\n\nSingle Damage Function has no ordinates.");
-        //        //Create dummy depth-damage function with no damage
-        //        _theFunction = FunctionFactory.CreateFunction(new double[2]{ 0,1}, new double[2]{ 0,0});
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            /*
-        //            double[] xout = new double[_NumOrdinates];
-        //            double[] yout = new double[_NumOrdinates];
-
-        //            FunctionXY theXYFunction = new FunctionXY(_NumOrdinates, _Depth, _Damage);
-        //            theXYFunction.GetCompressedFunction(xout, yout);
-
-        //            theFunction = FunctionFactory.CreateFunction(xout, yout);
-        //            */
-
-        //            IOrdinate<double>[] a = new IOrdinate<double>[10];
-        //            //a[0] = new IOrdinate<double>(1,2);
-        //            //a[0].x = 0;   //.x is private, can't access it
-
-        //            _theFunction = FunctionFactory.CreateFunction(_Depth, _Damage);
-        //            // _theFunction = FunctionFactory.CreateFunction(IEnumerable<IOrdinate<double>> ordinates)
-        //            IOrdinate<double> theOrd = _theFunction.Ordinates.ElementAt(0);
-        //        }
-        //        catch (ArgumentException e)
-        //        {
-        //            Console.WriteLine("\n\nFailure to convert Bobz function to Johnz function.");
-        //            Console.WriteLine(e);
-        //        }
-        //    }
-
-        //    // doesn't work OrdinatesFunctionFixedYs _ordFuncFixedY = new OrdinatesFunctionFixedYs(this._Depth, this._Damage);
-        //    return _theFunction;
-        //}
         #endregion
     }
 }

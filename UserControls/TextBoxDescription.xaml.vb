@@ -58,8 +58,8 @@ Namespace UserControls
             _DescriptionWindow.MaxHeight = Int32.MaxValue
             _DescriptionWindow.MaxWidth = Int32.MaxValue
             _DescriptionWindow.MinWidth = 100
-            Arrow.Visibility = Visibility.Collapsed
-            Expand.IsEnabled = False
+            'Arrow.Visibility = Visibility.Collapsed
+            'Expand.IsEnabled = False
 
         End Sub
         Private Sub WindowCloses(sender As System.Object, e As System.EventArgs)
@@ -68,28 +68,28 @@ Namespace UserControls
             Dim parent As Window = Window.GetWindow(Me)
             RemoveHandler parent.LocationChanged, AddressOf ParentMove
             RemoveHandler parent.SizeChanged, AddressOf ParentResize
-            Arrow.Visibility = Visibility.Visible
-            Expand.IsEnabled = True
+            'Arrow.Visibility = Visibility.Visible
+            'Expand.IsEnabled = True
         End Sub
-        Private Sub Expand_Click(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles Expand.Click
+        'Private Sub Expand_Click(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles Expand.Click
 
-            Dim parent As Window = Window.GetWindow(Me)
-            AddHandler parent.LocationChanged, AddressOf ParentMove
-            AddHandler parent.SizeChanged, AddressOf ParentResize
-            Dim location As Point = Me.PointToScreen(New Point(0, 0))
-            _DescriptionWindow = New DescriptionWindow()
-            _DescriptionWindow.Owner = parent
-            _DescriptionWindow.DataContext = Me
-            _DescriptionWindow.MaxHeight = MaxAllowableHeight
-            _DescriptionWindow.Width = ActualWidth
-            _DescriptionWindow.MaxWidth = ActualWidth
-            _DescriptionWindow.MinWidth = ActualWidth
-            _DescriptionWindow.Top = Top
-            _DescriptionWindow.Left = Left
-            _DescriptionWindow.Show()
-            AddHandler _DescriptionWindow.Closing, AddressOf WindowCloses
-            AddHandler _DescriptionWindow.RequestPopOut, AddressOf HandlePopOut
-        End Sub
+        '    Dim parent As Window = Window.GetWindow(Me)
+        '    AddHandler parent.LocationChanged, AddressOf ParentMove
+        '    AddHandler parent.SizeChanged, AddressOf ParentResize
+        '    Dim location As Point = Me.PointToScreen(New Point(0, 0))
+        '    _DescriptionWindow = New DescriptionWindow()
+        '    _DescriptionWindow.Owner = parent
+        '    _DescriptionWindow.DataContext = Me
+        '    _DescriptionWindow.MaxHeight = MaxAllowableHeight
+        '    _DescriptionWindow.Width = ActualWidth
+        '    _DescriptionWindow.MaxWidth = ActualWidth
+        '    _DescriptionWindow.MinWidth = ActualWidth
+        '    _DescriptionWindow.Top = Top
+        '    _DescriptionWindow.Left = Left
+        '    _DescriptionWindow.Show()
+        '    AddHandler _DescriptionWindow.Closing, AddressOf WindowCloses
+        '    AddHandler _DescriptionWindow.RequestPopOut, AddressOf HandlePopOut
+        'End Sub
 
         Private Sub TxtDescription_KeyDown(sender As Object, e As Input.KeyEventArgs)
             Dim t As System.Windows.Controls.TextBox = DirectCast(sender, System.Windows.Controls.TextBox)

@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
-using Functions;
-using ViewModel.GeoTech;
-using ViewModel.StageTransforms;
-using Model;
+using System.Linq;
+using static Importer.AsciiImport;
 
 namespace Importer
 {
     [Serializable]
-    public class Levee : FdObjectDataLook, ISaveToSqlite
+    public class Levee : FdObjectDataLook
     {
         #region Notes
         // Created By: $username$
@@ -179,41 +173,41 @@ namespace Importer
             }
             return;
         }
-        public void Print()
+        public void Print(AsyncLogger logger, ImportOptions importOptions = ImportOptions.ImportEverything)
         {
             //Basic Information
-            WriteLine($"\n\nLevee Name: {Name}");
-            WriteLine($"\tDescription: {Description}");
-            WriteLine($"\tPlan: {PlanName}");
-            WriteLine($"\tYear: {YearName}");
-            WriteLine($"\tStream: {StreamName}");
-            WriteLine($"\tReach: {DamageReachName}");
-            WriteLine($"\tTop of Levee: {ElevationTopOfLevee}");
+            logger.Log($"\n\nLevee Name: {Name}");
+            logger.Log($"\tDescription: {Description}");
+            logger.Log($"\tPlan: {PlanName}");
+            logger.Log($"\tYear: {YearName}");
+            logger.Log($"\tStream: {StreamName}");
+            logger.Log($"\tReach: {DamageReachName}");
+            logger.Log($"\tTop of Levee: {ElevationTopOfLevee}");
 
             //Interior-Exterior Function
-            if (_IntExt.Count > 0)
+            if (_IntExt.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportExteriorInterior))
             {
-                WriteLine($"\n\tInterior-Exterior Function, Number of Points {_IntExt.Count}");
-                Write("\t\tExterior Elev: ");
+                logger.Log($"\n\tInterior-Exterior Function, Number of Points {_IntExt.Count}");
+                logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _IntExt.Count; i++)
-                    Write($"\t{_IntExt.ElementAt(i).GetX()}");
-                Write("\n\t\tInterior Elev: ");
+                    logger.Append($"\t{_IntExt.ElementAt(i).GetX()}");
+                logger.Append("\n\t\tInterior Elev: ");
                 for (int i = 0; i < _IntExt.Count; i++)
-                    Write($"\t{_IntExt.ElementAt(i).GetY()}");
-                Write("\n");
+                    logger.Append($"\t{_IntExt.ElementAt(i).GetY()}");
+                logger.Append("\n");
             }
 
             //Geotechnical Function
-            if (_GeoTech.Count > 0)
+            if (_GeoTech.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportLevees))
             {
-                WriteLine($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
-                Write("\t\tExterior Elev: ");
+                logger.Log($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
+                logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _GeoTech.Count; i++)
-                    Write($"\t{_GeoTech.ElementAt(i).GetX()}");
-                Write("\n\t\tFailure Probability: ");
+                    logger.Append($"\t{_GeoTech.ElementAt(i).GetX()}");
+                logger.Append("\n\t\tFailure Probability: ");
                 for (int i = 0; i < _GeoTech.Count; i++)
-                    Write($"\t{_GeoTech.ElementAt(i).GetY()}");
-                Write("\n");
+                    logger.Append($"\t{_GeoTech.ElementAt(i).GetY()}");
+                logger.Append("\n");
             }
 
             return;
@@ -310,59 +304,6 @@ namespace Importer
             }
             return;
         }
-
-        public void SaveToSqlite()
-        {
-            if (FailureFunctionPairs.Count > 0)
-            {
-                SaveFailureFunction();
-            }
-            if (ExteriorInteriorPairs.Count > 0)
-            {
-                SaveExtIntFunction();
-            }
-        }
-
-        private void SaveExtIntFunction()
-        {
-            List<ICoordinate> extIntCoords = new List<ICoordinate>();
-            foreach (Pair_xy xy in ExteriorInteriorPairs)
-            {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
-            }
-            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            Model.IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, function);
-            string editDate = DateTime.Now.ToString("G");
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
-            ViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
-        }
-
-        private void SaveFailureFunction()
-        {
-            List<ICoordinate> failureCoords = new List<ICoordinate>();
-            foreach (Pair_xy xy in FailureFunctionPairs)
-            {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                failureCoords.Add(ICoordinateFactory.Factory(x, y));
-            }
-
-            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, function);
-            string editDate = DateTime.Now.ToString("G");
-           // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
-            //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);
-            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(Name,editDate, Description, ElevationTopOfLevee, false,  func);
-            ViewModel.Saving.PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
-
-        }
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

@@ -124,9 +124,11 @@
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
             <GeoTechView:FailureFunctionEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
+        
+        
         
         <!--Aggrgated Region-->
         <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
@@ -144,14 +146,22 @@
         <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
             <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
 
         <!--GeoTech Region-->
         <DataTemplate DataType="{x:Type GeoTechVM:LeveeFeatureEditorVM }" >
             <GeoTechView:LeveeFeatureEditor/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type GeoTechVM:FailureFunctionEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type GeoTechVM:FailureFunctionEditorVM }" >
             <GeoTechView:FailureFunctionEditor/>
+        </DataTemplate>-->
+
+        <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
         <!--StageTransforms Region-->
@@ -161,7 +171,11 @@
         <DataTemplate DataType="{x:Type StageTransformsVM:ExteriorInteriorEditorVM }" >
             <StageTransformsView:ExteriorInteriorEditor/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+
         <!--FlowTransforms Region-->
         <DataTemplate DataType="{x:Type FlowTransformsVM:InflowOutflowEditorVM }" >
             <FlowTransformsView:InflowOutflowEditor/>
@@ -183,6 +197,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
             <OccupancyTypesView:OccTypeGroupRowItem/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportVM }" >
@@ -231,13 +248,9 @@
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromFDA1VM }" >
-            <InventoryView:ImportStructuresFromFDA1/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
@@ -379,7 +392,17 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:MapWindowControlVM }" >
             <UtilitiesView:MapWindowWrapper/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AggregatedVM:ImportStageDamageFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type FlowTransformsVM:ImportInflowOutflowFromFDA1VM }" >
+            <UtilitiesView:ImportFromFDA1/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
             <UtilitiesView:Rename/>
         </DataTemplate>
@@ -403,9 +426,7 @@
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterFDA1VM }" >
-            <WaterSurfaceElevationsView:WaterSurfaceElevationImporterFromFDA1/>
-        </DataTemplate>
+
         <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/View;component/Resources/Error.png" IsHitTestVisible="false"/>
         <Image x:Key="MessageImageKey" Source="pack://application:,,,/View;component/Resources/Message.png" IsHitTestVisible="false"/>
         <Image x:Key="HelpImageKey" Source="pack://application:,,,/View;component/Resources/help.png" IsHitTestVisible="false"/>-->

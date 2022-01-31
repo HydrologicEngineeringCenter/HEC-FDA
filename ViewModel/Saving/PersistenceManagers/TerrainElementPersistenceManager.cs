@@ -77,7 +77,8 @@ namespace ViewModel.Saving.PersistenceManagers
 
         private async void CopyFileOnBackgroundThread(TerrainElement element) //object sender, DoWorkEventArgs e)
         {
-            await Task.Run(() => System.IO.File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
+            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
+
             string name = element.Name;
             //remove the temporary node and replace it
             TerrainOwnerElement terrainParent = StudyCache.GetParentElementOfType<TerrainOwnerElement>();

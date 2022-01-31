@@ -31,7 +31,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <!--<UserControls:TextBoxDescription Grid.Column="1" Description="{Binding Description}" Margin="5"/>-->
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <Grid x:Name="editorGrid" Grid.Row="2">
             <Grid.ColumnDefinitions>

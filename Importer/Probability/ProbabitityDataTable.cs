@@ -173,7 +173,7 @@ namespace Importer
                 }
 
                 //GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Add(probFunc);
-                probFuncList.Add(probFunc);
+                probFuncList.Add(probFunc, null);
                 //_MustFlushProbFunc = false;
                 probFunc.Reset();
                 probFunc.Deallocate();

@@ -1,30 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ViewModel.Utilities;
-using ViewModel.Editors;
-using System.Collections.ObjectModel;
-using Statistics;
+﻿using Functions;
 using Model;
-using Functions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:04:38 PM)]
-    public class FailureFunctionElement : Utilities.ChildElement
+    public class FailureFunctionElement : ChildElement
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 6/8/2017 2:04:38 PM
         #endregion
         #region Fields
-        private const string _TableConstant = "Failure Function - ";
-        //private string _Description;
-       // private Statistics.UncertainCurveDataCollection _Curve;
-        //private List<LeveeFeatureElement> _LateralStructureList;
         private LeveeFeatureElement _SelectedLateralStructure;
-
-
         #endregion
         #region Properties
        
@@ -33,18 +25,6 @@ namespace ViewModel.GeoTech
             get { return _SelectedLateralStructure; }
             set { _SelectedLateralStructure = value; NotifyPropertyChanged(); }
         }
-        //public List<LeveeFeatureElement> LateralStructureList
-        //{
-        //    get { return _LateralStructureList; }
-        //    set { _LateralStructureList = value; NotifyPropertyChanged(); }
-        //}
-        //public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
-
-        //public Statistics.UncertainCurveDataCollection FailureFunctionCurve
-        //{
-        //    get { return _Curve; }
-        //    set { _Curve = value; NotifyPropertyChanged(); }
-        //}
         #endregion
         #region Constructors
         public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, 
@@ -52,7 +32,7 @@ namespace ViewModel.GeoTech
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
 
             Description = description;
             if (Description == null) Description = "";
@@ -68,15 +48,15 @@ namespace ViewModel.GeoTech
             //}
 
             Utilities.NamedAction editFailureFunctionCurve = new Utilities.NamedAction();
-            editFailureFunctionCurve.Header = "Edit Failure Function Curve";
+            editFailureFunctionCurve.Header = "Edit Failure Function Curve...";
             editFailureFunctionCurve.Action = EditFailureFunctionCurve;
 
             Utilities.NamedAction removeFailureFunctionCurve = new Utilities.NamedAction();
-            removeFailureFunctionCurve.Header = "Remove";
+            removeFailureFunctionCurve.Header = StringConstants.REMOVE_MENU;
             removeFailureFunctionCurve.Action = RemoveElement;
 
             Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
-            renameElement.Header = "Rename";
+            renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();

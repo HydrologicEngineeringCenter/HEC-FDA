@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
+using static Importer.AsciiImport;
 
 namespace Importer
 {
@@ -31,21 +32,24 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void Add(Levee theLevee)
+        public void Add(Levee theLevee, AsyncLogger logger, ImportOptions importOptions)
         {
             Levee aLevee = ObjectCopier.Clone(theLevee);
             WriteLine($"Add Levee to SortList. Name: {aLevee.Name}");
             _LeveeListSort.Add(aLevee.Name.Trim(), aLevee);
-            if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aLevee.Print();
+            if (logger != null)
+            {
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aLevee.Print(logger, importOptions);
+            }
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             Levee aLevee;
-            WriteLine($"Number of Levees {_LeveeListSort.Count}");
+            logger.Log($"Number of Levees {_LeveeListSort.Count}");
             for (int i = 0; i < _LeveeListSort.Count; i++)
             {
                 aLevee = _LeveeListSort.ElementAt(i).Value;
-                aLevee.Print();
+                aLevee.Print(logger);
             }
         }
         public void PrintToFile()

@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.StageTransforms"
              xmlns:Utilities="clr-namespace:View.Utilities"
-             xmlns:CA="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
-             xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"             
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
@@ -37,11 +36,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
-        <!--<CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Exterior Stage" yColumnHeader="Interior Stage" xAxisLabel="Exterior Stage" yAxisLabel="Interior Stage" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>-->
         <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
-        <!--<Utilities:TransactionMessageControl Grid.Row="4" />-->
         <Utilities:OKCloseControl Grid.Row="5"/>
     </Grid>
 </UserControl>

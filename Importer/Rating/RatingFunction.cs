@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
 using System.IO;
-using ViewModel.StageTransforms;
-using Functions.CoordinatesFunctions;
-using Functions;
-using Model;
-using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
     [Serializable]
-    public class RatingFunction : FdObjectData, ISaveToSqlite
+    public class RatingFunction : FdObjectData
     {
         #region Notes
         // Created By: q0hecrdc
@@ -119,64 +109,64 @@ namespace Importer
             }
             return;
         }
-        public void Print()
+        public void Print(AsyncLogger logger)
         {
             //Basic Information
-            WriteLine($"\n\nStage-Discharge Function Name: {Name}");
-            WriteLine($"\tDescription: {Description}");
-            WriteLine($"\tPlan: {PlanName}");
-            WriteLine($"\tYear: {YearName}");
-            WriteLine($"\tStream: {StreamName}");
-            WriteLine($"\tReach: {DamageReachName}");
-            WriteLine($"\tError Type: {ErrorTypesId}");
-            WriteLine($"\tUses Global Error: {UsesGlobalError}");
+            logger.Log($"\n\nStage-Discharge Function Name: {Name}");
+            logger.Log($"\tDescription: {Description}");
+            logger.Log($"\tPlan: {PlanName}");
+            logger.Log($"\tYear: {YearName}");
+            logger.Log($"\tStream: {StreamName}");
+            logger.Log($"\tReach: {DamageReachName}");
+            logger.Log($"\tError Type: {ErrorTypesId}");
+            logger.Log($"\tUses Global Error: {UsesGlobalError}");
 
             if (UsesGlobalError)
             {
-                WriteLine($"\tBase Stage: {BaseStage}");
+                logger.Log($"\tBase Stage: {BaseStage}");
                 if (ErrorTypesId == ErrorType.NORMAL)
-                    WriteLine($"\tStd Dev: {GlobalStdDev}");
+                    logger.Log($"\tStd Dev: {GlobalStdDev}");
                 else if (ErrorTypesId == ErrorType.LOGNORMAL)
-                    WriteLine($"\tLog Std Dev: {GlobalStdDevLog}");
+                    logger.Log($"\tLog Std Dev: {GlobalStdDevLog}");
                 else if (ErrorTypesId == ErrorType.TRIANGULAR)
-                    WriteLine($"\tUpper Error: {GlobalStdDevHigh}\n\tLower Error: {GlobalStdDevLow}");
+                    logger.Log($"\tUpper Error: {GlobalStdDevHigh}\n\tLower Error: {GlobalStdDevLow}");
             }
             //Points
-            WriteLine($"\n\tRating Curve, Number of Points {NumberOfPoints}");
-            Write("\t\tDischarge: ");
+            logger.Log($"\n\tRating Curve, Number of Points {NumberOfPoints}");
+            logger.Log("\t\tDischarge: ");
             for (int i = 0; i < NumberOfPoints; i++)
-                Write($"\t{_Discharge[i]}");
-            Write("\n\t\tStage: ");
+                logger.Log($"\t{_Discharge[i]}");
+            logger.Log("\n\t\tStage: ");
             for (int i = 0; i < NumberOfPoints; i++)
-                Write($"\t{_Stage[i]}");
-            Write("\n");
+                logger.Log($"\t{_Stage[i]}");
+            logger.Log("\n");
 
             //Ordinate by Ordinate errors
             if (!UsesGlobalError)
             {
                 if (ErrorTypesId == ErrorType.NORMAL)
                 {
-                    Write("\t\tStd Dev:");
+                    logger.Log("\t\tStd Dev:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDev[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDev[i]}");
+                    logger.Log("\n");
                 }
                 else if (ErrorTypesId == ErrorType.LOGNORMAL)
                 {
-                    Write("\t\tLog Std Dev: ");
+                    logger.Log("\t\tLog Std Dev: ");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        WriteLine($"\t{_StdDevLog[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDevLog[i]}");
+                    logger.Log("\n");
                 }
                 else if (ErrorTypesId == ErrorType.TRIANGULAR)
                 {
-                    Write("\t\tUpper Error:");
+                    logger.Log("\t\tUpper Error:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDevHigh[i]}");
-                    Write("\n\t\tLower Error:");
+                        logger.Log($"\t{_StdDevHigh[i]}");
+                    logger.Log("\n\t\tLower Error:");
                     for (int i = 0; i < NumberOfPoints; i++)
-                        Write($"\t{_StdDevLow[i]}");
-                    Write("\n");
+                        logger.Log($"\t{_StdDevLow[i]}");
+                    logger.Log("\n");
                 }
             }
             return;
@@ -400,26 +390,6 @@ namespace Importer
             return _Stage;
         }
         #endregion
-
-        public void SaveToSqlite()
-        {
-            double[] stages = GetStage();
-            double[] flows = GetDischarge();
-            //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-            List<double> stagesList = new List<double>();
-            List<double> flowsList = new List<double>();
-            for(int i = 0;i<NumberOfPoints;i++)
-            {
-                stagesList.Add(stages[i]);
-                flowsList.Add(flows[i]);
-            }
-            //always use linear. This is the only option in Old Fda.
-            ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-            IFdaFunction rating = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
-            RatingCurveElement elem = new RatingCurveElement(Name,CalculationDate,Description,rating);
-            RatingElementPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetRatingManager();
-            manager.SaveNew(elem);
-        }
 
     }
 }

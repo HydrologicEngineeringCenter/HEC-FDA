@@ -49,15 +49,15 @@ namespace ViewModel.AggregatedStageDamage
             IsManual = isManual;
 
             NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship";
+            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
             editDamageCurve.Action = EditDamageCurve;
 
             NamedAction removeDamageCurve = new NamedAction();
-            removeDamageCurve.Header = "Remove";
+            removeDamageCurve.Header = StringConstants.REMOVE_MENU;
             removeDamageCurve.Action = RemoveElement;
 
             NamedAction renameDamageCurve = new NamedAction(this);
-            renameDamageCurve.Header = "Rename";
+            renameDamageCurve.Header = StringConstants.RENAME_MENU;
             renameDamageCurve.Action = Rename;
 
             NamedAction exportDetails = new NamedAction(this);
@@ -126,7 +126,7 @@ namespace ViewModel.AggregatedStageDamage
             List<ChildElement> structureInventories = StudyCache.GetChildElementsOfType(typeof(InventoryElement));
             List<ChildElement> wseElems = StudyCache.GetChildElementsOfType(typeof(WaterSurfaceElevationElement));
 
-            //I think i would create a datatable object so that i could define columns and then create rows. I think this will make it 
+            //I thought i would create a datatable object so that i could define columns and then create rows. I think this will make it 
             //easier to update and maintain than just trying to write it out as a big string or something like that.
             
             //i thought we could grab the structure data from the inventory element form the study cache, but i don't see that option. We might
