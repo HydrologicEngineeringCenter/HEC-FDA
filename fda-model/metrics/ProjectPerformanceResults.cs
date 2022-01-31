@@ -10,18 +10,18 @@ using paireddata;
 namespace metrics
 {
     public class ProjectPerformanceResults
-{
-    private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
-    private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
+    {
+        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
+        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
-    private Histogram _aep = null;
-    private Dictionary<double, Histogram> _cnep;
+        private ThreadsafeInlineHistogram _aep = null;
+        private Dictionary<double, ThreadsafeInlineHistogram> _cnep;
         private UncertainPairedData _leveeCurve;
 
-    public Histogram HistogramOfAEPs
+        public ThreadsafeInlineHistogram HistogramOfAEPs
         {
             get
             {
@@ -29,43 +29,43 @@ namespace metrics
             }
         }
 
-    public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue)
-    {
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
+        {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = null; //is this necessary?
-            _cnep = new Dictionary<double, Histogram>();
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+            _aep.SetIterationSize(c.MaxIterations);
+            _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
-    }
-            public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve)
-    {
+        }
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve, ConvergenceCriteria  c)
+        {
             _leveeCurve = leveeCurve;
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = null; //is this necessary?
-            _cnep = new Dictionary<double, Histogram>();
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+            _aep.SetIterationSize(c.MaxIterations);
+            _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
-    }
-        public void AddAEPEstimate(double aepEstimate)
-        {
-            if (_aep == null)
-            {
-                var histo = new Histogram(aepEstimate, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
-                _aep = histo;
-                
-            }
-            _aep.AddObservationToHistogram(aepEstimate);
         }
-
-        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
+        public void AddAEPEstimate(double aepEstimate, Int64 iteration)
+        {
+            _aep.AddObservationToHistogram(aepEstimate, iteration);
+        }
+        public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                var histo = new Histogram(stageForCNEP, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+                histo.SetIterationSize(c.MaxIterations);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
-            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
+        }
+
+        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP, Int64 iteration)
+        {
+            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP, iteration);
         }
 
         public double MeanAEP()
@@ -83,7 +83,42 @@ namespace metrics
             double assuranceOfAEP = _aep.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
-
+        public bool ConditionalNonExceedanceProbabilityIsConverged()
+        {
+            //dont like this.
+            foreach (double key in _cnep.Keys)
+            {
+                if (key == 0.98)
+                {
+                    return _cnep[key].IsConverged;
+                }
+            }
+            return false;
+        }
+        public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upper, double lower)
+        {
+            //dont like this.
+            foreach( double key in _cnep.Keys)
+            {
+                if(key == 0.98)
+                {
+                    return _cnep[key].TestForConvergence(upper,lower);
+                }
+            }
+            return false;
+        }
+        public Int64 ConditionalNonExceedanceProbabilityRemainingIterations(double upper, double lower)
+        {
+            //dont like this
+            foreach (double key in _cnep.Keys)
+            {
+                if (key == 0.98)
+                {
+                    return _cnep[key].EstimateIterationsRemaining(upper, lower);
+                }
+            }
+            return 0;
+        }
         public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
             if (_calculatePerformanceForLevee)
@@ -92,6 +127,7 @@ namespace metrics
             }
             else
             {
+                _cnep[exceedanceProbability].ForceDeQueue();
                 double conditionalNonExceedanceProbability = _cnep[exceedanceProbability].CDF(_thresholdValue);
                 return conditionalNonExceedanceProbability;
             }
@@ -101,6 +137,7 @@ namespace metrics
         private double CalculateConditionalNonExceedanceProbabilityForLevee(double exceedanceProbability)
         {
             IPairedData medianLeveeCurve = _leveeCurve.SamplePairedData(0.5);
+            _cnep[exceedanceProbability].ForceDeQueue();
             double stageStep = _cnep[exceedanceProbability].BinWidth;
             int stageStepQuantity = _cnep[exceedanceProbability].BinCounts.Length;
             double[] stages = _leveeCurve.xs();

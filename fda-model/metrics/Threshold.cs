@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using paireddata;
+using Statistics;
 
 namespace metrics
 {
@@ -18,19 +19,19 @@ namespace metrics
         /// </summary>
         public int ThresholdID { get; }
 
-        public Threshold(int thresholdID, ThresholdEnum thresholdType=0, double thresholdValue=0)
+        public Threshold(int thresholdID,ConvergenceCriteria c, ThresholdEnum thresholdType=0, double thresholdValue=0 )
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue); 
+            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, c); 
             ThresholdID = thresholdID;
         }
 
-        public Threshold(int thresholdID, UncertainPairedData leveeCurve, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
+        public Threshold(int thresholdID, UncertainPairedData leveeCurve, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, leveeCurve);
+            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, leveeCurve, c);
             ThresholdID = thresholdID;
         }
 

@@ -34,30 +34,30 @@ namespace fda_model_test
 
         static IDistribution[] StageDistributions =
         {
-            IDistributionFactory.FactoryNormal(458,0.00001),
-            IDistributionFactory.FactoryNormal(468.33,.312),
-            IDistributionFactory.FactoryNormal(469.97,.362),
-            IDistributionFactory.FactoryNormal(471.95,.422),
-            IDistributionFactory.FactoryNormal(473.06,.456),
-            IDistributionFactory.FactoryNormal(473.66,.474),
-            IDistributionFactory.FactoryNormal(474.53,.5),
-            IDistributionFactory.FactoryNormal(475.11,.5),
-            IDistributionFactory.FactoryNormal(477.4,.5)
+            new Normal(458,0.00001),
+            new Normal(468.33,.312),
+            new Normal(469.97,.362),
+            new Normal(471.95,.422),
+            new Normal(473.06,.456),
+            new Normal(473.66,.474),
+            new Normal(474.53,.5),
+            new Normal(475.11,.5),
+            new Normal(477.4,.5)
                 //note that the rating curve domain lies within the stage-damage domain
         };
         static double[] StageDamageStages = { 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
         static IDistribution[] DamageDistrbutions =
         {
-            IDistributionFactory.FactoryNormal(0,0.00001),
-            IDistributionFactory.FactoryNormal(.04,.16),
-            IDistributionFactory.FactoryNormal(.66,1.02),
-            IDistributionFactory.FactoryNormal(2.83,2.47),
-            IDistributionFactory.FactoryNormal(7.48,3.55),
-            IDistributionFactory.FactoryNormal(17.82,7.38),
-            IDistributionFactory.FactoryNormal(39.87,12.35),
-            IDistributionFactory.FactoryNormal(76.91,13.53),
-            IDistributionFactory.FactoryNormal(124.82,13.87),
-            IDistributionFactory.FactoryNormal(173.73,13.12),
+            new Normal(0,0.00001),
+            new Normal(.04,.16),
+            new Normal(.66,1.02),
+            new Normal(2.83,2.47),
+            new Normal(7.48,3.55),
+            new Normal(17.82,7.38),
+            new Normal(39.87,12.35),
+            new Normal(76.91,13.53),
+            new Normal(124.82,13.87),
+            new Normal(173.73,13.12),
         };
 
         static double[] FragilityStages = { 470, 471, 472, 473, 474, 475 };
@@ -108,12 +108,12 @@ namespace fda_model_test
                 .build();
 
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = Math.Abs(difference / expected);
-            Assert.True(relativeDifference < .01);
+            Assert.True(relativeDifference < .015);
         }
 
         [Theory]
@@ -143,7 +143,7 @@ namespace fda_model_test
                 .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
@@ -171,7 +171,7 @@ namespace fda_model_test
                 .withLevee(fragilityCurve, topOfLeveeElevation)
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");

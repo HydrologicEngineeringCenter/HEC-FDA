@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fda-model-test", "fda-model-test\fda-model-test.csproj", "{F9FBA186-4776-4A20-85A3-3F928F9F5F7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fda-model-cmd", "fda-model-cmd\fda-model-cmd.csproj", "{A5661917-5AB0-4347-BB00-85E4B192BC67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{F9FBA186-4776-4A20-85A3-3F928F9F5F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9FBA186-4776-4A20-85A3-3F928F9F5F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9FBA186-4776-4A20-85A3-3F928F9F5F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5661917-5AB0-4347-BB00-85E4B192BC67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5661917-5AB0-4347-BB00-85E4B192BC67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5661917-5AB0-4347-BB00-85E4B192BC67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5661917-5AB0-4347-BB00-85E4B192BC67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

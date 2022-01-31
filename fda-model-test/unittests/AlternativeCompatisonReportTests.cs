@@ -133,9 +133,8 @@ namespace fda_model_test
 
             alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
             double actual = ((alternativeComparisonReportResults[withProjectAlternativeID])[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
-            double relativeDifference = Math.Abs((actual - expected) / expected);
-            double tolerance = 0.01;
-            Assert.True(relativeDifference < tolerance);
+            double err = Math.Abs((actual - expected) / expected);
+            Assert.True(err<.01);
 
         }
     }

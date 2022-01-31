@@ -7,6 +7,8 @@ using paireddata;
 using metrics;
 using System.Linq;
 using Base.Events;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace compute{
     public class Simulation: Base.Implementations.Validation, Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
@@ -22,6 +24,7 @@ namespace compute{
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private Results _results = new Results();
+        private bool _leveeIsValid = false;
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -66,70 +69,130 @@ namespace compute{
                 }
                 //enumerate what the errors and warnings are 
             }
-
+            int masterseed = 0;
+            if(rp is MeanRandomProvider)
+            {
+                if (convergence_criteria.MaxIterations != 1)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
+                    //return _results;
+                }
+            }
+            else
+            {
+                masterseed = rp.Seed;
+            }
+            foreach (UncertainPairedData pd in _damage_category_stage_damage)
+            {
+                _results.ExpectedAnnualDamageResults.AddEADKey(pd.Category, convergence_criteria);
+            }
+            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergence_criteria);
+            
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
-                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold());
+                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergence_criteria));
             }
+            SetStageForNonExceedanceProbability(convergence_criteria);
             Int64 progressChunks = 1;
-            if (convergence_criteria.MaxIterations > 100)
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergence_criteria.MaxIterations;
+            if (_ExpectedIterations > 100)
             {
-                progressChunks = convergence_criteria.MaxIterations / 100;
+                progressChunks = _ExpectedIterations / 100;
             }
-            
-            for (int i = 0; i < convergence_criteria.MaxIterations; i ++){
-                if (_frequency_stage.IsNull)
+            Random masterSeedList = new Random(masterseed);//must be seeded.
+            int[] seeds = new int[convergence_criteria.MaxIterations];
+            for(int i = 0; i<convergence_criteria.MaxIterations; i++)
+            {
+                seeds[i] = masterSeedList.Next();
+            }
+            Int64 iterations = convergence_criteria.MinIterations;
+            _leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
+
+            while (!_results.IsConverged())
+            {
+                Parallel.For(0, iterations, i =>
                 {
-                    //if frequency_flow is not defined throw big errors.
-                    IPairedData ff = BootstrapToPairedData(rp, _frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
-                    //check if flow transform exists, and use it here
-                    if (_inflow_outflow.IsNull)
+                    //check if it is a mean random provider or not
+                    interfaces.IProvideRandomNumbers threadlocalRandomProvider;
+                    if(rp is MeanRandomProvider)
                     {
-                        if (_flow_stage.IsNull)
-                        {
-                            //complain loudly
-                            return _results;
-                        }
-                        else
-                        {
-                            IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());
-                            IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
-                        }
- 
+                        threadlocalRandomProvider = new MeanRandomProvider();
                     }
                     else
                     {
-                        IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(rp.NextRandom()); //should be a random number
-                        IPairedData transformff = inflow_outflow_sample.compose(ff);
+                        threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                    }
+                    if (_frequency_stage.IsNull)
+                    {
+                        //if frequency_flow is not defined throw big errors.
+                        IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                        //check if flow transform exists, and use it here
+                        if (_inflow_outflow.IsNull)
+                        {
                             if (_flow_stage.IsNull)
                             {
-                            //complain loudly
-                            return _results;
+                                //complain loudly
+                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                return; //_results;
                             }
                             else
                             {
-                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
-                                IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
+                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                                IPairedData frequency_stage = flow_stage_sample.compose(ff);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
                             }
+
+                        }
+                        else
+                        {
+                            IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
+                            IPairedData transformff = inflow_outflow_sample.compose(ff);
+                            if (_flow_stage.IsNull)
+                            {
+                                //complain loudly
+                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                return;// _results;
+                            }
+                            else
+                            {
+                                IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
+                                IPairedData frequency_stage = flow_stage_sample.compose(transformff);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                        ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i);
+                    }
+                    Interlocked.Increment(ref _completedIterations);
+                    if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
+                    {
+                        double percentcomplete = ((double)_completedIterations)/((double)_ExpectedIterations)*100;
+                        ReportProgress(this, new ProgressReportEventArgs((int)percentcomplete));
                     }
 
+                });
+                if(!_results.TestForConvergence(.95, .05))
+                {
+                    iterations = _results.RemainingIterations(.95,.05);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
                 }
                 else
                 {
-                    IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
-                    ComputeFromStageFrequency(rp, frequency_stage_sample, giveMeADamageFrequency);
-                }
-                if (i % progressChunks == 0)
-                {
-                    ReportProgress(this, new ProgressReportEventArgs((int)(i / progressChunks)));
+                    iterations = 0;
+                    break;
                 }
                 
             }
+
             return _results;
         }
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency){
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration){
 
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
@@ -137,17 +200,17 @@ namespace compute{
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency);
-                    ComputePerformance(frequency_stage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_stage, giveMeADamageFrequency, iteration);
+                    ComputePerformance(frequency_stage, iteration);
                 }
                 else
                 {
-                    if (LeveeIsValid())
+                    if (_leveeIsValid)
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample, giveMeADamageFrequency);
-                        ComputeLeveePerformance(frequency_stage, levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample, giveMeADamageFrequency, iteration);
+                        ComputeLeveePerformance(frequency_stage, levee_curve_sample, iteration);
                     }
 
                 }
@@ -160,17 +223,17 @@ namespace compute{
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage, giveMeADamageFrequency);
-                    ComputePerformance(frequency_floodplainstage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage, giveMeADamageFrequency, iteration);
+                    ComputePerformance(frequency_floodplainstage, iteration);
                 }
                 else
                 {
-                    if (LeveeIsValid())
+                    if (_leveeIsValid)
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample, giveMeADamageFrequency);
-                        ComputeLeveePerformance(frequency_stage, levee_curve_sample);
+                        ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample, giveMeADamageFrequency, iteration);
+                        ComputeLeveePerformance(frequency_stage, levee_curve_sample, iteration);
                     }
 
                 }
@@ -178,24 +241,26 @@ namespace compute{
             }
         }
         private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, Statistics.ContinuousDistribution dist, Int64 ordinates){
-            double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
-            IDistribution bootstrap = dist.Sample(randyPacket);
-            double[] x = new double[ordinates];
-            double[] y = new double[ordinates];
-            for(int i=0;i<ordinates; i++){
-                double val = (double) i + .5;
-                //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                double prob = (val)/((double)ordinates);
-                x[i] = prob;
+            
+                double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
+                IDistribution bootstrap = dist.Sample(randyPacket);
+                double[] x = new double[ordinates];
+                double[] y = new double[ordinates];
+                for(int i=0;i<ordinates; i++){
+                    double val = (double) i + .5;
+                    //equally spaced non-exceedance (cumulative) probabilities in increasing order
+                    double prob = (val)/((double)ordinates);
+                    x[i] = prob;
 
-                //y values in increasing order 
-                y[i] = bootstrap.InverseCDF(prob);
+                    //y values in increasing order 
+                    y[i] = bootstrap.InverseCDF(prob);
                 
-            }
+                }
 
-            return new PairedData(x, y);
+                return new PairedData(x, y);
+
         }
-        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency)
+        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
         {
             double totalEAD = 0.0;
             PairedData totalDamageFrequency = new PairedData(null, null, "Total");
@@ -205,14 +270,14 @@ namespace compute{
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.Category);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.Category, iteration);
 
                 if(giveMeADamageFrequency)
                 {
                     ReportMessage(this, new MessageEventArgs( new FrequencyDamageMessage((PairedData)frequency_damage,frequency_damage.Category)));
                 }
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
+            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
@@ -220,7 +285,7 @@ namespace compute{
 
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee, bool giveMeADamageFrequency)
+        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee, bool giveMeADamageFrequency, Int64 iteration)
         {
             double totalEAD = 0.0;
             PairedData totalDamageFrequency = new PairedData(null, null, "Total");
@@ -231,7 +296,7 @@ namespace compute{
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category, iteration);
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
@@ -239,7 +304,7 @@ namespace compute{
                 }
 
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
+            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
@@ -248,19 +313,19 @@ namespace compute{
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
-        public void ComputePerformance(IPairedData frequency_stage)
+        public void ComputePerformance(IPairedData frequency_stage, Int64 iteration)
         {
 
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep, iteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value, iteration);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample)
+        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, Int64 iteration)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
@@ -284,28 +349,39 @@ namespace compute{
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
             {
-                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
+                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep, iteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value, iteration);
             }
             
         }
 
-        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold)
+        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, Int64 iteration)
         {
             double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
             for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
+                threshold.ProjectPerformanceResults.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
+            }
+        }
+        public void SetStageForNonExceedanceProbability(ConvergenceCriteria c)
+        {
+            double[] stageOfEvent = new double[5];
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
+            {
+                for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
+                {
+                    thresholdEntry.Value.ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(er101RequiredNonExceedanceProbabilities[i], c);
+                }
             }
         }
 
 
 
 
-
-        private Threshold ComputeDefaultThreshold()
+        private Threshold ComputeDefaultThreshold(ConvergenceCriteria c)
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
@@ -353,11 +429,11 @@ namespace compute{
                 frequencyDamage = totalStageDamage.compose(frequencyStage);
                 double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * frequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
                 double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
-                return new Threshold(DEFAULT_THRESHOLD_ID, ThresholdEnum.InteriorStage, thresholdStage);
+                return new Threshold(DEFAULT_THRESHOLD_ID,c, ThresholdEnum.InteriorStage, thresholdStage);
             }
             else
             {
-                return new Threshold(DEFAULT_THRESHOLD_ID, _levee_curve, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
+                return new Threshold(DEFAULT_THRESHOLD_ID, _levee_curve,c, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
             }
         }
 
@@ -394,15 +470,18 @@ namespace compute{
 
         private bool LeveeIsValid()
         {
+            if (_levee_curve.IsNull) return false;
             if (_levee_curve.ys().Last().Type != IDistributionEnum.Deterministic)
             {
-                throw new ArgumentException("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution");
+                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
+                return false;
             }
             else if (_levee_curve.ys().Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                throw new ArgumentException("The fragility curve must have stage at which the probability of failure of the levee is 1");
+                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("The fragility curve must have stage at which the probability of failure of the levee is 1")));
+                return false;
             }
             else
             {   //right here or somewhere we need to do validation to handle a top of levee elevation above all stages 

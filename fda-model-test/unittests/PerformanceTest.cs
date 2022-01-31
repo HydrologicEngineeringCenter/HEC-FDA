@@ -27,7 +27,7 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(1234, 1, 0.5)]
+        [InlineData(1234, 1, 0.0005)]
         public void ComputePerformanceWithSimulation_Test(int seed, int iterations, double expected)
         {
 
@@ -50,7 +50,8 @@ namespace fda_model_test
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
-            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, 150000);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, 150000);
 
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
@@ -60,7 +61,7 @@ namespace fda_model_test
                 .build();
  
             RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            
             metrics.Results results = simulation.Compute(randomProvider, cc,false);
 
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
@@ -89,14 +90,16 @@ namespace fda_model_test
             }
             paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
-            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            int iterations = 1;
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
             compute.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            int iterations = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            
+            
             metrics.Results results = simulation.Compute(meanRandomProvider,cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             //TODO: why do both of these work? Richard did something wrong, it needs to be fixed.
@@ -121,13 +124,14 @@ namespace fda_model_test
             }
             paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
-            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
             compute.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            
             metrics.Results results = simulation.Compute(meanRandomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.LongTermExceedanceProbability(years);
             double difference = expected - actual;
@@ -150,14 +154,15 @@ namespace fda_model_test
             paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
-            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withLevee(levee_curve, 45)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            
             Results results = simulation.Compute(meanRandomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             double difference = expected - actual;
@@ -181,18 +186,17 @@ namespace fda_model_test
             }
             UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             int thresholdID = 1;
-            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withAdditionalThreshold(threshold)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            
             metrics.Results results = simulation.Compute(randomProvider, cc,false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(nonExceedanceProbability);
-            double difference = expected - actual;
-            double relativeDifference = difference / expected;
-            Assert.True(relativeDifference < .02);
+            Assert.Equal(expected, actual, 1);
         }
     }
 

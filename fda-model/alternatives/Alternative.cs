@@ -63,7 +63,9 @@ namespace alternatives
                     //Sturges rule 
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
+                    baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
                     double eadSampledBaseYearLowerBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
+                    mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
                     double eadSampledFutureYearLowerBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
                     double eadSampledBaseYearUpperBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
                     double eadSampledFutureYearUpperBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);

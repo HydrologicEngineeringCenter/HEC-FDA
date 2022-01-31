@@ -10,5 +10,6 @@ namespace interfaces
 {
         double NextRandom();
         double[] NextRandomSequence(int size);
+        int Seed { get; }
 }
 }
