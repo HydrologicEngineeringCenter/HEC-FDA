@@ -24,6 +24,7 @@ namespace compute{
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private Results _results = new Results();
+        private bool _leveeIsValid = false;
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -106,6 +107,8 @@ namespace compute{
                 seeds[i] = masterSeedList.Next();
             }
             Int64 iterations = convergence_criteria.MinIterations;
+            _leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
+
             while (!_results.IsConverged())
             {
                 Parallel.For(0, iterations, i =>
@@ -202,7 +205,7 @@ namespace compute{
                 }
                 else
                 {
-                    if (LeveeIsValid())
+                    if (_leveeIsValid)
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
@@ -225,7 +228,7 @@ namespace compute{
                 }
                 else
                 {
-                    if (LeveeIsValid())
+                    if (_leveeIsValid)
                     {
                         IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
@@ -467,15 +470,18 @@ namespace compute{
 
         private bool LeveeIsValid()
         {
+            if (_levee_curve.IsNull) return false;
             if (_levee_curve.ys().Last().Type != IDistributionEnum.Deterministic)
             {
-                throw new ArgumentException("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution");
+                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
+                return false;
             }
             else if (_levee_curve.ys().Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                throw new ArgumentException("The fragility curve must have stage at which the probability of failure of the levee is 1");
+                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("The fragility curve must have stage at which the probability of failure of the levee is 1")));
+                return false;
             }
             else
             {   //right here or somewhere we need to do validation to handle a top of levee elevation above all stages 
