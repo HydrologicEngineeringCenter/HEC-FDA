@@ -85,7 +85,6 @@
              
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              
-             xmlns:local="clr-namespace:Fda"
              StartupUri="ViewWindow.xaml">
     <Application.Resources>
         <Style TargetType="Control" x:Key="defaultErrorTemplate">

@@ -377,12 +377,20 @@ namespace ViewModel.Utilities
 
         #region Occtypes
 
-        public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName)
+        public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
-                fda2Occtypes.Add(GetFDA2OccupancyType(ot));
+                try
+                {
+                    fda2Occtypes.Add(GetFDA2OccupancyType(ot));
+                }
+                catch(Exception e)
+                {
+                    string errorMsg = Environment.NewLine + "Failed to import occupancy type '" + ot.Name + "' because of the following exception:";
+                    messages += errorMsg + Environment.NewLine + e.Message + Environment.NewLine;
+                }
             }
             int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
 
@@ -412,6 +420,10 @@ namespace ViewModel.Utilities
 
             //the error distributions are in the following order:
             //public enum OccTypeStrucComponent { FFLOOR, STRUCTURE, CONTENT, OTHER, AUTO};
+
+            //ffloor and structure 
+            //* normal: make mean = 100
+
             List<IOrdinate> uncertainties = TranslateErrorDistributionsToIOrdinates(ot1._ErrorDistribution);
             ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
             ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
@@ -451,7 +463,8 @@ namespace ViewModel.Utilities
                     }
                 case ErrorType.TRIANGULAR:
                     {
-                        return IDistributedOrdinateFactory.FactoryTriangular(mean, stDev, max);
+                        //The mean is always 100. The importer code has the value at -901 so we hardcode it here.
+                        return IDistributedOrdinateFactory.FactoryTriangular(100, stDev, max);
                     }
                 case ErrorType.UNIFORM:
                     {
