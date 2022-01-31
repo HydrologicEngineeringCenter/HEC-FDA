@@ -1,4 +1,5 @@
 ﻿using Model;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using ViewModel.Utilities;
@@ -17,7 +18,7 @@ namespace ViewModel.StageTransforms
         #endregion
         #region Constructors
 
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, IFdaFunction ratingCurve) : base()
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, UncertainPairedData ratingCurve) : base()
         {
             LastEditDate = creationDate;
             Name = userprovidedname;

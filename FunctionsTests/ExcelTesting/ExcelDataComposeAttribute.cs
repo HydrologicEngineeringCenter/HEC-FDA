@@ -1,5 +1,5 @@
 ﻿using ClosedXML.Excel;
-using Functions;
+
 using Functions.CoordinatesFunctions;
 using System;
 using System.Collections.Generic;

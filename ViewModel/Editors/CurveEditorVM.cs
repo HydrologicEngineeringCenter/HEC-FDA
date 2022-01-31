@@ -5,6 +5,7 @@ using Functions;
 using FdaLogging;
 using HEC.Plotting.Core.ViewModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using paireddata;
 
 namespace ViewModel.Editors
 {
@@ -15,7 +16,7 @@ namespace ViewModel.Editors
 
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
-        private IFdaFunction _Curve;
+        private UncertainPairedData _Curve;
         private string _SavingText;
         //private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
   
@@ -56,7 +57,7 @@ namespace ViewModel.Editors
         }
 
 
-        public IFdaFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set
@@ -79,7 +80,7 @@ namespace ViewModel.Editors
         #endregion
 
         #region constructors
-        public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public CurveEditorVM(UncertainPairedData defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             _ParameterType = defaultCurve.ParameterType;
             PlotTitle = "Curve";
@@ -139,7 +140,7 @@ namespace ViewModel.Editors
             }
         }
 
-        public virtual ICoordinatesFunction GetCoordinatesFunction()
+        public virtual UncertainPairedData GetCoordinatesFunction()
         {
             return EditorVM.CreateFunctionFromTables(); 
         }
@@ -159,11 +160,11 @@ namespace ViewModel.Editors
             try
             {
                 //try to construct the new coordinates function
-                ICoordinatesFunction coordFunc = GetCoordinatesFunction();
+                UncertainPairedData coordFunc = GetCoordinatesFunction();
                 EditorVM.Function = coordFunc;
                 //IFunction function = coordFunc.Sample(.5);
-               
-                Curve = IFdaFunctionFactory.Factory( _ParameterType, coordFunc);
+
+                Curve = coordFunc;
             }
             catch(Exception ex)
             {

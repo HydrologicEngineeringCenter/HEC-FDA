@@ -33,7 +33,7 @@ namespace Model
         /// <summary>
         /// A <see cref="IReadOnlyDictionary{TKey, TValue}"/> of <see cref="IMetric"/> keys and <see cref="Statistics.IConvergenceResult"/> values describing convergence of the <see cref="Metrics"/> values.
         /// </summary>
-        IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; }
+        //IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; }
     }
 
     

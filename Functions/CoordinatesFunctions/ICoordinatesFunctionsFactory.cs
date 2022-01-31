@@ -1,6 +1,7 @@
 ﻿using Functions.Coordinates;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
+using paireddata;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,14 @@ namespace Functions
         }
         
         
-        public static ICoordinatesFunction Factory(List<ICoordinate> coordinates, InterpolationEnum interpolator)
+        public static ICoordinatesFunction Factory(List<ICoordinate> coordinates)
         {
+
+            //foreach(ICoordinate coord in coordinates)
+            //{
+            //    coord.X.Value();
+            //}
+
             //todo: This is bad, but i am not sure how to handle an interpolation type of statistical which is what 
             //the analytical flow freq's are. I am not actually using this for anything anyway i think.
             if (interpolator == InterpolationEnum.Statistical)
@@ -465,7 +472,7 @@ namespace Functions
 
 
 
-        public static ICoordinatesFunction Factory(String xmlString)
+        public static UncertainPairedData Factory(String xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement functionsElem = doc.Element(SerializationConstants.FUNCTIONS);
@@ -498,7 +505,7 @@ namespace Functions
 
         private static ICoordinatesFunction CreateFunctionFromFunctionElement(XElement functionElement)
         {
-            InterpolationEnum interpolator = GetInterpolator(functionElement);
+            //InterpolationEnum interpolator = GetInterpolator(functionElement);
 
             //handle the LP3 differently
             if (functionElement.Attribute(SerializationConstants.LOG_PEARSON_III) != null)

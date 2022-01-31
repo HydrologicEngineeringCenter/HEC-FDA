@@ -1,5 +1,5 @@
-﻿using Functions;
-using Functions.Ordinates;
+﻿
+
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;

@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Functions;
+using paireddata;
+using Statistics.Distributions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Utilities;
-using Functions;
-using Model;
 
 namespace ViewModel.StageTransforms
 {
@@ -21,7 +19,7 @@ namespace ViewModel.StageTransforms
         private string _Description = "";
         private readonly string _Title = "Exterior-Interior Curve";
 
-        private IFdaFunction _Curve;
+        private UncertainPairedData _Curve;
 
 
         #endregion
@@ -41,7 +39,7 @@ namespace ViewModel.StageTransforms
         {
             get { return _Title; }
         }
-        public IFdaFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -51,7 +49,7 @@ namespace ViewModel.StageTransforms
 
         #endregion
         #region Constructors
-        public ExteriorInteriorEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()
+        public ExteriorInteriorEditorVM(Action<ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()
         {
             ownerValidationRules(this);
 
@@ -62,7 +60,16 @@ namespace ViewModel.StageTransforms
             List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);// ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
+
+                double[] xs = new double[10];
+            Normal[] ys = new Normal[10];
+            for (int i = 0; i < 10; i++)
+            {
+                xs[i] = i;
+                ys[i] = new Normal(i, 0);
+            }
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, "Exterior Stage", "Interior Stage", "Exterior-Interior", "", -1);
+            Curve = curve; //IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
 
             SaveAction = saveAction;
 
@@ -119,12 +126,12 @@ namespace ViewModel.StageTransforms
             Curve = elem.Curve;
         }
 
-        public IFdaFunction GetTheElementsCurve()
+        public UncertainPairedData GetTheElementsCurve()
         {
             return ((ExteriorInteriorElement)CurrentElement).Curve;
         }
 
-        public IFdaFunction GetTheEditorsCurve()
+        public UncertainPairedData GetTheEditorsCurve()
         {
             return Curve;
         }

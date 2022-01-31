@@ -1,8 +1,5 @@
-﻿using Functions.Ordinates;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Xunit;
 
 namespace FunctionsTests.Ordinates

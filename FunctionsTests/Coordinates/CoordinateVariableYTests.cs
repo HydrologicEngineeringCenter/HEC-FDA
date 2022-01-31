@@ -1,6 +1,6 @@
-﻿using Functions;
+﻿
 using Functions.Coordinates;
-using Functions.Ordinates;
+
 using Statistics;
 using Statistics.Distributions;
 using System;

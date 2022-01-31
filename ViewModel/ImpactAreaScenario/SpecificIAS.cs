@@ -1,4 +1,4 @@
-﻿using ead;
+﻿using compute;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -143,12 +143,13 @@ namespace ViewModel.ImpactAreaScenario
             try
             {
                 //todo: how many iterations?
-                metrics.Results result = simulation.Compute(mrp, 1);
-                Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                ComputeResults = result;
-                return result;
+                //metrics.Results result = simulation.Compute(mrp, 1);
+                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                //ComputeResults = result;
+                //return result;
+                return null;
             }
             catch (Exception e)
             {

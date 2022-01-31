@@ -1,10 +1,7 @@
-﻿using Functions;
-using FunctionsView.ViewModel;
+﻿using FunctionsView.ViewModel;
+using paireddata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities;
 
 namespace FunctionsView.Validation
@@ -35,7 +32,7 @@ namespace FunctionsView.Validation
             try
             {
                 //todo: Cody to Cody, is this the best way to validate the function?
-                ICoordinatesFunction func = entity.CreateFunctionFromTables();
+                UncertainPairedData func = entity.CreateFunctionFromTables();
                 //if(!func.IsValid)
                 //{
                 //    errors.AddRange(func.Messages);

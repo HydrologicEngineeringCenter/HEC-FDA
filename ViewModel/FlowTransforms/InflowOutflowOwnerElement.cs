@@ -65,10 +65,10 @@ namespace ViewModel.FlowTransforms
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
+            //List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            //IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
@@ -79,6 +79,9 @@ namespace ViewModel.FlowTransforms
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
 
+            //.WithParentGuid(this.GUID)
+            //.WithCanOpenMultipleTimes(true);
+            UncertainPairedData defaultCurve = Utilities.DefaultPairedData.CreateDefaultNormalUncertainPairedData("Inflow", "Outflow", "Inflow-Outflow");
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
 
             string title = "Create Inflow Outflow";

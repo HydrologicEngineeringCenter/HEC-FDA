@@ -83,9 +83,10 @@ namespace ViewModel.StageTransforms
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-             
 
-            CurveEditorVM vm = new CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
+            paireddata.UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Flow", "Rating Curve");
+
+            CurveEditorVM vm = new CurveEditorVM(,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
             string header = "Create Rating Curve " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
             Navigate(tab, false, true);

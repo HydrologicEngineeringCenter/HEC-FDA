@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using paireddata;
 
 namespace ViewModel.Utilities
 {
@@ -22,7 +23,7 @@ namespace ViewModel.Utilities
 
         //private object _CustomTreeViewHeader;
         private string _Description = "";
-        private IFdaFunction _Curve;
+        private UncertainPairedData _Curve;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = false;
@@ -48,7 +49,7 @@ namespace ViewModel.Utilities
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public IFdaFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }

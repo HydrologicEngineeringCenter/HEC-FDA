@@ -29,7 +29,7 @@ namespace ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public IConditionLocationYearResult ComputeResults { get; set; }
+        //public IConditionLocationYearResult ComputeResults { get; set; }
 
         public string Description
         {

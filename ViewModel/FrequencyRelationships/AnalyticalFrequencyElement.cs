@@ -1,5 +1,5 @@
-﻿using Functions;
-using Model;
+﻿using Model;
+using paireddata;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, IFdaFunction function) : base()
+            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, UncertainPairedData function) : base()
         {
             POR = por;
             IsAnalytical = isAnalytical;

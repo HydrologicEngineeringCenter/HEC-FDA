@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using paireddata;
 
 namespace ViewModel.Editors
 {
@@ -89,21 +90,21 @@ namespace ViewModel.Editors
             set; 
         }
         #region Constructors
-        public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
+        public BaseLoggingEditorVM(UncertainPairedData defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            ICoordinatesFunction coordFunc = null;
-            if (defaultCurve == null)
-            {
-                List<double> xs = new List<double>() { 0 };
-                List<double> ys = new List<double>() { 0 };
-                coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            }
-            else
-            {
-                coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve.Coordinates, defaultCurve.Interpolator);
-            }
+            //ICoordinatesFunction coordFunc = null;
+            //if (defaultCurve == null)
+            //{
+            //    List<double> xs = new List<double>() { 0 };
+            //    List<double> ys = new List<double>() { 0 };
+            //    coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            //}
+            //else
+            //{
+            //    coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve);
+            //}
 
-            EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
+            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
         }
 

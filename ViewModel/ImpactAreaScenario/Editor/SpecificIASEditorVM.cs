@@ -1,8 +1,9 @@
-﻿using ead;
+﻿using compute;
 using Functions;
 using HEC.CS.Collections;
 using Model;
 using paireddata;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -464,11 +465,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
             MeanRandomProvider mrp = new MeanRandomProvider();
             try
             {
-                metrics.Results result = simulation.Compute(mrp, 1);
-                Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                int i = 0;
+                //metrics.Results result = simulation.Compute(mrp, 1);
+                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                //int i = 0;
             }
             catch (Exception e)
             {
@@ -482,18 +483,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                //todo: i don't like this.
-                IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, curve.Function);
-                stageDamages.Add(fdaFunction.ToUncertainPairedData());
+                stageDamages.Add(curve.Function);
             }
             return stageDamages;
         }
 
 
         #region PlotCurves
-        private IFdaFunction getFrequencyRelationshipFunction()
+        private UncertainPairedData getFrequencyRelationshipFunction()
         {
-            IFdaFunction retval = null;
+            UncertainPairedData retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
                 retval = SelectedFrequencyElement.ChildElement.Curve;
@@ -502,9 +501,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return retval;
         }
 
-        private IFdaFunction getRatingCurveFunction()
+        private UncertainPairedData getRatingCurveFunction()
         {
-            IFdaFunction retval = null;
+            UncertainPairedData retval = null;
             if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
             {
                 retval = SelectedRatingCurveElement.ChildElement.Curve;
@@ -513,33 +512,29 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return retval;
         }
 
-        private IFdaFunction getStageDamageFunction()
+        private UncertainPairedData getStageDamageFunction()
         {
-
-            IFdaFunction retval = null;
+            UncertainPairedData retval = null;
             if (SelectedDamageCurve != null)
             {
-                //the iparameterEnum type does not matter here. I just need to turn the coordinates function into an ifdaFunction
-                retval = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, SelectedDamageCurve.Function);
+                retval = SelectedDamageCurve.Function;
             }
             return retval;
         }
 
-        private IFdaFunction getDamageFrequencyFunction()
+        private UncertainPairedData getDamageFrequencyFunction()
         {
             //todo: this will be the result from the compute. I don't think we need this method once the compute is happening.
-            List<double> xValues = new List<double>();
-            List<double> yValues = new List<double>();
-
+            double[] xs = new double[10];
+            Normal[] ys = new Normal[10];
             for (int i = 0; i < 10; i++)
             {
-                xValues.Add(i / 9.0);
-                yValues.Add(i * 110);
+                xs[i] = i;
+                ys[i] = new Normal(i, 0);
             }
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, "Stage", "Damage", "Stage-Damage", "", -1);
+            return curve;
 
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.DamageFrequency, coordinatesFunction);
-            return fdaFunction;
         }
 
         public void Plot()

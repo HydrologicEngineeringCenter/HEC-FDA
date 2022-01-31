@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ViewModel.Utilities;
 using System.Collections.ObjectModel;
 using Model;
+using paireddata;
 
 namespace ViewModel.Editors
 {
@@ -73,7 +74,7 @@ namespace ViewModel.Editors
         }
 
         public string OldName { get; set; }
-        public IFdaFunction OldCurve { get; set; }
+        public UncertainPairedData OldCurve { get; set; }
         //public OwnedElement SaveElement { get; set; } 
         //public Action<ChildElement> SaveAction { get; set; }
         public Saving.IPersistableWithUndoRedo SavingManager { get; set; }

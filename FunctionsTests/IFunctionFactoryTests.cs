@@ -1,4 +1,4 @@
-using Functions;
+
 using Functions.CoordinatesFunctions;
 using System;
 using System.Collections.Immutable;

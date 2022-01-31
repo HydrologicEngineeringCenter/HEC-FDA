@@ -1,10 +1,7 @@
-﻿using System;
+﻿using paireddata;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ViewModel.Utilities;
-using Statistics;
-using Model;
 
 namespace ViewModel.StageTransforms
 {
@@ -28,7 +25,7 @@ namespace ViewModel.StageTransforms
         
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, IFdaFunction exteriorInteriorCurve):base()
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, UncertainPairedData exteriorInteriorCurve):base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -150,7 +147,7 @@ namespace ViewModel.StageTransforms
         }
 
         //todo: Refactor: commenting out
-        private bool areCurvesEqual(IFdaFunction curve2)
+        private bool areCurvesEqual(UncertainPairedData curve2)
         {
             bool retval = true;
             //if (Curve.GetType() != curve2.GetType())

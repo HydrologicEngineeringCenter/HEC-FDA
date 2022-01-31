@@ -10,6 +10,8 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
 using Statistics;
 using Utilities;
+using paireddata;
+using Statistics.Distributions;
 
 namespace ViewModel.FrequencyRelationships
 {
@@ -19,6 +21,7 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Fields
         
+        private UncertainPairedData _Curve;
         private ObservableCollection<double> _Probabilities = new ObservableCollection<double>();
         private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
@@ -103,7 +106,7 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(IFdaFunction defaultCurve, string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public AnalyticalFrequencyEditorVM(UncertainPairedData defaultCurve, string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };   
             UpdateChartLineData();
@@ -158,7 +161,7 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
 
-        public override ICoordinatesFunction GetCoordinatesFunction()
+        public override UncertainPairedData GetCoordinatesFunction()
         {
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
@@ -167,7 +170,20 @@ namespace ViewModel.FrequencyRelationships
                 if (IsAnalytical)
                 {
                     if (IsStandard)
-                    {                        
+                    {
+                        //todo: finish, create array of probs
+                        LogPearson3 lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
+
+                        lp3.Validate();
+                        if(lp3.HasErrors)
+                        {
+                            System.Collections.IEnumerable enumerable = lp3.GetErrors();
+                            Base.Enumerations.ErrorLevel errorLevel = lp3.ErrorLevel;
+                        }
+                        //Distribution
+                        //todo use mean, st dev, and skew to create the curve
+                        
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                         IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if(dist.State < IMessageLevels.Error)
                         {

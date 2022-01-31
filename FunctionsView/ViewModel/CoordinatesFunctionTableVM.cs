@@ -1,12 +1,10 @@
 ﻿using Functions;
-using Functions.CoordinatesFunctions;
-using FunctionsView.View;
+using paireddata;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionsView.ViewModel
 {
@@ -22,10 +20,6 @@ namespace FunctionsView.ViewModel
         public IOrdinateEnum DistributionType
         {
             get { return Rows[0].SelectedDistributionType; }
-        }
-        public InterpolationEnum InterpolationType
-        {
-            get { return Rows[0].SelectedInterpolationType; }
         }
         public ObservableCollection<CoordinatesFunctionRowItem> Rows 
         { 
@@ -53,18 +47,25 @@ namespace FunctionsView.ViewModel
             TableWasModified?.Invoke(this, new EventArgs());
         }
 
-        public ICoordinatesFunction CreateCoordinatesFunctionFromTable()
+        public UncertainPairedData CreateCoordinatesFunctionFromTable()
         {
             //every row in a table should be guaranteed to have the same distribution type
             //and the same interpolation type
-            InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
             //i need to turn each row into an iCoordinate
-            List<ICoordinate> coordinates = new List<ICoordinate>();
-            foreach(CoordinatesFunctionRowItem row in Rows)
+            //List<ICoordinate> coordinates = new List<ICoordinate>();
+            //foreach(CoordinatesFunctionRowItem row in Rows)
+            //{
+            //    coordinates.Add(row.CreateCoordinateFromRow());
+            //}
+            //return IFunctionFactory.Factory(coordinates, interpType);
+            List<double> xs = new List<double>();
+            List<IDistribution> ys = new List<IDistribution>();
+            foreach (CoordinatesFunctionRowItem row in Rows)
             {
-                coordinates.Add(row.CreateCoordinateFromRow());
+                xs.Add(row.X);
+                ys.Add(new Normal(row.Y, 0));
             }
-            return IFunctionFactory.Factory(coordinates, interpType);
+            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "xLabel", "yLabel", "testName", "description", -1);
         }
 
 
@@ -160,42 +161,10 @@ namespace FunctionsView.ViewModel
         /// <returns></returns>
         private CoordinatesFunctionRowItem CreateDefaultRow()
         {
-            InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
+            //InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
             IOrdinateEnum distType = Rows[0].SelectedDistributionType;
-            CoordinatesFunctionRowItem row = null;
-            switch (distType)
-            {
-                case IOrdinateEnum.Constant:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithConstantDist(0, interpType).Build();
-                        break;
-                    }
-                case IOrdinateEnum.Normal:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithNormalDist(0, 0, interpType).Build();
-                        break;
-                    }
-                case IOrdinateEnum.Triangular:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithTriangularDist(0, 0, 0, interpType).Build();
-                        break;
-                    }
-                case IOrdinateEnum.Uniform:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithUniformDist(0, 0, interpType).Build();
-                        break;
-                    }
-                case IOrdinateEnum.TruncatedNormal:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithTruncatedNormalDist(0, 0, 0, 0, interpType).Build();
-                        break;
-                    }
-                case IOrdinateEnum.Beta4Parameters:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithBetaDist(0, 0, 0, 0, interpType).Build();
-                        break;
-                    }
-            }
+            CoordinatesFunctionRowItem row = null;                
+            row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithNormalDist(0, 0).Build();                                
             row.RowIsLeavingTable += Row_RowIsLeavingTable;
             return row;
         }

@@ -1,5 +1,4 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,8 +26,8 @@ namespace ViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, 
-            IFdaFunction failureFunctionCurve, LeveeFeatureElement selectedLatStructure) : base()
+        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description,
+            UncertainPairedData failureFunctionCurve, LeveeFeatureElement selectedLatStructure) : base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -167,8 +166,8 @@ namespace ViewModel.GeoTech
             vm.SelectedLateralStructure = element.SelectedLateralStructure;
             if (vm.EditorVM != null)
             {
-                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
-                vm.EditorVM.Function = coordFunc;
+                //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
+                vm.EditorVM.Function = elem.Curve;
             }
         }
         #endregion
@@ -208,7 +207,7 @@ namespace ViewModel.GeoTech
             }
             return retval;
         }
-        private bool areCurvesEqual(IFdaFunction curve2)
+        private bool areCurvesEqual(UncertainPairedData curve2)
         {
             bool retval = true;
             //todo: Refactor: i commented this out

@@ -1,11 +1,6 @@
-﻿using ViewModel.ImpactArea;
-using Functions;
-using FunctionsView.ViewModel;
+﻿using paireddata;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.ImpactArea;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -29,7 +24,7 @@ namespace ViewModel.AggregatedStageDamage
         public CoordinatesFunctionEditorVM EditorVM { get; set; }
 
 
-        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ICoordinatesFunction function)
+        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)
         {
             ID = id;
             ImpactArea = impArea;

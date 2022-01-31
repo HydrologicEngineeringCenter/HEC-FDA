@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CoordinatesFunctions\**" />
+    <EmbeddedResource Remove="CoordinatesFunctions\**" />
+    <None Remove="CoordinatesFunctions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Validation\LinkedCoordinatesFunctionValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2021.11.1.119" />
     <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.10.28.1541" />
   </ItemGroup>
