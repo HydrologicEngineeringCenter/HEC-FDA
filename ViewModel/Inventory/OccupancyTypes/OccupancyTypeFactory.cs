@@ -52,10 +52,16 @@ namespace ViewModel.Inventory.OccupancyTypes
             //depth damage curves
             List<double> xs = new List<double>() { 0 };
             List<double> ys = new List<double>() { 0 };
-            ot.StructureDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            ot.ContentDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            ot.VehicleDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            ot.OtherDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+
+            paireddata.UncertainPairedData defaultStruct = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultCont = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultVehicle = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultOther = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
+
+            ot.StructureDepthDamageFunction = defaultStruct;
+            ot.ContentDepthDamageFunction = defaultCont;
+            ot.VehicleDepthDamageFunction = defaultVehicle;
+            ot.OtherDepthDamageFunction = defaultOther;
 
             //value uncertainties
             ot.StructureValueUncertainty = new Constant(0);

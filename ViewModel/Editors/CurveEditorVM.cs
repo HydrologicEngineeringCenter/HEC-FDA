@@ -82,7 +82,6 @@ namespace ViewModel.Editors
         #region constructors
         public CurveEditorVM(UncertainPairedData defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            _ParameterType = defaultCurve.ParameterType;
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
         }
@@ -94,7 +93,6 @@ namespace ViewModel.Editors
             if (elem.Curve != null)
             {
                 //the curve is null for the conditions editor
-                _ParameterType = elem.Curve.ParameterType;
             }
             PlotTitle = Name;
             SetDimensions(800, 600, 400, 400);         
@@ -124,7 +122,7 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(prevElement);
                 SavingText = CreateLastSavedText(prevElement);
                 ReloadMessages();
-                EditorVM.UpdateChartViewModel();
+                //EditorVM.UpdateChartViewModel();
             }
         }
 
@@ -136,13 +134,13 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(nextElement);
                 SavingText = CreateLastSavedText(nextElement);
                 ReloadMessages();
-                EditorVM.UpdateChartViewModel();
+                //EditorVM.UpdateChartViewModel();
             }
         }
 
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
-            return EditorVM.CreateFunctionFromTables(); 
+            return null;// EditorVM.CreateFunctionFromTables(); 
         }
 
         public virtual void SaveWhileEditing()

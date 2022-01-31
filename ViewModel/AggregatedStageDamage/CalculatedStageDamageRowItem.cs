@@ -21,7 +21,7 @@ namespace ViewModel.AggregatedStageDamage
             get { return _DamCat; }
             set { _DamCat = value; NotifyPropertyChanged(); }
         }
-        public CoordinatesFunctionEditorVM EditorVM { get; set; }
+        //public CoordinatesFunctionEditorVM EditorVM { get; set; }
 
 
         public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)
@@ -29,7 +29,7 @@ namespace ViewModel.AggregatedStageDamage
             ID = id;
             ImpactArea = impArea;
             DamageCategory = damCat;
-            EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage", true);
+            //EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage", true);
         }
 
 

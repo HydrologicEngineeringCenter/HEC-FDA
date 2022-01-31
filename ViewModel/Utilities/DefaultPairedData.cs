@@ -23,6 +23,32 @@ namespace ViewModel.Utilities
             UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "", -1);
             return curve;
         }
+        public static UncertainPairedData CreateDefaultDeterminateUncertainPairedData(string xLabel, string yLabel, string name)
+        {
+            double[] xs = new double[10];
+            Deterministic[] ys = new Deterministic[10];
+            for (int i = 0; i < 10; i++)
+            {
+                xs[i] = i;
+                ys[i] = new Deterministic(i);
+            }
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "", -1);
+            return curve;
+        }
+
+        public static UncertainPairedData CreateDefaultDeterminateUncertainPairedData(List<double> xs, List<double> ys, string xLabel, string yLabel, string name)
+        {
+            //double[] xs = new double[10];
+            List<Deterministic> yVals = new List<Deterministic>();
+            foreach(double d in ys)
+            {
+                //xs[i] = i;
+                yVals.Add(new Deterministic(d));
+            }
+            UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "", -1);
+            return curve;
+        }
+
 
     }
 }
