@@ -105,7 +105,7 @@ namespace ViewModel.FrequencyRelationships
         #region Constructors
         public AnalyticalFrequencyEditorVM(IFdaFunction defaultCurve, string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            //_Curve = null;//todo: Refactor: CO new Statistics.LogPearsonIII(4, .4, .5, 50);
+            _Curve = null;//todo: Refactor: CO new Statistics.LogPearsonIII(4, .4, .5, 50);
             Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };   
             UpdateChartLineData();
             LoadDefaultFlows();

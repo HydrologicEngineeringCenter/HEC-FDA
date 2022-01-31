@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 using Utilities;
 using Importer;
 using static Importer.ProbabilityFunction;
-using ViewModel.Utilities;
-using ViewModel.FrequencyRelationships;
-using System.Xml.Linq;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
