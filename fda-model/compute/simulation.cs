@@ -16,6 +16,7 @@ namespace compute{
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
         private Statistics.ContinuousDistribution _frequency_flow;
+        private UncertainPairedData _frequency_flow_graphical;
         private UncertainPairedData _inflow_outflow;
         private UncertainPairedData _flow_stage;
         private UncertainPairedData _frequency_stage;
@@ -534,6 +535,11 @@ namespace compute{
             public SimulationBuilder withFlowFrequency(Statistics.ContinuousDistribution dist)
             {
                 _sim._frequency_flow = dist;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withFlowFrequency(UncertainPairedData upd)
+            {
+                _sim._frequency_flow_graphical = upd;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInflowOutflow(UncertainPairedData upd)
