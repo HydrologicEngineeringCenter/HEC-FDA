@@ -40,6 +40,7 @@ namespace compute{
         internal Simulation()
         {
             _frequency_flow = null;
+            _frequency_flow_graphical = new UncertainPairedData(); //can we have both of these?
             _inflow_outflow = new UncertainPairedData();//defaults to null
             _flow_stage = new UncertainPairedData(); //defaults to null
             _frequency_stage = new UncertainPairedData();//defaults to null
@@ -516,7 +517,6 @@ namespace compute{
                 ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
             }
         }
-        
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender,e);
