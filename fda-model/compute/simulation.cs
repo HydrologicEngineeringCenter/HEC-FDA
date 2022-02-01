@@ -126,8 +126,17 @@ namespace compute{
                     }
                     if (_frequency_stage.IsNull)
                     {
+                        IPairedData frequencyFlow;
+                        if (_frequency_flow_graphical.IsNull)
+                        {
+                            frequencyFlow = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+
+                        }
+                        else
+                        {
+                            frequencyFlow = _frequency_flow_graphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                        }
                         //if frequency_flow is not defined throw big errors.
-                        IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                         //check if flow transform exists, and use it here
                         if (_inflow_outflow.IsNull)
                         {
@@ -140,7 +149,7 @@ namespace compute{
                             else
                             {
                                 IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                                IPairedData frequency_stage = flow_stage_sample.compose(ff);
+                                IPairedData frequency_stage = flow_stage_sample.compose(frequencyFlow);
                                 ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
                             }
 
@@ -148,7 +157,7 @@ namespace compute{
                         else
                         {
                             IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
-                            IPairedData transformff = inflow_outflow_sample.compose(ff);
+                            IPairedData transformff = inflow_outflow_sample.compose(frequencyFlow);
                             if (_flow_stage.IsNull)
                             {
                                 //complain loudly
