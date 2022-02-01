@@ -16,6 +16,7 @@ namespace compute{
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
         private Statistics.ContinuousDistribution _frequency_flow;
+        private UncertainPairedData _frequency_flow_graphical;
         private UncertainPairedData _inflow_outflow;
         private UncertainPairedData _flow_stage;
         private UncertainPairedData _frequency_stage;
@@ -39,6 +40,7 @@ namespace compute{
         internal Simulation()
         {
             _frequency_flow = null;
+            _frequency_flow_graphical = new UncertainPairedData(); //can we have both of these?
             _inflow_outflow = new UncertainPairedData();//defaults to null
             _flow_stage = new UncertainPairedData(); //defaults to null
             _frequency_stage = new UncertainPairedData();//defaults to null
@@ -125,8 +127,17 @@ namespace compute{
                     }
                     if (_frequency_stage.IsNull)
                     {
+                        IPairedData frequencyFlow;
+                        if (_frequency_flow_graphical.IsNull)
+                        {
+                            frequencyFlow = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+
+                        }
+                        else
+                        {
+                            frequencyFlow = _frequency_flow_graphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                        }
                         //if frequency_flow is not defined throw big errors.
-                        IPairedData ff = BootstrapToPairedData(threadlocalRandomProvider, _frequency_flow, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                         //check if flow transform exists, and use it here
                         if (_inflow_outflow.IsNull)
                         {
@@ -139,7 +150,7 @@ namespace compute{
                             else
                             {
                                 IPairedData flow_stage_sample = _flow_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                                IPairedData frequency_stage = flow_stage_sample.compose(ff);
+                                IPairedData frequency_stage = flow_stage_sample.compose(frequencyFlow);
                                 ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
                             }
 
@@ -147,7 +158,7 @@ namespace compute{
                         else
                         {
                             IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
-                            IPairedData transformff = inflow_outflow_sample.compose(ff);
+                            IPairedData transformff = inflow_outflow_sample.compose(frequencyFlow);
                             if (_flow_stage.IsNull)
                             {
                                 //complain loudly
@@ -506,7 +517,6 @@ namespace compute{
                 ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
             }
         }
-        
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender,e);
@@ -534,6 +544,11 @@ namespace compute{
             public SimulationBuilder withFlowFrequency(Statistics.ContinuousDistribution dist)
             {
                 _sim._frequency_flow = dist;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withFlowFrequency(UncertainPairedData upd)
+            {
+                _sim._frequency_flow_graphical = upd;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInflowOutflow(UncertainPairedData upd)
