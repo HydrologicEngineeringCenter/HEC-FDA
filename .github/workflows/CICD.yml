@@ -37,7 +37,7 @@ jobs:
 
     - name: Pack 
       run: |
-            $datetime = get-date -f yyyy.M.d.Hmm
+            $datetime = get-date -f yyyy-M-d-Hmm
             $versionSuffix = "alpha-" + $datetime
             dotnet pack --configuration Debug --version-suffix $versionSuffix
       shell: powershell
