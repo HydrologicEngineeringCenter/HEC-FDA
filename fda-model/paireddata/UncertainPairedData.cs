@@ -12,15 +12,34 @@ namespace paireddata
         #region Fields 
         private double[] _xvals;
         private IDistribution[] _yvals;
+        private CurveMetaData _metadata;
         #endregion
 
         #region Properties 
-        public string XLabel { get; }
-        public string YLabel { get; }
-        public string Name { get; }
-        public string Description { get; }
-        public string Category { get; }
-        public bool IsNull { get; }
+        public string XLabel
+        {
+            get { return _metadata.XLabel; }
+        }
+        public string YLabel
+        {
+            get { return _metadata.YLabel; }
+        }
+        public string Name
+        {
+            get { return _metadata.Name; }
+        }
+        public string Description
+        {
+            get { return _metadata.Description; }
+        }
+        public string Category
+        {
+            get { return _metadata.Category; }
+        }
+        public bool IsNull
+        {
+            get { return _metadata.IsNull; }
+        }
         public double[] xs()
         {
             return _xvals;
@@ -34,30 +53,21 @@ namespace paireddata
         #region Constructors 
         public UncertainPairedData()
         {
-            IsNull = true;
+            _metadata = new CurveMetaData();
         }
         //, string xlabel, string ylabel, string name, string description, int ID
+        
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description)
         {
             _xvals = xs;
             _yvals = ys;
-            Category = "Default";
-            IsNull = false;
-            XLabel = xlabel;
-            YLabel = ylabel;
-            Name = name;
-            Description = description;
+            _metadata = new CurveMetaData(xlabel,ylabel,name,description);
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, string category)
         {
             _xvals = xs;
             _yvals = ys;
-            Category = category;
-            IsNull = false;
-            XLabel = xlabel;
-            YLabel = ylabel;
-            Name = name;
-            Description = description;
+            _metadata = new CurveMetaData(xlabel, ylabel, name, description, category);
         }
         #endregion
 
@@ -69,7 +79,7 @@ namespace paireddata
             {
                 y[i] = _yvals[i].InverseCDF(probability);
             }
-            PairedData pd = new PairedData(_xvals, y, Category);//mutability leakage on xvals
+            PairedData pd = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
             pd.Validate();
             if (pd.HasErrors){
                 

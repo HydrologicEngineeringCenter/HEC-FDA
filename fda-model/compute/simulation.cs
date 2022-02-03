@@ -57,7 +57,7 @@ namespace compute{
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Statistics.ConvergenceCriteria convergence_criteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false){
-            Validate();
+            //Validate();
             if (HasErrors)
             {
                 if (ErrorLevel >= Base.Enumerations.ErrorLevel.Fatal)
@@ -70,6 +70,10 @@ namespace compute{
                     ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation contains warnings")));
                 }
                 //enumerate what the errors and warnings are 
+            }
+            else
+            {
+                _leveeIsValid = true;
             }
             int masterseed = 0;
             if(rp is MeanRandomProvider)
@@ -109,7 +113,7 @@ namespace compute{
                 seeds[i] = masterSeedList.Next();
             }
             Int64 iterations = convergence_criteria.MinIterations;
-            _leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
+            //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
             while (!_results.IsConverged())
             {
@@ -274,7 +278,8 @@ namespace compute{
         private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
         {
             double totalEAD = 0.0;
-            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
+            CurveMetaData metadata = new CurveMetaData("Total");
+            PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
             foreach (UncertainPairedData pairedData in _damage_category_stage_damage){
                 IPairedData _stage_damage_sample = pairedData.SamplePairedData(rp.NextRandom());//needs to be a random number
@@ -299,7 +304,8 @@ namespace compute{
         private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, IPairedData levee, bool giveMeADamageFrequency, Int64 iteration)
         {
             double totalEAD = 0.0;
-            PairedData totalDamageFrequency = new PairedData(null, null, "Total");
+            CurveMetaData metadata = new CurveMetaData("Total");
+            PairedData totalDamageFrequency = new PairedData(null, null, metadata);
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
                 IPairedData stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
@@ -396,7 +402,8 @@ namespace compute{
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
-            IPairedData frequencyDamage = new PairedData(null, null, "Total");
+            CurveMetaData metadata = new CurveMetaData("Total");
+            IPairedData frequencyDamage = new PairedData(null, null, metadata);
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_levee_curve.IsNull)
             {
@@ -450,7 +457,8 @@ namespace compute{
 
         internal PairedData ComputeTotalStageDamage(List<UncertainPairedData> listOfUncertainPairedData)
         {
-            PairedData totalStageDamage = new PairedData(null, null, "Total");
+            CurveMetaData metadata = new CurveMetaData("Total");
+            PairedData totalStageDamage = new PairedData(null, null, metadata);
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             foreach (UncertainPairedData uncertainPairedData in listOfUncertainPairedData)
             {
