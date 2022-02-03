@@ -79,27 +79,27 @@ namespace paireddata
             {
                 y[i] = _yvals[i].InverseCDF(probability);
             }
-            PairedData pd = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
-            pd.Validate();
-            if (pd.HasErrors){
+            PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
+            pairedData.Validate();
+            if (pairedData.HasErrors){
                 
-                if (pd.RuleMap[nameof(pd.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pd.Yvals);//sorts but doesnt solve the problem of repeated values.
+                    Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
                 }
-                if (pd.RuleMap[nameof(pd.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pd.Xvals);//bad news.
+                    Array.Sort(pairedData.Xvals);//bad news.
                 }
-                pd.Validate();
-                if (pd.HasErrors)
+                pairedData.Validate();
+                if (pairedData.HasErrors)
                 {
                    // throw new Exception("the produced paired data is not monotonically increasing.");
                 }
 
                 
             }
-            return pd;
+            return pairedData;
         }
 
         public XElement WriteToXML()

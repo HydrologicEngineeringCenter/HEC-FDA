@@ -11,8 +11,11 @@ namespace paireddata
     class GraphicalUncertainPairedData : IPairedDataProducer, ICanBeNull
     {
         #region Fields
+        private int _EquivalentRecordLength;
         private double[] _ExceedanceProbabilities;
-        private Normal[] _FlowOrStageDistributions;
+        private Normal[] _UnrevisedDistributions;
+        private Normal[] _DistributionsMonotonicFromAbove;
+        private Normal[] _DistributionsMonotonicFromBelow;
         private CurveMetaData _metaData;
         #endregion
 
@@ -41,13 +44,20 @@ namespace paireddata
         {
             get { return _metaData.IsNull; }
         }
-        public double[] ExceedanceProbabilities() //why do we have the () here?
+        public double[] ExceedanceProbabilities
         {
-            return _ExceedanceProbabilities;
+            get
+            {
+                return _ExceedanceProbabilities;
+            }
         }
-        public Normal[] FlowOrStageDistributions()
+        public int EquivalentRecordLength
         {
-            return _FlowOrStageDistributions;
+            get
+            {
+                return _EquivalentRecordLength;
+            }
+
         }
         #endregion
 
@@ -62,15 +72,58 @@ namespace paireddata
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, maximumProbability, minimumProbability, usingFlows, flowsAreNotLogged);
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
-            _FlowOrStageDistributions = graphical.FlowOrStageDistributions;
+            _UnrevisedDistributions = graphical.FlowOrStageDistributions;
+            _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_UnrevisedDistributions);
+            _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_UnrevisedDistributions);
+            _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, description);
         }
-
-
-
+        #endregion
 
         #region Functions
         IPairedData IPairedDataProducer.SamplePairedData(double probability)
+        {
+            double[] y = new double[_UnrevisedDistributions.Length];
+            if (probability > 0.5)
+            {
+                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                {
+                    y[i] = _DistributionsMonotonicFromAbove[i].InverseCDF(probability);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                {
+                    y[i] = _DistributionsMonotonicFromBelow[i].InverseCDF(probability);
+                }
+            }
+            PairedData pairedData = new PairedData(_ExceedanceProbabilities, y, _metaData);
+            pairedData.Validate();
+            if (pairedData.HasErrors)
+            {
+                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                {
+                    Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
+                }
+                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                {
+                    Array.Sort(pairedData.Xvals);//bad news.
+                }
+                pairedData.Validate();
+                if (pairedData.HasErrors)
+                {
+                    // throw new Exception("the produced paired data is not monotonically increasing.");
+                }
+            }
+            return pairedData;
+        }
+        private Normal[] MakeMeMonotonicFromBelow(Normal[] flowOrStageDistributions)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Normal[] MakeMeMonotonicFromAbove(Normal[] flowOrStageDistributions)
         {
             throw new NotImplementedException();
         }
