@@ -1,7 +1,5 @@
-﻿using Functions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using paireddata;
+using Statistics;
 
 namespace OccupancyTypes
 {
@@ -16,17 +14,17 @@ namespace OccupancyTypes
         bool CalculateVehicleDamage { get; set; }
         bool CalculateOtherDamage { get; set; }
 
-        ICoordinatesFunction StructureDepthDamageFunction { get; set; }
+        UncertainPairedData StructureDepthDamageFunction { get; set; }
 
-        ICoordinatesFunction ContentDepthDamageFunction { get; set; }
-        ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
-        ICoordinatesFunction OtherDepthDamageFunction { get; set; }
+        UncertainPairedData ContentDepthDamageFunction { get; set; }
+        UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        UncertainPairedData OtherDepthDamageFunction { get; set; }
 
-        IDistributedOrdinate StructureValueUncertainty { get; set; }
-        IDistributedOrdinate ContentValueUncertainty { get; set; }
-        IDistributedOrdinate VehicleValueUncertainty { get; set; }
-        IDistributedOrdinate OtherValueUncertainty { get; set; }
-        IDistributedOrdinate FoundationHeightUncertainty { get; set; }
+        IDistribution StructureValueUncertainty { get; set; }
+        IDistribution ContentValueUncertainty { get; set; }
+        IDistribution VehicleValueUncertainty { get; set; }
+        IDistribution OtherValueUncertainty { get; set; }
+        IDistribution FoundationHeightUncertainty { get; set; }
 
 
 

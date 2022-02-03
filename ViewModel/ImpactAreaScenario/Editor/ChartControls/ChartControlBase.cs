@@ -1,17 +1,13 @@
-﻿using Functions;
-using HEC.Plotting.Core;
+﻿using HEC.Plotting.Core;
 using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using Model;
 using paireddata;
 using SciChart.Charting.Model.ChartSeries;
-using SciChart.Data.Model;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -140,10 +136,10 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> yVals = new List<double>();
             if (Function != null)
             {
-                List<ICoordinate> coordinates = Function.ys;
-                foreach (ICoordinate coord in coordinates)
+                IDistribution[] coordinates = Function.ys();
+                foreach (IDistribution coord in coordinates)
                 {
-                    yVals.Add(coord.Y.Value());
+                    yVals.Add(coord.InverseCDF(.5));
                 }
             }
             return yVals.ToArray();

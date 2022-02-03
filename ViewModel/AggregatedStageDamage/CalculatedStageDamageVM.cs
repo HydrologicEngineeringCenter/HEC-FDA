@@ -1,5 +1,4 @@
-﻿using Functions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -224,7 +223,7 @@ namespace ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.EditorVM.CreateFunctionFromTables());
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); //r.EditorVM.CreateFunctionFromTables());
                 curves.Add(curve);
             }
 

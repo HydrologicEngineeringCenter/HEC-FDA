@@ -1,11 +1,8 @@
-﻿using Functions;
-using Functions.Ordinates;
+﻿using Statistics;
+using Statistics.Distributions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -18,7 +15,7 @@ namespace ViewModel.Inventory.OccupancyTypes
         public event EventHandler WasModified;
 
         #region fields
-        private IOrdinate _ValueUncertainty;
+        private IDistribution _ValueUncertainty;
        // private IOrdinateEnum _SelectedType;
         private IValueUncertainty _CurrentVM;
         private NormalControlVM _NormalControlVM;
@@ -46,7 +43,7 @@ namespace ViewModel.Inventory.OccupancyTypes
         }
 
 
-        public ObservableCollection<IOrdinateEnum> UncertaintyTypes
+        public ObservableCollection<IDistributionEnum> UncertaintyTypes
         {
             get;
             set;
@@ -66,7 +63,7 @@ namespace ViewModel.Inventory.OccupancyTypes
         //    }
         //}
 
-        public IOrdinate ValueUncertainty
+        public IDistribution ValueUncertainty
         {
             get
             {
@@ -109,16 +106,16 @@ namespace ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region constructors
-        public ValueUncertaintyVM(IOrdinate valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType, String labelString)
+        public ValueUncertaintyVM(IDistribution valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType, String labelString)
         {
             ValueUncertaintyType = ValueUncertaintyType;
             //create the options for the combobox
-            UncertaintyTypes = new ObservableCollection<IOrdinateEnum>()
+            UncertaintyTypes = new ObservableCollection<IDistributionEnum>()
             {
-                IOrdinateEnum.Constant,
-                IOrdinateEnum.Normal,
-                IOrdinateEnum.Triangular,
-                IOrdinateEnum.Uniform
+                IDistributionEnum.Deterministic,
+                IDistributionEnum.Normal,
+                IDistributionEnum.Triangular,
+                IDistributionEnum.Uniform
             };
 
            
@@ -144,9 +141,9 @@ namespace ViewModel.Inventory.OccupancyTypes
         /// <param name="newValue"></param>
         public void SelectionChanged(Object newValue)
         {
-            if(newValue is IOrdinateEnum)
+            if(newValue is IDistributionEnum)
             {
-                IOrdinateEnum newType = (IOrdinateEnum)newValue;
+                IDistributionEnum newType = (IDistributionEnum)newValue;
                 //if newtype is the same as current then do nothing
                 if (newType != _ValueUncertainty.Type)
                 {
@@ -156,24 +153,23 @@ namespace ViewModel.Inventory.OccupancyTypes
                     try 
                     { 
                         //the constant option doesn't have anything, so it can't make an IOrdinate
-                        if(_ValueUncertainty.Type !=  IOrdinateEnum.Constant)
-                        {
-                            _ValueUncertainty = _CurrentVM.CreateOrdinate();
-                            IOrdinate newOrdinate = IOrdinateTranslator.TranslateValuesBetweenDistributionTypes(_ValueUncertainty, newType);
-                            ValueUncertainty = newOrdinate;
-                        }
-                        else
-                        {
+                        //if(_ValueUncertainty.Type != IDistributionEnum.Deterministic)
+                        //{
+                        //    _ValueUncertainty = _CurrentVM.CreateOrdinate();
+                        //    IDistribution newOrdinate = IOrdinateTranslator.TranslateValuesBetweenDistributionTypes(_ValueUncertainty, newType);
+                        //    ValueUncertainty = newOrdinate;
+                        //}
+                        //else
+                        //{
                             //create a default IOrdinate of the new type
-                            IOrdinate newOrdinate = CreateDefaultIOdinate(newType);
-                            ValueUncertainty = newOrdinate;
-                        }
+                            ValueUncertainty = CreateDefaultIOdinate(newType);
+                        //}
                     
                     }
                     catch(Exception ex)
                     {
                         //create a default IOrdinate of the new type
-                        IOrdinate newOrdinate = CreateDefaultIOdinate(newType);
+                        IDistribution newOrdinate = CreateDefaultIOdinate(newType);
                         ValueUncertainty = newOrdinate;
                     }
 
@@ -208,26 +204,26 @@ namespace ViewModel.Inventory.OccupancyTypes
             //}
         }
 
-        private IOrdinate CreateDefaultIOdinate(IOrdinateEnum type)
+        private IDistribution CreateDefaultIOdinate(IDistributionEnum type)
         {
             switch(type)
             {
-                case IOrdinateEnum.Constant:
+                case IDistributionEnum.Deterministic:
                     {
-                        return IOrdinateFactory.Factory(0);
+                        return new Deterministic(0);
                     }
-                case IOrdinateEnum.Normal:
+                case IDistributionEnum.Normal:
                     {
-                        return IDistributedOrdinateFactory.FactoryNormal(0, 0);
+                        return new Normal(0, 0);
                     }
-                case IOrdinateEnum.Triangular:
+                case IDistributionEnum.Triangular:
                     {
-                        return IDistributedOrdinateFactory.FactoryTriangular(0,0, 0);
+                        return new Triangular(0,0, 0);
 
                     }
-                case IOrdinateEnum.Uniform:
+                case IDistributionEnum.Uniform:
                     {
-                        return IDistributedOrdinateFactory.FactoryUniform(0, 0);
+                        return new Uniform(0, 0);
 
                     }
             }
@@ -241,11 +237,11 @@ namespace ViewModel.Inventory.OccupancyTypes
         /// in the combobox, a view model with default values is displayed
         /// </summary>
         /// <param name="ordinate"></param>
-        private void CreateDistributionControls(IOrdinate ordinate, string labelString)
+        private void CreateDistributionControls(IDistribution ordinate, string labelString)
         {
-            IOrdinateEnum ordType = ordinate.Type;
+            IDistributionEnum ordType = ordinate.Type;
             //create constant option
-            if(ordType == IOrdinateEnum.Constant)
+            if(ordType == IDistributionEnum.Deterministic)
             {
                 //todo: i don't really know how to handle constant right now
                 ControlWasModified(this, new EventArgs());
@@ -254,10 +250,10 @@ namespace ViewModel.Inventory.OccupancyTypes
             //create normal option
             double normalMean = 0;
             double normalStDev = 0;
-            if(ordType == IOrdinateEnum.Normal)
+            if(ordType == IDistributionEnum.Normal)
             {
-                 normalMean = ((IDistributedOrdinate)ordinate).Mean;
-                normalStDev = ((IDistributedOrdinate)ordinate).StandardDeviation;
+                 normalMean = ((Normal)ordinate).Mean;
+                normalStDev = ((Normal)ordinate).StandardDeviation;
             }
             _NormalControlVM = new NormalControlVM(normalMean, normalStDev, labelString);
             _NormalControlVM.WasModified += ControlWasModified;
@@ -266,11 +262,11 @@ namespace ViewModel.Inventory.OccupancyTypes
             double triMostLikely = 1;
             double triMin = 0;
             double triMax = 2;
-            if(ordType == IOrdinateEnum.Triangular)
+            if(ordType == IDistributionEnum.Triangular)
             {
-                triMostLikely = ((IDistributedOrdinate)ordinate).Mode;
-                triMin = ((IDistributedOrdinate)ordinate).Range.Min;
-                triMax = ((IDistributedOrdinate)ordinate).Range.Max;
+                triMostLikely = ((Triangular)ordinate).MostLikely;
+                triMin = ((Triangular)ordinate).Min;
+                triMax = ((Triangular)ordinate).Max;
             }
             _TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, labelString);
             _TriangularControlVM.WasModified += ControlWasModified;
@@ -278,10 +274,10 @@ namespace ViewModel.Inventory.OccupancyTypes
             //create the uniform option
             double uniMin = 0;
             double uniMax = 1;
-            if(ordType == IOrdinateEnum.Uniform)
+            if(ordType == IDistributionEnum.Uniform)
             {
-                uniMin = ((IDistributedOrdinate)ordinate).Range.Min;
-                uniMax = ((IDistributedOrdinate)ordinate).Range.Max;
+                uniMin = ((Uniform)ordinate).Min;
+                uniMax = ((Uniform)ordinate).Max;
             }
             _UniformControlVM = new UniformControlVM(uniMin, uniMax, labelString);
             _UniformControlVM.WasModified += ControlWasModified;
@@ -344,23 +340,23 @@ namespace ViewModel.Inventory.OccupancyTypes
         {
             switch(_ValueUncertainty.Type)
             {
-                case IOrdinateEnum.Constant:
+                case IDistributionEnum.Deterministic:
                     {
                         CurrentVM = null;//todo: ???
                         break;
                     }
-                case IOrdinateEnum.Normal:
+                case IDistributionEnum.Normal:
                     {
                         
                         CurrentVM = _NormalControlVM;
                         break;
                     }
-                case IOrdinateEnum.Triangular:
+                case IDistributionEnum.Triangular:
                     {
                         CurrentVM = _TriangularControlVM;
                         break;
                     }
-                case IOrdinateEnum.Uniform:
+                case IDistributionEnum.Uniform:
                     {
                         CurrentVM = _UniformControlVM;
                         break;
@@ -373,12 +369,12 @@ namespace ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public IOrdinate CreateOrdinate()
+        public IDistribution CreateOrdinate()
         {
             if (CurrentVM == null)
             {
                 //then it is a constant
-                return new Constant(0); //todo: what value goes here?
+                return new Deterministic(0); //todo: what value goes here?
             }
             else
             {

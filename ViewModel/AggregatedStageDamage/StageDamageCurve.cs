@@ -1,5 +1,4 @@
-﻿using Functions;
-using paireddata;
+﻿using paireddata;
 using System;
 using System.Xml.Linq;
 using Utilities.Serialization;
@@ -24,14 +23,13 @@ namespace ViewModel.AggregatedStageDamage
         {
             int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
-            XElement functionElem = curveElement.Element(SerializationConstants.FUNCTIONS);
-            UncertainPairedData coordFunction = ICoordinatesFunctionsFactory.Factory(functionElem.ToString());
+            XElement functionElem = curveElement.Element("UncertainPairedData");
+            UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
 
             //todo i need to create the row item from the id? i just need to grab it from the database i guess
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
             DamCat = selectedDamCat;
-            Function = coordFunction;
-
+            Function = uncertainPairedData;
         }
 
         public ImpactAreaRowItem ImpArea { get; }

@@ -4,8 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:View.FrequencyRelationships"
-             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
-             xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:cmds="clr-namespace:View.Commands"
              xmlns:Utilities="clr-namespace:View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"

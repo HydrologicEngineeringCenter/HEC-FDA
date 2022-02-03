@@ -1,17 +1,11 @@
-﻿using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
-
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
+using ViewModel.StageTransforms;
 using ViewModel.Storage;
-using Importer;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -98,7 +92,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.Description = "";
             }
             
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.DistributionType, 
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve, 
                 element.Curve.GetType(), element.Curve.WriteToXML().ToString()};
 
         }
@@ -118,7 +112,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //the new stateId will be one higher than the max that is in the table already.
             int stateId = Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve, element.Curve.GetType(),
                 element.Curve.WriteToXML().ToString(), stateId};
 
         }
@@ -130,10 +124,13 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.Rating, coordinatesFunction);
+            string curveXML = (string)rowData[CURVE_COL];
+            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
+
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            //IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.Rating, coordinatesFunction);
             RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
-                (string)rowData[DESC_COL], function);
+                (string)rowData[DESC_COL], upd);
             return rc;
         }
 

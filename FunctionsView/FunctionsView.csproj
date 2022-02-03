@@ -9,6 +9,11 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ViewModel\CoordinatesFunctionRowItem.cs" />
+    <Compile Remove="ViewModel\CoordinatesFunctionRowItemBuilder.cs" />
+    <Compile Remove="ViewModel\CoordinatesFunctionTableVM.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="HecCs">
       <HintPath>..\lib\HecCs.dll</HintPath>
     </Reference>

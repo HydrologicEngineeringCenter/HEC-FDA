@@ -1,9 +1,7 @@
-﻿using ViewModel.Editors;
-using ViewModel.Study;
-using ViewModel.Utilities;
-using Functions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel
 {
@@ -106,8 +104,7 @@ namespace ViewModel
             vm.Curve = element.Curve;
             if (vm.EditorVM != null)
             {
-                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
-                vm.EditorVM.Function = coordFunc;
+                vm.EditorVM.Function = element.Curve;
             }
         }
 

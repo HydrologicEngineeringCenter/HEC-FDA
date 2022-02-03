@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Functions\Functions.csproj" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-2-2-055" />
   </ItemGroup>
 
   <ItemGroup>

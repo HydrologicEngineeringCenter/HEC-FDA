@@ -1,10 +1,4 @@
-﻿using Functions;
-using Statistics;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OccupancyTypes
+﻿namespace OccupancyTypes
 {
     public static class OccupancyTypeFactory
     {

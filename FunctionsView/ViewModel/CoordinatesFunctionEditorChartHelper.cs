@@ -1,9 +1,7 @@
-﻿using Functions;
-using HEC.Plotting.SciChart2D.DataModel;
+﻿using HEC.Plotting.SciChart2D.DataModel;
 using paireddata;
 using Statistics;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Media;
 
 namespace FunctionsView.ViewModel

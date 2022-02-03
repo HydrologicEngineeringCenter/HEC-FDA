@@ -1,7 +1,4 @@
-﻿using Functions;
-using paireddata;
-using Statistics;
-using Statistics.Distributions;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -206,7 +203,7 @@ namespace ViewModel.AggregatedStageDamage
             foreach (ManualStageDamageRowItem r in Rows)
             {
                 UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
-                if(coordFunc.xs().Length<2)
+                if (coordFunc.xs().Length < 2)
                 {
                     rowsThatFailed.Add(r.ID.ToString());
                 }

@@ -1,5 +1,6 @@
 ﻿using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using metrics;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private void loadDummyData(List<ThresholdComboItem> metrics)
         {
-            MetricsToRows = new Dictionary<IMetric, List<IPerformanceRowItem>>();
+            MetricsToRows = new Dictionary<Threshold, List<IPerformanceRowItem>>();
 
             for (int i = 0; i < metrics.Count; i++)
             {

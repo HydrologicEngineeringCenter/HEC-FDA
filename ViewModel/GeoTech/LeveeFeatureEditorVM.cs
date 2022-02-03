@@ -1,6 +1,5 @@
-﻿using Functions;
-using FunctionsView.ViewModel;
-using Model;
+﻿using paireddata;
+using Statistics.Distributions;
 using System.Collections.Generic;
 using ViewModel.Editors;
 using ViewModel.Utilities;
@@ -33,7 +32,7 @@ namespace ViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM(IFdaFunction defaultCurve, Editors.EditorActionManager actionManager) : base(defaultCurve,"Probability","Stage","chartTitle", actionManager)
+        public LeveeFeatureEditorVM(UncertainPairedData defaultCurve, Editors.EditorActionManager actionManager) : base(defaultCurve,"Probability","Stage","chartTitle", actionManager)
         {
 
         }
@@ -46,25 +45,25 @@ namespace ViewModel.GeoTech
         #region Voids
         private void UpdateChart(double newElevationValue)
         {
-            if (_UsingDefaultCurve)
-            {
-                //if this is the first time then there will only be one coordinate
-                CoordinatesFunctionTableVM firstTable =  EditorVM.Tables[0];
-                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(1, false)
-                                        .WithConstantDist(newElevationValue, Functions.InterpolationEnum.Piecewise)
-                                        .Build();
-                if (firstTable.Rows.Count > 1)
-                {
-                    //replace the second row
-                    firstTable.DeleteRows(new List<int> { 1 });
-                    firstTable.AddRow(row);
-                }
-                else
-                {
-                    //add the second row
-                    firstTable.AddRow(row);
-                }
-            }
+            //if (_UsingDefaultCurve)
+            //{
+            //    //if this is the first time then there will only be one coordinate
+            //    CoordinatesFunctionTableVM firstTable =  EditorVM.Tables[0];
+            //    CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(1, false)
+            //                            .WithConstantDist(newElevationValue)
+            //                            .Build();
+            //    if (firstTable.Rows.Count > 1)
+            //    {
+            //        //replace the second row
+            //        firstTable.DeleteRows(new List<int> { 1 });
+            //        firstTable.AddRow(row);
+            //    }
+            //    else
+            //    {
+            //        //add the second row
+            //        firstTable.AddRow(row);
+            //    }
+            //}
         }
         #endregion
         #region Functions
@@ -75,14 +74,15 @@ namespace ViewModel.GeoTech
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
         }
 
-        public override ICoordinatesFunction GetCoordinatesFunction()
+        public override UncertainPairedData GetCoordinatesFunction()
         {
             if(IsUsingDefault)
             {
                 //in this case then we create a special default coordinates function
-                List<double> xs = new List<double>() { Elevation, Elevation + .000000000000001 };
-                List<double> ys = new List<double>() { 0, 1 }; 
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                List<double> defaultXs = new List<double>() { Elevation, Elevation + .000000000000001 };
+                List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
+
+                return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
             }
             else
             {

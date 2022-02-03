@@ -18,7 +18,7 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 using FdaLogging;
-using Functions;
+
 
 namespace ViewModel.Study
 {
@@ -156,9 +156,10 @@ namespace ViewModel.Study
         #region Constructors
         public FdaStudyVM() : base()
         {
-            Sampler.RegisterSampler(new ConstantSampler());
-            Sampler.RegisterSampler(new DistributionSampler());
-            Sampler.RegisterSampler(new LinkedFunctionsSampler());
+            //todo: i don't remember what this did, but i think it had to do with John's functions which don't exist anymore.
+            //Sampler.RegisterSampler(new ConstantSampler());
+            //Sampler.RegisterSampler(new DistributionSampler());
+            //Sampler.RegisterSampler(new LinkedFunctionsSampler());
 
             TabController tabFactory = TabController.Instance;
             TabFactoryInstance = tabFactory;

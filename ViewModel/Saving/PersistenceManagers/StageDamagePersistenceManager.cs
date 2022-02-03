@@ -1,5 +1,6 @@
-﻿using Functions;
+﻿
 using Importer;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -182,7 +183,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 damagesList.Add(damages[i]);
             }
             //always use linear. This is the only option in Old Fda.
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
+            UncertainPairedData func = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(depthsList, damagesList, "Stage", "Damage", "Stage-Damage"); 
             //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
 
             //there should only ever be 0 or 1 impact area elements
@@ -294,7 +295,7 @@ namespace ViewModel.Saving.PersistenceManagers
             int elemId = GetElementId(TableName, nameOfTotalFunctionInParentTable);
                     
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, ((AggregatedStageDamageElement)element).Method,
+                element.Curve, ((AggregatedStageDamageElement)element).Method,
                 element.Curve.WriteToXML().ToString(),
                 assetType};
         }

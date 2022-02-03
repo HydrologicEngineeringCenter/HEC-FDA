@@ -1,14 +1,10 @@
-﻿using ViewModel.FlowTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Importer;
+using System.Xml.Linq;
+using ViewModel.FlowTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -91,18 +87,21 @@ namespace ViewModel.Saving.PersistenceManagers
         private object[] GetRowDataFromElement(InflowOutflowElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.WriteToXML().ToString() };
+                element.Curve, element.Curve.WriteToXML().ToString() };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, func);
+            string curveXML = (string)rowData[CURVE_COL];
+            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
+
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            //IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            //IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, func);
 
             //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
-                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], function);
+                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], upd);
             //inout.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
             //inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             return inout;
@@ -159,14 +158,14 @@ namespace ViewModel.Saving.PersistenceManagers
         }
 
       
-        private void SaveFlowFreqCurveTable(InflowOutflowElement element, string lastEditDate)
-        {
-            if (!Storage.Connection.Instance.IsOpen)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            element.Curve.toSqliteTable(ChangeTableConstant + lastEditDate);
-        }
+        //private void SaveFlowFreqCurveTable(InflowOutflowElement element, string lastEditDate)
+        //{
+        //    if (!Storage.Connection.Instance.IsOpen)
+        //    {
+        //        Storage.Connection.Instance.Open();
+        //    }
+        //    element.Curve.toSqliteTable(ChangeTableConstant + lastEditDate);
+        //}
 
     
 
@@ -230,7 +229,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType,
+                element.Curve,
                 element.Curve.WriteToXML().ToString(), stateId};
         }
 

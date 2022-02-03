@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Functions;
+﻿using Statistics;
+using Statistics.Distributions;
+using System;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -39,9 +36,9 @@ namespace ViewModel.Inventory.OccupancyTypes
             StDev = stDev;
         }
 
-        public IOrdinate CreateOrdinate()
+        public IDistribution CreateOrdinate()
         {
-            return IDistributedOrdinateFactory.FactoryNormal(Mean, StDev);
+            return new Normal(Mean, StDev);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using ViewModel.Editors;
@@ -69,14 +68,14 @@ namespace ViewModel.StageTransforms
 
         public void AddNewRatingCurve(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1000, 10000, 15000,20000,50000 };//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            List<double> yValues = new List<double>() { 1,2,3,4,5};//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
+            //List<double> xValues = new List<double>() { 1000, 10000, 15000,20000,50000 };//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //List<double> yValues = new List<double>() { 1,2,3,4,5};//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            //IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+            //IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
             
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager()
+            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -84,9 +83,9 @@ namespace ViewModel.StageTransforms
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
 
-            paireddata.UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Flow", "Rating Curve");
+            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Flow", "Rating Curve");
 
-            CurveEditorVM vm = new CurveEditorVM(,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
+            CurveEditorVM vm = new CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
             string header = "Create Rating Curve " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
             Navigate(tab, false, true);

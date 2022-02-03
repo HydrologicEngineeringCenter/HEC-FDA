@@ -1,4 +1,5 @@
 ﻿using compute;
+using metrics;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -235,27 +236,28 @@ namespace ViewModel.ImpactAreaScenario
             {
                 case "NOTSET":
                     {
-                        return new ThresholdType( IMetricEnum.NotSet, "Not Set");
+                        return new ThresholdType( ThresholdEnum.NotSupported, "Not Set");
                     }
                 case "EXTERIORSTAGEAEP":
                 case "EXTERIORSTAGE":
                     {
-                        return new ThresholdType(IMetricEnum.ExteriorStage, "Exterior Stage");
+                        return new ThresholdType(ThresholdEnum.ExteriorStage, "Exterior Stage");
                     }
                 case "INTERIORSTAGEAEP":
                 case "INTERIORSTAGE":
                     {
-                        return new ThresholdType( IMetricEnum.InteriorStage, "Interior Stage");
+                        return new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage");
                     }
                 case "DAMAGEAEP":
                 case "DAMAGES":
                     {
-                        return new ThresholdType( IMetricEnum.Damages, "Damages");
+                        return new ThresholdType(ThresholdEnum.Damage, "Damages");
                     }
-                case "EAD":
-                case "EXPECTEDANNUALDAMAGE":
+                //case "EAD":
+                //case "EXPECTEDANNUALDAMAGE":
                     {
-                        return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
+                        //todo: do what?
+                        //return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
                     }
                 default:
                     {

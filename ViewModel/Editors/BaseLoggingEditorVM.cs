@@ -1,17 +1,13 @@
 ﻿using FdaLogging;
-using ViewModel.Saving;
-using ViewModel.Utilities.Transactions;
-using Functions;
-using FunctionsView.ViewModel;
-using Model;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities;
-using paireddata;
+using ViewModel.Saving;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
 
 namespace ViewModel.Editors
 {
@@ -112,7 +108,7 @@ namespace ViewModel.Editors
         {
             if (elem.Curve != null)
             {
-                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
+                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve, xLabel, yLabel, chartTitle);
             }
             else
             {
@@ -259,13 +255,14 @@ namespace ViewModel.Editors
                 return logs;
             }
             //get messages from the editor
-            messagesFromEditor.AddRange(EditorVM.Messages);
+            //messagesFromEditor.AddRange(EditorVM.Messages);
 
             //get messages from the editor's function
-            if( EditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(EditorVM.Function.Messages);
-            }
+            
+            //if( EditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(EditorVM.Function.Messages);
+            //}
             foreach (IMessage message in messagesFromEditor)
             {
                 LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);

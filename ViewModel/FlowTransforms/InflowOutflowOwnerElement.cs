@@ -1,11 +1,7 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using paireddata;
+using ViewModel.Utilities;
 
 namespace ViewModel.FlowTransforms
 {

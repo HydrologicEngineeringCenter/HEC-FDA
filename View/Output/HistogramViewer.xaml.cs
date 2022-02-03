@@ -219,24 +219,24 @@ namespace View.Output
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            HistogramViewerVM vm = (HistogramViewerVM)this.DataContext;
-            _isEAD = vm.IsEAD;
-            setUpHistogramPlotModel(vm.SampleSize, vm.Bins);
+            //HistogramViewerVM vm = (HistogramViewerVM)this.DataContext;
+            //_isEAD = vm.IsEAD;
+            //setUpHistogramPlotModel(vm.SampleSize, vm.Bins);
 
-            if (_isEAD == true)
-            {
-                lbl_MeanValueText.Content = "Mean Expected Annual Damages:";
-                lbl_MeanValueText.Width = 255;
-                lbl_MeanValue.Content = String.Format("{0:0,0}", vm.EADMean);
+            //if (_isEAD == true)
+            //{
+            //    lbl_MeanValueText.Content = "Mean Expected Annual Damages:";
+            //    lbl_MeanValueText.Width = 255;
+            //    lbl_MeanValue.Content = String.Format("{0:0,0}", vm.EADMean);
 
 
-            }
-            else
-            {
-                //lbl_MeanValueText.Content = "Mean AEP:";
-                lbl_MeanValue.Content = String.Format("{0:.###}", vm.AEPMean);
+            //}
+            //else
+            //{
+            //    //lbl_MeanValueText.Content = "Mean AEP:";
+            //    lbl_MeanValue.Content = String.Format("{0:.###}", vm.AEPMean);
 
-            }
+            //}
         }
     }
 }

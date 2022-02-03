@@ -1,15 +1,10 @@
-﻿using System;
+﻿using FdaLogging;
+using paireddata;
+using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using FdaLogging;
 using ViewModel.Inventory.DamageCategory;
-using ViewModel.Utilities.Transactions;
-using Functions;
-using static ViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -134,19 +129,19 @@ namespace ViewModel.Inventory.OccupancyTypes
             set { _CalculateOtherDamage = value; IsModified = true; }
         }
 
-        public ICoordinatesFunction StructureDepthDamageFunction 
+        public UncertainPairedData StructureDepthDamageFunction 
         { 
             get; 
             set; 
         }
-        public ICoordinatesFunction ContentDepthDamageFunction { get; set; }
-        public ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
-        public ICoordinatesFunction OtherDepthDamageFunction { get; set; }
-        public IOrdinate StructureValueUncertainty { get; set; }
-        public IOrdinate ContentValueUncertainty { get; set; }
-        public IOrdinate VehicleValueUncertainty { get; set; }
-        public IOrdinate OtherValueUncertainty { get; set; }
-        public IOrdinate FoundationHeightUncertainty { get; set; }
+        public UncertainPairedData ContentDepthDamageFunction { get; set; }
+        public UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        public UncertainPairedData OtherDepthDamageFunction { get; set; }
+        public IDistribution StructureValueUncertainty { get; set; }
+        public IDistribution ContentValueUncertainty { get; set; }
+        public IDistribution VehicleValueUncertainty { get; set; }
+        public IDistribution OtherValueUncertainty { get; set; }
+        public IDistribution FoundationHeightUncertainty { get; set; }
 
         public ValueUncertaintyType StructureUncertaintyType { get; set; }
         public  ValueUncertaintyType ContentUncertaintyType { get; set; }

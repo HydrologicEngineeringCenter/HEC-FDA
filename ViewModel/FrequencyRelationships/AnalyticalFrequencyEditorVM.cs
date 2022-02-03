@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using FdaLogging;
-using ViewModel.Editors;
-using Functions;
-using FunctionsView.ViewModel;
+﻿using FdaLogging;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using Model;
-using Statistics;
-using Utilities;
 using paireddata;
 using Statistics.Distributions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Utilities;
+using ViewModel.Editors;
 
 namespace ViewModel.FrequencyRelationships
 {
@@ -144,14 +140,13 @@ namespace ViewModel.FrequencyRelationships
         {
             try
             {
-                ICoordinatesFunction function = GetCoordinatesFunction();
-                IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
-                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(fdaFunction.Coordinates, fdaFunction.Interpolator);
+                UncertainPairedData function = GetCoordinatesFunction();
 
-                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func, "Frequency", "Flow");
+                //todo: I don't have the chart helper anymore.
+                //CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function, "Frequency", "Flow");
 
-                List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
-                StandardChartViewModel.LineData.Set(lineData);
+                //List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
+                //StandardChartViewModel.LineData.Set(lineData);
             }
             catch(Exception e)
             {
@@ -163,32 +158,17 @@ namespace ViewModel.FrequencyRelationships
 
         public override UncertainPairedData GetCoordinatesFunction()
         {
-            List<double> xs = new List<double>();
-            List<double> ys = new List<double>();
+            List<double> xs = new List<double>() { 0 };
+            List<double> ys = new List<double>() { 0 };
             try
             {
                 if (IsAnalytical)
                 {
+                    LogPearson3 lp3 = new LogPearson3();
                     if (IsStandard)
                     {
                         //todo: finish, create array of probs
-                        LogPearson3 lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
-
-                        lp3.Validate();
-                        if(lp3.HasErrors)
-                        {
-                            System.Collections.IEnumerable enumerable = lp3.GetErrors();
-                            Base.Enumerations.ErrorLevel errorLevel = lp3.ErrorLevel;
-                        }
-                        //Distribution
-                        //todo use mean, st dev, and skew to create the curve
-                        
-                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
-                        if(dist.State < IMessageLevels.Error)
-                        {
-                            return IFunctionFactory.Factory(dist);
-                        }
+                        lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
                     }
                     else
                     {
@@ -199,17 +179,28 @@ namespace ViewModel.FrequencyRelationships
                             flows.Add(d.Flow);
                         }
 
-                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
-                        if (dist.State < IMessageLevels.Error)
+                        lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
+                    }
+                    lp3.Validate();
+                    if (lp3.HasErrors)
+                    {
+                        System.Collections.IEnumerable enumerable = lp3.GetErrors();
+                        Base.Enumerations.ErrorLevel errorLevel = lp3.ErrorLevel;
+                        //todo: do what?
+                    }
+                    else
+                    {
+                        double mean = lp3.Mean;
+                        double stDev = lp3.StandardDeviation;
+                        double skew = lp3.Skewness;
+                        FitToFlowMean = "Mean: " + mean.ToString(".##");
+                        FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
+                        FitToFlowSkew = "Skew: " + skew.ToString(".##");
+                        double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
+                        List<double> vals = new List<double>();
+                        foreach (double prob in probs)
                         {
-                            double mean = dist.Mean;
-                            double stDev = dist.StandardDeviation;
-                            double skew = dist.Skewness;
-                            FitToFlowMean = "Mean: " + mean.ToString(".##");
-                            FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
-                            FitToFlowSkew = "Skew: " + skew.ToString(".##");
-
-                            return IFunctionFactory.Factory(dist);
+                            vals.Add(lp3.InverseCDF(prob));
                         }
                     }
                 }
@@ -219,43 +210,27 @@ namespace ViewModel.FrequencyRelationships
                 FitToFlowMean = "Mean: N/A";
                 FitToFlowStDev = "Mean: N/A";
                 FitToFlowSkew = "Mean: N/A";
-
-                xs = new List<double>() { 0 };
-                ys = new List<double>() { 0 };
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
             }
             FitToFlowMean = "Mean: N/A";
             FitToFlowStDev = "Mean: N/A";
             FitToFlowSkew = "Mean: N/A";
-
-            xs = new List<double>() { 0 };
-            ys = new List<double>() { 0 };
-            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            
+            return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
         }
 
         public bool CanCreateValidFunction()
         {
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
+            LogPearson3 lp3 = new LogPearson3();
+
             try
             {
                 if (IsAnalytical)
                 {
                     if (IsStandard)
                     {
-                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
-                        if (dist.State < IMessageLevels.Error)
-                        {
-                            IFunction func = IFunctionFactory.Factory(dist);
-                            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
-                            //todo: currently the flows are way to high to be real which is causing an error message
-                            //i am commenting this out so that i can move on
-                            //if(func.State < IMessageLevels.Error && fdaFunction.State < IMessageLevels.Error)
-                            {
-                                return true;
-                            }
-                        }
+                        lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
                     }
                     else
                     {
@@ -265,16 +240,13 @@ namespace ViewModel.FrequencyRelationships
                             flows.Add(d.Flow);
                         }
 
-                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
-                        if (dist.State < IMessageLevels.Error)
-                        {
-                            IFunction func = IFunctionFactory.Factory(dist);
-                            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
-                            if (func.State < IMessageLevels.Error && fdaFunction.State < IMessageLevels.Error)
-                            {
-                                return true;
-                            }
-                        }
+                        lp3 = (LogPearson3)lp3.Fit(flows.ToArray());                     
+                    }
+
+                    lp3.Validate();
+                    if (!lp3.HasErrors)
+                    {
+                        return true;
                     }
                 }
             }
@@ -286,12 +258,11 @@ namespace ViewModel.FrequencyRelationships
 
         }
 
-        public IFdaFunction CreateFdaFunction()
+        public UncertainPairedData CreateFdaFunction()
         {
             if(CanCreateValidFunction())
             {
-                ICoordinatesFunction func =  GetCoordinatesFunction();
-                return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, (IFunction) func);
+                return  GetCoordinatesFunction();
             }
             return null;
         }

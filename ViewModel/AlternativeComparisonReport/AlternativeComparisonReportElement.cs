@@ -50,7 +50,7 @@ namespace ViewModel.AlternativeComparisonReport
                 int iasID = Int32.Parse(elem.Attribute(ID).Value);
                 WithProjAltIDs.Add(iasID);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
             AddActions();
         }
 

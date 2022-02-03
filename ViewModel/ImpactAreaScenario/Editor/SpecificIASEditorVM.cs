@@ -1,7 +1,5 @@
 ﻿using compute;
-using Functions;
 using HEC.CS.Collections;
-using Model;
 using paireddata;
 using Statistics.Distributions;
 using System;

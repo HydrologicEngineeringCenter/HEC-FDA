@@ -1,12 +1,7 @@
-﻿using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
 {
@@ -73,9 +68,8 @@ namespace ViewModel.StageTransforms
         {
             List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
             List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
+            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
+            // IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
 
             //double[] xValues = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
             //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };

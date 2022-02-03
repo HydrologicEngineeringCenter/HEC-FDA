@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Study"
         xmlns:Utils="clr-namespace:View.Utilities"
-        xmlns:FunctionsView="clr-namespace:FunctionsView.View;assembly=FunctionsView"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
         mc:Ignorable="d"

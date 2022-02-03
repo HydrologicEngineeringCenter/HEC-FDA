@@ -115,9 +115,9 @@ namespace ViewModel.ImpactArea
             _featureNodeHash = args.MapFeatureHash;
             foreach (NamedAction a in Actions)
             {
-                if (a.Header.Equals("Add Impact Areas To Map Window"))
+                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Remove Impact Areas from Map Window";
+                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
                     a.Action = RemoveElementFromMapWindow;
                 }
             }

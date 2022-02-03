@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using metrics;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,7 +36,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         public void AddRow()
         {
-            Rows.Add(new ThresholdRowItem(getNextIdInteger(), IMetricEnum.ExteriorStage, 0));
+            Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.ExteriorStage, 0));
             SelectedRow = Rows[Rows.Count - 1];
         }
 

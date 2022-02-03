@@ -164,21 +164,21 @@
         </DataTemplate>
 
         <!--StageTransforms Region-->
-        <DataTemplate DataType="{x:Type StageTransformsVM:RatingCurveEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type StageTransformsVM:RatingCurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type StageTransformsVM:ExteriorInteriorEditorVM }" >
             <StageTransformsView:ExteriorInteriorEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
         <!--FlowTransforms Region-->
-        <DataTemplate DataType="{x:Type FlowTransformsVM:InflowOutflowEditorVM }" >
+        <!--<DataTemplate DataType="{x:Type FlowTransformsVM:InflowOutflowEditorVM }" >
             <FlowTransformsView:InflowOutflowEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <!--Hydraulics Region-->
         <DataTemplate DataType="{x:Type HydraulicsVM:GridImporterVM }" >
@@ -349,13 +349,13 @@
 
        
 
-        <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
+        <!--<DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
             <PlotsOutputView:LinkedPlots/>
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type PlotsOutputVM:HistogramViewerVM }" >
             <PlotsOutputView:HistogramViewer/>
-        </DataTemplate>
+        </DataTemplate>-->
         
         <!--Study Region-->
         <DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >

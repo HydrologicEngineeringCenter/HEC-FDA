@@ -1,14 +1,8 @@
-﻿using ViewModel.ImpactArea;
-using ViewModel.Inventory.DamageCategory;
-using Functions;
-using FunctionsView.ViewModel;
+﻿using paireddata;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using paireddata;
+using ViewModel.ImpactArea;
+using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -38,7 +32,7 @@ namespace ViewModel.AggregatedStageDamage
             get { return _DamageCategories; }
             set { _DamageCategories = value; NotifyPropertyChanged(); }
         }
-        //public CoordinatesFunctionEditorVM EditorVM { get; set; }
+        public CoordinatesFunctionEditorVM EditorVM { get; set; }
 
         public String SelectedDamCat
         {
@@ -56,7 +50,7 @@ namespace ViewModel.AggregatedStageDamage
             {
                 SelectedDamCat = damCats[0];
             }
-            //EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
+            EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
         }
 
         public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, StageDamageCurve curve)
@@ -66,7 +60,7 @@ namespace ViewModel.AggregatedStageDamage
             SelectedImpArea = curve.ImpArea;
             DamageCategories = damCats;
             SelectedDamCat = curve.DamCat;
-            //EditorVM = new CoordinatesFunctionEditorVM(curve.Function, "Stage", "Damage", "Stage-Damage");
+            EditorVM = new CoordinatesFunctionEditorVM(curve.Function, "Stage", "Damage", "Stage-Damage");
 
         }
 
@@ -81,7 +75,7 @@ namespace ViewModel.AggregatedStageDamage
             SelectedImpArea = rowItem.SelectedImpArea;
             DamageCategories = rowItem.DamageCategories;
             SelectedDamCat = rowItem.SelectedDamCat;
-            //EditorVM = new CoordinatesFunctionEditorVM(rowItem.EditorVM);
+            EditorVM = new CoordinatesFunctionEditorVM(rowItem.EditorVM);
         }
 
     }

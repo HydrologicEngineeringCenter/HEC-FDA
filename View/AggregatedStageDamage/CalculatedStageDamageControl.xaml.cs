@@ -1,10 +1,10 @@
-﻿using FunctionsView.ViewModel;
-using HEC.Plotting.SciChart2D.Charts;
+﻿using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using ViewModel.AggregatedStageDamage;
+using ViewModel.Utilities;
 
 namespace View.AggregatedStageDamage
 {

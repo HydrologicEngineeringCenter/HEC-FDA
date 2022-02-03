@@ -29,6 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\AlternativeComparisonReport_20x20.png" />
+    <None Remove="Resources\Alternatives_20x20.png" />
+    <None Remove="Resources\ImpactAreaScenario_20x20.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="GeoTech\FailureFunctionEditor.xaml" />
     <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
     <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
@@ -117,6 +123,15 @@
 	
 	
   <ItemGroup>
+    <Resource Include="Resources\AlternativeComparisonReport_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Alternatives_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ImpactAreaScenario_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -142,23 +157,12 @@
     <None Update="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Update="Resources\AlternativeComparisonReport_20x20.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Alternatives_20x20.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ImpactAreaScenario_20x20.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
 	
 	
   <ItemGroup>
-    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />

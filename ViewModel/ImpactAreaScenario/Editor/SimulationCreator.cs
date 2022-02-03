@@ -43,12 +43,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
             _ImpactAreaID = currentImpactAreaID;
         }
 
-        private IDistribution GetFrequencyDistribution()
+        private ContinuousDistribution GetFrequencyDistribution()
         {
-            IDistribution freqDistribution = _FreqElem.GetDistribution();
-            //todo: using dummy flow-freq right now
-            IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
-            return flow_frequency;
+            return _FreqElem.GetDistribution();
+
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
@@ -74,20 +72,20 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             SimulationBuilder sb = Simulation.builder()
                 .withFlowFrequency(GetFrequencyDistribution())
-                .withFlowStage(_RatElem.Curve.ToUncertainPairedData())
+                .withFlowStage(_RatElem.Curve)
                 .withStageDamages(GetStageDamagesAsPairedData());
 
             if(_UseInOut)
             {
-                sb.withInflowOutflow(_InOutElem.Curve.ToUncertainPairedData());
+                sb.withInflowOutflow(_InOutElem.Curve);
             }
             if(_UseExtInt)
             {
-                sb.withInteriorExterior(_ExtIntElem.Curve.ToUncertainPairedData());
+                sb.withInteriorExterior(_ExtIntElem.Curve);
             }
             if(_UseLevee)
             {
-                sb.withLevee(_LeveeElem.Curve.ToUncertainPairedData());
+                sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
             }
 
             return sb.build();

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using FdaLogging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using FdaLogging;
+using Utilities;
 using ViewModel.Editors;
 using ViewModel.Inventory.DamageCategory;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using ViewModel.Utilities.Transactions;
-using FunctionsView.ViewModel;
-using Utilities;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -433,41 +431,41 @@ namespace ViewModel.Inventory.OccupancyTypes
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
             List<LogItem> logs = new List<LogItem>();
-            List<IMessage> messagesFromEditor = new List<IMessage>();
+            //List<IMessage> messagesFromEditor = new List<IMessage>();
 
-            //get messages from the editors
-            messagesFromEditor.AddRange(StructureEditorVM.Messages);
-            messagesFromEditor.AddRange(ContentEditorVM.Messages);
-            messagesFromEditor.AddRange(VehicleEditorVM.Messages);
-            messagesFromEditor.AddRange(OtherEditorVM.Messages);
+            ////get messages from the editors
+            //messagesFromEditor.AddRange(StructureEditorVM.Messages);
+            //messagesFromEditor.AddRange(ContentEditorVM.Messages);
+            //messagesFromEditor.AddRange(VehicleEditorVM.Messages);
+            //messagesFromEditor.AddRange(OtherEditorVM.Messages);
 
-            //get messages from the editor's function
-            if (StructureEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(StructureEditorVM.Function.Messages);
-            }
-            if (ContentEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(ContentEditorVM.Function.Messages);
-            }
-            if (VehicleEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(VehicleEditorVM.Function.Messages);
-            }
-            if (OtherEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(OtherEditorVM.Function.Messages);
-            }
+            ////get messages from the editor's function
+            //if (StructureEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(StructureEditorVM.Function.Messages);
+            //}
+            //if (ContentEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(ContentEditorVM.Function.Messages);
+            //}
+            //if (VehicleEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(VehicleEditorVM.Function.Messages);
+            //}
+            //if (OtherEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(OtherEditorVM.Function.Messages);
+            //}
 
-            foreach (IMessage message in messagesFromEditor)
-            {
-                LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
-                logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
-            }
-            //order the list by the log level. Highest on top
-            var sortedLogList = logs
-                .OrderByDescending(x => (int)(x.LogLevel))
-                .ToList();
+            //foreach (IMessage message in messagesFromEditor)
+            //{
+            //    LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
+            //    logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
+            //}
+            ////order the list by the log level. Highest on top
+            //var sortedLogList = logs
+            //    .OrderByDescending(x => (int)(x.LogLevel))
+            //    .ToList();
 
             return logs;
         }

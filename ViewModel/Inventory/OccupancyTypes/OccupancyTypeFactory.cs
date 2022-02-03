@@ -1,10 +1,5 @@
-﻿using Functions;
-using Functions.Ordinates;
-using System;
+﻿using Statistics.Distributions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -64,11 +59,11 @@ namespace ViewModel.Inventory.OccupancyTypes
             ot.OtherDepthDamageFunction = defaultOther;
 
             //value uncertainties
-            ot.StructureValueUncertainty = new Constant(0);
-            ot.ContentValueUncertainty = new Constant(0);
-            ot.VehicleValueUncertainty = new Constant(0);
-            ot.OtherValueUncertainty = new Constant(0);
-            ot.FoundationHeightUncertainty = new Constant(0);
+            ot.StructureValueUncertainty = new Deterministic(0);
+            ot.ContentValueUncertainty = new Deterministic(0);
+            ot.VehicleValueUncertainty = new Deterministic(0);
+            ot.OtherValueUncertainty = new Deterministic(0);
+            ot.FoundationHeightUncertainty = new Deterministic(0);
 
             //group id
             ot.GroupID = groupId;

@@ -1,6 +1,7 @@
 ﻿using paireddata;
 using System;
 using ViewModel.ImpactArea;
+using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -21,7 +22,7 @@ namespace ViewModel.AggregatedStageDamage
             get { return _DamCat; }
             set { _DamCat = value; NotifyPropertyChanged(); }
         }
-        //public CoordinatesFunctionEditorVM EditorVM { get; set; }
+        public CoordinatesFunctionEditorVM EditorVM { get; set; }
 
 
         public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)

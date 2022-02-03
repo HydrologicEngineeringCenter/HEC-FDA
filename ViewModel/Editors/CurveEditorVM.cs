@@ -1,11 +1,9 @@
-﻿using ViewModel.Utilities;
-using System;
-using Model;
-using Functions;
-using FdaLogging;
+﻿using FdaLogging;
 using HEC.Plotting.Core.ViewModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
+using System;
+using ViewModel.Utilities;
 
 namespace ViewModel.Editors
 {
@@ -76,7 +74,6 @@ namespace ViewModel.Editors
         public string PlotTitle { get; set; }
 
 
-        private IParameterEnum _ParameterType;
         #endregion
 
         #region constructors
@@ -140,7 +137,8 @@ namespace ViewModel.Editors
 
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
-            return null;// EditorVM.CreateFunctionFromTables(); 
+            //todo: this will be the curve from the table.
+            return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData("", "", ""); 
         }
 
         public virtual void SaveWhileEditing()

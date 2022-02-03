@@ -1,15 +1,11 @@
-﻿using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.GeoTech
 {
-    public class LeveeFeatureOwnerElement : Utilities.ParentElement
+    public class LeveeFeatureOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -82,8 +78,9 @@ namespace ViewModel.GeoTech
             //create default curve 
             List<double> xValues = new List<double>() { 0};
             List<double> yValues = new List<double>() { 0 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
+            //Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            //IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
+            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Probabilty", "Elevation", "Failure Function");
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);

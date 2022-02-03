@@ -1,21 +1,9 @@
-﻿using ViewModel.Editors;
-using FunctionsView.ViewModel;
-using HEC.Plotting.SciChart2D.Charts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HEC.Plotting.SciChart2D.Charts;
+using HEC.Plotting.SciChart2D.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using HEC.Plotting.SciChart2D.ViewModel;
+using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace View.GeoTech
 {
@@ -31,16 +19,16 @@ namespace View.GeoTech
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            CurveEditorVM vm = DataContext as CurveEditorVM;
-            if ( vm != null)
-            {
-                CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-                editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            //CurveEditorVM vm = DataContext as CurveEditorVM;
+            //if ( vm != null)
+            //{
+            //    CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+            //    editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            //    Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
                 
-                PlotGrid.Children.Add(chart);
-                Grid.SetColumn(chart, 2);
-            }
+            //    PlotGrid.Children.Add(chart);
+            //    Grid.SetColumn(chart, 2);
+            //}
         }
 
         private void rad_default_Checked(object sender, RoutedEventArgs e)

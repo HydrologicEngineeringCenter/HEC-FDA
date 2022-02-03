@@ -1,15 +1,10 @@
-﻿using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Importer;
+using System.Xml.Linq;
+using ViewModel.StageTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -91,7 +86,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             //todo: why are all these properties on child element. I was expecting to have to cast this element to an ext int.
             return new object[] { element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve, element.Curve.GetType(),
                 element.Curve.WriteToXML().ToString() };
         }
 
@@ -106,45 +101,47 @@ namespace ViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, id, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {id, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve, element.Curve.GetType(),
                 element.Curve.WriteToXML().ToString(), stateId};
 
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, func);
+            string curveXML = (string)rowData[CURVE_COL];
+            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            //IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            //IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, func);
 
             //Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
             //(string)rowData[CURVE_DIST_TYPE_COL]));
             ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
-                (string)rowData[DESC_COL], function);
+                (string)rowData[DESC_COL], upd);
             //ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
               //              (string)rowData[CURVE_DIST_TYPE_COL])); 
             return ele;
         }
         #endregion
 
-        public void SaveFDA1Element(Levee lev)
-        {
-            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
-            string description = pysr + lev.Description;
+        //public void SaveFDA1Element(Levee lev)
+        //{
+        //    string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
+        //    string description = pysr + lev.Description;
 
-            List<ICoordinate> extIntCoords = new List<ICoordinate>();
-            foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
-            {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
-            }
-            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, description, func);
-            SaveNewElement(elem);
-        }
+        //    List<ICoordinate> extIntCoords = new List<ICoordinate>();
+        //    foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
+        //    {
+        //        double x = xy.GetX();
+        //        double y = xy.GetY();
+        //        extIntCoords.Add(ICoordinateFactory.Factory(x, y));
+        //    }
+        //    ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
+        //    IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
+        //    IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
+        //    ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, description, func);
+        //    SaveNewElement(elem);
+        //}
         public void SaveNew(ChildElement element)
         {
             //save to parent table

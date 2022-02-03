@@ -1,7 +1,6 @@
 ﻿using FdaLogging;
-using Functions;
-using Functions.Ordinates;
-using Importer;
+using paireddata;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1114,34 +1113,35 @@ namespace ViewModel.Saving.PersistenceManagers
             occtype.Description = desc;
             occtype.DamageCategory = DamageCategoryFactory.Factory(damCatName);
             occtype.FoundationHtUncertaintyType = GetValueUncertaintyType(foundHtUncertaintyType);
-            occtype.FoundationHeightUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(foundHtUncertaintyXML));
+            occtype.FoundationHeightUncertainty = ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
 
             //structures
             occtype.CalculateStructureDamage = isStructTabChecked;
-            occtype.StructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(structValueUncertaintyXML));
+            occtype.StructureValueUncertainty = ContinuousDistribution.FromXML(XElement.Parse(structValueUncertaintyXML));
             occtype.StructureUncertaintyType = GetValueUncertaintyType(structValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
             //IFdaFunction structFunction = IFdaFunctionFactory.Factory(structDepthDamageXML, IParameterEnum.Rating);
-            occtype.StructureDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(structDepthDamageXML);
+            occtype.StructureDepthDamageFunction = UncertainPairedData.ReadFromXML(XElement.Parse(structDepthDamageXML));
 
             //content
             occtype.CalculateContentDamage = isContenTabChecked;
-            occtype.ContentValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contentValueUncertaintyXML));
-            occtype.ContentUncertaintyType = GetValueUncertaintyType(contValueType);
-            occtype.ContentDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(contentDepthDamageXML);
+            occtype.ContentValueUncertainty = ContinuousDistribution.FromXML(XElement.Parse(contentValueUncertaintyXML));
+            occtype.ContentUncertaintyType = GetValueUncertaintyType(contValueType);           
+            occtype.ContentDepthDamageFunction = UncertainPairedData.ReadFromXML(XElement.Parse(contentDepthDamageXML));
 
             //vehicle
             occtype.CalculateVehicleDamage = isVehicleTabChecked;
-            occtype.VehicleValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
+            occtype.VehicleValueUncertainty = ContinuousDistribution.FromXML(XElement.Parse(vehicleValueUncertaintyXML));
             occtype.VehicleUncertaintyType = GetValueUncertaintyType(vehicleValueType);
-            occtype.VehicleDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(vehicleDepthDamageXML);
+            occtype.VehicleDepthDamageFunction = UncertainPairedData.ReadFromXML(XElement.Parse(vehicleDepthDamageXML));
+
 
             //other
             occtype.CalculateOtherDamage = isOtherTabChecked;
-            occtype.OtherValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
+            occtype.OtherValueUncertainty = ContinuousDistribution.FromXML(XElement.Parse(vehicleValueUncertaintyXML));
             occtype.OtherUncertaintyType = GetValueUncertaintyType(otherValueType);
-            occtype.OtherDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(otherDepthDamageXML);
+            occtype.OtherDepthDamageFunction = UncertainPairedData.ReadFromXML(XElement.Parse(otherDepthDamageXML));
 
             //setting all these properties will set the "isModified" to true. But we just created this thing so turn back to false
             occtype.IsModified = false;
@@ -1183,7 +1183,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //foundation ht uncertainty type
             rowsList.Add(ot.FoundationHtUncertaintyType.ToString());
             //foundation height xml
-            rowsList.Add(ot.FoundationHeightUncertainty.WriteToXML().ToString());
+            rowsList.Add(ot.FoundationHeightUncertainty.ToXML().ToString());
 
 
             //is struct checked
@@ -1192,7 +1192,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //structure uncertainty type
             rowsList.Add(ot.StructureUncertaintyType.ToString());
             //structure value uncertainty
-            rowsList.Add(ot.StructureValueUncertainty.WriteToXML().ToString());
+            rowsList.Add(ot.StructureValueUncertainty.ToXML().ToString());
 
             //structure depth damage function
             rowsList.Add(ot.StructureDepthDamageFunction.WriteToXML().ToString());
@@ -1212,7 +1212,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //content value uncertainty type
             rowsList.Add(ot.ContentUncertaintyType.ToString());
             //content value uncertainty
-            rowsList.Add(ot.ContentValueUncertainty.WriteToXML().ToString());
+            rowsList.Add(ot.ContentValueUncertainty.ToXML().ToString());
 
             //content depth damage function
             rowsList.Add(ot.ContentDepthDamageFunction.WriteToXML().ToString());
@@ -1232,7 +1232,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //vehicle uncertainty type
             rowsList.Add(ot.VehicleUncertaintyType.ToString());
             //vehicle value uncertainty
-            rowsList.Add(ot.VehicleValueUncertainty.WriteToXML().ToString());
+            rowsList.Add(ot.VehicleValueUncertainty.ToXML().ToString());
 
             //vehicle depth damage function 
             rowsList.Add(ot.VehicleDepthDamageFunction.WriteToXML().ToString());
@@ -1253,7 +1253,7 @@ namespace ViewModel.Saving.PersistenceManagers
             //other uncertainty type
             rowsList.Add(ot.OtherUncertaintyType.ToString());
             //other value uncertainty
-            rowsList.Add(ot.OtherValueUncertainty.WriteToXML().ToString());
+            rowsList.Add(ot.OtherValueUncertainty.ToXML().ToString());
 
             //other depth damage function
             rowsList.Add(ot.OtherDepthDamageFunction.WriteToXML().ToString());

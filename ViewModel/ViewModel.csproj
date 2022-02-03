@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
     <Compile Remove="FlowTransforms\InflowOutflowEditorVM.cs" />
-    <Compile Remove="FrequencyRelationships\AnalyticalFrequencyOwnerElement.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
     <Compile Remove="Output\LinkedPlotsVM.cs" />
@@ -97,11 +97,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
-    <ProjectReference Include="..\Functions\Functions.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />

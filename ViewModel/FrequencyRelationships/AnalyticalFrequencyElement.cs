@@ -1,6 +1,7 @@
 ﻿using Model;
 using paireddata;
 using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -79,9 +80,11 @@ namespace ViewModel.FrequencyRelationships
             //this is hacky but i need to set the curve property on this child element so that the curve editor can get the correct 
             //parameter type. I didn't want to mess with refactoring curve editor in any way because a lot of things use it.
             //This curve is not being used to display the plot or for saving. It can be filled with dummy data.
-            //Cody 1/27/22
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(new List<double>() { 0, 1 }, new List<double>() { 0, 1 });
-            Curve = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, func);
+            //Cody 1/27/22 *** not sure this is true anymore, there is no parameter type anymore.
+            List<double> xs = new List<double>() { 0, 1 };
+            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
+            Curve = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Flow", "Frequency", "Flow-Frequency", "", -1);
+
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }
@@ -255,7 +258,7 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowDoubles;
         }
-        public IDistribution GetDistribution()
+        public ContinuousDistribution GetDistribution()
         {
             return new Statistics.Distributions.LogPearson3(Mean, StDev, Skew, POR);
         }

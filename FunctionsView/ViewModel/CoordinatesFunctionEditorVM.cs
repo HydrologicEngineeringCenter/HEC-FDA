@@ -1,14 +1,7 @@
-﻿using Functions;
-using FunctionsView.Validation;
-using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
+﻿using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
-using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Media;
 using Utilities;
 
 namespace FunctionsView.ViewModel
@@ -212,19 +205,19 @@ namespace FunctionsView.ViewModel
         //{
         //}
 
-        //public UncertainPairedData CreateFunctionFromTables()
-        //{
-        //    //if (Tables.Count == 1)
-        //    {
-        //        //if there is only one table then we know that this is not
-        //        //a linked coordinates function.
-        //        return Tables[0].CreateCoordinatesFunctionFromTable();
-        //    }
-        //    //else
-        //    //{
-        //    //    return CreateLinkedFunction();
-        //    //}
-        //}
+        public UncertainPairedData CreateFunctionFromTables()
+        {
+            //if (Tables.Count == 1)
+            {
+                //if there is only one table then we know that this is not
+                //a linked coordinates function.
+                return Tables[0].CreateCoordinatesFunctionFromTable();
+            }
+            //else
+            //{
+            //    return CreateLinkedFunction();
+            //}
+        }
 
         ////private ICoordinatesFunction CreateLinkedFunction()
         ////{
@@ -337,7 +330,7 @@ namespace FunctionsView.ViewModel
         //                break;
 
 
-                        
+
         //            }
         //        case CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType.Splitting:
         //            {
@@ -566,7 +559,7 @@ namespace FunctionsView.ViewModel
         //    //if there are multiple tables then just delete this table
         //    //if this is the last table then put in an empty row
         //    CoordinatesFunctionTableVM table = (CoordinatesFunctionTableVM)sender;
-            
+
         //    Tables.Remove(table);
         //    if (Tables.Count == 0)
         //    {
@@ -581,7 +574,7 @@ namespace FunctionsView.ViewModel
         //    ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
         //    rows.Add(new CoordinatesFunctionRowItem(_IsReadOnly));
         //    CreateTable(rows);
-            
+
         //}
 
         public bool Validate(IValidator<CoordinatesFunctionEditorVM> validator, out IEnumerable<IMessage> errors)

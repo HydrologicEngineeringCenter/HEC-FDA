@@ -1,12 +1,11 @@
-﻿using Functions;
-using Functions.Ordinates;
-using Importer;
-using Model;
+﻿using Importer;
+using paireddata;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
@@ -51,13 +50,122 @@ namespace ViewModel.Utilities
                 stagesList.Add(stages[i]);
                 flowsList.Add(flows[i]);
             }
+            //todo: how do we handle uncertainty here?
+
+            UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
             //always use linear. This is the only option in Old Fda.
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-            IFdaFunction rating = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)func);
+            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
+            //IFdaFunction rating = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)func);
             //add the plan year stream reach for the description
-            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, rating);
+            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, ratingPairedData);
             return elem;
         }
+
+        private static UncertainPairedData CreateRatingPairedData(RatingFunction rat)
+        {
+            if (rat.UsesGlobalError)
+            {
+                return CreateRatingPairedDataWithGlobalUncertainty(rat);
+            }
+            else
+            {
+                //not sure if this is possible. Look at the importer project class RatingFunction. I could do it but i would have to make the arrays public.
+                //if this is possible, maybe i could just set the global variables. I think the logic is the same.
+                return CreateRatingPairedDataWithPointUncertainty(rat);
+            }
+        }
+
+        private static UncertainPairedData CreateRatingPairedDataWithPointUncertainty(RatingFunction rat)
+        {
+            UncertainPairedData upd = new UncertainPairedData();
+            //if (rat.ErrorTypesId == ErrorType.LOGNORMAL)
+            //{
+            //    rat._st
+            //    List<Deterministic> yVals = new List<Deterministic>();
+            //    foreach (double d in ys)
+            //    {
+            //        yVals.Add(new Deterministic(d));
+            //    }
+            //    UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "", -1);
+            //    return curve;
+            //}
+            //else if (rat.ErrorTypesId == ErrorType.NORMAL)
+            //{
+
+            //}
+            //else if (rat.ErrorTypesId == ErrorType.TRIANGULAR)
+            //{
+
+            //}
+            //else if (rat.ErrorTypesId == ErrorType.UNIFORM)
+            //{
+
+            //}
+            //else if (rat.ErrorTypesId == ErrorType.NONE)
+            //{
+
+            //}
+            return upd;
+        }
+
+        private static UncertainPairedData CreateRatingPairedDataWithGlobalUncertainty(RatingFunction rat)
+        {
+            UncertainPairedData upd = new UncertainPairedData();
+            string xLabel = "Stage";
+            string yLabel = "Flow";
+            string name = "Rating";
+
+            double[] stages = rat.GetStage();
+            double[] flows = rat.GetDischarge();
+
+            if (rat.ErrorTypesId == ErrorType.LOGNORMAL)
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new LogNormal(flows[i], rat.GlobalStdDev));
+                }
+                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+            }
+            else if (rat.ErrorTypesId == ErrorType.NORMAL)
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new Normal(flows[i], rat.GlobalStdDev));
+                }
+                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+            }
+            else if (rat.ErrorTypesId == ErrorType.TRIANGULAR)
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new Triangular(rat.GlobalStdDevLow, flows[i], rat.GlobalStdDevHigh));
+                }
+                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+            }
+            else if (rat.ErrorTypesId == ErrorType.UNIFORM)
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new Uniform(rat.GlobalStdDevLow, rat.GlobalStdDevHigh));
+                }
+                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+            }
+            else if (rat.ErrorTypesId == ErrorType.NONE)
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new Deterministic(flows[i]));
+                }
+                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+            }
+            return upd;
+        }
+
 
         #endregion
 
@@ -138,8 +246,9 @@ namespace ViewModel.Utilities
                 damagesList.Add(damages[i]);
             }
             //always use linear. This is the only option in Old Fda.
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
+            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
             //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
+            UncertainPairedData stageDamagePairedData = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(depthsList, damagesList, "Stage", "Damage", "Stage-Damage");
 
             //there should only ever be 0 or 1 impact area elements
             if (impactAreaElements.Count > 0)
@@ -156,7 +265,7 @@ namespace ViewModel.Utilities
                     if (row.Name.Equals(damageReachName))
                     {
                         impactAreaMatches = true;
-                        curve = new StageDamageCurve(row, damCat, func);
+                        curve = new StageDamageCurve(row, damCat, stageDamagePairedData);
                         break;
                     }
                     else
@@ -312,39 +421,21 @@ namespace ViewModel.Utilities
 
         private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction)
         {
-            List<double> inflows = new List<double>();
-            List<double> outflows = new List<double>();
-            for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
-            {
-                inflows.Add(probFunction.TransFlowInflow[i]);
-                outflows.Add(probFunction.TransFlowOutflow[i]);
-            }
+            List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
 
-            List<IDistributedOrdinate> distributedOrdinates = GetUncertaintyValues(probFunction);
-            ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
-            ICoordinatesFunction coordFunc = null;
-            if (distributedOrdinates.Count > 0)
-            {
-                coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, distributedOrdinates, InterpolationEnum.Linear);
-            }
-            else
-            {
-                coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, outflows, InterpolationEnum.Linear);
-            }
-
-            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
+            UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "", -1);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), func);
         }
 
-        private static List<IDistributedOrdinate> GetUncertaintyValues(ProbabilityFunction probFunction)
+        private static List<IDistribution> GetUncertaintyValues(ProbabilityFunction probFunction)
         {
-            List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+            List<IDistribution> ords = new List<IDistribution>();
             if (probFunction.ErrorTypeTransformFlow == ErrorType.NORMAL)
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
                     //todo: what is the mean here? i am using the outflow for now.
-                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
+                    ords.Add(new Normal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
                 }
             }
             else if (probFunction.ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
@@ -352,21 +443,28 @@ namespace ViewModel.Utilities
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
                     //todo: need a log normal
-                    ords.Add(IDistributedOrdinateFactory.FactoryNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
+                    ords.Add(new LogNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
                 }
             }
             else if (probFunction.ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    ords.Add(IDistributedOrdinateFactory.FactoryTriangular(probFunction.TransFlowOutflow[i], probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                    ords.Add(new Triangular(probFunction.TransFlowOutflow[i], probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
                 }
             }
             else if (probFunction.ErrorTypeTransformFlow == ErrorType.UNIFORM)
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    ords.Add(IDistributedOrdinateFactory.FactoryUniform(probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                    ords.Add(new Uniform(probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                }
+            }
+            else if (probFunction.ErrorTypeTransformFlow == ErrorType.NONE)
+            {
+                for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
+                {
+                    ords.Add(new Deterministic(probFunction.TransFlowOutflow[i]));
                 }
             }
 
@@ -412,7 +510,7 @@ namespace ViewModel.Utilities
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
             //this list is in the order of the enum
-            List<ICoordinatesFunction> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(ot1, errorMessages);
+            List<UncertainPairedData> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(ot1, errorMessages);
             ot.StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
             ot.ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
             ot.VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
@@ -424,7 +522,7 @@ namespace ViewModel.Utilities
             //ffloor and structure 
             //* normal: make mean = 100
 
-            List<IOrdinate> uncertainties = TranslateErrorDistributionsToIOrdinates(ot1._ErrorDistribution);
+            List<IDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(ot1._ErrorDistribution);
             ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
             ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
             ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
@@ -444,7 +542,7 @@ namespace ViewModel.Utilities
 
             return ot;
         }
-        private static IOrdinate TranslateErrorDistToOrdinate(ErrorDistribution errorDist)
+        private static IDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist)
         {
             double mean = errorDist.GetCentralValue();
             //st dev gets reused as min
@@ -455,20 +553,21 @@ namespace ViewModel.Utilities
             {
                 case ErrorType.NONE:
                     {
-                        return new Constant(mean);
+                        return new Deterministic(mean);
                     }
                 case ErrorType.NORMAL:
                     {
-                        return IDistributedOrdinateFactory.FactoryNormal(mean, stDev);
+                        return new Normal(mean, stDev);
                     }
                 case ErrorType.TRIANGULAR:
                     {
                         //The mean is always 100. The importer code has the value at -901 so we hardcode it here.
-                        return IDistributedOrdinateFactory.FactoryTriangular(100, stDev, max);
+                        return new Triangular(100, stDev, max); 
                     }
                 case ErrorType.UNIFORM:
                     {
-                        return IDistributedOrdinateFactory.FactoryUniform(stDev, max);
+                        //todo: there is no lower. What to do?
+                        return new Uniform(mean, max);
                     }
                 case ErrorType.LOGNORMAL:
                     {
@@ -478,13 +577,13 @@ namespace ViewModel.Utilities
                     {
                         //todo: do what
                         //something went wrong, lets just make it a constant?
-                        return new Constant(mean);
+                        return new Deterministic(mean);
                     }
             }
         }
-        private static List<IOrdinate> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
+        private static List<IDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
         {
-            List<IOrdinate> ordinates = new List<IOrdinate>();
+            List<IDistribution> ordinates = new List<IDistribution>();
             foreach (ErrorDistribution errDist in errorDists)
             {
                 ordinates.Add(TranslateErrorDistToOrdinate(errDist));
@@ -492,20 +591,20 @@ namespace ViewModel.Utilities
             return ordinates;
         }
 
-        private static List<ICoordinatesFunction> TranslateSingleDamageFunctionToCoordinatesFunctions(Importer.OccupancyType ot, List<string> errorMessages)
+        private static List<UncertainPairedData> TranslateSingleDamageFunctionToCoordinatesFunctions(Importer.OccupancyType ot, List<string> errorMessages)
         {
             
             SingleDamageFunction[] singleDamageFunctions = ot._SingleDamageFunction;
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
-            List<ICoordinatesFunction> coordinatesFunctions = new List<ICoordinatesFunction>();
+            List<UncertainPairedData> coordinatesFunctions = new List<UncertainPairedData>();
             //if an occtype fails to read in properly we will make a message and keep trying
             //to import other occtypes.
             for (int i = 0; i < singleDamageFunctions.Length; i++)
             {
                 SingleDamageFunction func = singleDamageFunctions[i];
                 StructureValueType type = (StructureValueType)i;
-                ICoordinatesFunction function = null;
+                UncertainPairedData function = null;
 
                 if (IsEmptyFunction(func))
                 {
@@ -530,11 +629,12 @@ namespace ViewModel.Utilities
             return coordinatesFunctions;
         }
 
-        private static ICoordinatesFunction CreateEmptyFunction()
+        private static UncertainPairedData CreateEmptyFunction()
         {
             List<double> xs = new List<double>() { 1, 2, 3 };
-            List<double> ys = new List<double>() { 1, 2, 3 };
-            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(1),new Deterministic(2),new Deterministic(3) };
+            //todo: not sure these labels are correct.
+            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "", -1);
         }
 
         private static bool IsEmptyFunction(SingleDamageFunction function)
@@ -554,7 +654,7 @@ namespace ViewModel.Utilities
             return true;
         }
 
-        private static ICoordinatesFunction CreateCoordinatesFunction(string name, SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)
+        private static UncertainPairedData CreateCoordinatesFunction(string name, SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)
         {
             List<double> depths = function.Depth.ToList<double>();
             List<double> damages = function.Damage.ToList<double>();
@@ -603,11 +703,11 @@ namespace ViewModel.Utilities
         /// <param name="structureValueType">This is just to add more info to the error msg if there is one</param>
         /// <param name="errors"></param>
         /// <returns></returns>
-        private static ICoordinatesFunction CreateNoneFunction(string name, List<double> xs, List<double> ys, StructureValueType structureValueType, List<string> errors)
+        private static UncertainPairedData CreateNoneFunction(string name, List<double> xs, List<double> ys, StructureValueType structureValueType, List<string> errors)
         {
             try
             {
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
             }
             catch (ArgumentException e)
             {
@@ -616,58 +716,82 @@ namespace ViewModel.Utilities
             }
         }
 
-        private static ICoordinatesFunction CreateNormalFunction(string name, List<double> xs, List<double> ys, List<double> stDevs, StructureValueType structureValueType, List<string> errors)
+        private static UncertainPairedData CreateNormalFunction(string name, List<double> xs, List<double> ys, List<double> stDevs, StructureValueType structureValueType, List<string> errors)
         {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            List<Normal> yVals = new List<Normal>();
             for (int i = 0; i < xs.Count; i++)
             {
-                ordinates.Add(IDistributedOrdinateFactory.FactoryNormal(ys[i], stDevs[i]));
+                yVals.Add(new Normal(ys[i], stDevs[i]));
             }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch (ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-                return null;
-            }
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
+
+            //    List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            //for (int i = 0; i < xs.Count; i++)
+            //{
+            //    ordinates.Add(IDistributedOrdinateFactory.FactoryNormal(ys[i], stDevs[i]));
+            //}
+            //try
+            //{
+            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+            //}
+            //catch (ArgumentException e)
+            //{
+            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+            //    return null;
+            //}
         }
 
-        private static ICoordinatesFunction CreateTriangularFunction(string name, List<double> xs, List<double> ys, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
+        private static UncertainPairedData CreateTriangularFunction(string name, List<double> xs, List<double> ys, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
         {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            List<Triangular> yVals = new List<Triangular>();
             for (int i = 0; i < xs.Count; i++)
             {
-                ordinates.Add(IDistributedOrdinateFactory.FactoryTriangular(ys[i], mins[i], maxs[i]));
+                yVals.Add(new Triangular(mins[i], ys[i], maxs[i]));
             }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch (ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-                return null;
-            }
+
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
+
+
+            //List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            //for (int i = 0; i < xs.Count; i++)
+            //{
+            //    ordinates.Add(IDistributedOrdinateFactory.FactoryTriangular(ys[i], mins[i], maxs[i]));
+            //}
+            //try
+            //{
+            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+            //}
+            //catch (ArgumentException e)
+            //{
+            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+            //    return null;
+            //}
         }
 
-        private static ICoordinatesFunction CreateUniformFunction(string name, List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
+        private static UncertainPairedData CreateUniformFunction(string name, List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
         {
-            List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            List<Uniform> yVals = new List<Uniform>();
             for (int i = 0; i < xs.Count; i++)
             {
-                ordinates.Add(IDistributedOrdinateFactory.FactoryUniform(mins[i], maxs[i]));
+                yVals.Add(new Uniform(mins[i], maxs[i]));
             }
-            try
-            {
-                return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            }
-            catch (ArgumentException e)
-            {
-                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-                return null;
-            }
+
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
+
+            //List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
+            //for (int i = 0; i < xs.Count; i++)
+            //{
+            //    ordinates.Add(IDistributedOrdinateFactory.FactoryUniform(mins[i], maxs[i]));
+            //}
+            //try
+            //{
+            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
+            //}
+            //catch (ArgumentException e)
+            //{
+            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+            //    return null;
+            //}
         }
 
         private static string CreateFailedCoordFunctionErrorMsg(StructureValueType type, string occtypeName, string exceptionMsg)
@@ -760,34 +884,41 @@ namespace ViewModel.Utilities
 
         private static ChildElement CreateLeveeElement(Levee lev, ref string message)
         {
-            List<ICoordinate> failureCoords = new List<ICoordinate>();
+            //List<ICoordinate> failureCoords = new List<ICoordinate>();
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+
             foreach (Pair_xy xy in lev.FailureFunctionPairs)
             {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                failureCoords.Add(ICoordinateFactory.Factory(x, y));
+                xs.Add( xy.GetX());
+                ys.Add( xy.GetY());
             }
 
-            ICoordinatesFunction coordsFunction = null;
+            //ICoordinatesFunction coordsFunction = null;
             //todo: what if no coords here.
             //in this case then we create a special default coordinates function
             bool isDefault = true;
-            if (failureCoords.Count == 0)
+            UncertainPairedData func = new UncertainPairedData();
+            if (xs.Count == 0)
             {
                 //create default curve
-                List<double> xs = new List<double>() {lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
-                List<double> ys = new List<double>() { 0, 1 };
-                coordsFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                List<double> defaultXs = new List<double>() {lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
+                List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };                
+
+                func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
                 message += "No failure function was detected.\nCreating default failure function at top of levee.";
             }
             else
             {
-                coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
+                List<Deterministic> yVals = new List<Deterministic>();
+                foreach (double d in ys)
+                {
+                    yVals.Add(new Deterministic(d));
+                }
+                func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
                 isDefault = false;
             }
 
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.LateralStructureFailure, function);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, func);
             return leveeFeatureElement;
         }
@@ -811,16 +942,14 @@ namespace ViewModel.Utilities
 
         private static ChildElement CreateExteriorInterior(Levee lev)
         {
-            List<ICoordinate> extIntCoords = new List<ICoordinate>();
+            List<double> xs = new List<double>();
+            List<Deterministic> ys = new List<Deterministic>();
             foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
             {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
+                xs.Add( xy.GetX());
+                ys.Add(new Deterministic(xy.GetY()));
             }
-            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
+            UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "", -1);
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), func);
             return elem;
         }

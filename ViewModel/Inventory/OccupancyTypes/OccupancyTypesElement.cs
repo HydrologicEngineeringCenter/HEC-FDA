@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using System.Xml.Linq;
 using ViewModel.Utilities;
-using Functions;
-using ViewModel.Inventory.DamageCategory;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {

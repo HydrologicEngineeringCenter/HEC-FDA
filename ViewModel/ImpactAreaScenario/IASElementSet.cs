@@ -78,7 +78,7 @@ namespace ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png");
             AddActions();
         }
 

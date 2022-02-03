@@ -56,7 +56,7 @@ namespace ViewModel.Alternatives
                 int iasID = Int32.Parse(elem.Attribute(ID).Value);
                 IASElementSets.Add(iasID);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Alternatives_20x20.png");
             AddActions();
         }
 

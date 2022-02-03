@@ -2116,8 +2116,8 @@ namespace View.Output
 
         private void btn_EadHistogram_Click(object sender, RoutedEventArgs e)
         {
-            LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
-            vm.DisplayEADHistogram();
+            //LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
+            //vm.DisplayEADHistogram();
             //HistogramViewer hv = new HistogramViewer(Result, true);
             //hv.Owner = this;
             //hv.Show();
@@ -2125,8 +2125,8 @@ namespace View.Output
 
         private void btn_AepHistogram_Click(object sender, RoutedEventArgs e)
         {
-            LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
-            vm.DisplayAEPHistogram();
+            //LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
+            //vm.DisplayAEPHistogram();
             //        HistogramViewer hv = new HistogramViewer(Result, false);
             //        hv.Owner = this;
             //        hv.Show();
