@@ -7,7 +7,7 @@ using System;
 
 namespace paireddata
 {
-    public class UncertainPairedData: IPairedDataProducer, ICategory, ICanBeNull
+    public class UncertainPairedData : IPairedDataProducer, ICategory, ICanBeNull
     {
         #region Fields 
         private double[] _xvals;
@@ -19,13 +19,14 @@ namespace paireddata
         public string YLabel { get; }
         public string Name { get; }
         public string Description { get; }
-        public int ID { get; }
-        public string Category {get;}
+        public string Category { get; }
         public bool IsNull { get; }
-        public double[] xs(){
+        public double[] xs()
+        {
             return _xvals;
         }
-        public IDistribution[] ys(){
+        public IDistribution[] ys()
+        {
             return _yvals;
         }
         #endregion
@@ -36,7 +37,7 @@ namespace paireddata
             IsNull = true;
         }
         //, string xlabel, string ylabel, string name, string description, int ID
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id)
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description)
         {
             _xvals = xs;
             _yvals = ys;
@@ -46,9 +47,9 @@ namespace paireddata
             YLabel = ylabel;
             Name = name;
             Description = description;
-            ID = id;
         }
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id, string category){
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, string category)
+        {
             _xvals = xs;
             _yvals = ys;
             Category = category;
@@ -57,18 +58,38 @@ namespace paireddata
             YLabel = ylabel;
             Name = name;
             Description = description;
-            ID = id;
         }
         #endregion
 
         #region Methods 
-        public IPairedData SamplePairedData(double probability){
-                double[] y = new double[_yvals.Length];
-                for (int i = 0; i < _xvals.Length; i++)
+        public IPairedData SamplePairedData(double probability)
+        {
+            double[] y = new double[_yvals.Length];
+            for (int i = 0; i < _xvals.Length; i++)
+            {
+                y[i] = _yvals[i].InverseCDF(probability);
+            }
+            PairedData pd = new PairedData(_xvals, y, Category);//mutability leakage on xvals
+            pd.Validate();
+            if (pd.HasErrors){
+                
+                if (pd.RuleMap[nameof(pd.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                 {
-                    y[i] = _yvals[i].InverseCDF(probability);
+                    Array.Sort(pd.Yvals);//sorts but doesnt solve the problem of repeated values.
                 }
-                return new PairedData(_xvals, y, Category);//mutability leakage on xvals
+                if (pd.RuleMap[nameof(pd.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                {
+                    Array.Sort(pd.Xvals);//bad news.
+                }
+                pd.Validate();
+                if (pd.HasErrors)
+                {
+                   // throw new Exception("the produced paired data is not monotonically increasing.");
+                }
+
+                
+            }
+            return pd;
         }
 
         public XElement WriteToXML()
@@ -79,9 +100,8 @@ namespace paireddata
             masterElement.SetAttributeValue("YLabel", YLabel);
             masterElement.SetAttributeValue("Name", Name);
             masterElement.SetAttributeValue("Description", Description);
-            masterElement.SetAttributeValue("ID", ID);
             masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
-            for (int i=0; i<_xvals.Length; i++)
+            for (int i = 0; i < _xvals.Length; i++)
             {
                 XElement rowElement = new XElement("Coordinate");
                 XElement xElement = new XElement("X");
@@ -101,14 +121,13 @@ namespace paireddata
             string yLabel = element.Attribute("YLabel").Value;
             string name = element.Attribute("Name").Value;
             string description = element.Attribute("Description").Value;
-            int id = Convert.ToInt32(element.Attribute("ID").Value);
             int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
             double[] xValues = new double[size];
             IDistribution[] yValues = new IDistribution[size];
             int i = 0;
-            foreach(XElement coordinateElement in element.Elements())
+            foreach (XElement coordinateElement in element.Elements())
             {
-                foreach(XElement ordinateElements in coordinateElement.Elements())
+                foreach (XElement ordinateElements in coordinateElement.Elements())
                 {
                     if (ordinateElements.Name.ToString().Equals("X"))
                     {
@@ -121,7 +140,7 @@ namespace paireddata
                 }
                 i++;
             }
-            return new UncertainPairedData(xValues,yValues,xLabel,yLabel,name,description,id,category);
+            return new UncertainPairedData(xValues, yValues, xLabel, yLabel, name, description, category);
         }
         #endregion
     }

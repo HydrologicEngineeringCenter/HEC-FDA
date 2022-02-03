@@ -67,8 +67,8 @@ int id = 1;
 
 double topOfLeveeElevation = 475;
 Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
-UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description);
+UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, "residential");
 List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
 stageDamageList.Add(stageDamage);
 
@@ -80,7 +80,7 @@ for (int i = 0; i < 2; i++)
     leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
 }
 leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function", 0);
+UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function");
 
 Simulation simulation = Simulation.builder()
     .withFlowFrequency(flowFrequency)

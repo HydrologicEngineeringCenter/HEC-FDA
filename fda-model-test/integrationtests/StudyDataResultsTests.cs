@@ -77,8 +77,8 @@ namespace fda_model_test
         public void ComputeMeanEAD_Test(double expected)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             Simulation simulation = Simulation.builder()
@@ -97,8 +97,8 @@ namespace fda_model_test
         public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             Simulation simulation = Simulation.builder()
@@ -121,8 +121,8 @@ namespace fda_model_test
         public void ComputeMeanEADAndPerformanceWithIterationsAndLevee_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
 
@@ -134,7 +134,7 @@ namespace fda_model_test
                 leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
             }
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-            UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function", 0);
+            UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function");
 
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flowFrequency)
@@ -159,11 +159,11 @@ namespace fda_model_test
         public void ComputeMeanEADAndPerformanceWithIterationsAndLeveeAndFragility_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name, description, id);
+            UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name, description);
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)

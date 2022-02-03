@@ -38,7 +38,7 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -46,7 +46,7 @@ namespace fda_model_test
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
 
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id,  "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description,  "residential");
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
@@ -88,7 +88,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
             int thresholdID = 1;
             int iterations = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
@@ -122,7 +122,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
@@ -151,8 +151,8 @@ namespace fda_model_test
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
                 failureDistributions[i] = new Statistics.Distributions.Deterministic(ProbLeveeFailure[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
-            paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions, xLabel, yLabel, name, description, id);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
+            paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions, xLabel, yLabel, name, description);
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
@@ -184,7 +184,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = IDistributionFactory.FactoryNormal(StageForNonExceedanceProbs[i],StandardDeviationOfStage[i]);
             }
-            UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
+            UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);

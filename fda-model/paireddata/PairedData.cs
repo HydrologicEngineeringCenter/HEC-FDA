@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace paireddata
 {
-    public class PairedData: IPairedData
+    public class PairedData: Base.Implementations.Validation, IPairedData
     {
         public double[] Xvals { get; }
         public double[] Yvals { get; }
@@ -12,42 +12,25 @@ namespace paireddata
         //or array.reverse
         //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys){
-            if (xs != null && ys != null)
-            {
-                if (!IsMonotonicallyIncreasing(xs))
-                {
-                    Array.Sort(xs);
-
-                }
-                if (!IsMonotonicallyIncreasing(ys))
-                {
-                    Array.Sort(ys);
-                }
-            }
             Xvals = xs;
             Yvals = ys;
             Category = "Default";
+            AddRules();
         }
         public PairedData(double[] xs, double[] ys, string category){
-           if(xs != null && ys != null)
-            {
-                if (!IsMonotonicallyIncreasing(xs))
-                {
-                    Array.Sort(xs);
-
-                }
-                if (!IsMonotonicallyIncreasing(ys))
-                {
-                    Array.Sort(ys);
-                }
-            }
             Xvals = xs;
             Yvals = ys;
             Category = Category;
+            AddRules();
         }
-        public bool IsMonotonicallyIncreasing(double[] arrayOfData)
+        private void AddRules()
         {
-
+            AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsMonotonicallyIncreasing(Xvals), "X must be monotonically increasing"));
+            AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsMonotonicallyIncreasing(Yvals), "Y must be monotonically increasing"));
+        }
+        private bool IsMonotonicallyIncreasing(double[] arrayOfData)
+        {
+            if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length-1; i++)
             {
                 if (arrayOfData[i] >= arrayOfData[i + 1])
