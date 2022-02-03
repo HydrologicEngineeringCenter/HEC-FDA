@@ -19,7 +19,6 @@ namespace paireddata
         public string YLabel { get; }
         public string Name { get; }
         public string Description { get; }
-        public int ID { get; }
         public string Category {get;}
         public bool IsNull { get; }
         public double[] xs(){
@@ -36,7 +35,7 @@ namespace paireddata
             IsNull = true;
         }
         //, string xlabel, string ylabel, string name, string description, int ID
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id)
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description)
         {
             _xvals = xs;
             _yvals = ys;
@@ -46,9 +45,8 @@ namespace paireddata
             YLabel = ylabel;
             Name = name;
             Description = description;
-            ID = id;
         }
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id, string category){
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, string category){
             _xvals = xs;
             _yvals = ys;
             Category = category;
@@ -57,7 +55,6 @@ namespace paireddata
             YLabel = ylabel;
             Name = name;
             Description = description;
-            ID = id;
         }
         #endregion
 
@@ -79,7 +76,6 @@ namespace paireddata
             masterElement.SetAttributeValue("YLabel", YLabel);
             masterElement.SetAttributeValue("Name", Name);
             masterElement.SetAttributeValue("Description", Description);
-            masterElement.SetAttributeValue("ID", ID);
             masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
             for (int i=0; i<_xvals.Length; i++)
             {
@@ -101,7 +97,6 @@ namespace paireddata
             string yLabel = element.Attribute("YLabel").Value;
             string name = element.Attribute("Name").Value;
             string description = element.Attribute("Description").Value;
-            int id = Convert.ToInt32(element.Attribute("ID").Value);
             int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
             double[] xValues = new double[size];
             IDistribution[] yValues = new IDistribution[size];
@@ -121,7 +116,7 @@ namespace paireddata
                 }
                 i++;
             }
-            return new UncertainPairedData(xValues,yValues,xLabel,yLabel,name,description,id,category);
+            return new UncertainPairedData(xValues,yValues,xLabel,yLabel,name,description,category);
         }
         #endregion
     }

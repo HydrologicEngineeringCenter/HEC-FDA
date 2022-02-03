@@ -32,7 +32,7 @@ namespace fda_model_test
             {
                 yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name, description, id);
+            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name, description);
             IPairedData pd = upd.SamplePairedData(probability);
             double actual = pd.Yvals[0] / pd.Xvals[0];
             Assert.Equal(expectedSlope, actual);
@@ -49,7 +49,7 @@ namespace fda_model_test
             {
                 yvals[i] = new Uniform(countByOnes[i]*minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description, id);
+            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
@@ -77,7 +77,7 @@ namespace fda_model_test
             {
                 yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description, id);
+            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
@@ -132,7 +132,7 @@ namespace fda_model_test
 
             foreach(IDistribution[] yvals in list)
             {
-                UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name, description, id);
+                UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name, description);
                 XElement ele = upd.WriteToXML();
                 UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
 
