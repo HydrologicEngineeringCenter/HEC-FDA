@@ -15,6 +15,7 @@ namespace fda_model_test
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };
         static double[] probabilities = { .9, .8, .7, .6, .5 };
+        static double[] increasingprobabilities = { .5, .6, .7, .8, .9 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -49,7 +50,7 @@ namespace fda_model_test
             {
                 yvals[i] = new Uniform(countByOnes[i]*minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description);
+            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, xLabel, yLabel, name, description);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
@@ -77,7 +78,7 @@ namespace fda_model_test
             {
                 yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(probabilities, yvals, xLabel, yLabel, name, description);
+            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, xLabel, yLabel, name, description);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
