@@ -152,7 +152,7 @@ namespace fda_model_test
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
 
             Simulation simulation = Simulation.builder()
