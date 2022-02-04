@@ -140,7 +140,7 @@ namespace metrics
             _cnep[exceedanceProbability].ForceDeQueue();
             double stageStep = _cnep[exceedanceProbability].BinWidth;
             int stageStepQuantity = _cnep[exceedanceProbability].BinCounts.Length;
-            double[] stages = _leveeCurve.xs();
+            double[] stages = _leveeCurve.Xvals;
             double firstStage = stages[0];
 
             double currentStage;

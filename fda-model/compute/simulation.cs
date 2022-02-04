@@ -490,12 +490,12 @@ namespace compute{
         private bool LeveeIsValid()
         {
             if (_levee_curve.IsNull) return false;
-            if (_levee_curve.ys().Last().Type != IDistributionEnum.Deterministic)
+            if (_levee_curve.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
                 ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
                 return false;
             }
-            else if (_levee_curve.ys().Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
+            else if (_levee_curve.Yvals.Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
@@ -513,10 +513,10 @@ namespace compute{
 
         private void TopOfLeveehasCertainFailure()
         {
-            int idx = Array.BinarySearch(_levee_curve.xs(), _topOfLeveeElevation);
+            int idx = Array.BinarySearch(_levee_curve.Xvals, _topOfLeveeElevation);
             if (idx > 0) 
             {
-                if (_levee_curve.ys()[idx].InverseCDF(0.5) != 1)
+                if (_levee_curve.Yvals[idx].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
                       ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
                 }
