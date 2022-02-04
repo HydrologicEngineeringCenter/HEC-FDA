@@ -88,7 +88,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
+            paireddata.GraphicalUncertainPairedData frequency_stage = new GraphicalUncertainPairedData(NonExceedanceProbs, stageDistributions, 50, xLabel, yLabel, name, description);
             int thresholdID = 1;
             int iterations = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
