@@ -137,23 +137,23 @@ namespace fda_model_test
                 XElement ele = upd.WriteToXML();
                 UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
 
-                double[] minExpected = new double[upd.ys().Length];
-                double[] minActual = new double[upd2.ys().Length];
-                double[] maxExpected = new double[upd.ys().Length];
-                double[] maxActual = new double[upd2.ys().Length];
+                double[] minExpected = new double[upd.Yvals.Length];
+                double[] minActual = new double[upd2.Yvals.Length];
+                double[] maxExpected = new double[upd.Yvals.Length];
+                double[] maxActual = new double[upd2.Yvals.Length];
 
-                for (int i = 0; i < upd.ys().Length; i++)
+                for (int i = 0; i < upd.Yvals.Length; i++)
                 {
-                    minExpected[i] = upd.ys()[i].InverseCDF(0.0);
-                    maxExpected[i] = upd.ys()[i].InverseCDF(1.0);
+                    minExpected[i] = upd.Yvals[i].InverseCDF(0.0);
+                    maxExpected[i] = upd.Yvals[i].InverseCDF(1.0);
                 }
-                for (int i = 0; i < upd2.ys().Length; i++)
+                for (int i = 0; i < upd2.Yvals.Length; i++)
                 {
-                    minActual[i] = upd2.ys()[i].InverseCDF(0.0);
-                    maxActual[i] = upd2.ys()[i].InverseCDF(1.0);
+                    minActual[i] = upd2.Yvals[i].InverseCDF(0.0);
+                    maxActual[i] = upd2.Yvals[i].InverseCDF(1.0);
                 }
 
-                Assert.Equal(upd.xs(), upd2.xs());
+                Assert.Equal(upd.Xvals, upd2.Xvals);
                 Assert.Equal(minExpected, minActual);
                 Assert.Equal(maxExpected, maxActual);
 

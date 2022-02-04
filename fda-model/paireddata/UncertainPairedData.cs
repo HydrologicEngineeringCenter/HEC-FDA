@@ -7,7 +7,7 @@ using System;
 
 namespace paireddata
 {
-    public class UncertainPairedData : IPairedDataProducer, ICategory, ICanBeNull
+    public class UncertainPairedData : Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull
     {
         #region Fields 
         private double[] _xvals;
@@ -40,13 +40,13 @@ namespace paireddata
         {
             get { return _metadata.IsNull; }
         }
-        public double[] xs()
+        public double[] Xvals
         {
-            return _xvals;
+            get { return _xvals; }
         }
-        public IDistribution[] ys()
+        public IDistribution[] Yvals
         {
-            return _yvals;
+            get { return _yvals; }
         }
         #endregion
 
@@ -72,6 +72,57 @@ namespace paireddata
         #endregion
 
         #region Methods 
+        private void AddRules()
+        {
+            switch (_metadata.CurveType)
+            {
+                case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
+                    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals,.99, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    break;
+                case CurveTypesEnum.MonotonicallyIncreasing:
+                    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .99, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    break;
+                //case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
+                //    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsArrayValid(Yvals, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+                //    break;
+                //case CurveTypesEnum.MonotonicallyDecreasing:
+                //    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsArrayValid(Yvals, (a, b) => (a < b)), "Y must be monotonically decreasing"));
+                //    break;
+                default:
+                    break;
+            }
+
+        }
+        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        {
+            if (arrayOfData == null) return false;
+            for (int i = 0; i < arrayOfData.Length - 1; i++)
+            {
+                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool IsDistributionArrayValid(IDistribution[] arrayOfData,double prob, Func<double, double, bool> comparison)
+        {
+            if (arrayOfData == null) return false;
+            for (int i = 0; i < arrayOfData.Length - 1; i++)
+            {
+                if (comparison(arrayOfData[i].InverseCDF(prob), arrayOfData[i + 1].InverseCDF(prob)))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public IPairedData SamplePairedData(double probability)
         {
             double[] y = new double[_yvals.Length];
