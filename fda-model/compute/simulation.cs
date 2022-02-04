@@ -71,10 +71,7 @@ namespace compute{
                 }
                 //enumerate what the errors and warnings are 
             }
-            else
-            {
-                _leveeIsValid = true;
-            }
+            _leveeIsValid = true;
             int masterseed = 0;
             if(rp is MeanRandomProvider)
             {
@@ -546,12 +543,13 @@ namespace compute{
             {
                 _sim.Validate();
                
-                //probably do validation here.
+                //add validation here to test ranges and domains.
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(Statistics.ContinuousDistribution dist)
             {
                 _sim._frequency_flow = dist;
+                _sim.AddSinglePropertyRule("flow frequency", new Base.Implementations.Rule(() => { _sim._frequency_flow.Validate(); return !_sim._frequency_flow.HasErrors; }, _sim._frequency_flow.GetErrors().ToString())) ;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(UncertainPairedData upd)
@@ -562,21 +560,27 @@ namespace compute{
             public SimulationBuilder withInflowOutflow(UncertainPairedData upd)
             {
                 _sim._inflow_outflow = upd;
+                _sim.AddSinglePropertyRule("inflow outflow", new Base.Implementations.Rule(() => { _sim._inflow_outflow.Validate(); return !_sim._inflow_outflow.HasErrors; }, _sim._inflow_outflow.GetErrors().ToString()));
+                
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData upd)
             {
                 _sim._flow_stage = upd;
+                _sim.AddSinglePropertyRule("flow stage", new Base.Implementations.Rule(() => { _sim._flow_stage.Validate(); return !_sim._flow_stage.HasErrors; }, _sim._flow_stage.GetErrors().ToString()));
+                
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFrequencyStage(UncertainPairedData upd)
             {
                 _sim._frequency_stage = upd;
+                _sim.AddSinglePropertyRule("frequency_stage", new Base.Implementations.Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData upd)
             {
                 _sim._channelstage_floodplainstage = upd;
+                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Base.Implementations.Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, _sim._channelstage_floodplainstage.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(UncertainPairedData upd, double topOfLeveeElevation)
@@ -589,6 +593,10 @@ namespace compute{
             public SimulationBuilder withStageDamages(List<UncertainPairedData> upd)
             {
                 _sim._damage_category_stage_damage = upd;
+                foreach(UncertainPairedData uncertain in _sim._damage_category_stage_damage)
+                {
+                    _sim.AddSinglePropertyRule(uncertain.Category + " stage damages", new Base.Implementations.Rule(() => { uncertain.Validate(); return !uncertain.HasErrors; }, uncertain.GetErrors().ToString()));
+                }
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withPerformanceMetrics(Results mr)
