@@ -79,7 +79,7 @@ namespace fda_model_test
 
 
         [Theory]
-        [InlineData(9980, 1, .028)] //TODO: on paper, I calculate 0.026. I think discretization makes this .028. Investigate. 
+        [InlineData(9980, 1, .026)]  
         public void ComputeLeveeAEP_Test(double thresholdValue, int iterations, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -122,18 +122,15 @@ namespace fda_model_test
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.Results results = simulation.Compute(meanRandomProvider, cc, false);
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
-            double difference = Math.Abs(actual - expected);
-            double relativeDifference = difference / expected;
-            double tolerance = 0.025;
-            Assert.True(relativeDifference < tolerance);
+            Assert.Equal(expected,actual,2);
         }
 
         [Theory]
-        [InlineData(3456,10000,12000,.9,.33333)]
-        [InlineData(5678, 10000, 13000,.98, .336735)]
-        [InlineData(6789, 10000, 14000, .99, .292929)]
-        [InlineData(8910, 10000, 15000 , .996, .246988)]
-        [InlineData(9102, 10000, 16000, .998, .198397)]
+        [InlineData(3456,10001,12000,.9,.666667)]
+        [InlineData(5678, 10001, 13000,.98, .663265)]
+        [InlineData(6789, 10001, 14000, .99, .707071)]
+        [InlineData(8910, 10001, 15000 , .996, .753012)]
+        [InlineData(9102, 10001, 16000, .998, .801603)]
         public void ComputeConditionalNonExceedanceProbability_Test(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -155,7 +152,7 @@ namespace fda_model_test
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
 
             Simulation simulation = Simulation.builder()
@@ -170,7 +167,7 @@ namespace fda_model_test
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(recurrenceInterval);
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
-            double tolerance = 0.01;
+            double tolerance = 0.025;
             Assert.True(relativeDifference < tolerance);
         }
     }

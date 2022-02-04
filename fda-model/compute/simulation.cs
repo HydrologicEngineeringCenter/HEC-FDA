@@ -188,7 +188,7 @@ namespace compute{
                     }
 
                 });
-                if(!_results.TestForConvergence(.95, .05))
+                if(!_results.TestResultsForConvergence(.95, .05))
                 {
                     iterations = _results.RemainingIterations(.95,.05);
                     _ExpectedIterations = _completedIterations + iterations;
