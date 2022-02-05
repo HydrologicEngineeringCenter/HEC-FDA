@@ -16,11 +16,11 @@ namespace fda_model_test.integrationtests
         {
             string filepath = @"C:\Users\Q0HECWPL\Downloads\ProbData.dbf";
             dbfreader dbr = new dbfreader(filepath);
-            double mean = (double)dbr.GetColumn("LOG_MEAN")[0];
+            double mean = (double)dbr.GetCell("LOG_MEAN",0);
             Assert.Equal(2.944761, mean);
-            double stdev = (double)dbr.GetColumn("STD_DEV")[0];
+            double stdev = (double)dbr.GetCell("STD_DEV",0);
             Assert.Equal(0.256108, stdev);
-            double skew = (double)dbr.GetColumn("SKEW")[0];
+            double skew = (double)dbr.GetCell("SKEW",0);
             Assert.Equal(0.2409, skew);
         }
     }
