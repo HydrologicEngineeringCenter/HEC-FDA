@@ -24,8 +24,8 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(51442, 50, .0275, 2023, 2072, 1000, 75000)]
-        [InlineData(59410, 50, .0275, 2023, 2050, 1000, 75000)]
+        [InlineData(51442, 50, .0275, 2023, 2072, 1, 75000)]
+        [InlineData(59410, 50, .0275, 2023, 2050, 1, 75000)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
 

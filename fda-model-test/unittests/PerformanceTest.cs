@@ -26,6 +26,7 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
+
         [InlineData(9200, 80, 1, .08, 0.998732271693343)]
         [InlineData(9400, 60, 1, .06, 0.975584185541488)]
         [InlineData(9600, 40, 1, .04, 0.80463384844468)]
@@ -152,6 +153,7 @@ namespace fda_model_test
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
+
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
 
