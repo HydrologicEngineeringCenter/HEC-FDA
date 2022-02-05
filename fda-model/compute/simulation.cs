@@ -78,11 +78,17 @@ namespace compute{
                 if (convergence_criteria.MaxIterations != 1)
                 {
                     ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
-                    //return _results;
+                    return _results;
                 }
+
             }
             else
             {
+                if (convergence_criteria.MinIterations <100)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
+                    return _results;
+                }
                 masterseed = rp.Seed;
             }
             foreach (UncertainPairedData pd in _damage_category_stage_damage)

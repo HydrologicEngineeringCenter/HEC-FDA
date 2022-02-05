@@ -27,7 +27,7 @@ namespace fda_model_test
         static int id = 1;
 
         [Theory]
-        [InlineData(1234, 1, 0.0005)]
+        [InlineData(1234, 100, 0.0005)]
         public void ComputePerformanceWithSimulation_Test(int seed, int iterations, double expected)
         {
 
@@ -50,7 +50,7 @@ namespace fda_model_test
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, 150000);
 
             Simulation simulation = Simulation.builder()
@@ -186,7 +186,7 @@ namespace fda_model_test
             }
             UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description);
             int thresholdID = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)

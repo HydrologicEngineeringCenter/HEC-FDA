@@ -98,10 +98,10 @@ namespace fda_model_test
 
 
         [Theory]
-        [InlineData(1234, 100, 139603.76)]
-        [InlineData(1234, 1, 139603.76)]
-        [InlineData(4321, 1, 8128.72)]
-        [InlineData(1111, 1, 270510.77)]
+        [InlineData(1234, 100, 124987.126536313)]
+        [InlineData(2345, 100, 120189.843743947)]
+        [InlineData(4321, 100, 116493.377846062)]
+        [InlineData(1111, 100, 143316.627604432)]
         public void ComputeEAD_Iterations(int seed, int iterations, double expected)
         {
 
@@ -128,7 +128,7 @@ namespace fda_model_test
                 .withStageDamages(upd)
                 .build();
             RandomProvider rp = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             metrics.Results r = s.Compute(rp, cc);
             double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
 
