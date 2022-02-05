@@ -16,10 +16,10 @@ namespace compute{
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
         private Statistics.ContinuousDistribution _frequency_flow;
-        private UncertainPairedData _frequency_flow_graphical;
+        private GraphicalUncertainPairedData _frequency_flow_graphical;
         private UncertainPairedData _inflow_outflow;
         private UncertainPairedData _flow_stage;
-        private UncertainPairedData _frequency_stage;
+        private GraphicalUncertainPairedData _frequency_stage;
         private UncertainPairedData _channelstage_floodplainstage;
         private UncertainPairedData _levee_curve;
         private double _topOfLeveeElevation;
@@ -40,10 +40,10 @@ namespace compute{
         internal Simulation()
         {
             _frequency_flow = null;
-            _frequency_flow_graphical = new UncertainPairedData(); //can we have both of these?
+            _frequency_flow_graphical = new GraphicalUncertainPairedData(); //can we have both of these?
             _inflow_outflow = new UncertainPairedData();//defaults to null
             _flow_stage = new UncertainPairedData(); //defaults to null
-            _frequency_stage = new UncertainPairedData();//defaults to null
+            _frequency_stage = new GraphicalUncertainPairedData();//defaults to null
             _channelstage_floodplainstage = new UncertainPairedData();//defaults to null
             _levee_curve = new UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
@@ -188,7 +188,7 @@ namespace compute{
                     }
 
                 });
-                if(!_results.TestForConvergence(.95, .05))
+                if(!_results.TestResultsForConvergence(.95, .05))
                 {
                     iterations = _results.RemainingIterations(.95,.05);
                     _ExpectedIterations = _completedIterations + iterations;
@@ -552,9 +552,9 @@ namespace compute{
                 _sim.AddSinglePropertyRule("flow frequency", new Base.Implementations.Rule(() => { _sim._frequency_flow.Validate(); return !_sim._frequency_flow.HasErrors; }, _sim._frequency_flow.GetErrors().ToString())) ;
                 return new SimulationBuilder(_sim);
             }
-            public SimulationBuilder withFlowFrequency(UncertainPairedData upd)
+            public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData gupd)
             {
-                _sim._frequency_flow_graphical = upd;
+                _sim._frequency_flow_graphical = gupd;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInflowOutflow(UncertainPairedData upd)
@@ -571,9 +571,9 @@ namespace compute{
                 
                 return new SimulationBuilder(_sim);
             }
-            public SimulationBuilder withFrequencyStage(UncertainPairedData upd)
+            public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData gupd)
             {
-                _sim._frequency_stage = upd;
+                _sim._frequency_stage = gupd;
                 _sim.AddSinglePropertyRule("frequency_stage", new Base.Implementations.Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }

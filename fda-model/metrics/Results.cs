@@ -31,18 +31,18 @@ namespace metrics
         {
             return IsEADConverged() && IsPerformanceConverged();
         }
-        public bool TestForConvergence(double upper, double lower)
+        public bool TestResultsForConvergence(double upper, double lower)
         {
-            bool ead = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upper, lower);
-            bool cnp = false;
+            bool eadIsConverged = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upper, lower);
+            bool cnepIsConverged = false;
             //dont like this.
             foreach(var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                cnp = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upper, lower);
+                cnepIsConverged = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upper, lower);
                 break;
             }
             
-            return ead && cnp;
+            return eadIsConverged && cnepIsConverged;
         }
         public Int64 RemainingIterations(double upper, double lower)
         {
