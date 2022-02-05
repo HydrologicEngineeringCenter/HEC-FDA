@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
 namespace paireddata
 {
     public class PairedData : Base.Implementations.Validation, IPairedData
@@ -74,8 +76,8 @@ namespace paireddata
         public double f(double x)
         {
             //binary search.
-            double[] xarr = Xvals; //probably not necessary anymore.
-            Int32 idx = Array.BinarySearch(xarr, x);
+            //double[] xarr = Xvals; //probably not necessary anymore.
+            Int32 idx = Array.BinarySearch(Xvals, x);
             if (idx >= 0)
             {
                 //Matches a value exactly
@@ -91,9 +93,11 @@ namespace paireddata
                 if (idx == 0) { return Yvals[0]; }
 
                 //Ok. Interpolate Y=mx+b
-                double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
-                double b = Yvals[idx - 1];
-                double dx = x - Xvals[idx - 1];
+                double yidxminus1 = Yvals[idx - 1];
+                double xidxminus1 = Xvals[idx-1];
+                double m = (Yvals[idx] - yidxminus1) / (Xvals[idx] - xidxminus1);
+                double b = yidxminus1;
+                double dx = x - xidxminus1;
                 return m * dx + b;
             }
         }
@@ -131,9 +135,11 @@ namespace paireddata
         /// </summary>
         public IPairedData compose(IPairedData input)
         {
-            double[] x = new double[input.Xvals.Length];
-            double[] y = new double[input.Yvals.Length];
-            for (int i = 0; i < input.Xvals.Count(); i++)
+            int count = input.Xvals.Length;
+            double[] x = new double[count];
+            double[] y = new double[count];
+
+            for (int i = 0; i < count; i++)
             {
                 y[i] = f(input.Yvals[i]);
                 x[i] = input.Xvals[i];
