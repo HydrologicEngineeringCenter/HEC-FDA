@@ -370,7 +370,7 @@ namespace utilities
             for (int col = 1; col <= _NColumns; col++)
             {
                 bytes = _dbfreader.ReadBytes(32);
-                _ColumnNames[col - 1] = System.Text.Encoding.ASCII.GetString(bytes, 0, 10);
+                _ColumnNames[col - 1] = System.Text.Encoding.ASCII.GetString(bytes, 0, 10).Trim(Convert.ToChar(0));
                 // field type
                 switch (System.Text.Encoding.UTF8.GetString(bytes, 11, 1))
                 {
