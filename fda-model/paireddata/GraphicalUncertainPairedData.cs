@@ -8,7 +8,7 @@ using System;
 
 namespace paireddata
 {
-    public class GraphicalUncertainPairedData : IPairedDataProducer, ICanBeNull
+    public class GraphicalUncertainPairedData : Base.Implementations.Validation, IPairedDataProducer, ICanBeNull
     {
         #region Fields
         private int _EquivalentRecordLength;
