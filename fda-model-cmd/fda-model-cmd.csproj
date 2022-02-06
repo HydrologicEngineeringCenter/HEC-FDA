@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.20.150" />
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-2-2-058" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-2-6-1556" />
     <PackageReference Include="USACE.HEC.FDA.Utilities" Version="1.1.0-alpha-2022.1.24.1758" />
   </ItemGroup>
 
