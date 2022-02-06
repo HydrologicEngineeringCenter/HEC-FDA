@@ -69,6 +69,12 @@ namespace paireddata
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel, ylabel, name, description, category);
         }
+        public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
+        {
+            _xvals = xs;
+            _yvals = ys;
+            _metadata = metadata;
+        }
         #endregion
 
         #region Methods 
