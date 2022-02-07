@@ -1,14 +1,11 @@
 ﻿using FdaLogging;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities;
+using ViewModel.Editors;
+using ViewModel.Saving;
+using ViewModel.Utilities.Transactions;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {

@@ -1,6 +1,5 @@
 ﻿using compute;
 using metrics;
-using Model;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -9,7 +8,6 @@ using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Editor;
 using ViewModel.StageTransforms;
 

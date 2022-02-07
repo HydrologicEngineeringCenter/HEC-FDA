@@ -73,48 +73,7 @@ namespace ViewModel.Utilities
             }
             string keyname = _ButtonsDictionary.Keys.ToArray()[0];
         }
-        //public CustomMessageBoxVM(bool Yes_Button, bool No_Button, bool OK_Button, bool Cancel_Button, bool Close_Button, bool Abort_Button = false, bool Retry_Button = false, bool Ignore_Button = false)
-        //{
-        //    _ButtonsDictionary = new Dictionary<string, bool>();
-        //    ButtonsEnum myButtons = new ButtonsEnum();
-
-        //    if (Yes_Button == true)
-        //    {
-        //        myButtons = myButtons | ButtonsEnum.Yes;
-        //    }
-            
-        //    if (No_Button) { myButtons =myButtons | ButtonsEnum.No; }
-
-
-        //    if((myButtons & ButtonsEnum.Yes) == ButtonsEnum.Yes)
-        //    {
-        //        _ButtonsDictionary.Add("Yes", true);
-        //    }
-        //    if ((myButtons & ButtonsEnum.No) == ButtonsEnum.No)
-        //    {
-        //        _ButtonsDictionary.Add("No", true);
-        //    }
-        //    if ((myButtons & ButtonsEnum.OK) == ButtonsEnum.OK)
-        //    {
-        //        _ButtonsDictionary.Add("OK", true);
-        //    }
-        //    if ((myButtons & ButtonsEnum.Cancel) == ButtonsEnum.Cancel)
-        //    {
-        //        _ButtonsDictionary.Add("Cancel", true);
-        //    }
-        //    if ((myButtons & ButtonsEnum.Close) == ButtonsEnum.Close)
-        //    {
-        //        _ButtonsDictionary.Add("Close", true);
-        //    }
-
-        //}
-
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-   
+        
         #endregion
         #region Voids
         #endregion

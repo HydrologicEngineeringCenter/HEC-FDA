@@ -46,7 +46,6 @@ namespace ViewModel.AggregatedStageDamage
             set { _SelectedStructureInventoryElement = value; NotifyPropertyChanged(); }
         }
 
-
         public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations
         {
             get { return _WaterSurfaceElevations; }

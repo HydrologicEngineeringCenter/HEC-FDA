@@ -8,7 +8,6 @@ namespace ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageRowItem : BaseViewModel
     {
-
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private String _SelectedDamCat;
         private ObservableCollection<String> _DamageCategories;
@@ -61,7 +60,6 @@ namespace ViewModel.AggregatedStageDamage
             DamageCategories = damCats;
             SelectedDamCat = curve.DamCat;
             EditorVM = new CoordinatesFunctionEditorVM(curve.Function, "Stage", "Damage", "Stage-Damage");
-
         }
 
         /// <summary>

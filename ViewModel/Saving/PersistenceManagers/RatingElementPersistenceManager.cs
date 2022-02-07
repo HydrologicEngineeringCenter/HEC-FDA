@@ -11,12 +11,9 @@ namespace ViewModel.Saving.PersistenceManagers
 {
     public class RatingElementPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
-        private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESC_COL = 3;
-        private const int CURVE_DIST_TYPE_COL = 4;
-        private const int CURVE_TYPE_COL = 5;
-        private const int CURVE_COL = 6;
+        private const int CURVE_COL = 4;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("RatingElementPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
@@ -37,7 +34,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[]{ NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE};
+                return new string[]{ NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
             }
         }
         /// <summary>
@@ -45,7 +42,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override Type[] TableColumnTypes
         {
-            get { return new Type[]{ typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) }; }
+            get { return new Type[]{ typeof(string), typeof(string), typeof(string), typeof(string) }; }
         }
 
         /// <summary>
@@ -55,7 +52,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[]{ ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE , STATE_INDEX_COL_NAME};
+                return new string[]{ ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE , STATE_INDEX_COL_NAME};
             }
         }
         /// <summary>
@@ -65,7 +62,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                return new Type[]{ typeof(int), typeof(string), typeof(string),
                     typeof(string), typeof(string), typeof(int) };
             }
         }      
@@ -92,8 +89,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.Description = "";
             }
             
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve, 
-                element.Curve.GetType(), element.Curve.WriteToXML().ToString()};
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString()};
 
         }
         /// <summary>
@@ -111,10 +107,7 @@ namespace ViewModel.Saving.PersistenceManagers
             int elemId = GetElementId(TableName, element.Name);
             //the new stateId will be one higher than the max that is in the table already.
             int stateId = Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve, element.Curve.GetType(),
-                element.Curve.WriteToXML().ToString(), stateId};
-
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,element.Curve.WriteToXML().ToString(), stateId};
         }
        
         /// <summary>
@@ -126,47 +119,10 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             string curveXML = (string)rowData[CURVE_COL];
             UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
-
-            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            //IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.Rating, coordinatesFunction);
             RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
                 (string)rowData[DESC_COL], upd);
             return rc;
         }
-
-        #endregion
-
-        #region Import from old fda
-        //public void SaveFDA1Elements(RatingFunctionList ratingCurves)
-        //{
-        //    foreach (KeyValuePair<string, RatingFunction> rat in ratingCurves.RatingFunctions)
-        //    {
-        //        SaveRatingFunction(rat.Value);
-        //    }
-        //}
-
-        //private void SaveRatingFunction(RatingFunction rat)
-        //{
-        //    string pysr = "(" + rat.PlanName + " " + rat.YearName + " " + rat.StreamName + " " + rat.DamageReachName + ") ";
-        //    string description = pysr + rat.Description;
-        //    double[] stages = rat.GetStage();
-        //    double[] flows = rat.GetDischarge();
-        //    //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-        //    List<double> stagesList = new List<double>();
-        //    List<double> flowsList = new List<double>();
-        //    for (int i = 0; i < rat.NumberOfPoints; i++)
-        //    {
-        //        stagesList.Add(stages[i]);
-        //        flowsList.Add(flows[i]);
-        //    }
-        //    //always use linear. This is the only option in Old Fda.
-        //    ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-        //    IFdaFunction rating = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)func);
-        //    //add the plan year stream reach for the description
-        //    RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, rating);
-        //    SaveNew(elem);
-        //}
-
 
         #endregion
 

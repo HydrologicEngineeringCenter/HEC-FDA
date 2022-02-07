@@ -1,12 +1,10 @@
 ﻿using FdaLogging;
-using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Utilities;
 using ViewModel.Editors;
 
 namespace ViewModel.FrequencyRelationships
@@ -15,10 +13,7 @@ namespace ViewModel.FrequencyRelationships
     {
         #region Notes
         #endregion
-        #region Fields
-        
-        private UncertainPairedData _Curve;
-        private ObservableCollection<double> _Probabilities = new ObservableCollection<double>();
+        #region Fields     
         private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private double _Mean = 2;
@@ -91,27 +86,18 @@ namespace ViewModel.FrequencyRelationships
         {
             get { return _GraphicalFlows; }
             set { _GraphicalFlows = value; NotifyPropertyChanged(); }
-        }
- 
-        public ObservableCollection<double> Probabilities
-        {
-            get { return _Probabilities; }
-            set { _Probabilities = value; NotifyPropertyChanged();}
-        }
-       
+        }      
 
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(UncertainPairedData defaultCurve, string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public AnalyticalFrequencyEditorVM(UncertainPairedData defaultCurve, string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };   
             UpdateChartLineData();
             LoadDefaultFlows();
         }
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
             CurrentElement = elem;
-            Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             UpdateChartLineData();
             if(elem.AnalyticalFlows.Count == 0)
             {
@@ -167,7 +153,6 @@ namespace ViewModel.FrequencyRelationships
                     LogPearson3 lp3 = new LogPearson3();
                     if (IsStandard)
                     {
-                        //todo: finish, create array of probs
                         lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
                     }
                     else

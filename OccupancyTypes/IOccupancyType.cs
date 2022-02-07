@@ -15,7 +15,6 @@ namespace OccupancyTypes
         bool CalculateOtherDamage { get; set; }
 
         UncertainPairedData StructureDepthDamageFunction { get; set; }
-
         UncertainPairedData ContentDepthDamageFunction { get; set; }
         UncertainPairedData VehicleDepthDamageFunction { get; set; }
         UncertainPairedData OtherDepthDamageFunction { get; set; }
@@ -26,21 +25,12 @@ namespace OccupancyTypes
         IDistribution OtherValueUncertainty { get; set; }
         IDistribution FoundationHeightUncertainty { get; set; }
 
-
-
         string StructureDepthDamageName { get; set; }
         string ContentDepthDamageName { get; set; }
         string VehicleDepthDamageName { get; set; }
         string OtherDepthDamageName { get; set; }
 
-
         IOccupancyType Clone();
-        //public SampledOccupancyType GenerateSampledOccupancyType(ref Random Randy);
-        //public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter);
-        //public string WriteToFDAString();
-        //public XElement WriteToXElement();
-
-        //public delegate void ReportMessageEventHandler(string message);
 
     }
 }

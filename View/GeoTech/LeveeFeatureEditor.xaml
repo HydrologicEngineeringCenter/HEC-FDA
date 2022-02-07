@@ -9,15 +9,12 @@
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
-
              d:DesignHeight="400" d:DesignWidth="620">
     <UserControl.Resources>
         <Utilities:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-
     </UserControl.Resources>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
-            
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
@@ -60,7 +57,6 @@
 
         <Utilities:MessageExpanderControl Grid.Row="3" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
 
-        <!--<Utilities:OKCloseControl Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />-->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"  />
             <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>

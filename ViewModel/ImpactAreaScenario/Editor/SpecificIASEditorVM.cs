@@ -106,7 +106,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <summary>
         /// The rows that show up in the "Warnings" expander after hitting the plot button.
         /// </summary>
-        public ObservableCollection<RecommendationRowItem> MessageRows { get; set; }
+        public ObservableCollection<RecommendationRowItem> MessageRows { get; } = new ObservableCollection<RecommendationRowItem>();
 
         /// <summary>
         /// This is the create new ctor
@@ -126,7 +126,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void Initialize()
         {
-            MessageRows = new ObservableCollection<RecommendationRowItem>();
             _additionalThresholdsVM = new ThresholdsVM();
             _additionalThresholdsVM.RequestNavigation += Navigate;
 
@@ -392,11 +391,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        //todo: check that these selected items aren't null?
         private List<StageDamageCurve> GetStageDamageCurves()
         {
-            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
-            List<StageDamageCurve> stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
+            List<StageDamageCurve> stageDamageCurves = new List<StageDamageCurve>();
+            if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+            {
+                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
+                stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
+            }
             return stageDamageCurves;
         }
 

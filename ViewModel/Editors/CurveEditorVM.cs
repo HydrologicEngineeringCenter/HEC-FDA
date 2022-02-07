@@ -15,9 +15,7 @@ namespace ViewModel.Editors
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
         private UncertainPairedData _Curve;
-        private string _SavingText;
-        //private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-  
+        private string _SavingText;  
 
         #region properties
         
@@ -33,7 +31,6 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(prevElement);
                 SavingText = CreateLastSavedText(prevElement);
                 UndoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-
             }
         }
 
@@ -50,10 +47,8 @@ namespace ViewModel.Editors
                 SavingText = CreateLastSavedText(nextElement);
 
                 RedoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-
             }
         }
-
 
         public UncertainPairedData Curve
         {
@@ -82,15 +77,10 @@ namespace ViewModel.Editors
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
         }
-
-       
+ 
 
         public CurveEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
-            if (elem.Curve != null)
-            {
-                //the curve is null for the conditions editor
-            }
             PlotTitle = Name;
             SetDimensions(800, 600, 400, 400);         
         }

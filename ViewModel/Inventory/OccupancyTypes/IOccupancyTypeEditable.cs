@@ -14,7 +14,6 @@ namespace ViewModel.Inventory.OccupancyTypes
     {
         event EventHandler UpdateMessagesEvent;
 
-        //IOccupancyType OccType { get; set; }
         string Name { get; set; }
         int ID { get; set; }
         int GroupID { get; set; }

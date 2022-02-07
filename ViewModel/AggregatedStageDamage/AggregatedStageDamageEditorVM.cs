@@ -4,7 +4,6 @@ using System.Windows;
 using ViewModel.Editors;
 using ViewModel.Utilities;
 
-
 namespace ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageEditorVM : BaseLoggingEditorVM
@@ -77,7 +76,6 @@ namespace ViewModel.AggregatedStageDamage
                 CurrentVM = CalculatedVM;
             }
         }
-   
 
         public virtual void SaveWhileEditing()
         {
@@ -90,7 +88,6 @@ namespace ViewModel.AggregatedStageDamage
                 SaveCalculatedCurves();
             }
         }
-
         
         private void SaveCalculatedCurves()
         {

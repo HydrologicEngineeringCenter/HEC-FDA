@@ -1,23 +1,15 @@
 ﻿
+using FdaLogging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Utilities.Transactions;
 using System.Collections.ObjectModel;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Utilities;
 using System.IO;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
-using System.Collections;
-using System.Windows;
 using ViewModel.Tabs;
-using System.Threading;
-using System.Reflection;
-using System.Diagnostics;
-using FdaLogging;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
 
 
 namespace ViewModel.Study

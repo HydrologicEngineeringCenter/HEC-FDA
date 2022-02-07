@@ -1,9 +1,5 @@
-﻿using HEC.Plotting.SciChart2D.Charts;
-using HEC.Plotting.SciChart2D.ViewModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Editors;
-using ViewModel.Utilities;
 
 namespace View.GeoTech
 {

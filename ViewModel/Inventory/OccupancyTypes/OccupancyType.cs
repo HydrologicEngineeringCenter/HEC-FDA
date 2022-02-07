@@ -18,7 +18,6 @@ namespace ViewModel.Inventory.OccupancyTypes
         private bool _CalculateContentDamage;
         private bool _CalculateVehicleDamage;
         private bool _CalculateOtherDamage;
-
         private bool _IsModified;
 
         /// <summary>
@@ -28,70 +27,17 @@ namespace ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public bool IsModified 
         {
-            get
-            {
-                return _IsModified;
-            }
-            set
-            {
-                _IsModified = value;
-                NotifyPropertyChanged();
-                //if(_IsModified == true)
-                //{
-                //    //_Name = _Name + '*';
-                //    addStarIfDoesntExist();
-                //}
-                //else
-                //{
-                //    removeStarIfExists();
-                //}
-            }
+            get{ return _IsModified;}
+            set{_IsModified = value; NotifyPropertyChanged();}
         }
 
         public string Name
         {
-            get 
-            {
-                return _Name;
-                //if( IsModified)
-                //{
-                //    string retval = addStarIfDoesntExist();
-                //    return retval;
-                //}
-                //else
-                //{
-                //    return removeStarIfExists(); 
-                //}
-            }
+            get  { return _Name;}
             set { _Name = value; IsModified = true; NotifyPropertyChanged(); }
         }
 
-        //private void addStarIfDoesntExist()
-        //{
-        //    if(_Name.Last() != '*')
-        //    {
-        //        _Name = _Name + '*'; // _Name.Insert(_Name.Length, '*'.ToString());
-        //        NotifyPropertyChanged("Name");
-                
-        //    }
-        //    //else
-        //    //{
-        //    //    return _Name;
-        //    //}
-        //}
-        //private void removeStarIfExists()
-        //{
-        //    if(_Name.Last().Equals('*'))
-        //    {
-        //        _Name =  _Name.Remove(_Name.Length - 1, 1);
-        //        NotifyPropertyChanged("Name");
-
-        //    }
-        //    //else
-        //    //{
-        //    //    return _Name;
-        //    //}
-        //}
+        
 
         public string Description
         {
@@ -99,11 +45,8 @@ namespace ViewModel.Inventory.OccupancyTypes
             set { _Description = value; IsModified = true; }
         }
 
-        public IDamageCategory DamageCategory 
-        { 
-            get; 
-            set; 
-        }
+        public IDamageCategory DamageCategory { get; set; }
+
 
         public bool CalculateStructureDamage
         {
@@ -129,11 +72,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             set { _CalculateOtherDamage = value; IsModified = true; }
         }
 
-        public UncertainPairedData StructureDepthDamageFunction 
-        { 
-            get; 
-            set; 
-        }
+        public UncertainPairedData StructureDepthDamageFunction { get; set; }
         public UncertainPairedData ContentDepthDamageFunction { get; set; }
         public UncertainPairedData VehicleDepthDamageFunction { get; set; }
         public UncertainPairedData OtherDepthDamageFunction { get; set; }
@@ -149,16 +88,8 @@ namespace ViewModel.Inventory.OccupancyTypes
         public ValueUncertaintyType OtherUncertaintyType { get; set; }
         public ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
 
-
-        //todo: are these name important or used anywhere?
-        //public string StructureDepthDamageName { get; set; }
-        //public string ContentDepthDamageName { get; set; }
-        //public string VehicleDepthDamageName { get; set; }
-        //public string OtherDepthDamageName { get; set; }
         public int GroupID { get; set; }
         public int ID { get; set; }
-
-        
 
         public OccupancyType()
         {

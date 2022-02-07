@@ -43,12 +43,7 @@ namespace ViewModel.Inventory.DepthDamage
         }
         #endregion
         #region Constructors
-        //public DepthDamageCurve(string name, UncertainCurveIncreasing curve, DamageTypeEnum damageType)
-        //{
-        //    _Name = name;
-        //    _Curve = curve;
-        //    _DamageType = damageType;
-        //}
+
         public DepthDamageCurve(string name, string description, UncertainPairedData curve, DamageTypeEnum damageType)
         {
             _Name = name;

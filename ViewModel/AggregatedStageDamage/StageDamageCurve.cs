@@ -1,7 +1,6 @@
 ﻿using paireddata;
 using System;
 using System.Xml.Linq;
-using Utilities.Serialization;
 using ViewModel.ImpactArea;
 
 namespace ViewModel.AggregatedStageDamage
@@ -35,7 +34,6 @@ namespace ViewModel.AggregatedStageDamage
         public ImpactAreaRowItem ImpArea { get; }
         public string DamCat { get; }
         public UncertainPairedData Function { get; }
-
 
         public XElement WriteToXML(StageDamageCurve curve)
         {

@@ -85,7 +85,6 @@ namespace ViewModel
             CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
         }
 
-
         public void AssignValuesFromCurveEditorToElement(BaseEditorVM editorVM, ChildElement element)
         {
             CurveEditorVM vm = (CurveEditorVM)editorVM;

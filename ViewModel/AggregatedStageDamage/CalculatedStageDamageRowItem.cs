@@ -10,7 +10,6 @@ namespace ViewModel.AggregatedStageDamage
         private ImpactAreaRowItem _ImpactArea;
         private String _DamCat;
 
-
         public int ID { get; set; }
         public ImpactAreaRowItem ImpactArea
         {
@@ -30,7 +29,7 @@ namespace ViewModel.AggregatedStageDamage
             ID = id;
             ImpactArea = impArea;
             DamageCategory = damCat;
-            //EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage", true);
+            EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
         }
 
 

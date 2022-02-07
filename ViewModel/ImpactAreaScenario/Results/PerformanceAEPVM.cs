@@ -1,19 +1,13 @@
 ﻿using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
-using Model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAEPVM : PerformanceVMBase
     {
-
         private readonly HistogramData2D _data;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
 

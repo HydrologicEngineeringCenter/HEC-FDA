@@ -1,5 +1,4 @@
 ﻿using compute;
-using Model;
 using paireddata;
 using Statistics;
 using System.Collections.Generic;
@@ -46,7 +45,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ContinuousDistribution GetFrequencyDistribution()
         {
             return _FreqElem.GetDistribution();
-
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
@@ -61,8 +59,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                //todo: i don't like this. Is there an easier way to get a paired data from the stage damage curve.
-                //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, curve.Function);
                 stageDamages.Add(curve.Function);
             }
             return stageDamages;

@@ -1,13 +1,12 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using ViewModel.Editors;
 using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Results;
-using ViewModel.Utilities;
 using ViewModel.Saving;
-using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -209,9 +208,7 @@ namespace ViewModel.ImpactAreaScenario
             PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
-        #region Voids
-        
-
+        #region Voids     
         #endregion
         #region Functions
         public override ChildElement CloneElement(ChildElement elementToClone)

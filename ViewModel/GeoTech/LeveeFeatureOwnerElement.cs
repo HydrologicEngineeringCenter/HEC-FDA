@@ -12,17 +12,15 @@ namespace ViewModel.GeoTech
         #region Fields
         #endregion
         #region Properties
-      
         #endregion
         #region Constructors
         public LeveeFeatureOwnerElement( ) : base()
         {
             Name = "Levee Features";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-
-            Utilities.NamedAction add = new Utilities.NamedAction();
+            NamedAction add = new NamedAction();
             add.Header = "Create New Levee Feature";
             add.Action = AddNewLeveeFeature;
 
@@ -30,7 +28,7 @@ namespace ViewModel.GeoTech
             importFromFile.Header = StringConstants.ImportFromOldFda("Levees");
             importFromFile.Action = ImportFromFile;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(add);
             localActions.Add(importFromFile);
 
@@ -76,19 +74,14 @@ namespace ViewModel.GeoTech
                 .WithSiblingRules(this);
 
             //create default curve 
-            List<double> xValues = new List<double>() { 0};
-            List<double> yValues = new List<double>() { 0 };
-            //Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            //IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Probabilty", "Elevation", "Failure Function");
+            List<double> xs = new List<double>() {0};
+            List<double> ys = new List<double>() {0};
+            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Probabilty", "Elevation", "Failure Function");
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
-            //StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
             string header = "Create Levee";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateLevee");
-            Navigate(tab, false, false);
-          
+            Navigate(tab, false, false);       
         }
 
         #endregion
@@ -96,9 +89,7 @@ namespace ViewModel.GeoTech
         public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
-            //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            //return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
             return new LeveeFeatureElement(editorVM.Name, editDate, editorVM.Description, editorVM.Elevation, editorVM.IsUsingDefault, editorVM.Curve);
         }
         #endregion

@@ -2,7 +2,6 @@
 using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -16,7 +15,6 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         #region fields
         private IDistribution _ValueUncertainty;
-       // private IOrdinateEnum _SelectedType;
         private IValueUncertainty _CurrentVM;
         private NormalControlVM _NormalControlVM;
         private TriangularControlVM _TriangularControlVM;
@@ -49,20 +47,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             set;
         }
 
-        //public IOrdinateEnum SelectedType
-        //{
-        //    get
-        //    {
-        //        return _SelectedType;
-        //    }
-        //    set
-        //    {
-        //        _SelectedType = value;
-        //        NotifyPropertyChanged();
-        //        SelectedDistributionTypeChanged();
-        //    }
-        //}
-
         public IDistribution ValueUncertainty
         {
             get
@@ -72,36 +56,10 @@ namespace ViewModel.Inventory.OccupancyTypes
             set
             {
                 _ValueUncertainty = value;
-                //SelectedType = _ValueUncertainty.Type;
-                //UpdateDistributionValues(value);
                 SelectedDistributionTypeChanged();
                 NotifyPropertyChanged();
             }
         }
-
-        //public double Min
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public double Max
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public double StDev
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public double Mean
-        //{
-        //    get;
-        //    set;
-        //}
 
         #endregion
 
@@ -118,8 +76,6 @@ namespace ViewModel.Inventory.OccupancyTypes
                 IDistributionEnum.Uniform
             };
 
-           
-
             //create the vm's for the individual distribution types
 
             //set what values you can, then set some defaults for the other dist types?
@@ -129,7 +85,6 @@ namespace ViewModel.Inventory.OccupancyTypes
 
             //set the current vm to be of the selected type
             SelectedDistributionTypeChanged();
-
         }
 
         #endregion

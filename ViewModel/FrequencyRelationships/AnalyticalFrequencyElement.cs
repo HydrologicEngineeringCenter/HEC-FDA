@@ -1,5 +1,4 @@
-﻿using Model;
-using paireddata;
+﻿using paireddata;
 using Statistics;
 using Statistics.Distributions;
 using System;
@@ -18,8 +17,7 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Fields
         #endregion
-        #region Properties
-      
+        #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }
         public bool IsStandard { get; set; }
@@ -76,14 +74,6 @@ namespace ViewModel.FrequencyRelationships
             IsLogFlow = (bool)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.IS_LOG);
             string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
             AnalyticalFlows = ConvertStringToFlows(flows);
-
-            //this is hacky but i need to set the curve property on this child element so that the curve editor can get the correct 
-            //parameter type. I didn't want to mess with refactoring curve editor in any way because a lot of things use it.
-            //This curve is not being used to display the plot or for saving. It can be filled with dummy data.
-            //Cody 1/27/22 *** not sure this is true anymore, there is no parameter type anymore.
-            List<double> xs = new List<double>() { 0, 1 };
-            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
-            Curve = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Flow", "Frequency", "Flow-Frequency", "", -1);
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
@@ -181,7 +171,7 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowWrappers;
         }
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        public ChildElement CreateElementFromEditor(BaseEditorVM editorVM)
         {
             //will be formatted like: 2/27/2009 12:12:22 PM
             string editDate = DateTime.Now.ToString("G"); 
@@ -260,7 +250,7 @@ namespace ViewModel.FrequencyRelationships
         }
         public ContinuousDistribution GetDistribution()
         {
-            return new Statistics.Distributions.LogPearson3(Mean, StDev, Skew, POR);
+            return new LogPearson3(Mean, StDev, Skew, POR);
         }
 
     }

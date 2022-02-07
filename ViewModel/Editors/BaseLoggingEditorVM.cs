@@ -66,9 +66,8 @@ namespace ViewModel.Editors
         public bool IsExpanded 
         {
             get { return _IsExpanded; }
-            set 
-            {
-                
+            set
+            {          
                 if (_IsExpanded != value)
                 {
                     _IsExpanded = value;
@@ -88,23 +87,11 @@ namespace ViewModel.Editors
         #region Constructors
         public BaseLoggingEditorVM(UncertainPairedData defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            //ICoordinatesFunction coordFunc = null;
-            //if (defaultCurve == null)
-            //{
-            //    List<double> xs = new List<double>() { 0 };
-            //    List<double> ys = new List<double>() { 0 };
-            //    coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            //}
-            //else
-            //{
-            //    coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve);
-            //}
-
             EditorVM = new CoordinatesFunctionEditorVM(defaultCurve, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
         }
 
-        public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
+        public BaseLoggingEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
             if (elem.Curve != null)
             {

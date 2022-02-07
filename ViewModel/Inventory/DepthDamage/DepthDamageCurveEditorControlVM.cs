@@ -102,10 +102,6 @@ namespace ViewModel.Inventory.DepthDamage
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
 
      
     }
