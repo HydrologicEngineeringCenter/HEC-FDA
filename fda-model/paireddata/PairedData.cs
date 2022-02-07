@@ -1,3 +1,5 @@
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -289,6 +291,17 @@ namespace paireddata
                 }
             }
             return new PairedData(newXvals.ToArray(), newYvals.ToArray());
+        }
+        public UncertainPairedData toUncertainPairedData()
+        {
+            IDistribution[] ydists = new IDistribution[Yvals.Length];
+            int idx = 0;
+            foreach(double val in Yvals)
+            {
+                ydists[idx] = new Deterministic(val);
+                idx++;
+            }
+            return new UncertainPairedData(Xvals, ydists, _metadata);
         }
     }
 }
