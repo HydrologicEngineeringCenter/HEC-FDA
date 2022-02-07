@@ -39,7 +39,10 @@ namespace Importer
             _LeveeListSort.Add(aLevee.Name.Trim(), aLevee);
             if (logger != null)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aLevee.Print(logger, importOptions);
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
+                {
+                    aLevee.Print(logger, importOptions);
+                }
             }
         }
         public void Print(AsyncLogger logger)

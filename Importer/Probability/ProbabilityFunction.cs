@@ -390,19 +390,25 @@ namespace Importer
                     logger.Log($"\tGraphical Points:");
                     logger.Append("\t\tProbability: ");
                     for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                    {
                         logger.Append($"\t{ExceedanceProbability[i]}");
+                    }
                     logger.Append("\n");
                     if (ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
                     {
                         logger.Append("\t\tDischarge: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{Discharge[i]}");
+                        }
                     }
                     else if (ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
                     {
                         logger.Append("\t\tStage: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{Stage[i]}");
+                        }
                     }
                     logger.Append("\n");
 
@@ -411,25 +417,33 @@ namespace Importer
                     {
                         logger.Append("\t\tNormal: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{_StdDevNormalUserDef[i]}");
+                        }
                         logger.Append("\n");
                     }
                     else if (UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
                     {
                         logger.Append("\t\tLog Normal: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{_StdDevLogUserDef[i]}");
+                        }
                         logger.Append("\n");
                     }
                     else if (UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
                     {
                         logger.Append("\t\tTriangular High: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{_StdDevUpperUserDef[i]}");
+                        }
                         logger.Append("\n");
                         logger.Append("\t\tTriangular Low: ");
                         for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        {
                             logger.Append($"\t{_StdDevLowerUserDef[i]}");
+                        }
                     }
                 }
             }
@@ -441,35 +455,47 @@ namespace Importer
                     logger.Log("\n\tTransform Flow Function");
                     logger.Append("\t\tInflow: ");
                     for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                    {
                         logger.Append($"\t{TransFlowInflow[i]}");
+                    }
                     logger.Append("\n");
                     logger.Append("\t\tOutflow: ");
                     for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                    {
                         logger.Append($"\t{TransFlowOutflow[i]}");
+                    }
                     logger.Append("\n");
                     if (ErrorTypeTransformFlow == ErrorType.NORMAL)
                     {
                         logger.Append("\t\tNormal: ");
                         for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        {
                             logger.Append($"\t{TransFlowStdDev[i]}");
+                        }
                         logger.Append("\n");
                     }
                     else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
                     {
                         logger.Append("\t\tLog Normal: ");
                         for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        {
                             logger.Append($"\t{TransFlowLogStdDev[i]}");
+                        }
                         logger.Append("\n");
                     }
                     else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
                     {
                         logger.Append("\t\tTriangular High: ");
                         for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        {
                             logger.Append($"\t{ TransFlowUpper[i]}");
+                        }
                         logger.Append("\n");
                         logger.Append("\t\tTriangular Low: ");
                         for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        {
                             logger.Append($"\t{TransFlowLower[i]}");
+                        }
                         logger.Append("\n");
                     }
                 }

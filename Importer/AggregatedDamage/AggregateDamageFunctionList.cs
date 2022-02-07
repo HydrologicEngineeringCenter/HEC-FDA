@@ -33,9 +33,9 @@ namespace Importer
             AggregateDamageFunction aAggDamgFunc = ObjectCopier.Clone(theAggDamgFunc);
             _AggDamgFuncListSort.Add(aAggDamgFunc.Name, aAggDamgFunc);
             WriteLine($"Add Aggregate Damage Function to SortList.  {aAggDamgFunc.Name}");
-            if(logger != null)
+            if(logger != null && GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aAggDamgFunc.Print(logger);
+                aAggDamgFunc.Print(logger);
             }
         }
         public void Print(AsyncLogger logger)

@@ -45,11 +45,7 @@ namespace ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-        //public string GetTerrainPathBase()
-        //{
-        //    return Storage.Connection.Instance.TerrainDirectory + "\\";
 
-        //}
         public string OriginalTerrainPath { get; set; }
 
         public override string TableName
@@ -75,9 +71,9 @@ namespace ViewModel.Saving.PersistenceManagers
             return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
         }
 
-        private async void CopyFileOnBackgroundThread(TerrainElement element) //object sender, DoWorkEventArgs e)
+        private async void CopyFileOnBackgroundThread(TerrainElement element)
         {
-            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
+            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
 
             string name = element.Name;
             //remove the temporary node and replace it

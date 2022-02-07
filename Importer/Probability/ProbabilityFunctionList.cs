@@ -38,7 +38,10 @@ namespace Importer
             WriteLine($"Add Probability Function to SortList.  {aProbFunc.Name}");
             if(logger != null)
             {
-                if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aProbFunc.Print(logger);
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
+                {
+                    aProbFunc.Print(logger);
+                }
             }
         }
         public void Print(AsyncLogger logger)

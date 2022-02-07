@@ -552,33 +552,21 @@ namespace ViewModel.Utilities
             switch (type)
             {
                 case ErrorType.NONE:
-                    {
                         return new Deterministic(mean);
-                    }
                 case ErrorType.NORMAL:
-                    {
                         return new Normal(mean, stDev);
-                    }
                 case ErrorType.TRIANGULAR:
-                    {
                         //The mean is always 100. The importer code has the value at -901 so we hardcode it here.
                         return new Triangular(100, stDev, max); 
-                    }
                 case ErrorType.UNIFORM:
-                    {
                         //todo: there is no lower. What to do?
                         return new Uniform(mean, max);
-                    }
                 case ErrorType.LOGNORMAL:
-                    {
                         throw new NotImplementedException();
-                    }
                 default:
-                    {
                         //todo: do what
                         //something went wrong, lets just make it a constant?
                         return new Deterministic(mean);
-                    }
             }
         }
         private static List<IDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)

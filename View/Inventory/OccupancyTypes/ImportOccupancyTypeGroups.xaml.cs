@@ -50,7 +50,10 @@ namespace View.Inventory.OccupancyTypes
             //remove the sender row from the list
             ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
-            if(sendingRow == null) { return; }
+            if(sendingRow == null) 
+            { 
+                return; 
+            }
             vm.ListOfRowVMs.Remove(sendingRow);
             DrawAllTheRows();
         }

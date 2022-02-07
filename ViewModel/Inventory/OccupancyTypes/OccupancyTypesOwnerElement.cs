@@ -93,10 +93,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             //dont open the editor if there are no occtype groups to edit
             if (ListOfOccupancyTypesGroups.Count < 1)
             {
-                //CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
-                //string title = "No Occupancy Types";
-                //DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
-                //Navigate(tabb);
+
                 MessageBox.Show("There are no occupancy types to edit. You must first import a group of occupancy types.", "No Occupancy Types", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                // CreateDefaultOccTypeGroup();
                 

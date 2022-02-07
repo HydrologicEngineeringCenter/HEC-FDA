@@ -38,7 +38,10 @@ namespace Importer
             WriteLine($"Add Rating Function to SortList.  {aRatingFunc.Name}");
             if(logger != null)
             {
-                if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aRatingFunc.Print(logger);
+                if(GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
+                {
+                    aRatingFunc.Print(logger);
+                }
             }
         }
         public void Print(AsyncLogger logger)

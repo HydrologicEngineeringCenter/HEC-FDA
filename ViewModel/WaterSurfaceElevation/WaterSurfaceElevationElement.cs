@@ -8,7 +8,7 @@ using ViewModel.Utilities;
 namespace ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 6 / 2017 9:47:42 AM)]
-    public class WaterSurfaceElevationElement : Utilities.ChildElement
+    public class WaterSurfaceElevationElement : ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -108,7 +108,7 @@ namespace ViewModel.WaterSurfaceElevation
                 mapWindow.ToolTip = "No map layers exist when imported from HEC-FDA 1.4.3";
             }
 
-            List<NamedAction> localactions = new List<Utilities.NamedAction>();
+            List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(editElement);
             localactions.Add(remove);
             localactions.Add(renameElement);
@@ -143,9 +143,9 @@ namespace ViewModel.WaterSurfaceElevation
             {
                 foreach (int hash in _featureNodeHashs)
                 {
-                    RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(hash));
+                    RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(hash));
                 }
-                foreach (Utilities.NamedAction a in Actions)
+                foreach (NamedAction a in Actions)
                 {
                     if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                     {
@@ -158,7 +158,7 @@ namespace ViewModel.WaterSurfaceElevation
 
         public void removedcallback(OpenGLMapping.FeatureNodeHeader node, bool includeSelected)
         {
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
@@ -173,10 +173,9 @@ namespace ViewModel.WaterSurfaceElevation
             _featureNodeHashs = new List<int>();
             foreach (PathAndProbability file in RelativePathAndProbability)
             {
-
                 LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\" + file.Path);
                 OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-                Utilities.AddGriddedDataEventArgs args = new Utilities.AddGriddedDataEventArgs(r, c);
+                AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
                 args.FeatureName = Name;
                 AddToMapWindow(this, args);
 
@@ -184,7 +183,7 @@ namespace ViewModel.WaterSurfaceElevation
             }
 
 
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {

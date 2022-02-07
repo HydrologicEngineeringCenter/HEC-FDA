@@ -45,7 +45,10 @@ namespace Importer
             WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");
             if (logger != null)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19) aOccType.Print(logger);
+                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
+                {
+                    aOccType.Print(logger);
+                }
             }
         }
         public void Print(AsyncLogger logger)
