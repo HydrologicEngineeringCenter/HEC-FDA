@@ -7,8 +7,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.20.150" />
-    <PackageReference Include="HenryGeorgist.Framework.Model" Version="1.0.0-alpha-2022.1.20.150" />
     <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022.1.26.1955" />
   </ItemGroup>
 </Project>

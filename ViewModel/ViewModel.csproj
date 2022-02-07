@@ -102,8 +102,6 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="GDAL-HEC" Version="0.0.1" />
-    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.20.150" />
-    <PackageReference Include="HenryGeorgist.Framework.Model" Version="1.0.0-alpha-2022.1.20.150" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />

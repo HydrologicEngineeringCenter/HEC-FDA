@@ -286,8 +286,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.20.150" />
-    <PackageReference Include="HenryGeorgist.Framework.Model" Version="1.0.0-alpha-2022.1.20.150" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />
