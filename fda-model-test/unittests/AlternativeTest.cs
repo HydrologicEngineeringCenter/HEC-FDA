@@ -21,7 +21,15 @@ namespace fda_model_test
         static string name = "name";
         static string description = "description";
         static int id = 1;
-
+        /// <summary>
+        /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        /// <param name="expected"></param>
+        /// <param name="poa"></param>
+        /// <param name="discountRate"></param>
+        /// <param name="baseYear"></param>
+        /// <param name="futureYear"></param>
+        /// <param name="iterations"></param>
         [Theory]
         [InlineData(208213.8061, 50,.0275,2023,2072,1)]
         [InlineData(239260.1814, 50, .0275, 2023, 2050, 1)]

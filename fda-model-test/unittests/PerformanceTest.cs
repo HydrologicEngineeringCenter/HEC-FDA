@@ -25,8 +25,8 @@ namespace fda_model_test
         static string description = "description";
         static int id = 1;
 
-        [Theory]
 
+        [Theory]
         [InlineData(9200, 80, 1, .08, 0.998732271693343)]
         [InlineData(9400, 60, 1, .06, 0.975584185541488)]
         [InlineData(9600, 40, 1, .04, 0.80463384844468)]
@@ -78,7 +78,12 @@ namespace fda_model_test
             Assert.True(ltepRelativeDifference < .025);
         }
 
-
+        /// <summary>
+        /// calculations for the below test can be obtained at https://docs.google.com/spreadsheets/d/1iSSQHjxlyKbtqfq1s3-RG_t4W19QZCiW/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        /// <param name="thresholdValue"></param>
+        /// <param name="iterations"></param>
+        /// <param name="expected"></param>
         [Theory]
         [InlineData(9980, 1, .026)]  
         public void ComputeLeveeAEP_Test(double thresholdValue, int iterations, double expected)
@@ -125,7 +130,14 @@ namespace fda_model_test
             double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
             Assert.Equal(expected,actual,2);
         }
-
+        /// <summary>
+        /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1ui_sPDAleoYyu-T3fgraY5ye-WAMVs_j/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        /// <param name="seed"></param>
+        /// <param name="iterations"></param>
+        /// <param name="thresholdValue"></param>
+        /// <param name="recurrenceInterval"></param>
+        /// <param name="expected"></param>
         [Theory]
         [InlineData(3456,10001,12000,.9,.666667)]
         [InlineData(5678, 10001, 13000,.98, .663265)]
