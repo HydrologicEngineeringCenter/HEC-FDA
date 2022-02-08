@@ -21,19 +21,19 @@
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <v:ImageNamedActionButton Grid.Column="0"  Height="18" Width="18" NamedAction="{Binding ErrorsAction}" Style="{StaticResource EnableDisableImageNamedActionButton}" ButtonStyle="{StaticResource TransparentButton}" ToolTip="Errors">
-                <v:ImageNamedActionButton.Image>
-                    <Image Source="/View;component/Resources/Error.png"/>
-                </v:ImageNamedActionButton.Image>
+                <!--<v:ImageNamedActionButton.Image>
+                    --><!--<Image Source="/View;component/Resources/Error.png"/>--><!--
+                </v:ImageNamedActionButton.Image>-->
             </v:ImageNamedActionButton>
             <v:ImageNamedActionButton Grid.Column="1" Height="18" Width="18" NamedAction="{Binding MessagesAction}" Style="{StaticResource EnableDisableImageNamedActionButton}" ButtonStyle="{StaticResource TransparentButton}" ToolTip="Messages">
-                <v:ImageNamedActionButton.Image>
-                    <Image Source="/View;component/Resources/Message.png"/>
-                </v:ImageNamedActionButton.Image>
+                <!--<v:ImageNamedActionButton.Image>
+                    --><!--<Image Source="/View;component/Resources/Message.png"/>--><!--
+                </v:ImageNamedActionButton.Image>-->
             </v:ImageNamedActionButton>
             <v:ImageNamedActionButton Grid.Column="2" Height="18" Width="18" NamedAction="{Binding HelpAction}" Style="{StaticResource EnableDisableImageNamedActionButton}" ButtonStyle="{StaticResource TransparentButton}" ToolTip="Get Help.">
-                <v:ImageNamedActionButton.Image>
+                <!--<v:ImageNamedActionButton.Image>
                     <Image Source="/View;component/Resources/Help.png"/>
-                </v:ImageNamedActionButton.Image>
+                </v:ImageNamedActionButton.Image>-->
             </v:ImageNamedActionButton>
         </Grid>
         <ContentControl Grid.Row="1" Content="{Binding}"/>
