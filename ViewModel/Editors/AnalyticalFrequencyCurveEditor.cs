@@ -1,14 +1,7 @@
-﻿using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.Utilities;
-using Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using paireddata;
 using Statistics.Distributions;
-using paireddata;
+using System.Collections.Generic;
+using ViewModel.Utilities;
 
 namespace ViewModel.Editors
 {

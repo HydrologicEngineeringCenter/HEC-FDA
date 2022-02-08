@@ -298,10 +298,7 @@ namespace ViewModel.Study
             DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
             newStudyTab.Name = "CreateStudyTab";
             TabController.Instance.AddTab(newStudyTab);
-
         }
-
-
 
         #endregion
         public void WriteMapLayersXMLFile()

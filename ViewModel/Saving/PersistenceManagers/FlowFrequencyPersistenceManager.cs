@@ -28,7 +28,9 @@ namespace ViewModel.Saving.PersistenceManagers
         public static readonly string IS_LOG = "IsLog";
         public static readonly string FLOWS = "Flows";
 
-        private const int XML_COL = 2;
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+        private const int XML_COL = 3;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
@@ -42,12 +44,12 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get{return new string[] { NAME, "XML" };}
+            get{return new string[] { NAME,DESCRIPTION, "XML" };}
         }
 
         public override Type[] TableColumnTypes
         {
-            get  { return new Type[] { typeof(string), typeof(string)}; }
+            get  { return new Type[] { typeof(string), typeof(string), typeof(string)}; }
         }
 
         public override string[] ChangeTableColumnNames
@@ -68,7 +70,7 @@ namespace ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[]{element.Name, WriteFlowFrequencyToXML(element) };
+            return new object[]{element.Name, element.Description, WriteFlowFrequencyToXML(element) };
         }
 
         private string ConvertFlowsToString(List<double> flows)
@@ -89,7 +91,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new AnalyticalFrequencyElement((string)rowData[XML_COL]);
+            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL]);
         }
 
         #endregion

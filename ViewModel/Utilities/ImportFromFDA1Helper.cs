@@ -50,13 +50,7 @@ namespace ViewModel.Utilities
                 stagesList.Add(stages[i]);
                 flowsList.Add(flows[i]);
             }
-            //todo: how do we handle uncertainty here?
-
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
-            //always use linear. This is the only option in Old Fda.
-            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-            //IFdaFunction rating = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)func);
-            //add the plan year stream reach for the description
             RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, ratingPairedData);
             return elem;
         }
@@ -182,7 +176,6 @@ namespace ViewModel.Utilities
                 .Select(group => group.ToList())
                 .ToList();
 
-            //todo: write out how we are grouping the curves?
             messages += "\nGrouping stage damage functions by plan and year: \n";
 
             //now create elements from the groups of curves
@@ -200,32 +193,30 @@ namespace ViewModel.Utilities
 
         private static AggregatedStageDamageElement CreateElement(List<AggregateDamageFunction> funcs, List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
-            //for the creation date, i am grabbing the creation date from one of the curves
-
-            List<StageDamageCurve> curves = new List<StageDamageCurve>();
-            foreach (AggregateDamageFunction func in funcs)
+            AggregatedStageDamageElement elem = null;
+            if (funcs.Count > 0)
             {
-
-                SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
-                if (stageDamageCurve != null)
+                //for the creation date, i am grabbing the creation date from one of the curves
+                List<StageDamageCurve> curves = new List<StageDamageCurve>();
+                foreach (AggregateDamageFunction func in funcs)
                 {
-                    curves.Add(stageDamageCurve);
+                    SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
+                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
+                    if (stageDamageCurve != null)
+                    {
+                        curves.Add(stageDamageCurve);
+                    }
+                }
+
+                string name = funcs[0].PlanName.Trim() + " - " + funcs[0].YearName.Trim();
+                messages += "Group: " + name;
+                messages += "\n\tNumber of curves: " + curves.Count + "\n\n";
+                if (curves.Count > 0)
+                {
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true);
                 }
             }
-
-            //todo what if the count is zero
-            string name = funcs[0].PlanName.Trim() + " - " + funcs[0].YearName.Trim();
-            messages += "Group: " + name;
-            messages += "\n\tNumber of curves: " + curves.Count + "\n\n";
-            if (curves.Count > 0)
-            {
-                return new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true);
-            }
-            else
-            {
-                return null;
-            }
+            return elem;
         }
 
         private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
@@ -245,10 +236,7 @@ namespace ViewModel.Utilities
                 depthsList.Add(depths[i]);
                 damagesList.Add(damages[i]);
             }
-            //always use linear. This is the only option in Old Fda.
-            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
-            //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
-            UncertainPairedData stageDamagePairedData = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(depthsList, damagesList, "Stage", "Damage", "Stage-Damage");
+            UncertainPairedData stageDamagePairedData = UncertainPairedDataFactory.CreateDeterminateData(depthsList, damagesList, "Stage", "Damage", "Stage-Damage");
 
             //there should only ever be 0 or 1 impact area elements
             if (impactAreaElements.Count > 0)
@@ -274,11 +262,6 @@ namespace ViewModel.Utilities
 
                     }
                 }
-                //if (!impactAreaMatches)
-                //{
-                //    string msg = "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
-                //    MessageBox.Show(msg, "Could Not Import", MessageBoxButton.OK, MessageBoxImage.Information);
-                //}
             }
 
             return curve;
@@ -592,7 +575,7 @@ namespace ViewModel.Utilities
             {
                 SingleDamageFunction func = singleDamageFunctions[i];
                 StructureValueType type = (StructureValueType)i;
-                UncertainPairedData function = null;
+                UncertainPairedData function;
 
                 if (IsEmptyFunction(func))
                 {
@@ -695,7 +678,7 @@ namespace ViewModel.Utilities
         {
             try
             {
-                return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
+                return UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occupancy Type");
             }
             catch (ArgumentException e)
             {
@@ -711,22 +694,7 @@ namespace ViewModel.Utilities
             {
                 yVals.Add(new Normal(ys[i], stDevs[i]));
             }
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
-
-            //    List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            //for (int i = 0; i < xs.Count; i++)
-            //{
-            //    ordinates.Add(IDistributedOrdinateFactory.FactoryNormal(ys[i], stDevs[i]));
-            //}
-            //try
-            //{
-            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            //}
-            //catch (ArgumentException e)
-            //{
-            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-            //    return null;
-            //}
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
         }
 
         private static UncertainPairedData CreateTriangularFunction(string name, List<double> xs, List<double> ys, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
@@ -737,23 +705,7 @@ namespace ViewModel.Utilities
                 yVals.Add(new Triangular(mins[i], ys[i], maxs[i]));
             }
 
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
-
-
-            //List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            //for (int i = 0; i < xs.Count; i++)
-            //{
-            //    ordinates.Add(IDistributedOrdinateFactory.FactoryTriangular(ys[i], mins[i], maxs[i]));
-            //}
-            //try
-            //{
-            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            //}
-            //catch (ArgumentException e)
-            //{
-            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-            //    return null;
-            //}
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
         }
 
         private static UncertainPairedData CreateUniformFunction(string name, List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
@@ -764,22 +716,7 @@ namespace ViewModel.Utilities
                 yVals.Add(new Uniform(mins[i], maxs[i]));
             }
 
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "", "", "", "", -1);
-
-            //List<IDistributedOrdinate> ordinates = new List<IDistributedOrdinate>();
-            //for (int i = 0; i < xs.Count; i++)
-            //{
-            //    ordinates.Add(IDistributedOrdinateFactory.FactoryUniform(mins[i], maxs[i]));
-            //}
-            //try
-            //{
-            //    return ICoordinatesFunctionsFactory.Factory(xs, ordinates, InterpolationEnum.Linear);
-            //}
-            //catch (ArgumentException e)
-            //{
-            //    errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
-            //    return null;
-            //}
+            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
         }
 
         private static string CreateFailedCoordFunctionErrorMsg(StructureValueType type, string occtypeName, string exceptionMsg)
@@ -851,16 +788,7 @@ namespace ViewModel.Utilities
             foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {
                 Levee lev = kvp.Value;
-
-                //if (lev.FailureFunctionPairs.Count > 0)
-                {
-                    elems.Add(CreateLeveeElement(lev, ref message));
-                }
-                //if (lev.ExteriorInteriorPairs.Count > 0)
-                //{
-                //    Saving.PersistenceFactory.GetExteriorInteriorManager().SaveFDA1Element(lev);
-                //}
-
+                elems.Add(CreateLeveeElement(lev, ref message));
             }
             return elems;
         }
@@ -872,7 +800,6 @@ namespace ViewModel.Utilities
 
         private static ChildElement CreateLeveeElement(Levee lev, ref string message)
         {
-            //List<ICoordinate> failureCoords = new List<ICoordinate>();
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
 
@@ -882,9 +809,6 @@ namespace ViewModel.Utilities
                 ys.Add( xy.GetY());
             }
 
-            //ICoordinatesFunction coordsFunction = null;
-            //todo: what if no coords here.
-            //in this case then we create a special default coordinates function
             bool isDefault = true;
             UncertainPairedData func = new UncertainPairedData();
             if (xs.Count == 0)

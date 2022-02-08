@@ -76,7 +76,7 @@ namespace ViewModel.GeoTech
             //create default curve 
             List<double> xs = new List<double>() {0};
             List<double> ys = new List<double>() {0};
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Probabilty", "Elevation", "Failure Function");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Probabilty", "Elevation", "Failure Function");
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             string header = "Create Levee";

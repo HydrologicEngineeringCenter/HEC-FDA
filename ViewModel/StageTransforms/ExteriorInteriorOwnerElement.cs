@@ -64,7 +64,7 @@ namespace ViewModel.StageTransforms
         {
             List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
             List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()

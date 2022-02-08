@@ -144,8 +144,9 @@ namespace ViewModel.FrequencyRelationships
 
         public override UncertainPairedData GetCoordinatesFunction()
         {
-            List<double> xs = new List<double>() { 0 };
-            List<double> ys = new List<double>() { 0 };
+            double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
+            List<double> yVals = new List<double>();
+
             try
             {
                 if (IsAnalytical)
@@ -181,11 +182,9 @@ namespace ViewModel.FrequencyRelationships
                         FitToFlowMean = "Mean: " + mean.ToString(".##");
                         FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
                         FitToFlowSkew = "Skew: " + skew.ToString(".##");
-                        double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
-                        List<double> vals = new List<double>();
                         foreach (double prob in probs)
                         {
-                            vals.Add(lp3.InverseCDF(prob));
+                            yVals.Add(lp3.InverseCDF(prob));
                         }
                     }
                 }
@@ -195,12 +194,13 @@ namespace ViewModel.FrequencyRelationships
                 FitToFlowMean = "Mean: N/A";
                 FitToFlowStDev = "Mean: N/A";
                 FitToFlowSkew = "Mean: N/A";
-                return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
+                //todo: do what?
+                //return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
             }
             FitToFlowMean = "Mean: N/A";
             FitToFlowStDev = "Mean: N/A";
             FitToFlowSkew = "Mean: N/A";
-            return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
+            return Utilities.UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
         }
 
         public bool CanCreateValidFunction()

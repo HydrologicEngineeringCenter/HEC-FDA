@@ -75,7 +75,7 @@ namespace ViewModel.FlowTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Inflow", "Outflow", "Inflow-Outflow");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Inflow", "Outflow", "Inflow-Outflow");
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
 
             string title = "Create Inflow Outflow";

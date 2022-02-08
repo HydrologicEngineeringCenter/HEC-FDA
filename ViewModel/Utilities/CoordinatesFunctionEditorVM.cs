@@ -27,7 +27,7 @@ namespace ViewModel.Utilities
 
         public UncertainPairedData CreateFunctionFromTables()
         {
-            return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData("", "", "");
+            return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", "");
         }
 
     }

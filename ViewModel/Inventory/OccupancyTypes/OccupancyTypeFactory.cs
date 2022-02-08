@@ -48,10 +48,10 @@ namespace ViewModel.Inventory.OccupancyTypes
             List<double> xs = new List<double>() { 0 };
             List<double> ys = new List<double>() { 0 };
 
-            paireddata.UncertainPairedData defaultStruct = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
-            paireddata.UncertainPairedData defaultCont = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
-            paireddata.UncertainPairedData defaultVehicle = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
-            paireddata.UncertainPairedData defaultOther = Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultStruct = Utilities.UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultCont = Utilities.UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultVehicle = Utilities.UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
+            paireddata.UncertainPairedData defaultOther = Utilities.UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
 
             ot.StructureDepthDamageFunction = defaultStruct;
             ot.ContentDepthDamageFunction = defaultCont;

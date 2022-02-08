@@ -78,7 +78,7 @@ namespace ViewModel.StageTransforms
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
 
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             CurveEditorVM vm = new CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
             string header = "Create Rating Curve " + vm.Name;

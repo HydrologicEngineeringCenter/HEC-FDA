@@ -128,7 +128,7 @@ namespace ViewModel.Editors
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
             //todo: this will be the curve from the table.
-            return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData("", "", ""); 
+            return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", ""); 
         }
 
         public virtual void SaveWhileEditing()

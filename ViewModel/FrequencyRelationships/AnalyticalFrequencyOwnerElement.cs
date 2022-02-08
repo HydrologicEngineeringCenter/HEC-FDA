@@ -77,7 +77,7 @@ namespace ViewModel.FrequencyRelationships
             List<double> xs = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> ys = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys,"Flow", "Frequency", "Flow-Frequency Function");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys,"Flow", "Frequency", "Flow-Frequency Function");
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             string header = "Import Frequency";

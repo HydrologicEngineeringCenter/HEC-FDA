@@ -95,44 +95,55 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private static void CheckRangeValues(ChildElementComboItem element1, ChildElementComboItem element2, bool compareXAxisOnElem1, bool compareXAxisOnElem2,
             string headerBase, string axisLabel, ObservableCollection<RecommendationRowItem> messageRows)
         {
+            double minProb = .00001;
+            double maxProb = .99999;
+
             ChildElement elem1 = element1.ChildElement;
             ChildElement elem2 = element2.ChildElement;
+
             string name1 = elem1.Name;
             string name2 = elem2.Name;
-            double[] range1 = new double[2];
-            double[] range2 = new double[2];
+
+            double x1Min = elem1.Curve.xs().First();
+            double x1Max = elem1.Curve.xs().Last();
+
+            double x2Min = elem2.Curve.xs().First();
+            double x2Max = elem2.Curve.xs().First();
+
+            double y1Min = elem1.Curve.ys().First().InverseCDF(minProb);
+            double y1Max = elem1.Curve.ys().Last().InverseCDF(maxProb);
+
+            double y2Min = elem2.Curve.ys().First().InverseCDF(minProb);
+            double y2Max = elem2.Curve.ys().First().InverseCDF(maxProb);
+
+            //these will be the min and max for the axes that we care about
+            double min1;
+            double max1;
+
+            double min2;
+            double max2;
             if (compareXAxisOnElem1)
             {
-                range1[0] = elem1.Curve.xs().First();
-                range1[1] = elem1.Curve.xs().Last();
+                min1 = x1Min;
+                max1 = x1Max;
             }
             else
             {
-                //todo: is this correct?
-                range1[0] = elem1.Curve.ys().First().InverseCDF(.5);
-                range1[1] = elem1.Curve.ys().Last().InverseCDF(.5);
+                min1 = y1Min;
+                max1 = y1Max;
             }
             if (compareXAxisOnElem2)
             {
-                range2[0] = elem2.Curve.xs().First();
-                range2[1] = elem2.Curve.xs().Last();
+                min2 = x2Min;
+                max2 = x2Max;
             }
             else
             {
-                //todo: is this correct?
-                range2[0] = elem2.Curve.ys().First().InverseCDF(.5);
-                range2[1] = elem2.Curve.ys().Last().InverseCDF(.5);
+                min2 = y2Min;
+                max2 = y2Max;
             }
 
-            double min1 = range1[0];
-            double max1 = range1[1];
-
-            double min2 = range2[0];
-            double max2 = range2[1];
-
-
             AddRecommendationForNonoverlappingRange(min1, max1, min2, max2, headerBase, axisLabel, name1, name2, messageRows);
-
         }
 
         /// <summary>
