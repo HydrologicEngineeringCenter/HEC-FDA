@@ -27,6 +27,7 @@ namespace ViewModel.Utilities
             AddSiblingRules(element);
             CreateElementFromEditorAction = createElementFromEditorAction;
         }
+        #endregion
 
         public override void AddValidationRules()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using paireddata;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -175,7 +176,7 @@ namespace ViewModel.AggregatedStageDamage
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
-                    paireddata.UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
+                    UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
 
                     Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, uncertainPairedData));
                 }

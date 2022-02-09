@@ -15,13 +15,15 @@ namespace View.GeoTech
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            //todo: leaving this here until we get the new table and plot control
+
             //CurveEditorVM vm = DataContext as CurveEditorVM;
             //if ( vm != null)
             //{
             //    CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
             //    editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
             //    Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-                
+
             //    PlotGrid.Children.Add(chart);
             //    Grid.SetColumn(chart, 2);
             //}

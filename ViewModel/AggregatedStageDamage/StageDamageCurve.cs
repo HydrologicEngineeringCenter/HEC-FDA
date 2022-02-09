@@ -22,7 +22,7 @@ namespace ViewModel.AggregatedStageDamage
         {
             int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
-            XElement functionElem = curveElement.Element("UncertainPairedData");
+            XElement functionElem = curveElement.Element(nameof(UncertainPairedData));
             UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
 
             //todo i need to create the row item from the id? i just need to grab it from the database i guess
