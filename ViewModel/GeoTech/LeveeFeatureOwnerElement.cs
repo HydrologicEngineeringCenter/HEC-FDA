@@ -64,13 +64,13 @@ namespace ViewModel.GeoTech
 
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(
+            Editors.SaveHelper saveHelper = new Editors.SaveHelper(
                 Saving.PersistenceFactory.GetLeveeManager(),
                  (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             //create default curve 

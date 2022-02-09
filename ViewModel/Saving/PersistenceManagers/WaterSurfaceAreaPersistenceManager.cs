@@ -1,16 +1,14 @@
-﻿using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
+using ViewModel.WaterSurfaceElevation;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class WaterSurfaceAreaPersistenceManager : SavingBase, IElementManager
+    public class WaterSurfaceAreaPersistenceManager : SavingBase
     {
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -52,21 +50,15 @@ namespace ViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
-
-
         #region utilities
         private object[] GetRowDataFromElement(WaterSurfaceElevationElement element)
         {
             return new object[] { element.Name, element.Description, element.IsDepthGrids };
-
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-
             List<PathAndProbability> ppList = new List<PathAndProbability>();
-
-
 
             DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
@@ -110,8 +102,6 @@ namespace ViewModel.Saving.PersistenceManagers
                     tbl.AddRow(rows[j]);
                 }
                 tbl.ApplyEdits();
-
-
             }
         }
 
@@ -119,46 +109,24 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             try
             {
-                System.IO.Directory.Delete(Storage.Connection.Instance.HydraulicsDirectory + "\\" + element.Name,true);
-                //foreach (PathAndProbability pap in element.RelativePathAndProbability)
-                //{
-                //    System.IO.File.Delete(Storage.Connection.Instance.HydraulicsDirectory + "\\" + pap.Path);
-                //}
-
+                Directory.Delete(Storage.Connection.Instance.HydraulicsDirectory + "\\" + element.Name,true);
             }
             catch (Exception e)
             {
                 throw new NotImplementedException();
-                //CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete water surface elevation files");
-                //Navigate(messageBox);
-                //CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
-                //return;
-            }
-            
+            }   
         }
-
-        //public void AddToMapWindow(WaterSurfaceElevationElement element)
-        //{
-        //    foreach (PathAndProbability file in element.RelativePathAndProbability)
-        //    {
-        //        LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\" + file.Path);
-        //        OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-        //        Utilities.AddGriddedDataEventArgs args = new Utilities.AddGriddedDataEventArgs(r, c);
-        //        args.FeatureName = Name;
-        //        element.AddToMapWindow(this, args);
-        //    }
-        //}
 
         private void RenameHydraulicsDirectory(string oldName, string newName)
         {
             string oldPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + oldName;
-            if(System.IO.Directory.Exists(oldPath))
+            if(Directory.Exists(oldPath))
             {
                 string newPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + newName;
 
                 try
                 {
-                    System.IO.Directory.Move(oldPath, newPath);
+                    Directory.Move(oldPath, newPath);
                 }
                 catch (Exception e)
                 {
@@ -174,7 +142,7 @@ namespace ViewModel.Saving.PersistenceManagers
         private void SaveFilesToStudyDirectory(string directoryName)
         {
             string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + directoryName;
-            if(System.IO.Directory.Exists(path))
+            if(Directory.Exists(path))
             {
                 throw new Exception();
             }
@@ -213,15 +181,12 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex )
         {
-            //UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((WaterSurfaceElevationElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
             base.SaveExisting(oldElement, element);
             UpdateThePaths((WaterSurfaceElevationElement)element);
             Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
             SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
             //rename the folder in the study directory
             RenameHydraulicsDirectory(oldElement.Name, element.Name);
-            //StudyCacheForSaving.UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)element);
-
         }
 
         private void UpdateThePaths(WaterSurfaceElevationElement element)
@@ -233,18 +198,13 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> waterSurfaceElevs = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (WaterSurfaceElevationElement elem in waterSurfaceElevs)
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }
-
-        public override void AddValidationRules()
-        {
-           // throw new NotImplementedException();
         }
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
@@ -259,7 +219,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -272,7 +232,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
@@ -285,7 +245,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using FdaLogging;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Storage;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving
 {
-    public abstract class SavingBase : BaseViewModel
+    public abstract class SavingBase : BaseViewModel, IElementManager
     {
         /// <summary>
         /// The FDACache stores all the elements in memory. 
@@ -23,81 +24,16 @@ namespace ViewModel.Saving
         public const string LAST_EDIT_DATE = "last_edit_date";
         public const string DESCRIPTION = "description";
         public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
-        //todo: some elems use the curve type in their tables and some don't. Am i using the curve type for something? investigate?
         public const string CURVE_TYPE = "curve_type";
         public const string CURVE = "curve";
+
+        public const int NAME_COL = 1;
 
         public abstract string[] TableColumnNames { get; }
         public abstract Type[] TableColumnTypes { get; }
         public abstract object[] GetRowDataFromElement(ChildElement elem);
 
         #region Utilities
-
-        public static async void SaveElementOnBackGroundThread(ChildElement elementToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage) 
-        {
-            //need to create a method to just append the note and gif
-            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);
-            //clear the actions while it is saving
-            List<NamedAction> actions = new List<NamedAction>();
-            foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
-            {
-                actions.Add(act);
-            }
-            elementToChangeActionsAndHeader.Actions = new List<NamedAction>();
-
-            await Task.Run(() =>
-            {
-                if (!Connection.Instance.IsConnectionNull)
-                {
-                    if (!Connection.Instance.IsOpen)
-                    {
-                        Connection.Instance.Open();
-                    }
-                    System.Threading.Thread.Sleep(5000);
-
-                    SavingAction(elementToSave);
-               
-                    elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
-
-                    //restore the actions
-                    elementToChangeActionsAndHeader.Actions = actions;
-                }
-            });
-        }
-
-        public static async void SaveElementsOnBackGroundThread(List<ChildElement> elementsToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage)
-        {
-            //need to create a method to just append the note and gif
-            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);
-            //clear the actions while it is saving
-            List<NamedAction> actions = new List<NamedAction>();
-            foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
-            {
-                actions.Add(act);
-            }
-            elementToChangeActionsAndHeader.Actions = new List<NamedAction>();
-
-            await Task.Run(() =>
-            {
-                if (!Connection.Instance.IsConnectionNull)
-                {
-                    if (!Connection.Instance.IsOpen)
-                    {
-                        Connection.Instance.Open();
-                    }
-
-                    foreach (ChildElement elem in elementsToSave)
-                    {
-                        SavingAction(elem);
-                    }
-
-                    elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
-
-                    //restore the actions
-                    elementToChangeActionsAndHeader.Actions = actions;
-                }
-            });
-        }
 
         public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
         {
@@ -110,25 +46,6 @@ namespace ViewModel.Saving
                 elems.Add(createElemsFromRowDataAction(row.ItemArray));
             }
             return elems;
-        }
-
-        private int GetElementIndexInTable(DatabaseManager.DataTableView tableView, string name, int nameIndexInTheRow)
-        {
-            if (tableView != null)
-            {
-                tableView.GetRows(0, tableView.NumberOfRows - 1);
-                List<object[]> rows = tableView.GetRows(0, tableView.NumberOfRows - 1);
-
-                for (int i = 0; i < rows.Count; i++)
-                {
-                    if (((string)rows[i][nameIndexInTheRow]).Equals(name))
-                    {
-                        return i;
-
-                    }
-                }
-            }
-            return -1;
         }
 
         private int GetElementIndexInTable(DataTable tableView, string name, int nameIndexInTheRow)
@@ -150,7 +67,7 @@ namespace ViewModel.Saving
         #endregion
 
         #region save new
-        public void SaveNewElement(ChildElement element)
+        public void SaveNew(ChildElement element)
         {
             OpenConnection();
             //update the edit date
@@ -171,7 +88,6 @@ namespace ViewModel.Saving
             }
 
             Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
-
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
@@ -296,8 +212,6 @@ namespace ViewModel.Saving
             command.ExecuteNonQuery();
         }
 
-       
-
         public void DeleteRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames)
         {
             //this sql query looks like this:
@@ -358,7 +272,6 @@ namespace ViewModel.Saving
             {
                 //don't evaluate the last edit time which is the second one. - i am getting rid of this which means it will always save because
                 //the conditions (1) is the description.
-               // if (i == 1) { continue; }
                 if (a[i] == null)
                 {
                     a[i] = "";
@@ -368,17 +281,13 @@ namespace ViewModel.Saving
                     return true;
                 }
             }
-
             return false;
         }
 
         #endregion
 
-        #region UndoRedo
-
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
-        #endregion
         internal virtual string ChangeTableConstant { get { return ""; } }
 
         /// <summary>
@@ -413,5 +322,29 @@ namespace ViewModel.Saving
             }
             return retval;
         }
+
+        public void Remove(ChildElement element)
+        {
+            StudyCacheForSaving.RemoveElement(element);
+            RemoveFromParentTable(element, TableName);
+        }
+
+        public abstract void Load();
+
+        public virtual  void Log(LoggingLevel level, string message, string elementName)
+        {
+
+        }
+
+        public virtual ObservableCollection<LogItem> GetLogMessages(string elementName)
+        {
+            return new ObservableCollection<LogItem>();
+        }
+
+        public virtual ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
+        {
+            return new ObservableCollection<LogItem>();
+        }
+
     }
 }

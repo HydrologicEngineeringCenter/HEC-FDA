@@ -7,7 +7,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class AlternativePersistenceManager : SavingBase, IElementManager
+    public class AlternativePersistenceManager : SavingBase
     {
         public override string TableName => "alternatives";
 
@@ -52,8 +52,7 @@ namespace ViewModel.Saving.PersistenceManagers
             return retval;
         }
 
-
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
             foreach (AlternativeElement elem in iasElems)

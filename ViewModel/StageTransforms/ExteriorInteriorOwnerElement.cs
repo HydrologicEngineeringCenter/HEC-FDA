@@ -67,12 +67,12 @@ namespace ViewModel.StageTransforms
             UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
+            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);

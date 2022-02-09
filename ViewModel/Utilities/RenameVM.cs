@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Threading.Tasks;
 using ViewModel.Editors;
 
 namespace ViewModel.Utilities
@@ -16,12 +11,10 @@ namespace ViewModel.Utilities
         // Created Date: 11/22/2016 9:05:37 AM
         #endregion
         #region Fields
-        private string _Name;
         #endregion
         #region Properties
         public ChildElement OldElement { get; set; }
         public ChildElement ElementToSave { get; set; }
-
         public Func<ChildElement, ChildElement> CreateElementFromEditorAction { get; set; }
 
         #endregion
@@ -31,11 +24,8 @@ namespace ViewModel.Utilities
         {
             Name = element.Name;
             OldElement = element;
-            //StudyCache.AddSiblingRules(this, element);
             AddSiblingRules(element);
-
             CreateElementFromEditorAction = createElementFromEditorAction;
-
         }
 
         public override void AddValidationRules()
@@ -57,16 +47,8 @@ namespace ViewModel.Utilities
             Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
-                savingManager.SaveExisting(OldElement, ElementToSave, 0);
+                savingManager.SaveExisting(OldElement, ElementToSave);
             }
         }
-
-     
-     
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
     }
 }

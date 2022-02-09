@@ -5,12 +5,10 @@ using System.Text;
 using System.Xml.Linq;
 using ViewModel.FrequencyRelationships;
 using ViewModel.Utilities;
-using ViewModel.FrequencyRelationships;
-using System.Xml.Linq;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class FlowFrequencyPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
+    public class FlowFrequencyPersistenceManager : SavingBase
     {
         public static readonly string FLOW_FREQUENCY = "FlowFrequency";
         public static readonly string NAME = "Name";
@@ -28,7 +26,6 @@ namespace ViewModel.Saving.PersistenceManagers
         public static readonly string IS_LOG = "IsLog";
         public static readonly string FLOWS = "Flows";
 
-        private const int NAME_COL = 1;
         private const int DESC_COL = 2;
         private const int XML_COL = 3;
 
@@ -40,7 +37,6 @@ namespace ViewModel.Saving.PersistenceManagers
         /// The name of the parent table that will hold all elements of this type
         /// </summary>
         public override string TableName { get { return "analytical_frequency_curves"; } }
-        public override string ChangeTableName { get { return "analytical_frequency_changes"; } }
 
         public override string[] TableColumnNames
         {
@@ -50,16 +46,6 @@ namespace ViewModel.Saving.PersistenceManagers
         public override Type[] TableColumnTypes
         {
             get  { return new Type[] { typeof(string), typeof(string), typeof(string)}; }
-        }
-
-        public override string[] ChangeTableColumnNames
-        {
-            get{return new string[] { ELEMENT_ID_COL_NAME, NAME, "XML", STATE_INDEX_COL_NAME };}
-        }
-
-        public override Type[] ChangeTableColumnTypes
-        {
-            get{return new Type[]{typeof(int), typeof(string), typeof(string), typeof(int)};}
         }
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
@@ -105,9 +91,7 @@ namespace ViewModel.Saving.PersistenceManagers
             if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
                 //save to parent table
-                SaveNewElement(element);
-                //save to change table
-                SaveToChangeTable(element);
+                base.SaveNew(element);
                 //log message
                 Log(FdaLogging.LoggingLevel.Info, "Created new flow frequency curve: " + element.Name, element.Name);
             }
@@ -118,12 +102,7 @@ namespace ViewModel.Saving.PersistenceManagers
             base.Remove(element);
         }
 
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
-        {
-            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-        }
-
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> flowFreqs = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (AnalyticalFrequencyElement elem in flowFreqs)
@@ -144,7 +123,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -157,11 +136,12 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
         }
+
         /// <summary>
         /// Gets all the log messages for this element from the specified log level table.
         /// This is used by the MessageExpander to filter by log level
@@ -169,17 +149,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
-        }
-
-        public override object[] GetRowDataForChangeTable(ChildElement element)
-        {
-            int elemId = GetElementId(TableName, element.Name);
-            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[]{elemId, element.Name, WriteFlowFrequencyToXML((AnalyticalFrequencyElement)element), stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

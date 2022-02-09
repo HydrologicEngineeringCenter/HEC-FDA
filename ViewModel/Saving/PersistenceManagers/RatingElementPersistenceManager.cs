@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using ViewModel.StageTransforms;
-using ViewModel.Storage;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class RatingElementPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
+    public class RatingElementPersistenceManager : SavingBase
     {
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESC_COL = 3;
@@ -22,20 +21,13 @@ namespace ViewModel.Saving.PersistenceManagers
         /// The name of the parent table that will hold all elements of this type
         /// </summary>
         public override string TableName { get { return "rating_curves"; } }
-        /// <summary>
-        /// The name of the change table that will hold the various states of elements.
-        /// </summary>
-        public override string ChangeTableName { get { return "rating_curve_changes"; } }
 
         /// <summary>
         /// Names of the columns in the parent table
         /// </summary>
         public override string[] TableColumnNames
         {
-            get
-            {
-                return new string[]{ NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
-            }
+            get {return new string[]{ NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};}
         }
         /// <summary>
         /// The types of the columns in the parent table
@@ -43,28 +35,6 @@ namespace ViewModel.Saving.PersistenceManagers
         public override Type[] TableColumnTypes
         {
             get { return new Type[]{ typeof(string), typeof(string), typeof(string), typeof(string) }; }
-        }
-
-        /// <summary>
-        /// Names of the columns in the change table
-        /// </summary>
-        public override string[] ChangeTableColumnNames
-        {
-            get
-            {
-                return new string[]{ ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE , STATE_INDEX_COL_NAME};
-            }
-        }
-        /// <summary>
-        /// Types for the columns in the change table
-        /// </summary>
-        public override Type[] ChangeTableColumnTypes
-        {
-            get
-            {
-                return new Type[]{ typeof(int), typeof(string), typeof(string),
-                    typeof(string), typeof(string), typeof(int) };
-            }
         }      
 
         #region constructor
@@ -90,24 +60,6 @@ namespace ViewModel.Saving.PersistenceManagers
             }
             
             return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString()};
-
-        }
-        /// <summary>
-        /// Turns the element into an object[] for the row in the change table
-        /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
-        public override object[] GetRowDataForChangeTable(ChildElement element)
-        {
-            if (element.Description == null)
-            {
-                element.Description = "";
-            }
-
-            int elemId = GetElementId(TableName, element.Name);
-            //the new stateId will be one higher than the max that is in the table already.
-            int stateId = Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,element.Curve.WriteToXML().ToString(), stateId};
         }
        
         /// <summary>
@@ -119,7 +71,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             string curveXML = (string)rowData[CURVE_COL];
             UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
                 (string)rowData[DESC_COL], upd);
             return rc;
         }
@@ -133,13 +85,10 @@ namespace ViewModel.Saving.PersistenceManagers
         public void SaveNew(ChildElement element)
         {
             //save to parent table
-            SaveNewElement(element);
-            //save to change table
-            SaveToChangeTable(element);
+            base.SaveNew(element);
             //log message
             Log(FdaLogging.LoggingLevel.Info, "Created new rating curve: " + element.Name, element.Name);
         }
-
        
         /// <summary>
         /// Remove the element from the parent table, all references to it in the change table, and all references to it in the log tables.
@@ -151,21 +100,9 @@ namespace ViewModel.Saving.PersistenceManagers
         }
 
         /// <summary>
-        /// Update the row in the parent table and add row to the change table. Update element in the study cache.
-        /// </summary>
-        /// <param name="oldElement"></param>
-        /// <param name="elementToSave"></param>
-        /// <param name="changeTableIndex"></param>
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave,int changeTableIndex )
-        {
-            //this will save to the parent table and to the change table
-            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-        }
-
-        /// <summary>
         /// Loads the elements from the parent table and puts them into the study cache.
         /// </summary>
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> ratings = CreateElementsFromRows( TableName, rowData => CreateElementFromRowData(rowData));
             foreach (RatingCurveElement elem in ratings)
@@ -181,7 +118,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -194,7 +131,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages( id, ELEMENT_TYPE);
@@ -207,7 +144,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);

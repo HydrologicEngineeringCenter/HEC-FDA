@@ -8,7 +8,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class AlternativeComparisonReportPersistenceManager : SavingBase, IElementManager
+    public class AlternativeComparisonReportPersistenceManager : SavingBase
     {
         private const int XML_COL = 2;
         public override string TableName => "alternative_comparison_reports";
@@ -61,7 +61,7 @@ namespace ViewModel.Saving.PersistenceManagers
             return retval;
         }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
             foreach (AlternativeComparisonReportElement elem in iasElems)

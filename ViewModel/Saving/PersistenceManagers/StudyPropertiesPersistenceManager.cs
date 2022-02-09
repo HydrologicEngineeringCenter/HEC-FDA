@@ -20,7 +20,7 @@ namespace ViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
-        public void Load()
+        public override void Load()
         {
             //there should only ever be one item in this list.
             List<ChildElement> studyProperties = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
@@ -37,7 +37,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            SaveNewElement(element);
+            base.SaveNew(element);
         }
 
         //todo: how to rename the whole study?

@@ -8,9 +8,8 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class LeveePersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
+    public class LeveePersistenceManager : SavingBase
     {
-        private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESC_COL = 3;
         private const int ELEVATION_COL = 4;
@@ -45,24 +44,6 @@ namespace ViewModel.Saving.PersistenceManagers
             get { return new string[] { NAME,LAST_EDIT_DATE, DESCRIPTION, "elevation","is_default", CURVE }; }
         }
 
-        public override string ChangeTableName => "levee_failure_changes";
-
-        public override string[] ChangeTableColumnNames
-        {
-            get
-            {
-                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, "elevation", "is_default", CURVE, STATE_INDEX_COL_NAME };
-            }
-        }
-
-        public override Type[] ChangeTableColumnTypes
-        {
-            get
-            {
-                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string),typeof(double), typeof(bool), typeof(string), typeof(int) };
-            }
-        }
-
         public LeveePersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
@@ -77,26 +58,8 @@ namespace ViewModel.Saving.PersistenceManagers
         public override object[] GetRowDataFromElement(ChildElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed, element.Curve.WriteToXML().ToString() };
-
         }
-        /// <summary>
-        /// Turns the element into an object[] for the row in the change table
-        /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
-        public override object[] GetRowDataForChangeTable(ChildElement element)
-        {
-            if (element.Description == null)
-            {
-                element.Description = "";
-            }
 
-            int elemId = GetElementId(TableName, element.Name);
-            //the new stateId will be one higher than the max that is in the table already.
-            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed,
-                element.Curve.WriteToXML().ToString(), stateId};
-        }
         /// <summary>
         /// Creates an element from the row in the parent table.
         /// </summary>
@@ -114,20 +77,15 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            SaveNewElement(element);
-            SaveToChangeTable(element);
+            base.SaveNew(element);
             Log(FdaLogging.LoggingLevel.Info, "Created new levee failure element: " + element.Name, element.Name);
         }
         public void Remove(ChildElement element)
         {
             base.Remove(element);
         }
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
-        {
-            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-        }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> levees = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (LeveeFeatureElement elem in levees)
@@ -148,7 +106,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -161,7 +119,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
@@ -174,7 +132,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);

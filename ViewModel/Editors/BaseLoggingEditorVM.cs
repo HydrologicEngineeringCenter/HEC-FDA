@@ -164,7 +164,6 @@ namespace ViewModel.Editors
         }
         public void FilterRowsByLevel(LoggingLevel level)
         {
-
             MessageRows = PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
         }
 

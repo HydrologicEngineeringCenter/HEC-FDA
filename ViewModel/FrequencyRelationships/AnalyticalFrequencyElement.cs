@@ -121,12 +121,12 @@ namespace ViewModel.FrequencyRelationships
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
             //create save helper
-            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);

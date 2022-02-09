@@ -23,7 +23,7 @@ namespace ViewModel.AggregatedStageDamage
             StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
             foreach (AggregatedStageDamageElement elem in ElementsToImport)
             {
-                manager.SaveNewElement(elem);
+                manager.SaveNew(elem);
             }
         }
 
