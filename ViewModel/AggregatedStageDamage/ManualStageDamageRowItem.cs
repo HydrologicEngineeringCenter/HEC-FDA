@@ -1,19 +1,13 @@
-﻿using ViewModel.ImpactArea;
-using ViewModel.Inventory.DamageCategory;
-using Functions;
-using FunctionsView.ViewModel;
+﻿using paireddata;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.ImpactArea;
+using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageRowItem : BaseViewModel
     {
-
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private String _SelectedDamCat;
         private ObservableCollection<String> _DamageCategories;
@@ -45,7 +39,7 @@ namespace ViewModel.AggregatedStageDamage
             set { _SelectedDamCat = value; NotifyPropertyChanged(); }
         }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ICoordinatesFunction function)
+        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, UncertainPairedData function)
         {
             ID = id;
             ImpactAreas = impAreas;
@@ -66,7 +60,6 @@ namespace ViewModel.AggregatedStageDamage
             DamageCategories = damCats;
             SelectedDamCat = curve.DamCat;
             EditorVM = new CoordinatesFunctionEditorVM(curve.Function, "Stage", "Damage", "Stage-Damage");
-
         }
 
         /// <summary>

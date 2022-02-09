@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using metrics;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +11,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public ThresholdType ThresholdType { get; set; }   
         public double ThresholdValue { get; set; }
 
-        public ThresholdRowItem(int id, IMetricEnum thresholdType, double value)
+        public ThresholdRowItem(int id, ThresholdEnum thresholdType, double value)
         {
             ID = id;
             LoadThresholdTypes();
@@ -21,15 +21,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void LoadThresholdTypes()
         {
-            ThresholdTypes.Add(new ThresholdType( IMetricEnum.ExteriorStage, "Exterior Stage"));
-            ThresholdTypes.Add(new ThresholdType( IMetricEnum.InteriorStage, "Interior Stage"));
-            ThresholdTypes.Add(new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage"));
-            ThresholdTypes.Add(new ThresholdType( IMetricEnum.Damages, "Damages"));
+            ThresholdTypes.Add(new ThresholdType( ThresholdEnum.ExteriorStage, "Exterior Stage"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.Damage, "Damage"));
         }
 
-        public IMetric GetMetric()
+        public Threshold GetMetric()
         {
-            return IMetricFactory.Factory(ThresholdType.Metric, ThresholdValue);
+            return new Threshold(-1, ThresholdType.Metric, ThresholdValue);
         }
     }
 }

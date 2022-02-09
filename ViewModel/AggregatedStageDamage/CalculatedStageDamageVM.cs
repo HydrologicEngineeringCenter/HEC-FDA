@@ -1,5 +1,4 @@
-﻿using Functions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -46,7 +45,6 @@ namespace ViewModel.AggregatedStageDamage
             get { return _SelectedStructureInventoryElement; }
             set { _SelectedStructureInventoryElement = value; NotifyPropertyChanged(); }
         }
-
 
         public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations
         {
@@ -177,15 +175,9 @@ namespace ViewModel.AggregatedStageDamage
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
-                    List<double> xs = new List<double>();
-                    List<double> ys = new List<double>();
-                    for (int j = 0; j <= i; j++)
-                    {
-                        xs.Add(j);
-                        ys.Add(j);
-                    }
-                    ICoordinatesFunction testFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, testFunc));
+                    paireddata.UncertainPairedData uncertainPairedData = DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Damage", "testName");
+
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, uncertainPairedData));
                 }
                 //end dummy rows
                 ShowChart = true;
@@ -230,7 +222,7 @@ namespace ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.EditorVM.CreateFunctionFromTables());
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); //r.EditorVM.CreateFunctionFromTables());
                 curves.Add(curve);
             }
 

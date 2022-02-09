@@ -1,4 +1,4 @@
-﻿using Functions;
+﻿
 using Functions.CoordinatesFunctions;
 using FunctionsTests.CoordinatesFunctions;
 using System;

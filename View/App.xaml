@@ -15,9 +15,6 @@
              
              xmlns:IASEditorVM ="clr-namespace:ViewModel.ImpactAreaScenario.Editor;assembly=ViewModel"
              xmlns:IASEditorView ="clr-namespace:View.ImpactAreaScenario.Editor"
-             
-             xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
-             xmlns:PlotsOutputView="clr-namespace:View.Output"
                           
              xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
              xmlns:AlternativeComparisonReport ="clr-namespace:View.AlternativeComparisonReport"
@@ -47,8 +44,7 @@
              
               xmlns:DepthDamageView="clr-namespace:View.Inventory.DepthDamageCurves"
              xmlns:DepthDamageVM="clr-namespace:ViewModel.Inventory.DepthDamage;assembly=ViewModel"
-             
-             
+                          
              xmlns:FlowTransformsView="clr-namespace:View.FlowTransforms"
              xmlns:FlowTransformsVM="clr-namespace:ViewModel.FlowTransforms;assembly=ViewModel"
              
@@ -82,24 +78,17 @@
              
              xmlns:WaterSurfaceElevationsView="clr-namespace:View.WaterSurfaceElevation"
              xmlns:WaterSurfaceElevationsVM="clr-namespace:ViewModel.WaterSurfaceElevation;assembly=ViewModel"
-             
-             xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-             
+                          
              StartupUri="ViewWindow.xaml">
     <Application.Resources>
         <Style TargetType="Control" x:Key="defaultErrorTemplate">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
-                    <!--<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
-                            Path=(Validation.Errors).CurrentItem.ErrorContent}" />-->
                 </Trigger>
             </Style.Triggers>
         </Style>
         <Style TargetType="TextBox" BasedOn="{StaticResource defaultErrorTemplate}" />
-        <!--<Style TargetType="CheckBox" BasedOn="{StaticResource defaultErrorTemplate}" />-->
         <Style TargetType="CheckBox" BasedOn="{StaticResource defaultErrorTemplate}" />
-        <!--<Style TargetType="{x:Type CA:TextBoxFolderBrowser}" BasedOn="{StaticResource defaultErrorTemplate}" />-->
-        <!--<Style TargetType="{x:Type CA:TextBoxFileBrowser}" BasedOn="{StaticResource defaultErrorTemplate}" />-->
         <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
@@ -123,12 +112,7 @@
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
-            <GeoTechView:FailureFunctionEditor/>
-        </DataTemplate>-->
-        
-        
-        
+
         <!--Aggrgated Region-->
         <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
             <AggregatedView:AggregatedStageDamage/>
@@ -155,37 +139,20 @@
             <GeoTechView:LeveeFeatureEditor/>
         </DataTemplate>
 
-        <!--<DataTemplate DataType="{x:Type GeoTechVM:FailureFunctionEditorVM }" >
-            <GeoTechView:FailureFunctionEditor/>
-        </DataTemplate>-->
-
         <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
-
-        <!--StageTransforms Region-->
-        <DataTemplate DataType="{x:Type StageTransformsVM:RatingCurveEditorVM }" >
-            <StageTransformsView:RatingCurveEditor/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StageTransformsVM:ExteriorInteriorEditorVM }" >
-            <StageTransformsView:ExteriorInteriorEditor/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
-        <!--FlowTransforms Region-->
-        <DataTemplate DataType="{x:Type FlowTransformsVM:InflowOutflowEditorVM }" >
-            <FlowTransformsView:InflowOutflowEditor/>
-        </DataTemplate>
-
         <!--Hydraulics Region-->
         <DataTemplate DataType="{x:Type HydraulicsVM:GridImporterVM }" >
             <HydraulicsView:GridImporter/>
         </DataTemplate>
+        
         <!--Impact Area Region-->
-
         <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
             <ImpactAreaView:ImpactAreaImporter/>
         </DataTemplate>
@@ -204,11 +171,8 @@
         <DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportVM }" >
             <OccupancyTypesView:SaveAllReport/>
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportGroupVM }" >
-            <OccupancyTypesView:SaveAllGroupControl/>
-        </DataTemplate>-->
-        <!--Occupancy Types Controls Region-->
-        
+
+        <!--Occupancy Types Controls Region-->       
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>
@@ -224,8 +188,8 @@
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:UniformControlVM}">
             <OccupancyTypesControlsView:UniformControl/>
         </DataTemplate>
-        <!--Inventory Region-->
-      
+        
+        <!--Inventory Region-->      
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorVM }" >
             <DepthDamageView:DepthDamageCurveEditor/>
         </DataTemplate>
@@ -255,9 +219,7 @@
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
-            <InventoryView:ImportFromShapefile/>
-        </DataTemplate>-->
+
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
@@ -330,33 +292,14 @@
         
 
         <!--Output Region-->
-        <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >
-            <OutputView:CreateEconImportFile/>
-        </DataTemplate>-->
         <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
             <OutputView:IndexLocations/>
         </DataTemplate>
-    
+
         <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
             <ImpactAreaScenarioView:EnterSeed/>
         </DataTemplate>
-  
-      
-       
-        
-        
-       
 
-       
-
-        <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
-            <PlotsOutputView:LinkedPlots/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type PlotsOutputVM:HistogramViewerVM }" >
-            <PlotsOutputView:HistogramViewer/>
-        </DataTemplate>
-        
         <!--Study Region-->
         <DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >
             <StudyView:AnalysisYears/>
@@ -408,10 +351,7 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }" >
             <UtilitiesView:MessageWindow/>
         </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type UtilitiesVM:MessagesVM }" >
-            <UtilitiesView:MessagesView/>
-        </DataTemplate>-->
+
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomMessageBoxVM }" >
             <UtilitiesView:CustomMessageBox/>
         </DataTemplate>
@@ -425,10 +365,5 @@
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
-
-        <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/View;component/Resources/Error.png" IsHitTestVisible="false"/>
-        <Image x:Key="MessageImageKey" Source="pack://application:,,,/View;component/Resources/Message.png" IsHitTestVisible="false"/>
-        <Image x:Key="HelpImageKey" Source="pack://application:,,,/View;component/Resources/help.png" IsHitTestVisible="false"/>-->
-
     </Application.Resources>
 </Application>

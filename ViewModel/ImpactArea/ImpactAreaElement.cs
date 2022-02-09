@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Utilities;
-using ViewModel.ImpactAreaScenario;
+using System.Text;
 using System.Windows;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Utilities;
 
 namespace ViewModel.ImpactArea
 {
@@ -71,7 +69,6 @@ namespace ViewModel.ImpactArea
 
         public void RemoveElement(object sender, EventArgs e)
         {
-
             List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
             if (iasElems.Count > 0)
             {
@@ -115,9 +112,9 @@ namespace ViewModel.ImpactArea
             _featureNodeHash = args.MapFeatureHash;
             foreach (NamedAction a in Actions)
             {
-                if (a.Header.Equals("Add Impact Areas To Map Window"))
+                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
-                    a.Header = "Remove Impact Areas from Map Window";
+                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
                     a.Action = RemoveElementFromMapWindow;
                 }
             }

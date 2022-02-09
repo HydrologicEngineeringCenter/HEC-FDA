@@ -1,11 +1,6 @@
-﻿using ViewModel.Inventory.DamageCategory;
-using Functions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static ViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
+﻿using paireddata;
+using Statistics;
+using ViewModel.Inventory.DamageCategory;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -23,17 +18,17 @@ namespace ViewModel.Inventory.OccupancyTypes
         bool CalculateVehicleDamage { get; set; }
         bool CalculateOtherDamage { get; set; }
 
-        ICoordinatesFunction StructureDepthDamageFunction { get; set; }
+        UncertainPairedData StructureDepthDamageFunction { get; set; }
 
-        ICoordinatesFunction ContentDepthDamageFunction { get; set; }
-        ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
-        ICoordinatesFunction OtherDepthDamageFunction { get; set; }
+        UncertainPairedData ContentDepthDamageFunction { get; set; }
+        UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        UncertainPairedData OtherDepthDamageFunction { get; set; }
 
-        IOrdinate StructureValueUncertainty { get; set; }
-        IOrdinate ContentValueUncertainty { get; set; }
-        IOrdinate VehicleValueUncertainty { get; set; }
-        IOrdinate OtherValueUncertainty { get; set; }
-        IOrdinate FoundationHeightUncertainty { get; set; }
+        IDistribution StructureValueUncertainty { get; set; }
+        IDistribution ContentValueUncertainty { get; set; }
+        IDistribution VehicleValueUncertainty { get; set; }
+        IDistribution OtherValueUncertainty { get; set; }
+        IDistribution FoundationHeightUncertainty { get; set; }
         
          ValueUncertaintyType StructureUncertaintyType { get; set; }
         ValueUncertaintyType ContentUncertaintyType { get; set; }

@@ -47,7 +47,7 @@ namespace Model
                 }
                 counter++;
             }
-            return new UncertainPairedData(xvals, yvals, fx.ParameterType.ToString());
+            return new UncertainPairedData(xvals, yvals,PrintXLabel(fx,true),PrintYLabel(fx,true), fx.ParameterType.ToString(),"",-1);
         }
     }
 }

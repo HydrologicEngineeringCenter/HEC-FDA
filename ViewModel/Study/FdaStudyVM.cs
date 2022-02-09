@@ -1,24 +1,16 @@
 ﻿
+using FdaLogging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Utilities.Transactions;
 using System.Collections.ObjectModel;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Utilities;
 using System.IO;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
-using System.Collections;
-using System.Windows;
 using ViewModel.Tabs;
-using System.Threading;
-using System.Reflection;
-using System.Diagnostics;
-using FdaLogging;
-using Functions;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
+
 
 namespace ViewModel.Study
 {
@@ -156,9 +148,10 @@ namespace ViewModel.Study
         #region Constructors
         public FdaStudyVM() : base()
         {
-            Sampler.RegisterSampler(new ConstantSampler());
-            Sampler.RegisterSampler(new DistributionSampler());
-            Sampler.RegisterSampler(new LinkedFunctionsSampler());
+            //todo: i don't remember what this did, but i think it had to do with John's functions which don't exist anymore.
+            //Sampler.RegisterSampler(new ConstantSampler());
+            //Sampler.RegisterSampler(new DistributionSampler());
+            //Sampler.RegisterSampler(new LinkedFunctionsSampler());
 
             TabController tabFactory = TabController.Instance;
             TabFactoryInstance = tabFactory;

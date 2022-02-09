@@ -1,5 +1,4 @@
-﻿using ead;
-using Model;
+﻿using compute;
 using paireddata;
 using Statistics;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.StageTransforms;
-using static ead.Simulation;
+using static compute.Simulation;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
@@ -43,12 +42,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             _ImpactAreaID = currentImpactAreaID;
         }
 
-        private IDistribution GetFrequencyDistribution()
+        private ContinuousDistribution GetFrequencyDistribution()
         {
-            IDistribution freqDistribution = _FreqElem.GetDistribution();
-            //todo: using dummy flow-freq right now
-            IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
-            return flow_frequency;
+            return _FreqElem.GetDistribution();
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
@@ -63,9 +59,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                //todo: i don't like this. Is there an easier way to get a paired data from the stage damage curve.
-                IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, curve.Function);
-                stageDamages.Add(fdaFunction.ToUncertainPairedData());
+                stageDamages.Add(curve.Function);
             }
             return stageDamages;
         }
@@ -74,20 +68,20 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             SimulationBuilder sb = Simulation.builder()
                 .withFlowFrequency(GetFrequencyDistribution())
-                .withFlowStage(_RatElem.Curve.ToUncertainPairedData())
+                .withFlowStage(_RatElem.Curve)
                 .withStageDamages(GetStageDamagesAsPairedData());
 
             if(_UseInOut)
             {
-                sb.withInflowOutflow(_InOutElem.Curve.ToUncertainPairedData());
+                sb.withInflowOutflow(_InOutElem.Curve);
             }
             if(_UseExtInt)
             {
-                sb.withInteriorExterior(_ExtIntElem.Curve.ToUncertainPairedData());
+                sb.withInteriorExterior(_ExtIntElem.Curve);
             }
             if(_UseLevee)
             {
-                sb.withLevee(_LeveeElem.Curve.ToUncertainPairedData());
+                sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
             }
 
             return sb.build();

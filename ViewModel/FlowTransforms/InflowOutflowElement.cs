@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using ViewModel.Utilities;
@@ -17,7 +17,7 @@ namespace ViewModel.FlowTransforms
         #endregion
 
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, IFdaFunction inflowOutflowCurve ):base()
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, UncertainPairedData inflowOutflowCurve ):base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;

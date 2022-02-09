@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using metrics;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,11 @@ namespace ViewModel.ImpactAreaScenario.Results
     {
         public string Description { get; set; }
 
-        public IMetric Metric { get; set; }
-        public ThresholdComboItem(IMetric metric)
+        public Threshold Metric { get; set; }
+        public ThresholdComboItem(Threshold metric)
         {
             Metric = metric;
-            double value = metric.Ordinate.Value();
-            Description = metric.Label + " (" + value + ")";
+            Description = metric.ThresholdType + " (" + metric.ThresholdValue + ")";
         }
 
     }

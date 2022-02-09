@@ -1,15 +1,12 @@
-﻿using System;
+﻿using paireddata;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Utilities;
-using Model;
 
 namespace ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement : Utilities.ChildElement
+    public class LeveeFeatureElement : ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -36,7 +33,7 @@ namespace ViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, IFdaFunction failureFunction) : base()
+        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, UncertainPairedData failureFunction) : base()
         {
             Name = userProvidedName;
             LastEditDate = creationDate;

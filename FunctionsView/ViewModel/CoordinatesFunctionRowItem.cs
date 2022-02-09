@@ -1,11 +1,7 @@
 ﻿using Functions;
-using Functions.CoordinatesFunctions;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionsView.ViewModel
 {
@@ -16,7 +12,6 @@ namespace FunctionsView.ViewModel
             IOrdinateEnum.Triangular, IOrdinateEnum.Uniform, IOrdinateEnum.TruncatedNormal, IOrdinateEnum.Beta4Parameters };
 
         private IOrdinateEnum _selectedDistType = IOrdinateEnum.NotSupported;
-        private InterpolationEnum _selectedInterpolationType;
         private bool _IsReadOnly;
 
         #region Properties
@@ -45,28 +40,6 @@ namespace FunctionsView.ViewModel
             get
             {
                 return SupportedDistributionTypes; 
-            }
-        }
-
-        public IEnumerable<InterpolationEnum> InterpolationTypes
-        {
-            get
-            {
-                var query= Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>()
-                .Except(new InterpolationEnum[] { InterpolationEnum.NaturalCubicSpline, InterpolationEnum.Statistical });
-                return query;
-            }
-        }
-        public InterpolationEnum SelectedInterpolationType
-        {
-            get { return _selectedInterpolationType; }
-            set
-            {
-                if (!value.Equals(_selectedInterpolationType))
-                {
-                    _selectedInterpolationType = value;
-                    RowIsLeavingTable?.Invoke(this, new EventArgs());
-                }
             }
         }
 
@@ -328,7 +301,6 @@ namespace FunctionsView.ViewModel
             X = 0;
             Y = 0;
             SelectedDistributionType = IOrdinateEnum.Constant;
-            SelectedInterpolationType = InterpolationEnum.Linear;
             IsReadOnly = isReadOnly;
         }
         /// <summary>
@@ -344,7 +316,7 @@ namespace FunctionsView.ViewModel
         /// <param name="distType"></param>
         /// <param name="interpType"></param>
         public CoordinatesFunctionRowItem(double x, double y, double standDev,double mean, double min, double max, double mostLikely, 
-            double alpha, double beta, IOrdinateEnum distType,InterpolationEnum interpType, bool isReadOnly)
+            double alpha, double beta, IOrdinateEnum distType, bool isReadOnly)
         {
             X = x;
             Y = y;
@@ -356,13 +328,12 @@ namespace FunctionsView.ViewModel
             Alpha = alpha;
             Beta = beta;
             SelectedDistributionType = distType;
-            SelectedInterpolationType = interpType;
             IsReadOnly = isReadOnly;
         }
 
         public CoordinatesFunctionRowItem Clone()
         {
-            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, SelectedInterpolationType, IsReadOnly);
+            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, IsReadOnly);
         }
        
         public ICoordinate CreateCoordinateFromRow()

@@ -1,12 +1,8 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using ViewModel.Editors;
 using ViewModel.Utilities;
-
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -35,7 +31,7 @@ namespace ViewModel.AggregatedStageDamage
         #endregion
 
         #region constructors
-        public AggregatedStageDamageEditorVM(IFdaFunction func, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(func, xLabel, yLabel, chartTitle, actionManager)
+        public AggregatedStageDamageEditorVM(UncertainPairedData func, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(func, xLabel, yLabel, chartTitle, actionManager)
         {
             _IsInEditMode = false;
             HasChanges = true;
@@ -80,7 +76,6 @@ namespace ViewModel.AggregatedStageDamage
                 CurrentVM = CalculatedVM;
             }
         }
-   
 
         public virtual void SaveWhileEditing()
         {
@@ -93,7 +88,6 @@ namespace ViewModel.AggregatedStageDamage
                 SaveCalculatedCurves();
             }
         }
-
         
         private void SaveCalculatedCurves()
         {

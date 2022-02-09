@@ -1,7 +1,7 @@
-﻿using Functions;
+﻿
 using Functions.Coordinates;
 using Functions.CoordinatesFunctions;
-using Functions.Ordinates;
+
 using Statistics;
 using System;
 using System.Collections.Generic;

@@ -1,10 +1,9 @@
-﻿using ViewModel.Utilities;
-using System;
-using Model;
-using Functions;
-using FdaLogging;
+﻿using FdaLogging;
 using HEC.Plotting.Core.ViewModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using paireddata;
+using System;
+using ViewModel.Utilities;
 
 namespace ViewModel.Editors
 {
@@ -15,10 +14,8 @@ namespace ViewModel.Editors
 
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
-        private IFdaFunction _Curve;
-        private string _SavingText;
-        //private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-  
+        private UncertainPairedData _Curve;
+        private string _SavingText;  
 
         #region properties
         
@@ -34,7 +31,6 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(prevElement);
                 SavingText = CreateLastSavedText(prevElement);
                 UndoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-
             }
         }
 
@@ -51,12 +47,10 @@ namespace ViewModel.Editors
                 SavingText = CreateLastSavedText(nextElement);
 
                 RedoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-
             }
         }
 
-
-        public IFdaFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set
@@ -75,26 +69,18 @@ namespace ViewModel.Editors
         public string PlotTitle { get; set; }
 
 
-        private IParameterEnum _ParameterType;
         #endregion
 
         #region constructors
-        public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public CurveEditorVM(UncertainPairedData defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            _ParameterType = defaultCurve.ParameterType;
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
         }
-
-       
+ 
 
         public CurveEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
-            if (elem.Curve != null)
-            {
-                //the curve is null for the conditions editor
-                _ParameterType = elem.Curve.ParameterType;
-            }
             PlotTitle = Name;
             SetDimensions(800, 600, 400, 400);         
         }
@@ -123,7 +109,7 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(prevElement);
                 SavingText = CreateLastSavedText(prevElement);
                 ReloadMessages();
-                EditorVM.UpdateChartViewModel();
+                //EditorVM.UpdateChartViewModel();
             }
         }
 
@@ -135,13 +121,14 @@ namespace ViewModel.Editors
                 AssignValuesFromElementToEditor(nextElement);
                 SavingText = CreateLastSavedText(nextElement);
                 ReloadMessages();
-                EditorVM.UpdateChartViewModel();
+                //EditorVM.UpdateChartViewModel();
             }
         }
 
-        public virtual ICoordinatesFunction GetCoordinatesFunction()
+        public virtual UncertainPairedData GetCoordinatesFunction()
         {
-            return EditorVM.CreateFunctionFromTables(); 
+            //todo: this will be the curve from the table.
+            return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData("", "", ""); 
         }
 
         public virtual void SaveWhileEditing()
@@ -159,11 +146,11 @@ namespace ViewModel.Editors
             try
             {
                 //try to construct the new coordinates function
-                ICoordinatesFunction coordFunc = GetCoordinatesFunction();
+                UncertainPairedData coordFunc = GetCoordinatesFunction();
                 EditorVM.Function = coordFunc;
                 //IFunction function = coordFunc.Sample(.5);
-               
-                Curve = IFdaFunctionFactory.Factory( _ParameterType, coordFunc);
+
+                Curve = coordFunc;
             }
             catch(Exception ex)
             {

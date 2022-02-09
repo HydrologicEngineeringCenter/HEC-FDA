@@ -1,12 +1,7 @@
-﻿using ViewModel.ImpactArea;
-using Functions;
+﻿using paireddata;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Utilities.Serialization;
+using ViewModel.ImpactArea;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -16,7 +11,7 @@ namespace ViewModel.AggregatedStageDamage
         private const String SELECTED_IMPACT_AREA_TAG = "SelectedImpactArea";
         private const String SELECTED_DAM_CAT_TAG = "SelectedDamCat";
 
-        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ICoordinatesFunction function)
+        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)
         {
             ImpArea = impArea;
             DamCat = damCat;
@@ -27,20 +22,18 @@ namespace ViewModel.AggregatedStageDamage
         {
             int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
-            XElement functionElem = curveElement.Element(SerializationConstants.FUNCTIONS);
-            ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(functionElem.ToString());
+            XElement functionElem = curveElement.Element("UncertainPairedData");
+            UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
 
             //todo i need to create the row item from the id? i just need to grab it from the database i guess
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
             DamCat = selectedDamCat;
-            Function = coordFunction;
-
+            Function = uncertainPairedData;
         }
 
         public ImpactAreaRowItem ImpArea { get; }
         public string DamCat { get; }
-        public ICoordinatesFunction Function { get; }
-
+        public UncertainPairedData Function { get; }
 
         public XElement WriteToXML(StageDamageCurve curve)
         {

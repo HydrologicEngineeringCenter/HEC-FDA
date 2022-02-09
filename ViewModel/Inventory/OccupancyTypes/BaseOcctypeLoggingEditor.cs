@@ -1,14 +1,11 @@
 ﻿using FdaLogging;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities;
+using ViewModel.Editors;
+using ViewModel.Saving;
+using ViewModel.Utilities.Transactions;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -153,44 +150,44 @@ namespace ViewModel.Inventory.OccupancyTypes
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
             List<LogItem> logs = new List<LogItem>();
-            List<IMessage> messagesFromEditor = new List<IMessage>();
-            if (SelectedOccType == null)
-            {
-                return logs;
-            }
-            //get messages from the editors
-            messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Messages);
-            messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Messages);
-            messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Messages);
-            messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Messages);
+            //List<IMessage> messagesFromEditor = new List<IMessage>();
+            //if (SelectedOccType == null)
+            //{
+            //    return logs;
+            //}
+            ////get messages from the editors
+            //messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Messages);
+            //messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Messages);
+            //messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Messages);
+            //messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Messages);
 
-            //get messages from the editor's function
-            if (SelectedOccType.StructureEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Function.Messages);
-            }
-            if (SelectedOccType.ContentEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Function.Messages);
-            }
-            if (SelectedOccType.VehicleEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Function.Messages);
-            }
-            if (SelectedOccType.OtherEditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Function.Messages);
-            }
+            ////get messages from the editor's function
+            //if (SelectedOccType.StructureEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Function.Messages);
+            //}
+            //if (SelectedOccType.ContentEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Function.Messages);
+            //}
+            //if (SelectedOccType.VehicleEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Function.Messages);
+            //}
+            //if (SelectedOccType.OtherEditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Function.Messages);
+            //}
             
-            foreach (IMessage message in messagesFromEditor)
-            {
-                LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
-                logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
-            }
-            //order the list by the log level. Highest on top
-            var sortedLogList = logs
-                .OrderByDescending(x => (int)(x.LogLevel))
-                .ToList();
+            //foreach (IMessage message in messagesFromEditor)
+            //{
+            //    LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
+            //    logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
+            //}
+            ////order the list by the log level. Highest on top
+            //var sortedLogList = logs
+            //    .OrderByDescending(x => (int)(x.LogLevel))
+            //    .ToList();
 
             return logs;
         }

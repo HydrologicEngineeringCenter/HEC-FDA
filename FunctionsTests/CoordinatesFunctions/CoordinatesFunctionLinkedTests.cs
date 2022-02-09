@@ -1,6 +1,6 @@
-﻿using Functions;
+﻿
 using Functions.CoordinatesFunctions;
-using Functions.Ordinates;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

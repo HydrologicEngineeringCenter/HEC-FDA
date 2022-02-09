@@ -1,6 +1,6 @@
-﻿using Functions;
+﻿
 using Functions.Coordinates;
-using Functions.Ordinates;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

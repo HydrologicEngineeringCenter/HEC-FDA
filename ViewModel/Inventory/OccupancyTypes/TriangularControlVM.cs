@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Functions;
+﻿using Statistics;
+using Statistics.Distributions;
+using System;
 using Utilities;
 
 namespace ViewModel.Inventory.OccupancyTypes
@@ -52,7 +49,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             Max = max;
         }
 
-        public IOrdinate CreateOrdinate()
+        public IDistribution CreateOrdinate()
         {
             //for now (8/10/20) we don't show the user the "MostLikely" value. We don't care
             //what it is, we just want it to always work so we will set it to be the same
@@ -69,7 +66,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             }
             else
             {
-                return IDistributedOrdinateFactory.FactoryTriangular(MostLikely, Min, Max);
+                return new Triangular(MostLikely, Min, Max);
             }
         }
     }

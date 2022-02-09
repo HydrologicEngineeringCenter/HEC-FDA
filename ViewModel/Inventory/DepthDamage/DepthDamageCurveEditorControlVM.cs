@@ -1,10 +1,7 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Inventory.DepthDamage
 {
@@ -33,7 +30,7 @@ namespace ViewModel.Inventory.DepthDamage
 
         private DepthDamageCurve.DamageTypeEnum _DamageType;
         private string _Name;
-        private ICoordinatesFunction _Curve;
+        private UncertainPairedData _Curve;
         private string _Description;
         private List<string> _DamageTypeEnums;
 
@@ -64,7 +61,7 @@ namespace ViewModel.Inventory.DepthDamage
             set { _Description = value; }
         }
 
-        public ICoordinatesFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set { _Curve = value; }
@@ -105,10 +102,6 @@ namespace ViewModel.Inventory.DepthDamage
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
 
      
     }

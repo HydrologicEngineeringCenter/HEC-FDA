@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using System.Threading.Tasks;
-using Utilities;
-using Importer;
-using static Importer.ProbabilityFunction;
+using System.Xml.Linq;
+using ViewModel.FrequencyRelationships;
 using ViewModel.Utilities;
 using ViewModel.FrequencyRelationships;
 using System.Xml.Linq;
@@ -30,8 +28,6 @@ namespace ViewModel.Saving.PersistenceManagers
         public static readonly string IS_LOG = "IsLog";
         public static readonly string FLOWS = "Flows";
 
-        private const int ID_COL = 0;
-        private const int NAME_COL = 1;
         private const int XML_COL = 2;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
@@ -53,7 +49,6 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get  { return new Type[] { typeof(string), typeof(string)}; }
         }
-
 
         public override string[] ChangeTableColumnNames
         {
@@ -96,109 +91,6 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             return new AnalyticalFrequencyElement((string)rowData[XML_COL]);
         }
-
-        #endregion
-
-        #region import from old fda
-        public void SaveFDA1Element(ProbabilityFunction pf)
-        {
-            string pysr = "(" + pf.PlanName + " " + pf.YearName + " " + pf.StreamName + " " + pf.DamageReachName + ") ";
-            string description = pysr + pf.Description;
-
-            if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
-            {
-                if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
-                {
-
-                    //LP3 moments
-                    double mean = pf.MomentsLp3[0];
-                    double stdDev = pf.MomentsLp3[1];
-                    double skew = pf.MomentsLp3[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
-
-                }
-                else if (pf.SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
-                {
-                    //analytical synthetic points
-                    double flowPoint5 = pf.PointsSynthetic[0];
-                    double flowPoint1 = pf.PointsSynthetic[1];
-                    double flowPoint01 = pf.PointsSynthetic[2];
-                    //call factory to create LP3
-                    //Statistics.IDistributionFactory.fa
-                    //Functions.IFunctionFactory.Factory()
-
-                    //grab manager and save it.
-                }
-            }
-            else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
-            {
-                ////get probabilities
-                //List<double> probabilities = new List<double>();
-                //for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //{
-                //    probabilities.Add(pf.ExceedanceProbability[i]);
-                //}
-
-                //if (pf.ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-                //{
-                //    Write("\t\tDischarge: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf.Discharge[i]}");
-                //}
-                //else if (pf.ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
-                //{
-                //    Write("\t\tStage: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf.Stage[i]}");
-                //}
-                ////User Defined Uncertainty
-                //if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
-                //{
-                //    Write("\t\tNormal: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevNormalUserDef[i]}");
-                //    Write("\n");
-                //}
-                //else if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
-                //{
-                //    Write("\t\tLog Normal: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevLogUserDef[i]}");
-                //    Write("\n");
-                //}
-                //else if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
-                //{
-                //    Write("\t\tTriangular High: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevUpperUserDef[i]}");
-                //    Write("\n");
-                //    Write("\t\tTriangular Low: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevLowerUserDef[i]}");
-                //}
-            }
-
-
-            //if (pf._ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-            {
-                //List<ICoordinate> flowFreqCoords = new List<ICoordinate>();
-                //foreach (Pair_xy xy in )
-                //{
-                //    double x = xy.GetX();
-                //    double y = xy.GetY();
-                //    flowFreqCoords.Add(ICoordinateFactory.Factory(x, y));
-                //}
-                //ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(flowFreqCoords, InterpolationEnum.Linear);
-                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
-                //ImpactAreaFunctionFactory.FactoryFrequency(, ImpactAreaFunctionEnum.InflowFrequency);
-            }
-
-        }
-
 
         #endregion
 
@@ -292,9 +184,6 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             return GetRowDataFromElement((AnalyticalFrequencyElement)elem);
         }
-
-
-
 
         public string WriteFlowFrequencyToXML(AnalyticalFrequencyElement elem)
         {

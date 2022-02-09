@@ -1,12 +1,7 @@
-﻿using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
 {
@@ -17,10 +12,6 @@ namespace ViewModel.StageTransforms
         #region Fields
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
         #endregion
         #region Constructors
         public ExteriorInteriorOwnerElement( ) : base()
@@ -73,13 +64,7 @@ namespace ViewModel.StageTransforms
         {
             List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
             List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
-
-            //double[] xValues = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
-            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
-            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
@@ -89,72 +74,23 @@ namespace ViewModel.StageTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
-            //StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
             string header = "Create Exterior Interior";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateExteriorInterior");
             Navigate(tab, false, true);
-
-            //ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
-            //Navigate(vm);
-            //if (!vm.WasCancled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-            //        ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
-            //        AddElement(ele);
-            //        AddTransaction(this, newTransactions.TransactionEventArgs(ele.Name,Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
-            //    }
-            //}
         }
-       
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+
         #endregion
         #region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Interior Exterior Curves";
-        //    }
-        //}
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Name","Last Edit Date", "Description", "Curve Distribution Type" };
-        //}
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
-        //}
+
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
-
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-            //return null;
         }
-        //public override ChildElement CreateElementFromRowData(object[] rowData)
-        //{
-        //    Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-        //    ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0],(string)rowData[1], (string)rowData[2], ucdc, this);
-        //    ele.ExteriorInteriorCurve.fromSqliteTable(ele.TableName);
-        //    return ele;
-        //}
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-            
-        //    AddElement(CreateElementFromRowData(rowData),false);
-        //}
+
         #endregion
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Functions;
-using Model;
-using Statistics;
+﻿using paireddata;
 
 namespace ViewModel.Inventory.DepthDamage
 {
@@ -21,7 +14,7 @@ namespace ViewModel.Inventory.DepthDamage
 
         private DamageTypeEnum _DamageType;
         private string _Name;
-        private ICoordinatesFunction _Curve;
+        private UncertainPairedData _Curve;
         private string _Description;
         
 
@@ -43,20 +36,15 @@ namespace ViewModel.Inventory.DepthDamage
             set { _Description = value; }
         }
 
-        public ICoordinatesFunction Curve
+        public UncertainPairedData Curve
         {
             get { return _Curve; }
             set { _Curve = value; }
         }
         #endregion
         #region Constructors
-        //public DepthDamageCurve(string name, UncertainCurveIncreasing curve, DamageTypeEnum damageType)
-        //{
-        //    _Name = name;
-        //    _Curve = curve;
-        //    _DamageType = damageType;
-        //}
-        public DepthDamageCurve(string name, string description, ICoordinatesFunction curve, DamageTypeEnum damageType)
+
+        public DepthDamageCurve(string name, string description, UncertainPairedData curve, DamageTypeEnum damageType)
         {
             _Name = name;
             _Curve = curve;

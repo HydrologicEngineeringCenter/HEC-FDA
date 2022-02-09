@@ -1,25 +1,19 @@
-﻿using ViewModel.FlowTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Importer;
+using System.Xml.Linq;
+using ViewModel.FlowTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
     public class InflowOutflowPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
-        private const int ID_COL = 0;
         private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESCRIPTION_COL = 3;
-        private const int CURVE_DIST_TYPE_COL = 4;
-        private const int CURVE_COL = 5;
+        private const int CURVE_COL = 4;
 
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
@@ -31,8 +25,8 @@ namespace ViewModel.Saving.PersistenceManagers
 
         private const string TABLE_NAME = "inflow_outflow_relationships";
         internal override string ChangeTableConstant { get { return "Inflow Outflow - "; } }
-        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE , CURVE};
-        public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
+        public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string) };
 
         public override string TableName { get { return TABLE_NAME; } }
         
@@ -54,7 +48,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE, STATE_INDEX_COL_NAME };
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE, STATE_INDEX_COL_NAME };
             }
         }
         /// <summary>
@@ -64,7 +58,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string),
                      typeof(string), typeof(int) };
             }
         }
@@ -90,27 +84,20 @@ namespace ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(InflowOutflowElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.WriteToXML().ToString() };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString() };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, func);
+            string curveXML = (string)rowData[CURVE_COL];
+            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
 
-            //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
-                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], function);
-            //inout.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            //inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
+                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], upd);
             return inout;
         }
 
         #endregion
-
-        
 
         public void SaveNew(ChildElement element)
         {
@@ -128,25 +115,11 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             base.Remove(element);
-            //RemoveFromParentTable(element, TableName);
-            //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            //StudyCacheForSaving.RemoveElement((InflowOutflowElement)element);
         }
 
-        public void SaveExisting(ChildElement oldElement, Utilities.ChildElement elementToSave, int changeTableIndex  )
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
             base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-            //string editDate = DateTime.Now.ToString("G");
-            //elementToSave.LastEditDate = editDate;
-
-            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
-            //{
-            //    UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-            //    //
-            //    //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-            //    // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-            //    StudyCacheForSaving.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
-            //}
         }
 
         public void Load()
@@ -156,23 +129,6 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }
-
-      
-        private void SaveFlowFreqCurveTable(InflowOutflowElement element, string lastEditDate)
-        {
-            if (!Storage.Connection.Instance.IsOpen)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            element.Curve.toSqliteTable(ChangeTableConstant + lastEditDate);
-        }
-
-    
-
-        public override void AddValidationRules()
-        {
-           // throw new NotImplementedException();
         }
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
@@ -230,7 +186,6 @@ namespace ViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType,
                 element.Curve.WriteToXML().ToString(), stateId};
         }
 

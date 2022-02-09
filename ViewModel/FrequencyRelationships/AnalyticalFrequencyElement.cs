@@ -1,6 +1,6 @@
-﻿using Functions;
-using Model;
+﻿using paireddata;
 using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +17,7 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Fields
         #endregion
-        #region Properties
-      
+        #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }
         public bool IsStandard { get; set; }
@@ -32,7 +31,7 @@ namespace ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, IFdaFunction function) : base()
+            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, UncertainPairedData function) : base()
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -76,12 +75,6 @@ namespace ViewModel.FrequencyRelationships
             string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
             AnalyticalFlows = ConvertStringToFlows(flows);
 
-            //this is hacky but i need to set the curve property on this child element so that the curve editor can get the correct 
-            //parameter type. I didn't want to mess with refactoring curve editor in any way because a lot of things use it.
-            //This curve is not being used to display the plot or for saving. It can be filled with dummy data.
-            //Cody 1/27/22
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(new List<double>() { 0, 1 }, new List<double>() { 0, 1 });
-            Curve = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, func);
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }
@@ -178,7 +171,7 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowWrappers;
         }
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        public ChildElement CreateElementFromEditor(BaseEditorVM editorVM)
         {
             //will be formatted like: 2/27/2009 12:12:22 PM
             string editDate = DateTime.Now.ToString("G"); 
@@ -255,9 +248,9 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowDoubles;
         }
-        public IDistribution GetDistribution()
+        public ContinuousDistribution GetDistribution()
         {
-            return new Statistics.Distributions.LogPearson3(Mean, StDev, Skew, POR);
+            return new LogPearson3(Mean, StDev, Skew, POR);
         }
 
     }

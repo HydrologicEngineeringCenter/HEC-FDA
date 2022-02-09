@@ -1,13 +1,9 @@
 ﻿using FdaLogging;
-using ViewModel.Inventory.DamageCategory;
-using Functions;
-using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Inventory.DamageCategory;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -18,7 +14,6 @@ namespace ViewModel.Inventory.OccupancyTypes
     {
         event EventHandler UpdateMessagesEvent;
 
-        //IOccupancyType OccType { get; set; }
         string Name { get; set; }
         int ID { get; set; }
         int GroupID { get; set; }

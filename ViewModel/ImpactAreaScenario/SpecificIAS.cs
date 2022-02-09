@@ -1,5 +1,5 @@
-﻿using ead;
-using Model;
+﻿using compute;
+using metrics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -8,7 +8,6 @@ using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Editor;
 using ViewModel.StageTransforms;
 
@@ -143,12 +142,13 @@ namespace ViewModel.ImpactAreaScenario
             try
             {
                 //todo: how many iterations?
-                metrics.Results result = simulation.Compute(mrp, 1);
-                Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                ComputeResults = result;
-                return result;
+                //metrics.Results result = simulation.Compute(mrp, 1);
+                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                //ComputeResults = result;
+                //return result;
+                return null;
             }
             catch (Exception e)
             {
@@ -234,27 +234,28 @@ namespace ViewModel.ImpactAreaScenario
             {
                 case "NOTSET":
                     {
-                        return new ThresholdType( IMetricEnum.NotSet, "Not Set");
+                        return new ThresholdType( ThresholdEnum.NotSupported, "Not Set");
                     }
                 case "EXTERIORSTAGEAEP":
                 case "EXTERIORSTAGE":
                     {
-                        return new ThresholdType(IMetricEnum.ExteriorStage, "Exterior Stage");
+                        return new ThresholdType(ThresholdEnum.ExteriorStage, "Exterior Stage");
                     }
                 case "INTERIORSTAGEAEP":
                 case "INTERIORSTAGE":
                     {
-                        return new ThresholdType( IMetricEnum.InteriorStage, "Interior Stage");
+                        return new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage");
                     }
                 case "DAMAGEAEP":
                 case "DAMAGES":
                     {
-                        return new ThresholdType( IMetricEnum.Damages, "Damages");
+                        return new ThresholdType(ThresholdEnum.Damage, "Damages");
                     }
-                case "EAD":
-                case "EXPECTEDANNUALDAMAGE":
+                //case "EAD":
+                //case "EXPECTEDANNUALDAMAGE":
                     {
-                        return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
+                        //todo: do what?
+                        //return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
                     }
                 default:
                     {

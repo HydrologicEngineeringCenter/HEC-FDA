@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Utilities="clr-namespace:View.Utilities"
-             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
@@ -39,7 +38,7 @@
                 <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding EditorVM}" />
+            <Utilities:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />
         </Grid>
         <Utilities:MessageExpanderControl Grid.Row="3" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">

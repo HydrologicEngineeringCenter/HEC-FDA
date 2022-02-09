@@ -1,16 +1,13 @@
-﻿using Functions;
-using HEC.Plotting.Core;
+﻿using HEC.Plotting.Core;
 using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using Model;
+using paireddata;
 using SciChart.Charting.Model.ChartSeries;
-using SciChart.Data.Model;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -24,7 +21,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
         private string _yAxisLabel;
         private string _seriesName;
 
-        public IFdaFunction Function { get; set; }
+        public UncertainPairedData Function { get; set; }
         public SciChart2DChartViewModel ChartVM { get; private set; }
 
         //This will probably become 3 lines
@@ -108,7 +105,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             ChartVM = new SciChart2DChartViewModel(ChartVM);
         }
 
-        public void UpdatePlotData(IFdaFunction function)
+        public void UpdatePlotData(UncertainPairedData function)
         {
             Function = function;
         }
@@ -130,11 +127,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> xVals = new List<double>();
             if (Function != null)
             {
-                List<ICoordinate> coordinates = Function.Coordinates;
-                foreach(ICoordinate coord in coordinates)
-                {
-                    xVals.Add(coord.X.Value());
-                }
+                xVals.AddRange( Function.xs());
             }
             return xVals.ToArray();
         }
@@ -143,10 +136,10 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> yVals = new List<double>();
             if (Function != null)
             {
-                List<ICoordinate> coordinates = Function.Coordinates;
-                foreach (ICoordinate coord in coordinates)
+                IDistribution[] coordinates = Function.ys();
+                foreach (IDistribution coord in coordinates)
                 {
-                    yVals.Add(coord.Y.Value());
+                    yVals.Add(coord.InverseCDF(.5));
                 }
             }
             return yVals.ToArray();

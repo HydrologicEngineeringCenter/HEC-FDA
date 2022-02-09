@@ -7,17 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Statistics.Distributions;
+using paireddata;
 
 namespace ViewModel.Editors
 {
     public class AnalyticalFrequencyCurveEditor: CurveEditorVM
     {
-        private Statistics.IDistribution _Distribution;
+        private LogPearson3 _Distribution;
+        //private Statistics.IDistribution _Distribution;
         private System.Collections.ObjectModel.ObservableCollection<object> _Items;
         private System.Collections.ObjectModel.ObservableCollection<double> _Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>();
         //private double _TestKnowledge = .9;
         //private double _TestNatural = .01;
-        public Statistics.IDistribution Distribution
+        public LogPearson3 Distribution
         {
             get { return _Distribution; }
             set { _Distribution = value; NotifyPropertyChanged(); UpdateItems(); }
@@ -50,7 +53,7 @@ namespace ViewModel.Editors
         { 
             get 
             { 
-                return _Distribution.StandardDeviation; 
+                return _Distribution. StandardDeviation; 
             } 
             set 
             { 
@@ -84,7 +87,7 @@ namespace ViewModel.Editors
         }
 
 
-        public AnalyticalFrequencyCurveEditor(IFdaFunction defaultCurve,string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel,chartTitle, actionManager)
+        public AnalyticalFrequencyCurveEditor(UncertainPairedData defaultCurve,string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel,chartTitle, actionManager)
         {
 
         }

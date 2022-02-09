@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Conditions\Locations\Years\Results\ConditionLocationYearResult.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="UnitsNet" Version="4.69.0" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2021.11.5.1534" />
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.10.28.1541" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022.1.21.304" />
   </ItemGroup>
 
   <ItemGroup>

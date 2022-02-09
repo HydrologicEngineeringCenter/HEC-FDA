@@ -1,14 +1,9 @@
-﻿using Functions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Statistics;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
     public interface IValueUncertainty
     {
-        IOrdinate CreateOrdinate();
+        IDistribution CreateOrdinate();
     }
 }

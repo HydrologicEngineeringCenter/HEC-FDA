@@ -1,4 +1,4 @@
-﻿using Functions;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -80,11 +80,9 @@ namespace ViewModel.AggregatedStageDamage
             }
         }
 
-        private ICoordinatesFunction CreateDefaultCurve()
+        private UncertainPairedData CreateDefaultCurve()
         {
-            List<double> xs = new List<double>() { 0,1,2,3,4,5,6,7,8,9 };
-            List<double> ys = new List<double>() { 0,1,2,3,4,5,6,7,8,9 };
-            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            return Utilities.DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Damage", "testName");
         }
 
         private void loadImpactAreas()
@@ -135,7 +133,7 @@ namespace ViewModel.AggregatedStageDamage
                 ManualStageDamageRowItem currentRI = Rows[SelectedRowIndex];
                 try
                 {
-                    ICoordinatesFunction coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
+                    UncertainPairedData coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
                     currentRI.EditorVM.Function = coordinatesFunction;
                 }
                 catch(InvalidConstructorArgumentsException ex)
@@ -204,8 +202,8 @@ namespace ViewModel.AggregatedStageDamage
             List<string> rowsThatFailed = new List<string>();
             foreach (ManualStageDamageRowItem r in Rows)
             {
-                ICoordinatesFunction coordFunc = r.EditorVM.CreateFunctionFromTables();
-                if(coordFunc.Coordinates.Count<2)
+                UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
+                if (coordFunc.xs().Length < 2)
                 {
                     rowsThatFailed.Add(r.ID.ToString());
                 }

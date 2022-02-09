@@ -1,24 +1,16 @@
-﻿using System;
+﻿using FdaLogging;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using System.ComponentModel;
-using ViewModel.Utilities;
-using ViewModel.Saving.PersistenceManagers;
-using Functions;
-using FunctionsView.ViewModel;
-using ViewModel.Inventory.DamageCategory;
-using Functions.Ordinates;
-using HEC.Plotting.SciChart2D.Charts;
-using System.Collections.ObjectModel;
-using ViewModel.Saving;
 using System.Windows;
 using ViewModel.Editors;
-using ViewModel.Utilities.Transactions;
-using FdaLogging;
-using ViewModel.Tabs;
+using ViewModel.Saving;
+using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {

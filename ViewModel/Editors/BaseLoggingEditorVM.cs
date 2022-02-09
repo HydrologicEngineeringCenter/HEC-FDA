@@ -1,16 +1,13 @@
 ﻿using FdaLogging;
-using ViewModel.Saving;
-using ViewModel.Utilities.Transactions;
-using Functions;
-using FunctionsView.ViewModel;
-using Model;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities;
+using ViewModel.Saving;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
 
 namespace ViewModel.Editors
 {
@@ -69,9 +66,8 @@ namespace ViewModel.Editors
         public bool IsExpanded 
         {
             get { return _IsExpanded; }
-            set 
-            {
-                
+            set
+            {          
                 if (_IsExpanded != value)
                 {
                     _IsExpanded = value;
@@ -89,29 +85,17 @@ namespace ViewModel.Editors
             set; 
         }
         #region Constructors
-        public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
+        public BaseLoggingEditorVM(UncertainPairedData defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            ICoordinatesFunction coordFunc = null;
-            if (defaultCurve == null)
-            {
-                List<double> xs = new List<double>() { 0 };
-                List<double> ys = new List<double>() { 0 };
-                coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            }
-            else
-            {
-                coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve.Coordinates, defaultCurve.Interpolator);
-            }
-
-            EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
+            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
         }
 
-        public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
+        public BaseLoggingEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
             if (elem.Curve != null)
             {
-                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
+                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve, xLabel, yLabel, chartTitle);
             }
             else
             {
@@ -258,13 +242,14 @@ namespace ViewModel.Editors
                 return logs;
             }
             //get messages from the editor
-            messagesFromEditor.AddRange(EditorVM.Messages);
+            //messagesFromEditor.AddRange(EditorVM.Messages);
 
             //get messages from the editor's function
-            if( EditorVM.Function.Messages != null)
-            {
-                messagesFromEditor.AddRange(EditorVM.Function.Messages);
-            }
+            
+            //if( EditorVM.Function.Messages != null)
+            //{
+            //    messagesFromEditor.AddRange(EditorVM.Function.Messages);
+            //}
             foreach (IMessage message in messagesFromEditor)
             {
                 LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);

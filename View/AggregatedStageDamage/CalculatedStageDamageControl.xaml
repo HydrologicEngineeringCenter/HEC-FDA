@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              xmlns:utils="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
@@ -60,7 +59,7 @@
                 <ColumnDefinition Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding SelectedRow.EditorVM,Mode=TwoWay}" />
+            <utils:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />
         </Grid>
     </Grid>
 </UserControl>

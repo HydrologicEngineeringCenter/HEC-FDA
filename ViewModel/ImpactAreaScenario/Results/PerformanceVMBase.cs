@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using metrics;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ViewModel.ImpactAreaScenario.Results
     {
         private List<IPerformanceRowItem> _rows;
 
-        public Dictionary<IMetric, List<IPerformanceRowItem>> MetricsToRows { get; set; }
+        public Dictionary<Threshold, List<IPerformanceRowItem>> MetricsToRows { get; set; }
 
         public List<IPerformanceRowItem> Rows
         {

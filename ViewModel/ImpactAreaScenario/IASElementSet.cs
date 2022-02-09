@@ -1,13 +1,12 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using ViewModel.Editors;
 using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Results;
-using ViewModel.Utilities;
 using ViewModel.Saving;
-using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -29,7 +28,7 @@ namespace ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public IConditionLocationYearResult ComputeResults { get; set; }
+        //public IConditionLocationYearResult ComputeResults { get; set; }
 
         public string Description
         {
@@ -78,7 +77,7 @@ namespace ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png");
             AddActions();
         }
 
@@ -209,9 +208,7 @@ namespace ViewModel.ImpactAreaScenario
             PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
-        #region Voids
-        
-
+        #region Voids     
         #endregion
         #region Functions
         public override ChildElement CloneElement(ChildElement elementToClone)

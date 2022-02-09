@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using metrics;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private void loadDummyData(List<ThresholdComboItem> metrics)
         {
-            MetricsToRows = new Dictionary<IMetric, List<IPerformanceRowItem>>();
+            MetricsToRows = new Dictionary<Threshold, List<IPerformanceRowItem>>();
 
             for (int i = 0; i < metrics.Count; i++)
             {

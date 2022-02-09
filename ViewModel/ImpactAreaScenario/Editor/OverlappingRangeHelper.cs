@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,13 +70,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
             double otherMin = -1;
             double otherMax = -1;
 
-            IFdaFunction otherCurve = otherElem.ChildElement.Curve;
+            UncertainPairedData otherCurve = otherElem.ChildElement.Curve;
 
-            stageDamageMin = selectedDamageCurve.Function.Coordinates.First().X.Value();
-            stageDamageMax = selectedDamageCurve.Function.Coordinates.Last().X.Value();
+            stageDamageMin = selectedDamageCurve.Function.xs().Min();
+            stageDamageMax = selectedDamageCurve.Function.xs().Last();
 
-            otherMin = otherCurve.YSeries.Range.Min;
-            otherMax = otherCurve.YSeries.Range.Max;
+            //todo: not sure i did this right.
+            otherMin = otherCurve.ys().First().CDF(.5);
+            otherMax = otherCurve.ys().Last().CDF(.5);
 
             AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE,
                 stageDamElem.Name, otherElem.ChildElement.Name, messageRows);
@@ -98,30 +99,36 @@ namespace ViewModel.ImpactAreaScenario.Editor
             ChildElement elem2 = element2.ChildElement;
             string name1 = elem1.Name;
             string name2 = elem2.Name;
-            IParameterRange range1;
-            IParameterRange range2;
+            double[] range1 = new double[2];
+            double[] range2 = new double[2];
             if (compareXAxisOnElem1)
             {
-                range1 = elem1.Curve.XSeries;
+                range1[0] = elem1.Curve.xs().First();
+                range1[1] = elem1.Curve.xs().Last();
             }
             else
             {
-                range1 = elem1.Curve.YSeries;
+                //todo: is this correct?
+                range1[0] = elem1.Curve.ys().First().InverseCDF(.5);
+                range1[1] = elem1.Curve.ys().Last().InverseCDF(.5);
             }
             if (compareXAxisOnElem2)
             {
-                range2 = elem2.Curve.XSeries;
+                range2[0] = elem2.Curve.xs().First();
+                range2[1] = elem2.Curve.xs().Last();
             }
             else
             {
-                range2 = elem2.Curve.YSeries;
+                //todo: is this correct?
+                range2[0] = elem2.Curve.ys().First().InverseCDF(.5);
+                range2[1] = elem2.Curve.ys().Last().InverseCDF(.5);
             }
 
-            double min1 = range1.Range.Min;
-            double max1 = range1.Range.Max;
+            double min1 = range1[0];
+            double max1 = range1[1];
 
-            double min2 = range2.Range.Min;
-            double max2 = range2.Range.Max;
+            double min2 = range2[0];
+            double max2 = range2[1];
 
 
             AddRecommendationForNonoverlappingRange(min1, max1, min2, max2, headerBase, axisLabel, name1, name2, messageRows);

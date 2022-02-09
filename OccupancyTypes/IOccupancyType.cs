@@ -1,7 +1,5 @@
-﻿using Functions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using paireddata;
+using Statistics;
 
 namespace OccupancyTypes
 {
@@ -16,33 +14,23 @@ namespace OccupancyTypes
         bool CalculateVehicleDamage { get; set; }
         bool CalculateOtherDamage { get; set; }
 
-        ICoordinatesFunction StructureDepthDamageFunction { get; set; }
+        UncertainPairedData StructureDepthDamageFunction { get; set; }
+        UncertainPairedData ContentDepthDamageFunction { get; set; }
+        UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        UncertainPairedData OtherDepthDamageFunction { get; set; }
 
-        ICoordinatesFunction ContentDepthDamageFunction { get; set; }
-        ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
-        ICoordinatesFunction OtherDepthDamageFunction { get; set; }
-
-        IDistributedOrdinate StructureValueUncertainty { get; set; }
-        IDistributedOrdinate ContentValueUncertainty { get; set; }
-        IDistributedOrdinate VehicleValueUncertainty { get; set; }
-        IDistributedOrdinate OtherValueUncertainty { get; set; }
-        IDistributedOrdinate FoundationHeightUncertainty { get; set; }
-
-
+        IDistribution StructureValueUncertainty { get; set; }
+        IDistribution ContentValueUncertainty { get; set; }
+        IDistribution VehicleValueUncertainty { get; set; }
+        IDistribution OtherValueUncertainty { get; set; }
+        IDistribution FoundationHeightUncertainty { get; set; }
 
         string StructureDepthDamageName { get; set; }
         string ContentDepthDamageName { get; set; }
         string VehicleDepthDamageName { get; set; }
         string OtherDepthDamageName { get; set; }
 
-
         IOccupancyType Clone();
-        //public SampledOccupancyType GenerateSampledOccupancyType(ref Random Randy);
-        //public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter);
-        //public string WriteToFDAString();
-        //public XElement WriteToXElement();
-
-        //public delegate void ReportMessageEventHandler(string message);
 
     }
 }

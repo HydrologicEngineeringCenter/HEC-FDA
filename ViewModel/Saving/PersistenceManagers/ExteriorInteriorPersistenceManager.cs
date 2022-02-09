@@ -1,26 +1,18 @@
-﻿using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Importer;
+using System.Xml.Linq;
+using ViewModel.StageTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
     public class ExteriorInteriorPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
-        private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESC_COL = 3;
-        private const int CURVE_DIST_TYPE_COL = 4;
-        private const int CURVE_TYPE_COL = 5;
-        private const int CURVE_COL = 6;
+        private const int CURVE_COL = 4;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ExteriorInteriorPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
@@ -35,18 +27,14 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override string ChangeTableName { get { return "exterior_interior_changes"; } }
 
-        
-
-
         /// <summary>
         /// Names of the columns in the parent table
         /// </summary>
         public override string[] TableColumnNames
         {
             get
-            {
-               
-                return new string[] {NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE};
+            {            
+                return new string[] {NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
             }
         }
         /// <summary>
@@ -54,7 +42,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override Type[] TableColumnTypes
         {
-            get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) }; }
+            get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) }; }
         }
 
         /// <summary>
@@ -64,7 +52,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE, STATE_INDEX_COL_NAME };
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE, STATE_INDEX_COL_NAME };
             }
         }
 
@@ -75,7 +63,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                return new Type[]{ typeof(int), typeof(string), typeof(string),
                     typeof(string), typeof(string), typeof(int) };
             }
         }     
@@ -89,10 +77,7 @@ namespace ViewModel.Saving.PersistenceManagers
         #region utilities
         public override object[] GetRowDataFromElement(ChildElement element)
         {
-            //todo: why are all these properties on child element. I was expecting to have to cast this element to an ext int.
-            return new object[] { element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.GetType(),
-                element.Curve.WriteToXML().ToString() };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString() };
         }
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
@@ -105,46 +90,20 @@ namespace ViewModel.Saving.PersistenceManagers
             int id = GetElementId(TableName, element.Name);
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, id, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] {id, element.Name, element.LastEditDate, element.Description,
-                element.Curve.DistributionType, element.Curve.GetType(),
-                element.Curve.WriteToXML().ToString(), stateId};
+            return new object[] {id, element.Name, element.LastEditDate, element.Description,element.Curve.WriteToXML().ToString(), stateId};
 
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
-            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, func);
-
-            //Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
-            //(string)rowData[CURVE_DIST_TYPE_COL]));
+            string curveXML = (string)rowData[CURVE_COL];
+            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));          
             ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
-                (string)rowData[DESC_COL], function);
-            //ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
-              //              (string)rowData[CURVE_DIST_TYPE_COL])); 
+                (string)rowData[DESC_COL], upd);
             return ele;
         }
         #endregion
 
-        public void SaveFDA1Element(Levee lev)
-        {
-            string pysr = "(" + lev.PlanName + " " + lev.YearName + " " + lev.StreamName + " " + lev.DamageReachName + ") ";
-            string description = pysr + lev.Description;
-
-            List<ICoordinate> extIntCoords = new List<ICoordinate>();
-            foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
-            {
-                double x = xy.GetX();
-                double y = xy.GetY();
-                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
-            }
-            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.ExteriorInteriorStage, function);
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, description, func);
-            SaveNewElement(elem);
-        }
         public void SaveNew(ChildElement element)
         {
             //save to parent table
@@ -227,6 +186,5 @@ namespace ViewModel.Saving.PersistenceManagers
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
-
     }
 }

@@ -1,7 +1,6 @@
-﻿using Functions;
+﻿using paireddata;
+using Statistics;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
 
 namespace OccupancyTypes
@@ -22,21 +21,21 @@ namespace OccupancyTypes
 
         public bool CalculateOtherDamage { get; set; }
 
-        public ICoordinatesFunction StructureDepthDamageFunction
+        public UncertainPairedData StructureDepthDamageFunction
         {
             get;
             set;
         }
-        public ICoordinatesFunction ContentDepthDamageFunction { get; set; }
-        public ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
-        public ICoordinatesFunction OtherDepthDamageFunction { get; set; }
+        public UncertainPairedData ContentDepthDamageFunction { get; set; }
+        public UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        public UncertainPairedData OtherDepthDamageFunction { get; set; }
 
 
-        public IDistributedOrdinate StructureValueUncertainty { get; set; }
-        public IDistributedOrdinate ContentValueUncertainty { get; set; }
-        public IDistributedOrdinate VehicleValueUncertainty { get; set; }
-        public IDistributedOrdinate OtherValueUncertainty { get; set; }
-        public IDistributedOrdinate FoundationHeightUncertainty { get; set; }
+        public IDistribution StructureValueUncertainty { get; set; }
+        public IDistribution ContentValueUncertainty { get; set; }
+        public IDistribution VehicleValueUncertainty { get; set; }
+        public IDistribution OtherValueUncertainty { get; set; }
+        public IDistribution FoundationHeightUncertainty { get; set; }
         public string StructureDepthDamageName { get; set; }
         public string ContentDepthDamageName { get; set; }
         public string VehicleDepthDamageName { get; set; }

@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using metrics;
+using Model;
 using System.Collections.Generic;
 using System.Linq;
 using ViewModel.ImpactAreaScenario.Editor;
@@ -111,7 +112,7 @@ namespace ViewModel.ImpactAreaScenario.Results
             //todo: After talking with Richard it sounds like this default threshold might not
             //always be a constant value (it might depend on the study?). Update this when the new
             //model and compute are finished.
-            IMetric defaultMetric = IMetricFactory.Factory(IMetricEnum.ExteriorStage, 5);
+            Threshold defaultMetric = new Threshold(-1, ThresholdEnum.ExteriorStage, 5);
             comboItems.Add(new ThresholdComboItem(defaultMetric));
             foreach(ThresholdRowItem row in thresholdRows)
             {              
