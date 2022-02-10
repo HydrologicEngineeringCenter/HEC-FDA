@@ -43,12 +43,9 @@ namespace Importer
             OccupancyType aOccType = ObjectCopier.Clone(theOcctype);
             _OcctypeListSort.Add(aOccType.Name.Trim(), aOccType);
             WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");
-            if (logger != null)
+            if (logger != null && GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
-                {
-                    aOccType.Print(logger);
-                }
+                aOccType.Print(logger);
             }
         }
         public void Print(AsyncLogger logger)

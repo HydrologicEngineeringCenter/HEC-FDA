@@ -1,6 +1,7 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.GeoTech
@@ -64,12 +65,12 @@ namespace ViewModel.GeoTech
 
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            Editors.SaveHelper saveHelper = new Editors.SaveHelper(
+            SaveHelper saveHelper = new SaveHelper(
                 Saving.PersistenceFactory.GetLeveeManager(),
                  (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
@@ -86,7 +87,7 @@ namespace ViewModel.GeoTech
 
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
             LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM

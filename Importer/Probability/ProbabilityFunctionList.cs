@@ -36,12 +36,9 @@ namespace Importer
             ProbabilityFunction aProbFunc = ObjectCopier.Clone(theProbFunc);
             _ProbabilityFunctionListSort.Add(aProbFunc.Name.Trim(), aProbFunc);
             WriteLine($"Add Probability Function to SortList.  {aProbFunc.Name}");
-            if(logger != null)
+            if (logger != null && GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
-                {
-                    aProbFunc.Print(logger);
-                }
+                aProbFunc.Print(logger);
             }
         }
         public void Print(AsyncLogger logger)

@@ -37,12 +37,9 @@ namespace Importer
             Levee aLevee = ObjectCopier.Clone(theLevee);
             WriteLine($"Add Levee to SortList. Name: {aLevee.Name}");
             _LeveeListSort.Add(aLevee.Name.Trim(), aLevee);
-            if (logger != null)
+            if (logger != null && GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
             {
-                if (GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
-                {
-                    aLevee.Print(logger, importOptions);
-                }
+                aLevee.Print(logger, importOptions);
             }
         }
         public void Print(AsyncLogger logger)

@@ -1,4 +1,5 @@
-﻿using paireddata;
+﻿using FdaLogging;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -78,7 +79,7 @@ namespace ViewModel.Saving.PersistenceManagers
         public void SaveNew(ChildElement element)
         {
             base.SaveNew(element);
-            Log(FdaLogging.LoggingLevel.Info, "Created new levee failure element: " + element.Name, element.Name);
+            Log(LoggingLevel.Info, "Created new levee failure element: " + element.Name, element.Name);
         }
         public void Remove(ChildElement element)
         {
@@ -94,9 +95,9 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
+        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
         {
-            return new ObservableCollection<FdaLogging.LogItem>();
+            return new ObservableCollection<LogItem>();
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -119,10 +120,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+            return RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
         }
 
         /// <summary>
@@ -132,10 +133,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+            return RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
     }
 }

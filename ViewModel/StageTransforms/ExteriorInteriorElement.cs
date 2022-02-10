@@ -1,6 +1,7 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
@@ -60,24 +61,24 @@ namespace ViewModel.StageTransforms
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
             //create save helper
-            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
+            CurveEditorVM vm = new CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
             Navigate(tab, false, true);         
         }
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            CurveEditorVM editorVM = (CurveEditorVM)vm;
 
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
