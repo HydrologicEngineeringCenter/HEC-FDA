@@ -25,7 +25,14 @@ namespace fda_model_test
         static string description = "description";
         static int id = 1;
 
-
+        /// <summary>
+        /// The calculations for the results in the test below can be found at https://docs.google.com/spreadsheets/d/1UUNgHYq1_zV4ifnu0iVmiPOzL2szyBCX/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        /// <param name="thresholdValue"></param>
+        /// <param name="years"></param>
+        /// <param name="iterations"></param>
+        /// <param name="expectedAEP"></param>
+        /// <param name="expectedLTEP"></param>
         [Theory]
         [InlineData(9200, 80, 1, .08, 0.998732271693343)]
         [InlineData(9400, 60, 1, .06, 0.975584185541488)]
