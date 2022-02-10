@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using Statistics;
 using interfaces;
-using System.Linq;
-using System.Xml.Linq;
+using Statistics;
 using System;
+using System.Xml.Linq;
 
 namespace paireddata
 {
@@ -27,10 +25,6 @@ namespace paireddata
         public string Name
         {
             get { return _metadata.Name; }
-        }
-        public string Description
-        {
-            get { return _metadata.Description; }
         }
         public string Category
         {
@@ -57,17 +51,17 @@ namespace paireddata
         }
         //, string xlabel, string ylabel, string name, string description, int ID
         
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description)
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
         {
             _xvals = xs;
             _yvals = ys;
-            _metadata = new CurveMetaData(xlabel,ylabel,name,description);
+            _metadata = new CurveMetaData(xlabel,ylabel,name);
         }
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, string category)
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
         {
             _xvals = xs;
             _yvals = ys;
-            _metadata = new CurveMetaData(xlabel, ylabel, name, description, category);
+            _metadata = new CurveMetaData(xlabel, ylabel, name, category);
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
@@ -166,7 +160,6 @@ namespace paireddata
             masterElement.SetAttributeValue("XLabel", XLabel);
             masterElement.SetAttributeValue("YLabel", YLabel);
             masterElement.SetAttributeValue("Name", Name);
-            masterElement.SetAttributeValue("Description", Description);
             masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
             for (int i = 0; i < _xvals.Length; i++)
             {
@@ -187,7 +180,6 @@ namespace paireddata
             string xLabel = element.Attribute("XLabel").Value;
             string yLabel = element.Attribute("YLabel").Value;
             string name = element.Attribute("Name").Value;
-            string description = element.Attribute("Description").Value;
             int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
             double[] xValues = new double[size];
             IDistribution[] yValues = new IDistribution[size];
@@ -207,7 +199,7 @@ namespace paireddata
                 }
                 i++;
             }
-            return new UncertainPairedData(xValues, yValues, xLabel, yLabel, name, description, category);
+            return new UncertainPairedData(xValues, yValues, xLabel, yLabel, name, category);
         }
         #endregion
     }

@@ -39,10 +39,6 @@ namespace paireddata
         {
             get { return _metaData.Name; }
         }
-        public string Description
-        {
-            get { return _metaData.Description; }
-        }
         public string Category
         {
             get { return _metaData.Category; }
@@ -74,7 +70,7 @@ namespace paireddata
             _metaData = new CurveMetaData();
         }
 
-        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, string description, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, maximumProbability, minimumProbability, usingFlows, flowsAreNotLogged);
             graphical.ComputeGraphicalConfidenceLimits();
@@ -83,7 +79,7 @@ namespace paireddata
             _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions);
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions);
             _EquivalentRecordLength = equivalentRecordLength;
-            _metaData = new CurveMetaData(xlabel, ylabel, name, description);
+            _metaData = new CurveMetaData(xlabel, ylabel, name);
         }
         #endregion
 
