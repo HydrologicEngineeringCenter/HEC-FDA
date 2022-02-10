@@ -32,11 +32,11 @@ namespace ViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM(UncertainPairedData defaultCurve, Editors.EditorActionManager actionManager) : base(defaultCurve,"Probability","Stage","chartTitle", actionManager)
+        public LeveeFeatureEditorVM(UncertainPairedData defaultCurve, EditorActionManager actionManager) : base(defaultCurve,"Probability","Stage","chartTitle", actionManager)
         {
 
         }
-        public LeveeFeatureEditorVM( ChildElement element, Editors.EditorActionManager actionManager) : base(element, "Probability", "Stage", "chartTitle",actionManager)
+        public LeveeFeatureEditorVM( ChildElement element, EditorActionManager actionManager) : base(element, "Probability", "Stage", "chartTitle",actionManager)
         {
             Elevation = ((LeveeFeatureElement)element).Elevation;
             IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
@@ -45,6 +45,7 @@ namespace ViewModel.GeoTech
         #region Voids
         private void UpdateChart(double newElevationValue)
         {
+            //todo: leaving this here until we get the new table and plot 
             //if (_UsingDefaultCurve)
             //{
             //    //if this is the first time then there will only be one coordinate

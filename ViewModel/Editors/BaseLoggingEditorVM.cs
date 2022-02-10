@@ -240,11 +240,12 @@ namespace ViewModel.Editors
             {
                 return logs;
             }
+            //todo: waiting to see what we are going to do with logging
             //get messages from the editor
             //messagesFromEditor.AddRange(EditorVM.Messages);
 
             //get messages from the editor's function
-            
+
             //if( EditorVM.Function.Messages != null)
             //{
             //    messagesFromEditor.AddRange(EditorVM.Function.Messages);

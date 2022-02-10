@@ -208,8 +208,7 @@ namespace ViewModel.ImpactAreaScenario
             PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
-        #region Voids     
-        #endregion
+
         #region Functions
         public override ChildElement CloneElement(ChildElement elementToClone)
         {

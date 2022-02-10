@@ -128,13 +128,12 @@ namespace ViewModel.FrequencyRelationships
             {
                 UncertainPairedData function = GetCoordinatesFunction();
 
-                //todo: I don't have the chart helper anymore.
-                //CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function, "Frequency", "Flow");
+                //todo: leaving this here until we get the new table and plot 
 
                 //List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
                 //StandardChartViewModel.LineData.Set(lineData);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //do nothing?
             }
