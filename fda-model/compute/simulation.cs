@@ -210,7 +210,7 @@ namespace compute
                 }
 
             }
-
+            _results.ParalellTestForConvergence(.95, .05);
             return _results;
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)

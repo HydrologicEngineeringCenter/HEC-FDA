@@ -103,6 +103,17 @@ double EAD = results.ExpectedAnnualDamageResults.MeanEAD("residential");
 Console.WriteLine("EAD was " + EAD);
 double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
 Console.WriteLine("AEP was " + meanActualAEP);
+double cnp90 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.9);
+Console.WriteLine("CNEP(.90) was " + cnp90);
+double cnp98 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.98);
+Console.WriteLine("CNEP(.98) was " + cnp98);
+double cnp99 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.99);
+Console.WriteLine("CNEP(.99) was " + cnp99);
+double cnp996 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.996);
+Console.WriteLine("CNEP(.996) was " + cnp996);
+double cnp998 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.998);
+Console.WriteLine("CNEP(.998) was " + cnp998);
+
 if (results.IsConverged())
 {
     Console.WriteLine("Converged");
