@@ -1,5 +1,6 @@
 ﻿using paireddata;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModel.ImpactArea;
 using ViewModel.Utilities;
@@ -76,5 +77,19 @@ namespace ViewModel.AggregatedStageDamage
             EditorVM = new CoordinatesFunctionEditorVM(rowItem.EditorVM);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is ManualStageDamageRowItem item &&
+                   SelectedImpArea.Name.Equals( item.SelectedImpArea.Name) &&
+                   SelectedDamCat == item.SelectedDamCat;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1172079173;
+            hashCode = hashCode * -1521134295 + EqualityComparer<ImpactAreaRowItem>.Default.GetHashCode(SelectedImpArea);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SelectedDamCat);
+            return hashCode;
+        }
     }
 }

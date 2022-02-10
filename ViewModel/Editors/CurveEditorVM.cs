@@ -15,7 +15,6 @@ namespace ViewModel.Editors
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
         private UncertainPairedData _Curve;
-        private string _SavingText;  
 
         #region properties
         
@@ -29,11 +28,7 @@ namespace ViewModel.Editors
             }
         }
 
-        public string SavingText
-        {
-            get { return _SavingText; }
-            set { _SavingText = value; NotifyPropertyChanged(); }
-        }      
+           
 
         public string PlotTitle { get; set; }
 
@@ -58,17 +53,7 @@ namespace ViewModel.Editors
 
 
         #region voids       
-
-        /// <summary>
-        /// I wanted this here so that the text could live in one place.
-        /// That way if we want to change it, it should change all the places that use it.
-        /// </summary>
-        /// <param name="elem"></param>
-        /// <returns></returns>
-        private string CreateLastSavedText(ChildElement elem)
-        {
-            return "Last Saved: " + elem.LastEditDate;
-        }
+   
 
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
@@ -119,10 +104,7 @@ namespace ViewModel.Editors
             // i need to update those properties here
             AssignValuesFromEditorToCurrentElement();
 
-            SavingText = CreateLastSavedText(elementToSave);
-
-            ReloadMessages(true);
-            HasChanges = false;
+            UpdateSave(elementToSave);
         }
     
         public override void Save()

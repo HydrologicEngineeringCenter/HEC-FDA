@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using Utilities;
 using ViewModel.ImpactArea;
@@ -241,23 +242,32 @@ namespace ViewModel.AggregatedStageDamage
 
         private bool AreManualRowsUniqueCombinations()
         {
-            HashSet<String> rowPairs = new HashSet<string>();
+            bool AreManualRowsUniqueCombinations = true;
+            //HashSet<String> rowPairs = new HashSet<string>();
             ObservableCollection<ManualStageDamageRowItem> rows = Rows;
+            HashSet<int> repeatRows = new HashSet<int>();
             foreach (ManualStageDamageRowItem row in rows)
             {
-                //todo do we enforce unique names on the impact area names? I hope so or this won't work
-                String uniqueCombo = row.SelectedImpArea.Name + " | " + row.SelectedDamCat;
-                bool added = rowPairs.Add(uniqueCombo);
-                if (!added)
+
+                foreach (ManualStageDamageRowItem row2 in rows)
                 {
-                    //then it was a duplicate
-                    String msg = "Stage-Damage curves must have unique impact area and damage category combinations." + Environment.NewLine +
-                        "Repeat curve: " + row.ID;
-                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    //The "!=" below weeds out the row that is itself
+                    if (row != row2 && row.Equals(row2))
+                    {
+                        repeatRows.Add(row.ID);
+                        repeatRows.Add(row2.ID);
+                    }
                 }
             }
-            return true;
+            if (repeatRows.Count > 0)
+            {
+                string iDList = string.Join(", ", repeatRows.Select(n => n.ToString()).ToArray());
+                String msg = "Stage-Damage curves must have unique impact area and damage category combinations." + Environment.NewLine +
+                            "Repeat curves: " + iDList;
+                MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                AreManualRowsUniqueCombinations = false;
+            }
+            return AreManualRowsUniqueCombinations;
         }
 
     }

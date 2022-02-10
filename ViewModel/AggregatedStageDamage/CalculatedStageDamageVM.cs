@@ -198,7 +198,7 @@ namespace ViewModel.AggregatedStageDamage
             FdaValidationResult vr = new FdaValidationResult();
             if (SelectedWaterSurfaceElevation == null)
             {
-                vr.AddErrorMessage("A water surface elevation must be selected.");
+                vr.AddErrorMessage("A hydraulics data set must be selected.");
             }
             if (SelectedStructures == null)
             {
