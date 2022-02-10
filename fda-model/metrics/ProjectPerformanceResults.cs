@@ -28,7 +28,6 @@ namespace metrics
                 return _aep;
             }
         }
-
         public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
         {
             _thresholdType = thresholdType;
@@ -180,6 +179,20 @@ namespace metrics
         {
             double ltep = 1 - Math.Pow((1 - MeanAEP()), years);
             return ltep;
+        }
+        public void ParallelTestForConvergence(double upper, double lower)
+        {
+            double[] keys = new double[_cnep.Keys.Count];
+            int idx = 0;
+            foreach (var keyvaluepair in _cnep)
+            {
+                keys[idx] = keyvaluepair.Key;
+                idx++;
+            }
+            Parallel.For(0, keys.Length, i =>
+            {
+                _cnep[keys[i]].TestForConvergence(upper,lower);//this will force dequeue also.
+            });
         }
     }
 }

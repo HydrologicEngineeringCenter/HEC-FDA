@@ -56,6 +56,13 @@ namespace metrics
             }
             return Math.Max(ead, performance);
         }
+        public void ParalellTestForConvergence(double upper, double lower)
+        {
+            foreach (var keyvaluepair in PerformanceByThresholds.ThresholdsDictionary)
+            {
+                keyvaluepair.Value.ProjectPerformanceResults.ParallelTestForConvergence(upper, lower);
+            }
+        }
 
     }
 }
