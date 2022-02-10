@@ -94,14 +94,14 @@ namespace metrics
             }
             return false;
         }
-        public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upper, double lower)
+        public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             //dont like this.
             foreach( double key in _cnep.Keys)
             {
                 if(key == 0.98)
                 {
-                    return _cnep[key].TestForConvergence(upper,lower);
+                    return _cnep[key].TestForConvergence(upperConfidenceLimitProb,lowerConfidenceLimitProb);
                 }
             }
             return false;
