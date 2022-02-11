@@ -37,8 +37,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             set { _Name = value; IsModified = true; NotifyPropertyChanged(); }
         }
 
-        
-
         public string Description
         {
             get { return _Description; }
@@ -88,6 +86,11 @@ namespace ViewModel.Inventory.OccupancyTypes
         public ValueUncertaintyType OtherUncertaintyType { get; set; }
         public ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
 
+        //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
+        public bool IsContentRatio { get; set; }
+        public bool IsVehicleRatio { get; set; }
+        public bool IsOtherRatio { get; set; }
+
         public int GroupID { get; set; }
         public int ID { get; set; }
 
@@ -101,11 +104,11 @@ namespace ViewModel.Inventory.OccupancyTypes
             DamageCategory = DamageCategoryFactory.Factory(damageCategoryName);
         }
 
-
         #region messages section
         public LoggingLevel SaveStatusLevel => throw new NotImplementedException();
 
         public bool IsExpanded { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public ObservableCollection<LogItem> MessageRows { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int MessageCount => throw new NotImplementedException();

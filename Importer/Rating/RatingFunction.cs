@@ -22,6 +22,22 @@ namespace Importer
 
         #endregion
         #region Properties
+        public double[] IndividualStDevs
+        {
+            get { return _StdDev; }
+        }
+        public double[] IndividualLogStDevs
+        {
+            get { return _StdDevLog; }
+        }
+        public double[] IndividualHighStDevs
+        {
+            get { return _StdDevHigh; }
+        }
+        public double[] IndividualLowStDevs
+        {
+            get { return _StdDevLow; }
+        }
         public string PlanName
         { get; set; }
         public string YearName

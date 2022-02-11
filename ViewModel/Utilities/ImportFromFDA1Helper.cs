@@ -57,108 +57,110 @@ namespace ViewModel.Utilities
 
         private static UncertainPairedData CreateRatingPairedData(RatingFunction rat)
         {
-            if (rat.UsesGlobalError)
-            {
-                return CreateRatingPairedDataWithGlobalUncertainty(rat);
-            }
-            else
-            {
-                //not sure if this is possible. Look at the importer project class RatingFunction. I could do it but i would have to make the arrays public.
-                //if this is possible, maybe i could just set the global variables. I think the logic is the same.
-                return CreateRatingPairedDataWithPointUncertainty(rat);
-            }
-        }
-
-        private static UncertainPairedData CreateRatingPairedDataWithPointUncertainty(RatingFunction rat)
-        {
-            UncertainPairedData upd = new UncertainPairedData();
-            //if (rat.ErrorTypesId == ErrorType.LOGNORMAL)
-            //{
-            //    rat._st
-            //    List<Deterministic> yVals = new List<Deterministic>();
-            //    foreach (double d in ys)
-            //    {
-            //        yVals.Add(new Deterministic(d));
-            //    }
-            //    UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "", -1);
-            //    return curve;
-            //}
-            //else if (rat.ErrorTypesId == ErrorType.NORMAL)
-            //{
-
-            //}
-            //else if (rat.ErrorTypesId == ErrorType.TRIANGULAR)
-            //{
-
-            //}
-            //else if (rat.ErrorTypesId == ErrorType.UNIFORM)
-            //{
-
-            //}
-            //else if (rat.ErrorTypesId == ErrorType.NONE)
-            //{
-
-            //}
-            return upd;
-        }
-
-        private static UncertainPairedData CreateRatingPairedDataWithGlobalUncertainty(RatingFunction rat)
-        {
-            UncertainPairedData upd = new UncertainPairedData();
-            string xLabel = "Stage";
-            string yLabel = "Flow";
-            string name = "Rating";
-
-            double[] stages = rat.GetStage();
-            double[] flows = rat.GetDischarge();
+            List<IDistribution> ys = new List<IDistribution>();
 
             if (rat.ErrorTypesId == ErrorType.LOGNORMAL)
             {
-                List<IDistribution> ys = new List<IDistribution>();
-                for (int i = 0; i < rat.NumberOfPoints; i++)
-                {
-                    ys.Add(new LogNormal(flows[i], rat.GlobalStdDev));
-                }
-                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+                ys = CreateLogNormalDistributions(rat);
             }
             else if (rat.ErrorTypesId == ErrorType.NORMAL)
             {
-                List<IDistribution> ys = new List<IDistribution>();
-                for (int i = 0; i < rat.NumberOfPoints; i++)
-                {
-                    ys.Add(new Normal(flows[i], rat.GlobalStdDev));
-                }
-                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+                ys = CreateNormalDistributions(rat);
             }
             else if (rat.ErrorTypesId == ErrorType.TRIANGULAR)
             {
-                List<IDistribution> ys = new List<IDistribution>();
-                for (int i = 0; i < rat.NumberOfPoints; i++)
-                {
-                    ys.Add(new Triangular(rat.GlobalStdDevLow, flows[i], rat.GlobalStdDevHigh));
-                }
-                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+                ys = CreateTriangularDistributions(rat);
             }
             else if (rat.ErrorTypesId == ErrorType.UNIFORM)
             {
-                List<IDistribution> ys = new List<IDistribution>();
-                for (int i = 0; i < rat.NumberOfPoints; i++)
-                {
-                    ys.Add(new Uniform(rat.GlobalStdDevLow, rat.GlobalStdDevHigh));
-                }
-                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+                ys = CreateUniformDistributions(rat);
             }
             else if (rat.ErrorTypesId == ErrorType.NONE)
             {
-                List<IDistribution> ys = new List<IDistribution>();
-                for (int i = 0; i < rat.NumberOfPoints; i++)
-                {
-                    ys.Add(new Deterministic(flows[i]));
-                }
-                upd = new UncertainPairedData(stages, ys.ToArray(), xLabel, yLabel, name, "", -1);
+                ys = CreateDeterministicDistributions(rat);
             }
-            return upd;
+
+            return new UncertainPairedData(rat.GetStage(), ys.ToArray(), "Stage", "Flow", "Rating", "", -1);
         }
+
+        private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                if (rat.UsesGlobalError)
+                {
+                    ys.Add(new LogNormal(rat.GetDischarge()[i], rat.GlobalStdDevLog));
+                }
+                else
+                {
+                    ys.Add(new LogNormal(rat.GetDischarge()[i], rat.IndividualLogStDevs[i]));
+                }
+            }
+            return ys;
+        }
+
+        private static List<IDistribution> CreateNormalDistributions(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                if (rat.UsesGlobalError)
+                {
+                    ys.Add(new Normal(rat.GetDischarge()[i], rat.GlobalStdDev));
+                }
+                else
+                {
+                    ys.Add(new Normal(rat.GetDischarge()[i], rat.IndividualStDevs[i]));
+                }
+            }
+            return ys;
+        }
+        private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                if (rat.UsesGlobalError)
+                {
+                    ys.Add(new Triangular(rat.GlobalStdDevLow, rat.GetDischarge()[i], rat.GlobalStdDevHigh));
+                }
+                else
+                {
+                    ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetDischarge()[i], rat.IndividualHighStDevs[i]));
+                }
+            }
+            return ys;
+        }
+
+        private static List<IDistribution> CreateUniformDistributions(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                if (rat.UsesGlobalError)
+                {
+                    ys.Add(new Uniform(rat.GlobalStdDevLow, rat.GlobalStdDevHigh));
+                }
+                else
+                {
+                    ys.Add(new Uniform(rat.IndividualLowStDevs[i], rat.IndividualHighStDevs[i]));
+                }
+            }
+            return ys;
+        }
+        private static List<IDistribution> CreateDeterministicDistributions(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                ys.Add(new Deterministic(rat.GetDischarge()[i]));
+            }
+            return ys;
+        }
+        
+
+        
 
 
         #endregion
@@ -219,40 +221,57 @@ namespace ViewModel.Utilities
             return elem;
         }
 
+        private static UncertainPairedData CreateStageDamagePairedData(SingleDamageFunction sdf)
+        {
+            double[] depths = sdf.Depth;
+            double[] damages = sdf.Damage;
+            double[] stDevs = sdf.StdDev;
+
+            ErrorType uncertaintyType = sdf.GetTypeError();
+            List<double> depthsList = new List<double>();
+            List<IDistribution> damagesList = new List<IDistribution>();
+            //stage damage curves can only be deterministic or normal.
+            if (uncertaintyType == ErrorType.NONE)
+            {
+                //create deterministic
+                for (int i = 0; i < sdf.GetNumRows(); i++)
+                {
+                    depthsList.Add(depths[i]);
+                    damagesList.Add(new Deterministic(damages[i]));
+                }
+            }
+            else if (uncertaintyType == ErrorType.NORMAL)
+            {
+                for (int i = 0; i < sdf.GetNumRows(); i++)
+                {
+                    depthsList.Add(depths[i]);
+                    damagesList.Add(new Normal(damages[i], stDevs[i]));
+                }
+            }
+            return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "", -1);
+        }
+
         private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
             List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
             damageReachName = damageReachName.Trim();
             damCat = damCat.Trim();
 
+            UncertainPairedData stageDamagePairedData = CreateStageDamagePairedData(sdf);
+
             StageDamageCurve curve = null;
-            double[] depths = sdf.Depth;
-            double[] damages = sdf.Damage;
-
-            List<double> depthsList = new List<double>();
-            List<double> damagesList = new List<double>();
-            for (int i = 0; i < sdf.GetNumRows(); i++)
-            {
-                depthsList.Add(depths[i]);
-                damagesList.Add(damages[i]);
-            }
-            UncertainPairedData stageDamagePairedData = UncertainPairedDataFactory.CreateDeterminateData(depthsList, damagesList, "Stage", "Damage", "Stage-Damage");
-
             //there should only ever be 0 or 1 impact area elements
             if (impactAreaElements.Count > 0)
             {
                 ObservableCollection<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)impactAreaElements[0]).ImpactAreaRows;
-                ImpactAreaRowItem selectedRow = null;
 
                 //does this curve's damage reach equal an existing impact area?
-                bool impactAreaMatches = false;
                 foreach (ImpactAreaRowItem row in impactAreaRows)
                 {
                     //the damage reach name needs to match an existing impact area to be included.
                     //message user if it does not.
                     if (row.Name.Equals(damageReachName))
                     {
-                        impactAreaMatches = true;
                         curve = new StageDamageCurve(row, damCat, stageDamagePairedData);
                         break;
                     }
@@ -293,29 +312,7 @@ namespace ViewModel.Utilities
         {
             string pysr = "(" + pf.PlanName.Trim() + " " + pf.YearName.Trim() + " " + pf.StreamName.Trim() + " " + pf.DamageReachName.Trim() + ") ";
             return pysr + pf.Description;
-        }
-
-        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
-        {
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            double mean = pf.MomentsLp3[0];
-            double stDev = pf.MomentsLp3[1];
-            double skew = pf.MomentsLp3[2];
-
-            int por = pf.EquivalentLengthOfRecord;
-
-            bool isAnalytical = true;
-            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
-            bool isLogFlow = false;
-
-            //there will be no analytical flows. We just need 
-            List<double> analyticalFlows = new List<double>();
-            List<double> graphicalFlows = new List<double>();
-
-            
-            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows, null);
-        }
+        } 
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
         {
@@ -380,6 +377,28 @@ namespace ViewModel.Utilities
             return elem;
         }
 
+        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            double mean = pf.MomentsLp3[0];
+            double stDev = pf.MomentsLp3[1];
+            double skew = pf.MomentsLp3[2];
+
+            int por = pf.EquivalentLengthOfRecord;
+
+            bool isAnalytical = true;
+            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
+            bool isLogFlow = false;
+
+            //there will be no analytical flows. We just need 
+            List<double> analyticalFlows = new List<double>();
+            List<double> graphicalFlows = new List<double>();
+
+
+            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
+                isLogFlow, analyticalFlows, graphicalFlows, null);
+        }
+
         #endregion
 
         #region inflow outflow
@@ -425,7 +444,6 @@ namespace ViewModel.Utilities
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    //todo: need a log normal
                     ords.Add(new LogNormal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
                 }
             }
@@ -479,44 +497,41 @@ namespace ViewModel.Utilities
             return elem;
         }
 
-        private static IOccupancyType GetFDA2OccupancyType(Importer.OccupancyType ot1)
+        private static IOccupancyType GetFDA2OccupancyType(Importer.OccupancyType importedOT)
         {
             List<string> errorMessages = new List<string>();
-            //translate from old occtype to new occtype
             IOccupancyType ot = OccupancyTypeFactory.Factory();
 
             //what do i need for a new ot
-            ot.Name = ot1.Name;
-            ot.Description = ot1.Description;
-            ot.DamageCategory = DamageCategoryFactory.Factory(ot1.CategoryName);
+            ot.Name = importedOT.Name;
+            ot.Description = importedOT.Description;
+            ot.DamageCategory = DamageCategoryFactory.Factory(importedOT.CategoryName);
 
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
             //this list is in the order of the enum
-            List<UncertainPairedData> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(ot1, errorMessages);
+            List<UncertainPairedData> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(importedOT, errorMessages);
             ot.StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
             ot.ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
             ot.VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
             ot.OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
 
-            //the error distributions are in the following order:
-            //public enum OccTypeStrucComponent { FFLOOR, STRUCTURE, CONTENT, OTHER, AUTO};
-
-            //ffloor and structure 
-            //* normal: make mean = 100
-
-            List<IDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(ot1._ErrorDistribution);
+            List<IDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
+            ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
             ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
             ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
-            ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
             ot.OtherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
-            ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
+            ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
 
             //there is no concept of a value uncertainty type in old FDA, so default to percent of mean
             ot.StructureUncertaintyType = ValueUncertaintyType.PercentOfMean;
             ot.ContentUncertaintyType = ValueUncertaintyType.PercentOfMean;
             ot.VehicleUncertaintyType = ValueUncertaintyType.PercentOfMean;
             ot.OtherUncertaintyType = ValueUncertaintyType.PercentOfMean;
+
+            ot.IsContentRatio = true;
+            ot.IsOtherRatio = true;
+            ot.IsVehicleRatio = true;
 
             ot.CalculateStructureDamage = true;
             ot.CalculateContentDamage = true;
@@ -525,8 +540,38 @@ namespace ViewModel.Utilities
 
             return ot;
         }
-        private static IDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist)
+
+        private static IDistribution TranslateStructureValueUncertainty(ErrorDistribution errorDist)
         {
+            //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
+            double mostLikelyValue = 100;
+            //double mean = errorDist.GetCentralValue();
+            //st dev gets reused as min
+            double stDev = errorDist.GetStdDev();
+            double max = errorDist.GetUpper();
+            ErrorType type = errorDist.GetErrorType();
+            switch (type)
+            {
+                case ErrorType.NONE:
+                    return new Deterministic(mostLikelyValue);
+                case ErrorType.NORMAL:
+                    return new Normal(mostLikelyValue, stDev);
+                case ErrorType.TRIANGULAR:
+                    return new Triangular(stDev, mostLikelyValue, max);
+                case ErrorType.UNIFORM:
+                    return new Uniform(mostLikelyValue, max);
+                case ErrorType.LOGNORMAL:
+                    return new LogNormal(mostLikelyValue, stDev);
+                default:
+                    //something went wrong, lets just make it a constant?
+                    return new Deterministic(mostLikelyValue);
+            }
+        }
+
+        private static IDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
+        {
+            //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
+            //double mostLikelyValue = 100;
             double mean = errorDist.GetCentralValue();
             //st dev gets reused as min
             double stDev = errorDist.GetStdDev();
@@ -535,36 +580,52 @@ namespace ViewModel.Utilities
             switch (type)
             {
                 case ErrorType.NONE:
-                        return new Deterministic(mean);
+                    return new Deterministic(mean);
                 case ErrorType.NORMAL:
-                        return new Normal(mean, stDev);
+                    return new Normal(mean, stDev);
                 case ErrorType.TRIANGULAR:
-                        //The mean is always 100. The importer code has the value at -901 so we hardcode it here.
-                        return new Triangular(100, stDev, max); 
+                    return new Triangular(stDev, mean, max);
                 case ErrorType.UNIFORM:
-                        //todo: there is no lower. What to do?
-                        return new Uniform(mean, max);
+                    return new Uniform(mean, max);
                 case ErrorType.LOGNORMAL:
-                        throw new NotImplementedException();
+                    return new LogNormal(mean, stDev);
                 default:
-                        //todo: do what
-                        //something went wrong, lets just make it a constant?
-                        return new Deterministic(mean);
+                    //something went wrong, lets just make it a constant?
+                    return new Deterministic(mean);
+            }
+        }
+
+        private static IDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist, OccTypeStrucComponent componentType)
+        {
+            switch(componentType)
+            {
+                case OccTypeStrucComponent.FFLOOR:
+                case OccTypeStrucComponent.STRUCTURE:
+                    return TranslateStructureValueUncertainty(errorDist);
+                case OccTypeStrucComponent.CONTENT:
+                case OccTypeStrucComponent.AUTO:
+                case OccTypeStrucComponent.OTHER:
+                    return TranslateRatioValueUncertainty(errorDist);
+                default:
+                    return new Deterministic(0);
             }
         }
         private static List<IDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
         {
             List<IDistribution> ordinates = new List<IDistribution>();
-            foreach (ErrorDistribution errDist in errorDists)
+            if(errorDists.Length >= 5)
             {
-                ordinates.Add(TranslateErrorDistToOrdinate(errDist));
+                ordinates.Add(TranslateErrorDistToOrdinate(errorDists[0], OccTypeStrucComponent.FFLOOR));
+                ordinates.Add(TranslateErrorDistToOrdinate(errorDists[1], OccTypeStrucComponent.STRUCTURE));
+                ordinates.Add(TranslateErrorDistToOrdinate(errorDists[2], OccTypeStrucComponent.CONTENT));
+                ordinates.Add(TranslateErrorDistToOrdinate(errorDists[3], OccTypeStrucComponent.OTHER));
+                ordinates.Add(TranslateErrorDistToOrdinate(errorDists[4], OccTypeStrucComponent.AUTO));
             }
             return ordinates;
         }
 
         private static List<UncertainPairedData> TranslateSingleDamageFunctionToCoordinatesFunctions(Importer.OccupancyType ot, List<string> errorMessages)
-        {
-            
+        {           
             SingleDamageFunction[] singleDamageFunctions = ot._SingleDamageFunction;
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
@@ -694,7 +755,16 @@ namespace ViewModel.Utilities
             {
                 yVals.Add(new Normal(ys[i], stDevs[i]));
             }
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+
+            try
+            { 
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+            }
+            catch (ArgumentException e)
+            {
+                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+                return null;
+            }
         }
 
         private static UncertainPairedData CreateTriangularFunction(string name, List<double> xs, List<double> ys, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
@@ -705,7 +775,15 @@ namespace ViewModel.Utilities
                 yVals.Add(new Triangular(mins[i], ys[i], maxs[i]));
             }
 
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+            try
+            {
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+            }
+            catch (ArgumentException e)
+            {
+                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+                return null;
+            }
         }
 
         private static UncertainPairedData CreateUniformFunction(string name, List<double> xs, List<double> mins, List<double> maxs, StructureValueType structureValueType, List<string> errors)
@@ -716,7 +794,15 @@ namespace ViewModel.Utilities
                 yVals.Add(new Uniform(mins[i], maxs[i]));
             }
 
-            return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+            try
+            {
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+            }
+            catch (ArgumentException e)
+            {
+                errors.Add(CreateFailedCoordFunctionErrorMsg(structureValueType, name, e.Message));
+                return null;
+            }
         }
 
         private static string CreateFailedCoordFunctionErrorMsg(StructureValueType type, string occtypeName, string exceptionMsg)
