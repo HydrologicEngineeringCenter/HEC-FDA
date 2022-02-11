@@ -52,12 +52,12 @@ namespace ViewModel.FrequencyRelationships
             AddActions();
         }
 
-        public AnalyticalFrequencyElement(string xmlString)
+        public AnalyticalFrequencyElement(string name, string description, string xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
-            Name = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.NAME);
-            Description = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.DESCRIPTION);
+            Name = name;
+            Description = description;
             LastEditDate = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.LAST_EDIT_DATE);
             IsAnalytical = (bool)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.IS_ANALYTICAL);
 
@@ -74,6 +74,18 @@ namespace ViewModel.FrequencyRelationships
             IsLogFlow = (bool)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.IS_LOG);
             string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
             AnalyticalFlows = ConvertStringToFlows(flows);
+
+            LogPearson3 lp3 = new LogPearson3();
+            if (IsStandard)
+            {
+                lp3 = new LogPearson3(Mean, StDev, Skew, POR);
+            }
+            else
+            {
+                //this is fit to flow
+                lp3 = (LogPearson3)lp3.Fit(AnalyticalFlows.ToArray());
+            }
+            Curve = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
@@ -109,12 +121,12 @@ namespace ViewModel.FrequencyRelationships
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
             //create save helper
-            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);

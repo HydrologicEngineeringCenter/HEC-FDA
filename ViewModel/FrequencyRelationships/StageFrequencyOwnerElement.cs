@@ -43,7 +43,5 @@ namespace ViewModel.FrequencyRelationships
             throw new NotImplementedException();
         }
         #endregion
-        #region Functions
-        #endregion
     }
 }

@@ -61,9 +61,9 @@ namespace ViewModel.Editors
             if (actionManager != null)
             {
                 SetActionManagerValues();
-                if (actionManager.SaveUndoRedoHelper != null)
+                if (actionManager.SaveHelper != null)
                 {
-                    actionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, elem);
+                    actionManager.SaveHelper.AssignValuesFromElementToEditorAction(this, elem);
                 }
             }
         }

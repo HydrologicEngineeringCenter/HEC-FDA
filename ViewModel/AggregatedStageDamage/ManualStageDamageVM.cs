@@ -82,7 +82,7 @@ namespace ViewModel.AggregatedStageDamage
 
         private UncertainPairedData CreateDefaultCurve()
         {
-            return Utilities.DefaultPairedData.CreateDefaultNormalUncertainPairedData("Stage", "Damage", "testName");
+            return Utilities.UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
         }
 
         private void loadImpactAreas()

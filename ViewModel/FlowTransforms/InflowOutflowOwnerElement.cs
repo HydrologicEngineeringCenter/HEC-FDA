@@ -68,14 +68,14 @@ namespace ViewModel.FlowTransforms
             List<double> ys = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
+            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "Inflow", "Outflow", "Inflow-Outflow");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Inflow", "Outflow", "Inflow-Outflow");
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
 
             string title = "Create Inflow Outflow";

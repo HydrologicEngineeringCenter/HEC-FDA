@@ -1,19 +1,15 @@
 ﻿using DatabaseManager;
-using ViewModel.Inventory;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Inventory;
 using ViewModel.Storage;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class StructureInventoryPersistenceManager : SavingBase, IElementManager
+    public class StructureInventoryPersistenceManager : SavingBase
     {
         public static readonly string STRUCTURE_INVENTORY_TABLE_CONSTANT = "structure_inventory_";
 
@@ -23,7 +19,6 @@ namespace ViewModel.Saving.PersistenceManagers
         public static readonly string NOTES = "Notes";
         public static readonly string OTHER = "Other";
 
-        private const int ID_COL = 0;
         private const int NAME_COL = 1;
         private const int DESC_COL = 2;
         private const int IS_OLD_FDA = 3;
@@ -33,7 +28,6 @@ namespace ViewModel.Saving.PersistenceManagers
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "structure_inventory";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StructureInventoryPersistenceManager");
-
 
         private const string TABLE_NAME = "structure_inventories";
         internal override string ChangeTableConstant
@@ -230,7 +224,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(InventoryElement))
             {
-                SaveNewElement(element);
+                base.SaveNew(element);
             }
         }
  
@@ -238,7 +232,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// Loading a structure inventory does not get all the structure data. It only brings in the name. If you want the structure data
         /// you will need to read it in when you need it. This is happening when adding the structure to the map window.
         /// </summary>
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> structures = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (InventoryElement elem in structures)
@@ -287,7 +281,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -300,7 +294,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
@@ -312,7 +306,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);

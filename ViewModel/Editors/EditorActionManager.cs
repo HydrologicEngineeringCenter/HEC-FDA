@@ -1,9 +1,4 @@
-﻿using ViewModel.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ViewModel.Editors
 {
@@ -11,12 +6,13 @@ namespace ViewModel.Editors
     {
 
         public bool HasSaveHelper { get; set; }
-        public SaveUndoRedoHelper SaveUndoRedoHelper { get; set; }
+        public SaveHelper SaveHelper { get; set; }
 
         public bool HasSiblingRules { get; set; }
-        public BaseFdaElement SiblingElement { get; set; }//this can be a parent element or a sibling
-        //public bool HasCanOpenMultipleTimes { get; set; }
-        //public bool CanOpenMultipleTimes { get; set; }
+
+        //this can be a parent element or a sibling
+        public BaseFdaElement SiblingElement { get; set; }
+
         public bool HasParentGuid { get; set; }
         public Guid ParentGuid { get; set; }
 
@@ -33,31 +29,18 @@ namespace ViewModel.Editors
             
         }
 
-        //public EditorActionManager WithParentGuid(Guid parentGuid)
-        //{
-        //    HasParentGuid = true;
-        //    ParentGuid = parentGuid;
-        //    return this;
-        //}
-        //public EditorActionManager WithCanOpenMultipleTimes(bool canOpenMultipleTimes)
-        //{
-        //    HasCanOpenMultipleTimes = true;
-        //    CanOpenMultipleTimes = canOpenMultipleTimes;
-        //    return this;
-        //}
         public EditorActionManager WithSiblingRules(BaseFdaElement element)
         {
             HasSiblingRules = true;
             SiblingElement = element;
             return this;
         }
-        public EditorActionManager WithSaveUndoRedo(SaveUndoRedoHelper helper)
+        public EditorActionManager WithSaveHelper(SaveHelper helper)
         {
             HasSaveHelper = true;         
-            SaveUndoRedoHelper = helper;
+            SaveHelper = helper;
             return this;
         }
-
 
     }
 }

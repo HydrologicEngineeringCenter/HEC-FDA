@@ -223,9 +223,14 @@ namespace Importer
             wr.Write($"{this.ValueOfOther}{delimt}");
             wr.Write($"{this.ValueOfCar}{delimt}");
             if (this.UsesFirstFloorElev)
+            {
                 wr.Write($"1{delimt}");
+            }
             else
+            {
                 wr.Write($"0{delimt}");
+            }
+
             wr.Write($"{this.ElevationsStructure[(int)ElevationValue.FIRST_FLOOR]}{delimt}");
             wr.Write($"{this.ElevationsStructure[(int)ElevationValue.GROUND]}{delimt}");
             wr.Write($"{this.ElevationsStructure[(int)ElevationValue.DELTAG]}{delimt}");

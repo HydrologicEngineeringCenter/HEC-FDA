@@ -13,14 +13,13 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class OccTypePersistenceManager : SavingBase, IElementManager
+    public class OccTypePersistenceManager : SavingBase
     {
         private const string OCCTYPES_TABLE_NAME = "occupancy_types";
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
         private const int PARENT_IS_SELECTED_COL = 2;
-
 
         //These are the columns for the child table
         private const int GROUP_ID_COL = 0;
@@ -30,34 +29,27 @@ namespace ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 3;
         private const int DAM_CAT_COL = 4;
         private const int FOUND_HT_UNCERTAINTY_TYPE_COL = 5;
-        private const int FOUND_HT_UNCERTAINTY_COL = 6;
-       
+        private const int FOUND_HT_UNCERTAINTY_COL = 6; 
 
         private const int IS_STRUCT_SELECTED_COL = 7;
         private const int VAR_STRUCT_TYPE_COL = 8;
         private const int VAR_STRUCT_VALUE_COL = 9;
         private const int STRUCT_CURVE_COL = 10;
 
-
         private const int IS_CONT_SELECTED_COL = 11;
         private const int VAR_CONT_TYPE_COL = 12;
         private const int VAR_CONT_VALUE_COL = 13;
-        private const int CONTENT_CURVE_COL = 14;
-    
+        private const int CONTENT_CURVE_COL = 14;  
 
         private const int IS_VEH_SELECTED_COL = 15;
         private const int VAR_VEH_TYPE_COL = 16;
         private const int VAR_VEH_VALUE_COL = 17;
         private const int VEHICLE_CURVE_COL = 18;
 
-
         private const int IS_OTHER_SELECTED_COL = 19;
         private const int VAR_OTHER_TYPE_COL = 20;
         private const int VAR_OTHER_VALUE_COL = 21;
         private const int OTHER_CURVE_COL = 22;
-
-
-
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -346,7 +338,7 @@ namespace ViewModel.Saving.PersistenceManagers
             return retval;
         }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
             
@@ -939,7 +931,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             //this will save to the parent table
             //and add the element to the study cache
-            SaveNewElement(element);
+            base.SaveNew(element);
 
             //save to the child table
             SaveNewToOcctypesTable(element);
@@ -1325,9 +1317,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
 
 
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
+        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
         {
-            return new ObservableCollection<FdaLogging.LogItem>();
+            return new ObservableCollection<LogItem>();
         }
 
         /// <summary>
@@ -1337,7 +1329,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(LoggingLevel level, string message, string elementName)
         {
            // int elementId = GetElementId(TableName, elementName);
             //LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -1350,11 +1342,11 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
             //int id = GetElementId(TableName, elementName);
-            //return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
-            return new ObservableCollection<FdaLogging.LogItem>();
+            //return RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+            return new ObservableCollection<LogItem>();
         }
 
         /// <summary>
@@ -1364,11 +1356,11 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
         {
             //int id = GetElementId(TableName, elementName);
-            //return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
-            return new ObservableCollection<FdaLogging.LogItem>();
+            //return RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+            return new ObservableCollection<LogItem>();
 
         }
 

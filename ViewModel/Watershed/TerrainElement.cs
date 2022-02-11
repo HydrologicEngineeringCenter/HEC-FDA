@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ViewModel.Watershed
 {
-    public class TerrainElement : Utilities.ChildElement
+    public class TerrainElement : ChildElement
     {
 
         #region Notes
@@ -42,25 +42,25 @@ namespace ViewModel.Watershed
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON, " -Saving",true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON, " -Saving",true);
             }
             else
             {
-                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON);
 
-                Utilities.NamedAction remove = new Utilities.NamedAction();
+                NamedAction remove = new NamedAction();
                 remove.Header = StringConstants.REMOVE_MENU;
                 remove.Action = RemoveElement;
 
-                Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+                NamedAction renameElement = new NamedAction(this);
                 renameElement.Header = StringConstants.RENAME_MENU;
                 renameElement.Action = Rename;
 
-                Utilities.NamedAction mapWindow = new Utilities.NamedAction();
+                NamedAction mapWindow = new NamedAction();
                 mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
                 mapWindow.Action = AddTerrainToMapWindow;
 
-                List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
+                List<NamedAction> localactions = new List<NamedAction>();
                 localactions.Add(remove);
                 localactions.Add(renameElement);
                 localactions.Add(mapWindow);
@@ -80,8 +80,8 @@ namespace ViewModel.Watershed
 
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
-            RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(_featureHashCode));
-            foreach (Utilities.NamedAction a in Actions)
+            RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(_featureHashCode));
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
@@ -92,7 +92,7 @@ namespace ViewModel.Watershed
         }
         public void removedcallback(OpenGLMapping.FeatureNodeHeader node, bool includeSelected)
         {
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
                 {
@@ -110,11 +110,11 @@ namespace ViewModel.Watershed
             LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(filePath);
 
             OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.Terrain, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-            Utilities.AddGriddedDataEventArgs args = new Utilities.AddGriddedDataEventArgs(r, c);
+            AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
             args.FeatureName = Name;
             AddToMapWindow(this, args);
             _featureHashCode = args.MapFeatureHash;
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
                 {
@@ -133,9 +133,9 @@ namespace ViewModel.Watershed
 
         //public override void Remove(object arg1, EventArgs arg2)
         //{
-        //    if (_Owner.GetType().BaseType == typeof(Utilities.OwnerElement))
+        //    if (_Owner.GetType().BaseType == typeof(OwnerElement))
         //    {
-        //        Utilities.OwnerElement o = (Utilities.OwnerElement)_Owner;
+        //        OwnerElement o = (OwnerElement)_Owner;
         //        o.Elements.Remove(this);
         //        //delete the terrain file.
         //        //System.IO.File.Delete(FilePath);

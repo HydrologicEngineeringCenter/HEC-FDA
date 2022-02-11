@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,8 +12,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-
-    public class IASPersistenceManager : SavingBase, IElementManager
+    public class IASPersistenceManager : SavingBase
     {
         //todo: get rid of the logging stuff once we know what we are doing with logging.
 
@@ -59,9 +57,6 @@ namespace ViewModel.Saving.PersistenceManagers
 
         #endregion
 
-
-
-
         #region utilities
         /// <summary>
         /// Gets the row from the element that will go into the main table.
@@ -89,7 +84,6 @@ namespace ViewModel.Saving.PersistenceManagers
             string xml = (string)rowData[XML_COLUMN];
             return new IASElementSet(xml);
         }
-
 
         #endregion
 
@@ -136,7 +130,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <summary>
         /// Reads the tables and creates all the conditions.
         /// </summary>
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> iasElems = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
             foreach (IASElementSet elem in iasElems)
@@ -185,9 +179,7 @@ namespace ViewModel.Saving.PersistenceManagers
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
-
         #endregion
-
 
         private string WasAnalyticalFrequencyElementModified(IASElementSet iasElems,ChildElement elem, int elemID )
         {

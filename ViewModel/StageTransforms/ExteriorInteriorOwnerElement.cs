@@ -1,6 +1,7 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
@@ -64,18 +65,18 @@ namespace ViewModel.StageTransforms
         {
             List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
             List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
+            CurveEditorVM vm = new CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
             string header = "Create Exterior Interior";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateExteriorInterior");
             Navigate(tab, false, true);
@@ -84,9 +85,9 @@ namespace ViewModel.StageTransforms
         #endregion
         #region Functions
 
-        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            CurveEditorVM editorVM = (CurveEditorVM)vm;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
         }

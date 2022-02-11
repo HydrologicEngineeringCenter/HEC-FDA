@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaLogging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -9,7 +10,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class ImpactAreaPersistenceManager : SavingBase, IElementManager
+    public class ImpactAreaPersistenceManager : SavingBase
     {
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -135,9 +136,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 SaveImpactAreaTable(impactAreaElement);
                 StudyCacheForSaving.AddElement(impactAreaElement);
             }
-        }
-
-        
+        }  
 
         public void Remove(ChildElement element)
         {
@@ -146,8 +145,8 @@ namespace ViewModel.Saving.PersistenceManagers
             RemoveTable(impAreaTable);
             RemoveFromGeopackageTable(impAreaTable);
             StudyCacheForSaving.RemoveElement(element);
-
         }
+
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
             base.SaveExisting(oldElement, elementToSave);
@@ -156,13 +155,12 @@ namespace ViewModel.Saving.PersistenceManagers
                 string oldName = IMPACT_AREA_TABLE_PREFIX + oldElement.Name;
                 string newName = IMPACT_AREA_TABLE_PREFIX + elementToSave.Name;
                 LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
-                myGeoPackWriter.RenameFeatures(oldName, newName);
-                
+                myGeoPackWriter.RenameFeatures(oldName, newName);               
             }
                 UpdateExistingTable((ImpactAreaElement)elementToSave);
         }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> impAreas = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (ImpactAreaElement elem in impAreas)
@@ -171,9 +169,9 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
+        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
         {
-            return new ObservableCollection<FdaLogging.LogItem>();
+            return new ObservableCollection<LogItem>();
         }
 
         /// <summary>
@@ -183,7 +181,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -196,10 +194,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+            return RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
         }
 
         /// <summary>
@@ -209,10 +207,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+            return RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

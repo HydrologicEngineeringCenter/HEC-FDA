@@ -1,19 +1,15 @@
-﻿using ViewModel.Utilities;
-using ViewModel.Watershed;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Utilities;
+using ViewModel.Watershed;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class TerrainElementPersistenceManager : SavingBase, IElementManager
+    public class TerrainElementPersistenceManager : SavingBase
     {
-        private const int ID_COL = 0;
         private const int NAME_COL = 1;
         private const int DESC_COL = 2;
 
@@ -22,7 +18,6 @@ namespace ViewModel.Saving.PersistenceManagers
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "terrain";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("TerrainElementPersistenceManager");
-
 
         private const string TABLE_NAME = "terrains";
         internal override string ChangeTableConstant { get { return "?????"; } }
@@ -37,19 +32,13 @@ namespace ViewModel.Saving.PersistenceManagers
             get { return TableColTypes; }
         }
 
-
-
         public TerrainElementPersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
         #region utilities
-        //public string GetTerrainPathBase()
-        //{
-        //    return Storage.Connection.Instance.TerrainDirectory + "\\";
 
-        //}
         public string OriginalTerrainPath { get; set; }
 
         public override string TableName
@@ -75,9 +64,9 @@ namespace ViewModel.Saving.PersistenceManagers
             return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
         }
 
-        private async void CopyFileOnBackgroundThread(TerrainElement element) //object sender, DoWorkEventArgs e)
+        private async void CopyFileOnBackgroundThread(TerrainElement element)
         {
-            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
+            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
 
             string name = element.Name;
             //remove the temporary node and replace it
@@ -141,10 +130,7 @@ namespace ViewModel.Saving.PersistenceManagers
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                             newElement.Actions = actions;
-                           // newElement.AddToMapWindow
                         });
-                        //System.IO.File.Move(files[0], Storage.Connection.Instance.TerrainDirectory + "\\" + newName);
-
                     }
                     catch (Exception e)
                     {
@@ -160,8 +146,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         #endregion
 
-
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> terrains = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (TerrainElement elem in terrains)
@@ -181,15 +166,10 @@ namespace ViewModel.Saving.PersistenceManagers
             element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
             element.Actions.Clear();
             RemoveTerrainFileOnBackgroundThread((TerrainElement)element);
-            //System.IO.File.Delete(((TerrainElement)element).FileName);
-
         }
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
             RenameTheTerrainFileOnBackgroundThread(oldElement, element);
-            //UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-            //StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
-
             //the path needs to get updated with the new name and set on the new element.
             TerrainElement elem = (TerrainElement)oldElement;
             string originalExtension = System.IO.Path.GetExtension(elem.FileName);
@@ -210,7 +190,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -223,7 +203,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
@@ -235,7 +215,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);

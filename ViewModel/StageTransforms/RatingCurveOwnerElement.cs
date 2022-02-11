@@ -70,29 +70,28 @@ namespace ViewModel.StageTransforms
             List<double> yValues = new List<double>() { 1,2,3,4,5};
 
             //create save helper
-            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager()
+            SaveHelper saveHelper = new SaveHelper( Saving.PersistenceFactory.GetRatingManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xValues,yValues, "Stage", "Flow", "Rating Curve");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
 
             CurveEditorVM vm = new CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
             string header = "Create Rating Curve " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
             Navigate(tab, false, true);          
         }
-
-    
+  
         #endregion
         #region Functions
       
         public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
-            CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            CurveEditorVM editorVM = (CurveEditorVM)vm;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
         }

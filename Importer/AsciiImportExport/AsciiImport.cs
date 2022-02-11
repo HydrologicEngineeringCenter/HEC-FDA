@@ -53,7 +53,6 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
-        public string _FileName;
 
         public enum ImportOptions
         {
@@ -69,7 +68,7 @@ namespace Importer
 
         #endregion
         #region Properties
-        private AsyncLogger _Logger;
+        private readonly AsyncLogger _Logger;
         public bool UsesDollar
         { get; set; }
         #endregion
@@ -88,7 +87,6 @@ namespace Importer
 
         public void ImportAsciiData(string theImportFilename, ImportOptions importOptions)
         {
-            _FileName = Path.GetFileNameWithoutExtension( theImportFilename);
             char delimiterChar = '\t';
 
             FileStream fileStreamImport = File.OpenRead(theImportFilename);
@@ -1864,7 +1862,9 @@ namespace Importer
         protected void FlushProbFunction()
         {
             if (_MustFlushProbFunc)
+            {
                 GlobalVariables.mp_fdaStudy.GetProbabilityFuncList().Add(_FrequencyFunction, _Logger);
+            }
             _MustFlushProbFunc = false;
             _FrequencyFunction.Reset();
         }
@@ -2235,7 +2235,9 @@ namespace Importer
         protected void FlushLevee()
         {
             if (_MustFlushLevee)
+            {
                 GlobalVariables.mp_fdaStudy.GetLeveeList().Add(_Levee, _Logger, ImportOptions.ImportEverything);
+            }
             _MustFlushLevee = false;
             _Levee.Reset();
         }

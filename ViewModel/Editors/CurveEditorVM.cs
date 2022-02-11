@@ -7,7 +7,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Editors
 {
-    public class CurveEditorVM : BaseLoggingEditorVM, ISaveUndoRedo
+    public class CurveEditorVM : BaseLoggingEditorVM, ISaveWhileEditing
     {
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
@@ -19,37 +19,6 @@ namespace ViewModel.Editors
 
         #region properties
         
-        public int UndoRowsSelectedIndex
-        {
-            set
-            {
-                if (value == -1)
-                {
-                    return;
-                }
-                ChildElement prevElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInUndoList(value, CurrentElement);
-                AssignValuesFromElementToEditor(prevElement);
-                SavingText = CreateLastSavedText(prevElement);
-                UndoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-            }
-        }
-
-        public int RedoRowsSelectedIndex
-        {
-            set
-            {
-                if (value == -1)
-                {
-                    return;
-                }
-                ChildElement nextElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInRedoList(value, CurrentElement);
-                AssignValuesFromElementToEditor(nextElement);
-                SavingText = CreateLastSavedText(nextElement);
-
-                RedoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
-            }
-        }
-
         public UncertainPairedData Curve
         {
             get { return _Curve; }
@@ -101,34 +70,10 @@ namespace ViewModel.Editors
             return "Last Saved: " + elem.LastEditDate;
         }
 
-        public  void Undo()
-        {
-            ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
-            if (prevElement != null)
-            {
-                AssignValuesFromElementToEditor(prevElement);
-                SavingText = CreateLastSavedText(prevElement);
-                ReloadMessages();
-                //EditorVM.UpdateChartViewModel();
-            }
-        }
-
-        public  void Redo()
-        {
-            ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
-            if(nextElement != null)
-            {
-                AssignValuesFromElementToEditor(nextElement);
-                SavingText = CreateLastSavedText(nextElement);
-                ReloadMessages();
-                //EditorVM.UpdateChartViewModel();
-            }
-        }
-
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
             //todo: this will be the curve from the table.
-            return DefaultPairedData.CreateDefaultDeterminateUncertainPairedData("", "", ""); 
+            return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", ""); 
         }
 
         public virtual void SaveWhileEditing()
@@ -145,23 +90,20 @@ namespace ViewModel.Editors
 
             try
             {
-                //try to construct the new coordinates function
                 UncertainPairedData coordFunc = GetCoordinatesFunction();
                 EditorVM.Function = coordFunc;
-                //IFunction function = coordFunc.Sample(.5);
-
                 Curve = coordFunc;
             }
             catch(Exception ex)
             {
-                //we were unsuccessful in creating the coordinates function                
+                //we were unsuccessful in creating the function                
                 TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, ex.Message));
                 UpdateMessages(true);
                 return;
             }
 
             InTheProcessOfSaving = true;
-            ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
+            ChildElement elementToSave = ActionManager.SaveHelper.CreateElementFromEditorAction(this);
             if(CurrentElement == null)
             {
                 CurrentElement = elementToSave;
@@ -172,7 +114,7 @@ namespace ViewModel.Editors
             CurrentElement.LastEditDate = LastEditDate;
             elementToSave.Curve = Curve;
 
-            ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
+            ActionManager.SaveHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
             //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
             // i need to update those properties here
             AssignValuesFromEditorToCurrentElement();
@@ -190,7 +132,7 @@ namespace ViewModel.Editors
 
         private void AssignValuesFromEditorToCurrentElement()
         {
-            ActionManager.SaveUndoRedoHelper.AssignValuesFromEditorToElementAction(this,CurrentElement);
+            ActionManager.SaveHelper.AssignValuesFromEditorToElementAction(this,CurrentElement);
         }
 
         /// <summary>
@@ -200,7 +142,7 @@ namespace ViewModel.Editors
         /// <param name="element"></param>
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
-            ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
+            ActionManager.SaveHelper.AssignValuesFromElementToEditorAction(this, element);
         }
 
         #endregion

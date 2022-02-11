@@ -1,10 +1,8 @@
 ﻿using HEC.Plotting.SciChart2D.Charts;
-using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using ViewModel.AggregatedStageDamage;
-using ViewModel.Utilities;
 
 namespace View.AggregatedStageDamage
 {
@@ -53,6 +51,8 @@ namespace View.AggregatedStageDamage
                 int rowIndex = vm.SelectedRowIndex;
                 if (rowIndex >= 0)
                 {
+                    //todo: leaving this here until we get the new table and plot control
+
                     //CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
 
                     //SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);

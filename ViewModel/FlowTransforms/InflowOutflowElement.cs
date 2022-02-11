@@ -58,12 +58,12 @@ namespace ViewModel.FlowTransforms
                 "Openning " + Name + " for editing.",nameof(InflowOutflowElement)));
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
+            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this,  "Inflow", "Outflow", "Inflow - Outflow", actionManager);
@@ -92,7 +92,6 @@ namespace ViewModel.FlowTransforms
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
             AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != "test", "Name cannot be test.", false);
         }
 
         public override bool Equals(object obj)

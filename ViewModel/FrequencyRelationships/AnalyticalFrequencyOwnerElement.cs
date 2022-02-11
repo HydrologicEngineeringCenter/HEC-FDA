@@ -66,18 +66,18 @@ namespace ViewModel.FrequencyRelationships
         public void AddNewFlowFrequencyCurve(object arg1, EventArgs arg2)
         {
             //create save helper
-            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+                .WithSaveHelper(saveHelper)
                .WithSiblingRules(this);
 
             List<double> xs = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> ys = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             
-            UncertainPairedData defaultCurve = DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys,"Flow", "Frequency", "Flow-Frequency Function");
+            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys,"Flow", "Frequency", "Flow-Frequency Function");
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             string header = "Import Frequency";

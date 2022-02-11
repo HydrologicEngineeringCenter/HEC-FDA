@@ -15,6 +15,8 @@ namespace View.StageTransforms
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            //todo: leaving this here until we get the new table and plot control
+
             //CurveEditorVM vm = DataContext as CurveEditorVM;
             //if ( vm != null)
             //{

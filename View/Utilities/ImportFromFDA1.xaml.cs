@@ -34,7 +34,7 @@ namespace View.Utilities
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = Window.GetWindow(this);
+            Window window = Window.GetWindow(this);
             window.Close();
         }
     }

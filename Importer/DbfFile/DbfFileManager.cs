@@ -599,7 +599,7 @@ namespace Importer
             }
             else if (mp_fileNameBase == "PROBDATA")
             {
-                ProbabitityDataTable pdt = new ProbabitityDataTable();
+                ProbabilityDataTable pdt = new ProbabilityDataTable();
                 pdt.ProcessProbdataDataTable(dataTable);
             }
             else if (mp_fileNameBase == "RATDATA")

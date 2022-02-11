@@ -1,7 +1,7 @@
-﻿using Model;
-using paireddata;
+﻿using paireddata;
 using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
@@ -45,10 +45,7 @@ namespace ViewModel.StageTransforms
             localActions.Add(renameElement);
 
             Actions = localActions;
-
         }
-
-
 
         #endregion
         #region Voids
@@ -62,26 +59,24 @@ namespace ViewModel.StageTransforms
         }
 
         public void EditRatingCurve(object arg1, EventArgs arg2)
-        {
-           
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetRatingManager(),this, (editorVM) => CreateElementFromEditor(editorVM),
+        {       
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetRatingManager(),this, (editorVM) => CreateElementFromEditor(editorVM),
                 (editorVM, element) => AssignValuesFromElementToCurveEditor(editorVM, element),
                  (editorVM, elem) => AssignValuesFromCurveEditorToElement(editorVM, elem));
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
            
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);
+            CurveEditorVM vm = new CurveEditorVM(this,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   
-        }
-     
+        }   
 
-        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            CurveEditorVM editorVM = (CurveEditorVM)vm;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
             return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
@@ -92,9 +87,7 @@ namespace ViewModel.StageTransforms
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
 
-
         #endregion
-
 
         public override bool Equals(object obj)
         {
@@ -118,7 +111,6 @@ namespace ViewModel.StageTransforms
                 {
                     retval = false;
                 }
-
             }
             else
             {
@@ -126,6 +118,5 @@ namespace ViewModel.StageTransforms
             }
             return retval;
         }
-
     }
 }

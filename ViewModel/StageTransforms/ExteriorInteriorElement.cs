@@ -1,53 +1,46 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 11:31:34 AM)]
-    public class ExteriorInteriorElement : Utilities.ChildElement
+    public class ExteriorInteriorElement : ChildElement
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 6/8/2017 11:31:34 AM
         #endregion
         #region Fields
-        private const string _TableConstant = "Exterior Interior - ";
-
         #endregion
-        #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return _TableConstant;
-        //}
-
-        
+        #region Properties   
         #endregion
         #region Constructors
         public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, UncertainPairedData exteriorInteriorCurve):base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
 
             Description = desc;
             if (Description == null) Description = "";
             Curve = exteriorInteriorCurve;
 
-            Utilities.NamedAction editExteriorInteriorCurve = new Utilities.NamedAction();
+            NamedAction editExteriorInteriorCurve = new NamedAction();
             editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve...";
             editExteriorInteriorCurve.Action = EditExteriorInteriorCurve;
 
-            Utilities.NamedAction removeExteriorInteriorCurve = new Utilities.NamedAction();
+            NamedAction removeExteriorInteriorCurve = new NamedAction();
             removeExteriorInteriorCurve.Header = StringConstants.REMOVE_MENU;
             removeExteriorInteriorCurve.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new NamedAction(this);
             renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(editExteriorInteriorCurve);
             localActions.Add(removeExteriorInteriorCurve);
             localActions.Add(renameElement);
@@ -66,50 +59,31 @@ namespace ViewModel.StageTransforms
             Saving.PersistenceFactory.GetExteriorInteriorManager().Remove(this);
         }
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
-        {
-          
+        {         
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper)
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
-              // .WithParentGuid(this.GUID)
-              // .WithCanOpenMultipleTimes(false);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
-            //StudyCache.AddSiblingRules(vm, this);
+            CurveEditorVM vm = new CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
-            Navigate(tab, false, true);
-            
+            Navigate(tab, false, true);         
         }
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            CurveEditorVM editorVM = (CurveEditorVM)vm;
 
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-            //return null;
         }
         #endregion
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return GetTableConstant() + LastEditDate;
-        //    }
-        //}
-
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
 
         public override bool Equals(object obj)
         {
@@ -146,7 +120,7 @@ namespace ViewModel.StageTransforms
             return retval;
         }
 
-        //todo: Refactor: commenting out
+        //todo: do i need this?
         private bool areCurvesEqual(UncertainPairedData curve2)
         {
             bool retval = true;
@@ -187,24 +161,5 @@ namespace ViewModel.StageTransforms
 
             return retval;
         }
-
-        //public override void Save()
-        //{
-        //    _Curve.toSqliteTable(TableName);
-        //}
-
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name, LastEditDate, Description, ExteriorInteriorCurve.Distribution };
-        //}
-
-        //public override bool SavesToRow()
-        //{
-        //    return true;
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return true;
-        //}
     }
 }

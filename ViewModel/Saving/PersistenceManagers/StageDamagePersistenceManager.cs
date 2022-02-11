@@ -1,18 +1,13 @@
-﻿
-using Importer;
-using paireddata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Xml.Linq;
 using ViewModel.AggregatedStageDamage;
-using ViewModel.ImpactArea;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class StageDamagePersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
+    public class StageDamagePersistenceManager : SavingBase
     {
         private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
@@ -29,7 +24,6 @@ namespace ViewModel.Saving.PersistenceManagers
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StageDamagePersistenceManager");
         private const String STAGE_DAMAGE_CURVES_TAG = "StageDamageCurves";
 
-
         private const string TABLE_NAME = "stage_damage_relationships";
         internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
         private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves" };
@@ -45,38 +39,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override string TableName { get { return TABLE_NAME; } }
 
-        /// <summary>
-        /// The name of the change table that will hold the various states of elements.
-        /// </summary>
-        public override string ChangeTableName { get { return "stage_damage_changes"; } }
-
-        /// <summary>
-        /// Names of the columns in the change table
-        /// </summary>
-        public override string[] ChangeTableColumnNames
-        {
-            get
-            {
-                return new string[]{ ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves", STATE_INDEX_COL_NAME };
-            }
-        }
-        /// <summary>
-        /// Types for the columns in the change table
-        /// </summary>
-        public override Type[] ChangeTableColumnTypes
-        {
-            get
-            {
-                return new Type[] {typeof(int), typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string), typeof(int) };
-            }
-        }
-
         public override string[] TableColumnNames
         {
-            get
-            {
-                return TableColNames;
-            }
+            get{ return TableColNames;}
         }
 
         public StageDamagePersistenceManager(Study.FDACache studyCache)
@@ -114,9 +79,7 @@ namespace ViewModel.Saving.PersistenceManagers
             if (element.GetType() == typeof(AggregatedStageDamageElement))
             {
                 //save to parent table
-                SaveNewElement(element);
-                //save to change table
-                SaveToChangeTable(element);
+                base.SaveNew(element);
                 //log message
                 Log(FdaLogging.LoggingLevel.Info, "Created new stage damage curve: " + element.Name, element.Name);
             }
@@ -125,16 +88,8 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             base.Remove(element);
         }
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
-        {
-            if (elementToSave.Description == null) 
-            { 
-                elementToSave.Description = ""; 
-            }
-            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-        }
 
-        public void Load()
+        public override void Load()
         {
             List<ChildElement> stageDamages = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (AggregatedStageDamageElement elem in stageDamages)
@@ -155,7 +110,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="message"></param>
         /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
             int elementId = GetElementId(TableName, elementName);
             LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
@@ -168,7 +123,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
@@ -180,7 +135,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="level"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
@@ -199,22 +154,6 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.Curve, ((AggregatedStageDamageElement)element).Method,
                 element.Curve.WriteToXML().ToString(),
                 assetType};
-        }
-
-        public override object[] GetRowDataForChangeTable(ChildElement elem)
-        {
-            AggregatedStageDamageElement element = (AggregatedStageDamageElement)elem;
-            if (element.Description == null)
-            {
-                element.Description = "";
-            }
-
-            int elemId = GetElementId(TableName, element.Name);
-            //the new stateId will be one higher than the max that is in the table already.
-            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-               element.IsManual, element.SelectedWSE, element.SelectedStructures, WriteCurvesToXML(element.Curves), stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
