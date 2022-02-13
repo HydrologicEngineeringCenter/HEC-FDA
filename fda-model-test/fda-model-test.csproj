@@ -20,4 +20,8 @@
     <ProjectReference Include="..\fda-model\fda-model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
 </Project>

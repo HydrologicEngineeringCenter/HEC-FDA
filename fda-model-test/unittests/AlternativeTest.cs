@@ -19,7 +19,6 @@ namespace fda_model_test
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static string description = "description";
         static int id = 1;
         /// <summary>
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
@@ -43,7 +42,7 @@ namespace fda_model_test
             {
                 stages[i] = new Statistics.Distributions.Uniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, xLabel, yLabel, name, description);
+            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, xLabel, yLabel, name);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
             IDistribution[] baseDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -56,8 +55,8 @@ namespace fda_model_test
                 futureDamages[i] = new Statistics.Distributions.Uniform(0, 1200000 * i, 10);
             }
             string damageCategory = "residential";
-            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, xLabel, yLabel, name, description, damageCategory);
-            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, xLabel, yLabel, name, description, damageCategory);
+            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, xLabel, yLabel, name, damageCategory);
+            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, xLabel, yLabel, name, damageCategory);
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();

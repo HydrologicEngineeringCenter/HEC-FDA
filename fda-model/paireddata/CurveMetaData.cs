@@ -11,7 +11,6 @@ namespace paireddata
         public string XLabel { get; }
         public string YLabel { get; }
         public string Name { get; }
-        public string Description { get; }
         public string Category { get; }
         public bool IsNull { get; }
         public CurveTypesEnum CurveType {get;}
@@ -21,7 +20,6 @@ namespace paireddata
             XLabel = "xlabel";
             YLabel = "ylabel";
             Name = "made up";
-            Description = "TODO: implement me";
             Category = "residential";
             IsNull = true;
         }
@@ -31,7 +29,6 @@ namespace paireddata
             XLabel = "xlabel";
             YLabel = "ylabel";
             Name = "made up";
-            Description = "TODO: implement me";
             Category = category;
             IsNull = false;
         }
@@ -41,27 +38,24 @@ namespace paireddata
             XLabel = "xlabel";
             YLabel = "ylabel";
             Name = "made up";
-            Description = "TODO: implement me";
             Category = category;
             IsNull=false;
         }
-        public CurveMetaData(string xlabel, string ylabel, string name, string description, string category)
+        public CurveMetaData(string xlabel, string ylabel, string name, string category)
         {
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Description = description;
             Category = category;
             IsNull = false;
         }
-        public CurveMetaData(string xlabel, string ylabel, string name, string description)
+        public CurveMetaData(string xlabel, string ylabel, string name)
         {
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Description = description;
             Category = "AGAIG";
             IsNull = false;
         }

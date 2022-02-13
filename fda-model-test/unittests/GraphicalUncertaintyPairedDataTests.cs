@@ -14,7 +14,6 @@ namespace fda_model_test.unittests
         private static string xLabel = "x label";
         private static string yLabel = "y label";
         private static string name = "name";
-        private static string description = "description";
 
         [Theory]
         [InlineData(new double[] { .99, .5, .1, .02, .01, .002 }, new double[] { 500, 2000, 34900, 66900, 86000, 146000 }, 5, true, false)] //Based on Elkhorn River at Highway 91 Dodge County FIS 2008
@@ -23,7 +22,7 @@ namespace fda_model_test.unittests
        20, false, false)]
         public void ReturnsDistributionsWhereMeanAndConfidenceLimitsAreMonotonicallyIncreasing(double[] probs, double[] flows, int erl, bool usingFlows, bool flowsNotLogged)
         {
-            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, xLabel, yLabel, name, description);
+            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, xLabel, yLabel, name, usingFlows: usingFlows, flowsAreNotLogged: flowsNotLogged);
             List<IPairedData> pairedDataList = new List<IPairedData>();
             IPairedData lowerPairedData = graphical.SamplePairedData(0.05);
             pairedDataList.Add(lowerPairedData);

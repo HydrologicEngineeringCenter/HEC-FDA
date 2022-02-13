@@ -22,10 +22,16 @@ namespace fda_model_test
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static string description = "description";
         static int id = 1;
 
-
+        /// <summary>
+        /// The calculations for the results in the test below can be found at https://docs.google.com/spreadsheets/d/1UUNgHYq1_zV4ifnu0iVmiPOzL2szyBCX/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        /// <param name="thresholdValue"></param>
+        /// <param name="years"></param>
+        /// <param name="iterations"></param>
+        /// <param name="expectedAEP"></param>
+        /// <param name="expectedLTEP"></param>
         [Theory]
         [InlineData(9200, 80, 1, .08, 0.998732271693343)]
         [InlineData(9400, 60, 1, .06, 0.975584185541488)]
@@ -41,7 +47,7 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -49,7 +55,7 @@ namespace fda_model_test
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
 
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description,  "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name,  "residential");
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
@@ -95,7 +101,7 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -103,7 +109,7 @@ namespace fda_model_test
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
 
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             IDistribution[] failureProbs = new IDistribution[StageForNonLeveeFailureProbs.Length];
@@ -111,7 +117,7 @@ namespace fda_model_test
             {
                 failureProbs[i] = new Deterministic(ProbLeveeFailure[i]);
             }
-            UncertainPairedData leveeCurve = new UncertainPairedData(StageForNonLeveeFailureProbs, failureProbs, xLabel, yLabel, name, description);
+            UncertainPairedData leveeCurve = new UncertainPairedData(StageForNonLeveeFailureProbs, failureProbs, xLabel, yLabel, name);
 
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
@@ -153,7 +159,7 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -161,7 +167,7 @@ namespace fda_model_test
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
 
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
