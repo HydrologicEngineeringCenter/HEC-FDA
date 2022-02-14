@@ -8,7 +8,7 @@ namespace View.Utilities
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((bool)value == true)
+            if (System.Convert.ToBoolean(value) == true)
             {
                 return "Unidentifiable";
             }

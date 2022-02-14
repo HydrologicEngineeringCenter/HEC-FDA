@@ -58,26 +58,23 @@ namespace ViewModel.Utilities
         private static UncertainPairedData CreateRatingPairedData(RatingFunction rat)
         {
             List<IDistribution> ys = new List<IDistribution>();
-
-            if (rat.ErrorTypesId == ErrorType.LOGNORMAL)
+            switch(rat.ErrorTypesId)
             {
-                ys = CreateLogNormalDistributions(rat);
-            }
-            else if (rat.ErrorTypesId == ErrorType.NORMAL)
-            {
-                ys = CreateNormalDistributions(rat);
-            }
-            else if (rat.ErrorTypesId == ErrorType.TRIANGULAR)
-            {
-                ys = CreateTriangularDistributions(rat);
-            }
-            else if (rat.ErrorTypesId == ErrorType.UNIFORM)
-            {
-                ys = CreateUniformDistributions(rat);
-            }
-            else if (rat.ErrorTypesId == ErrorType.NONE)
-            {
-                ys = CreateDeterministicDistributions(rat);
+                case ErrorType.LOGNORMAL:
+                    ys = CreateLogNormalDistributions(rat);
+                    break;
+                case ErrorType.NORMAL:
+                    ys = CreateNormalDistributions(rat);
+                    break;
+                case ErrorType.TRIANGULAR:
+                    ys = CreateTriangularDistributions(rat);
+                    break;
+                case ErrorType.UNIFORM:
+                    ys = CreateUniformDistributions(rat);
+                    break;
+                case ErrorType.NONE:
+                    ys = CreateDeterministicDistributions(rat);
+                    break;
             }
 
             return new UncertainPairedData(rat.GetStage(), ys.ToArray(), "Stage", "Flow", "Rating", "", -1);
@@ -550,22 +547,26 @@ namespace ViewModel.Utilities
             double stDev = errorDist.GetStdDev();
             double max = errorDist.GetUpper();
             ErrorType type = errorDist.GetErrorType();
+            IDistribution dist = new Deterministic(mostLikelyValue);
             switch (type)
             {
                 case ErrorType.NONE:
-                    return new Deterministic(mostLikelyValue);
+                    dist = new Deterministic(mostLikelyValue);
+                    break;
                 case ErrorType.NORMAL:
-                    return new Normal(mostLikelyValue, stDev);
+                    dist = new Normal(mostLikelyValue, stDev);
+                    break;
                 case ErrorType.TRIANGULAR:
-                    return new Triangular(stDev, mostLikelyValue, max);
+                    dist = new Triangular(stDev, mostLikelyValue, max);
+                    break;
                 case ErrorType.UNIFORM:
-                    return new Uniform(mostLikelyValue, max);
+                    dist = new Uniform(mostLikelyValue, max);
+                    break;
                 case ErrorType.LOGNORMAL:
-                    return new LogNormal(mostLikelyValue, stDev);
-                default:
-                    //something went wrong, lets just make it a constant?
-                    return new Deterministic(mostLikelyValue);
+                    dist = new LogNormal(mostLikelyValue, stDev);
+                    break;
             }
+            return dist;
         }
 
         private static IDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
@@ -577,38 +578,44 @@ namespace ViewModel.Utilities
             double stDev = errorDist.GetStdDev();
             double max = errorDist.GetUpper();
             ErrorType type = errorDist.GetErrorType();
+            IDistribution dist = new Deterministic(mean);
             switch (type)
             {
                 case ErrorType.NONE:
-                    return new Deterministic(mean);
+                    dist = new Deterministic(mean);
+                    break;
                 case ErrorType.NORMAL:
-                    return new Normal(mean, stDev);
+                    dist = new Normal(mean, stDev);
+                    break;
                 case ErrorType.TRIANGULAR:
-                    return new Triangular(stDev, mean, max);
+                    dist = new Triangular(stDev, mean, max);
+                    break;
                 case ErrorType.UNIFORM:
-                    return new Uniform(mean, max);
+                    dist = new Uniform(mean, max);
+                    break;
                 case ErrorType.LOGNORMAL:
-                    return new LogNormal(mean, stDev);
-                default:
-                    //something went wrong, lets just make it a constant?
-                    return new Deterministic(mean);
+                    dist = new LogNormal(mean, stDev);
+                    break;
             }
+            return dist;
         }
 
         private static IDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist, OccTypeStrucComponent componentType)
         {
+            IDistribution dist = new Deterministic(0);
             switch(componentType)
             {
                 case OccTypeStrucComponent.FFLOOR:
                 case OccTypeStrucComponent.STRUCTURE:
-                    return TranslateStructureValueUncertainty(errorDist);
+                    dist = TranslateStructureValueUncertainty(errorDist);
+                    break;
                 case OccTypeStrucComponent.CONTENT:
                 case OccTypeStrucComponent.AUTO:
                 case OccTypeStrucComponent.OTHER:
-                    return TranslateRatioValueUncertainty(errorDist);
-                default:
-                    return new Deterministic(0);
+                    dist = TranslateRatioValueUncertainty(errorDist);
+                    break;
             }
+            return dist;
         }
         private static List<IDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
         {

@@ -243,12 +243,10 @@ namespace ViewModel.AggregatedStageDamage
         private bool AreManualRowsUniqueCombinations()
         {
             bool AreManualRowsUniqueCombinations = true;
-            //HashSet<String> rowPairs = new HashSet<string>();
             ObservableCollection<ManualStageDamageRowItem> rows = Rows;
             HashSet<int> repeatRows = new HashSet<int>();
             foreach (ManualStageDamageRowItem row in rows)
             {
-
                 foreach (ManualStageDamageRowItem row2 in rows)
                 {
                     //The "!=" below weeds out the row that is itself
@@ -269,6 +267,5 @@ namespace ViewModel.AggregatedStageDamage
             }
             return AreManualRowsUniqueCombinations;
         }
-
     }
 }
