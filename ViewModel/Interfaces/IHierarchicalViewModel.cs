@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using ViewModel.Implementations;
+﻿using HEC.MVVMFramework.ViewModel.Implementations;
+using System.Collections.Generic;
 
-namespace ViewModel.Interfaces
+namespace HEC.MVVMFramework.ViewModel.Interfaces
 {
-    public interface IHierarchicalViewModel: IBaseViewModel, IExpandable, IHaveActionList, INavigate, IDisplayToUI, Base.Interfaces.IValidate
+    public interface IHierarchicalViewModel : IBaseViewModel, IExpandable, IHaveActionList, INavigate, IDisplayToUI, Base.Interfaces.IValidate
     {
         IHierarchicalViewModel Parent { get; set; }
         System.Collections.ObjectModel.ObservableCollection<IHierarchicalViewModel> Children { get; }

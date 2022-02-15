@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
-using ViewModel.Events;
+using HEC.MVVMFramework.ViewModel.Enumerations;
+using HEC.MVVMFramework.ViewModel.Events;
+using HEC.MVVMFramework.ViewModel.Interfaces;
+using HEC.MVVMFramework.ViewModel.Validation;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class ValidatingBaseViewModel: Implementations.BaseViewModel, Base.Interfaces.IValidate, ViewModel.Interfaces.INavigate
+    public class ValidatingBaseViewModel : BaseViewModel, Base.Interfaces.IValidate, INavigate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         public event NavigationEventHandler NavigationEvent;
@@ -41,7 +44,7 @@ namespace ViewModel.Implementations
         }
         public ValidatingBaseViewModel()
         {
-            ErrorsAction = new NamedAction() { Action = ShowErrors , IsEnabled = HasErrors};
+            ErrorsAction = new NamedAction() { Action = ShowErrors, IsEnabled = HasErrors };
         }
         public void AddMultiPropertyRule(List<string> properties, IRule rule)
         {
@@ -55,7 +58,7 @@ namespace ViewModel.Implementations
                 }
                 else
                 {
-                    Validation.PropertyRule r = new Validation.PropertyRule(rule);
+                    PropertyRule r = new PropertyRule(rule);
                     _RuleMap.Add(prop, r);
                 }
             }
@@ -70,7 +73,7 @@ namespace ViewModel.Implementations
             }
             else
             {
-                Validation.PropertyRule r = new Validation.PropertyRule(rule);
+                PropertyRule r = new PropertyRule(rule);
                 _RuleMap.Add(property, r);
             }
         }
@@ -78,8 +81,8 @@ namespace ViewModel.Implementations
         {
             if (HasErrors)
             {
-                ViewModel.Implementations.ErrorReportViewModel ervm = new ErrorReportViewModel();
-                Navigate(this, new NavigationEventArgs(ervm, Enumerations.NavigationOptionsEnum.AsNewWindow, "Errors Exist"));
+                ErrorReportViewModel ervm = new ErrorReportViewModel();
+                Navigate(this, new NavigationEventArgs(ervm, NavigationOptionsEnum.AsNewWindow, "Errors Exist"));
                 ervm.SetErrors(_RuleMap);
             }
 
@@ -136,7 +139,7 @@ namespace ViewModel.Implementations
                 {
                     ErrorLevel changed = _errorLevel ^ prevErrorState;
                     NotifyPropertyChanged(nameof(HasErrors));
-                    if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
+                    if (ErrorsAction is IDisplayToUI) { ((IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
                     foreach (ErrorLevel e in Enum.GetValues(typeof(ErrorLevel)))
                     {
                         if ((changed & e) > 0)
@@ -159,7 +162,7 @@ namespace ViewModel.Implementations
                 if (_errorLevel != prevErrorState)
                 {
                     NotifyPropertyChanged(nameof(HasErrors));//errors no longer exist
-                    if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
+                    if (ErrorsAction is IDisplayToUI) { ((IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
                 }
             }
         }
@@ -195,10 +198,10 @@ namespace ViewModel.Implementations
                         _errorLevel = currState;
                     }
                 }
-                if ((currState ^ prevState) > 0) { NotifyPropertyChanged(nameof(HasErrors)); if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; } }
+                if ((currState ^ prevState) > 0) { NotifyPropertyChanged(nameof(HasErrors)); if (ErrorsAction is IDisplayToUI) { ((IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; } }
             }
         }
-        protected override void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
+        protected override void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             if (_RuleMap.ContainsKey(propertyName)) { Validate(propertyName); }
             base.NotifyPropertyChanged(propertyName);
@@ -206,7 +209,7 @@ namespace ViewModel.Implementations
 
         public void Navigate(object sender, NavigationEventArgs e)
         {
-            NavigationEvent?.Invoke(sender,e);
+            NavigationEvent?.Invoke(sender, e);
         }
     }
 }

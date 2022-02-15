@@ -1,12 +1,12 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
 using System;
 
-namespace Model.Messaging
+namespace HEC.MVVMFramework.Model.Messaging
 {
-    public class TimeStampedErrorMessage: ErrorMessage
+    public class TimeStampedErrorMessage : ErrorMessage
     {
         protected readonly DateTime _DateTime;
-        public TimeStampedErrorMessage(string message, ErrorLevel errorLevel): base(message,errorLevel)
+        public TimeStampedErrorMessage(string message, ErrorLevel errorLevel) : base(message, errorLevel)
         {
             _DateTime = DateTime.Now;
         }

@@ -1,13 +1,8 @@
 ﻿using HEC.MVVMFramework.Base.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Interfaces
+namespace HEC.MVVMFramework.ViewModel.Interfaces
 {
-    public interface IDisplayableNamedAction: IDisplayToUI, INamedAction
+    public interface IDisplayableNamedAction : IDisplayToUI, INamedAction
     {
     }
 }

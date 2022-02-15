@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
     public class NamedAction : Interfaces.IDisplayableNamedAction, INotifyPropertyChanged
     {
@@ -38,7 +38,7 @@ namespace ViewModel.Implementations
         public NamedAction()
         {
             Name = "Default Header Name";
-            _Action = (object sender, EventArgs e) => { throw new NotImplementedException("Implement an action on " + Name); };
+            _Action = (sender, e) => { throw new NotImplementedException("Implement an action on " + Name); };
         }
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

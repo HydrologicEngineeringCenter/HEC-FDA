@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using HEC.MVVMFramework.Base.Enumerations;
@@ -10,7 +7,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Implementations;
 
-namespace View.Implementations
+namespace HEC.MVVMFramework.View.Implementations
 {
     public sealed class TextFileMessageSubscriber : IRecieveMessages, IDisposable
     {
@@ -22,8 +19,8 @@ namespace View.Implementations
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
-        private string _filePath = System.IO.Path.GetTempFileName();
-        System.IO.StreamWriter sw;
+        private string _filePath = Path.GetTempFileName();
+        StreamWriter sw;
         //private System.Collections.Generic.List<System.ComponentModel.BackgroundWorker> _bwList;
         private System.ComponentModel.BackgroundWorker _bw;
         private System.Collections.Concurrent.ConcurrentQueue<IMessage> _messages;
@@ -57,7 +54,7 @@ namespace View.Implementations
             set
             {
                 _filePath = value;
-                if (!System.IO.File.Exists(_filePath))
+                if (!File.Exists(_filePath))
                 {
                     sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
                 }
@@ -83,7 +80,7 @@ namespace View.Implementations
             _messages = new System.Collections.Concurrent.ConcurrentQueue<IMessage>();
             //register
             MessageHub.Subscribe(this);
-            if (!System.IO.File.Exists(_filePath)) { System.IO.File.Create(_filePath); }
+            if (!File.Exists(_filePath)) { File.Create(_filePath); }
             sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
             sw.AutoFlush = true;
             _bw = new System.ComponentModel.BackgroundWorker();
@@ -101,7 +98,7 @@ namespace View.Implementations
                     if (!_bw.IsBusy) _bw.RunWorkerAsync();
                 }
 
-                
+
             }
         }
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -110,7 +107,7 @@ namespace View.Implementations
         }
         private void DeQueue()
         {
-            System.Text.StringBuilder s = new StringBuilder();
+            StringBuilder s = new StringBuilder();
             IMessage imess;
             while (_messages.TryDequeue(out imess))
             {

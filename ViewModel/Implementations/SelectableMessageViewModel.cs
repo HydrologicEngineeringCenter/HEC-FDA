@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using HEC.MVVMFramework.Base.Attributes;
 using HEC.MVVMFramework.Base.Enumerations;
@@ -11,9 +9,9 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Implementations;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class SelectableMessageViewModel : IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
+    public class SelectableMessageViewModel : IRecieveMessages, INotifyPropertyChanged
     {
         private IMessage _message;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -134,7 +132,7 @@ namespace ViewModel.Implementations
         {
             updateReporeters();
         }
-        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
+        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -153,7 +151,7 @@ namespace ViewModel.Implementations
             {
                 Count = 1;
                 Type t = o.GetType();
-                System.Reflection.TypeInfo ti = t.GetTypeInfo();
+                TypeInfo ti = t.GetTypeInfo();
                 ReporterDisplayNameAttribute rdma = (ReporterDisplayNameAttribute)ti.GetCustomAttribute(typeof(ReporterDisplayNameAttribute));
                 if (rdma != null)
                 {

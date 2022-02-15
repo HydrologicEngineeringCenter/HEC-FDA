@@ -1,6 +1,6 @@
 ﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using ViewModel.Events;
+using HEC.MVVMFramework.ViewModel.Events;
 
 namespace HEC.MVVMFramework.View.Windows
 {

@@ -1,5 +1,4 @@
-﻿
-namespace ViewModel.Interfaces
+﻿namespace HEC.MVVMFramework.ViewModel.Interfaces
 {
     public interface IExpandable
     {

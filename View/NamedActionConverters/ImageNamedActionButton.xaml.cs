@@ -1,4 +1,5 @@
 ﻿using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -77,9 +78,9 @@ namespace HEC.MVVMFramework.View.NamedActionConverters
                 return;
             }else
             {
-                if(na is ViewModel.Implementations.NamedAction)
+                if(na is NamedAction)
                 {
-                    ViewModel.Implementations.NamedAction vna = na as ViewModel.Implementations.NamedAction;
+                    NamedAction vna = na as NamedAction;
                     if (!vna.IsVisible)
                     {
                         btn.Visibility = Visibility.Collapsed;

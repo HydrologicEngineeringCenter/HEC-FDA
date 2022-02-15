@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class SubscriberMessageViewModel : IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
+    public class SubscriberMessageViewModel : IRecieveMessages, INotifyPropertyChanged
     {
         private IMessage _message;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -70,7 +66,7 @@ namespace ViewModel.Implementations
                 _messageCount = value; NotifyPropertyChanged();
             }
         }
-        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
+        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

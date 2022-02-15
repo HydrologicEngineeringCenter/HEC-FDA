@@ -1,8 +1,9 @@
 ﻿using System;
-namespace ViewModel.Enumerations
+
+namespace HEC.MVVMFramework.ViewModel.Enumerations
 {
     [Flags]
-    public enum NavigationOptionsEnum: byte
+    public enum NavigationOptionsEnum : byte
     {
         Unassigned = 0x00,
 
