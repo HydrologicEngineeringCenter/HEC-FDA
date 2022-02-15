@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,10 +11,10 @@ namespace ViewModel.Implementations
 {
     public class ErrorReportViewModel : Implementations.BaseViewModel
     {
-        private Base.Interfaces.IMessage _message;
+        private IMessage _message;
         private int _messageCount = 100;
         private System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
-        public Base.Interfaces.IMessage IMessage
+        public IMessage IMessage
         {
             get { return _message; }
             set { _message = value; NotifyPropertyChanged(); }
@@ -28,16 +30,16 @@ namespace ViewModel.Implementations
                 _messageCount = value; NotifyPropertyChanged();
             }
         }
-        public void SetErrors(Dictionary<string, Base.Interfaces.IPropertyRule> ruleMap)
+        public void SetErrors(Dictionary<string, IPropertyRule> ruleMap)
         {
-            Base.Interfaces.IMessage imsg = null;
+            IMessage imsg = null;
             int messageCount = ruleMap.Values.Count();
             MessageCounter = messageCount;
 
-            foreach (Base.Interfaces.IPropertyRule r in ruleMap.Values)
+            foreach (IPropertyRule r in ruleMap.Values)
             {
                 string msg = "";
-                if (r.ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (r.ErrorLevel > ErrorLevel.Unassigned)
                 {
 
                     foreach (string m in r.Errors)

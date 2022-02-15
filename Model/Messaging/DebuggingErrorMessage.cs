@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace Model.Messaging
         private readonly string _callingMethod;
         private readonly string _callingClass;
         private readonly int _callingLine;
-        public DebuggingErrorMessage(string message, Base.Enumerations.ErrorLevel errorLevel, [System.Runtime.CompilerServices.CallerMemberNameAttribute] string memberName = "", [System.Runtime.CompilerServices.CallerFilePathAttribute] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumberAttribute] int lineNo = 0) : base(message,errorLevel)
+        public DebuggingErrorMessage(string message, ErrorLevel errorLevel, [System.Runtime.CompilerServices.CallerMemberNameAttribute] string memberName = "", [System.Runtime.CompilerServices.CallerFilePathAttribute] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumberAttribute] int lineNo = 0) : base(message,errorLevel)
         {
             _callingMethod = memberName;
             _callingClass = filePath.Split(new char[] { '\\' }).Last();

@@ -1,6 +1,8 @@
-﻿using ViewModel.Events;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using ViewModel.Events;
 
-namespace View.Windows
+namespace HEC.MVVMFramework.View.Windows
 {
     public class Window: System.Windows.Window
     {
@@ -26,13 +28,13 @@ namespace View.Windows
             {
                 ((ViewModel.Interfaces.IUpdatePlot)bvm).UpdatePlotEvent += Vm_UpdatePlot;
             }
-            if(bvm is Base.Interfaces.IReportMessage)
+            if(bvm is IReportMessage)
             {
-                Base.Implementations.MessageHub.Register(bvm as Base.Interfaces.IReportMessage);
+                MessageHub.Register(bvm as IReportMessage);
             }
-            if (bvm is Base.Interfaces.IRecieveMessages)
+            if (bvm is IRecieveMessages)
             {
-                Base.Implementations.MessageHub.Subscribe(bvm as Base.Interfaces.IRecieveMessages);
+                MessageHub.Subscribe(bvm as IRecieveMessages);
             }
             if (bvm is ViewModel.Interfaces.IClose)
             {

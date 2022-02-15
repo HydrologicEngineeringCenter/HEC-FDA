@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace ViewModel.Validation
 {
-    public class PropertyRule : Base.Interfaces.IPropertyRule
+    public class PropertyRule : IPropertyRule
     {
         private List<IRule> _rules = new List<IRule>();
         private List<string> _errors;
-        private Base.Enumerations.ErrorLevel _errorLevel;
+        private ErrorLevel _errorLevel;
         public IEnumerable<string> Errors
         {
             get
@@ -24,7 +25,7 @@ namespace ViewModel.Validation
                 return _rules;
             }
         }
-        public Base.Enumerations.ErrorLevel ErrorLevel
+        public ErrorLevel ErrorLevel
         {
             get
             {
@@ -49,7 +50,7 @@ namespace ViewModel.Validation
         public void Update()
         {
             _errors = new List<string>();
-            _errorLevel = Base.Enumerations.ErrorLevel.Unassigned;
+            _errorLevel = ErrorLevel.Unassigned;
             try
             {
                 foreach (IRule r in _rules)
@@ -57,7 +58,7 @@ namespace ViewModel.Validation
                     if (!r.Expression())
                     {
                         _errors.Add(r.Message);
-                        if(_errorLevel > Base.Enumerations.ErrorLevel.Unassigned) {
+                        if(_errorLevel > ErrorLevel.Unassigned) {
                              _errorLevel = _errorLevel | r.ErrorLevel;
                         }else
                         {
@@ -70,7 +71,7 @@ namespace ViewModel.Validation
             catch (Exception e)
             {
                 _errors.Add(e.Message);
-                _errorLevel = Base.Enumerations.ErrorLevel.Fatal;
+                _errorLevel = ErrorLevel.Fatal;
                 //NotifyPropertyChanged(nameof(Error));
                 //if(HasError != prevState) { NotifyPropertyChanged(nameof(HasError)); }
             }

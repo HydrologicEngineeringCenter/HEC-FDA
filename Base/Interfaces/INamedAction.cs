@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Base.Interfaces
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface INamedAction : INamed
     {

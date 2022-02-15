@@ -1,27 +1,28 @@
 ﻿using Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
-namespace Base.Implementations
+namespace HEC.MVVMFramework.Base.Implementations
 {
-    public class Validation: IValidate
+    public class Validation : IValidate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         private Dictionary<string, IPropertyRule> _RuleMap = new Dictionary<string, IPropertyRule>();
         private List<string> _Errors;
         private INamedAction _ErrorsAction;
-        private Base.Enumerations.ErrorLevel _errorLevel;
+        private ErrorLevel _errorLevel;
         public bool HasErrors
         {
             get
             {
-                return _errorLevel > Base.Enumerations.ErrorLevel.Unassigned;
+                return _errorLevel > ErrorLevel.Unassigned;
             }
         }
-        public Base.Interfaces.INamedAction ErrorsAction
+        public INamedAction ErrorsAction
         {
             get { return _ErrorsAction; }
             set { _ErrorsAction = value; }
@@ -33,7 +34,7 @@ namespace Base.Implementations
                 return _RuleMap;
             }
         }
-        public Base.Enumerations.ErrorLevel ErrorLevel
+        public ErrorLevel ErrorLevel
         {
             get { return _errorLevel; }
         }
@@ -77,7 +78,7 @@ namespace Base.Implementations
             if (propertyName == null) return null;
             if (_RuleMap.ContainsKey(propertyName))
             {
-                if (_RuleMap[propertyName].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (_RuleMap[propertyName].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     return _RuleMap[propertyName].Errors;
                 }
@@ -99,14 +100,14 @@ namespace Base.Implementations
         public void Validate()
         {
             _Errors = new List<string>();
-            Base.Enumerations.ErrorLevel prevErrorState = _errorLevel;
-            _errorLevel = Base.Enumerations.ErrorLevel.Unassigned;
+            ErrorLevel prevErrorState = _errorLevel;
+            _errorLevel = ErrorLevel.Unassigned;
             foreach (string s in _RuleMap.Keys)
             {
                 _RuleMap[s].Update();
-                if (_RuleMap[s].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (_RuleMap[s].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                    if (_errorLevel > ErrorLevel.Unassigned)
                     {
                         _errorLevel = _RuleMap[s].ErrorLevel;
                     }
@@ -117,14 +118,14 @@ namespace Base.Implementations
                     _Errors.AddRange(_RuleMap[s].Errors);
                 }
             }
-            if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+            if (_errorLevel > ErrorLevel.Unassigned)
             {
                 //errors exist
                 if (_errorLevel != prevErrorState)
                 {
-                    Base.Enumerations.ErrorLevel changed = _errorLevel ^ prevErrorState;
+                    ErrorLevel changed = _errorLevel ^ prevErrorState;
                     //NotifyPropertyChanged(nameof(HasErrors));
-                    foreach (Base.Enumerations.ErrorLevel e in Enum.GetValues(typeof(Base.Enumerations.ErrorLevel)))
+                    foreach (ErrorLevel e in Enum.GetValues(typeof(ErrorLevel)))
                     {
                         if ((changed & e) > 0)
                         {
@@ -151,14 +152,14 @@ namespace Base.Implementations
         }
         public void Validate(string propertyName)
         {
-            Base.Enumerations.ErrorLevel prevState = _RuleMap[propertyName].ErrorLevel;
+            ErrorLevel prevState = _RuleMap[propertyName].ErrorLevel;
             _RuleMap[propertyName].Update();
             if (prevState != _RuleMap[propertyName].ErrorLevel)
             {
                 //a change occured.
 
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-                Base.Enumerations.ErrorLevel currState = _RuleMap[propertyName].ErrorLevel;
+                ErrorLevel currState = _RuleMap[propertyName].ErrorLevel;
 
                 //check if it is the biggest one.
                 bool biggerErrorsExist = false;
@@ -171,8 +172,8 @@ namespace Base.Implementations
                 }
                 if (!biggerErrorsExist)
                 {
-                    if (currState == Base.Enumerations.ErrorLevel.Unassigned) _errorLevel = currState;
-                    if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                    if (currState == ErrorLevel.Unassigned) _errorLevel = currState;
+                    if (_errorLevel > ErrorLevel.Unassigned)
                     {
                         _errorLevel = _errorLevel | currState;
                     }
@@ -181,7 +182,8 @@ namespace Base.Implementations
                         _errorLevel = currState;
                     }
                 }
-                if ((currState ^ prevState) > 0) {
+                if ((currState ^ prevState) > 0)
+                {
                     //NotifyPropertyChanged(nameof(HasErrors)); 
                 }
             }

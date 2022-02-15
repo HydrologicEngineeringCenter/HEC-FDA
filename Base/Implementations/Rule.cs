@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
+using System;
 
-namespace Base.Implementations
+namespace HEC.MVVMFramework.Base.Implementations
 {
-    public class Rule : Base.Interfaces.IRule
+    public class Rule : IRule
     {
         private readonly Func<bool> _expression;
         private readonly string _message;
-        private readonly Base.Enumerations.ErrorLevel _errorLevel;
+        private readonly ErrorLevel _errorLevel;
         public Func<bool> Expression
         {
             get
@@ -23,14 +23,14 @@ namespace Base.Implementations
                 return _message;
             }
         }
-        public Base.Enumerations.ErrorLevel ErrorLevel
+        public ErrorLevel ErrorLevel
         {
             get { return _errorLevel; }
         }
-        public Rule(Func<bool> expr, string msg) : this(expr, msg, Base.Enumerations.ErrorLevel.Info)
+        public Rule(Func<bool> expr, string msg) : this(expr, msg, ErrorLevel.Info)
         {
         }
-        public Rule(Func<bool> expr, string msg, Base.Enumerations.ErrorLevel errorLevel)
+        public Rule(Func<bool> expr, string msg, ErrorLevel errorLevel)
         {
             _expression = expr;
             _message = msg;

@@ -1,4 +1,5 @@
-﻿
+﻿using HEC.MVVMFramework.Base.Interfaces;
+
 namespace Base.Interfaces
 {
     public interface IUndoRedo: ITrackChanges

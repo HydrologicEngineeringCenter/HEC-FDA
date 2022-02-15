@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Base.Interfaces;
+﻿using HEC.MVVMFramework.Base.Interfaces;
 
-namespace Base.Implementations
+namespace HEC.MVVMFramework.Base.Implementations
 {
-    public class Message : Interfaces.IMessage
+    public class Message : IMessage
     {
         private readonly string _message;
         string IMessage.Message

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace View.UserControls
+namespace HEC.MVVMFramework.View.UserControls
 {
     public partial class TextBoxFileBrowserControl : UserControl
     {

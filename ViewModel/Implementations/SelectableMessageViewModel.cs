@@ -4,17 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Base.Enumerations;
-using Base.Events;
 using System.Reflection;
+using HEC.MVVMFramework.Base.Attributes;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace ViewModel.Implementations
 {
-    public class SelectableMessageViewModel : Base.Interfaces.IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
+    public class SelectableMessageViewModel : IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
     {
-        private Base.Interfaces.IMessage _message;
+        private IMessage _message;
         public event PropertyChangedEventHandler PropertyChanged;
-        private Base.Enumerations.ErrorLevel _filterLevel = ErrorLevel.Unassigned;
+        private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageType = null;
         private int _messageCount = 10;
         private Type _senderType = null;
@@ -24,7 +27,7 @@ namespace ViewModel.Implementations
         {
             get { return _reporters; }
         }
-        public Base.Interfaces.IMessage IMessage
+        public IMessage IMessage
         {
             get { return _message; }
             set { _message = value; NotifyPropertyChanged(); }
@@ -95,8 +98,8 @@ namespace ViewModel.Implementations
         }
         public SelectableMessageViewModel()
         {
-            Base.Implementations.MessageHub.ReporterAdded += MessageHub_ReporterAdded;
-            Base.Implementations.MessageHub.ReporterRemoved += MessageHub_ReporterRemoved;
+            MessageHub.ReporterAdded += MessageHub_ReporterAdded;
+            MessageHub.ReporterRemoved += MessageHub_ReporterRemoved;
             MessageHub_ReporterAdded(null, null);
 
         }
@@ -104,9 +107,9 @@ namespace ViewModel.Implementations
         {
             _reporters = new List<TypeRepresentation>();
             TypeRepresentation nullType = new TypeRepresentation();
-            nullType.Count = Base.Implementations.MessageHub.Reporters.Count();
+            nullType.Count = MessageHub.Reporters.Count();
             _reporters.Add(nullType);
-            foreach (Base.Interfaces.IReportMessage r in Base.Implementations.MessageHub.Reporters)
+            foreach (IReportMessage r in MessageHub.Reporters)
             {
                 TypeRepresentation newTr = new TypeRepresentation(r);
                 bool hasMatch = false;
@@ -151,7 +154,7 @@ namespace ViewModel.Implementations
                 Count = 1;
                 Type t = o.GetType();
                 System.Reflection.TypeInfo ti = t.GetTypeInfo();
-                Base.Attributes.ReporterDisplayNameAttribute rdma = (Base.Attributes.ReporterDisplayNameAttribute)ti.GetCustomAttribute(typeof(Base.Attributes.ReporterDisplayNameAttribute));
+                ReporterDisplayNameAttribute rdma = (ReporterDisplayNameAttribute)ti.GetCustomAttribute(typeof(ReporterDisplayNameAttribute));
                 if (rdma != null)
                 {
                     Name = rdma.DisplayName;

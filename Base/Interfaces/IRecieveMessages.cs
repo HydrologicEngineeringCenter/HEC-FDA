@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using System;
 
-namespace Base.Interfaces
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface IRecieveMessages
     {
-        Enumerations.ErrorLevel FilterLevel { get; }
+        ErrorLevel FilterLevel { get; }
         Type SenderTypeFilter { get; }
         Type MessageTypeFilter { get; }
-        void RecieveMessage(object sender, Events.MessageEventArgs e);
+        void RecieveMessage(object sender, MessageEventArgs e);
     }
 }

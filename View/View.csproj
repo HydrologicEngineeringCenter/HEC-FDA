@@ -9,12 +9,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>HenryGeorgist.Framework.View</PackageId>
+		<PackageId>HEC.MVVMFramework.View</PackageId>
 		<VersionPrefix>1.0.0</VersionPrefix>
 		<Description>A library providing functionality for MVVM Views</Description>
 		<Authors>Will Lehman</Authors>
 		<RepositoryUrl>https://github.com/HenryGeorgist/Framework</RepositoryUrl>
 		<DebugType>embedded</DebugType>
+		<RootNamespace>HEC.MVVMFramework.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

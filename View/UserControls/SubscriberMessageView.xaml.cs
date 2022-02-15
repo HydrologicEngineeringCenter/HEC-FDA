@@ -1,29 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Base.Enumerations;
-using Base.Events;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 
-namespace View.UserControls
+namespace HEC.MVVMFramework.View.UserControls
 {
     /// <summary>
     /// Interaction logic for SubscriberMessageView.xaml
     /// </summary>
     public partial class SubscriberMessageView : UserControl
     {
-        public static readonly DependencyProperty FilterLevelProperty = DependencyProperty.Register(nameof(FilterLevel), typeof(Base.Enumerations.ErrorLevel), typeof(SubscriberMessageView), new PropertyMetadata(Base.Enumerations.ErrorLevel.Unassigned, FilterLevelChangedCallback));
+        public static readonly DependencyProperty FilterLevelProperty = DependencyProperty.Register(nameof(FilterLevel), typeof(ErrorLevel), typeof(SubscriberMessageView), new PropertyMetadata(ErrorLevel.Unassigned, FilterLevelChangedCallback));
         public static readonly DependencyProperty SenderTypeFilterProperty = DependencyProperty.Register(nameof(SenderTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, SenderTypeFilterChangedCallback));
         public static readonly DependencyProperty MessageTypeFilterProperty = DependencyProperty.Register(nameof(MessageTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, MessageTypeFilterChangedCallback));
         public static readonly DependencyProperty MessageCountProperty = DependencyProperty.Register(nameof(MessageCount), typeof(int), typeof(SubscriberMessageView), new PropertyMetadata(100, MessageCountChangedCallback));
@@ -38,7 +26,7 @@ namespace View.UserControls
         {
             get
             {
-                return (Base.Enumerations.ErrorLevel)GetValue(FilterLevelProperty);
+                return (ErrorLevel)GetValue(FilterLevelProperty);
             }
             set
             {
@@ -74,7 +62,7 @@ namespace View.UserControls
             _vm.FilterLevel = FilterLevel;
             _vm.SenderTypeFilter = SenderTypeFilter;
             _vm.MessageTypeFilter = MessageTypeFilter;
-            Base.Implementations.MessageHub.Subscribe(_vm);
+            MessageHub.Subscribe(_vm);
         }
         private static void FilterLevelChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

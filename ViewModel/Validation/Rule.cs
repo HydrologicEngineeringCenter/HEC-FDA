@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace ViewModel.Validation
 {
-    public class Rule : Base.Interfaces.IRule
+    public class Rule : IRule
     {
         private readonly Func<bool> _expression;
         private readonly string _message;
-        private readonly Base.Enumerations.ErrorLevel _errorLevel;
+        private readonly ErrorLevel _errorLevel;
         public Func<bool> Expression
         {
             get
@@ -25,14 +27,14 @@ namespace ViewModel.Validation
                 return _message;
             }
         }
-        public Base.Enumerations.ErrorLevel ErrorLevel
+        public ErrorLevel ErrorLevel
         {
             get { return _errorLevel; }
         }
-        public Rule(Func<bool> expr, string msg):this(expr,msg,Base.Enumerations.ErrorLevel.Info)
+        public Rule(Func<bool> expr, string msg):this(expr,msg, ErrorLevel.Info)
         {
         }
-        public Rule(Func<bool> expr, string msg, Base.Enumerations.ErrorLevel errorLevel)
+        public Rule(Func<bool> expr, string msg, ErrorLevel errorLevel)
         {
             _expression = expr;
             _message = msg;
