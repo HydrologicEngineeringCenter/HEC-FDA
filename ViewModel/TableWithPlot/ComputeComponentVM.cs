@@ -3,15 +3,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Xml.Linq;
-using fda_viewmodel.Data;
-using fda_viewmodel.Data.Base;
-using fda_viewmodel.Data.Interfaces;
+using ViewModel.TableWithPlot.Data;
+using ViewModel.TableWithPlot.Data.Base;
+using ViewModel.TableWithPlot.Data.Interfaces;
 using paireddata;
-using fda_viewmodel.Rows;
+using ViewModel.TableWithPlot.Rows;
 
-namespace fda_viewmodel
+namespace ViewModel.TableWithPlot
 {
-    public class ComputeComponentVM : ViewModel.Implementations.ValidatingBaseViewModel
+    public class ComputeComponentVM : BaseViewModel//ViewModel.Implementations.ValidatingBaseViewModel
     {
         #region Backing Fields
         private string _name;

@@ -1,6 +1,6 @@
-﻿using fda_viewmodel.Data.Interfaces;
-using fda_viewmodel.Rows.Attributes;
-using fda_viewmodel.Rows.Base;
+﻿using ViewModel.TableWithPlot.Data.Interfaces;
+using ViewModel.TableWithPlot.Rows.Attributes;
+using ViewModel.TableWithPlot.Rows.Base;
 using OxyPlot;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +8,8 @@ using System.Xml.Linq;
 using ViewModel.Events;
 using ViewModel.Implementations;
 
-namespace fda_viewmodel
+
+namespace ViewModel.TableWithPlot
 {
     public class TableWithPlotVM : ValidatingBaseViewModel, ViewModel.Interfaces.IUpdatePlot
     {
@@ -153,25 +154,25 @@ namespace fda_viewmodel
         }
         private void LoadFromXML(XElement ele)
         {
-            _reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);
-            var elements = ele.Descendants();
-            XElement computeCompElement = elements.First();
-            string componentType = (computeCompElement.Attribute("Name").Value);
-            switch (componentType)
-            {
-                case "Fragility Curve":
-                    _computeComponentVM = new FragilityComponentVM(computeCompElement);
-                    break;
-                case "Rating Curve":
-                    _computeComponentVM = new ComputeComponentVM(computeCompElement);
-                    break;
-                case "Graphical Flow Frequency":
-                    _computeComponentVM = new GraphicalVM(computeCompElement);
-                    break;
-                case "Stage-Damage Curve":
-                    _computeComponentVM = new ComputeComponentVM(computeCompElement);
-                    break;
-            }
+            //_reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);
+            //var elements = ele.Descendants();
+            //XElement computeCompElement = elements.First();
+            //string componentType = (computeCompElement.Attribute("Name").Value);
+            //switch (componentType)
+            //{
+            //    case "Fragility Curve":
+            //        _computeComponentVM = new FragilityComponentVM(computeCompElement);
+            //        break;
+            //    case "Rating Curve":
+            //        _computeComponentVM = new ComputeComponentVM(computeCompElement);
+            //        break;
+            //    case "Graphical Flow Frequency":
+            //        _computeComponentVM = new GraphicalVM(computeCompElement);
+            //        break;
+            //    case "Stage-Damage Curve":
+            //        _computeComponentVM = new ComputeComponentVM(computeCompElement);
+            //        break;
+            //}
         }
         private void AddHandlers() //Make sure new rows get added to this.
         {

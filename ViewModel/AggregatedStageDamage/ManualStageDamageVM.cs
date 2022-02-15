@@ -204,7 +204,7 @@ namespace ViewModel.AggregatedStageDamage
             foreach (ManualStageDamageRowItem r in Rows)
             {
                 UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
-                if (coordFunc.xs().Length < 2)
+                if (coordFunc.Xvals.Length < 2)
                 {
                     rowsThatFailed.Add(r.ID.ToString());
                 }

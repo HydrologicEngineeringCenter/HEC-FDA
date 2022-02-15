@@ -422,7 +422,7 @@ namespace ViewModel.Utilities
         {
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
 
-            UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "", -1);
+            UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), func);
         }
 
@@ -673,7 +673,7 @@ namespace ViewModel.Utilities
             List<double> xs = new List<double>() { 1, 2, 3 };
             List<Deterministic> ys = new List<Deterministic>() { new Deterministic(1),new Deterministic(2),new Deterministic(3) };
             //todo: not sure these labels are correct.
-            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "", -1);
+            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "");
         }
 
         private static bool IsEmptyFunction(SingleDamageFunction function)
@@ -910,7 +910,7 @@ namespace ViewModel.Utilities
                 List<double> defaultXs = new List<double>() {lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
                 List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };                
 
-                func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
+                func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 message += "No failure function was detected.\nCreating default failure function at top of levee.";
             }
             else
@@ -920,7 +920,7 @@ namespace ViewModel.Utilities
                 {
                     yVals.Add(new Deterministic(d));
                 }
-                func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
+                func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 isDefault = false;
             }
 
@@ -954,7 +954,7 @@ namespace ViewModel.Utilities
                 xs.Add( xy.GetX());
                 ys.Add(new Deterministic(xy.GetY()));
             }
-            UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "", -1);
+            UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), func);
             return elem;
         }

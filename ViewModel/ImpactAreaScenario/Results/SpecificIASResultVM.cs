@@ -112,7 +112,8 @@ namespace ViewModel.ImpactAreaScenario.Results
             //todo: After talking with Richard it sounds like this default threshold might not
             //always be a constant value (it might depend on the study?). Update this when the new
             //model and compute are finished.
-            Threshold defaultMetric = new Threshold(-1, ThresholdEnum.ExteriorStage, 5);
+            Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
+            Threshold defaultMetric = new Threshold(-1,convergenceCriteria, ThresholdEnum.ExteriorStage, 5);
             comboItems.Add(new ThresholdComboItem(defaultMetric));
             foreach(ThresholdRowItem row in thresholdRows)
             {              

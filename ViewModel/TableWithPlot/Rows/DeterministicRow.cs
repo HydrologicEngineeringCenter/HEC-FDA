@@ -1,0 +1,49 @@
+﻿using Base.Enumerations;
+using ViewModel.Validation;
+using Statistics.Distributions;
+using ViewModel.TableWithPlot.Rows.Base;
+using System.Collections.Generic;
+using ViewModel.TableWithPlot.Rows.Attributes;
+
+namespace ViewModel.TableWithPlot.Rows
+{
+    public class DeterministicRow : SequentialRow
+    {
+        [DisplayAsColumn("Y Value")]
+        [DisplayAsLine("Y Value", Enumerables.ColorEnum.Red)]
+        public double Value
+        {
+            get
+            {
+                return ((Deterministic)Y).Value;
+            }
+            set
+            {
+                Y = new Deterministic(value);
+                NotifyPropertyChanged();
+            }
+        }
+        protected override List<string> YMinProperties { 
+            get
+            {
+                return new List<string>() { nameof(Value)};
+            } 
+        }
+        protected override List<string> YMaxProperties
+        {
+            get
+            {
+                return new List<string>() { nameof(Value) };
+            }
+        }
+
+        public DeterministicRow(double x, double y): base(x, new Deterministic(y))
+        {
+            AddSinglePropertyRule(nameof(Value), new Rule( () => { if (PreviousRow == null) return true; return Value > ((DeterministicRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((DeterministicRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
+        }
+
+    }
+}
+
+

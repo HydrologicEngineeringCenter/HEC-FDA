@@ -83,7 +83,7 @@ namespace ViewModel.GeoTech
                 List<double> defaultXs = new List<double>() { Elevation, Elevation + .000000000000001 };
                 List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
 
-                return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "", -1);
+                return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
             }
             else
             {

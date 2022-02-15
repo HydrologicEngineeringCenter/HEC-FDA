@@ -532,7 +532,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 xs[i] = i;
                 ys[i] = new Normal(i, 0);
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, "Stage", "Damage", "Stage-Damage", "", -1);
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, "Stage", "Damage", "Stage-Damage", "");
             return curve;
 
         }

@@ -16,7 +16,7 @@ namespace ViewModel.Utilities
                 xs[i] = i;
                 ys[i] = new Normal(i, 0);
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "", -1);
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "");
             return curve;
         }
         public static UncertainPairedData CreateDefaultDeterminateData(string xLabel, string yLabel, string name)
@@ -28,7 +28,7 @@ namespace ViewModel.Utilities
                 xs[i] = i;
                 ys[i] = new Deterministic(i);
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "", -1);
+            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "");
             return curve;
         }
 
@@ -39,7 +39,7 @@ namespace ViewModel.Utilities
             {
                 yVals.Add(new Deterministic(d));
             }
-            UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "", -1);
+            UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "");
             return curve;
         }
         public static UncertainPairedData CreateDeterminateData(double[] xs, double[] ys, string xLabel, string yLabel, string name)
@@ -49,7 +49,7 @@ namespace ViewModel.Utilities
             {
                 yVals.Add(new Deterministic(d));
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, yVals.ToArray(), xLabel, yLabel, name, "", -1);
+            UncertainPairedData curve = new UncertainPairedData(xs, yVals.ToArray(), xLabel, yLabel, name, "");
             return curve;
         }
 
@@ -61,7 +61,7 @@ namespace ViewModel.Utilities
             {
                 yVals[i] = new Deterministic( lp3.InverseCDF(probs[i]));
             }
-            return new UncertainPairedData(probs, yVals, "Frequency", "Flow", "Flow-Frequency", "", -1);
+            return new UncertainPairedData(probs, yVals, "Frequency", "Flow", "Flow-Frequency", "");
         }
 
 

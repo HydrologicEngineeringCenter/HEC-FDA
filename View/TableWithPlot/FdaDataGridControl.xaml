@@ -4,14 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.TableWithPlot"
-             xmlns:fda_viewmodel ="clr-namespace:fda_viewmodel;assembly=fda-viewmodel"
-             xmlns:fda_view="clr-namespace:fda_view"
+             xmlns:fda_view="clr-namespace:View.TableWithPlot"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        
         <fda_view:FdaDataGrid Grid.Row="0" RowsAdded="MyDataGrid_RowsAdded"
                               x:Name="MyDataGrid" PreviewDeleteRows="MyDataGrid_PreviewDeleteRows" RowsDeleted="MyDataGrid_RowsDeleted"
                               ItemsSource="{Binding Path=Data}" AutoGenerateColumns="True" SelectionUnit="Cell" >

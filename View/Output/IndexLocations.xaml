@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Output"
         xmlns:OkClose="clr-namespace:View.Utilities"
-        xmlns:ViewModel="clr-namespace:ViewModel.Output;assembly=ViewModel"
+        xmlns:output="clr-namespace:ViewModel.Output;assembly=ViewModel"
+             xmlns:test="viewmo"
         mc:Ignorable="d"
         Height="455" Width="250" Background="WhiteSmoke">
     <UserControl.Resources>
-        <ViewModel:IndexLocationsVM x:Key="vm" />
+        <output:IndexLocationsVM x:Key="vm" />
     </UserControl.Resources>
     <Grid DataContext="{DynamicResource vm}">
         <Grid.RowDefinitions>

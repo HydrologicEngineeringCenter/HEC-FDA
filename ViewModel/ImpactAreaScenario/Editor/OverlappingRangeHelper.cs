@@ -72,12 +72,12 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             UncertainPairedData otherCurve = otherElem.ChildElement.Curve;
 
-            stageDamageMin = selectedDamageCurve.Function.xs().Min();
-            stageDamageMax = selectedDamageCurve.Function.xs().Last();
+            stageDamageMin = selectedDamageCurve.Function.Xvals.Min();
+            stageDamageMax = selectedDamageCurve.Function.Xvals.Last();
 
             //todo: not sure i did this right.
-            otherMin = otherCurve.ys().First().CDF(.5);
-            otherMax = otherCurve.ys().Last().CDF(.5);
+            otherMin = otherCurve.Yvals.First().CDF(.5);
+            otherMax = otherCurve.Yvals.Last().CDF(.5);
 
             AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE,
                 stageDamElem.Name, otherElem.ChildElement.Name, messageRows);
@@ -104,17 +104,17 @@ namespace ViewModel.ImpactAreaScenario.Editor
             string name1 = elem1.Name;
             string name2 = elem2.Name;
 
-            double x1Min = elem1.Curve.xs().First();
-            double x1Max = elem1.Curve.xs().Last();
+            double x1Min = elem1.Curve.Xvals.First();
+            double x1Max = elem1.Curve.Xvals.Last();
 
-            double x2Min = elem2.Curve.xs().First();
-            double x2Max = elem2.Curve.xs().First();
+            double x2Min = elem2.Curve.Xvals.First();
+            double x2Max = elem2.Curve.Xvals.First();
 
-            double y1Min = elem1.Curve.ys().First().InverseCDF(minProb);
-            double y1Max = elem1.Curve.ys().Last().InverseCDF(maxProb);
+            double y1Min = elem1.Curve.Yvals.First().InverseCDF(minProb);
+            double y1Max = elem1.Curve.Yvals.Last().InverseCDF(maxProb);
 
-            double y2Min = elem2.Curve.ys().First().InverseCDF(minProb);
-            double y2Max = elem2.Curve.ys().First().InverseCDF(maxProb);
+            double y2Min = elem2.Curve.Yvals.First().InverseCDF(minProb);
+            double y2Max = elem2.Curve.Yvals.First().InverseCDF(maxProb);
 
             //these will be the min and max for the axes that we care about
             double min1;
