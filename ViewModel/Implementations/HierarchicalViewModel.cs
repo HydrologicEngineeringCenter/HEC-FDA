@@ -1,11 +1,10 @@
 ﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.ViewModel.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Events;
-using ViewModel.Interfaces;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
     public class HierarchicalViewModel : ValidatingBaseViewModel, IHierarchicalViewModel
     {
@@ -39,7 +38,7 @@ namespace ViewModel.Implementations
 
             set
             {
-                _Expanded = value;  NotifyPropertyChanged();
+                _Expanded = value; NotifyPropertyChanged();
             }
         }
         public IHierarchicalViewModel Parent
@@ -114,7 +113,7 @@ namespace ViewModel.Implementations
                 INavigate ele = child as INavigate;
                 ele.NavigationEvent += Navigate;
             }
-            if(child is IReportMessage)
+            if (child is IReportMessage)
             {
                 IReportMessage ele = child as IReportMessage;
                 MessageHub.Register(ele);
@@ -124,7 +123,7 @@ namespace ViewModel.Implementations
             //    ICanClose ele = child as ICanClose;
             //    ele.Close += RequestClose;
             //}
-            
+
             _Children.Add(child);
             child.Parent = this;
             NotifyPropertyChanged(nameof(Children));

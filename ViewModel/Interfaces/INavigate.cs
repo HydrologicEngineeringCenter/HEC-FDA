@@ -1,8 +1,10 @@
-﻿namespace ViewModel.Interfaces
+﻿using HEC.MVVMFramework.ViewModel.Events;
+
+namespace HEC.MVVMFramework.ViewModel.Interfaces
 {
     public interface INavigate
     {
-        event Events.NavigationEventHandler NavigationEvent;
-        void Navigate(object sender, Events.NavigationEventArgs e);
+        event NavigationEventHandler NavigationEvent;
+        void Navigate(object sender, NavigationEventArgs e);
     }
 }

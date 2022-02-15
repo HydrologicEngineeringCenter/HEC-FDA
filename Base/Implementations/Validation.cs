@@ -1,5 +1,4 @@
-﻿using Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
+﻿using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System;
 using System.Collections;

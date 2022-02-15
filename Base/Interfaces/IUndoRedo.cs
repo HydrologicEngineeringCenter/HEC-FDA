@@ -1,8 +1,6 @@
-﻿using HEC.MVVMFramework.Base.Interfaces;
-
-namespace Base.Interfaces
+﻿namespace HEC.MVVMFramework.Base.Interfaces
 {
-    public interface IUndoRedo: ITrackChanges
+    public interface IUndoRedo : ITrackChanges
     {
         void Undo();
         void Redo();

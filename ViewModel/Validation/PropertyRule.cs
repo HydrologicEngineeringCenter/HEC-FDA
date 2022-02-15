@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 
-namespace ViewModel.Validation
+namespace HEC.MVVMFramework.ViewModel.Validation
 {
     public class PropertyRule : IPropertyRule
     {
@@ -58,9 +58,11 @@ namespace ViewModel.Validation
                     if (!r.Expression())
                     {
                         _errors.Add(r.Message);
-                        if(_errorLevel > ErrorLevel.Unassigned) {
-                             _errorLevel = _errorLevel | r.ErrorLevel;
-                        }else
+                        if (_errorLevel > ErrorLevel.Unassigned)
+                        {
+                            _errorLevel = _errorLevel | r.ErrorLevel;
+                        }
+                        else
                         {
                             _errorLevel = r.ErrorLevel;
                         }

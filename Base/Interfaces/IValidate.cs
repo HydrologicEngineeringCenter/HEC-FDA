@@ -1,12 +1,11 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
 
-namespace Base.Interfaces
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface IValidate : System.ComponentModel.INotifyDataErrorInfo
     {
-        Dictionary<string,IPropertyRule> RuleMap { get; }
+        Dictionary<string, IPropertyRule> RuleMap { get; }
         ErrorLevel ErrorLevel { get; }
         INamedAction ErrorsAction { get; }
         void AddMultiPropertyRule(List<string> properties, IRule rule);

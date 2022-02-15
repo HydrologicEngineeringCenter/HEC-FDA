@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.Interfaces
+﻿namespace HEC.MVVMFramework.ViewModel.Interfaces
 {
-    public interface IBaseViewModel: System.ComponentModel.INotifyPropertyChanged
+    public interface IBaseViewModel : System.ComponentModel.INotifyPropertyChanged
     {
 
     }

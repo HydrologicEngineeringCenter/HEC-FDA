@@ -1,15 +1,11 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Implementations
+namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class ErrorReportViewModel : Implementations.BaseViewModel
+    public class ErrorReportViewModel : BaseViewModel
     {
         private IMessage _message;
         private int _messageCount = 100;

@@ -1,16 +1,14 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace Model.Messaging
+namespace HEC.MVVMFramework.Model.Messaging
 {
-    public class DebuggingErrorMessage: TimeStampedErrorMessage
+    public class DebuggingErrorMessage : TimeStampedErrorMessage
     {
         private readonly string _callingMethod;
         private readonly string _callingClass;
         private readonly int _callingLine;
-        public DebuggingErrorMessage(string message, ErrorLevel errorLevel, [System.Runtime.CompilerServices.CallerMemberNameAttribute] string memberName = "", [System.Runtime.CompilerServices.CallerFilePathAttribute] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumberAttribute] int lineNo = 0) : base(message,errorLevel)
+        public DebuggingErrorMessage(string message, ErrorLevel errorLevel, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNo = 0) : base(message, errorLevel)
         {
             _callingMethod = memberName;
             _callingClass = filePath.Split(new char[] { '\\' }).Last();

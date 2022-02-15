@@ -1,12 +1,8 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Validation
+namespace HEC.MVVMFramework.ViewModel.Validation
 {
     public class Rule : IRule
     {
@@ -31,7 +27,7 @@ namespace ViewModel.Validation
         {
             get { return _errorLevel; }
         }
-        public Rule(Func<bool> expr, string msg):this(expr,msg, ErrorLevel.Info)
+        public Rule(Func<bool> expr, string msg) : this(expr, msg, ErrorLevel.Info)
         {
         }
         public Rule(Func<bool> expr, string msg, ErrorLevel errorLevel)

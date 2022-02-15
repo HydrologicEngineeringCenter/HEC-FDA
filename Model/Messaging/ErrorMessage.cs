@@ -1,8 +1,7 @@
-﻿using System;
-using HEC.MVVMFramework.Base.Enumerations;
+﻿using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 
-namespace Model.Messaging
+namespace HEC.MVVMFramework.Model.Messaging
 {
     public class ErrorMessage : IErrorMessage
     {
