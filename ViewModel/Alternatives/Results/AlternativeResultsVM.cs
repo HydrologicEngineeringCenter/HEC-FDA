@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 
-namespace ViewModel.Alternatives.Results
+namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class AlternativeResultsVM : BaseViewModel
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Storage;
-using ViewModel.Study;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class StudyPropertiesPersistenceManager : SavingBase
     {

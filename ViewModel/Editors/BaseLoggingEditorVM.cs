@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Utilities;
-using ViewModel.Saving;
-using ViewModel.Utilities;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 
-namespace ViewModel.Editors
+namespace HEC.FDA.ViewModel.Editors
 {
     public abstract class BaseLoggingEditorVM : BaseEditorVM, IDisplayLogMessages
     {

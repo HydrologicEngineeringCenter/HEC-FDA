@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.AlternativeComparisonReport;
-using ViewModel.Alternatives;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Inventory;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     /// <summary>
     /// The cache is used to hold all the elements in fda in memory. It gets loaded with elements

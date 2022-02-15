@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for ImportFromFDA1.xaml

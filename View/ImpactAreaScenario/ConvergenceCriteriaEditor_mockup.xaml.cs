@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.ImpactAreaScenario
+namespace HEC.FDA.View.ImpactAreaScenario
 {
     /// <summary>
     /// Interaction logic for ConvergenceCriteriaEditor_mockup.xaml

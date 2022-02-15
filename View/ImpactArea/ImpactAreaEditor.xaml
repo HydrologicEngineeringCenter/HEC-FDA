@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="View.ImpactArea.ImpactAreaEditor"
+﻿<UserControl x:Class="HEC.FDA.View.ImpactArea.ImpactAreaEditor"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:View.ImpactArea"
+        xmlns:local="clr-namespace:HEC.FDA.View.ImpactArea"
         xmlns:ViewModel="clr-namespace:ViewModel.ImpactArea;assembly=ViewModel"
-        xmlns:OkClose="clr-namespace:View.Utilities"
-        xmlns:converter="clr-namespace:View.ImpactArea"
+        xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+        xmlns:converter="clr-namespace:HEC.FDA.View.ImpactArea"
         mc:Ignorable="d"
          Height="235" Width="280">
     

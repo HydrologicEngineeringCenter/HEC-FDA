@@ -1,6 +1,6 @@
-﻿using ViewModel.Editors;
-using ViewModel.Study;
-using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace ViewModel.Tabs
+namespace HEC.FDA.ViewModel.Tabs
 {
     /// <summary>
     /// The main class for controlling the tabs/windows. This class holds two lists of IDynamicTab. One is for

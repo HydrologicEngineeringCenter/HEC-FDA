@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using ViewModel.Utilities;
-using ViewModel.Inventory.DepthDamage;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.DepthDamage;
 using Model;
 using System.IO;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 11 / 2017 1:47:59 PM)]
     public class ImportOccupancyTypesVM : Editors.BaseEditorVM

@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.AlternativeComparisonReport;
-using ViewModel.Study;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class AlternativeComparisonReportPersistenceManager : SavingBase
     {

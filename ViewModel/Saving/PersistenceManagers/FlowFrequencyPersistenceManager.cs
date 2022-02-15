@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Xml.Linq;
-using ViewModel.FrequencyRelationships;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class FlowFrequencyPersistenceManager : SavingBase
     {

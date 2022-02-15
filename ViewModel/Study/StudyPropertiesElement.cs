@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Linq;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class StudyPropertiesElement: ChildElement
     {

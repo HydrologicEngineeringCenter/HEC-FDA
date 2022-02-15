@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 
 
-namespace View.Inventory.DepthDamageCurves
+namespace HEC.FDA.View.Inventory.DepthDamageCurves
 {
     /// <summary>
     /// Interaction logic for DepthDamageCurveEditor.xaml
@@ -31,7 +31,7 @@ namespace View.Inventory.DepthDamageCurves
         }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
 
             LoadTheListView(this,new EventArgs());
             //DamageEditorControl.ListViewNeedsUpdating += new EventHandler(UpdateTheListView);
@@ -48,23 +48,23 @@ namespace View.Inventory.DepthDamageCurves
         private void LoadTheListView(object sender, EventArgs e)
         {
             //load the list view
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
             //if (vm.SelectedDepthDamageCurve == null) { return; }
 
             //ViewModel.Inventory.DepthDamage.DepthDamageCurve currentlySelectedCurve = vm.SelectedDepthDamageCurve;
 
             ObservableCollection<ViewModel.Inventory.DepthDamage.DepthDamageCurve> collectionOfCurves = new ObservableCollection<ViewModel.Inventory.DepthDamage.DepthDamageCurve>();
 
-            foreach (ViewModel.Inventory.DepthDamage.DepthDamageCurve curve in vm.CurveDictionary.Values)
+            foreach (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve curve in vm.CurveDictionary.Values)
             {
                 
                 collectionOfCurves.Add(curve);
             }
             _LCV = new ListCollectionView(vm.ListOfDepthDamageVMs);    //collectionOfCurves);
 
-            _LCV.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType)));
-            _LCV.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType), System.ComponentModel.ListSortDirection.Ascending));
-            _LCV.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.Name), System.ComponentModel.ListSortDirection.Ascending));
+            _LCV.GroupDescriptions.Add(new PropertyGroupDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType)));
+            _LCV.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType), System.ComponentModel.ListSortDirection.Ascending));
+            _LCV.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.Name), System.ComponentModel.ListSortDirection.Ascending));
 
             DepthDamageListView.ItemsSource = _LCV;
             
@@ -75,22 +75,22 @@ namespace View.Inventory.DepthDamageCurves
         //public void UpdateTheListView(object sender, EventArgs e)
         //{
         //    //load the list view
-        //    ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+        //    HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
         //    if (vm.SelectedDepthDamageCurve == null) { return; }
 
         //    ObservableCollection<ViewModel.Inventory.DepthDamage.DepthDamageCurve> collectionOfCurves = new ObservableCollection<ViewModel.Inventory.DepthDamage.DepthDamageCurve>();
 
-        //    foreach (ViewModel.Inventory.DepthDamage.DepthDamageCurve curve in ViewModel.Inventory.DepthDamage.DepthDamageCurveData.CurveDictionary.Values)
-        //    //for(int i = 0;i< ViewModel.Inventory.DepthDamage.DepthDamageCurveData.CurveDictionary.Count();i++)
+        //    foreach (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve curve in HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveData.CurveDictionary.Values)
+        //    //for(int i = 0;i< HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveData.CurveDictionary.Count();i++)
         //    {
         //        collectionOfCurves.Add( curve);
         //        //collectionOfCurves.Add(ot);
         //    }
         //    ListCollectionView lcv = new ListCollectionView(collectionOfCurves);
 
-        //    lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType)));
-        //    lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType), System.ComponentModel.ListSortDirection.Ascending));
-        //    lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(ViewModel.Inventory.DepthDamage.DepthDamageCurve.Name), System.ComponentModel.ListSortDirection.Ascending));
+        //    lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType)));
+        //    lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageType), System.ComponentModel.ListSortDirection.Ascending));
+        //    lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurve.Name), System.ComponentModel.ListSortDirection.Ascending));
 
         //    DepthDamageListView.ItemsSource = lcv;
         //}
@@ -98,31 +98,31 @@ namespace View.Inventory.DepthDamageCurves
 
         private void CreateNewButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
             vm.LanuchNewDepthDamageWindow();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
             vm.ListOfDepthDamageVMs.Remove(vm.CurrentDepthDamageCurveVM);
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
             vm.LanuchCopyDepthDamageWindow();
         }
 
         private void DepthDamageListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             
-            //ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
+            //ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM)this.DataContext;
 
             //vm.ListOfDepthDamageVMs.Remove(vm.CurrentDepthDamageCurveVM);
             
             
-            //ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM ddc = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)e.AddedItems[0];
+            //ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM ddc = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)e.AddedItems[0];
             //if(ddc != null)
             //{
             //    vm.ChangeSelectedDepthDamageCurve(ddc);

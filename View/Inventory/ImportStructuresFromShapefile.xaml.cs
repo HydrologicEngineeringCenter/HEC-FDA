@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Inventory;
-using ViewModel.Tabs;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Tabs;
 
-namespace View.Inventory
+namespace HEC.FDA.View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportStructuresFromShapefile.xaml

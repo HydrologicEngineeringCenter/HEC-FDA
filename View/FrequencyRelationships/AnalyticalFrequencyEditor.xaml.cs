@@ -6,9 +6,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 
-namespace View.FrequencyRelationships
+namespace HEC.FDA.View.FrequencyRelationships
 {
     /// <summary>
     /// Interaction logic for AnalyticalFrequencyEditor.xaml
@@ -93,8 +93,8 @@ namespace View.FrequencyRelationships
         private void ValidationDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             //todo: Refactor: CO
-            //ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM vm = (ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM)DataContext;
-            //Type RowType = typeof(ViewModel.FrequencyRelationships.AnalyticalFrequencyRowItem);
+            //ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM vm = (HEC.FDA.ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM)DataContext;
+            //Type RowType = typeof(HEC.FDA.ViewModel.FrequencyRelationships.AnalyticalFrequencyRowItem);
             //System.Reflection.PropertyInfo propertyInfo = RowType.GetProperty(e.PropertyName);
             //object[] Attributes = propertyInfo.GetCustomAttributes(true);
             

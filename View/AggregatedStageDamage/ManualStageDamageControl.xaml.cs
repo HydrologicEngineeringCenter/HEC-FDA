@@ -2,9 +2,9 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
 
-namespace View.AggregatedStageDamage
+namespace HEC.FDA.View.AggregatedStageDamage
 {
     /// <summary>
     /// Interaction logic for ManualStageDamageControl.xaml

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     public class BoolToModifiedConverter : IValueConverter
     {

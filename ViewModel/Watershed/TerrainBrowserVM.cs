@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ViewModel.Watershed
+namespace HEC.FDA.ViewModel.Watershed
 {
     //[Author("q0heccdm", "10 / 11 / 2016 11:13:25 AM")]
     public class TerrainBrowserVM:Editors.BaseEditorVM

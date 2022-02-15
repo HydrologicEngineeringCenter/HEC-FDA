@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public class RatingRelationshipControl : ChartControlBase
     {

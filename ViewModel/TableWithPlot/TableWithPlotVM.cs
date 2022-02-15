@@ -1,6 +1,6 @@
-﻿using ViewModel.TableWithPlot.Data.Interfaces;
-using ViewModel.TableWithPlot.Rows.Attributes;
-using ViewModel.TableWithPlot.Rows.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
 using OxyPlot;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +9,9 @@ using ViewModel.Events;
 using ViewModel.Implementations;
 
 
-namespace ViewModel.TableWithPlot
+namespace HEC.FDA.ViewModel.TableWithPlot
 {
-    public class TableWithPlotVM : ValidatingBaseViewModel, ViewModel.Interfaces.IUpdatePlot
+    public class TableWithPlotVM : ValidatingBaseViewModel, HEC.MVVMFamework.ViewModel.Interfaces.IUpdatePlot
     {
         #region Backing Fields
         private PlotModel _plotModel;

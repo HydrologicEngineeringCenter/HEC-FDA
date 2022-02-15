@@ -7,12 +7,12 @@ using System.IO;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
-using ViewModel.Tabs;
-using ViewModel.Utilities;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Tabs;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class FdaStudyVM : BaseViewModel, IDisposable, IDisplayLogMessages
     {

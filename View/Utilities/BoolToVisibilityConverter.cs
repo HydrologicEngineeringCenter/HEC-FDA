@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     //[Author(q0heccdm, 12 / 1 / 2017 2:16:52 PM)]
     public class BoolToVisibilityConverter : IValueConverter

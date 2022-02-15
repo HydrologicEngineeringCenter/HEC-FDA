@@ -7,12 +7,12 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
     public class OccupancyTypesEditorVM : BaseEditorVM

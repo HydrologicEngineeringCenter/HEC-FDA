@@ -6,7 +6,7 @@ using System.Windows.Media;
 using OxyPlot;
 using System.Windows.Media.Imaging;
 
-namespace View.TableWithPlot
+namespace HEC.FDA.View.TableWithPlot
 {
     public class ExpandedOxyPlot : OxyPlot.Wpf.PlotView
     {

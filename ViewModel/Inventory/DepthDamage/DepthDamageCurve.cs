@@ -1,6 +1,6 @@
 ﻿using paireddata;
 
-namespace ViewModel.Inventory.DepthDamage
+namespace HEC.FDA.ViewModel.Inventory.DepthDamage
 {
     //[Author(q0heccdm, 7 / 18 / 2017 9:24:20 AM)]
     public class DepthDamageCurve

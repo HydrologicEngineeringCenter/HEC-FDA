@@ -3,7 +3,7 @@ using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Note that there are only 5 of these in the occtype editor. There is NOT 5 per occtype.

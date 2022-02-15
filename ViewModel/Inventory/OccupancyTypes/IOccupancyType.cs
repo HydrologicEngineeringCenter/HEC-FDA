@@ -1,8 +1,8 @@
 ﻿using paireddata;
 using Statistics;
-using ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public interface IOccupancyType
     {

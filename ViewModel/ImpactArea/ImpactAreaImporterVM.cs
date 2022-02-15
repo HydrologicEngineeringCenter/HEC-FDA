@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
+using HEC.FDA.ViewModel.Editors;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 11:38:36 AM")]
     public class ImpactAreaImporterVM : Editors.BaseEditorVM

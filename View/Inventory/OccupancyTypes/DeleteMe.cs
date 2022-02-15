@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View.Inventory.OccupancyTypes
+namespace HEC.FDA.View.Inventory.OccupancyTypes
 {
     class DeleteMe
     {

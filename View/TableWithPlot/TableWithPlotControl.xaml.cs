@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace View.TableWithPlot
+namespace HEC.FDA.View.TableWithPlot
 {
     public partial class TableWithPlotControl : UserControl
     {

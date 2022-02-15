@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public abstract class ChartControlBase : BaseViewModel
     {

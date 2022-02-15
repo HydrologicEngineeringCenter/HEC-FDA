@@ -1,83 +1,83 @@
-﻿<Application x:Class="View.App"
+﻿<Application x:Class="HEC.FDA.View.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              
-             xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
+             xmlns:EditorsVM ="clr-namespace:HEC.FDA.ViewModel..Editors;assembly=ViewModel"
              
-             xmlns:AlternativeCompReportResultsVM="clr-namespace:ViewModel.AlternativeComparisonReport.Results;assembly=ViewModel"
-             xmlns:AlternativeCompReportResultsView ="clr-namespace:View.AlternativeComparisonReport.Results"
+             xmlns:AlternativeCompReportResultsVM="clr-namespace:HEC.FDA.ViewModel..AlternativeComparisonReport.Results;assembly=ViewModel"
+             xmlns:AlternativeCompReportResultsView ="clr-namespace:HEC.FDA.View.AlternativeComparisonReport.Results"
              
-             xmlns:AlternativeResultsVM="clr-namespace:ViewModel.Alternatives.Results;assembly=ViewModel"
-             xmlns:AlternativeResultsView ="clr-namespace:View.Alternatives.Results"
+             xmlns:AlternativeResultsVM="clr-namespace:HEC.FDA.ViewModel..Alternatives.Results;assembly=ViewModel"
+             xmlns:AlternativeResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results"
 
-             xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
-             xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
+             xmlns:IASResultsVM ="clr-namespace:HEC.FDA.ViewModel..ImpactAreaScenario.Results;assembly=ViewModel"
+             xmlns:IASResultsView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              
-             xmlns:IASEditorVM ="clr-namespace:ViewModel.ImpactAreaScenario.Editor;assembly=ViewModel"
-             xmlns:IASEditorView ="clr-namespace:View.ImpactAreaScenario.Editor"
+             xmlns:IASEditorVM ="clr-namespace:HEC.FDA.ViewModel..ImpactAreaScenario.Editor;assembly=ViewModel"
+             xmlns:IASEditorView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
                           
-             xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
-             xmlns:AlternativeComparisonReport ="clr-namespace:View.AlternativeComparisonReport"
+             xmlns:AlternativeComparisonReportVM="clr-namespace:HEC.FDA.ViewModel..AlternativeComparisonReport;assembly=ViewModel"
+             xmlns:AlternativeComparisonReport ="clr-namespace:HEC.FDA.View.AlternativeComparisonReport"
              
-             xmlns:AlternativeView="clr-namespace:View.Alternatives"
+             xmlns:AlternativeView="clr-namespace:HEC.FDA.View.Alternatives"
              
-             xmlns:PlansVM="clr-namespace:ViewModel.Alternatives;assembly=ViewModel"
-             xmlns:PlansView="clr-namespace:View.Plans"
+             xmlns:PlansVM="clr-namespace:HEC.FDA.ViewModel..Alternatives;assembly=ViewModel"
+             xmlns:PlansView="clr-namespace:HEC.FDA.View.Plans"
              
-             xmlns:FrequencyRelationshipsVM ="clr-namespace:ViewModel.FrequencyRelationships;assembly=ViewModel"
-             xmlns:FrequencyRelationshipsView ="clr-namespace:View.FrequencyRelationships"
+             xmlns:FrequencyRelationshipsVM ="clr-namespace:HEC.FDA.ViewModel..FrequencyRelationships;assembly=ViewModel"
+             xmlns:FrequencyRelationshipsView ="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              
-             xmlns:GeoTechVM="clr-namespace:ViewModel.GeoTech;assembly=ViewModel"
-             xmlns:GeoTechView="clr-namespace:View.GeoTech"
+             xmlns:GeoTechVM="clr-namespace:HEC.FDA.ViewModel..GeoTech;assembly=ViewModel"
+             xmlns:GeoTechView="clr-namespace:HEC.FDA.View.GeoTech"
              
-             xmlns:StageTransformsVM ="clr-namespace:ViewModel.StageTransforms;assembly=ViewModel"
-             xmlns:StageTransformsView ="clr-namespace:View.StageTransforms"
+             xmlns:StageTransformsVM ="clr-namespace:HEC.FDA.ViewModel..StageTransforms;assembly=ViewModel"
+             xmlns:StageTransformsView ="clr-namespace:HEC.FDA.View.StageTransforms"
              
-             xmlns:HydraulicsVM="clr-namespace:ViewModel.Hydraulics;assembly=ViewModel"
-             xmlns:HydraulicsView="clr-namespace:View.Hydraulics"
+             xmlns:HydraulicsVM="clr-namespace:HEC.FDA.ViewModel..Hydraulics;assembly=ViewModel"
+             xmlns:HydraulicsView="clr-namespace:HEC.FDA.View.Hydraulics"
              
-             xmlns:ImpactAreaView="clr-namespace:View.ImpactArea"
-             xmlns:ImpactAreaVM="clr-namespace:ViewModel.ImpactArea;assembly=ViewModel"
+             xmlns:ImpactAreaView="clr-namespace:HEC.FDA.View.ImpactArea"
+             xmlns:ImpactAreaVM="clr-namespace:HEC.FDA.ViewModel..ImpactArea;assembly=ViewModel"
              
-             xmlns:InventoryView="clr-namespace:View.Inventory"
-             xmlns:InventoryVM="clr-namespace:ViewModel.Inventory;assembly=ViewModel"
+             xmlns:InventoryView="clr-namespace:HEC.FDA.View.Inventory"
+             xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel..Inventory;assembly=ViewModel"
              
-              xmlns:DepthDamageView="clr-namespace:View.Inventory.DepthDamageCurves"
-             xmlns:DepthDamageVM="clr-namespace:ViewModel.Inventory.DepthDamage;assembly=ViewModel"
+              xmlns:DepthDamageView="clr-namespace:HEC.FDA.View.Inventory.DepthDamageCurves"
+             xmlns:DepthDamageVM="clr-namespace:HEC.FDA.ViewModel..Inventory.DepthDamage;assembly=ViewModel"
                           
-             xmlns:FlowTransformsView="clr-namespace:View.FlowTransforms"
-             xmlns:FlowTransformsVM="clr-namespace:ViewModel.FlowTransforms;assembly=ViewModel"
+             xmlns:FlowTransformsView="clr-namespace:HEC.FDA.View.FlowTransforms"
+             xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel..FlowTransforms;assembly=ViewModel"
              
-             xmlns:DamageCategoryView="clr-namespace:View.Inventory.DamageCategory"
-             xmlns:DamageCategoryVM="clr-namespace:ViewModel.Inventory.DamageCategory;assembly=ViewModel"
+             xmlns:DamageCategoryView="clr-namespace:HEC.FDA.View.Inventory.DamageCategory"
+             xmlns:DamageCategoryVM="clr-namespace:HEC.FDA.ViewModel..Inventory.DamageCategory;assembly=ViewModel"
              
-             xmlns:OutputView="clr-namespace:View.Output"
-             xmlns:OutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
+             xmlns:OutputView="clr-namespace:HEC.FDA.View.Output"
+             xmlns:OutputVM="clr-namespace:HEC.FDA.ViewModel..Output;assembly=ViewModel"
              
-             xmlns:StudyVM="clr-namespace:ViewModel.Study;assembly=ViewModel"
-             xmlns:StudyView="clr-namespace:View.Study"
+             xmlns:StudyVM="clr-namespace:HEC.FDA.ViewModel..Study;assembly=ViewModel"
+             xmlns:StudyView="clr-namespace:HEC.FDA.View.Study"
              
-             xmlns:WatershedVM="clr-namespace:ViewModel.Watershed;assembly=ViewModel"
-             xmlns:WatershedView="clr-namespace:View.Watershed"
+             xmlns:WatershedVM="clr-namespace:HEC.FDA.ViewModel..Watershed;assembly=ViewModel"
+             xmlns:WatershedView="clr-namespace:HEC.FDA.View.Watershed"
              
-             xmlns:AggregatedVM="clr-namespace:ViewModel.AggregatedStageDamage;assembly=ViewModel"
-             xmlns:AggregatedView="clr-namespace:View.AggregatedStageDamage"
+             xmlns:AggregatedVM="clr-namespace:HEC.FDA.ViewModel..AggregatedStageDamage;assembly=ViewModel"
+             xmlns:AggregatedView="clr-namespace:HEC.FDA.View.AggregatedStageDamage"
              
-             xmlns:ImpactAreaScenarioVM="clr-namespace:ViewModel.ImpactAreaScenario;assembly=ViewModel"
-             xmlns:ImpactAreaScenarioView="clr-namespace:View.ImpactAreaScenario"
+             xmlns:ImpactAreaScenarioVM="clr-namespace:HEC.FDA.ViewModel..ImpactAreaScenario;assembly=ViewModel"
+             xmlns:ImpactAreaScenarioView="clr-namespace:HEC.FDA.View.ImpactAreaScenario"
              
-             xmlns:OccupancyTypesVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
-             xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
+             xmlns:OccupancyTypesVM="clr-namespace:HEC.FDA.ViewModel..Inventory.OccupancyTypes;assembly=ViewModel"
+             xmlns:OccupancyTypesView="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes"
 
-             xmlns:OccupancyTypesControlsVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
-             xmlns:OccupancyTypesControlsView="clr-namespace:View.Inventory.OccupancyTypes.Controls"
+             xmlns:OccupancyTypesControlsVM="clr-namespace:HEC.FDA.ViewModel..Inventory.OccupancyTypes;assembly=ViewModel"
+             xmlns:OccupancyTypesControlsView="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
              
-             xmlns:UtilitiesView="clr-namespace:View.Utilities"
-             xmlns:UtilitiesVM="clr-namespace:ViewModel.Utilities;assembly=ViewModel"
-             xmlns:TransactionsVM="clr-namespace:ViewModel.Utilities.Transactions;assembly=ViewModel"
+             xmlns:UtilitiesView="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:UtilitiesVM="clr-namespace:HEC.FDA.ViewModel..Utilities;assembly=ViewModel"
+             xmlns:TransactionsVM="clr-namespace:HEC.FDA.ViewModel..Utilities.Transactions;assembly=ViewModel"
              
-             xmlns:WaterSurfaceElevationsView="clr-namespace:View.WaterSurfaceElevation"
-             xmlns:WaterSurfaceElevationsVM="clr-namespace:ViewModel.WaterSurfaceElevation;assembly=ViewModel"
+             xmlns:WaterSurfaceElevationsView="clr-namespace:HEC.FDA.View.WaterSurfaceElevation"
+             xmlns:WaterSurfaceElevationsVM="clr-namespace:HEC.FDA.ViewModel..WaterSurfaceElevation;assembly=ViewModel"
                           
              StartupUri="ViewWindow.xaml">
     <Application.Resources>

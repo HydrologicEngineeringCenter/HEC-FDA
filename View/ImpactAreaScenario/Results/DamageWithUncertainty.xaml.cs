@@ -8,9 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.ImpactAreaScenario.Results;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 
-namespace View.ImpactAreaScenario.Results
+namespace HEC.FDA.View.ImpactAreaScenario.Results
 {
     /// <summary>
     /// Interaction logic for DamageWithUncertainty.xaml

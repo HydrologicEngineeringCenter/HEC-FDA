@@ -2,7 +2,7 @@
 using Statistics.Distributions;
 using System;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class NormalControlVM : IValueUncertainty
     {

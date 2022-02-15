@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using ViewModel.AlternativeComparisonReport.Results;
-using ViewModel.Alternatives.Results;
-using ViewModel.Alternatives.Results.ResultObject;
-using ViewModel.Saving;
-using ViewModel.Study;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class AlternativeComparisonReportElement: ChildElement
     {

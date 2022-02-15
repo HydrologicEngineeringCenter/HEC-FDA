@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.AlternativeComparisonReport.Results
+namespace HEC.FDA.View.AlternativeComparisonReport.Results
 {
     /// <summary>
     /// Interaction logic for AlternativeComparisonReportResults.xaml

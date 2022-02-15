@@ -165,7 +165,7 @@
     <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
-    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -286,6 +286,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.2.15.1953" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />

@@ -1,12 +1,12 @@
-﻿using ViewModel.TableWithPlot.Rows.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
 using Statistics;
 using System.Collections.Generic;
 using Statistics.Distributions;
-using ViewModel.Validation;
-using Base.Enumerations;
-using ViewModel.TableWithPlot.Rows.Attributes;
 
-namespace ViewModel.TableWithPlot.Rows
+using Base.Enumerations;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class TriangularRow : SequentialRow
     {

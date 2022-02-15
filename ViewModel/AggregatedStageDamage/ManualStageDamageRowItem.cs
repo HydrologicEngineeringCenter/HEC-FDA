@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.ImpactArea;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageRowItem : BaseViewModel
     {

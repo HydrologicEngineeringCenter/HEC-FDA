@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     //[Author("q0heccdm", "10 / 18 / 2016 9:03:42 AM")]
     public class RadioButtonConverterLeft : IValueConverter
@@ -27,17 +27,17 @@ namespace View.Utilities
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || parameter == null) { return false; }
-            else if (value.Equals(ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
+            else if (value.Equals(HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
             else { return false; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null) { return ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
+            if (value == null || parameter == null) { return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
             else
             {
-                if (bool.Parse(value.ToString()) == true) return ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
-                else return ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
+                if (bool.Parse(value.ToString()) == true) return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
+                else return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
             }
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.ImpactAreaScenario.Results.RowItems
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems
 {
     public class PerformancePeriodRowItem : IPerformanceRowItem
     {

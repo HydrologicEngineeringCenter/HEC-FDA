@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Study
+namespace HEC.FDA.View.Study
 {
     /// <summary>
     /// Interaction logic for CreateNew.xaml
@@ -26,14 +26,14 @@ namespace View.Study
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
-            ViewModel.Study.ExistingStudyVM vm = (ViewModel.Study.ExistingStudyVM)this.DataContext;
+            HEC.FDA.ViewModel.Study.ExistingStudyVM vm = (HEC.FDA.ViewModel.Study.ExistingStudyVM)this.DataContext;
             vm.Path = fullpath;
             txtbox.Text = fullpath;
         }
 
         //private void TextBoxFileBrowser_LostFocus(object sender, RoutedEventArgs e)
         //{
-        //    ViewModel.Study.ExistingStudyVM vm = (ViewModel.Study.ExistingStudyVM)this.DataContext;
+        //    HEC.FDA.ViewModel.Study.ExistingStudyVM vm = (HEC.FDA.ViewModel.Study.ExistingStudyVM)this.DataContext;
         //    vm.Path = ((Consequences_Assist.Controls.TextBoxFileBrowser)sender).Path;
         //    txtbox.Text = vm.Path;
         //}

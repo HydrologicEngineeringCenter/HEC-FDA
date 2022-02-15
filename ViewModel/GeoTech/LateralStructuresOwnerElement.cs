@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.GeoTech
+namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:36:00 AM)]
     public class LateralStructuresOwnerElement : Utilities.ParentElement

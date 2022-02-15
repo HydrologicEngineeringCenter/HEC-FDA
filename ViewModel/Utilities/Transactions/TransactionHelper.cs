@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Utilities.Transactions
+namespace HEC.FDA.ViewModel.Utilities.Transactions
 {
     //todo: I think we can get rid of this class. (Cody 12/30/19)
     public class TransactionHelper

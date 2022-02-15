@@ -1,11 +1,11 @@
-﻿using ViewModel.Tabs;
+﻿using HEC.FDA.ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View.Commands
+namespace HEC.FDA.View.Commands
 {
     class CloseCommand : System.Windows.Input.ICommand
     {
@@ -24,7 +24,7 @@ namespace View.Commands
         public void Execute(object parameter)
         {
             var values = (object[])parameter;
-            //ViewModel.BaseViewModel vm = (ViewModel.BaseViewModel)values[0];
+            //ViewModel.BaseViewModel vm = (HEC.FDA.ViewModel.BaseViewModel)values[0];
             System.Windows.Window window = (System.Windows.Window)values[1];
             TabController.Instance.CloseTabOrWindow(window);
 

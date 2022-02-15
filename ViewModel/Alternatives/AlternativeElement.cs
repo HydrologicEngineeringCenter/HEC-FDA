@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
-using ViewModel.Alternatives.Results;
-using ViewModel.Alternatives.Results.ResultObject;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Utilities;
-using ViewModel.Saving;
-using ViewModel.Editors;
-using ViewModel.Study;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Study;
 
-namespace ViewModel.Alternatives
+namespace HEC.FDA.ViewModel.Alternatives
 {
     public class AlternativeElement : ChildElement
     {

@@ -1,11 +1,11 @@
 ﻿using Statistics.Distributions;
-using ViewModel.Validation;
-using ViewModel.TableWithPlot.Rows.Base;
+
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
 using Base.Enumerations;
 using System.Collections.Generic;
-using ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 
-namespace ViewModel.TableWithPlot.Rows
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class NormalRow : SequentialRow
     {

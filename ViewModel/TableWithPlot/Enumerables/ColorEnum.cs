@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.TableWithPlot.Enumerables
+namespace HEC.FDA.ViewModel.TableWithPlot.Enumerables
 {
     public enum ColorEnum
     {

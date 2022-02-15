@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Hydraulics
+namespace HEC.FDA.ViewModel.Hydraulics
 {
     public class GriddedHydraulicsOwnerElement: Utilities.ParentElement
     {

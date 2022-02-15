@@ -1,5 +1,5 @@
 ﻿
-namespace ViewModel.TableWithPlot.Enumerables
+namespace HEC.FDA.ViewModel.TableWithPlot.Enumerables
 {
     public enum ComputeComponentTypes
     {

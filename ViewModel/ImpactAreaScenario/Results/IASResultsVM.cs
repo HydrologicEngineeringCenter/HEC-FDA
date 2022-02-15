@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class IASResultsVM : BaseViewModel
     {

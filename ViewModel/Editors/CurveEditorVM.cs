@@ -3,9 +3,9 @@ using HEC.Plotting.Core.ViewModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
 using System;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Editors
+namespace HEC.FDA.ViewModel.Editors
 {
     public class CurveEditorVM : BaseLoggingEditorVM, ISaveWhileEditing
     {

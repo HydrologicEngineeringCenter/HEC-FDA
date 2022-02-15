@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Hydraulics
+namespace HEC.FDA.View.Hydraulics
 {
     /// <summary>
     /// Interaction logic for Properties.xaml

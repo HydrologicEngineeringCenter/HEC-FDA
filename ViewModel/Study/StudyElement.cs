@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.AlternativeComparisonReport;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Saving;
-using ViewModel.Storage;
-using ViewModel.Tabs;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Tabs;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class StudyElement : ParentElement
     {

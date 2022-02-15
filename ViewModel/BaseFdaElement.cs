@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel
+namespace HEC.FDA.ViewModel
 {
     public delegate void TransactionEventHandler(object sender, Utilities.Transactions.TransactionEventArgs args);
     /// <summary>

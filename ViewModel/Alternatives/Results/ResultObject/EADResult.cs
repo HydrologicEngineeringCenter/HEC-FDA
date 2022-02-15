@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ViewModel.Alternatives.Results.ResultObject
+namespace HEC.FDA.ViewModel.Alternatives.Results.ResultObject
 {
     public class EADResult
     {

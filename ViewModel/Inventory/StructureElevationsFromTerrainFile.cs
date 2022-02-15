@@ -1,9 +1,9 @@
 ﻿using LifeSimGIS;
 using System;
 using System.Collections.Generic;
-using ViewModel.Watershed;
+using HEC.FDA.ViewModel.Watershed;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class StructureElevationsFromTerrainFile:BaseViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace View.Study
+namespace HEC.FDA.View.Study
 {
     /// <summary>
     /// Interaction logic for CreateNew.xaml
@@ -14,7 +14,7 @@ namespace View.Study
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         {
-            ViewModel.Study.NewStudyVM vm = (ViewModel.Study.NewStudyVM)this.DataContext;
+            HEC.FDA.ViewModel.Study.NewStudyVM vm = (HEC.FDA.ViewModel.Study.NewStudyVM)this.DataContext;
             vm.Path = fullpath;
         }
 

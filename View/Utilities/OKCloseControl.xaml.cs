@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for OKCloseControl.xaml

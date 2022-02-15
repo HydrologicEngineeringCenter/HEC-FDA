@@ -2,9 +2,9 @@
 using Model;
 using System.Collections.Generic;
 using System.Linq;
-using ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class SpecificIASResultVM : BaseViewModel
     {

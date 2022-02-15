@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StructureInventoryLibrary;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 14 / 2017 4:00:20 PM)]
     public class StructureInventoryBaseElement : StructureInventoryBase

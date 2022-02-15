@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Alternatives.Results
+namespace HEC.FDA.View.Alternatives.Results
 {
     /// <summary>
     /// Interaction logic for EADDamageByDamCat.xaml

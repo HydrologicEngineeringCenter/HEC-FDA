@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System.IO;
 
-namespace ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
     public class WaterSurfaceElevationImporterVM:Editors.BaseEditorVM

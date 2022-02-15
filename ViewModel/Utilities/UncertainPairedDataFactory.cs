@@ -2,7 +2,7 @@
 using Statistics.Distributions;
 using System.Collections.Generic;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public static class UncertainPairedDataFactory
     {

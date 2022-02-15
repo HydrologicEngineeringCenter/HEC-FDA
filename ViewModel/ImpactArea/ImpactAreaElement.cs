@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaElement : ChildElement
     {

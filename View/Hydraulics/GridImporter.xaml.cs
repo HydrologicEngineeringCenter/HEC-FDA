@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Hydraulics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Hydraulics
+namespace HEC.FDA.View.Hydraulics
 {
     /// <summary>
     /// Interaction logic for GridImporter.xaml
@@ -23,7 +24,7 @@ namespace View.Hydraulics
         {
             InitializeComponent();
         }
-        public GridImporter(ViewModel.Hydraulics.GridImporterVM myVM)
+        public GridImporter(GridImporterVM myVM)
         {
             InitializeComponent();
             Resources["vm"] = myVM;
@@ -37,7 +38,7 @@ namespace View.Hydraulics
 
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                ViewModel.Hydraulics.GridImporterVM tempVM = (ViewModel.Hydraulics.GridImporterVM)Resources["vm"];
+                GridImporterVM tempVM = (GridImporterVM)Resources["vm"];
                 tempVM.Path = ofd.FileName;
                 Resources["vm"] = tempVM;
             }

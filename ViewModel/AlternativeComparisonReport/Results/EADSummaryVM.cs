@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results;
 
-namespace ViewModel.AlternativeComparisonReport.Results
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
     public class EADSummaryVM : IAlternativeResult
     {

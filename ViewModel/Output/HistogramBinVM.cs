@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Output
+namespace HEC.FDA.ViewModel.Output
 {
     public class HistogramBinVM
     {

@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     public class AnalyticalFrequencyOwnerElement : ParentElement
     {

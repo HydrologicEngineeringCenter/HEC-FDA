@@ -7,11 +7,11 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
-using ViewModel.Inventory.DamageCategory;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase
     {

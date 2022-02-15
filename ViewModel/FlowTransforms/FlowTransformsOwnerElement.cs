@@ -5,7 +5,7 @@ using System.Text;
 
 using System.Threading.Tasks;
 
-namespace ViewModel.FlowTransforms
+namespace HEC.FDA.ViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
     class FlowTransformsOwnerElement : Utilities.ParentElement

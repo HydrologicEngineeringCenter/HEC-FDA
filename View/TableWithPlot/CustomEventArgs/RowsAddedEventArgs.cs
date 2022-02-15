@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace View.TableWithPlot.CustomEventArgs
+namespace HEC.FDA.View.TableWithPlot.CustomEventArgs
 {
     public class RowsAddedEventArgs: EventArgs
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Alternatives.Results.ResultObject
+namespace HEC.FDA.ViewModel.Alternatives.Results.ResultObject
 {
     public class AlternativeResult
     {

@@ -1,6 +1,6 @@
 ﻿using Statistics;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public interface IValueUncertainty
     {

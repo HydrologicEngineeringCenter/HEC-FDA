@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class PropertiesVM : Editors.BaseEditorVM
     {

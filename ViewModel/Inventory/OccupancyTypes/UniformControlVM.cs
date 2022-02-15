@@ -3,7 +3,7 @@ using Statistics.Distributions;
 using System;
 using Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class UniformControlVM : IValueUncertainty
     {

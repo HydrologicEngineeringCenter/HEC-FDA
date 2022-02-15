@@ -1,8 +1,8 @@
 ﻿using FdaLogging;
 using System.Collections.ObjectModel;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving
+namespace HEC.FDA.ViewModel.Saving
 {
     public interface IElementManager
     {    

@@ -1,11 +1,10 @@
 ﻿using Base.Enumerations;
-using ViewModel.Validation;
 using Statistics.Distributions;
-using ViewModel.TableWithPlot.Rows.Base;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
 using System.Collections.Generic;
-using ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 
-namespace ViewModel.TableWithPlot.Rows
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public class GraphicalRow : SequentialRow
     {

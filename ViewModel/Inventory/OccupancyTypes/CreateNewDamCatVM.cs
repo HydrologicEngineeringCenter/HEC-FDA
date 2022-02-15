@@ -1,11 +1,11 @@
-﻿using ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 21 / 2017 1:26:32 PM)]
     public class CreateNewDamCatVM : BaseEditorVM 

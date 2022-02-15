@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ViewModel.Inventory;
-using ViewModel.Storage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class StructureInventoryPersistenceManager : SavingBase
     {
@@ -214,7 +214,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="name"></param>
         public void SaveNewInventoryToParentTable(string name, string description = "")
         {
-            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(ViewModel.Storage.Connection.Instance.ProjectFile);
+            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
             StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, description);
             InventoryElement elem = new InventoryElement(baseElem, true);
             SaveNew(elem);

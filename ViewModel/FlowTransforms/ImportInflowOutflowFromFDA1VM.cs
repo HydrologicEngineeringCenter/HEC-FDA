@@ -1,10 +1,10 @@
 ﻿using Importer;
 using System.Collections.Generic;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.FlowTransforms
+namespace HEC.FDA.ViewModel.FlowTransforms
 {
     public class ImportInflowOutflowFromFDA1VM : ImportFromFDA1VM
     {

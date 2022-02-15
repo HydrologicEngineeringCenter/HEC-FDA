@@ -1,4 +1,4 @@
-﻿namespace ViewModel.Inventory
+﻿namespace HEC.FDA.ViewModel.Inventory
 {
     class InventoryOwnerElement : Utilities.ParentElement
     {

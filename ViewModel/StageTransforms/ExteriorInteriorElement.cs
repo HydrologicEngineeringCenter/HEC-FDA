@@ -1,10 +1,10 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.StageTransforms
+namespace HEC.FDA.ViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 11:31:34 AM)]
     public class ExteriorInteriorElement : ChildElement

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ViewModel.Editors
+namespace HEC.FDA.ViewModel.Editors
 {
     public class EditorActionManager
     {

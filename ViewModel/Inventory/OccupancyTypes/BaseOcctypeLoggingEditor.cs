@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Utilities;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     /// <summary>
     /// This class exists to move logic out of the main OccupancyTypesEditorVM. This base class

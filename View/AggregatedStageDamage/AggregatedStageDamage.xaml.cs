@@ -1,4 +1,4 @@
-﻿using ViewModel.AggregatedStageDamage;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.AggregatedStageDamage
+namespace HEC.FDA.View.AggregatedStageDamage
 {
     /// <summary>
     /// Interaction logic for AggregatedStageDamage.xaml

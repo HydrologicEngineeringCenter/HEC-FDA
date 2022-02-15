@@ -3,13 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Xml.Linq;
-using ViewModel.TableWithPlot.Data;
-using ViewModel.TableWithPlot.Data.Base;
-using ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using paireddata;
-using ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using ViewModel;
 
-namespace ViewModel.TableWithPlot
+namespace HEC.FDA.ViewModel.TableWithPlot
 {
     public class ComputeComponentVM : BaseViewModel//ViewModel.Implementations.ValidatingBaseViewModel
     {

@@ -5,9 +5,9 @@ using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
+using HEC.FDA.ViewModel.Editors;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     public class AnalyticalFrequencyEditorVM :CurveEditorVM
     {

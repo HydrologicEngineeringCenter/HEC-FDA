@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.ImpactArea
+namespace HEC.FDA.View.ImpactArea
 {
     /// <summary>
     /// Interaction logic for ImpactAreaEditor.xaml

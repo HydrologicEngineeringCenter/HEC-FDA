@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using ViewModel.Alternatives;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class CreateNewAlternativeComparisonReportVM : BaseEditorVM
     {

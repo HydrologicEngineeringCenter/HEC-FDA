@@ -1,6 +1,6 @@
 ﻿using FdaLogging;
-using ViewModel.Utilities;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for MessageExpanderControl.xaml

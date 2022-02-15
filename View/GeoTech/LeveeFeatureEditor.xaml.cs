@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace View.GeoTech
+namespace HEC.FDA.View.GeoTech
 {
     /// <summary>
     /// Interaction logic for LeveeFeatureEditor.xaml

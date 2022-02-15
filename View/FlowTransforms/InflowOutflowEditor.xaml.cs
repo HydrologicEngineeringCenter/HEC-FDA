@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.FlowTransforms
+namespace HEC.FDA.View.FlowTransforms
 {
     /// <summary>
     /// Interaction logic for InflowOutflowEditor.xaml

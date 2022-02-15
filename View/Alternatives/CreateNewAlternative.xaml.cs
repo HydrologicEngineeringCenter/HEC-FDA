@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Plans
+namespace HEC.FDA.View.Plans
 {
     /// <summary>
     /// Interaction logic for CreateNewPlan.xaml

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     //[Author(q0heccdm, 6 / 30 / 2017 10:54:24 AM)]
     public class BoolToBoldConverter : IValueConverter

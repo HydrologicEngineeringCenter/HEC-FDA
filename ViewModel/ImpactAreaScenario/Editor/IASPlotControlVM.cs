@@ -1,9 +1,9 @@
 ﻿using HEC.Plotting.Core;
 using System;
 using System.Windows;
-using ViewModel.ImpactAreaScenario.Editor.ChartControls;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class IASPlotControlVM : BaseViewModel
     {

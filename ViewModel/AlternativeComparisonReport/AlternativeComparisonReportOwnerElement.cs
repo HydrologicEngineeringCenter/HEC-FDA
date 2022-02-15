@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class AlternativeComparisonReportOwnerElement: ParentElement
     {

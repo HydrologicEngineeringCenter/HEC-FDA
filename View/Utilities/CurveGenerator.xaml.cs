@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for CurveGenerator.xaml
     /// </summary>
     public partial class CurveGenerator : UserControl
     {
-        //public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ViewModel.CurveGeneratorVM), typeof(CurveGenerator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
+        //public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(HEC.FDA.ViewModel.CurveGeneratorVM), typeof(CurveGenerator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
 
         //private List<RowItem> _RowItems = new List<RowItem>();
         //private Model.IFdaFunction _Function;

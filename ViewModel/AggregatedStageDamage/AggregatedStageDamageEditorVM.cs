@@ -1,10 +1,10 @@
 ﻿using paireddata;
 using System;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageEditorVM : BaseLoggingEditorVM
     {

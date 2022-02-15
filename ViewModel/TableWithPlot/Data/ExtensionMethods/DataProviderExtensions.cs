@@ -1,7 +1,7 @@
-﻿using ViewModel.TableWithPlot.Rows.Base;
-using ViewModel.TableWithPlot.Data.Interfaces;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 
-namespace ViewModel.TableWithPlot.Data.ExtensionMethods
+namespace HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods
 {
     public static class DataProviderExtensions
     {

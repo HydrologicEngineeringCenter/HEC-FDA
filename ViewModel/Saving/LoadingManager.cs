@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Saving
+namespace HEC.FDA.ViewModel.Saving
 {
     public class LoadingManager
     {

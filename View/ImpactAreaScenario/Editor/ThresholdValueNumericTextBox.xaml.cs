@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.ImpactAreaScenario.Editor
+namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// Limits the input to numeric values.

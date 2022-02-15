@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View.Commands
+namespace HEC.FDA.View.Commands
 {
     class OkCommandConverter : System.Windows.Data.IMultiValueConverter
     {
@@ -22,7 +22,7 @@ namespace View.Commands
         #region Functions
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-                ViewModel.BaseViewModel vm = (ViewModel.BaseViewModel)values[0];
+                HEC.FDA.ViewModel.BaseViewModel vm = (HEC.FDA.ViewModel.BaseViewModel)values[0];
             if (vm != null)
             {
                 //todo: Cody commented out on 1/2/20. I am not sure if it was needed.

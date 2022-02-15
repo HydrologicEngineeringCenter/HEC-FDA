@@ -6,10 +6,10 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
-using ViewModel.Storage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving
+namespace HEC.FDA.ViewModel.Saving
 {
     public abstract class SavingBase : BaseViewModel, IElementManager
     {

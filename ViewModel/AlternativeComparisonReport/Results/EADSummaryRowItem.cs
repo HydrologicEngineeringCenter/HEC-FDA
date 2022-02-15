@@ -1,4 +1,4 @@
-﻿namespace ViewModel.AlternativeComparisonReport.Results
+﻿namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
     public class EADSummaryRowItem
     {

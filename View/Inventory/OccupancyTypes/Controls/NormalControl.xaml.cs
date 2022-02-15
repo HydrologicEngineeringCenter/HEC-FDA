@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Inventory.OccupancyTypes.Controls
+namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 {
     /// <summary>
     /// Interaction logic for NormalControl.xaml

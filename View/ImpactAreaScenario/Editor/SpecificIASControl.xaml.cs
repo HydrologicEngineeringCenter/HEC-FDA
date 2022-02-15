@@ -16,9 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 
-namespace View.ImpactAreaScenario.Editor
+namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// Interaction logic for SpecificIASControl.xaml

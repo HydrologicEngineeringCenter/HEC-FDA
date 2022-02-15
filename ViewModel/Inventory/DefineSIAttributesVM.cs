@@ -7,10 +7,10 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class DefineSIAttributesVM : BaseViewModel
     {

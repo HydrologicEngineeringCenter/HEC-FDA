@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     //[Author("q0heccdm", "10 / 11 / 2016 4:08:19 PM")]
     

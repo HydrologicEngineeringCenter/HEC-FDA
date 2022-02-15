@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Inventory
+namespace HEC.FDA.View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportFromShapefile.xaml

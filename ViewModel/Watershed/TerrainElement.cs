@@ -1,10 +1,10 @@
-﻿using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ViewModel.Watershed
+namespace HEC.FDA.ViewModel.Watershed
 {
     public class TerrainElement : ChildElement
     {

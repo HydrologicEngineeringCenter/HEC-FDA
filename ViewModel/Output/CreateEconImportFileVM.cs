@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Output
+namespace HEC.FDA.ViewModel.Output
 {
     //[Author("q0heccdm", "10 / 21 / 2016 11:30:29 AM")]
     public class CreateEconImportFileVM:BaseViewModel

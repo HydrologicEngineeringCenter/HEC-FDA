@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace ViewModel.TableWithPlot.Rows.Attributes
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class DisplayAsLineAttribute : Attribute

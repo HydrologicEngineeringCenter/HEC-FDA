@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 18 / 2016 11:49:56 AM")]
     public class RadioButtonConverterRight : IValueConverter
@@ -27,7 +27,7 @@ namespace ViewModel.ImpactArea
          public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) { return false; }
-            else if ((int)value == (int)ViewModel.ImpactArea.ImpactAreaVM.Bank.right) { return true; }
+            else if ((int)value == (int)ImpactAreaVM.Bank.right) { return true; }
             else { return false; }
         }
 

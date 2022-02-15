@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Hydraulics
+namespace HEC.FDA.ViewModel.Hydraulics
 {
     class WSPRowItem : Consequences_Assist.DataGridRowItem
     {

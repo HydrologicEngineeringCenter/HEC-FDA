@@ -5,10 +5,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Utilities;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageVM: BaseViewModel
     {

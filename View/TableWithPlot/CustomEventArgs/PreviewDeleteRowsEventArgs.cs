@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace View.TableWithPlot.CustomEventArgs
+namespace HEC.FDA.View.TableWithPlot.CustomEventArgs
 {
 
         public class PreviewDeleteRowsEventArgs : EventArgs

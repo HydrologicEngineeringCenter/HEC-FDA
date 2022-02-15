@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     public class NumericTextBoxWithClickHighlighting: TextBox
     {

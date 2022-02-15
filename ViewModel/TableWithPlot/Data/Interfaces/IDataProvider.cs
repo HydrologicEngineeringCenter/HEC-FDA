@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ViewModel.TableWithPlot.Data.Interfaces
+namespace HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces
 {
     public interface IDataProvider
     {

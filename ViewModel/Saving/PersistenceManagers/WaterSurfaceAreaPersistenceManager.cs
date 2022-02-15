@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class WaterSurfaceAreaPersistenceManager : SavingBase
     {

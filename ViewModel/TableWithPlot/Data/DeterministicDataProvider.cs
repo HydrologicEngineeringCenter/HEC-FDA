@@ -1,11 +1,11 @@
-﻿using ViewModel.TableWithPlot.Rows;
-using ViewModel.TableWithPlot.Data.ExtensionMethods;
-using ViewModel.TableWithPlot.Data.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
 using System.Xml.Linq;
 using Statistics;
 using Statistics.Distributions;
 
-namespace ViewModel.TableWithPlot.Data
+namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
     public class DeterministicDataProvider : BaseDataProvider
     {

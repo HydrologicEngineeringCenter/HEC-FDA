@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario.Results;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactAreaScenario
+namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class IASElementSet : ChildElement
     {

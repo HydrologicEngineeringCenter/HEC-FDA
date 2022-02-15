@@ -1,6 +1,6 @@
-﻿using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.WaterSurfaceElevation;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using paireddata;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public abstract class ChildElement : BaseFdaElement
     {

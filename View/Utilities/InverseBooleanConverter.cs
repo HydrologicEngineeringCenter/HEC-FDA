@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     //[Author(q0heccdm, 6 / 29 / 2017 2:22:42 PM)]
     public class InverseBooleanConverter : System.Windows.Data.IValueConverter

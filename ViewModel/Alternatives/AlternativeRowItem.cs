@@ -1,6 +1,6 @@
-﻿using ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
 
-namespace ViewModel.Alternatives
+namespace HEC.FDA.ViewModel.Alternatives
 {
     public class AlternativeRowItem : BaseViewModel
     {

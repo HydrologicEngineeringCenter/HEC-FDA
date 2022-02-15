@@ -1,4 +1,4 @@
-﻿using ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Inventory.OccupancyTypes.Controls
+namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 {
     /// <summary>
     /// Interaction logic for CreateNewDamCat.xaml

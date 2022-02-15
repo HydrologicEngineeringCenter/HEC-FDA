@@ -1,8 +1,8 @@
 ﻿using System;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Editors
+namespace HEC.FDA.ViewModel.Editors
 {
     public class SaveHelper  : BaseViewModel 
     {

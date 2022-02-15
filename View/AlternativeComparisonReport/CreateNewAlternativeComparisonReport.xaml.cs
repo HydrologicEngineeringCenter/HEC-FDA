@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
 
-namespace View.Alternatives
+namespace HEC.FDA.View.Alternatives
 {
     /// <summary>
     /// Interaction logic for CreateNewAlternative.xaml

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.ImpactAreaScenario.Results
+namespace HEC.FDA.View.ImpactAreaScenario.Results
 {
     /// <summary>
     /// Interaction logic for DamageByDamageCategory.xaml

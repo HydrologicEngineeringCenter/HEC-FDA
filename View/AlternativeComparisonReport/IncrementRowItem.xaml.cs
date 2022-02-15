@@ -1,4 +1,4 @@
-﻿using ViewModel.AlternativeComparisonReport;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Alternatives
+namespace HEC.FDA.View.Alternatives
 {
     /// <summary>
     /// Interaction logic for IncrementRowItem.xaml

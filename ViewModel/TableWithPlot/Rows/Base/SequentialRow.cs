@@ -1,12 +1,12 @@
-﻿using ViewModel.Validation;
-using Statistics;
+﻿using Statistics;
 using Base.Enumerations;
 using System.Collections.Generic;
-using ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+using Implementations = ViewModel.Implementations ;
 
-namespace ViewModel.TableWithPlot.Rows.Base
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows.Base
 {
-    public abstract class SequentialRow : ViewModel.Implementations.ValidatingBaseViewModel
+    public abstract class SequentialRow : Implementations.ValidatingBaseViewModel
     {
         private double _x;
         [DisplayAsColumn("X Value",0)]

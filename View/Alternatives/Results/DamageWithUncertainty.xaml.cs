@@ -13,9 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results;
 
-namespace View.Alternatives.Results
+namespace HEC.FDA.View.Alternatives.Results
 {
     /// <summary>
     /// Interaction logic for EADDamageWithUncertainty.xaml

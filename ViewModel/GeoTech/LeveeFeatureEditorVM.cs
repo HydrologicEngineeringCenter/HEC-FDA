@@ -1,10 +1,10 @@
 ﻿using paireddata;
 using Statistics.Distributions;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.GeoTech
+namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:20:23 PM)]
     public class LeveeFeatureEditorVM : CurveEditorVM

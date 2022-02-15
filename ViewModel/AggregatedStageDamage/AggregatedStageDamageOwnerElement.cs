@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageOwnerElement : ParentElement
     {

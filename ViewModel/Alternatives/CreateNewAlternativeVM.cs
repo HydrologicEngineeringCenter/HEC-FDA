@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Alternatives
+namespace HEC.FDA.ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {

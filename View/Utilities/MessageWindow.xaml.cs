@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for MessageWindow.xaml
@@ -23,12 +23,12 @@ namespace View.Utilities
         {
             InitializeComponent();
         }
-        //public MessageWindow(ViewModel.Utilities.MessageVM initializedVM)
+        //public MessageWindow(HEC.FDA.ViewModel.Utilities.MessageVM initializedVM)
         //{
             
         //    InitializeComponent();
-        //    //Resources["vm"] = new ViewModel.Utilities.MessageVM(message);
-        //    ViewModel.Utilities.MessageVM tempvm = (ViewModel.Utilities.MessageVM) Resources["vm"];
+        //    //Resources["vm"] = new HEC.FDA.ViewModel.Utilities.MessageVM(message);
+        //    HEC.FDA.ViewModel.Utilities.MessageVM tempvm = (HEC.FDA.ViewModel.Utilities.MessageVM) Resources["vm"];
 
         //    tempvm.Message = initializedVM.Message;
         //    tempvm.Title = initializedVM.Title;

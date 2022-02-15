@@ -1,11 +1,11 @@
 ﻿using Importer;
 using System.Collections.Generic;
-using ViewModel.ImpactArea;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ImportStageDamageFromFDA1VM : ImportFromFDA1VM
     {

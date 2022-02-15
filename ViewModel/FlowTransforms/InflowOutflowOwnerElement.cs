@@ -1,9 +1,9 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.FlowTransforms
+namespace HEC.FDA.ViewModel.FlowTransforms
 {
     public class InflowOutflowOwnerElement : ParentElement
     {

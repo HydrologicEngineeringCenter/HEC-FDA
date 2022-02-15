@@ -1,11 +1,11 @@
 ﻿using Base.Enumerations;
 using Statistics.Distributions;
-using ViewModel.Validation;
-using ViewModel.TableWithPlot.Rows.Base;
-using System.Collections.Generic;
-using ViewModel.TableWithPlot.Rows.Attributes;
 
-namespace ViewModel.TableWithPlot.Rows
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
+using System.Collections.Generic;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+
+namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class UniformRow : SequentialRow
     {

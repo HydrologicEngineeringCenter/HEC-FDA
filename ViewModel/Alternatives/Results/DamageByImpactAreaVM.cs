@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ViewModel.Alternatives.Results
+namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByImpactAreaVM : IAlternativeResult
     {

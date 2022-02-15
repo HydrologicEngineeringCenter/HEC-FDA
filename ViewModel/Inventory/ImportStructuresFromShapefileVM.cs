@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.Saving;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.Saving;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public  class ImportStructuresFromShapefileVM:BaseEditorVM
     {

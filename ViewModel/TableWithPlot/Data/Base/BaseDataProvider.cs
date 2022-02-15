@@ -1,12 +1,12 @@
-﻿using ViewModel.TableWithPlot.Data.Interfaces;
-using ViewModel.TableWithPlot.Rows.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
 using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace ViewModel.TableWithPlot.Data.Base
+namespace HEC.FDA.ViewModel.TableWithPlot.Data.Base
 {
     public abstract class BaseDataProvider:IDataProvider
     {

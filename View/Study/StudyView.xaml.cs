@@ -5,9 +5,9 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ViewModel.Study;
+using HEC.FDA.ViewModel.Study;
 
-namespace View.Study
+namespace HEC.FDA.View.Study
 {
     /// <summary>
     /// Interaction logic for StudyView.xaml

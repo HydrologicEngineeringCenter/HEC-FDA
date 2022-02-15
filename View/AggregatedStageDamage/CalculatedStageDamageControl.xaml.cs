@@ -3,10 +3,10 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace View.AggregatedStageDamage
+namespace HEC.FDA.View.AggregatedStageDamage
 {
     /// <summary>
     /// Interaction logic for CalculatedStageDamageControl.xaml

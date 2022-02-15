@@ -1,10 +1,10 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.StageTransforms
+namespace HEC.FDA.ViewModel.StageTransforms
 {
     public class RatingCurveElement : ChildElement
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using static Importer.AsciiImport;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public abstract class ImportFromFDA1VM : BaseViewModel
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     public class DynamicTab
     {

@@ -1,9 +1,9 @@
 ﻿using paireddata;
 using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.GeoTech
+namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
     public class LeveeFeatureElement : ChildElement

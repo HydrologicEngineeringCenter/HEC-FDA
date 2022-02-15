@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 
-namespace ViewModel.Alternatives.Results
+namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByDamCatVM : IAlternativeResult
     {

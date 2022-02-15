@@ -1,6 +1,6 @@
 ﻿using ViewModel;
-using ViewModel.Tabs;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Tabs;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using HEC.FDA.ViewModel;
 
-namespace View.Commands
+namespace HEC.FDA.View.Commands
 {
     class SaveCommand : ICommand
     {
@@ -61,11 +62,11 @@ namespace View.Commands
 
             //}
             //call save if its an editor?
-            if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
+            if (vm.GetType().IsSubclassOf(typeof(HEC.FDA.ViewModel.Editors.BaseEditorVM)))
             {
-                if (((ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
+                if (((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
                 {
-                    ((ViewModel.Editors.BaseEditorVM)vm).Save();
+                    ((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).Save();
                 }
                 else
                 {

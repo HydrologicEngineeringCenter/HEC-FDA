@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Inventory.DamageCategory;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     /// <summary>
     /// This is for use in the occtype editor. 

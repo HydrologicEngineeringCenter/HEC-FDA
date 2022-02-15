@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 3 / 14 / 2017 9:02:27 AM)]
     public class CustomMessageBoxVM:BaseViewModel

@@ -1,9 +1,9 @@
-﻿using ViewModel.TableWithPlot.Rows;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using Statistics.Distributions;
-using ViewModel.TableWithPlot.Data.Base;
-using ViewModel.TableWithPlot.Data.ExtensionMethods;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
+using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 
-namespace ViewModel.TableWithPlot.Data
+namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
     internal class NormalDataProvider : BaseDataProvider
     {

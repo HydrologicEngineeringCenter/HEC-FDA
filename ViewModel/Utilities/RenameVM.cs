@@ -1,7 +1,7 @@
 ﻿using System;
-using ViewModel.Editors;
+using HEC.FDA.ViewModel.Editors;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 11 / 22 / 2016 9:05:37 AM)]
     public class RenameVM:BaseEditorVM

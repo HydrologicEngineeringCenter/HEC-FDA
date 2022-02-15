@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace View.ImpactAreaScenario.Results
+namespace HEC.FDA.View.ImpactAreaScenario.Results
 {
     /// <summary>
     /// Interaction logic for SpecificIASResultsControl.xaml

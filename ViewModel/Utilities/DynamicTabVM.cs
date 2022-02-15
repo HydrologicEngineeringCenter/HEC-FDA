@@ -1,11 +1,11 @@
-﻿using ViewModel.Tabs;
+﻿using HEC.FDA.ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     /// <summary>
     /// Contains all the data needed to display a tab or window in FDA. When you pass this into the Navigate() method

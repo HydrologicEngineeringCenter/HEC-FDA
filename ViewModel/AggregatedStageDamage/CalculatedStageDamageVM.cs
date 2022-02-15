@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory;
-using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {

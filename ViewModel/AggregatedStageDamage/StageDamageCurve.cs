@@ -1,9 +1,9 @@
 ﻿using paireddata;
 using System;
 using System.Xml.Linq;
-using ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactArea;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class StageDamageCurve
     {

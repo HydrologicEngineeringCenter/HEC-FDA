@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Inventory.DepthDamageCurves
+namespace HEC.FDA.View.Inventory.DepthDamageCurves
 {
     /// <summary>
     /// Interaction logic for DepthDamageEditorControl.xaml
@@ -28,7 +28,7 @@ namespace View.Inventory.DepthDamageCurves
 
         private void DamageTypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
 
             vm.UpdateTheRow();
             //if (this.ListViewNeedsUpdating != null)
@@ -49,7 +49,7 @@ namespace View.Inventory.DepthDamageCurves
         {
 
 
-            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (HEC.FDA.ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
             // i need to check for name conflicts. We enforce unique names for depth damage curves
             vm.CheckWithParentForNameConflict(DepthDamageNameBox.Text);
             vm.Name = DepthDamageNameBox.Text;

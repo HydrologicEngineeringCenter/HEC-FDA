@@ -1,11 +1,11 @@
-﻿using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Saving
+namespace HEC.FDA.ViewModel.Saving
 {
     public class ElementAddedEventArgs:EventArgs
     {

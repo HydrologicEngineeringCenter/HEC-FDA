@@ -8,10 +8,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using View.TableWithPlot.CustomEventArgs;
-using ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.View.TableWithPlot.CustomEventArgs;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 
-namespace View.TableWithPlot
+namespace HEC.FDA.View.TableWithPlot
 {
     public class FdaDataGrid : DataGrid
     {

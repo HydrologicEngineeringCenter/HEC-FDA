@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Study
+namespace HEC.FDA.View.Study
 {
     /// <summary>
     /// Interaction logic for SciChartTest.xaml

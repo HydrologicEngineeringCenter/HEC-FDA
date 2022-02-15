@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace View.TableWithPlot
+namespace HEC.FDA.View.TableWithPlot
 {
     /// <summary>
     /// Interaction logic for FdaDataGridControl.xaml

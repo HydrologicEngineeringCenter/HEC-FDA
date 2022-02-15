@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using ViewModel.FlowTransforms;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class InflowOutflowPersistenceManager : SavingBase
     {

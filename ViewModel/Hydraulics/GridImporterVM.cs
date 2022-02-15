@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.Hydraulics
+namespace HEC.FDA.ViewModel.Hydraulics
 {
     //[Author("q0heccdm", "10 / 21 / 2016 3:59:07 PM")]
     public class GridImporterVM:BaseViewModel

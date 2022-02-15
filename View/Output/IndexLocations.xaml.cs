@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace View.Output
+namespace HEC.FDA.View.Output
 {
     /// <summary>
     /// Interaction logic for IndexLocations.xaml
