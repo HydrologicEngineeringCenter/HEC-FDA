@@ -1,7 +1,6 @@
-﻿
-namespace Base.Interfaces
+﻿namespace HEC.MVVMFramework.Base.Interfaces
 {
-    public interface IProgressReport: IReportMessage
+    public interface IProgressReport : IReportMessage
     {
         event Events.ProgressReportedEventHandler ProgressReport;
         void ReportProgress(object sender, Events.ProgressReportEventArgs e);

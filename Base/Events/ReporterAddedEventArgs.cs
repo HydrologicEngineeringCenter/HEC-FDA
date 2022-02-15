@@ -1,16 +1,17 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Interfaces;
+using System;
 
-namespace Base.Events
+namespace HEC.MVVMFramework.Base.Events
 {
     public delegate void ReporterAddedEventHandler(object sender, ReporterAddedEventArgs e);
-    public class ReporterAddedEventArgs: EventArgs
+    public class ReporterAddedEventArgs : EventArgs
     {
-        private readonly Base.Interfaces.IReportMessage _reporter;
-        public Base.Interfaces.IReportMessage Reporter
+        private readonly IReportMessage _reporter;
+        public IReportMessage Reporter
         {
             get { return _reporter; }
         }
-        public ReporterAddedEventArgs(Base.Interfaces.IReportMessage reporter)
+        public ReporterAddedEventArgs(IReportMessage reporter)
         {
             _reporter = reporter;
         }

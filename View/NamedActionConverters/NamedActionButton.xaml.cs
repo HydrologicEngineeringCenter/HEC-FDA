@@ -2,24 +2,25 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Base.Events;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
 
-namespace View.NamedActionConverters
+namespace HEC.MVVMFramework.View.NamedActionConverters
 {
     /// <summary>
     /// Interaction logic for NamedActionButton.xaml
     /// </summary>
     public partial class NamedActionButton : UserControl
     {
-        public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(Base.Interfaces.INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
+        public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
         private RoutedEventHandler _ActionHandler;
         public event MessageReportedEventHandler MessageReport;
 
-        public Base.Interfaces.INamedAction NamedAction
+        public INamedAction NamedAction
         {
             get
             {
-                return (Base.Interfaces.INamedAction)GetValue(ButtonNamedActionProperty);
+                return (INamedAction)GetValue(ButtonNamedActionProperty);
             }
             set
             {
@@ -39,7 +40,7 @@ namespace View.NamedActionConverters
             {
                 btn.Click -= nab._ActionHandler;
             }
-            Base.Interfaces.INamedAction na = (Base.Interfaces.INamedAction)e.NewValue;
+            INamedAction na = (INamedAction)e.NewValue;
             Binding headerBinding = new Binding("Name");
             headerBinding.Source = na;
             headerBinding.Mode = BindingMode.OneWay;

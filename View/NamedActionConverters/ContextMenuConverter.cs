@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Data;
 
-namespace View.NamedActionConverters
+namespace HEC.MVVMFramework.View.NamedActionConverters
 {
     public class ContextMenuConverter : IValueConverter
     {
@@ -42,18 +41,18 @@ namespace View.NamedActionConverters
                     headerBinding.Source = Action;
                     headerBinding.Mode = BindingMode.OneWay;
                     headerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                    BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.HeaderProperty, headerBinding);
+                    BindingOperations.SetBinding(mi, System.Windows.Controls.HeaderedItemsControl.HeaderProperty, headerBinding);
                     Binding enabledBinding = new Binding("Enabled");
                     enabledBinding.Source = Action;
                     enabledBinding.Mode = BindingMode.OneWay;
                     enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                    BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.IsEnabledProperty, enabledBinding);
+                    BindingOperations.SetBinding(mi, System.Windows.UIElement.IsEnabledProperty, enabledBinding);
                     Binding visibilityBinding = new Binding("Visible");
                     visibilityBinding.Source = Action;
                     visibilityBinding.Mode = BindingMode.OneWay;
                     visibilityBinding.Converter = new System.Windows.Controls.BooleanToVisibilityConverter();
                     visibilityBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                    BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.VisibilityProperty, visibilityBinding);
+                    BindingOperations.SetBinding(mi, System.Windows.UIElement.VisibilityProperty, visibilityBinding);
                     mi.Click += (ob, ev) => Action.Action(ob, ev);
                     c.Items.Add(mi);
 

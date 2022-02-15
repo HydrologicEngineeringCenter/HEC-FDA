@@ -1,9 +1,10 @@
-﻿
-namespace Base.Interfaces
+﻿using HEC.MVVMFramework.Base.Enumerations;
+
+namespace HEC.MVVMFramework.Base.Interfaces
 {
-    public interface IErrorMessage: IMessage
+    public interface IErrorMessage : IMessage
     {
-        Enumerations.ErrorLevel ErrorLevel { get; }
+        ErrorLevel ErrorLevel { get; }
 
     }
 }

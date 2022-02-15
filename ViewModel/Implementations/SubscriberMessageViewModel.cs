@@ -4,20 +4,21 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Base.Enumerations;
-using Base.Events;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace ViewModel.Implementations
 {
-    public class SubscriberMessageViewModel : Base.Interfaces.IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
+    public class SubscriberMessageViewModel : IRecieveMessages, System.ComponentModel.INotifyPropertyChanged
     {
-        private Base.Interfaces.IMessage _message;
+        private IMessage _message;
         public event PropertyChangedEventHandler PropertyChanged;
-        private Base.Enumerations.ErrorLevel _filterLevel = ErrorLevel.Unassigned;
+        private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _senderType = null;
         private Type _messageType = null;
         private int _messageCount = 100;
-        public Base.Interfaces.IMessage IMessage
+        public IMessage IMessage
         {
             get { return _message; }
             set { _message = value; NotifyPropertyChanged(); }

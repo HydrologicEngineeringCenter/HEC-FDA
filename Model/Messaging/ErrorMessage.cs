@@ -1,9 +1,10 @@
 ﻿using System;
-using Base.Enumerations;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace Model.Messaging
 {
-    public class ErrorMessage : Base.Interfaces.IErrorMessage
+    public class ErrorMessage : IErrorMessage
     {
         private readonly ErrorLevel _errorLevel;
         private readonly string _message;

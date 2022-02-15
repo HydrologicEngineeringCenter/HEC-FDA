@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModel.Events;
 using ViewModel.Interfaces;
@@ -112,10 +114,10 @@ namespace ViewModel.Implementations
                 INavigate ele = child as INavigate;
                 ele.NavigationEvent += Navigate;
             }
-            if(child is Base.Interfaces.IReportMessage)
+            if(child is IReportMessage)
             {
-                Base.Interfaces.IReportMessage ele = child as Base.Interfaces.IReportMessage;
-                Base.Implementations.MessageHub.Register(ele);
+                IReportMessage ele = child as IReportMessage;
+                MessageHub.Register(ele);
             }
             //if (child.GetType().GetInterfaces().Contains(typeof(ICanClose)))
             //{

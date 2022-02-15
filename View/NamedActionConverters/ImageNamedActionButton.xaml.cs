@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HEC.MVVMFramework.Base.Interfaces;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace View.NamedActionConverters
+namespace HEC.MVVMFramework.View.NamedActionConverters
 {
     /// <summary>
     /// Interaction logic for ImageNamedActionButton.xaml
     /// </summary>
     public partial class ImageNamedActionButton : UserControl
     {
-        public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(Base.Interfaces.INamedAction), typeof(ImageNamedActionButton), new FrameworkPropertyMetadata(null,ButtonNamedActionPropertyCallback, ButtonNamedActionPropertyCallbackCoerce), new ValidateValueCallback(IsValidNamedAction));
+        public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(INamedAction), typeof(ImageNamedActionButton), new FrameworkPropertyMetadata(null,ButtonNamedActionPropertyCallback, ButtonNamedActionPropertyCallbackCoerce), new ValidateValueCallback(IsValidNamedAction));
         public static DependencyProperty ImageProperty = DependencyProperty.Register(nameof(Image), typeof(object), typeof(ImageNamedActionButton), new PropertyMetadata(ImageChangedCallback));
         public static DependencyProperty ButtonToolTipProperty = DependencyProperty.Register(nameof(ButtonToolTip), typeof(object), typeof(ImageNamedActionButton), new PropertyMetadata(ToolTipChangedCallback));
         public static DependencyProperty ButtonStyleProperty = DependencyProperty.Register(nameof(ButtonStyle), typeof(System.Windows.Style), typeof(ImageNamedActionButton), new PropertyMetadata(StyleChangedCallback));
@@ -41,11 +31,11 @@ namespace View.NamedActionConverters
             set { SetValue(ButtonToolTipProperty, value); }
         }
         private bool _useImage = true;
-        public Base.Interfaces.INamedAction NamedAction
+        public INamedAction NamedAction
         {
             get
             {
-                return (Base.Interfaces.INamedAction)GetValue(ButtonNamedActionProperty);
+                return (INamedAction)GetValue(ButtonNamedActionProperty);
             }
             set
             {
@@ -80,7 +70,7 @@ namespace View.NamedActionConverters
             {
                 btn.Click -= nab._ActionHandler;
             }
-            Base.Interfaces.INamedAction na = (Base.Interfaces.INamedAction)e.NewValue;
+            INamedAction na = (INamedAction)e.NewValue;
             if (na == null)
             {
                 btn.Visibility = Visibility.Collapsed;
@@ -99,7 +89,7 @@ namespace View.NamedActionConverters
             }
             if (!nab._useImage)
             {
-                Binding headerBinding = new Binding(nameof(Base.Interfaces.INamedAction.Name));
+                Binding headerBinding = new Binding(nameof(INamedAction.Name));
                 headerBinding.Source = na;
                 headerBinding.Mode = BindingMode.OneWay;
                 headerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;

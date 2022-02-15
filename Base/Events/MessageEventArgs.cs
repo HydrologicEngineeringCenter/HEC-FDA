@@ -1,10 +1,10 @@
 ﻿using System;
-using Base.Interfaces;
+using HEC.MVVMFramework.Base.Interfaces;
 
-namespace Base.Events
+namespace HEC.MVVMFramework.Base.Events
 {
     public delegate void MessageReportedEventHandler(object sender, MessageEventArgs e);
-    public class MessageEventArgs: EventArgs
+    public class MessageEventArgs : EventArgs
     {
         private readonly IMessage _message;
         public IMessage Message

@@ -3,15 +3,16 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Base.Enumerations;
-using Base.Events;
 using System.IO;
 using System.Threading;
-
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace View.Implementations
 {
-    public sealed class TextFileMessageSubscriber : Base.Interfaces.IRecieveMessages, IDisposable
+    public sealed class TextFileMessageSubscriber : IRecieveMessages, IDisposable
     {
         private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageTypeFilter = null;
@@ -25,7 +26,7 @@ namespace View.Implementations
         System.IO.StreamWriter sw;
         //private System.Collections.Generic.List<System.ComponentModel.BackgroundWorker> _bwList;
         private System.ComponentModel.BackgroundWorker _bw;
-        private System.Collections.Concurrent.ConcurrentQueue<Base.Interfaces.IMessage> _messages;
+        private System.Collections.Concurrent.ConcurrentQueue<IMessage> _messages;
         public static TextFileMessageSubscriber Instance = new TextFileMessageSubscriber();
         public ErrorLevel FilterLevel
         {
@@ -79,9 +80,9 @@ namespace View.Implementations
         }
         private TextFileMessageSubscriber()
         {
-            _messages = new System.Collections.Concurrent.ConcurrentQueue<Base.Interfaces.IMessage>();
+            _messages = new System.Collections.Concurrent.ConcurrentQueue<IMessage>();
             //register
-            Base.Implementations.MessageHub.Subscribe(this);
+            MessageHub.Subscribe(this);
             if (!System.IO.File.Exists(_filePath)) { System.IO.File.Create(_filePath); }
             sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
             sw.AutoFlush = true;
@@ -110,7 +111,7 @@ namespace View.Implementations
         private void DeQueue()
         {
             System.Text.StringBuilder s = new StringBuilder();
-            Base.Interfaces.IMessage imess;
+            IMessage imess;
             while (_messages.TryDequeue(out imess))
             {
                 s.AppendLine(imess.ToString());

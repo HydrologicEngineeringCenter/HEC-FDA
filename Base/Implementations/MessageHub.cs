@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
-using Base.Events;
 using System.Net.Sockets;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
 
-namespace Base.Implementations
+namespace HEC.MVVMFramework.Base.Implementations
 {
-    public sealed class MessageHub : Base.Interfaces.IReportMessage
+    public sealed class MessageHub : IReportMessage
     {
         public event MessageReportedEventHandler MessageReport;
         public static event ReporterAddedEventHandler ReporterAdded;
         public static event ReporterRemovedEventHandler ReporterRemoved;
-        private static List<Base.Interfaces.IRecieveMessages> _subscribers;
-        private static List<Base.Interfaces.IReportMessage> _reporters;
-        private static System.Net.Sockets.TcpClient _reporter;
-        private static System.Net.Sockets.TcpListener _listener;
+        private static List<IRecieveMessages> _subscribers;
+        private static List<IReportMessage> _reporters;
+        private static TcpClient _reporter;
+        private static TcpListener _listener;
         private static System.Net.IPAddress _ip;
         //private static int _listeningPort;
         //private static int _reportingPort;
         private static bool _connected;
-        public static List<Base.Interfaces.IReportMessage> Reporters
+        public static List<IReportMessage> Reporters
         {
             get { return _reporters; }
         }
@@ -37,20 +39,20 @@ namespace Base.Implementations
         public static readonly MessageHub Instance = new MessageHub();
         private MessageHub()
         {
-            _subscribers = new List<Base.Interfaces.IRecieveMessages>();
-            _reporters = new List<Interfaces.IReportMessage>();
+            _subscribers = new List<IRecieveMessages>();
+            _reporters = new List<IReportMessage>();
         }
-        public static void Subscribe(Base.Interfaces.IRecieveMessages listener)
+        public static void Subscribe(IRecieveMessages listener)
         {
             _subscribers.Add(listener);
         }
-        public static void Register(Base.Interfaces.IReportMessage messanger)
+        public static void Register(IReportMessage messanger)
         {
             messanger.MessageReport += Broadcast;
             _reporters.Add(messanger);
             ReporterAdded?.Invoke(null, new ReporterAddedEventArgs(messanger));
         }
-        public static void Unregister(Base.Interfaces.IReportMessage messanger)
+        public static void Unregister(IReportMessage messanger)
         {
             messanger.MessageReport -= Broadcast;
             _reporters.Remove(messanger);
@@ -58,10 +60,10 @@ namespace Base.Implementations
         }
         public static void InitalizeListener(int port)
         {
-            _listener = new System.Net.Sockets.TcpListener(_ip, port);
+            _listener = new TcpListener(_ip, port);
             _listener.Start();
-            
-            System.Threading.Timer _t = new System.Threading.Timer(Listen,null,0,100);
+
+            System.Threading.Timer _t = new System.Threading.Timer(Listen, null, 0, 100);
 
         }
         private static void Listen(object state)
@@ -69,7 +71,7 @@ namespace Base.Implementations
             if (_listener.Pending())
             {
                 Broadcast(_listener, new MessageEventArgs(new Message("Connection Found.")));
-                System.Net.Sockets.TcpClient client = (System.Net.Sockets.TcpClient)_listener.AcceptTcpClientAsync().AsyncState;
+                TcpClient client = (TcpClient)_listener.AcceptTcpClientAsync().AsyncState;
                 if (client != null)
                 {
                     NetworkStream ns = client.GetStream();
@@ -101,18 +103,18 @@ namespace Base.Implementations
         }
         private static void Broadcast(object sender, MessageEventArgs e)
         {
-            foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
+            foreach (IRecieveMessages s in _subscribers)
             {
-                if (s is Base.Interfaces.IRecieveInstanceMessages)
+                if (s is IRecieveInstanceMessages)
                 {
-                    Base.Interfaces.IRecieveInstanceMessages sinstance = s as Base.Interfaces.IRecieveInstanceMessages;
+                    IRecieveInstanceMessages sinstance = s as IRecieveInstanceMessages;
                     if (sinstance.InstanceHash != sender.GetHashCode()) { continue; }
-                    if (e.Message is Base.Interfaces.IErrorMessage)
+                    if (e.Message is IErrorMessage)
                     {
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             //error filter
-                            Base.Interfaces.IErrorMessage emess = e.Message as Base.Interfaces.IErrorMessage;
+                            IErrorMessage emess = e.Message as IErrorMessage;
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
@@ -127,14 +129,14 @@ namespace Base.Implementations
                         }
                     }
                 }
-                if (e.Message is Base.Interfaces.IErrorMessage)
+                if (e.Message is IErrorMessage)
                 {
                     if (s.SenderTypeFilter == null || s.SenderTypeFilter == sender.GetType())
                     {
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             //error filter
-                            Base.Interfaces.IErrorMessage emess = e.Message as Base.Interfaces.IErrorMessage;
+                            IErrorMessage emess = e.Message as IErrorMessage;
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
@@ -160,16 +162,16 @@ namespace Base.Implementations
                 _reporter.GetStream().Flush();
             }
         }
-        public static void UnsubscribeAll(Base.Interfaces.IRecieveMessages listener)
+        public static void UnsubscribeAll(IRecieveMessages listener)
         {
-            foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
+            foreach (IRecieveMessages s in _subscribers)
             {
                 if (s == listener) _subscribers.Remove(s);
             }
         }
-        public static void Unsubscribe(Base.Interfaces.IRecieveMessages listener, Base.Enumerations.ErrorLevel filterLevel, System.Type senderFilterType, System.Type messageFilterType)
+        public static void Unsubscribe(IRecieveMessages listener, ErrorLevel filterLevel, System.Type senderFilterType, System.Type messageFilterType)
         {
-            foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
+            foreach (IRecieveMessages s in _subscribers)
             {
                 if (s == listener && s.FilterLevel == filterLevel && s.SenderTypeFilter == senderFilterType && s.MessageTypeFilter == messageFilterType) _subscribers.Remove(s);
             }

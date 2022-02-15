@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using System;
 
-namespace Base.Interfaces
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface IRule
     {
-        Base.Enumerations.ErrorLevel ErrorLevel { get; }
+        ErrorLevel ErrorLevel { get; }
         Func<bool> Expression { get; }
         string Message { get; }
     }

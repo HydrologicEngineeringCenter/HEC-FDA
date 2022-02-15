@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
 
-namespace View.UserControls
+namespace HEC.MVVMFramework.View.UserControls
 {
     public partial class TextBoxFolderBrowserControl : UserControl
     {

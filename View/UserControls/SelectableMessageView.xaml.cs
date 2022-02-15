@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace View.UserControls
+namespace HEC.MVVMFramework.View.UserControls
 {
     /// <summary>
     /// Interaction logic for SelectableMessageView.xaml
@@ -14,7 +15,7 @@ namespace View.UserControls
             InitializeComponent();
             //System.Diagnostics.Debugger.Break();
             DataContext = _vm;
-            Base.Implementations.MessageHub.Subscribe(_vm);
+            MessageHub.Subscribe(_vm);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

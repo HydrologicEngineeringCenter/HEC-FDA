@@ -1,14 +1,13 @@
-﻿
-
+﻿using HEC.MVVMFramework.Base.Enumerations;
 using System.Collections.Generic;
 
-namespace Base.Interfaces
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface IPropertyRule
     {
         List<IRule> Rules { get; }
         IEnumerable<string> Errors { get; }
-        Enumerations.ErrorLevel ErrorLevel { get; }
+        ErrorLevel ErrorLevel { get; }
         void AddRule(IRule rule);
         void Update();
     }

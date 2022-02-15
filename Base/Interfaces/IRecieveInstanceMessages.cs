@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Base.Interfaces
+﻿namespace HEC.MVVMFramework.Base.Interfaces
 {
-    interface IRecieveInstanceMessages:IRecieveMessages
+    interface IRecieveInstanceMessages : IRecieveMessages
     {
         int InstanceHash { get; }
     }

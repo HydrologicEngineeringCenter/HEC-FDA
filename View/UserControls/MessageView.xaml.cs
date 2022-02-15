@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace View.UserControls
+namespace HEC.MVVMFramework.View.UserControls
 {
     public delegate void UpdateDocumentCallBack(Paragraph p);
     /// <summary>
@@ -13,12 +14,12 @@ namespace View.UserControls
     /// </summary>
     public partial class MessageView : UserControl
     {
-        public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(nameof(Message), typeof(Base.Interfaces.IMessage), typeof(MessageView), new PropertyMetadata(MessagesChangedCallback));
+        public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(nameof(Message), typeof(IMessage), typeof(MessageView), new PropertyMetadata(MessagesChangedCallback));
         public static readonly DependencyProperty MessageCountProperty = DependencyProperty.Register(nameof(MessageCount), typeof(int), typeof(MessageView), new PropertyMetadata(100, MessageCountChangedCallback));
         private SolidColorBrush[] _errorColors = new SolidColorBrush[] { new SolidColorBrush(Colors.Black), new SolidColorBrush(Colors.Green), new SolidColorBrush(Colors.Goldenrod), new SolidColorBrush(Colors.Orange), new SolidColorBrush(Colors.LightCoral), new SolidColorBrush(Colors.DarkRed) };
-        public Base.Interfaces.IMessage Message
+        public IMessage Message
         {
-            get { return (Base.Interfaces.IMessage)GetValue(MessageProperty); }
+            get { return (IMessage)GetValue(MessageProperty); }
             set { SetValue(MessageProperty, value); }
         }
         public int MessageCount
@@ -39,30 +40,30 @@ namespace View.UserControls
         private static void MessagesChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MessageView owner = (MessageView)d;
-            Base.Interfaces.IMessage mess = e.NewValue as Base.Interfaces.IMessage;
+            IMessage mess = e.NewValue as IMessage;
             Run r = new Run();
-            if (mess is Base.Interfaces.IErrorMessage)
+            if (mess is IErrorMessage)
             {
-                Base.Interfaces.IErrorMessage err = mess as Base.Interfaces.IErrorMessage;
+                IErrorMessage err = mess as IErrorMessage;
                 r.Text = err.ToString();
                 owner.tb.Inlines.Add(r);
-                if (err.ErrorLevel.HasFlag(Base.Enumerations.ErrorLevel.Severe))
+                if (err.ErrorLevel.HasFlag(ErrorLevel.Severe))
                 {
                     owner.tb.Inlines.Last().Foreground = owner._errorColors[5];
                 }
-                else if (err.ErrorLevel.HasFlag(Base.Enumerations.ErrorLevel.Fatal))
+                else if (err.ErrorLevel.HasFlag(ErrorLevel.Fatal))
                 {
                     owner.tb.Inlines.Last().Foreground = owner._errorColors[4];
                 }
-                else if (err.ErrorLevel.HasFlag(Base.Enumerations.ErrorLevel.Major))
+                else if (err.ErrorLevel.HasFlag(ErrorLevel.Major))
                 {
                     owner.tb.Inlines.Last().Foreground = owner._errorColors[3];
                 }
-                else if (err.ErrorLevel.HasFlag(Base.Enumerations.ErrorLevel.Minor))
+                else if (err.ErrorLevel.HasFlag(ErrorLevel.Minor))
                 {
                     owner.tb.Inlines.Last().Foreground = owner._errorColors[2];
                 }
-                else if (err.ErrorLevel.HasFlag(Base.Enumerations.ErrorLevel.Info))
+                else if (err.ErrorLevel.HasFlag(ErrorLevel.Info))
                 {
                     owner.tb.Inlines.Last().Foreground = owner._errorColors[1];
                 }

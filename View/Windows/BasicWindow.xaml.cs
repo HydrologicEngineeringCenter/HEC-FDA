@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-namespace View.Windows
+namespace HEC.MVVMFramework.View.Windows
 {
     /// <summary>
     /// Interaction logic for BasicWindow.xaml
