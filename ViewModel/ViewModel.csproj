@@ -7,12 +7,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>HenryGeorgist.Framework.ViewModel</PackageId>
+		<PackageId>HEC.MVVMFramework.ViewModel</PackageId>
 		<VersionPrefix>1.0.0</VersionPrefix>
 		<Description>A library providing functionality for MVVM ViewModels</Description>
 		<Authors>Will Lehman</Authors>
 		<RepositoryUrl>https://github.com/HenryGeorgist/Framework</RepositoryUrl>
 		<DebugType>embedded</DebugType>
+		<RootNamespace>HEC.MVVMFramework.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

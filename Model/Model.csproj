@@ -7,20 +7,17 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>HenryGeorgist.Framework.Model</PackageId>
+		<PackageId>HEC.MVVMFramework.Model</PackageId>
 		<VersionPrefix>1.0.0</VersionPrefix>
 		<Description>A library providing functionality for MVVM Models</Description>
 		<Authors>Will Lehman</Authors>
 		<RepositoryUrl>https://github.com/HenryGeorgist/Framework</RepositoryUrl>
 		<DebugType>embedded</DebugType>
+		<RootNamespace>HEC.MVVMFramework.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Base\Base.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Validation\" />
 	</ItemGroup>
 
 </Project>
