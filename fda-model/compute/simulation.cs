@@ -1,23 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Statistics;
-using Statistics.Distributions;
 using paireddata;
 using metrics;
 using System.Linq;
-using Base.Events;
 using System.Threading.Tasks;
 using System.Threading;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace compute
 {
-    public class Simulation : Base.Implementations.Validation, Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport
+    public class Simulation : Validation, IReportMessage, IProgressReport
     {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
-        private Statistics.ContinuousDistribution _frequency_flow;
+        private ContinuousDistribution _frequency_flow;
         private GraphicalUncertainPairedData _frequency_flow_graphical;
         private UncertainPairedData _inflow_outflow;
         private UncertainPairedData _flow_stage;
@@ -58,19 +59,19 @@ namespace compute
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public Results Compute(interfaces.IProvideRandomNumbers rp, Statistics.ConvergenceCriteria convergence_criteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public Results Compute(interfaces.IProvideRandomNumbers rp, ConvergenceCriteria convergence_criteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
             if (HasErrors)
             {
-                if (ErrorLevel >= Base.Enumerations.ErrorLevel.Fatal)
+                if (ErrorLevel >= ErrorLevel.Fatal)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation contains errors. The compute has been aborted.")));
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
                     return _results;
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation contains warnings")));
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
                 }
                 //enumerate what the errors and warnings are 
             }
@@ -80,7 +81,7 @@ namespace compute
             {
                 if (convergence_criteria.MaxIterations != 1)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
                     return _results;
                 }
 
@@ -89,7 +90,7 @@ namespace compute
             {
                 if (convergence_criteria.MinIterations < 100)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
                     return _results;
                 }
                 masterseed = rp.Seed;
@@ -154,7 +155,7 @@ namespace compute
                             if (_flow_stage.IsNull)
                             {
                                 //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
                                 return; //_results;
                             }
                             else
@@ -172,7 +173,7 @@ namespace compute
                             if (_flow_stage.IsNull)
                             {
                                 //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Flow stage is Null!!!")));
+                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
                                 return;// _results;
                             }
                             else
@@ -262,7 +263,7 @@ namespace compute
 
             }
         }
-        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, Statistics.ContinuousDistribution dist, Int64 ordinates)
+        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, ContinuousDistribution dist, Int64 ordinates)
         {
 
             double[] samples = rp.NextRandomSequence(dist.SampleSize);
@@ -508,14 +509,14 @@ namespace compute
             if (_levee_curve.IsNull) return false;
             if (_levee_curve.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
-                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
+                ReportMessage(this, new MessageEventArgs(new Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
                 return false;
             }
             else if (_levee_curve.Yvals.Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("The fragility curve must have stage at which the probability of failure of the levee is 1")));
+                ReportMessage(this, new MessageEventArgs(new Message("The fragility curve must have stage at which the probability of failure of the levee is 1")));
                 return false;
             }
             else
@@ -534,12 +535,12 @@ namespace compute
             {
                 if (_levee_curve.Yvals[idx].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
-                    ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
                 }
             }
             else
             {   //top of levee elevation is not included in the fragility curve
-                ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
+                ReportMessage(this, new MessageEventArgs(new Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
             }
         }
         public void ReportMessage(object sender, MessageEventArgs e)
@@ -566,10 +567,10 @@ namespace compute
                 //add validation here to test ranges and domains.
                 return _sim;
             }
-            public SimulationBuilder withFlowFrequency(Statistics.ContinuousDistribution dist)
+            public SimulationBuilder withFlowFrequency(ContinuousDistribution dist)
             {
                 _sim._frequency_flow = dist;
-                _sim.AddSinglePropertyRule("flow frequency", new Base.Implementations.Rule(() => { _sim._frequency_flow.Validate(); return !_sim._frequency_flow.HasErrors; }, _sim._frequency_flow.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_flow.Validate(); return !_sim._frequency_flow.HasErrors; }, _sim._frequency_flow.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData gupd)
@@ -580,32 +581,32 @@ namespace compute
             public SimulationBuilder withInflowOutflow(UncertainPairedData upd)
             {
                 _sim._inflow_outflow = upd;
-                _sim.AddSinglePropertyRule("inflow outflow", new Base.Implementations.Rule(() => { _sim._inflow_outflow.Validate(); return !_sim._inflow_outflow.HasErrors; }, _sim._inflow_outflow.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._inflow_outflow.Validate(); return !_sim._inflow_outflow.HasErrors; }, _sim._inflow_outflow.GetErrors().ToString()));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData upd)
             {
                 _sim._flow_stage = upd;
-                _sim.AddSinglePropertyRule("flow stage", new Base.Implementations.Rule(() => { _sim._flow_stage.Validate(); return !_sim._flow_stage.HasErrors; }, _sim._flow_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._flow_stage.Validate(); return !_sim._flow_stage.HasErrors; }, _sim._flow_stage.GetErrors().ToString()));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData gupd)
             {
                 _sim._frequency_stage = gupd;
-                _sim.AddSinglePropertyRule("frequency_stage", new Base.Implementations.Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData upd)
             {
                 _sim._channelstage_floodplainstage = upd;
-                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Base.Implementations.Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, _sim._channelstage_floodplainstage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, _sim._channelstage_floodplainstage.GetErrors().ToString()));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(UncertainPairedData upd, double topOfLeveeElevation)
             {
-                _sim.AddSinglePropertyRule("levee", new Base.Implementations.Rule(() => _sim.LeveeIsValid(), "Levee is invalid."));
+                _sim.AddSinglePropertyRule("levee", new Rule(() => _sim.LeveeIsValid(), "Levee is invalid."));
                 _sim._levee_curve = upd;
                 _sim._topOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_sim);
@@ -615,7 +616,7 @@ namespace compute
                 _sim._damage_category_stage_damage = upd;
                 foreach (UncertainPairedData uncertain in _sim._damage_category_stage_damage)
                 {
-                    _sim.AddSinglePropertyRule(uncertain.Category + " stage damages", new Base.Implementations.Rule(() => { uncertain.Validate(); return !uncertain.HasErrors; }, uncertain.GetErrors().ToString()));
+                    _sim.AddSinglePropertyRule(uncertain.Category + " stage damages", new Rule(() => { uncertain.Validate(); return !uncertain.HasErrors; }, uncertain.GetErrors().ToString()));
                 }
                 return new SimulationBuilder(_sim);
             }

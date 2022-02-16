@@ -7,7 +7,7 @@ using paireddata;
 
 namespace compute
 {
-    public class FrequencyDamageMessage : Base.Implementations.Message
+    public class FrequencyDamageMessage : HEC.MVVMFramework.Base.Implementations.Message
 {
         private PairedData _frequencyDamage;
 

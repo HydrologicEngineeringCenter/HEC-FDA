@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace compute
 {
-    public class EADMessage : Base.Interfaces.IMessage
+    public class EADMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
     {
         private double _eadEstimate;
         public string Message
