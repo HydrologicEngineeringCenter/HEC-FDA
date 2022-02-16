@@ -1,6 +1,4 @@
-﻿using Base.Enumerations;
-using Statistics.Distributions;
-using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
+﻿using Statistics.Distributions;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 

@@ -1,7 +1,7 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using Statistics.Distributions;
-using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {

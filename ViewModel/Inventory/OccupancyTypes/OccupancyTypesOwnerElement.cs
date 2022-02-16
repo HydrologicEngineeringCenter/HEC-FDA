@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes

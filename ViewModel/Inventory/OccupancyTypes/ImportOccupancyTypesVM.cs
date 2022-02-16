@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Inventory.DepthDamage;
-using Model;
 using System.IO;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes

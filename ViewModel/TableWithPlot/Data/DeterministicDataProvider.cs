@@ -1,9 +1,6 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
-using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
-using System.Xml.Linq;
-using Statistics;
-using Statistics.Distributions;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes
 {

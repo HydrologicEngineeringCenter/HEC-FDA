@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Study
 {
     //[Author("q0heccdm", "10 / 11 / 2016 4:08:19 PM")]
-    
+
     public class AnalysisYearsVM : BaseViewModel
     {
         #region Notes

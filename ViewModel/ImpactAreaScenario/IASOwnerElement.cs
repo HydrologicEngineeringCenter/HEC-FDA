@@ -1,14 +1,8 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.FlowTransforms;
-using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario

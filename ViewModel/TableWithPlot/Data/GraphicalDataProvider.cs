@@ -1,4 +1,4 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using System.Collections.Generic;

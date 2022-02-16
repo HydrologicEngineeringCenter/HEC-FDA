@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HEC.FDA.ViewModel.Utilities.Transactions
+﻿namespace HEC.FDA.ViewModel.Utilities.Transactions
 {
     public class TransactionRowItem
     {

@@ -1,4 +1,4 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Rows.Base;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods

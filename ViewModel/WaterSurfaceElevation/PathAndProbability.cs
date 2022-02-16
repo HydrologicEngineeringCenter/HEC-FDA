@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Threading.Tasks;
-
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+﻿namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 11 / 2017 8:48:18 AM)]
     public class PathAndProbability
