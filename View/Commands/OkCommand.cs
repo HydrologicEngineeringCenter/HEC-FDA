@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using HEC.FDA.ViewModel;
 
 namespace HEC.FDA.View.Commands
 {

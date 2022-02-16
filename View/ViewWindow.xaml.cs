@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using OpenGLMapping;
-using System.IO;
-using System.Xml;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using System.Windows.Input;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using System.Timers;
-using System.Windows.Shapes;
-using ViewModel;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
-using HEC.FDA.ViewModel.Study;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Inventory;
+using OpenGLMapping;
+using System;
+using System.Collections.Generic;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
-namespace View
+namespace HEC.FDA.View
 {
     /// <summary>
     /// Interaction logic for ViewWindow.xaml
@@ -62,7 +56,7 @@ namespace View
 
         private void RequestAddToMapWindow(object sender, AddMapFeatureEventArgs args)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
 
@@ -132,7 +126,7 @@ namespace View
             return null;
         }
 
-        private void OpenStructureAttributeTable(object sender, Study.StudyView sv, AddMapFeatureEventArgs args)
+        private void OpenStructureAttributeTable(object sender, HEC.FDA.View.Study.StudyView sv, AddMapFeatureEventArgs args)
         {
             MapTreeView mtv = sv.MapTreeView;
             VectorFeatureNode nodeInMapTab = GetMapTabFeature(args.MapFeatureHash, mtv);
@@ -188,7 +182,7 @@ namespace View
 
         private void RequestRemoveFromMapWindow(object sender, RemoveMapFeatureEventArgs args)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             foreach (OpenGLMapping.FeatureNodeHeader f in mtv.GetAllFeatureNodes())
@@ -202,7 +196,7 @@ namespace View
         }
         private void RequestShapefilePaths(ref System.Collections.Generic.List<string> files)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             List<OpenGLMapping.VectorFeatureNode> v = mtv.GetVectorFeatureNodes();
@@ -213,7 +207,7 @@ namespace View
         }
         private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, VectorFeatureType featureType)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             List<OpenGLMapping.VectorFeatureNode> v = mtv.GetVectorFeatureNodes();
@@ -668,7 +662,7 @@ namespace View
 
         private TabControl GetTabControlFromMainWindow()
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(_MainWindow.masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(_MainWindow.masterControl);
             if (sv == null)
             {
                 return null;
