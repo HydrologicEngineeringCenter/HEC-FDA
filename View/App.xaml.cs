@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace View
+namespace HEC.FDA.View
 {
     /// <summary>
     /// Interaction logic for App.xaml
