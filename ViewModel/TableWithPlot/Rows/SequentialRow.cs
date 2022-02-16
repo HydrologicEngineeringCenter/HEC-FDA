@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.MVVMFramework.ViewModel.Validation;
-using Base.Enumerations;
-
+using HEC.MVVMFramework.Base.Enumerations;
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public abstract class SequentialRow : MVVMFramework.ViewModel.Implementations.ValidatingBaseViewModel
     {
-        Base.Enumerations.ErrorLevel;
         private double _x;
         [DisplayAsColumn("X Value",0)]
         public double X
@@ -46,7 +44,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 
         public void SetGlobalMaxRules(double xMax , double yMax , double xMin, double yMin)
         {
-            AddSinglePropertyRule(nameof(X), new Rule(() => { return X <= xMax; }, "X was greater than the maximum allowed value", Base.Enumerations. ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(X), new Rule(() => { return X <= xMax; }, "X was greater than the maximum allowed value", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(X), new Rule(() => { return X >= xMin; }, "X was smaller than the minimum allowed value", ErrorLevel.Severe));
             foreach(string propName in YMinProperties)
             {

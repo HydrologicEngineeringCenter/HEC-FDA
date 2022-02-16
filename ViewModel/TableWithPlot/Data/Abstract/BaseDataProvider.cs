@@ -66,7 +66,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
                 xs[i] = ((SequentialRow)Data[i]).X;
                 ys[i] = ((SequentialRow)Data[i]).Y;
             }
-            return new UncertainPairedData(xs, ys, xlabel, ylabel, name, description, category);
+            return new UncertainPairedData(xs, ys, xlabel, ylabel, name, category);
         }
         public void UpdateFromUncertainPairedData(UncertainPairedData upd)
         {

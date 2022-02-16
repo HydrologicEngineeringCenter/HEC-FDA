@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using HEC.FDA.ViewModel.Editors;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -170,7 +171,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     if (lp3.HasErrors)
                     {
                         System.Collections.IEnumerable enumerable = lp3.GetErrors();
-                        Base.Enumerations.ErrorLevel errorLevel = lp3.ErrorLevel;
+                        ErrorLevel errorLevel = lp3.ErrorLevel;
                         //todo: do what?
                     }
                     else

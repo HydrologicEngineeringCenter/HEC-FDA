@@ -1,4 +1,5 @@
-﻿using Base.Enumerations;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.ViewModel.Validation;
 using Statistics.Distributions;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;

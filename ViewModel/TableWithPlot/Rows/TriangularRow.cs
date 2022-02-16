@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.MVVMFramework.ViewModel.Validation;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -77,7 +79,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 
         public TriangularRow(double x, IDistribution y) : base(x, y)
         {
-            AddSinglePropertyRule(nameof(Min), new Rule(() => { if (PreviousRow == null) return true; return Min > ((Triangular)PreviousRow.Y).Min; }, "Min values are not increasing.",Base.Enumerations.ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Min), new Rule(() => { if (PreviousRow == null) return true; return Min > ((Triangular)PreviousRow.Y).Min; }, "Min values are not increasing.",ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Min), new Rule(() => { if (NextRow == null) return true; return Min < ((Triangular)NextRow.Y).Min; }, "Min values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(MostLikely), new Rule(() => { if (PreviousRow == null) return true; return MostLikely > ((Triangular)PreviousRow.Y).MostLikely; }, "Most likely values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(MostLikely), new Rule(() => { if (NextRow == null) return true; return MostLikely < ((Triangular)NextRow.Y).MostLikely; }, "Most likely values are not increasing.", ErrorLevel.Severe));
