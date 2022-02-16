@@ -68,7 +68,7 @@
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsChecked}" IsReadOnly="{Binding IsEditor}" Width="110">
+                <DataGridCheckBoxColumn Binding="{Binding IsChecked}" IsReadOnly="True" Width="110">
                     <DataGridCheckBoxColumn.Header>
                         <TextBlock Text="Import" TextWrapping="Wrap" />
                     </DataGridCheckBoxColumn.Header>
