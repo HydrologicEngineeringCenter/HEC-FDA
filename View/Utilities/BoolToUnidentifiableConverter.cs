@@ -4,13 +4,13 @@ using System.Windows.Data;
 
 namespace View.Utilities
 {
-    public class BoolToMissingConverter : IValueConverter
+    public class BoolToUnidentifiableConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (System.Convert.ToBoolean(value) == true)
             {
-                return "Missing";
+                return "Unidentifiable";
             }
             else
             {

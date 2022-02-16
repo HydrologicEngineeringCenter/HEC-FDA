@@ -30,23 +30,16 @@ namespace ViewModel.Inventory.OccupancyTypes
         IDistribution OtherValueUncertainty { get; set; }
         IDistribution FoundationHeightUncertainty { get; set; }
         
-         ValueUncertaintyType StructureUncertaintyType { get; set; }
+        //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
+        bool IsContentRatio { get; set; }
+        bool IsVehicleRatio { get; set; }
+        bool IsOtherRatio { get; set; }
+
+        ValueUncertaintyType StructureUncertaintyType { get; set; }
         ValueUncertaintyType ContentUncertaintyType { get; set; }
         ValueUncertaintyType VehicleUncertaintyType { get; set; }
         ValueUncertaintyType OtherUncertaintyType { get; set; }
         ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
-
-
-
-
-       
-        //public SampledOccupancyType GenerateSampledOccupancyType(ref Random Randy);
-        //public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter);
-        //public string WriteToFDAString();
-        //public XElement WriteToXElement();
-
-        //public delegate void ReportMessageEventHandler(string message);
-
 
     }
 }

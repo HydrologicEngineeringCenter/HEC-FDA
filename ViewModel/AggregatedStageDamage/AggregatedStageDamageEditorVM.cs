@@ -9,7 +9,7 @@ namespace ViewModel.AggregatedStageDamage
     public class AggregatedStageDamageEditorVM : BaseLoggingEditorVM
     {
         private bool _IsInEditMode;
-        private bool _IsManualRadioSelected = true;
+        private bool _IsManualRadioSelected = false;
         private BaseViewModel _CurrentVM;
 
         #region properties
@@ -39,7 +39,7 @@ namespace ViewModel.AggregatedStageDamage
 
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
-            CurrentVM = ManualVM;
+            CurrentVM = CalculatedVM;
         }
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, "", "", "", actionManager)
@@ -142,6 +142,7 @@ namespace ViewModel.AggregatedStageDamage
                     _IsInEditMode = true;
                 }
                 CurrentElement = elem;
+                UpdateSave(CurrentElement);
             }
         }
 

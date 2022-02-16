@@ -18,7 +18,14 @@ namespace ViewModel.Editors
         private bool _IsExpanded;
         private CoordinatesFunctionEditorVM _EditorVM;
         private bool _SaveStatusVisible;
+        private string _SavingText;
 
+
+        public string SavingText
+        {
+            get { return _SavingText; }
+            set { _SavingText = value; NotifyPropertyChanged(); }
+        }
         public bool SaveStatusVisible
         {
             get { return _SaveStatusVisible; }
@@ -232,6 +239,17 @@ namespace ViewModel.Editors
             }
         }
 
+        /// <summary>
+        /// Updates the saving text, reloads the messages and toggles the has changes so that the save gets disabled.
+        /// </summary>
+        /// <param name="elementToSave"></param>
+        public void UpdateSave(ChildElement elementToSave)
+        {
+            SavingText = CreateLastSavedText(elementToSave);
+            ReloadMessages(true);
+            HasChanges = false;
+        }
+
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
             List<LogItem> logs = new List<LogItem>();
@@ -285,6 +303,11 @@ namespace ViewModel.Editors
                     }
             }
             return logLevel;
+        }
+
+        private string CreateLastSavedText(ChildElement elem)
+        {
+            return "Last Saved: " + elem.LastEditDate;
         }
 
     }

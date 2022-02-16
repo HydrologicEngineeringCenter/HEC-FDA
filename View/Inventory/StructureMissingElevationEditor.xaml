@@ -13,6 +13,7 @@
         <con:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <con:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
         <con:BoolToMissingConverter x:Key="BoolToMissing"/>
+        <con:BoolToUnidentifiableConverter x:Key="BoolToUnidentifiable"/>
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -54,7 +55,7 @@
                 
                 <DataGridTextColumn Binding="{Binding IsMissingFirstFloorElevation, Converter={StaticResource BoolToMissing}}" Header="First Floor Elevation"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}"/>
                 <DataGridTextColumn Binding="{Binding IsMissingStructureValue, Converter={StaticResource BoolToMissing}}" Header="Structure Value"  Width="*"/>
-                <DataGridTextColumn Binding="{Binding IsMissingTerrainElevation, Converter={StaticResource BoolToMissing}}" Header="Terrain Elevation"  Width="*" Visibility="{Binding DataContext.ElevsFromTerrainFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+                <DataGridTextColumn Binding="{Binding IsMissingTerrainElevation, Converter={StaticResource BoolToUnidentifiable}}" Header="Terrain Elevation"  Width="*" Visibility="{Binding DataContext.ElevsFromTerrainFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" />
 
             </DataGrid.Columns>
         </DataGrid>

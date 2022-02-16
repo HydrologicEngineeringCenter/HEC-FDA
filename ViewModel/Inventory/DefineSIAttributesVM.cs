@@ -196,7 +196,7 @@ namespace ViewModel.Inventory
                 object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
                 foreach (object o in occtypesFromFile)
                 {
-                    uniqueList.Add((string)o);
+                    uniqueList.Add(o.ToString());
                 }
             }
             return uniqueList.Distinct().ToList();
