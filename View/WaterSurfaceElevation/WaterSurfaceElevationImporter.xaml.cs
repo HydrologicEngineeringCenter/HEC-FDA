@@ -70,7 +70,7 @@ namespace HEC.FDA.View.WaterSurfaceElevation
                 vm.AddRow(true, System.IO.Path.GetFileName(vrtFile), System.IO.Path.GetFullPath(vrtFile), prob);
             }
 
-            lst_ListOfRows.ItemsSource = vm.ListOfRows;
+            //lst_ListOfRows.ItemsSource = vm.ListOfRows;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -18,10 +18,14 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         private ObservableCollection<WaterSurfaceElevationRowItemVM> _ListOfRows;
         private List<PathAndProbability> _ListOfRelativePaths;
         private bool _IsDepthGridChecked;
-
+        private bool _IsEditor;
         #endregion
         #region Properties
-        public bool IsEditor { get; set; }
+        public bool IsEditor
+        {
+            get { return _IsEditor; }
+            set { _IsEditor = value; NotifyPropertyChanged(); }
+        }
         public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's
         public List<PathAndProbability> ListOfRelativePaths
         {
@@ -35,11 +39,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             get { return _IsDepthGridChecked; }
             set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
         }
-            public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows
-        {
-            get { return _ListOfRows; }
-            set { _ListOfRows = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
+ 
 
         #endregion
         #region Constructors

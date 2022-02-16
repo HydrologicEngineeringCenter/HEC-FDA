@@ -62,9 +62,59 @@
                 <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
-        
-       
-        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch"  Margin="3">
+
+        <DataGrid Grid.Row="5" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left"
+                  VerticalAlignment="Top" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Binding="{Binding IsChecked}" IsReadOnly="{Binding IsEditor}" Width="110">
+                    <DataGridCheckBoxColumn.Header>
+                        <TextBlock Text="Import" TextWrapping="Wrap" />
+                    </DataGridCheckBoxColumn.Header>
+                </DataGridCheckBoxColumn>
+                <DataGridTextColumn Binding="{Binding Name}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Name" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Probability}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Probability" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Return Year" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <!--<ItemsControl Grid.Row="5" ItemsSource="{Binding ListOfRows}" Grid.ColumnSpan="4"  Margin="5" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IsChecked}" IsEnabled="{Binding IsEditor, Converter={StaticResource BoolToInverseVisibility}}" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}"   HorizontalAlignment="Stretch"/>
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Probability}"  HorizontalAlignment="Stretch"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding ReturnYear}"   HorizontalAlignment="Stretch"/>
+
+
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+
+        <!--<ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch"  Margin="3">
            
             <ListView.View >
                 <GridView AllowsColumnReorder="false"  >
@@ -113,7 +163,7 @@
             
             
             
-        </ListView>
+        </ListView>-->
         <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Top" Content="An associated terrain may need to be defined before computing." />
 
         <!--<Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom"/>-->
