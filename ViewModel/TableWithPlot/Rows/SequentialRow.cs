@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.MVVMFramework.ViewModel.Validation;
+
 using HEC.MVVMFramework.Base.Enumerations;
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -31,6 +32,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             Y = y;
             if (isMonotonicallyIncreasing)
             {
+                Base.Implementations.Message;
+
                 AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X > PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
                 AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X < NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
             }
