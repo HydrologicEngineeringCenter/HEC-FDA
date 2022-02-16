@@ -359,6 +359,58 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             return vr;
         }
 
+        public void FileSelected(string fullpath)
+        {
+            //clear out any already existing rows
+            if (!Directory.Exists(fullpath))
+            {
+                ListOfRows.Clear();
+                return;
+            }
+            //is this an old fda study?
+
+            List<string> tifFiles = new List<string>();
+            List<string> fltFiles = new List<string>();
+            List<string> vrtFiles = new List<string>();
+
+            string[] fileList = Directory.GetFiles(fullpath);
+
+            if (fileList.Count() == 0)
+            {
+                return;
+            }
+
+            foreach (string file in fileList)
+            {
+                if (Path.GetExtension(file) == ".tif") { tifFiles.Add(file); }
+                if (Path.GetExtension(file) == ".flt") { fltFiles.Add(file); }
+                if (Path.GetExtension(file) == ".vrt") { vrtFiles.Add(file); }
+
+            }
+
+            //clear out any already existing rows
+            ListOfRows.Clear();
+
+            double prob = 0;
+            foreach (string tifFile in tifFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(tifFile), Path.GetFullPath(tifFile), prob);
+            }
+            prob = 0;
+            foreach (string fltFile in fltFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(fltFile), Path.GetFullPath(fltFile), prob);
+            }
+            prob = 0;
+            foreach (string vrtFile in vrtFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(vrtFile), Path.GetFullPath(vrtFile), prob);
+            }
+        }
+
         public override void Save()
         {
             FdaValidationResult vr = ValidateImporter();
