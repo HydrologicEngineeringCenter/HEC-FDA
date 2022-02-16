@@ -351,10 +351,26 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             return true;
         }
 
+        private FdaValidationResult ValidateImporter()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            return vr;
+        }
+
         public override void Save()
         {
-            bool isValid = RunSpecialValidation();
-            if (isValid)
+            FdaValidationResult vr = ValidateImporter();
+
+            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked);
+            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+            if (IsImporter && HasSaved == false)
+            {
+                manager.SaveNew(elementToSave);
+                HasSaved = true;
+                OriginalElement = elementToSave;
+            }
+            else
             {
                 int id = Saving.PersistenceFactory.GetWaterSurfaceManager().GetNextAvailableId();
                 WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);

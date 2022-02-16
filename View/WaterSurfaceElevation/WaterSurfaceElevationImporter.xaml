@@ -116,7 +116,10 @@
         </ListView>
         <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Top" Content="An associated terrain may need to be defined before computing." />
 
-        <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom"/>
-
+        <!--<Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom"/>-->
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Utilities:SaveControl />
+            <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
+        </StackPanel>
     </Grid>
 </UserControl>

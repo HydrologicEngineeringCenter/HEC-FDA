@@ -97,39 +97,7 @@ namespace HEC.FDA.ViewModel.Editors
         /// <summary>
         /// This will get called when the OK or save button is clicked on the editor
         /// </summary>
-        public void Save(ChildElement elementToSave)
-        {
-            InTheProcessOfSaving = true;
-            LastEditDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = LastEditDate;
-            //elementToSave.Curve = Curve;
-            Saving.IElementManager elementManager = Saving.PersistenceFactory.GetElementManager(elementToSave);
-
-            if (IsCreatingNewElement)
-            {
-                elementManager.SaveNew(elementToSave);
-                IsCreatingNewElement = false;
-            }
-            else
-            {
-                elementManager.SaveExisting(elementToSave);
-            }
-
-            SavingText = CreateLastSavedText(elementToSave);
-            HasChanges = false;
-            OriginalElement = elementToSave;
-        }
-
-        /// <summary>
-        /// I wanted this here so that the text could live in one place.
-        /// That way if we want to change it, it should change all the places that use it.
-        /// </summary>
-        /// <param name="elem"></param>
-        /// <returns></returns>
-        private string CreateLastSavedText(ChildElement elem)
-        {
-            return "Last Saved: " + elem.LastEditDate;
-        }
+        public abstract void Save();
 
         public override void AddValidationRules()
         {
