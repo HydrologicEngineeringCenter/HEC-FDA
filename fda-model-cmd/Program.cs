@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Base.Events;
+using HEC.MVVMFramework.Base.Events;
 using compute;
 using paireddata;
 using Statistics;
@@ -11,7 +11,7 @@ System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 sw.Start();
 int iterations = 1000000;
 int seed = 2345;
- IDistribution LP3Distribution = new LogPearson3(3.537, .438, .075, 125);
+IDistribution LP3Distribution = new LogPearson3(3.537, .438, .075, 125);
  double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
 
 string xLabel = "x label";

@@ -2,10 +2,12 @@ using interfaces;
 using Statistics;
 using System;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace paireddata
 {
-    public class UncertainPairedData : Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull
+    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull
     {
         #region Fields 
         private double[] _xvals;
@@ -77,22 +79,22 @@ namespace paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals,.99, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals,.99, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .99, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .99, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
                     break;
                 //case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
-                //    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
-                //    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsArrayValid(Yvals, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
                 //    break;
                 //case CurveTypesEnum.MonotonicallyDecreasing:
-                //    AddSinglePropertyRule(nameof(Xvals), new Base.Implementations.Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically decreasing"));
-                //    AddSinglePropertyRule(nameof(Yvals), new Base.Implementations.Rule(() => IsArrayValid(Yvals, (a, b) => (a < b)), "Y must be monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically decreasing"));
+                //    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a < b)), "Y must be monotonically decreasing"));
                 //    break;
                 default:
                     break;
@@ -134,11 +136,11 @@ namespace paireddata
             pairedData.Validate();
             if (pairedData.HasErrors){
                 
-                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
                 }
-                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Xvals);//bad news.
                 }

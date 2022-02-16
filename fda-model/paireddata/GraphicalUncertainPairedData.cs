@@ -5,10 +5,11 @@ using interfaces;
 using System.Linq;
 using System.Xml.Linq;
 using System;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace paireddata
 {
-    public class GraphicalUncertainPairedData : Base.Implementations.Validation, IPairedDataProducer, ICanBeNull
+    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull
     {
         #region Fields
         private int _EquivalentRecordLength;
@@ -105,11 +106,11 @@ namespace paireddata
             pairedData.Validate();
             if (pairedData.HasErrors)
             {
-                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
                 }
-                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
+                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Xvals);//bad news.
                 }
