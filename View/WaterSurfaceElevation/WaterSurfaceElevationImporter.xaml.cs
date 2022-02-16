@@ -20,57 +20,8 @@ namespace HEC.FDA.View.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-            WaterSurfaceElevationImporterVM vm = (WaterSurfaceElevationImporterVM)this.DataContext;
-            //clear out any already existing rows
-            if (!System.IO.Directory.Exists(fullpath))
-            {
-                vm.ListOfRows.Clear();
-                return;
-            }
-            //is this an old fda study?
-
-            List<string> tifFiles = new List<string>();
-            List<string> fltFiles = new List<string>();
-            List<string> vrtFiles = new List<string>();
-
-            string[] fileList = System.IO.Directory.GetFiles(fullpath);
-            
-            if(fileList.Count()==0)
-            {
-                return;
-            }
-
-            foreach(string file in fileList)
-            {
-                if(System.IO.Path.GetExtension(file) == ".tif") { tifFiles.Add(file); }
-                if (System.IO.Path.GetExtension(file) == ".flt") { fltFiles.Add(file); }
-                if (System.IO.Path.GetExtension(file) == ".vrt") { vrtFiles.Add(file); }
-
-            }
-
-            //clear out any already existing rows
-            vm.ListOfRows.Clear();
-
-            double prob = 0;
-            foreach(string tifFile in tifFiles)
-            {
-                prob += .1;
-                vm.AddRow(true, System.IO.Path.GetFileName(tifFile),System.IO.Path.GetFullPath(tifFile), prob);
-            }
-            prob = 0;
-            foreach (string fltFile in fltFiles)
-            {
-                prob += .1;
-                vm.AddRow(true, System.IO.Path.GetFileName(fltFile), System.IO.Path.GetFullPath(fltFile), prob);
-            }
-            prob = 0;
-            foreach (string vrtFile in vrtFiles)
-            {
-                prob += .1;
-                vm.AddRow(true, System.IO.Path.GetFileName(vrtFile), System.IO.Path.GetFullPath(vrtFile), prob);
-            }
-
-            //lst_ListOfRows.ItemsSource = vm.ListOfRows;
+            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            vm.FileSelected(fullpath);          
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
