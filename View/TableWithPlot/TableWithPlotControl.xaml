@@ -26,7 +26,7 @@
             </Grid>
             <!--<view:NamedActionButton Grid.Column="1" NamedAction="{Binding TableExtender}" />-->
         </Grid>
-        <!--<GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" />-->
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" />
         <Grid Grid.Column="2">
             <Grid.ColumnDefinitions>
                 <!--<ColumnDefinition Width="10"/>-->

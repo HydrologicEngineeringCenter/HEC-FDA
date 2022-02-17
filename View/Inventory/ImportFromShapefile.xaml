@@ -1,13 +1,11 @@
 ﻿<UserControl x:Class="HEC.FDA.View.Inventory.ImportFromShapefile"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HEC.FDA.View.Inventory"
-        xmlns:ViewModel="clr-namespace:ViewModel.Inventory;assembly=ViewModel"
-        xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-        mc:Ignorable="d"
+             xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             mc:Ignorable="d"
         Height="615" Width="364" >
     <UserControl.Resources>
         <!--<ViewModel:ImportFromShapefileVM x:Key="vm"/>-->
@@ -79,14 +77,14 @@
                     <TextBlock Text="Occupancy Type:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2"/>
                     <ComboBox Name="CmbOccType"  Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SIAttributes}" SelectedIndex="{Binding Path=OccTypeIndex}" SelectedItem="{Binding Path=OccupancyTypeColumnName}" />
 
-                    <TextBlock Text="Ground Elevation:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseDbfForTerrain, Path=.IsChecked}"/>
-                    <ComboBox Name="CmbGroundElevation"  Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseDbfForTerrain, Path=.IsChecked}" SelectedIndex="{Binding Path=GroundElevationIndex}" SelectedItem="{Binding Path=GroundElevationColumnName}"  />
+                    <TextBlock Text="Ground Elevation:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseDbfForTerrain, Path=IsChecked}"/>
+                    <ComboBox Name="CmbGroundElevation"  Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseDbfForTerrain, Path=IsChecked}" SelectedIndex="{Binding Path=GroundElevationIndex}" SelectedItem="{Binding Path=GroundElevationColumnName}"  />
 
-                    <TextBlock Text="Foundation Height:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseFoundationHeight, Path=.IsChecked}"/>
-                    <ComboBox Name="CmbFoundationHeight"  Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseFoundationHeight, Path=.IsChecked}" SelectedIndex="{Binding Path=FoundHeightIndex}" SelectedItem="{Binding Path=FoundationHeightColumnName}" />
+                    <TextBlock Text="Foundation Height:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseFoundationHeight, Path=IsChecked}"/>
+                    <ComboBox Name="CmbFoundationHeight"  Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseFoundationHeight, Path=IsChecked}" SelectedIndex="{Binding Path=FoundHeightIndex}" SelectedItem="{Binding Path=FoundationHeightColumnName}" />
 
-                    <TextBlock Text="First Floor Elevation:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseFirstfloorElevation, Path=.IsChecked}"/>
-                    <ComboBox Name="CmbFFE"  Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseFirstFloorElevation, Path=.IsChecked}" SelectedIndex="{Binding Path=FirstFloorIndex}" SelectedItem="{Binding Path=FirstFloorElevationColumnName}" />
+                    <TextBlock Text="First Floor Elevation:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2" IsEnabled="{Binding ElementName=UseFirstfloorElevation, Path=IsChecked}"/>
+                    <ComboBox Name="CmbFFE"  Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" IsEnabled="{Binding ElementName=UseFirstFloorElevation, Path=IsChecked}" SelectedIndex="{Binding Path=FirstFloorIndex}" SelectedItem="{Binding Path=FirstFloorElevationColumnName}" />
 
                     <TextBlock Text="Structure Value:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,2,2"/>
                     <ComboBox Name="CmbStructureValue"  Grid.Row="6" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,2" ItemsSource="{Binding Path=SINumericAttributes}" SelectedIndex="{Binding Path=StructValueIndex}" SelectedItem="{Binding Path=StructureValueColumnName}" />

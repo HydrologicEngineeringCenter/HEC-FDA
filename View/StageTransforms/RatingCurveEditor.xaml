@@ -6,6 +6,7 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
@@ -33,12 +34,13 @@
             <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <Grid x:Name="editorGrid" Grid.Row="2">
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
             <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <Utilities:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />
+            <!--<Utilities:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />-->
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
         </Grid>
         <Utilities:MessageExpanderControl Grid.Row="3" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">

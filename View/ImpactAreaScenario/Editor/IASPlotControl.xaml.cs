@@ -2,9 +2,6 @@
 using HEC.Plotting.Core.Charts;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
-using HEC.Plotting.SciChart2D.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;

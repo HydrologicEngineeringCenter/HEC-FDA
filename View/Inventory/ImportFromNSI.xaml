@@ -1,12 +1,10 @@
 ﻿<UserControl x:Class="HEC.FDA.View.Inventory.ImportFromNSI"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HEC.FDA.View.Inventory"
-        xmlns:ViewModel="clr-namespace:ViewModel.Inventory;assembly=ViewModel"
-        xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
-        mc:Ignorable="d"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             mc:Ignorable="d"
         Height="200" Width="498">
     <!--<UserControl.Resources>
         <ViewModel:ImportFromNSIVM x:Key="vm"/>

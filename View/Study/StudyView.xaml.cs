@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;

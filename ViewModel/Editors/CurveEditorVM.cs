@@ -4,6 +4,7 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
 using System;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -15,9 +16,17 @@ namespace HEC.FDA.ViewModel.Editors
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
         private UncertainPairedData _Curve;
+        private string _SavingText;
+        private TableWithPlotVM _TableWithPlot;
 
         #region properties
-        
+
+        public TableWithPlotVM TableWithPlot
+        {
+            get { return _TableWithPlot; }
+            set { _TableWithPlot = value; NotifyPropertyChanged(); }
+        }
+
         public UncertainPairedData Curve
         {
             get { return _Curve; }
@@ -40,13 +49,17 @@ namespace HEC.FDA.ViewModel.Editors
         {
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
+            ComputeComponentVM vm = new ComputeComponentVM("testName", "testXLabel", "testYLabel");
+            TableWithPlot = new TableWithPlotVM(vm);
         }
  
 
         public CurveEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
             PlotTitle = Name;
-            SetDimensions(800, 600, 400, 400);         
+            SetDimensions(800, 600, 400, 400);
+            ComputeComponentVM vm = new ComputeComponentVM("testName", "testXLabel", "testYLabel");
+            TableWithPlot = new TableWithPlotVM(vm);
         }
 
         #endregion

@@ -1,13 +1,8 @@
-﻿using ViewModel;
+﻿using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using HEC.FDA.ViewModel;
 
 namespace HEC.FDA.View.Commands
 {
