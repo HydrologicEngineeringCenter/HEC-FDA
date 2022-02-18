@@ -9,6 +9,7 @@ using paireddata;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
+using Statistics;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
@@ -97,9 +98,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             Initialize();
             SetValidation();
         }
-        public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel", string description = "description")
+        public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel")
         {
-            _name = name;
+            Name = name;
+            XLabel = xlabel;
+            YLabel = ylabel;
             Initialize();
             SetValidation();
         }

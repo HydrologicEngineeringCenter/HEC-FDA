@@ -19,7 +19,9 @@ namespace HEC.FDA.ViewModel
         private CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
         private string _Tooltip = null;
-
+        private bool _IsExpanded = true;
+        private int _FontSize = 14;
+        private bool _IsBold = true;
         #endregion
         #region Events
         public event EventHandler RenameMapTreeViewElement;
@@ -35,7 +37,21 @@ namespace HEC.FDA.ViewModel
         }
         #endregion
         #region Properties
-
+        public bool IsExpanded
+        {
+            get { return _IsExpanded; }
+            set { _IsExpanded = value; NotifyPropertyChanged(nameof(IsExpanded)); }
+        }
+        public int FontSize
+        {
+            get { return _FontSize; }
+            set { _FontSize = value; NotifyPropertyChanged(nameof(FontSize)); }
+        }
+        public bool IsBold
+        {
+            get { return _IsBold; }
+            set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
+        }
         public String ToolTip
         {
             get { return _Tooltip; }

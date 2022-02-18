@@ -6,8 +6,7 @@ using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
 using System.Reflection;
 using System.Xml.Linq;
-
-
+using paireddata;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
@@ -84,6 +83,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             _computeComponentVM = computeComponentVM;
             Initialize();
         }
+
         #endregion
         public TableWithPlotVM(XElement ele)
         {
@@ -152,6 +152,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             ele.Add(ComputeComponentVM.ToXML());
             return ele;
         }
+
+        public UncertainPairedData GetUncertainPairedData()
+        {
+            return ComputeComponentVM.SelectedItem.ToUncertainPairedData(ComputeComponentVM.XLabel, ComputeComponentVM.YLabel, ComputeComponentVM.Name, ComputeComponentVM.Description, "testCategory?");
+        }
+
         private void LoadFromXML(XElement ele)
         {
             //_reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);

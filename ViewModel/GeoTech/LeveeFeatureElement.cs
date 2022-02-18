@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -78,8 +79,15 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this);
+
+            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetRatingManager()
+                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
+
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSiblingRules(this)
+                .WithSaveHelper(saveHelper);
+
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this, actionManager);
             string header = "Edit " + Name;
@@ -90,7 +98,7 @@ namespace HEC.FDA.ViewModel.GeoTech
         
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
         {
             LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM

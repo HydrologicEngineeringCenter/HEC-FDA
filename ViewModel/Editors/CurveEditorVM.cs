@@ -5,6 +5,7 @@ using paireddata;
 using System;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.TableWithPlot;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -45,11 +46,11 @@ namespace HEC.FDA.ViewModel.Editors
         #endregion
 
         #region constructors
-        public CurveEditorVM(UncertainPairedData defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public CurveEditorVM(UncertainPairedData defaultCurve, string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
-            ComputeComponentVM vm = new ComputeComponentVM("testName", "testXLabel", "testYLabel");
+            ComputeComponentVM vm = new ComputeComponentVM( "testName", "testXLabel", "testYLabel");
             TableWithPlot = new TableWithPlotVM(vm);
         }
  
@@ -58,7 +59,7 @@ namespace HEC.FDA.ViewModel.Editors
         {
             PlotTitle = Name;
             SetDimensions(800, 600, 400, 400);
-            ComputeComponentVM vm = new ComputeComponentVM("testName", "testXLabel", "testYLabel");
+            ComputeComponentVM vm = new ComputeComponentVM( "testName", "testXLabel", "testYLabel");
             TableWithPlot = new TableWithPlotVM(vm);
         }
 
@@ -70,12 +71,16 @@ namespace HEC.FDA.ViewModel.Editors
 
         public virtual UncertainPairedData GetCoordinatesFunction()
         {
+            return TableWithPlot.GetUncertainPairedData();
             //todo: this will be the curve from the table.
-            return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", ""); 
+            //return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", ""); 
         }
 
         public virtual void SaveWhileEditing()
         {
+            XElement tableXML = TableWithPlot.ToXML();
+
+
             if(!HasChanges)
             {
                 //todo: it looks like this never gets hit. It always has changes.
