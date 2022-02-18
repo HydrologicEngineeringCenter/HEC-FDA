@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+	 <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>..\Build\FDA2.0</OutputPath>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>USACE.HEC.FDA.Statistics</PackageId>
+		<VersionPrefix>1.1.0</VersionPrefix>
+		<Description>A library for computing statistics within HEC-FDA</Description>
+		<Authors>Hydrologic Engineering Center</Authors>
+		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-statistics</RepositoryUrl>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.2.15.2147" />
+	<PackageReference Include="USACE.HEC.FDA.Utilities" Version="1.0" />
+  </ItemGroup>
+
+</Project>
