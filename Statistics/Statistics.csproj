@@ -11,7 +11,7 @@
 		<VersionPrefix>1.1.0</VersionPrefix>
 		<Description>A library for computing statistics within HEC-FDA</Description>
 		<Authors>Hydrologic Engineering Center</Authors>
-		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-statistics</RepositoryUrl>
+		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
