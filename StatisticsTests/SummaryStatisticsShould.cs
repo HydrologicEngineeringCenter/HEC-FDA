@@ -4,6 +4,7 @@ using Xunit;
 
 namespace StatisticsTests
 {
+    [Trait("Category", "Unit")]
     public class SummaryStatisticsShould
     {
         //https://www.itl.nist.gov/div898/strd/univ/data/Mavro.dat

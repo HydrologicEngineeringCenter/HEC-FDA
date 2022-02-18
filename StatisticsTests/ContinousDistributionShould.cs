@@ -4,6 +4,7 @@ using Xunit;
 
 namespace StatisticsTests
 {
+    [Trait("Category", "Unit")]
     public class ContinousDistributionShould
     {
         [Fact]

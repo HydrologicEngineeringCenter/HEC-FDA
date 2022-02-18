@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace StatisticsTests.Histograms
 {
+    [Trait("Category", "Unit")]
     public class ThreadsafeHistogramTests
     {
         [Theory]

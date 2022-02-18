@@ -9,6 +9,7 @@ using Utilities;
 
 namespace StatisticsTests.Histograms
 {
+    [Trait("Category", "Unit")]
     public class HistogramTests
     {
         [Theory]

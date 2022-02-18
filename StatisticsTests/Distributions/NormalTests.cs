@@ -7,6 +7,7 @@ using Xunit;
 namespace StatisticsTests.Distributions
 {
     [ExcludeFromCodeCoverage]
+    [Trait("Category", "Unit")]
     public class NormalTests
     {
         [Theory]

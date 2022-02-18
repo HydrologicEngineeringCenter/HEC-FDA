@@ -7,6 +7,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     /// <summary>
     /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="Statistics.Distributions.ShiftedGamma"/>.
     /// </summary>

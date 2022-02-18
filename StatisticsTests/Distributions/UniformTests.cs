@@ -6,6 +6,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     public class UniformTests
     {
         [Theory]

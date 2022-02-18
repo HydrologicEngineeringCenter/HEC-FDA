@@ -10,6 +10,7 @@ using Statistics.Distributions;
 
 namespace StatisticsTests.GraphicalRelationships
 {
+    [Trait("Category", "Unit")]
     public class GraphicalTests
     {
         /// <summary>

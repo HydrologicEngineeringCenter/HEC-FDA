@@ -3,6 +3,7 @@
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     public class DeterministicTests
     {
         [Theory]

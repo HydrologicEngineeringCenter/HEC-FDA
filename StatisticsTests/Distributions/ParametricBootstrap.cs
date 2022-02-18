@@ -8,6 +8,7 @@ using Statistics;
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     public class ParametricBootstrap
     {
         [Theory]

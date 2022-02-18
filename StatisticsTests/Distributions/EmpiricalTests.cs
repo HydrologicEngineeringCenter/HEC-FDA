@@ -10,6 +10,7 @@ using Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     public class EmpiricalTests
     {   
         [Theory]

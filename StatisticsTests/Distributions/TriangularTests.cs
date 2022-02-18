@@ -8,6 +8,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
+    [Trait("Category", "Unit")]
     [ExcludeFromCodeCoverage]
     public class TriangularTests
     {
