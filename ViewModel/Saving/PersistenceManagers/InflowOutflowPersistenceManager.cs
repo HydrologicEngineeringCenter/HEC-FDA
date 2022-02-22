@@ -1,11 +1,11 @@
 ﻿using FdaLogging;
-using paireddata;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.FlowTransforms;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -48,15 +48,15 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(InflowOutflowElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString() };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.ComputeComponentVM.ToXML().ToString() };
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string curveXML = (string)rowData[CURVE_COL];
-            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
-
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            ComputeComponentVM computeControlVM = new ComputeComponentVM(XElement.Parse(curveXML));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
-                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], upd);
+                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], computeControlVM, id);
             return inout;
         }
 

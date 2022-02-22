@@ -8,6 +8,9 @@ namespace HEC.FDA.View.Commands
 {
     class SaveCommand : ICommand
     {
+        /// <summary>
+        /// This has to be here for "ICommand"
+        /// </summary>
         public event EventHandler CanExecuteChanged;
         #region Voids
 
@@ -42,37 +45,13 @@ namespace HEC.FDA.View.Commands
             var values = (object[])parameter;
             BaseViewModel vm = (BaseViewModel)values[0];
             Window window = (Window)values[1];
-            //if (vm.HasChanges)//if the vm is loaded in an error state, the user will not be identified, we should consider not checking for changes.
-            //{
+
             vm.Validate();
 
-            //if (vm.HasError)
-            //{
-            //    bool yesClicked = DisplayErrors(vm, window);
-            //    if (!yesClicked)
-            //    {
-            //        return;
-            //    }
-
-            //}
-            //call save if its an editor?
-            if (vm.GetType().IsSubclassOf(typeof(HEC.FDA.ViewModel.Editors.BaseEditorVM)))
+            if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
             {
-                if (((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
-                {
-                    ((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).Save();
-                }
-                else
-                {
-                    return;
-                }
+                ((ViewModel.Editors.BaseEditorVM)vm).Save();
             }
-            // }
-
-            //vm.WasCanceled = false;
-
-            //TabController.Instance.CloseTabOrWindow(window);
-
         }
         #endregion
         #region Functions

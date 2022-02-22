@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 11:31:34 AM)]
-    public class ExteriorInteriorElement : ChildElement
+    public class ExteriorInteriorElement : CurveChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -18,7 +19,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #region Properties   
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, UncertainPairedData exteriorInteriorCurve):base()
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id):base(id)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -26,7 +27,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
             Description = desc;
             if (Description == null) Description = "";
-            Curve = exteriorInteriorCurve;
+            ComputeComponentVM = exteriorInteriorCurve;
 
             NamedAction editExteriorInteriorCurve = new NamedAction();
             editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve...";
@@ -52,7 +53,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ExteriorInteriorElement elem = (ExteriorInteriorElement)elementToClone;
-            return new ExteriorInteriorElement(elem.Name, elem.LastEditDate, elem.Description, elem.Curve);
+
+            return new ExteriorInteriorElement(elem.Name, elem.LastEditDate, elem.Description, elem.ComputeComponentVM, elem.ID);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
@@ -60,31 +62,19 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
-            //create save helper
-            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
-                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            CurveEditorVM vm = new CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior - Interior Stage", "Exterior Stage", "Interior Stage");
+
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(computeComponentVM , actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
             Navigate(tab, false, true);         
         }
         #endregion
-        #region Functions
-        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            CurveEditorVM editorVM = (CurveEditorVM)vm;
-
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-        }
-        #endregion
-
+       
         public override bool Equals(object obj)
         {
             if(Description == null)
@@ -108,10 +98,10 @@ namespace HEC.FDA.ViewModel.StageTransforms
                 {
                     retval = false;
                 }
-                if (!areCurvesEqual(elem.Curve))
-                {
-                    retval = false;
-                }
+                //if (!areCurvesEqual(elem.Curve))
+                //{
+                //    retval = false;
+                //}
             }
             else
             {

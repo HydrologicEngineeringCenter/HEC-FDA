@@ -41,7 +41,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
                 //check rating stages with stage-damage stages
                 CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
-
             }
             else
             {
@@ -51,7 +50,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 //check rating stages with stage-damage stages
                 CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
             }
-
         }
 
         /// <summary>
@@ -70,7 +68,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             double otherMin = -1;
             double otherMax = -1;
 
-            UncertainPairedData otherCurve = otherElem.ChildElement.Curve;
+            //todo: can i change the row item so i don't have to cast here?
+
+            UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).ComputeComponentVM.SelectedItemToPairedData();
 
             stageDamageMin = selectedDamageCurve.Function.Xvals.Min();
             stageDamageMax = selectedDamageCurve.Function.Xvals.Last();
@@ -101,20 +101,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             ChildElement elem1 = element1.ChildElement;
             ChildElement elem2 = element2.ChildElement;
 
+            //todo: can i change the row item so i don't have to cast here?
+            CurveChildElement curveElem1 = elem1 as CurveChildElement;
+            CurveChildElement curveElem2 = elem2 as CurveChildElement;
+
+            UncertainPairedData data1 = curveElem1.ComputeComponentVM.SelectedItemToPairedData();
+            UncertainPairedData data2 = curveElem2.ComputeComponentVM.SelectedItemToPairedData();
+
             string name1 = elem1.Name;
             string name2 = elem2.Name;
 
-            double x1Min = elem1.Curve.Xvals.First();
-            double x1Max = elem1.Curve.Xvals.Last();
+            double x1Min = data1.Xvals.First();
+            double x1Max = data1.Xvals.Last();
 
-            double x2Min = elem2.Curve.Xvals.First();
-            double x2Max = elem2.Curve.Xvals.First();
+            double x2Min = data2.Xvals.First();
+            double x2Max = data2.Xvals.First();
 
-            double y1Min = elem1.Curve.Yvals.First().InverseCDF(minProb);
-            double y1Max = elem1.Curve.Yvals.Last().InverseCDF(maxProb);
+            double y1Min = data1.Yvals.First().InverseCDF(minProb);
+            double y1Max = data1.Yvals.Last().InverseCDF(maxProb);
 
-            double y2Min = elem2.Curve.Yvals.First().InverseCDF(minProb);
-            double y2Max = elem2.Curve.Yvals.First().InverseCDF(maxProb);
+            double y2Min = data2.Yvals.First().InverseCDF(minProb);
+            double y2Max = data2.Yvals.First().InverseCDF(maxProb);
 
             //these will be the min and max for the axes that we care about
             double min1;

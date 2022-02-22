@@ -27,6 +27,7 @@ namespace HEC.FDA.ViewModel.Saving
         public const string CURVE_TYPE = "curve_type";
         public const string CURVE = "curve";
 
+        public const int ID_COL = 0;
         public const int NAME_COL = 1;
 
         public abstract string[] TableColumnNames { get; }
@@ -90,18 +91,17 @@ namespace HEC.FDA.ViewModel.Saving
             Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
         }
 
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
+        public void SaveExisting(ChildElement elementToSave)
         {
             OpenConnection();
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
             //this updates the parent table
-            int id = GetElementId(TableName, oldElement.Name);
-            UpdateTableRow(TableName, id, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
+            UpdateTableRow(TableName, elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
 
             //make this so that i can pass in "childElement" and have it updated
-            StudyCacheForSaving.UpdateElement(oldElement, elementToSave);
+            StudyCacheForSaving.UpdateElement( elementToSave);
         }
 
         #endregion
@@ -289,6 +289,37 @@ namespace HEC.FDA.ViewModel.Saving
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
         internal virtual string ChangeTableConstant { get { return ""; } }
+
+        public int GetNextAvailableId(int idColNumber = 0)
+        {
+            int retval = -1;
+            string tableName = TableName;
+            try
+            {
+                //todo: implement
+                SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
+                command.CommandText = "SELECT seq FROM SQLITE_SEQUENCE WHERE name = '" + tableName + "' LIMIT 1";
+                object id = command.ExecuteScalar();
+                if (id == null)
+                {
+                    retval = -1;
+                }
+                else
+                {
+                    retval = Convert.ToInt32(id) + 1;
+                }
+            }
+            catch (Exception e)
+            {
+                //todo: some message? Name doesn't exist in the database.
+                retval = -1;
+            }
+            return retval;
+            //int retval = -1;
+            //https://stackoverflow.com/questions/107005/predict-next-auto-inserted-row-id-sqlite#:~:text=Try%20SELECT%20*%20FROM%20SQLITE_SEQUENCE%20WHERE,to%20get%20the%20next%20ID.
+            //return retval;
+        }
+      
 
         /// <summary>
         /// Gets the ID for the element with the name provided. Note that the table column name

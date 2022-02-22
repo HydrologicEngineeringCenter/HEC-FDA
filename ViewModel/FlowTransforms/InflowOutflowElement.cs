@@ -1,12 +1,12 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 10:33:22 AM)]
-    public class InflowOutflowElement : ChildElement
+    public class InflowOutflowElement : CurveChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         #endregion
 
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, UncertainPairedData inflowOutflowCurve ):base()
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id):base(id)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             
             Description = description;
             if (Description == null) Description = "";
-            Curve = inflowOutflowCurve;
+            ComputeComponentVM = inflowOutflowCurve;
 
             NamedAction editInflowOutflowCurve = new NamedAction();
             editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve...";
@@ -57,16 +57,10 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 
                 "Openning " + Name + " for editing.",nameof(InflowOutflowElement)));
 
-            //create save helper
-            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
-                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-            //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this,  "Inflow", "Outflow", "Inflow - Outflow", actionManager);
+            Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(this, actionManager);
 
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditInflowOutflow" + vm.Name);
@@ -75,24 +69,16 @@ namespace HEC.FDA.ViewModel.FlowTransforms
 
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
-        {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new InflowOutflowElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-        }
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            InflowOutflowElement elem = (InflowOutflowElement)elementToClone;
-            return new InflowOutflowElement(elem.Name, elem.LastEditDate,elem.Description,elem.Curve);
+            ChildElement clonedElem = null;
+            if (elementToClone is InflowOutflowElement elem)
+            {
+                clonedElem = new InflowOutflowElement(elem.Name, elem.LastEditDate,elem.Description,elem.ComputeComponentVM, elem.ID);
+            }
+            return clonedElem;
         }
         #endregion
-
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-        }
 
         public override bool Equals(object obj)
         {
@@ -115,11 +101,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
                 if (!LastEditDate.Equals(elem.LastEditDate))
                 {
                     retval = false;
-                }
-                if (Curve != elem.Curve)
-                {
-                    retval = false;
-                }
+                }          
             }
             else
             {

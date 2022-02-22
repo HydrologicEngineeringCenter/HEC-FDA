@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void UpdateAlternativeElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddAlternativeElement(object sender, Saving.ElementAddedEventArgs e)
         {

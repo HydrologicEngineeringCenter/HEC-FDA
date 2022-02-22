@@ -66,7 +66,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new StudyPropertiesElement(rowData[XML_COL].ToString());
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new StudyPropertiesElement(rowData[XML_COL].ToString(), id);
         }
     }
 }

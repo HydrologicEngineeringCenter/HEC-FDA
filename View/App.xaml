@@ -33,9 +33,6 @@
              xmlns:StageTransformsVM ="clr-namespace:HEC.FDA.ViewModel.StageTransforms;assembly=HEC.FDA.ViewModel"
              xmlns:StageTransformsView ="clr-namespace:HEC.FDA.View.StageTransforms"
              
-             xmlns:HydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics;assembly=HEC.FDA.ViewModel"
-             xmlns:HydraulicsView="clr-namespace:HEC.FDA.View.Hydraulics"
-             
              xmlns:ImpactAreaView="clr-namespace:HEC.FDA.View.ImpactArea"
              xmlns:ImpactAreaVM="clr-namespace:HEC.FDA.ViewModel.ImpactArea;assembly=HEC.FDA.ViewModel"
              
@@ -147,11 +144,6 @@
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
-        <!--Hydraulics Region-->
-        <DataTemplate DataType="{x:Type HydraulicsVM:GridImporterVM }" >
-            <HydraulicsView:GridImporter/>
-        </DataTemplate>
-        
         <!--Impact Area Region-->
         <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
             <ImpactAreaView:ImpactAreaImporter/>

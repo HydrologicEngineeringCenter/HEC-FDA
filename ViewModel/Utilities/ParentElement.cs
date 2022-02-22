@@ -43,15 +43,20 @@ namespace HEC.FDA.ViewModel.Utilities
             NotifyPropertyChanged();
         }
 
-        public void UpdateElement(BaseFdaElement oldElement, BaseFdaElement newElement)
+        //The "Elements" list needs to be a list of BaseFdaElements because it can hold other parent level elems.
+        //We will only be updating child elements.
+        public void UpdateElement( ChildElement newElement)
         {
             int index = -1;
             for (int i = 0; i < Elements.Count; i++)
             {
-                if (Elements[i].Name.Equals(oldElement.Name))
+                if (Elements[i] is ChildElement childElem)
                 {
-                    index = i;
-                    break;
+                    if (childElem.ID == newElement.ID)
+                    {
+                        index = i;
+                        break;
+                    }
                 }
             }
             if (index != -1)
@@ -59,6 +64,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }
+
         }
 
         public void InsertElement(int index, BaseFdaElement ele)
@@ -75,7 +81,7 @@ namespace HEC.FDA.ViewModel.Utilities
             
             IsExpanded = true;
         }
-        public void AddElement(BaseFdaElement ele, bool newElement = true)
+        public void AddElement(BaseFdaElement ele)
         {
             //the name possibly changed so assign it to the element
             ele.RenameMapTreeViewElement += RenameMapTreeViewElement;

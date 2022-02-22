@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Voids
         private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -47,8 +47,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             RemoveElement(e.Element);
         }
-        #endregion
-        #region Functions
         #endregion
         public void AddNew(object arg1, EventArgs arg2)
         {

@@ -82,7 +82,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string xml = (string)rowData[XML_COLUMN];
-            return new IASElementSet(xml);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new IASElementSet(xml, id);
         }
 
         #endregion
@@ -122,9 +123,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="oldElement"></param>
         /// <param name="element"></param>
         /// <param name="changeTableIndex"></param>
-        public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
+        public void SaveExisting( ChildElement element)
         {
-            base.SaveExisting(oldElement, element);
+            base.SaveExisting( element);
         }
 
         /// <summary>

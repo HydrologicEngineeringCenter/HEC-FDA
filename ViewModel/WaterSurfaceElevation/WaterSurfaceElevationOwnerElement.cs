@@ -13,8 +13,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #endregion
         #region Fields
         #endregion
-        #region Properties
-       
+        #region Properties   
         #endregion
         #region Constructors
         public WaterSurfaceElevationOwnerElement( ):base()
@@ -40,7 +39,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Voids
         private void UpdateWaterSurfaceElevationElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void RemoveWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -62,9 +61,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
             Navigate(tab, false,false);
         }
-        #endregion
-        #region Functions
-        #endregion
-      
+        #endregion     
     }
 }

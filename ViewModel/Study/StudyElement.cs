@@ -265,7 +265,8 @@ namespace HEC.FDA.ViewModel.Study
         }
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
-            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description);
+            int id = PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, id);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
         private void StudyProperties(object arg1, EventArgs arg2)
@@ -418,7 +419,7 @@ namespace HEC.FDA.ViewModel.Study
             }
         }
 
-        #region Load Elements
+
         private void LoadElementsFromDB()
         {
             PersistenceFactory.GetRatingManager().Load();
@@ -440,8 +441,5 @@ namespace HEC.FDA.ViewModel.Study
 
         #endregion
 
-        #endregion
-        #region Functions
-        #endregion
     }
 }

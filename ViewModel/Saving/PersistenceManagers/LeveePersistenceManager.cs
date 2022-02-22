@@ -1,11 +1,11 @@
 ﻿using FdaLogging;
-using paireddata;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.GeoTech;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -58,7 +58,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override object[] GetRowDataFromElement(ChildElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed, element.Curve.WriteToXML().ToString() };
+            //todo bad casting
+            CurveChildElement curveChildElement = element as CurveChildElement; 
+
+            return new object[] { element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed, curveChildElement.ComputeComponentVM.ToXML().ToString() };
         }
 
         /// <summary>
@@ -70,8 +73,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             bool isDefault = Convert.ToBoolean(rowData[IS_DEFAULT_COL]);
             string curveXML = (string)rowData[CURVE_COL];
-            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
-            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]), isDefault, upd);
+            //UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(XElement.Parse(curveXML));
+
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]), isDefault, computeComponentVM, id);
         }
 
         #endregion

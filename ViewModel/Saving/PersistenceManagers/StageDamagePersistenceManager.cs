@@ -64,8 +64,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string curvesXmlString = (string)rowData[CURVES_COL];
             List<StageDamageCurve> stageDamageCurves = LoadCurvesFromXML(curvesXmlString);
 
+            int id = Convert.ToInt32(rowData[ID_COL]);
+
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
-            (string)rowData[DESC_COL], selectedWSE, selectedStructs,stageDamageCurves, isManual);
+            (string)rowData[DESC_COL], selectedWSE, selectedStructs,stageDamageCurves, isManual, id);
             return asd;
         }
         #endregion
@@ -139,21 +141,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
-        }
-
-        public object[] GetRowDataForAssetTable(ChildElement element,StageDamageAssetType assetType, string nameOfTotalFunctionInParentTable)
-        {
-            if (element.Description == null)
-            {
-                element.Description = "";
-            }
-
-            int elemId = GetElementId(TableName, nameOfTotalFunctionInParentTable);
-                    
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve, ((AggregatedStageDamageElement)element).Method,
-                element.Curve.WriteToXML().ToString(),
-                assetType};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

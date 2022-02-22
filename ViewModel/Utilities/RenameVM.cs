@@ -29,11 +29,6 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         #endregion
 
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-        }
-
         public override void Save()
         {
             ElementToSave = CreateElementFromEditorAction(OldElement);
@@ -48,7 +43,7 @@ namespace HEC.FDA.ViewModel.Utilities
             Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
-                savingManager.SaveExisting(OldElement, ElementToSave);
+                savingManager.SaveExisting(ElementToSave);
             }
         }
     }

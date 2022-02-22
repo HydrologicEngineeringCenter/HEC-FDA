@@ -3,20 +3,23 @@ using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace HEC.FDA.View.Commands
 {
-    class OkCommand : System.Windows.Input.ICommand
+    class OkCommand : ICommand
     {
         #region Notes
         #endregion
         #region Fields
         #endregion
         #region Events
+        /// <summary>
+        /// This is required by ICommand
+        /// </summary>
         public event EventHandler CanExecuteChanged;
         #endregion
-        #region Properties
-       
+        #region Properties     
         #endregion
         #region Constructors
         #endregion
@@ -53,40 +56,17 @@ namespace HEC.FDA.View.Commands
             var values = (object[])parameter;
             BaseViewModel vm = (BaseViewModel)values[0];
             Window window = (Window)values[1];
-            //if (vm.HasChanges)//if the vm is loaded in an error state, the user will not be identified, we should consider not checking for changes.
-            //{
-                vm.Validate();
-               if(vm.HasFatalError)
+            vm.Validate();
+            if (vm.HasFatalError)
             {
                 return;
             }
-                //if (vm.HasError)
-                //{
-                //bool yesClicked = DisplayErrors(vm, window);
-                //    if(!yesClicked)
-                //    {
-                //        return;
-                //    }
-                    
-                //}
-                //call save if its an editor?
-                if (vm.GetType().IsSubclassOf(typeof(HEC.FDA.ViewModel.Editors.BaseEditorVM)))
-                {
-                    if (((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
-                    {
-                        ((HEC.FDA.ViewModel.Editors.BaseEditorVM)vm).Save();
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-           // }
-
+            if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
+            {
+                ((ViewModel.Editors.BaseEditorVM)vm).Save();
+            }
             vm.WasCanceled = false;
-
             TabController.Instance.CloseTabOrWindow(window);
-
         }
         #endregion
         #region Functions
@@ -95,10 +75,5 @@ namespace HEC.FDA.View.Commands
             return true;
         }
         #endregion
-        
-
-
-
-
     }
 }

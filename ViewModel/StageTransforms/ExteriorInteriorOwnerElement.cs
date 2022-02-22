@@ -1,8 +1,8 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
            NamedAction addExteriorInterior = new NamedAction();
             addExteriorInterior.Header = "Create New Exterior Interior Relationship";
-            addExteriorInterior.Action = AddNewExteriorInteriorCurve;
+            addExteriorInterior.Action = CreateNewExteriorInteriorCurve;
 
            NamedAction ImportFromAscii = new NamedAction();
             ImportFromAscii.Header = StringConstants.ImportFromOldFda("Exterior Interior Relationship");
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #region Voids
         private void UpdateExteriorInteriorElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddExteriorInteriorElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -61,35 +61,18 @@ namespace HEC.FDA.ViewModel.StageTransforms
             Navigate(tab, false, true);
         }
 
-        public void AddNewExteriorInteriorCurve(object arg1, EventArgs arg2)
+        public void CreateNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
-            List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
-            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
-
-            //create save helper
-            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
-                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior - Interior Stage", "Exterior Stage", "Interior Stage");
+           
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            CurveEditorVM vm = new CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(computeComponentVM, actionManager);
             string header = "Create Exterior Interior";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateExteriorInterior");
             Navigate(tab, false, true);
-        }
-
-        #endregion
-        #region Functions
-
-        public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            CurveEditorVM editorVM = (CurveEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
         }
 
         #endregion

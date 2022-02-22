@@ -78,7 +78,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL]);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL], id);
         }
 
         #endregion

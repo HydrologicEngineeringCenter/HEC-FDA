@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
-        public WaterSurfaceElevationElement(string name, string description,List<double> probabilites, bool isDepthGrids):base()
+        public WaterSurfaceElevationElement(string name, string description,List<double> probabilites, bool isDepthGrids, int id):base(id)
         {
             HasAssociatedFiles = false;
             List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
             SetConstructorParams(name, description,pathAndProbs, isDepthGrids);
         }
-        public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids) : base()
+        public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, int id) : base(id)
         {
             HasAssociatedFiles = true;
             SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
@@ -196,46 +196,9 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)elementToClone;
-            return new WaterSurfaceElevationElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids);
+            return new WaterSurfaceElevationElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.ID);
         }
         #endregion
 
-
-  
-
-        //public override void Save()
-        //{
-        //    //gets called if savestotable is true
-        //    if (!Storage.Connection.Instance.IsConnectionNull)
-        //    {
-        //        if (Storage.Connection.Instance.TableNames().Contains(TableName))
-        //        {
-        //            //already exists... delete?
-        //            Storage.Connection.Instance.DeleteTable(TableName);
-        //        }
-
-        //        string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
-        //        Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
-
-        //        Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-        //        DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-
-        //        object[][] rows = new object[RelativePathAndProbability.Count][];
-        //        int i = 0;
-        //        foreach (PathAndProbability p in RelativePathAndProbability)
-        //        {
-        //            rows[i] = new object[] { p.Path, p.Probability, DateTime.Now.ToString() };
-        //            i++;
-        //        }
-        //        for (int j = 0; j < rows.Count(); j++)
-        //        {
-        //            tbl.AddRow(rows[j]);
-        //        }
-        //        tbl.ApplyEdits();
-
-
-        //    }
-        //}
-       
     }
 }

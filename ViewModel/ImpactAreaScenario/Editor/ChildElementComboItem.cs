@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             else
             {
                 _Name = element.Name;
-                ID = element.GetElementID();
+                ID = element.ID;
             }
             _ChildElement = element;
         }

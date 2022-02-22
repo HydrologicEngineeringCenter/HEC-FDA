@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         private const string NAME = "Name";
         private const string DESCRIPTION = "Description";
         private const string IAS_SET = "IASSet";
-        private const string ID = "ID";
+        private const string ID_STRING = "ID";
 
         public List<int> IASElementSets { get; } = new List<int>();
 
@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description, List<int> IASElements)
+        public AlternativeElement(string name, string description, List<int> IASElements, int id):base(id)
         {
             Name = name;
             Description = description;
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// Ctor for loading an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeElement(string xml)
+        public AlternativeElement(string xml, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement altElement = doc.Element(ALTERNATIVE);
@@ -53,13 +53,12 @@ namespace HEC.FDA.ViewModel.Alternatives
             IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
             foreach (XElement elem in iasElements)
             {
-                int iasID = Int32.Parse(elem.Attribute(ID).Value);
+                int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 IASElementSets.Add(iasID);
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Alternatives_20x20.png");
             AddActions();
         }
-
         #endregion
 
         private void AddActions()
@@ -121,7 +120,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             List<IASElementSet> currentElementSets = StudyCache.GetChildElementsOfType<IASElementSet>();
             foreach (IASElementSet set in currentElementSets)
             {
-                int setID = set.GetElementID();
+                int setID = set.ID;
                 if (setID == firstID)
                 {
                     iASElems[0] = set;
@@ -198,10 +197,9 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            if(elementToClone is AlternativeElement)
+            if(elementToClone is AlternativeElement elem)
             {
-                AlternativeElement elem = (AlternativeElement)elementToClone;
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.IASElementSets);
+                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.IASElementSets, elem.ID);
                 return elemToReturn;
             }
             return null;
@@ -216,7 +214,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             foreach (int elemID in IASElementSets)
             {
                 XElement setElement = new XElement(IAS_SET);
-                setElement.SetAttributeValue(ID, elemID);
+                setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
             return altElement.ToString();

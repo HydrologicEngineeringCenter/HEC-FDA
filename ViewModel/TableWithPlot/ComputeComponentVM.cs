@@ -106,6 +106,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             Initialize();
             SetValidation();
         }
+
         public ComputeComponentVM(XElement vmEle)
         {
             LoadFromXML(vmEle);
@@ -170,8 +171,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 YLabel = updEl.Attribute("YLabel")?.Value;
                 Description = updEl.Attribute("Description")?.Value;
 
-                string assemblyName = "fda_viewmodel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
-                string typeName = assemblyName + ".Data." + updEl.Attribute("DistributionProviderType").Value;
+                string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
+                string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
                 ObjectHandle oh = System.Activator.CreateInstance(null, typeName);//requires empty constructor
                 BaseDataProvider dist = oh.Unwrap() as BaseDataProvider;
 

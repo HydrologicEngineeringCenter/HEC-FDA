@@ -1,8 +1,7 @@
-﻿using paireddata;
-using Statistics.Distributions;
-using System.Collections.Generic;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -13,13 +12,11 @@ namespace HEC.FDA.ViewModel.GeoTech
         // Created By: q0heccdm
         // Created Date: 6/8/2017 1:20:23 PM
         #endregion
-        #region Fields
-      
+        #region Fields    
         private double _Elevation = 0;
         private bool _UsingDefaultCurve = true;
         #endregion
-        #region Properties
-       
+        #region Properties   
         public double Elevation
         {
             get { return _Elevation; }
@@ -32,11 +29,11 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM(UncertainPairedData defaultCurve, EditorActionManager actionManager) : base(defaultCurve,"Probability","Stage","chartTitle", actionManager)
+        public LeveeFeatureEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
 
         }
-        public LeveeFeatureEditorVM( ChildElement element, EditorActionManager actionManager) : base(element, "Probability", "Stage", "chartTitle",actionManager)
+        public LeveeFeatureEditorVM(CurveChildElement element, EditorActionManager actionManager) : base(element, actionManager)
         {
             Elevation = ((LeveeFeatureElement)element).Elevation;
             IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
@@ -69,26 +66,28 @@ namespace HEC.FDA.ViewModel.GeoTech
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
-        }
 
-        public override UncertainPairedData GetCoordinatesFunction()
-        {
-            if(IsUsingDefault)
-            {
-                //in this case then we create a special default coordinates function
-                List<double> defaultXs = new List<double>() { Elevation, Elevation + .000000000000001 };
-                List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
+        //public override UncertainPairedData GetCoordinatesFunction()
+        //{
+        //    if(IsUsingDefault)
+        //    {
+        //        //in this case then we create a special default coordinates function
+        //        List<double> defaultXs = new List<double>() { Elevation, Elevation + .000000000000001 };
+        //        List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
 
-                return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
-            }
-            else
-            {
-                return base.GetCoordinatesFunction();
-            }
+        //        return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
+        //    }
+        //    else
+        //    {
+        //        return base.GetCoordinatesFunction();
+        //    }
+        //}
+
+        public override void Save()
+        {
+            int id = GetElementID(Saving.PersistenceFactory.GetLeveeManager());
+            LeveeFeatureElement elem = new LeveeFeatureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.ComputeComponentVM, id);
+            base.Save(elem);
         }
     }
 }

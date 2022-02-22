@@ -1,8 +1,6 @@
-﻿using HEC.FDA.ViewModel.Saving;
+﻿using paireddata;
 using System;
 using System.Collections.ObjectModel;
-using paireddata;
-using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -11,21 +9,16 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Notes
         #endregion
         #region Fields
-
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
 
-
-        //private object _CustomTreeViewHeader;
         private string _Description = "";
-        private UncertainPairedData _Curve;
-        private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = false;
 
         #endregion
         #region Properties
 
-
+        public int ID { get; }
         public ObservableCollection<FdaLogging.LogItem> Logs { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 
@@ -39,12 +32,6 @@ namespace HEC.FDA.ViewModel.Utilities
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public UncertainPairedData Curve
-        {
-            get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); }
-        }
-
 
         public string Description
         {
@@ -54,28 +41,11 @@ namespace HEC.FDA.ViewModel.Utilities
         
         #endregion
         #region Constructors
-        public ChildElement()
+        public ChildElement(int id)
         {
-            
+            ID = id;
         }
         #endregion
-        /// <summary>
-        /// Gets the elements ID by finding this elements persistence manager and using
-        /// it's table name and element name to grab the ID from the database. -1 means
-        /// it did not find it for some reason.
-        /// </summary>
-        /// <returns></returns>
-        public int GetElementID()
-        {
-            IElementManager elementManager = PersistenceFactory.GetElementManager(this);
-            if(elementManager is SavingBase)
-            {
-                SavingBase baseManager = ((SavingBase)elementManager);
-                int id = baseManager.GetElementId(baseManager.TableName, Name);
-                return id;
-            }
-            return -1;
-        }
 
         public virtual void Rename(object sender, EventArgs e)
         {
@@ -86,9 +56,13 @@ namespace HEC.FDA.ViewModel.Utilities
             Navigate(tab);
         }  
 
+        /// <summary>
+        /// I think this is only being used for renaming elements.
+        /// </summary>
+        /// <param name="elementToClone"></param>
+        /// <returns></returns>
         public abstract ChildElement CloneElement(ChildElement elementToClone);
         
-        public virtual void RemoveElementFromMapWindow(object sender, EventArgs e) { }
-     
+        public virtual void RemoveElementFromMapWindow(object sender, EventArgs e) { }     
     }
 }

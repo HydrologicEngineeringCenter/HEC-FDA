@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #endregion
         #region Constructors
 
-        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual) : base()
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual, int id) : base(id)
         {
             LastEditDate = lastEditDate;
             CustomTreeViewHeader = new CustomHeaderVM(name, "pack://application:,,,/View;component/Resources/StageDamage.png");
@@ -47,6 +47,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             Name = name;
             Curves = curves;
             IsManual = isManual;
+            SelectedWSE = selectedWSE;
+            SelectedStructures = selectedStructs;
 
             NamedAction editDamageCurve = new NamedAction();
             editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
@@ -78,17 +80,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual);
+            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual, elem.ID);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetStageDamageManager().Remove(this);
         }
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-        }
+
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
             //create action manager

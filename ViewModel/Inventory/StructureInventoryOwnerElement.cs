@@ -15,8 +15,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Fields
         #endregion
-        #region Properties
-        
+        #region Properties       
         #endregion
         #region Constructors
         public StructureInventoryOwnerElement( ) : base()
@@ -42,7 +41,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Voids
         private void UpdateStructureInventoryElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
 
         private void RemoveStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
@@ -83,9 +82,7 @@ namespace HEC.FDA.ViewModel.Inventory
             Navigate(tab, false, false);
         }
 
-        #endregion
-        #region Functions
-        #endregion   
+        #endregion 
 
     }
 }

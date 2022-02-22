@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA) : base()
+        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA, int id) : base(id)
         {
             IsImportedFromOldFDA = isImportedFromOldFDA;
             Name = structInventoryBaseElement.Name;
@@ -142,7 +142,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             InventoryElement elem = (InventoryElement)elementToClone;
-            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA);
+            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA, elem.ID);
         }
         #endregion
 

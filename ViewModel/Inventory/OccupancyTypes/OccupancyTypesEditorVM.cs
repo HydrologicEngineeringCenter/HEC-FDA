@@ -727,7 +727,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
             int groupID = manager.GetUnusedId();
             string groupName = "Occupancy Type Group";
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>());
+            int id = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>(), id);
             //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
             //if it is open. see AddGroup() in this class.
             manager.SaveNew(elem);

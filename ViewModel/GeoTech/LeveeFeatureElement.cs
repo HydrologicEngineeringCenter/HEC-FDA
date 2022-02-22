@@ -1,13 +1,13 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement : ChildElement
+    public class LeveeFeatureElement : CurveChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -28,14 +28,12 @@ namespace HEC.FDA.ViewModel.GeoTech
             set { _Elevation = value; NotifyPropertyChanged(); }
         }
 
-
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, UncertainPairedData failureFunction) : base()
+        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) : base(id)
         {
             Name = userProvidedName;
             LastEditDate = creationDate;
-            Curve = failureFunction;
 
             IsDefaultCurveUsed = isDefault;
             if (isDefault)
@@ -47,6 +45,7 @@ namespace HEC.FDA.ViewModel.GeoTech
                 CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
             }
 
+            ComputeComponentVM = failureFunction;
             Description = description;
             if (Description == null) Description = "";
             Elevation = elevation;
@@ -69,7 +68,6 @@ namespace HEC.FDA.ViewModel.GeoTech
             localActions.Add(renameElement);
 
             Actions = localActions;
-
         }
         #endregion
         #region Voids
@@ -79,40 +77,25 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-
-            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetRatingManager()
-                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSiblingRules(this)
-                .WithSaveHelper(saveHelper);
-
+                .WithSiblingRules(this);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this, actionManager);
             string header = "Edit " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditLevee" + Name);
             Navigate(tab, false,false);
-        }
-
-        
+        }        
         #endregion
         #region Functions
-        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-            return new LeveeFeatureElement(editorVM.Name, editDate, editorVM.Description,editorVM.Elevation, editorVM.IsUsingDefault, editorVM.Curve);
-        }
-
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            LeveeFeatureElement elem = (LeveeFeatureElement)elementToClone;
-            return new LeveeFeatureElement(elem.Name,elem.LastEditDate, elem.Description, elem.Elevation, elem.IsDefaultCurveUsed, elem.Curve);
+            ChildElement clonedElem = null;
+            if (elementToClone is LeveeFeatureElement elem)
+            {
+                clonedElem = new LeveeFeatureElement(elem.Name,elem.LastEditDate, elem.Description, elem.Elevation, elem.IsDefaultCurveUsed, elem.ComputeComponentVM, elem.ID);
+            }
+            return clonedElem;
         }
         #endregion
     }
-
-
 }

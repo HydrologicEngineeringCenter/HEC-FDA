@@ -27,7 +27,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             AlternativeComparisonReportElement elem = null;
             if (rowData[XML_COL] is string xml)
             {
-                elem = new AlternativeComparisonReportElement(xml);
+                int id = Convert.ToInt32(rowData[ID_COL]);
+                elem = new AlternativeComparisonReportElement(xml,id);
             }
             return elem;
         }
@@ -82,7 +83,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
         {
-            base.SaveExisting(oldElement, elementToSave);
+            base.SaveExisting( elementToSave);
         }
 
         public void SaveNew(ChildElement element)
@@ -95,5 +96,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(altElem);
             }
         }
+
     }
 }

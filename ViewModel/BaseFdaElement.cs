@@ -1,7 +1,6 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel
 {
@@ -91,7 +90,13 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Voids
-      
+
+        public override void AddValidationRules()
+        {
+            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
+        }
+
         public void UpdateTreeViewHeader(string newName)
         {
             if (_CustomTreeViewHeader == null) { return; }
@@ -101,31 +106,6 @@ namespace HEC.FDA.ViewModel
             CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
         }
 
-        public void AssignValuesFromCurveEditorToElement(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-            element.Name = vm.Name;
-            element.Description = vm.Description;
-            element.Curve = vm.Curve;
-            element.UpdateTreeViewHeader(vm.Name);
-        }
-
-        public void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-
-            vm.Name = element.Name;
-            vm.Description = element.Description;
-            vm.Curve = element.Curve;
-            if (vm.EditorVM != null)
-            {
-                vm.EditorVM.Function = element.Curve;
-            }
-        }
-
         #endregion
-        #region Functions
-        #endregion
-
     }
 }

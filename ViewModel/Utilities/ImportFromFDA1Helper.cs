@@ -15,6 +15,7 @@ using HEC.FDA.ViewModel.Inventory.DamageCategory;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.StageTransforms;
 using static Importer.ProbabilityFunction;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -51,7 +52,12 @@ namespace HEC.FDA.ViewModel.Utilities
                 flowsList.Add(flows[i]);
             }
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
-            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, ratingPairedData);
+            int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
+
+            //todo: you need to pass in the UPD
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+
+            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, id);
             return elem;
         }
 
@@ -212,7 +218,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 messages += "\n\tNumber of curves: " + curves.Count + "\n\n";
                 if (curves.Count > 0)
                 {
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true);
+                    int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true, id);
                 }
             }
             return elem;
@@ -309,7 +316,29 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             string pysr = "(" + pf.PlanName.Trim() + " " + pf.YearName.Trim() + " " + pf.StreamName.Trim() + " " + pf.DamageReachName.Trim() + ") ";
             return pysr + pf.Description;
-        } 
+        }
+
+        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            double mean = pf.MomentsLp3[0];
+            double stDev = pf.MomentsLp3[1];
+            double skew = pf.MomentsLp3[2];
+
+            int por = pf.EquivalentLengthOfRecord;
+
+            bool isAnalytical = true;
+            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
+            bool isLogFlow = false;
+
+            //there will be no analytical flows. We just need 
+            List<double> analyticalFlows = new List<double>();
+            List<double> graphicalFlows = new List<double>();
+
+            int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
+            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
+                isLogFlow, analyticalFlows, graphicalFlows, null, id);
+        }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
         {
@@ -421,9 +450,11 @@ namespace HEC.FDA.ViewModel.Utilities
         private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction)
         {
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
-
+            int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
-            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), func);
+            //todo:
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, id);
         }
 
         private static List<IDistribution> GetUncertaintyValues(ProbabilityFunction probFunction)
@@ -490,7 +521,8 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
 
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, fda2Occtypes);
+            int id = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, fda2Occtypes, id);
             return elem;
         }
 
@@ -923,8 +955,10 @@ namespace HEC.FDA.ViewModel.Utilities
                 func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 isDefault = false;
             }
-
-            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, func);
+            int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
+            //todo:
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
             return leveeFeatureElement;
         }
 
@@ -955,7 +989,10 @@ namespace HEC.FDA.ViewModel.Utilities
                 ys.Add(new Deterministic(xy.GetY()));
             }
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), func);
+            int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
+            //todo:
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, id);
             return elem;
         }
 

@@ -34,11 +34,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
-        public OccupancyTypesElement():base()
+        public OccupancyTypesElement(int id):base(id)
         {
 
         }
-        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes):base()
+        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes, int id):base(id)
         {
             Name = occTypesGroupName;
             ID = groupID;

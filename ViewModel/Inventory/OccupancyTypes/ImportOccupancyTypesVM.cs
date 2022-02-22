@@ -13,7 +13,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created Date: 7/11/2017 1:47:59 PM
         #endregion
         #region Fields
-        //private ObservableCollection<string> _AvailablePaths;
         private string _SelectedPath;
         private BaseViewModel _CurrentView;
         #endregion
@@ -25,11 +24,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set { _CurrentView = value; NotifyPropertyChanged(); }
         }
 
-        //public ObservableCollection<string> AvailablePaths
-        //{
-        //    get { return _AvailablePaths; }
-        //    set { _AvailablePaths = value; NotifyPropertyChanged(); }
-        //}
         public string SelectedPath
         {
             get { return _SelectedPath; }
@@ -38,45 +32,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         
         public List<OccupancyTypesGroupRowItemVM> ListOfRowVMs { get; set; }
 
-        //public List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes { get; set; }
         public List<OccupancyTypesElement> ListOfOccTypeElements { get; set; }
-
 
         public string OccupancyTypesGroupName { get; set; }
         #endregion
         #region Constructors
         public ImportOccupancyTypesVM() : base(null)
-        {
-           
-
+        {          
             ListOfOccTypeElements = new List<OccupancyTypesElement>();
             ListOfRowVMs = new List<OccupancyTypesGroupRowItemVM>();
         }
         #endregion
-        #region Voids
-        //public void AddGroupsToOwnedElement()
-        //{
-        //    foreach(OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
-        //    {
-        //        //add the group
-
-
-        //        //OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes);
-        //        //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
-
-        //        //add the depth damage curves
-        //        //foreach (DepthDamage.DepthDamageCurve ddc in row.ListOfDepthDamageCurves)
-        //        //{
-        //        //    string ddCurveName = ddc.Name + " from " + row.Name;
-        //        //    if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(ddCurveName))
-        //        //    {
-        //        //        DepthDamage.DepthDamageCurveData.CurveDictionary.Add(ddCurveName, ddc);
-
-        //        //    }
-        //        //}
-
-        //    }
-        //}
+        #region Voids       
         #endregion
         #region Functions
         private bool IsValid(ref string errorMessage)
@@ -85,21 +52,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 errorMessage = "File not found.";
                 return false;
-            }
-            //if (OccupancyTypesGroupName == "" || OccupancyTypesGroupName == null)
-            //{
-            //    errorMessage = "Name cannot be blank.";
-            //    return false;
-            //}
-            //foreach(OccupancyTypesElement ele in OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
-            //{
-            //    if(ele.OccTypesGroupName == OccupancyTypesGroupName)
-            //    {
-            //        errorMessage = "The name " + OccupancyTypesGroupName + " already exists.";
-            //        return false;
-            //    }
-            //}
-            
+            }            
             return true;
         }
         public bool Import(List<IOccupancyType> occtypes)
@@ -234,7 +187,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }, "No occupancy type groups have been added for import.", true);
         }
 
-        public override bool RunSpecialValidation()
+        public bool RunSpecialValidation()
         {
             //test that no new names match existing names, and that no row has multiple occtypes with the same name
             List<string> uniqueNameList = new List<string>();
@@ -289,36 +242,41 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public override void Save()
         {
-            List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
-            foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+            bool isValid = RunSpecialValidation();
+            if (isValid)
             {
-                //create a dummy tabs checked dictionary
-                //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+                List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
+                foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+                {
+                    //create a dummy tabs checked dictionary
+                    //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-                //foreach (IOccupancyType ot in row.ListOfOccTypes)
+                    //foreach (IOccupancyType ot in row.ListOfOccTypes)
+                    //{
+                    //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+                    //    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
+                    //    //{
+                    //    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
+                    //    //    return;
+                    //    //}
+                    //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+
+                    //}
+                    int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
+                    int id = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+                    OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, newGroupID, row.ListOfOccTypes, id);
+                    //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
+                    elementsToSave.Add(elem);
+                }
+                //foreach (OccupancyTypesElement element in elementsToSave)
                 //{
-                //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                //    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
-                //    //{
-                //    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
-                //    //    return;
-                //    //}
-                //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
-
+                List<ChildElement> tmp = elementsToSave.ToList<ChildElement>();
+                Saving.PersistenceFactory.GetOccTypeManager().SaveNewElements(tmp);
                 //}
-                int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
-                OccupancyTypesElement elem = new OccupancyTypesElement( row.Name, newGroupID, row.ListOfOccTypes);
-                //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
-                elementsToSave.Add(elem);
-            }
-            //foreach (OccupancyTypesElement element in elementsToSave)
-            //{
-            List<ChildElement> tmp = elementsToSave.ToList<ChildElement>();
-            Saving.PersistenceFactory.GetOccTypeManager().SaveNewElements(tmp);
-            //}
 
-            //object[] args = new object[] { elementsToSave, Actions };
-            //OccupancyTypesOwnerElement.SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
+                //object[] args = new object[] { elementsToSave, Actions };
+                //OccupancyTypesOwnerElement.SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
+            }
         }
 
        

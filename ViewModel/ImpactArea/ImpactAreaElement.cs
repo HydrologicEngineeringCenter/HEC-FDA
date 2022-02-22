@@ -28,10 +28,10 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows) : this(userdefinedname,description,collectionOfRows, "")
+        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, int id) : this(userdefinedname,description,collectionOfRows, "", id)
         {
         }
-        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath ) : base()
+        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
         {
             Name = userdefinedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
@@ -156,7 +156,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ImpactAreaElement elem = (ImpactAreaElement)elementToClone;
-            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath);
+            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath, elem.ID);
         }
         #endregion
     }

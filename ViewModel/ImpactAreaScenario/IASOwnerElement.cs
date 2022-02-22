@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
-            int removedElementID = args.ID;
+            int removedElementID = args.NewElement.ID;
             if (args.NewElement is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.NewElement;
@@ -83,7 +83,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementRemoved(object sender, Saving.ElementAddedEventArgs args)
         {
-            int removedElementID = args.ID;
+            int removedElementID = args.Element.ID;
             if (args.Element is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.Element;
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void UpdateIASElementSet(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddIASElementSet(object sender, Saving.ElementAddedEventArgs e)
         {

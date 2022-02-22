@@ -15,14 +15,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         private const string ALTERNATIVE_COMP_REPORT = "AlternativeComparisonReport";
         private const string NAME = "Name";
         private const string DESCRIPTION = "Description";
-        private const string ID = "ID";
+        private const string ID_STRING = "ID";
         private const string WITHOUT_PROJ_ID = "WithoutProjID";
         private const string WITH_PROJ_ELEM = "WithProjectElement";
 
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
-        public AlternativeComparisonReportElement(string name, string desc,int withoutProjectAltId, List<int> withProjAlternativeIds)
+        public AlternativeComparisonReportElement(string name, string desc,int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
         {
             Name = name;
             Description = desc;
@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         /// The ctor used to load an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeComparisonReportElement(string xml)
+        public AlternativeComparisonReportElement(string xml, int id):base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
             {
-                int iasID = Int32.Parse(elem.Attribute(ID).Value);
+                int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
@@ -86,14 +86,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Actions = localActions;
         }
 
-
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AlternativeComparisonReportElement elemToReturn = null;
             if (elementToClone is AlternativeComparisonReportElement)
             {
                 AlternativeComparisonReportElement elem = (AlternativeComparisonReportElement)elementToClone;
-                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.WithoutProjAltID, elem.WithProjAltIDs);
+                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.WithoutProjAltID, elem.WithProjAltIDs, elem.ID);
             }
             return elemToReturn;
         }
@@ -107,7 +106,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             foreach (int elemID in WithProjAltIDs)
             {
                 XElement setElement = new XElement(WITH_PROJ_ELEM);
-                setElement.SetAttributeValue(ID, elemID);
+                setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
             return altElement.ToString();
@@ -162,6 +161,5 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         {
             PersistenceFactory.GetAlternativeCompReportManager().Remove(this);
         }
-
     }
 }

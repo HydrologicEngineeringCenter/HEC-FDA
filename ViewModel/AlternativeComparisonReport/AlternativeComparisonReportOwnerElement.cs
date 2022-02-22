@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         private void UpdateAlternativeCompReportElement(object sender, ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddAlternativeCompReportElement(object sender, ElementAddedEventArgs e)
         {

@@ -27,8 +27,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private bool _CurrentViewIsEnabled;
         #endregion
         #region Properties
-        
-
         public bool CurrentViewIsEnabled
         {
             get { return _CurrentViewIsEnabled; }
@@ -226,10 +224,11 @@ namespace HEC.FDA.ViewModel.Inventory
         public override void Save()
         {
             StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
-            InventoryElement elementToSave = new InventoryElement(SIBase, false);
+            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
+            InventoryElement elementToSave = new InventoryElement(SIBase, false, id);
 
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
-            if (IsImporter && HasSaved == false)
+            if (IsCreatingNewElement && HasSaved == false)
             {
                 OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();
 
@@ -240,8 +239,6 @@ namespace HEC.FDA.ViewModel.Inventory
         }
 
         #endregion
-        #endregion
-        #region Functions
         #endregion
     }
 }

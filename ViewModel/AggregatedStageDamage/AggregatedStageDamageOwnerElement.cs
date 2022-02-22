@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Voids
         private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -92,7 +92,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 EditorActionManager actionManager = new EditorActionManager()
                      .WithSiblingRules(this);
 
-                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(null, "Stage - Damage", "Stage", "Damage", actionManager);
+                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM( actionManager);
                 DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
                 Navigate(tab, false, true);
             }

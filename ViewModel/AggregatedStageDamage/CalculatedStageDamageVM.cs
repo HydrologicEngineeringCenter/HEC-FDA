@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             foreach(InventoryElement ie in Structures)
             {
-                if(ie.GetElementID() == inventoryID)
+                if(ie.ID == inventoryID)
                 {
                     SelectedStructures = ie;
                     break;
@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             foreach(WaterSurfaceElevationElement wat in WaterSurfaceElevations)
             {
-                if(wat.GetElementID() == waterID)
+                if(wat.ID == waterID)
                 {
                     SelectedWaterSurfaceElevation = wat;
                     break;
@@ -223,13 +223,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); //r.EditorVM.CreateFunctionFromTables());
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); 
                 curves.Add(curve);
             }
-
             return curves;
         }
-
-
     }
 }

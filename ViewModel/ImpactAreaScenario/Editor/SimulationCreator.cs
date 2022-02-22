@@ -66,25 +66,29 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public Simulation BuildSimulation()
         {
-            SimulationBuilder sb = Simulation.builder()
-                .withFlowFrequency(GetFrequencyDistribution())
-                .withFlowStage(_RatElem.Curve)
-                .withStageDamages(GetStageDamagesAsPairedData());
+            //todo: cody commented out on 2/21/22
 
-            if(_UseInOut)
-            {
-                sb.withInflowOutflow(_InOutElem.Curve);
-            }
-            if(_UseExtInt)
-            {
-                sb.withInteriorExterior(_ExtIntElem.Curve);
-            }
-            if(_UseLevee)
-            {
-                sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
-            }
+            //SimulationBuilder sb = Simulation.builder()
+            //    .withFlowFrequency(GetFrequencyDistribution())
+            //    .withFlowStage(_RatElem.Curve)
+            //    .withStageDamages(GetStageDamagesAsPairedData());
 
-            return sb.build();
+            //if(_UseInOut)
+            //{
+            //    sb.withInflowOutflow(_InOutElem.Curve);
+            //}
+            //if(_UseExtInt)
+            //{
+            //    sb.withInteriorExterior(_ExtIntElem.Curve);
+            //}
+            //if(_UseLevee)
+            //{
+            //    sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
+            //}
+
+            //return sb.build();
+
+            return null;
         }
     }
 }

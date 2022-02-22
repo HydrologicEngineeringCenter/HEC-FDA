@@ -1,15 +1,13 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageEditorVM : BaseLoggingEditorVM
+    public class AggregatedStageDamageEditorVM : BaseEditorVM
     {
-        private bool _IsInEditMode;
-        private bool _IsManualRadioSelected = false;
+        private bool _IsManualRadioSelected = true;
         private BaseViewModel _CurrentVM;
 
         #region properties
@@ -31,20 +29,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #endregion
 
         #region constructors
-        public AggregatedStageDamageEditorVM(UncertainPairedData func, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(func, xLabel, yLabel, chartTitle, actionManager)
+        public AggregatedStageDamageEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
-            _IsInEditMode = false;
+            IsCreatingNewElement = true;
             HasChanges = true;
             SetDimensions(800, 600, 400, 400);
-
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
             CurrentVM = CalculatedVM;
         }
 
-        public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, "", "", "", actionManager)
+        public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            _IsInEditMode = true;
+            IsCreatingNewElement = false;
             AggregatedStageDamageElement element = (AggregatedStageDamageElement)elem;
             Name = element.Name;
             Description = element.Description;
@@ -76,8 +73,60 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 CurrentVM = CalculatedVM;
             }
         }
+        
+        private void SaveCalculatedCurves()
+        {
+            FdaValidationResult vr = CalculatedVM.ValidateForm();
+            if (vr.IsValid)
+            {
+                int wseID = CalculatedVM.SelectedWaterSurfaceElevation.ID;
+                int structID = CalculatedVM.SelectedStructures.ID;
+                LastEditDate = DateTime.Now.ToString("G");
+                int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);
+               
+                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
 
-        public virtual void SaveWhileEditing()
+                if (IsCreatingNewElement)
+                {
+                    manager.SaveNew(elemToSave);
+                }
+                else
+                {
+                    manager.SaveExisting(elemToSave);
+                    IsCreatingNewElement = false;
+                }
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SaveManualEditCurves()
+        {
+            bool valid = ManualVM.ValidateForm();
+            if (valid)
+            {
+                LastEditDate = DateTime.Now.ToString("G");
+                int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
+
+                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+
+                if (IsCreatingNewElement)
+                {
+                    manager.SaveNew(elem);
+                }
+                else
+                {
+                    manager.SaveExisting(elem);
+                    IsCreatingNewElement = false;
+                }
+            }
+        }
+
+        public override void Save()
         {
             if (IsManualRadioSelected)
             {
@@ -88,68 +137,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 SaveCalculatedCurves();
             }
         }
-        
-        private void SaveCalculatedCurves()
-        {
-            FdaValidationResult vr = CalculatedVM.ValidateForm();
-            if (vr.IsValid)
-            {
-                int wseID = CalculatedVM.SelectedWaterSurfaceElevation.GetElementID();
-                int structID = CalculatedVM.SelectedStructures.GetElementID();
-                LastEditDate = DateTime.Now.ToString("G");
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false);
-                if (CurrentElement == null)
-                {
-                    CurrentElement = elem;
-                }
-                CurrentElement.LastEditDate = LastEditDate;
-                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
 
-                if (_IsInEditMode)
-                {
-                    manager.SaveExisting(CurrentElement, elem);
-                }
-                else
-                {
-                    manager.SaveNew(elem);
-                    _IsInEditMode = true;
-                }
-            }
-            else
-            {
-                MessageBox.Show(vr.ErrorMessage, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
-
-        private void SaveManualEditCurves()
-        {
-            bool valid = ManualVM.ValidateForm();
-            if (valid)
-            {
-                LastEditDate = DateTime.Now.ToString("G");
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true);
-
-                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-
-                if (_IsInEditMode)
-                {
-                    manager.SaveExisting(CurrentElement, elem);
-                }
-                else
-                {
-                    manager.SaveNew(elem);
-                    _IsInEditMode = true;
-                }
-                CurrentElement = elem;
-                UpdateSave(CurrentElement);
-            }
-        }
-
-        public override void Save()
-        {
-            SaveWhileEditing();
-        }
         #endregion
     }
 }

@@ -33,7 +33,6 @@ namespace HEC.FDA.ViewModel.Alternatives
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             _IsInEditMode = true;
-            CurrentElement = elem;
             Name = elem.Name;
             Description = elem.Description;
             SelectSavedRows(elem.IASElementSets);
@@ -56,14 +55,13 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void IASRemoved(object sender, ElementAddedEventArgs e)
         {
-            Rows.Remove(Rows.Where(row => row.ID == e.ID).Single());
+            Rows.Remove(Rows.Where(row => row.ID == e.Element.ID).Single());
         }
 
         private void IASUpdated(object sender, ElementUpdatedEventArgs e)
         {
-            IASElementSet oldElement = (IASElementSet)e.OldElement;
             IASElementSet newElement = (IASElementSet)e.NewElement;
-            int idToUpdate = newElement.GetElementID();
+            int idToUpdate = newElement.ID;
 
             //find the row with this id and update the row's values;
             AlternativeRowItem foundRow = Rows.Where(row => row.ID == idToUpdate).SingleOrDefault();
@@ -126,17 +124,17 @@ namespace HEC.FDA.ViewModel.Alternatives
                     }
                 }
 
-                AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets());
+                int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
+                AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets(), id);
                 if (_IsInEditMode)
                 {
-                    PersistenceFactory.GetAlternativeManager().SaveExisting(CurrentElement, elemToSave);
+                    PersistenceFactory.GetAlternativeManager().SaveExisting(elemToSave);
                 }
                 else
                 {
                     PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
                     _IsInEditMode = true;
                 }
-                CurrentElement = elemToSave;
             }
             else
             {

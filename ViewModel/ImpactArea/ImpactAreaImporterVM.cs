@@ -2,24 +2,21 @@
 using System.Linq;
 using System.Collections.ObjectModel;
 using HEC.FDA.ViewModel.Editors;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 11:38:36 AM")]
-    public class ImpactAreaImporterVM : Editors.BaseEditorVM
+    public class ImpactAreaImporterVM : BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 10/13/2016 11:38:36 AM
         #endregion
         #region Fields
-        private string _Name;
         private string _Path;
-        private string _Description;
         private ObservableCollection<string> _Paths;
         private List<string> _UniqueFields;
-        //private ObservableCollection<ImpactAreaUniqueNameSet> _UniqueFields;
-        //private ImpactAreaUniqueNameSet _SelectedImpactAreaUniqueNameSet;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
         private bool _IsInEditMode = false;
         private string _SelectedUniqueName;
@@ -40,7 +37,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             get { return _Path; }
             set { _Path = value;  NotifyPropertyChanged();}
         }
-        //public ObservableCollection<ImpactAreaUniqueNameSet> UniqueFields { get { return _UniqueFields; } set { _UniqueFields = value; NotifyPropertyChanged(); } }
         public ObservableCollection<ImpactAreaRowItem> ListOfRows
         {
             get { return _ListOfRows; }
@@ -52,16 +48,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             set { _UniqueFields = value; NotifyPropertyChanged(); }
         }
   
-        //public string Description
-        //{
-        //    get { return _Description; }
-        //    set { _Description = value; NotifyPropertyChanged(); }
-        //}
-        //public ImpactAreaUniqueNameSet SelectedImpactAreaUniqueNameSet
-        //{
-        //    get { return _SelectedImpactAreaUniqueNameSet; }
-        //    set { _SelectedImpactAreaUniqueNameSet = value; NotifyPropertyChanged(); }
-        //}
         public string SelectedUniqueName
         {
             get { return _SelectedUniqueName; }
@@ -83,7 +69,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             ListOfRows = impactAreaRows;
             Description = element.Description;
             IsInEditMode = true;
-
         }
         #endregion
         #region Voids
@@ -92,11 +77,10 @@ namespace HEC.FDA.ViewModel.ImpactArea
         /// </summary>
         /// <param name="path"></param>
         public void loadUniqueNames(string path)
-
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
             {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
             SelectedPath = path; //isnt this bound??
@@ -105,20 +89,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             List<string> uniqueNameList = new List<string>();
 
-           // ObservableCollection<ImpactAreaUniqueNameSet>  uniques = new ObservableCollection<ImpactAreaUniqueNameSet>();
             for(int i = 0;i< dtv.ColumnNames.Count(); i++)
             {
                 if(dtv.ColumnTypes[i]== typeof(string))
                 {
-                    // object[] col = dtv.GetColumn(i);
-                    //ImpactAreaUniqueNameSet dt = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], col);
-                    //uniques.Add(dt);
                     uniqueNameList.Add(dtv.ColumnNames[i]);
                 }
             }
             if (!(uniqueNameList.Count > 0))
             {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                MessageBox.Show("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", "No String Fields", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
             UniqueFields = uniqueNameList;
@@ -128,7 +108,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(SelectedPath, "dbf")))
             {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
@@ -144,43 +124,24 @@ namespace HEC.FDA.ViewModel.ImpactArea
                     ListOfRows = iauns.RowItems;
                 }
             }
-
         }
         #endregion
         #region Functions
         #endregion
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
-            AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
+            base.AddValidationRules();
             AddRule(nameof(SelectedUniqueName), () => Name != null, "A unique name has not been selected.");
             AddRule(nameof(ListOfRows), () => ListOfRows != null, "There are no impact area rows.");
-
-            //AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank.");
-            //if (IsNameReadOnly == false)
-            // {
-            //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
-            // }
-            //AddRule(nameof(SelectedImpactAreaUniqueNameSet), () => SelectedImpactAreaUniqueNameSet != null, "You must select a unique name.");
-
-
-            //AddRule(nameof(Mean), () => Mean > 1, "Mean must be greater than 1");
-
-        }
-
-        public bool IsValid()
-        {
-            //do some basic validation.
-            //if()
-            return true;
         }
 
         public override void Save()
         {
             if(Description == null) { Description = ""; }
-                ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows,SelectedPath);
+            int id = Saving.PersistenceFactory.GetImpactAreaManager().GetNextAvailableId();
+                ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows,SelectedPath, id);
             Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager();
-            if (IsImporter && HasSaved == false)
+            if (IsCreatingNewElement && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);
                 HasSaved = true;

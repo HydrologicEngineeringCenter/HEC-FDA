@@ -1,8 +1,8 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.GeoTech
         #region Voids
         private void UpdateLeveeElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement(e.NewElement);
         }
      
         private void RemoveLeveeElement(object sender, Saving.ElementAddedEventArgs e)
@@ -65,33 +65,15 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            SaveHelper saveHelper = new SaveHelper(
-                Saving.PersistenceFactory.GetLeveeManager(),
-                 (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
-
-            //create default curve 
-            List<double> xs = new List<double>() {0};
-            List<double> ys = new List<double>() {0};
-            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Probabilty", "Elevation", "Failure Function");
+           
+            ComputeComponentVM defaultCurve = new ComputeComponentVM("Failure Function", "Probabilty", "Elevation");
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             string header = "Create Levee";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateLevee");
             Navigate(tab, false, false);       
-        }
-
-        #endregion
-        #region Functions
-        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new LeveeFeatureElement(editorVM.Name, editDate, editorVM.Description, editorVM.Elevation, editorVM.IsUsingDefault, editorVM.Curve);
         }
         #endregion
     }
