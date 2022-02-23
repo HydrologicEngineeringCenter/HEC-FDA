@@ -80,13 +80,13 @@ namespace paireddata
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
                     AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals,.99, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals,.9999, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
                     AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .99, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .01, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
                     break;
                 //case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
                 //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
