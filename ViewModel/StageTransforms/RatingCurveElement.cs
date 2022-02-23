@@ -75,34 +75,5 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
         #endregion
 
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(RatingCurveElement))
-            {
-                RatingCurveElement elem = (RatingCurveElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if(Description == null && elem.Description != null)
-                {
-                    retval = false;
-                }
-                else if (Description != null && !Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
     }
 }

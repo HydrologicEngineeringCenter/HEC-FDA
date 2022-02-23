@@ -190,38 +190,5 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         #endregion
 
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(AggregatedStageDamageElement))
-            {
-                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if (Description == null && elem.Description != null)
-                {
-                    retval = false;
-                }
-                else if (Description != null && !Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-                if (Method != elem.Method)
-                {
-                    retval = false;
-                }             
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
     }
 }

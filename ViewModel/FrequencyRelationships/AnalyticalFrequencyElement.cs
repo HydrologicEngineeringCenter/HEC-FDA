@@ -150,37 +150,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             return flowWrappers;
         }
-        
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(AnalyticalFrequencyElement))
-            {
-                AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if(Description == null)
-                {
-                    Description = "";
-                }
-                if (!Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
-
+               
         #endregion
 
         List<double> ConvertStringToFlows(string flows)

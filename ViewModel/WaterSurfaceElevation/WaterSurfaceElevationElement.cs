@@ -115,8 +115,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             TableContainsGeoData = true;
         }
 
-
-
         #endregion
         #region Voids
         public void EditElement(object sender, EventArgs e)
