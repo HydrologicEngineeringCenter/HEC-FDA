@@ -22,25 +22,25 @@ namespace HEC.FDA.View.AggregatedStageDamage
 
         private void linkChartViewModel()
         {
-            if(DataContext is CalculatedStageDamageVM vm)
-            {
-                if (vm.Rows.Count > 0)
-                {
-                    CoordinatesFunctionEditorVM editorVM = vm.Rows[vm.SelectedRowIndex].EditorVM;
+            //if(DataContext is CalculatedStageDamageVM vm)
+            //{
+            //    if (vm.Rows.Count > 0)
+            //    {
+            //        CoordinatesFunctionEditorVM editorVM = vm.Rows[vm.SelectedRowIndex].EditorVM;
 
-                    SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                    Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                    editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+            //        SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            //        Chart2D chart = new Chart2D(sciChart2DChartViewModel);
+            //        editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
 
-                    if (_lastChart != null)
-                    {
-                        editorGrid.Children.Remove(_lastChart);
-                    }
-                    _lastChart = chart;
-                    editorGrid.Children.Add(chart);
-                    Grid.SetColumn(chart, 2);
-                }
-            }
+            //        if (_lastChart != null)
+            //        {
+            //            editorGrid.Children.Remove(_lastChart);
+            //        }
+            //        _lastChart = chart;
+            //        editorGrid.Children.Add(chart);
+            //        Grid.SetColumn(chart, 2);
+            //    }
+            //}
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

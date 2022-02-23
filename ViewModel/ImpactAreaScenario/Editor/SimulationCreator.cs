@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.Function);
+                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
             }
             return stageDamages;
         }

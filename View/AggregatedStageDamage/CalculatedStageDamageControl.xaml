@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -54,12 +55,7 @@
         </GroupBox>
 
         <Grid x:Name="editorGrid" Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*" MinWidth="200"/>
-            </Grid.ColumnDefinitions>
-            <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <utils:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
         </Grid>
     </Grid>
 </UserControl>

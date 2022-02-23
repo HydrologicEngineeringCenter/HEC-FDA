@@ -72,8 +72,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).ComputeComponentVM.SelectedItemToPairedData();
 
-            stageDamageMin = selectedDamageCurve.Function.Xvals.Min();
-            stageDamageMax = selectedDamageCurve.Function.Xvals.Last();
+            stageDamageMin = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Min();
+            stageDamageMax = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Last();
 
             //todo: not sure i did this right.
             otherMin = otherCurve.Yvals.First().CDF(.5);

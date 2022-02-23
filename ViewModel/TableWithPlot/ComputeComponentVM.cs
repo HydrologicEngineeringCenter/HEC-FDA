@@ -1,19 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Data;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.MVVMFramework.ViewModel.Implementations;
+using paireddata;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.TableWithPlot.Data;
-using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
-using paireddata;
-using HEC.FDA.ViewModel.TableWithPlot.Rows;
-using HEC.MVVMFramework.ViewModel.Implementations;
-using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
-using Statistics;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
-    public class ComputeComponentVM : BaseViewModel//ViewModel.Implementations.ValidatingBaseViewModel
+    public class ComputeComponentVM : BaseViewModel
     {
         #region Backing Fields
         private string _name;

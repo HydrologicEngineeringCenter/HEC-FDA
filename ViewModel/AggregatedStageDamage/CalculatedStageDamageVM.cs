@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -21,9 +22,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
+        private TableWithPlotVM _TableWithPlot;
+
 
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
+        public TableWithPlotVM TableWithPlot
+        {
+            get { return _TableWithPlot; }
+            set { _TableWithPlot = value; NotifyPropertyChanged(); }
+        }
         public bool ShowChart
         {
             get { return _ShowChart; }
@@ -32,7 +40,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public CalculatedStageDamageRowItem SelectedRow
         {
             get { return _SelectedRow; }
-            set { _SelectedRow = value; NotifyPropertyChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
+            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
         }
 
         public ObservableCollection<InventoryElement> Structures
@@ -83,7 +91,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int i = 1;
             foreach (StageDamageCurve curve in curves)
             {
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.Function);
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent);
                 Rows.Add(newRow);
                 i++;
             }
@@ -176,14 +184,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
-                    UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
-
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, uncertainPairedData));
+                    //UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
+                    ComputeComponentVM cc = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, cc));
                 }
                 //end dummy rows
-                ShowChart = true;
                 if (Rows.Count > 0)
                 {
+                    TableWithPlot = new TableWithPlotVM(Rows[0].ComputeComponent);
+                    ShowChart = true;
                     SelectedRowIndex = 0;
                 }
             }
@@ -227,6 +236,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 curves.Add(curve);
             }
             return curves;
+        }
+
+        private void RowChanged()
+        {
+            TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
         }
     }
 }

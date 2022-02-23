@@ -483,7 +483,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.Function);
+                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
             }
             return stageDamages;
         }
@@ -521,7 +521,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             UncertainPairedData retval = null;
             if (SelectedDamageCurve != null)
             {
-                retval = SelectedDamageCurve.Function;
+                retval = SelectedDamageCurve.ComputeComponent.SelectedItemToPairedData();
             }
             return retval;
         }

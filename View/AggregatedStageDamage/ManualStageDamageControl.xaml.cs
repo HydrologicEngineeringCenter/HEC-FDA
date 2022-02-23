@@ -22,7 +22,6 @@ namespace HEC.FDA.View.AggregatedStageDamage
             if (DataContext is ManualStageDamageVM vm)
             {
                 vm.Add();
-                linkChartViewModel();
             }
         }
 
@@ -31,7 +30,6 @@ namespace HEC.FDA.View.AggregatedStageDamage
             if (DataContext is ManualStageDamageVM vm)
             {
                 vm.Copy();
-                linkChartViewModel();
             }
         }
 
@@ -40,48 +38,11 @@ namespace HEC.FDA.View.AggregatedStageDamage
             if (DataContext is ManualStageDamageVM vm)
             {
                 vm.Remove();
-                linkChartViewModel();
             }
         }
 
-        private void linkChartViewModel()
-        {
-            if (DataContext is ManualStageDamageVM vm)
-            {
-                int rowIndex = vm.SelectedRowIndex;
-                if (rowIndex >= 0)
-                {
-                    //todo: leaving this here until we get the new table and plot control
+        
 
-                    //CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
 
-                    //SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                    //Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                    //editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
-
-                    //if (_lastChart != null)
-                    //{
-                    //    editorGrid.Children.Remove(_lastChart);
-                    //}
-                    //_lastChart = chart;
-                    //editorGrid.Children.Add(chart);
-                    //Grid.SetColumn(chart, 2);
-                }
-            }
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is ManualStageDamageVM vm)
-            {
-                vm.SelectedRowChanged += Vm_SelectedRowChanged;
-                linkChartViewModel();
-            }
-        }
-
-        private void Vm_SelectedRowChanged(object sender, EventArgs e)
-        {
-            linkChartViewModel();
-        }
     }
 }

@@ -66,9 +66,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior - Interior Stage", "Exterior Stage", "Interior Stage");
-
-            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(computeComponentVM , actionManager);
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
             Navigate(tab, false, true);         

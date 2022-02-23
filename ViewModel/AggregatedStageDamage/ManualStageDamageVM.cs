@@ -7,22 +7,27 @@ using System.Windows;
 using Utilities;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageVM: BaseViewModel
     {
-        public event EventHandler SelectedRowChanged;
-
+        private TableWithPlotVM _TableWithPlot;
         private ManualStageDamageRowItem _SelectedRow;
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private ObservableCollection<String> _DamageCategories;
         private int _SelectedRowIndex = 0;
         public ObservableCollection<ManualStageDamageRowItem> Rows { get; set; }
+        public TableWithPlotVM TableWithPlot
+        {
+            get { return _TableWithPlot; }
+            set { _TableWithPlot = value; NotifyPropertyChanged(); }
+        }
         public ManualStageDamageRowItem SelectedRow 
         {
             get { return _SelectedRow; }
-            set { _SelectedRow = value; NotifyPropertyChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
+            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged(); }
         }
 
         public int SelectedRowIndex
@@ -37,6 +42,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             loadDamageCategories();
             Rows = new ObservableCollection<ManualStageDamageRowItem>();
             Rows.Add(CreateNewRow(1));
+            TableWithPlot = new TableWithPlotVM(CreateDefaultCurve());
         }
 
         public ManualStageDamageVM(List<StageDamageCurve> curves)
@@ -47,7 +53,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
-                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.Function);
+                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.ComputeComponent);
                 SelectItemsInRow(curve, newRow);
                 Rows.Add(newRow);
                 i++;
@@ -81,9 +87,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private UncertainPairedData CreateDefaultCurve()
+        private ComputeComponentVM CreateDefaultCurve()
         {
-            return Utilities.UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
+            return new ComputeComponentVM("Stage Damage", "Stage", "Damage");
+            //return Utilities.UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
         }
 
         private void loadImpactAreas()
@@ -134,8 +141,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ManualStageDamageRowItem currentRI = Rows[SelectedRowIndex];
                 try
                 {
-                    UncertainPairedData coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
-                    currentRI.EditorVM.Function = coordinatesFunction;
+                    //UncertainPairedData coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
+                    //currentRI.EditorVM.Function = coordinatesFunction;
+                    //currentRI.ComputeComponent = 
                 }
                 catch(InvalidConstructorArgumentsException ex)
                 {
@@ -183,7 +191,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.EditorVM.CreateFunctionFromTables());
+                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent);
                 curves.Add(curve);
             }
             return curves;
@@ -200,43 +208,44 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private bool AreThereTwoPointsPerCurve()
         {
-            List<string> rowsThatFailed = new List<string>();
-            foreach (ManualStageDamageRowItem r in Rows)
-            {
-                UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
-                if (coordFunc.Xvals.Length < 2)
-                {
-                    rowsThatFailed.Add(r.ID.ToString());
-                }
-            }
+            return true;
+            //List<string> rowsThatFailed = new List<string>();
+            //foreach (ManualStageDamageRowItem r in Rows)
+            //{
+            //    UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
+            //    if (coordFunc.Xvals.Length < 2)
+            //    {
+            //        rowsThatFailed.Add(r.ID.ToString());
+            //    }
+            //}
 
-            if(rowsThatFailed.Count>0)
-            {
-                //\u2022 is a bullet character
-                String msg = "Manually entered curves must have at least 2 points." + Environment.NewLine + "Curves in error:" + Environment.NewLine + "\t\u2022 ";
-                MessageBox.Show(msg + string.Join(Environment.NewLine + "\t\u2022 ", rowsThatFailed), "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            return rowsThatFailed.Count == 0;
+            //if(rowsThatFailed.Count>0)
+            //{
+            //    //\u2022 is a bullet character
+            //    String msg = "Manually entered curves must have at least 2 points." + Environment.NewLine + "Curves in error:" + Environment.NewLine + "\t\u2022 ";
+            //    MessageBox.Show(msg + string.Join(Environment.NewLine + "\t\u2022 ", rowsThatFailed), "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
+            //return rowsThatFailed.Count == 0;
         }
 
         private bool AreManualCurvesValid()
         {
-            ObservableCollection<ManualStageDamageRowItem> rows = Rows;
-            foreach (ManualStageDamageRowItem r in rows)
-            {
-                try
-                {
-                    r.EditorVM.CreateFunctionFromTables();
-                }
-                catch (Exception ex)
-                {
-                    //we have an invalid curve
-                    String msg = "An invalid curve was detected." + Environment.NewLine +
-                        "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
-                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
-                }
-            }
+            //ObservableCollection<ManualStageDamageRowItem> rows = Rows;
+            //foreach (ManualStageDamageRowItem r in rows)
+            //{
+            //    try
+            //    {
+            //        r.EditorVM.CreateFunctionFromTables();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        //we have an invalid curve
+            //        String msg = "An invalid curve was detected." + Environment.NewLine +
+            //            "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
+            //        MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return false;
+            //    }
+            //}
             return true;
         }
 
@@ -267,5 +276,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             return AreManualRowsUniqueCombinations;
         }
+
+        private void RowChanged()
+        {
+            TableWithPlot = new TableWithPlotVM( SelectedRow.ComputeComponent);
+        }
+
     }
 }

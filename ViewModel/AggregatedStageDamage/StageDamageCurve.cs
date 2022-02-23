@@ -2,6 +2,7 @@
 using System;
 using System.Xml.Linq;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -11,11 +12,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const String SELECTED_IMPACT_AREA_TAG = "SelectedImpactArea";
         private const String SELECTED_DAM_CAT_TAG = "SelectedDamCat";
 
-        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)
+        public ImpactAreaRowItem ImpArea { get; }
+        public string DamCat { get; }
+        public ComputeComponentVM ComputeComponent { get; }
+
+        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function)
         {
             ImpArea = impArea;
             DamCat = damCat;
-            Function = function;
+            ComputeComponent = function;
         }
 
         public StageDamageCurve(XElement curveElement)
@@ -23,24 +28,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
             XElement functionElem = curveElement.Element(nameof(UncertainPairedData));
-            UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
+            //UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(functionElem);
+
 
             //todo i need to create the row item from the id? i just need to grab it from the database i guess
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
             DamCat = selectedDamCat;
-            Function = uncertainPairedData;
+            ComputeComponent = computeComponentVM;
         }
 
-        public ImpactAreaRowItem ImpArea { get; }
-        public string DamCat { get; }
-        public UncertainPairedData Function { get; }
+   
 
         public XElement WriteToXML(StageDamageCurve curve)
         {
             XElement stageDamageCurveElement = new XElement(STAGE_DAMAGE_CURVE_TAG);
             stageDamageCurveElement.SetAttributeValue(SELECTED_IMPACT_AREA_TAG, curve.ImpArea.ID);
             stageDamageCurveElement.SetAttributeValue(SELECTED_DAM_CAT_TAG, curve.DamCat);
-            stageDamageCurveElement.Add(curve.Function.WriteToXML());
+            stageDamageCurveElement.Add(curve.ComputeComponent.ToXML());
 
             return stageDamageCurveElement;
         }
