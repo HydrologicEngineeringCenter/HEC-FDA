@@ -138,11 +138,13 @@ namespace paireddata
                 
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
+                    //Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
+                    pairedData.ForceMonotonic();
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Xvals);//bad news.
+                    // throw new Exception("the produced paired data is not monotonically increasing.");
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)

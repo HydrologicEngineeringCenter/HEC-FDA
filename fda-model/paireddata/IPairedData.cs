@@ -6,5 +6,6 @@ namespace paireddata
     {
         double[] Xvals { get; }
         double[] Yvals { get; }
+        void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue);
     }
 }
