@@ -83,7 +83,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     break;
             }
 
-            return new UncertainPairedData(rat.GetStage(), ys.ToArray(), "Stage", "Flow", "Rating", "", -1);
+            return new UncertainPairedData(rat.GetStage(), ys.ToArray(), "Stage", "Flow", "Rating", "");
         }
 
         private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
@@ -252,7 +252,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     damagesList.Add(new Normal(damages[i], stDevs[i]));
                 }
             }
-            return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "", -1);
+            return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "");
         }
 
         private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
@@ -276,7 +276,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     //message user if it does not.
                     if (row.Name.Equals(damageReachName))
                     {
-                        impactAreaMatches = true;
+                        //impactAreaMatches = true;
                         //todo: uncomment and handle it
                         //curve = new StageDamageCurve(row, damCat, stageDamagePairedData);
                         break;
@@ -405,27 +405,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return elem;
         }
 
-        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
-        {
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            double mean = pf.MomentsLp3[0];
-            double stDev = pf.MomentsLp3[1];
-            double skew = pf.MomentsLp3[2];
-
-            int por = pf.EquivalentLengthOfRecord;
-
-            bool isAnalytical = true;
-            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
-            bool isLogFlow = false;
-
-            //there will be no analytical flows. We just need 
-            List<double> analyticalFlows = new List<double>();
-            List<double> graphicalFlows = new List<double>();
-
-
-            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows, null);
-        }
+     
 
         #endregion
 
@@ -799,7 +779,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             { 
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
             }
             catch (ArgumentException e)
             {
@@ -818,7 +798,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             {
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
             }
             catch (ArgumentException e)
             {
@@ -837,7 +817,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             {
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "", -1);
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
             }
             catch (ArgumentException e)
             {

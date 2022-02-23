@@ -11,7 +11,6 @@ namespace HEC.FDA.View.AggregatedStageDamage
     /// </summary>
     public partial class ManualStageDamageControl : UserControl
     {
-        private Chart2D _lastChart;
         public ManualStageDamageControl()
         {
             InitializeComponent();
@@ -40,9 +39,6 @@ namespace HEC.FDA.View.AggregatedStageDamage
                 vm.Remove();
             }
         }
-
-        
-
 
     }
 }

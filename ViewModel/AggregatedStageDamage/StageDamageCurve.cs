@@ -1,8 +1,7 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -27,7 +26,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
-            XElement functionElem = curveElement.Element(nameof(UncertainPairedData));
+            XElement functionElem = curveElement.Element("ComputeComponentVM");
             //UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(functionElem);
 
@@ -36,9 +35,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
             DamCat = selectedDamCat;
             ComputeComponent = computeComponentVM;
-        }
-
-   
+        } 
 
         public XElement WriteToXML(StageDamageCurve curve)
         {

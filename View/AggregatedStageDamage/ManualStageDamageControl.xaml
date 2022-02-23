@@ -21,7 +21,7 @@
                     <Button Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
                 </StackPanel>
 
-                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Curve" Width="50" DisplayMemberBinding="{Binding ID}" />

@@ -1,20 +1,16 @@
-﻿using paireddata;
-using System;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Inventory;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {
-        public event EventHandler SelectedRowChanged;
-
         private ObservableCollection<WaterSurfaceElevationElement> _WaterSurfaceElevations;
         private WaterSurfaceElevationElement _SelectedWaterSurfaceElevation;
 
@@ -40,7 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public CalculatedStageDamageRowItem SelectedRow
         {
             get { return _SelectedRow; }
-            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
+            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged();}
         }
 
         public ObservableCollection<InventoryElement> Structures
@@ -66,8 +62,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             get { return _SelectedWaterSurfaceElevation; }
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
         }
-
-        public int SelectedRowIndex {get;set;}
 
         public CalculatedStageDamageVM()
         {
@@ -98,7 +92,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(Rows.Count>0)
             {
                 ShowChart = true;
-                SelectedRowIndex = 0;
+                SelectedRow = Rows[0];
             }
         }
 
@@ -193,7 +187,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     TableWithPlot = new TableWithPlotVM(Rows[0].ComputeComponent);
                     ShowChart = true;
-                    SelectedRowIndex = 0;
+                    SelectedRow = Rows[0];
                 }
             }
             else

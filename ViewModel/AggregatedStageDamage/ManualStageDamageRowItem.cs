@@ -33,7 +33,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             get { return _DamageCategories; }
             set { _DamageCategories = value; NotifyPropertyChanged(); }
         }
-        //public CoordinatesFunctionEditorVM EditorVM { get; set; }
         public ComputeComponentVM ComputeComponent { get; set; }
 
         public String SelectedDamCat
@@ -52,7 +51,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 SelectedDamCat = damCats[0];
             }
-            //EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
             ComputeComponent = function;
         }
 
@@ -63,7 +61,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedImpArea = curve.ImpArea;
             DamageCategories = damCats;
             SelectedDamCat = curve.DamCat;
-            //EditorVM = new CoordinatesFunctionEditorVM(curve.ComputeComponent, "Stage", "Damage", "Stage-Damage");
             ComputeComponent = curve.ComputeComponent;
         }
 
@@ -78,23 +75,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedImpArea = rowItem.SelectedImpArea;
             DamageCategories = rowItem.DamageCategories;
             SelectedDamCat = rowItem.SelectedDamCat;
-            //EditorVM = new CoordinatesFunctionEditorVM(rowItem.EditorVM);
             ComputeComponent = rowItem.ComputeComponent;
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj is ManualStageDamageRowItem item &&
-                   SelectedImpArea.Name.Equals( item.SelectedImpArea.Name) &&
-                   SelectedDamCat == item.SelectedDamCat;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 1172079173;
-            hashCode = hashCode * -1521134295 + EqualityComparer<ImpactAreaRowItem>.Default.GetHashCode(SelectedImpArea);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SelectedDamCat);
-            return hashCode;
-        }
+        
     }
 }

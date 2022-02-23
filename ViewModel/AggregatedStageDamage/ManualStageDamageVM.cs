@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private ObservableCollection<String> _DamageCategories;
         private int _SelectedRowIndex = 0;
-        public ObservableCollection<ManualStageDamageRowItem> Rows { get; set; }
+        public ObservableCollection<ManualStageDamageRowItem> Rows { get; } = new ObservableCollection<ManualStageDamageRowItem>();
         public TableWithPlotVM TableWithPlot
         {
             get { return _TableWithPlot; }
@@ -30,24 +30,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged(); }
         }
 
-        public int SelectedRowIndex
-        {
-            get { return _SelectedRowIndex; }
-            set { _SelectedRowIndex = value; NotifyPropertyChanged(); }
-        }
-
         public ManualStageDamageVM()
         {
             loadImpactAreas();
             loadDamageCategories();
-            Rows = new ObservableCollection<ManualStageDamageRowItem>();
             Rows.Add(CreateNewRow(1));
+            SelectedRow = Rows[0];
             TableWithPlot = new TableWithPlotVM(CreateDefaultCurve());
         }
 
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
-            Rows = new ObservableCollection<ManualStageDamageRowItem>();
             loadImpactAreas();
             loadDamageCategories();
             int i = 1;
@@ -57,6 +50,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 SelectItemsInRow(curve, newRow);
                 Rows.Add(newRow);
                 i++;
+            }
+            if(Rows.Count > 0)
+            {
+                SelectedRow = Rows[0];
             }
         }
 
@@ -131,14 +128,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 lastRowId = Rows[Rows.Count - 1].ID;
             }
             Rows.Add(CreateNewRow(lastRowId+1));
-            SelectedRowIndex = Rows.Count - 1;
+            SelectedRow = Rows.Last();
         }
 
         public void Copy()
         {
-            if(SelectedRowIndex >=0)
+            if(SelectedRow != null)
             {
-                ManualStageDamageRowItem currentRI = Rows[SelectedRowIndex];
+                ManualStageDamageRowItem currentRI = SelectedRow;
                 try
                 {
                     //UncertainPairedData coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
@@ -152,7 +149,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     return;
                 }
                 int lastRowId = Rows[Rows.Count - 1].ID;
-                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(lastRowId+1, Rows[SelectedRowIndex]);
+                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(lastRowId+1, SelectedRow);
                 Rows.Add(newRow);
             }
         }
@@ -162,7 +159,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //don't allow the removing of the last row
             if (Rows.Count != 1)
             {
-                int currentIndex = SelectedRowIndex;
+                int currentIndex = Rows.IndexOf(SelectedRow);
                 if (currentIndex >= 0)
                 {
                     Rows.RemoveAt(currentIndex);
@@ -170,11 +167,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //now set the selected index
                 if (currentIndex >= Rows.Count)
                 {
-                    SelectedRowIndex = Rows.Count - 1;
-                }
-                else
-                {
-                    SelectedRowIndex = currentIndex;
+                    SelectedRow = Rows[Rows.Count - 1];
                 }
             }
         }
@@ -249,6 +242,23 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return true;
         }
 
+        private bool DoRowsHaveEqualValues(ManualStageDamageRowItem row1, ManualStageDamageRowItem row2)
+        {
+            bool areEqual = false;
+
+            //The "!=" below weeds out the row that is itself
+            if (row1 != row2)
+            {
+                //check imp area and dam cat
+                if(row1.SelectedImpArea.ToString().Equals(row2.SelectedImpArea.ToString()) &&
+                    row1.SelectedDamCat.Equals(row2.SelectedDamCat))
+                {
+                    areEqual = true;
+                }
+            }
+            return areEqual;
+        }
+
         private bool AreManualRowsUniqueCombinations()
         {
             bool AreManualRowsUniqueCombinations = true;
@@ -258,8 +268,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 foreach (ManualStageDamageRowItem row2 in rows)
                 {
-                    //The "!=" below weeds out the row that is itself
-                    if (row != row2 && row.Equals(row2))
+                    if (DoRowsHaveEqualValues(row, row2))
                     {
                         repeatRows.Add(row.ID);
                         repeatRows.Add(row2.ID);

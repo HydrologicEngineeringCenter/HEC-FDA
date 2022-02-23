@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     public class BoolToUnidentifiableConverter : IValueConverter
     {

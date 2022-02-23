@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageEditorVM : BaseEditorVM
     {
-        private bool _IsManualRadioSelected = true;
+        private bool _IsManualRadioSelected = false;
         private BaseViewModel _CurrentVM;
 
         #region properties
@@ -109,11 +109,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (valid)
             {
                 LastEditDate = DateTime.Now.ToString("G");
-                int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
 
                 Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
 
+                int id = GetElementID();
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
                 if (IsCreatingNewElement)
                 {
                     manager.SaveNew(elem);
@@ -136,6 +136,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 SaveCalculatedCurves();
             }
+        }
+
+        public int GetElementID()
+        {
+            int id = -1;
+            if (IsCreatingNewElement)
+            {
+                id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+            }
+            else
+            {
+                id = OriginalElement.ID;
+            }
+            return id;
         }
 
         #endregion
