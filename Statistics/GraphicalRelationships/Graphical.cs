@@ -97,6 +97,8 @@ namespace Statistics.GraphicalRelationships
         /// <summary>
         /// Steps to get a complete graphical relationship: 1. Construct Graphical, 2. Compute Confidence Limits, 3. Access Exceedance Probability and FlowOrStageDistribution Public Properties.
         /// ExceedanceProbabilities array and FlowOrStageDistribution IDistribution array can then be used to construct an uncertain paired data object. 
+        /// This constructor assumes that exceedance probabilities and flow or stage values have a strictly monotonic relationships.
+        /// TODO: Add validation
         /// </summary>
         /// <param name="exceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
         /// <param name="flowOrStageValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
@@ -108,19 +110,6 @@ namespace Statistics.GraphicalRelationships
       
         public Graphical(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
         {
-            //1. Check for null data and check for monotonicity 
-            if(exceedanceProbabilities != null && flowOrStageValues != null)
-            {
-                if (!IsMonotonicallyDecreasing(exceedanceProbabilities))
-                {
-                    Array.Sort(exceedanceProbabilities);
-                }
-                if (!IsMonotonicallyIncreasing(flowOrStageValues))
-                {
-                    Array.Sort(flowOrStageValues);
-                }
-            }
-
             _SampleSize = equivalentRecordLength;
             _UsingFlows = usingFlows;
             _InputExceedanceProbabilities = exceedanceProbabilities;
