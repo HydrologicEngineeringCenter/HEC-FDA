@@ -1,20 +1,7 @@
-﻿using Importer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace View.Inventory.OccupancyTypes
+namespace HEC.FDA.View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for ImportOccupancyTypes.xaml
@@ -29,7 +16,7 @@ namespace View.Inventory.OccupancyTypes
         }
         private void cmb_Path_SelectionMade(string fullpath, string filename)
         {
-            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = fullpath;
             lbl_PassFail.Content = "";
             if (txt_Name.Text == null || txt_Name.Text == "")
@@ -39,7 +26,7 @@ namespace View.Inventory.OccupancyTypes
         }
         //private void Cmb_Path_CmbSelectionMade(string path)
         //{
-        //    ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+        //    HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
         //    vm.SelectedPath = path;
         //    if(txt_Name.Text == null || txt_Name.Text == "")
         //    {
@@ -49,7 +36,7 @@ namespace View.Inventory.OccupancyTypes
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //todo: i don't think this class is being used anywhere. Delete?
-            //ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
  
 

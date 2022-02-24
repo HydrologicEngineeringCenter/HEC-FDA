@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.AlternativeComparisonReport;
-using ViewModel.Alternatives;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Inventory;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     /// <summary>
     /// The cache is used to hold all the elements in fda in memory. It gets loaded with elements
@@ -134,7 +134,6 @@ namespace ViewModel.Study
         {
 
             ElementAddedEventArgs elementAddedEventArgs = new ElementAddedEventArgs(elem);
-            elementAddedEventArgs.ID = elem.GetElementID();
 
             if (elem.GetType() == typeof(TerrainElement))
             {
@@ -310,323 +309,194 @@ namespace ViewModel.Study
 
         #region UpdateElements
 
-        public void UpdateElement(ChildElement oldElement, ChildElement newElement)
+        public void UpdateElement( ChildElement newElement)
         {     
-            if (oldElement is TerrainElement)
+            if (newElement is TerrainElement)
             {
-                UpdateTerrain((TerrainElement) oldElement, (TerrainElement)newElement);
+                UpdateTerrain( (TerrainElement)newElement);
             }
-            else if(oldElement is RatingCurveElement)
+            else if(newElement is RatingCurveElement)
             {
-                UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)newElement);
+                UpdateRatingCurve( (RatingCurveElement)newElement);
             }
-            else if (oldElement is ImpactAreaElement )
+            else if (newElement is ImpactAreaElement )
             {
-                UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)newElement);
+                UpdateImpactAreaElement( (ImpactAreaElement)newElement);
             }
-            else if (oldElement is WaterSurfaceElevationElement )
+            else if (newElement is WaterSurfaceElevationElement )
             {
-                UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)newElement);
+                UpdateWaterSurfaceElevationElement( (WaterSurfaceElevationElement)newElement);
             }
-            else if (oldElement is AnalyticalFrequencyElement )
+            else if (newElement is AnalyticalFrequencyElement )
             {
-                UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)newElement);
+                UpdateFlowFrequencyElement( (AnalyticalFrequencyElement)newElement);
             }
-            else if (oldElement is InflowOutflowElement )
+            else if (newElement is InflowOutflowElement )
             {
-                UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)newElement);
+                UpdateInflowOutflowElement( (InflowOutflowElement)newElement);
             }
-            else if (oldElement is ExteriorInteriorElement )
+            else if (newElement is ExteriorInteriorElement )
             {
-                UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)newElement);
+                UpdateExteriorInteriorElement( (ExteriorInteriorElement)newElement);
             }
-            else if (oldElement is LeveeFeatureElement)
+            else if (newElement is LeveeFeatureElement)
             {
-                UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)newElement);
+                UpdateLeveeElement( (LeveeFeatureElement)newElement);
             }
-            else if (oldElement is AggregatedStageDamageElement )
+            else if (newElement is AggregatedStageDamageElement )
             {
-                UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)newElement);
+                UpdateStageDamageElement( (AggregatedStageDamageElement)newElement);
             }
-            else if (oldElement is IASElementSet )
+            else if (newElement is IASElementSet )
             {
-                UpdateIASElement((IASElementSet)oldElement, (IASElementSet)newElement);
+                UpdateIASElement( (IASElementSet)newElement);
             }
-            else if (oldElement.GetType().Equals(typeof(AlternativeElement)))
+            else if (newElement.GetType().Equals(typeof(AlternativeElement)))
             {
-                UpdateAlternativeElement((AlternativeElement)oldElement, (AlternativeElement)newElement);
+                UpdateAlternativeElement( (AlternativeElement)newElement);
             }
-            else if (oldElement.GetType().Equals(typeof(InventoryElement)))
+            else if (newElement.GetType().Equals(typeof(InventoryElement)))
             {
-                UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
+                UpdateStructureInventoryElement( (InventoryElement)newElement);
             }
-            else if(oldElement is AlternativeComparisonReportElement)
+            else if(newElement is AlternativeComparisonReportElement)
             {
-                UpdateAlternativeCompReportElement((AlternativeComparisonReportElement)oldElement, (AlternativeComparisonReportElement)newElement);
+                UpdateAlternativeCompReportElement( (AlternativeComparisonReportElement)newElement);
             }
-            else if(oldElement is StudyPropertiesElement)
+            else if(newElement is StudyPropertiesElement)
             {
                 StudyPropertiesElement = (StudyPropertiesElement)newElement;
             }
         }
 
-
-        public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
+        public void UpdateTerrain( TerrainElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < TerrainElements.Count; i++)
-            {
-                if (TerrainElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = TerrainElements.FindIndex(elem => elem.ID == newElement.ID);           
             if (index != -1)
             {
-                TerrainElements.RemoveAt(index);
-                TerrainElements.Insert(index, newElement);
-                TerrainUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                TerrainElements[index]= newElement;
+                TerrainUpdated?.Invoke(this, new ElementUpdatedEventArgs(newElement));
             }
         }
-        public void UpdateRatingCurve(RatingCurveElement oldElement, RatingCurveElement newElement)
+        public void UpdateRatingCurve(RatingCurveElement newElement)
         {
-            int index = -1;
-            for(int i = 0;i<RatingCurveElements.Count;i++)
-            {
-
-                if(RatingCurveElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = RatingCurveElements.FindIndex(elem => elem.ID == newElement.ID);
             if(index != -1)
             {
-                RatingCurveElements.RemoveAt(index);
-                RatingCurveElements.Insert(index, newElement);
-                RatingUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                RatingCurveElements[index] = newElement;
+                RatingUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateImpactAreaElement(ImpactAreaElement oldElement, ImpactAreaElement newElement)
+        public void UpdateImpactAreaElement(ImpactAreaElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < ImpactAreaElements.Count; i++)
-            {
-                if (ImpactAreaElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = ImpactAreaElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                ImpactAreaElements.RemoveAt(index);
-                ImpactAreaElements.Insert(index, newElement);
-                ImpactAreaUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                ImpactAreaElements[index]= newElement;
+                ImpactAreaUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateWaterSurfaceElevationElement(WaterSurfaceElevationElement oldElement, WaterSurfaceElevationElement newElement)
+        public void UpdateWaterSurfaceElevationElement( WaterSurfaceElevationElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < WaterSurfaceElements.Count; i++)
-            {
-                if (WaterSurfaceElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = WaterSurfaceElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                WaterSurfaceElements.RemoveAt(index);
-                WaterSurfaceElements.Insert(index, newElement);
-                WaterSurfaceElevationUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                WaterSurfaceElements[index] = newElement;
+                WaterSurfaceElevationUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateFlowFrequencyElement(AnalyticalFrequencyElement oldElement, AnalyticalFrequencyElement newElement)
+        public void UpdateFlowFrequencyElement( AnalyticalFrequencyElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < FlowFrequencyElements.Count; i++)
-            {
-                if (FlowFrequencyElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = FlowFrequencyElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                FlowFrequencyElements.RemoveAt(index);
-                FlowFrequencyElements.Insert(index, newElement);
-                FlowFrequencyUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                FlowFrequencyElements[index] = newElement;
+                FlowFrequencyUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateInflowOutflowElement(InflowOutflowElement oldElement, InflowOutflowElement newElement)
+        public void UpdateInflowOutflowElement( InflowOutflowElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < InflowOutflowElements.Count; i++)
-            {
-                if (InflowOutflowElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = InflowOutflowElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                InflowOutflowElements.RemoveAt(index);
-                InflowOutflowElements.Insert(index, newElement);
-                InflowOutflowUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                InflowOutflowElements[index] = newElement;
+                InflowOutflowUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateExteriorInteriorElement(ExteriorInteriorElement oldElement, ExteriorInteriorElement newElement)
+        public void UpdateExteriorInteriorElement( ExteriorInteriorElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < ExteriorInteriorElements.Count; i++)
-            {
-                if (ExteriorInteriorElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = ExteriorInteriorElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                ExteriorInteriorElements.RemoveAt(index);
-                ExteriorInteriorElements.Insert(index, newElement);
-                ExteriorInteriorUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                ExteriorInteriorElements[index] = newElement;
+                ExteriorInteriorUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateLeveeElement(LeveeFeatureElement oldElement, LeveeFeatureElement newElement)
+        public void UpdateLeveeElement( LeveeFeatureElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < LeveeElements.Count; i++)
-            {
-                if (LeveeElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = LeveeElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                LeveeElements.RemoveAt(index);
-                LeveeElements.Insert(index, newElement);
-                LeveeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                LeveeElements[index] = newElement;
+                LeveeUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
         
-        public void UpdateStageDamageElement(AggregatedStageDamageElement oldElement, AggregatedStageDamageElement newElement)
+        public void UpdateStageDamageElement( AggregatedStageDamageElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < StageDamageElements.Count; i++)
-            {
-                if (StageDamageElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = StageDamageElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                StageDamageElements.RemoveAt(index);
-                StageDamageElements.Insert(index, newElement);
-                StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                StageDamageElements[index] = newElement;
+                StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateIASElement(IASElementSet oldElement, IASElementSet newElement)
+        public void UpdateIASElement( IASElementSet newElement)
         {
-            int index = -1;
-            for (int i = 0; i < IASElementSets.Count; i++)
-            {
-                if (IASElementSets[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = IASElementSets.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                IASElementSets.RemoveAt(index);
-                IASElementSets.Insert(index, newElement);
-                IASElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                IASElementSets[index] = newElement;
+                IASElementUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        public void UpdateAlternativeElement( AlternativeElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < AlternativeElements.Count; i++)
-            {
-                if (AlternativeElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = AlternativeElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                AlternativeElements.RemoveAt(index);
-                AlternativeElements.Insert(index, newElement);
-                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                AlternativeElements[index]= newElement;
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
 
-        public void UpdateAlternativeCompReportElement(AlternativeComparisonReportElement oldElement, AlternativeComparisonReportElement newElement)
+        public void UpdateAlternativeCompReportElement( AlternativeComparisonReportElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < AlternativeCompReports.Count; i++)
-            {
-                if (AlternativeCompReports[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = AlternativeCompReports.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                AlternativeCompReports.RemoveAt(index);
-                AlternativeCompReports.Insert(index, newElement);
-                AlternativeCompReportUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                AlternativeCompReports[index] = newElement;
+                AlternativeCompReportUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
 
-        public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
+        public void UpdateStructureInventoryElement( InventoryElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < StructureInventoryElements.Count; i++)
-            {
-                if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = StructureInventoryElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                StructureInventoryElements.RemoveAt(index);
-                StructureInventoryElements.Insert(index, newElement);
-                StructureInventoryUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+                StructureInventoryElements[index] = newElement;
+                StructureInventoryUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
 
-        public void UpdateOccTypeElement(OccupancyTypesElement element)
+        public void UpdateOccTypeElement( OccupancyTypesElement newElement)
         {
-            int index = -1;
-            for (int i = 0; i < OccTypeElements.Count; i++)
-            {
-                if (OccTypeElements[i].ID == element.ID)
-                {
-                    index = i;
-                    break;
-                }
-            }
+            int index = OccTypeElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
             {
-                OccTypeElements.RemoveAt(index);
-                OccTypeElements.Insert(index, element);
-                //the old element parameter doesn't matter in this case. I only need the new one.
-                OccTypeElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(element, element));
+                OccTypeElements[index]= newElement;
+                OccTypeElementUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
         #endregion
@@ -845,41 +715,41 @@ namespace ViewModel.Study
             ChildElement childElem = null;
             if (childElementType == typeof(ImpactAreaElement))
             {
-                childElem = ImpactAreaElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();    
+                childElem = ImpactAreaElements.Where(elem => elem.ID == ID).FirstOrDefault();    
             }           
             else if (childElementType == typeof(AnalyticalFrequencyElement))
             {
-                childElem = FlowFrequencyElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();  
+                childElem = FlowFrequencyElements.Where(elem => elem.ID == ID).FirstOrDefault();  
             }
             else if (childElementType == typeof(InflowOutflowElement))
             {
-                childElem = InflowOutflowElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = InflowOutflowElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
             {
-                childElem = RatingCurveElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = RatingCurveElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType == typeof(ExteriorInteriorElement))
             {
-                childElem = ExteriorInteriorElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = ExteriorInteriorElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType == typeof(LeveeFeatureElement))
             {
-                childElem = LeveeElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = LeveeElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType == typeof(AggregatedStageDamageElement))
             {
-                childElem = StageDamageElements.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = StageDamageElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType == typeof(IASElementSet))
             {
-                childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = IASElementSets.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             if (childElementType == typeof(AlternativeElement))
             {
                 foreach (ChildElement elem in AlternativeElements)
                 {
-                    if (elem.GetElementID() == ID)
+                    if (elem.ID == ID)
                     {
                         return elem;
                     }
@@ -887,7 +757,7 @@ namespace ViewModel.Study
             }
             else if(childElementType == typeof(AlternativeComparisonReportElement))
             {
-                childElem = AlternativeCompReports.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+                childElem = AlternativeCompReports.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             return childElem;
         }

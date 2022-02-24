@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace View.Properties {
+namespace HEC.FDA.View.Properties {
     using System;
     
     

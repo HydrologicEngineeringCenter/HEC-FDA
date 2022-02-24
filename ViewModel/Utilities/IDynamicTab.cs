@@ -1,11 +1,6 @@
-﻿using ViewModel.Tabs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public interface IDynamicTab
     {

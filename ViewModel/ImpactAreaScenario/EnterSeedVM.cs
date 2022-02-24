@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.ImpactAreaScenario
+namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class EnterSeedVM:BaseViewModel
     {

@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="View.Inventory.DepthDamageCurves.DepthDamageEditorControl"
+﻿<UserControl x:Class="HEC.FDA.View.Inventory.DepthDamageCurves.DepthDamageEditorControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:View.Inventory.DepthDamageCurves"
+             xmlns:local="clr-namespace:HEC.FDA.View.Inventory.DepthDamageCurves"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:utils="clr-namespace:View.Utilities"
+             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900">
     <UserControl.Resources>

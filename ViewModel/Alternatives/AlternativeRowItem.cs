@@ -1,6 +1,6 @@
-﻿using ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
 
-namespace ViewModel.Alternatives
+namespace HEC.FDA.ViewModel.Alternatives
 {
     public class AlternativeRowItem : BaseViewModel
     {
@@ -37,14 +37,13 @@ namespace ViewModel.Alternatives
         }
         public AlternativeRowItem(IASElementSet elem)
         {
-            ID = elem.GetElementID();
+            ID = elem.ID;
             Year = elem.AnalysisYear;
             HasComputed = elem.HasComputed;
             //Name needs to be after the Year property is set to get the proper display name.
             Name = elem.Name ;
             IsSelected = false;
             UpdateTooltip();
-
         }
 
         private void UpdateTooltip()

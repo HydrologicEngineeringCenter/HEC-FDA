@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public abstract class ChartControlBase : BaseViewModel
     {
@@ -127,7 +127,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> xVals = new List<double>();
             if (Function != null)
             {
-                xVals.AddRange( Function.xs());
+                xVals.AddRange( Function.Xvals);
             }
             return xVals.ToArray();
         }
@@ -136,7 +136,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> yVals = new List<double>();
             if (Function != null)
             {
-                IDistribution[] coordinates = Function.ys();
+                IDistribution[] coordinates = Function.Yvals;
                 foreach (IDistribution coord in coordinates)
                 {
                     yVals.Add(coord.InverseCDF(.5));

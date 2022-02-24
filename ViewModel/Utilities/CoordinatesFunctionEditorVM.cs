@@ -2,7 +2,7 @@
 using paireddata;
 using System;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public class CoordinatesFunctionEditorVM
     {

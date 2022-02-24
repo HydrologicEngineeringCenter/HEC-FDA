@@ -1,4 +1,4 @@
-﻿namespace ViewModel.Utilities
+﻿namespace HEC.FDA.ViewModel.Utilities
 {
     public interface ISaveWhileEditing
     {

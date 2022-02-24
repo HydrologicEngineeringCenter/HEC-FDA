@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ViewModel.Inventory.DepthDamage
+namespace HEC.FDA.ViewModel.Inventory.DepthDamage
 {
     //[Author(q0heccdm, 7 / 18 / 2017 9:40:26 AM)]
     public class DepthDamageCurveData

@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ViewModel.ImpactAreaScenario.Editor;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace View.ImpactAreaScenario.Editor
+namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// Interaction logic for AdditionalThresholds.xaml

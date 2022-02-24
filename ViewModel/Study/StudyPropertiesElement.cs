@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Linq;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class StudyPropertiesElement: ChildElement
     {
@@ -60,7 +60,7 @@ namespace ViewModel.Study
         /// <param name="studyName"></param>
         /// <param name="studyPath"></param>
         /// <param name="description"></param>
-        public StudyPropertiesElement(string studyName, string studyPath, string description)
+        public StudyPropertiesElement(string studyName, string studyPath, string description, int id):base(id)
         {
             Name = studyName;
             StudyPath = studyPath;
@@ -78,7 +78,7 @@ namespace ViewModel.Study
         }
 
         public StudyPropertiesElement(string name, string path, string description, string createdBy, string createdDate, string studyNotes,
-            MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, int periodOfAnalysis)
+            MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, int periodOfAnalysis, int id) : base(id)
         {
             Name = name;
             StudyPath = path;
@@ -95,7 +95,7 @@ namespace ViewModel.Study
             PeriodOfAnalysis = periodOfAnalysis;
         }
        
-        public StudyPropertiesElement(StudyPropertiesElement elem)
+        public StudyPropertiesElement(StudyPropertiesElement elem, int id):base(id)
         {
             Name = elem.Name;
             StudyPath = elem.StudyPath;
@@ -116,7 +116,7 @@ namespace ViewModel.Study
         /// ctor used to create an element from the database
         /// </summary>
         /// <param name="xml"></param>
-        public StudyPropertiesElement(string xml)
+        public StudyPropertiesElement(string xml, int id):base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement studyProperty = doc.Element(STUDY_PROPERTIES);
@@ -159,7 +159,7 @@ namespace ViewModel.Study
             StudyPropertiesElement newElem = null;
             if(elementToClone is StudyPropertiesElement elem)
             {
-                newElem = new StudyPropertiesElement(elem);
+                newElem = new StudyPropertiesElement(elem, elem.ID);
             }
             return newElem;
         }

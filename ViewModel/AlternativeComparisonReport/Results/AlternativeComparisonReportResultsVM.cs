@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using ViewModel.Alternatives.Results;
-using ViewModel.Alternatives.Results.ResultObject;
-using ViewModel.Study;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Study;
 
-namespace ViewModel.AlternativeComparisonReport.Results
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
     public class AlternativeComparisonReportResultsVM : BaseViewModel
     {

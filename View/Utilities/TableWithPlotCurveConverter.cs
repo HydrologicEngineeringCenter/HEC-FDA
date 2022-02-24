@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     //[Author(q0heccdm, 8 / 11 / 2017 1:02:18 PM)]
     class TableWithPlotCurveConverter : IValueConverter

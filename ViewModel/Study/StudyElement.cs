@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.AlternativeComparisonReport;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Saving;
-using ViewModel.Storage;
-using ViewModel.Tabs;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Tabs;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class StudyElement : ParentElement
     {
@@ -265,7 +265,8 @@ namespace ViewModel.Study
         }
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
-            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description);
+            int id = PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, id);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
         private void StudyProperties(object arg1, EventArgs arg2)
@@ -418,7 +419,7 @@ namespace ViewModel.Study
             }
         }
 
-        #region Load Elements
+
         private void LoadElementsFromDB()
         {
             PersistenceFactory.GetRatingManager().Load();
@@ -440,8 +441,5 @@ namespace ViewModel.Study
 
         #endregion
 
-        #endregion
-        #region Functions
-        #endregion
     }
 }

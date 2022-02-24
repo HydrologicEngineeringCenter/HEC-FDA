@@ -1,20 +1,18 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
 
-namespace ViewModel.StageTransforms
+namespace HEC.FDA.ViewModel.StageTransforms
 {
     public class RatingCurveOwnerElement : ParentElement
     {
         #region Notes
         #endregion
         #region Fields
-
         #endregion
-        #region Properties
-        
+        #region Properties      
         #endregion
         #region Constructors
         public RatingCurveOwnerElement( ) : base()
@@ -46,7 +44,7 @@ namespace ViewModel.StageTransforms
         #region Voids
         private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement(e.NewElement);
         }
         private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -66,36 +64,16 @@ namespace ViewModel.StageTransforms
 
         public void AddNewRatingCurve(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1000, 10000, 15000,20000,50000 };
-            List<double> yValues = new List<double>() { 1,2,3,4,5};
-
-            //create save helper
-            SaveHelper saveHelper = new SaveHelper( Saving.PersistenceFactory.GetRatingManager()
-                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-            //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
-            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xValues,yValues, "Stage", "Flow", "Rating Curve");
-
-            CurveEditorVM vm = new CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);          
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Rating Curve", "Stage", "Flow");
+            RatingCurveEditorVM vm = new RatingCurveEditorVM(computeComponentVM, actionManager);
             string header = "Create Rating Curve " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
             Navigate(tab, false, true);          
         }
   
-        #endregion
-        #region Functions
-      
-        public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            CurveEditorVM editorVM = (CurveEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-        }
-
         #endregion
     }
 }

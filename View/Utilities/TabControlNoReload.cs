@@ -1,16 +1,11 @@
-﻿using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// The tab control by default reloads each tab everytime they are selected. This was causing all kinds of problems

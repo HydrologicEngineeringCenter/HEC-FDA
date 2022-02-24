@@ -1,7 +1,7 @@
 ﻿using System;
-using ViewModel.Editors;
+using HEC.FDA.ViewModel.Editors;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 11 / 22 / 2016 9:05:37 AM)]
     public class RenameVM:BaseEditorVM
@@ -29,11 +29,6 @@ namespace ViewModel.Utilities
         }
         #endregion
 
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-        }
-
         public override void Save()
         {
             ElementToSave = CreateElementFromEditorAction(OldElement);
@@ -48,7 +43,7 @@ namespace ViewModel.Utilities
             Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
-                savingManager.SaveExisting(OldElement, ElementToSave);
+                savingManager.SaveExisting(ElementToSave);
             }
         }
     }

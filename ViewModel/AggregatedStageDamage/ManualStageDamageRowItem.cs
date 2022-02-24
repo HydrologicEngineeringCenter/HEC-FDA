@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.ImpactArea;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.TableWithPlot;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageRowItem : BaseViewModel
     {
@@ -32,7 +33,7 @@ namespace ViewModel.AggregatedStageDamage
             get { return _DamageCategories; }
             set { _DamageCategories = value; NotifyPropertyChanged(); }
         }
-        public CoordinatesFunctionEditorVM EditorVM { get; set; }
+        public ComputeComponentVM ComputeComponent { get; set; }
 
         public String SelectedDamCat
         {
@@ -40,7 +41,7 @@ namespace ViewModel.AggregatedStageDamage
             set { _SelectedDamCat = value; NotifyPropertyChanged(); }
         }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, UncertainPairedData function)
+        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function)
         {
             ID = id;
             ImpactAreas = impAreas;
@@ -50,7 +51,7 @@ namespace ViewModel.AggregatedStageDamage
             {
                 SelectedDamCat = damCats[0];
             }
-            EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
+            ComputeComponent = function;
         }
 
         public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, StageDamageCurve curve)
@@ -60,7 +61,7 @@ namespace ViewModel.AggregatedStageDamage
             SelectedImpArea = curve.ImpArea;
             DamageCategories = damCats;
             SelectedDamCat = curve.DamCat;
-            EditorVM = new CoordinatesFunctionEditorVM(curve.Function, "Stage", "Damage", "Stage-Damage");
+            ComputeComponent = curve.ComputeComponent;
         }
 
         /// <summary>
@@ -74,22 +75,9 @@ namespace ViewModel.AggregatedStageDamage
             SelectedImpArea = rowItem.SelectedImpArea;
             DamageCategories = rowItem.DamageCategories;
             SelectedDamCat = rowItem.SelectedDamCat;
-            EditorVM = new CoordinatesFunctionEditorVM(rowItem.EditorVM);
+            ComputeComponent = rowItem.ComputeComponent;
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj is ManualStageDamageRowItem item &&
-                   SelectedImpArea.Name.Equals( item.SelectedImpArea.Name) &&
-                   SelectedDamCat == item.SelectedDamCat;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 1172079173;
-            hashCode = hashCode * -1521134295 + EqualityComparer<ImpactAreaRowItem>.Default.GetHashCode(SelectedImpArea);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SelectedDamCat);
-            return hashCode;
-        }
+        
     }
 }

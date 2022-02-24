@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using HEC.FDA.ViewModel.Watershed;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace View.Watershed
+namespace HEC.FDA.View.Watershed
 {
     /// <summary>
     /// Interaction logic for TerrainBrowser.xaml
@@ -26,7 +15,7 @@ namespace View.Watershed
 
         private void cmb_Path_CmbSelectionMade(string path)
         {
-            ViewModel.Watershed.TerrainBrowserVM vm = (ViewModel.Watershed.TerrainBrowserVM)this.DataContext;
+            HEC.FDA.ViewModel.Watershed.TerrainBrowserVM vm = (TerrainBrowserVM)this.DataContext;
             vm.OriginalPath = cmb_Path.SelectedPath;
         }
     }

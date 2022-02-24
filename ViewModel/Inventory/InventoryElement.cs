@@ -1,9 +1,9 @@
 ﻿using OpenGLMapping;
 using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     //[Author(q0heccdm, 12 / 1 / 2016 2:21:18 PM)]
     public class InventoryElement : ChildElement
@@ -37,7 +37,7 @@ namespace ViewModel.Inventory
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA) : base()
+        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA, int id) : base(id)
         {
             IsImportedFromOldFDA = isImportedFromOldFDA;
             Name = structInventoryBaseElement.Name;
@@ -142,7 +142,7 @@ namespace ViewModel.Inventory
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             InventoryElement elem = (InventoryElement)elementToClone;
-            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA);
+            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA, elem.ID);
         }
         #endregion
 

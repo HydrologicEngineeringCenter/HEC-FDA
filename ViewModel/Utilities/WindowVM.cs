@@ -1,11 +1,7 @@
-﻿using ViewModel.Tabs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HEC.FDA.ViewModel.Tabs;
+using ViewModel;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public delegate void LaunchNewWindowHandler(WindowVM vm, bool asDialogue);
     public class WindowVM : BaseViewModel

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     public class BoolToModifiedConverter : IValueConverter
     {

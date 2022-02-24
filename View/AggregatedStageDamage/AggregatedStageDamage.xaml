@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="View.AggregatedStageDamage.AggregatedStageDamage"
+﻿<UserControl x:Class="HEC.FDA.View.AggregatedStageDamage.AggregatedStageDamage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:Utilities="clr-namespace:View.Utilities"
+             xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
-             xmlns:util="clr-namespace:View.Utilities"
+             xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
              d:DesignHeight="450" d:DesignWidth="610">
     <UserControl.Resources>
         <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />

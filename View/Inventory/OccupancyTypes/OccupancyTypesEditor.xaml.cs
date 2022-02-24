@@ -1,23 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Collections.ObjectModel;
-using ViewModel.Inventory.OccupancyTypes;
-using View.Inventory.OccupancyTypes.Controls;
-using ViewModel.Tabs;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.View.Inventory.OccupancyTypes.Controls;
+using HEC.FDA.ViewModel.Tabs;
 
-namespace View.Inventory.OccupancyTypes
+namespace HEC.FDA.View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for OccupancyTypesEditor.xaml
@@ -210,7 +200,7 @@ namespace View.Inventory.OccupancyTypes
             //if (e.RemovedItems.Count > 0)
             //{
             //    IOccupancyType prev = (IOccupancyType)e.RemovedItems[0];
-            //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //    HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //    //structure
             //    prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
             //    //content

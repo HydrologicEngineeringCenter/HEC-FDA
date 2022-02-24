@@ -5,7 +5,7 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Controls;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     class ContextMenuConverter : IValueConverter
     {
@@ -33,7 +33,7 @@ namespace View.Utilities
             {
                 c = new System.Windows.Controls.ContextMenu();
                 List<ViewModel.Utilities.NamedAction> Actions = (List<ViewModel.Utilities.NamedAction>)value;
-                foreach (ViewModel.Utilities.NamedAction Action in Actions)
+                foreach (HEC.FDA.ViewModel.Utilities.NamedAction Action in Actions)
                 {
                     System.Windows.Controls.MenuItem mi = new System.Windows.Controls.MenuItem();
                     if(Action.Header == "seperator") { System.Windows.Controls.Separator s = new System.Windows.Controls.Separator(); c.Items.Add(s);continue; }

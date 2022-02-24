@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 //using FdaModel;
 //using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace View.ImpactArea
+namespace HEC.FDA.View.ImpactArea
 {
     //[Author("q0heccdm", "10 / 18 / 2016 11:47:33 AM")]
     public class RadioButtonConverterLeft : IValueConverter
@@ -29,16 +25,16 @@ namespace View.ImpactArea
      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) { return false; }
-            else if ((int)value ==(int)(ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
+            else if ((int)value ==(int)(HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
             else { return false; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //if (value == null) { return ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
+            //if (value == null) { return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
             //else
             //{
-            //    if (bool.Parse(value.ToString()) == true) return ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
+            //    if (bool.Parse(value.ToString()) == true) return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
             //    //else return null;//ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
             //}
             return parameter;

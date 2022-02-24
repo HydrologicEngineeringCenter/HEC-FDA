@@ -7,11 +7,11 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
-using ViewModel.Inventory.DamageCategory;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase
     {
@@ -156,7 +156,9 @@ namespace ViewModel.Saving.PersistenceManagers
             List<IOccupancyType> TempOccTypes = new List<IOccupancyType>();
             string groupName = rowData[PARENT_GROUP_NAME_COL].ToString();
             //create an empty element. Then loop through all the rows in the table to add the actual occtypes for this elem.
-            OccupancyTypesElement ele = new OccupancyTypesElement(groupName, groupId, TempOccTypes);
+
+            int id = Convert.ToInt32( rowData[ID_COL]);
+            OccupancyTypesElement ele = new OccupancyTypesElement(groupName, groupId, TempOccTypes, id);
             //ele.IsSelected = (bool)rowData[PARENT_IS_SELECTED_COL];
             //string elementTableName = GroupTablePrefix + groupName;
 
@@ -360,10 +362,11 @@ namespace ViewModel.Saving.PersistenceManagers
                         int groupId = Convert.ToInt32(row[PARENT_GROUP_ID_COL]);
                         string groupName = (string)row[PARENT_GROUP_NAME_COL];
                         bool isGroupSelected = Convert.ToBoolean(row[PARENT_IS_SELECTED_COL]);
+                        int id = Convert.ToInt32(row[ID_COL]);
 
                         //now read the child table and grab all the occtypes with this group id
                         List<IOccupancyType> occtypes = LoadOcctypes(groupId);
-                        OccupancyTypesElement elem = new OccupancyTypesElement( groupName,groupId, occtypes);
+                        OccupancyTypesElement elem = new OccupancyTypesElement( groupName,groupId, occtypes, id);
                         occTypeGroupsToReturn.Add(elem);
                     }
 
@@ -567,9 +570,9 @@ namespace ViewModel.Saving.PersistenceManagers
             //tbl.ApplyEdits();
 
 
-            int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
-
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, newOcctypes);
+            int newGroupID = PersistenceFactory.GetOccTypeManager().GetUnusedId();
+            int id = PersistenceFactory.GetOccTypeManager().GetNextAvailableId(); 
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, newOcctypes, id);
             SaveNew(elem);
         }
 
@@ -675,22 +678,22 @@ namespace ViewModel.Saving.PersistenceManagers
         /// element that is created from the group. This is done when saving from the occupancy type editor.
         /// </summary>
         /// <param name="groupsToUpdateInCache"></param>
-        public void UpdateOccTypeGroupsInStudyCache(List<IOccupancyTypeGroup> groupsToUpdateInCache)
-        {
-            foreach(IOccupancyTypeGroup group in groupsToUpdateInCache)
-            {
-                RemoveElementFromCache(group.ID);
+        //public void UpdateOccTypeGroupsInStudyCache(List<IOccupancyTypeGroup> groupsToUpdateInCache)
+        //{
+        //    foreach(IOccupancyTypeGroup group in groupsToUpdateInCache)
+        //    {
+        //        RemoveElementFromCache(group.ID);
 
-                //create new element to add to the cache
-                List<IOccupancyType> occtypes = new List<IOccupancyType>();
-                foreach(IOccupancyType ot in group.OccupancyTypes)
-                {
-                    occtypes.Add(ot);
-                }
-                OccupancyTypesElement elem = new OccupancyTypesElement(group.Name, group.ID, occtypes);
-                StudyCacheForSaving.AddElement(elem);
-            }
-        }
+        //        //create new element to add to the cache
+        //        List<IOccupancyType> occtypes = new List<IOccupancyType>();
+        //        foreach(IOccupancyType ot in group.OccupancyTypes)
+        //        {
+        //            occtypes.Add(ot);
+        //        }
+        //        OccupancyTypesElement elem = new OccupancyTypesElement(group.Name, group.ID, occtypes);
+        //        StudyCacheForSaving.AddElement(elem);
+        //    }
+        //}
 
         public void SaveModifiedOcctypes(List<IOccupancyType> occtypes)
         {
@@ -899,23 +902,23 @@ namespace ViewModel.Saving.PersistenceManagers
         /// Saves a newly created occtype group from the occtype editor.
         /// </summary>
         /// <param name="newGroupFromOccTypeEditor"></param>
-        public List<LogItem> SaveNew(IOccupancyTypeGroupEditable newGroupFromOccTypeEditor)
-        {
-            int newGroupID = GetUnusedId();
-            List<IOccupancyType> occtypes = new List<IOccupancyType>();
-            List<LogItem> errors = new List<LogItem>();
-            foreach(IOccupancyTypeEditable otEdit in newGroupFromOccTypeEditor.Occtypes)
-            {
-                IOccupancyType occType = otEdit.CreateOccupancyType(out errors);
-                if(occType != null)
-                {
-                    occtypes.Add(occType);
-                }
-            }
-            OccupancyTypesElement elem = new OccupancyTypesElement(Name, newGroupID, occtypes);
-            SaveNew(elem);
-            return errors;
-        }
+        //public List<LogItem> SaveNew(IOccupancyTypeGroupEditable newGroupFromOccTypeEditor)
+        //{
+        //    int newGroupID = GetUnusedId();
+        //    List<IOccupancyType> occtypes = new List<IOccupancyType>();
+        //    List<LogItem> errors = new List<LogItem>();
+        //    foreach(IOccupancyTypeEditable otEdit in newGroupFromOccTypeEditor.Occtypes)
+        //    {
+        //        IOccupancyType occType = otEdit.CreateOccupancyType(out errors);
+        //        if(occType != null)
+        //        {
+        //            occtypes.Add(occType);
+        //        }
+        //    }
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(Name, newGroupID, occtypes);
+        //    SaveNew(elem);
+        //    return errors;
+        //}
 
         public void SaveNewElements(List<ChildElement> elements)
         {

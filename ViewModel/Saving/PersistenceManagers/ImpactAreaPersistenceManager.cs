@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ViewModel.ImpactArea;
-using ViewModel.Storage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class ImpactAreaPersistenceManager : SavingBase
     {
@@ -59,7 +59,8 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             string name = (string)rowData[NAME_COL];
             ObservableCollection<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
-            return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems, id);
         }
 
         private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
@@ -149,7 +150,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
-            base.SaveExisting(oldElement, elementToSave);
+            base.SaveExisting(elementToSave);
             if (!oldElement.Name.Equals(elementToSave.Name))
             {
                 string oldName = IMPACT_AREA_TABLE_PREFIX + oldElement.Name;

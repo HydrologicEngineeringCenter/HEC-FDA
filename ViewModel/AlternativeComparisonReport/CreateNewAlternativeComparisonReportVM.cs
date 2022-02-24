@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using ViewModel.Alternatives;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class CreateNewAlternativeComparisonReportVM : BaseEditorVM
     {
@@ -37,7 +37,6 @@ namespace ViewModel.AlternativeComparisonReport
 
         public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base(actionManager)
         {
-            CurrentElement = elem;
             _IsInEditMode = true;
             FillForm(elem);
             ListenToAlternativeEvents();
@@ -70,7 +69,7 @@ namespace ViewModel.AlternativeComparisonReport
 
         private void SelectWithProjectCombo(ComparisonRowItemVM row, int withProjID)
         {
-            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.ID == withProjID);
+            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.Alternative.ID == withProjID);
             if (comboToSelect != null)
             {
                 row.SelectedAlternative = comboToSelect;
@@ -79,7 +78,7 @@ namespace ViewModel.AlternativeComparisonReport
 
         private void SelectWithoutProjectCombo(int withoutProjID)
         {
-            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.ID == withoutProjID);
+            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.Alternative.ID == withoutProjID);
             if(comboToSelect != null)
             {
                 SelectedWithoutProjectAlternative = comboToSelect;
@@ -115,7 +114,7 @@ namespace ViewModel.AlternativeComparisonReport
         }
         private void RemoveAlternative(object sender, ElementAddedEventArgs e)
         {
-            AlternativeComboItem itemToRemove = ProjectAlternatives.Where(comboItem => comboItem.ID == e.ID).SingleOrDefault();
+            AlternativeComboItem itemToRemove = ProjectAlternatives.Where(comboItem => comboItem.Alternative.ID == e.Element.ID).SingleOrDefault();
             if (itemToRemove != null)
             {
                 ProjectAlternatives.Remove(itemToRemove);
@@ -123,8 +122,8 @@ namespace ViewModel.AlternativeComparisonReport
         }
         private void UpdateAlternative(object sender, ElementUpdatedEventArgs e)
         {
-            int idToUpdate = e.ID;
-            AlternativeComboItem itemToUpdate = ProjectAlternatives.Where(comboItem => comboItem.ID == idToUpdate).SingleOrDefault();
+            int idToUpdate = e.NewElement.ID;
+            AlternativeComboItem itemToUpdate = ProjectAlternatives.Where(comboItem => comboItem.Alternative.ID == idToUpdate).SingleOrDefault();
             if (itemToUpdate != null)
             {
                 itemToUpdate.UpdateAlternative((AlternativeElement)e.NewElement);
@@ -180,21 +179,21 @@ namespace ViewModel.AlternativeComparisonReport
             List<int> selectedIds = new List<int>();
             foreach(ComparisonRowItemVM row in Rows)
             {
-                selectedIds.Add(row.SelectedAlternative.ID);
+                selectedIds.Add(row.SelectedAlternative.Alternative.ID);
             }
-            AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, SelectedWithoutProjectAlternative.ID, selectedIds);
+
+            int id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
+            AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
 
             if (_IsInEditMode)
             {
-                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(CurrentElement, elemToSave);
+                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(elemToSave);
             }
             else
             {
                 PersistenceFactory.GetAlternativeCompReportManager().SaveNew(elemToSave);
                 _IsInEditMode = true;
             }
-            CurrentElement = elemToSave;
-
         }
 
         public void RemoveSelectedRow()

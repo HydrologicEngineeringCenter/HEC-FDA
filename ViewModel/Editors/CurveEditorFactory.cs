@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.Editors
+﻿namespace HEC.FDA.ViewModel.Editors
 {
-     static class CurveEditorFactory
+    static class CurveEditorFactory
     {
 
         public static void CreateCurveImporter()

@@ -1,13 +1,13 @@
 ﻿using FdaLogging;
-using ViewModel.Study;
-using ViewModel.Utilities;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
-namespace ViewModel
+namespace HEC.FDA.ViewModel
 {
     public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog);
     public delegate void RequestShapefilePathsHandler(ref List<string> files);

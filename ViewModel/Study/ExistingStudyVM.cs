@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class ExistingStudyVM : Editors.BaseEditorVM
     {

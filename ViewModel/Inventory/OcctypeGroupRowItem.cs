@@ -1,7 +1,7 @@
 ﻿using System;
-using ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class OcctypeGroupRowItem:BaseViewModel
     {

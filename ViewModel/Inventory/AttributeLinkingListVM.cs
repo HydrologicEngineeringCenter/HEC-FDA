@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class AttributeLinkingListVM : BaseViewModel
     {

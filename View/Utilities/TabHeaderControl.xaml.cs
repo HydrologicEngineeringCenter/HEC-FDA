@@ -1,20 +1,10 @@
-﻿using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for TabHeaderControl.xaml
@@ -34,7 +24,7 @@ namespace View.Utilities
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
 
-            ViewModel.Utilities.DynamicTabVM vm = (ViewModel.Utilities.DynamicTabVM)this.DataContext;
+            DynamicTabVM vm = (DynamicTabVM)this.DataContext;
             vm.RemoveTab();
 
             //DependencyObject currentControl = (DependencyObject)sender;
@@ -51,7 +41,7 @@ namespace View.Utilities
             //        currentControl = LogicalTreeHelper.GetParent(currentControl);
             //    }
             //}
-            //ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
+            //ViewModel.Study.FdaStudyVM vm = (HEC.FDA.ViewModel.Study.FdaStudyVM)this.DataContext;
             ////if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
             //{
             //    //vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);

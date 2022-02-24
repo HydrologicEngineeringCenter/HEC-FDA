@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 
 
-namespace View.ImpactAreaScenario.Results
+namespace HEC.FDA.View.ImpactAreaScenario.Results
 {
     public partial class IASResults : UserControl
     {

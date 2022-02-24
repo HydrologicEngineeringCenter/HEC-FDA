@@ -3,14 +3,14 @@ using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.StageTransforms;
 using static compute.Simulation;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SimulationCreator
     {
@@ -59,32 +59,36 @@ namespace ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.Function);
+                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
             }
             return stageDamages;
         }
 
         public Simulation BuildSimulation()
         {
-            SimulationBuilder sb = Simulation.builder()
-                .withFlowFrequency(GetFrequencyDistribution())
-                .withFlowStage(_RatElem.Curve)
-                .withStageDamages(GetStageDamagesAsPairedData());
+            //todo: cody commented out on 2/21/22
 
-            if(_UseInOut)
-            {
-                sb.withInflowOutflow(_InOutElem.Curve);
-            }
-            if(_UseExtInt)
-            {
-                sb.withInteriorExterior(_ExtIntElem.Curve);
-            }
-            if(_UseLevee)
-            {
-                sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
-            }
+            //SimulationBuilder sb = Simulation.builder()
+            //    .withFlowFrequency(GetFrequencyDistribution())
+            //    .withFlowStage(_RatElem.Curve)
+            //    .withStageDamages(GetStageDamagesAsPairedData());
 
-            return sb.build();
+            //if(_UseInOut)
+            //{
+            //    sb.withInflowOutflow(_InOutElem.Curve);
+            //}
+            //if(_UseExtInt)
+            //{
+            //    sb.withInteriorExterior(_ExtIntElem.Curve);
+            //}
+            //if(_UseLevee)
+            //{
+            //    sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
+            //}
+
+            //return sb.build();
+
+            return null;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace View.AlternativeComparisonReport.Results
+namespace HEC.FDA.View.AlternativeComparisonReport.Results
 {
     /// <summary>
     /// Interaction logic for AAEQSummary.xaml

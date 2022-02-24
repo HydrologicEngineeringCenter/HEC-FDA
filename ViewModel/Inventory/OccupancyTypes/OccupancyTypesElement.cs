@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 11 / 2017 3:23:11 PM)]
     public class OccupancyTypesElement : Utilities.ChildElement
@@ -34,11 +34,11 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
-        public OccupancyTypesElement():base()
+        public OccupancyTypesElement(int id):base(id)
         {
 
         }
-        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes):base()
+        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes, int id):base(id)
         {
             Name = occTypesGroupName;
             ID = groupID;

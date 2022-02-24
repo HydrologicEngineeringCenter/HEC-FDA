@@ -1,9 +1,9 @@
 ﻿using paireddata;
 using Statistics.Distributions;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public static class OccupancyTypeFactory
     {

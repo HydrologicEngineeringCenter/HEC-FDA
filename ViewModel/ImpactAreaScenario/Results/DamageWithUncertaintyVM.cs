@@ -1,13 +1,9 @@
 ﻿using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {

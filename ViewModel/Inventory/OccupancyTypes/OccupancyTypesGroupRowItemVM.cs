@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 8 / 8 / 2017 1:35:28 PM)]
     public class OccupancyTypesGroupRowItemVM : BaseViewModel

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     class StageFrequencyOwnerElement : ParentElement
     {

@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <StartupObject>View.App</StartupObject>
+    <StartupObject>HEC.FDA.View.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +32,10 @@
     <None Remove="Resources\AlternativeComparisonReport_20x20.png" />
     <None Remove="Resources\Alternatives_20x20.png" />
     <None Remove="Resources\ImpactAreaScenario_20x20.png" />
+    <None Remove="Resources\PanHand.png" />
+    <None Remove="Resources\TrackPlot.png" />
+    <None Remove="Resources\ZoomAll.png" />
+    <None Remove="Resources\ZoomIn.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -132,6 +136,18 @@
     <Resource Include="Resources\ImpactAreaScenario_20x20.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\PanHand.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\TrackPlot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ZoomAll.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ZoomIn.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -157,6 +173,21 @@
     <None Update="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Update="TableWithPlot\Icons\FDA.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TableWithPlot\Icons\PanHand.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TableWithPlot\Icons\TrackPlot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TableWithPlot\Icons\ZoomAll.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TableWithPlot\Icons\ZoomIn.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
 	
@@ -165,7 +196,7 @@
     <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
-    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -286,6 +317,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />

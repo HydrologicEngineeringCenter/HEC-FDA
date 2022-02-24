@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ViewModel.Inventory;
-using ViewModel.Storage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class StructureInventoryPersistenceManager : SavingBase
     {
@@ -193,7 +193,8 @@ namespace ViewModel.Saving.PersistenceManagers
             StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
             bool isImportedFromOldFDA = Convert.ToBoolean( rowData[IS_OLD_FDA]);
 
-            InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA, id);
             return invEle;
         }
         #endregion
@@ -214,9 +215,10 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="name"></param>
         public void SaveNewInventoryToParentTable(string name, string description = "")
         {
-            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(ViewModel.Storage.Connection.Instance.ProjectFile);
+            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
             StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, description);
-            InventoryElement elem = new InventoryElement(baseElem, true);
+            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
+            InventoryElement elem = new InventoryElement(baseElem, true, id);
             SaveNew(elem);
         }
 
@@ -238,28 +240,6 @@ namespace ViewModel.Saving.PersistenceManagers
             foreach (InventoryElement elem in structures)
             {
                 StudyCacheForSaving.AddElement(elem);
-            }
-        }
-
-        /// <summary>
-        /// Right now there is no way to edit structs other than through the map window. This call only works for "rename". It will not 
-        /// update any of the structs values, only its name
-        /// </summary>
-        /// <param name="oldElement"></param>
-        /// <param name="elementToSave"></param>
-        /// <param name="changeTableIndex"></param>
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
-        {
-            base.SaveExisting(oldElement, elementToSave);
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName) )
-            {
-                //if the name has changed then we need to change the name in the geo package contents table
-                if (!oldElement.Name.Equals(elementToSave.Name))
-                {
-                    string childTable = ChangeTableConstant + oldElement.Name;
-                    string newChildTableName = ChangeTableConstant + elementToSave.Name;
-                    RenameInventoryInGeoPackageTable(childTable, newChildTableName);
-                }
             }
         }
 
@@ -344,8 +324,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
             DataTable table = Connection.Instance.GetDataTable(TableName);
             foreach (DataRow row in table.Rows)
-            {
-                
+            {              
                 names.Add(row.ItemArray[NAME_COL].ToString());
             }
             return names;

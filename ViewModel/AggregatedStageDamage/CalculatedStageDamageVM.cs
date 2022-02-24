@@ -1,19 +1,16 @@
-﻿using paireddata;
-using System;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory;
-using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {
-        public event EventHandler SelectedRowChanged;
-
         private ObservableCollection<WaterSurfaceElevationElement> _WaterSurfaceElevations;
         private WaterSurfaceElevationElement _SelectedWaterSurfaceElevation;
 
@@ -21,9 +18,16 @@ namespace ViewModel.AggregatedStageDamage
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
+        private TableWithPlotVM _TableWithPlot;
+
 
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
+        public TableWithPlotVM TableWithPlot
+        {
+            get { return _TableWithPlot; }
+            set { _TableWithPlot = value; NotifyPropertyChanged(); }
+        }
         public bool ShowChart
         {
             get { return _ShowChart; }
@@ -32,7 +36,7 @@ namespace ViewModel.AggregatedStageDamage
         public CalculatedStageDamageRowItem SelectedRow
         {
             get { return _SelectedRow; }
-            set { _SelectedRow = value; NotifyPropertyChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
+            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged();}
         }
 
         public ObservableCollection<InventoryElement> Structures
@@ -59,8 +63,6 @@ namespace ViewModel.AggregatedStageDamage
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
         }
 
-        public int SelectedRowIndex {get;set;}
-
         public CalculatedStageDamageVM()
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
@@ -83,14 +85,14 @@ namespace ViewModel.AggregatedStageDamage
             int i = 1;
             foreach (StageDamageCurve curve in curves)
             {
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.Function);
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent);
                 Rows.Add(newRow);
                 i++;
             }
             if(Rows.Count>0)
             {
                 ShowChart = true;
-                SelectedRowIndex = 0;
+                SelectedRow = Rows[0];
             }
         }
 
@@ -98,7 +100,7 @@ namespace ViewModel.AggregatedStageDamage
         {
             foreach(InventoryElement ie in Structures)
             {
-                if(ie.GetElementID() == inventoryID)
+                if(ie.ID == inventoryID)
                 {
                     SelectedStructures = ie;
                     break;
@@ -109,7 +111,7 @@ namespace ViewModel.AggregatedStageDamage
         {
             foreach(WaterSurfaceElevationElement wat in WaterSurfaceElevations)
             {
-                if(wat.GetElementID() == waterID)
+                if(wat.ID == waterID)
                 {
                     SelectedWaterSurfaceElevation = wat;
                     break;
@@ -176,15 +178,16 @@ namespace ViewModel.AggregatedStageDamage
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
-                    UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
-
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, uncertainPairedData));
+                    //UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
+                    ComputeComponentVM cc = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, cc));
                 }
                 //end dummy rows
-                ShowChart = true;
                 if (Rows.Count > 0)
                 {
-                    SelectedRowIndex = 0;
+                    TableWithPlot = new TableWithPlotVM(Rows[0].ComputeComponent);
+                    ShowChart = true;
+                    SelectedRow = Rows[0];
                 }
             }
             else
@@ -223,13 +226,15 @@ namespace ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); //r.EditorVM.CreateFunctionFromTables());
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); 
                 curves.Add(curve);
             }
-
             return curves;
         }
 
-
+        private void RowChanged()
+        {
+            TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
+        }
     }
 }

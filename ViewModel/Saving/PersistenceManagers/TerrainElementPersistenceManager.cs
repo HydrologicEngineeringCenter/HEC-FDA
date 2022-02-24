@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class TerrainElementPersistenceManager : SavingBase
     {
@@ -61,7 +61,8 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
         }
 
         private async void CopyFileOnBackgroundThread(TerrainElement element)
@@ -175,7 +176,7 @@ namespace ViewModel.Saving.PersistenceManagers
             string originalExtension = System.IO.Path.GetExtension(elem.FileName);
             string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
-            base.SaveExisting(oldElement, element);
+            base.SaveExisting( element);
             oldElement.AddMapTreeViewItemBackIn(((TerrainElement)oldElement).NodeToAddBackToMapWindow, new EventArgs());
         }
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)

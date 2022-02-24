@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace View.Inventory.OccupancyTypes
+namespace HEC.FDA.View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for ImportOccupancyTypeGroups.xaml
@@ -33,7 +33,7 @@ namespace View.Inventory.OccupancyTypes
         {
             if (cmb_Path.Text == null || cmb_Path.Text == "") { return; }
 
-            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = cmb_Path.Text;
 
             AsyncLogger logger = new AsyncLogger();
@@ -48,8 +48,8 @@ namespace View.Inventory.OccupancyTypes
         public void RemoveAndReDrawTheRows(object sender, EventArgs e)
         {
             //remove the sender row from the list
-            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
-            ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
+            HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
             if(sendingRow == null) 
             { 
                 return; 
@@ -64,9 +64,9 @@ namespace View.Inventory.OccupancyTypes
             grd_rows.RowDefinitions.Clear();
             grd_rows.ColumnDefinitions.Clear();
 
-            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
-            foreach(ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            foreach(HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
             {
                 row.UpdateTheListOfRows += new EventHandler(RemoveAndReDrawTheRows);
                 RowDefinition newRow = new RowDefinition();

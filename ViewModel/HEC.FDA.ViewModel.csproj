@@ -7,9 +7,11 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <RootNamespace>HEC.FDA.ViewModel</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Editors\BaseLoggingEditorVM.cs" />
     <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
     <Compile Remove="FlowTransforms\InflowOutflowEditorVM.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
@@ -102,13 +104,16 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="GDAL-HEC" Version="0.0.1" />
+    <PackageReference Include="HEC.MVVMFramework.Base" Version="1.0.0-alpha-2022.2.15.2147" />
+    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022.1.23.1649" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-2-16-1739" />
+	<PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-2-16-1811" />
   </ItemGroup>
   
 </Project>

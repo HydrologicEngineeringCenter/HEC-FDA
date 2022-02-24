@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace View.Inventory
+namespace HEC.FDA.View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportFromNSI.xaml
@@ -35,7 +24,7 @@ namespace View.Inventory
  
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                ViewModel.Inventory.ImportFromNSIVM tempVM = (ViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
+                HEC.FDA.ViewModel.Inventory.ImportFromNSIVM tempVM = (HEC.FDA.ViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
 
                 if (((Button)sender).Name == "studyAreaButton")
                 {

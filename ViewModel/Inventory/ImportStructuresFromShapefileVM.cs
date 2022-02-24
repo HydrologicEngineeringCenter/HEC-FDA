@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.Saving;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.Saving;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public  class ImportStructuresFromShapefileVM:BaseEditorVM
     {
@@ -27,8 +27,6 @@ namespace ViewModel.Inventory
         private bool _CurrentViewIsEnabled;
         #endregion
         #region Properties
-        
-
         public bool CurrentViewIsEnabled
         {
             get { return _CurrentViewIsEnabled; }
@@ -226,10 +224,11 @@ namespace ViewModel.Inventory
         public override void Save()
         {
             StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
-            InventoryElement elementToSave = new InventoryElement(SIBase, false);
+            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
+            InventoryElement elementToSave = new InventoryElement(SIBase, false, id);
 
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
-            if (IsImporter && HasSaved == false)
+            if (IsCreatingNewElement && HasSaved == false)
             {
                 OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();
 
@@ -240,8 +239,6 @@ namespace ViewModel.Inventory
         }
 
         #endregion
-        #endregion
-        #region Functions
         #endregion
     }
 }

@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class IASEditorVM : BaseEditorVM
     {
-
         #region Fields
-        private bool _IsInEditMode;
         private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>(); 
         private ImpactAreaRowItem _SelectedImpactArea;
         private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
-
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
-
         #endregion
-
 
         #region Properties
         public bool HasImpactArea
@@ -58,7 +52,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             CreateEmptySpecificIASEditors();
         }
 
-
         /// <summary>
         /// This is the ctor for opening an existing element.
         /// </summary>
@@ -66,11 +59,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <param name="manager"></param>
         public IASEditorVM(IASElementSet elem, EditorActionManager manager) : base(elem, manager)
         {
-            CurrentElement = elem;
-            _IsInEditMode = true;
             FillForm(elem);
         }   
-
 
         /// <summary>
         /// Loads the dictionary that links the specific impact area with the specific ias.
@@ -107,7 +97,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
             return impactAreaRows;
         }
-
         
         /// <summary>
         /// The user has changed the selected impact area in the combobox. We swap out the selected view model
@@ -159,7 +148,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row);
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
-
                 }
             }
             //There should always be an impact area.
@@ -167,7 +155,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
         #region validation
-
         private FdaValidationResult IsYearValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -216,7 +203,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public override void Save()
         {
             bool isValid = ValidateIAS();
-
             if (isValid)
             {
                 //get the list of specific IAS elements.
@@ -232,18 +218,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     Description = "";
                 }
 
-                IASElementSet elemToSave = new IASElementSet(Name, Description, Year.Value, elementsToSave);
-
-                if (_IsInEditMode)
-                {
-                    Saving.PersistenceFactory.GetIASManager().SaveExisting(CurrentElement, elemToSave);
-                }
-                else
-                {
-                    Saving.PersistenceFactory.GetIASManager().SaveNew(elemToSave);
-                    _IsInEditMode = true;
-                }
-                CurrentElement = elemToSave;
+                int id = Saving.PersistenceFactory.GetIASManager().GetNextAvailableId();
+                IASElementSet elemToSave = new IASElementSet(Name, Description, Year.Value, elementsToSave, id);
+                Save(elemToSave);
             }
         }
 

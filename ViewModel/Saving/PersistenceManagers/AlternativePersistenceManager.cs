@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Alternatives;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class AlternativePersistenceManager : SavingBase
     {
@@ -23,7 +23,8 @@ namespace ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string xml = (string)rowData[2];
-            AlternativeElement elem = new AlternativeElement(xml);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            AlternativeElement elem = new AlternativeElement(xml, id);
             return elem;
         }
 
@@ -71,9 +72,9 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
+        public void SaveExisting(ChildElement elementToSave, int changeTableIndex)
         {
-            base.SaveExisting(oldElement, elementToSave);
+            base.SaveExisting( elementToSave);
         }
 
         public void SaveNew(ChildElement element)

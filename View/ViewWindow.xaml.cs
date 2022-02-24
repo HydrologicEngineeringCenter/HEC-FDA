@@ -1,20 +1,19 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using OpenGLMapping;
+using System;
 using System.Collections.Generic;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using OpenGLMapping;
-using System.IO;
-using System.Xml;
-using ViewModel.Utilities;
 using System.Windows.Input;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using System.Timers;
-using System.Windows.Shapes;
-using ViewModel;
+using System.Windows.Media;
 
-namespace View
+namespace HEC.FDA.View
 {
     /// <summary>
     /// Interaction logic for ViewWindow.xaml
@@ -42,7 +41,7 @@ namespace View
             WindowVM vm = (WindowVM)this.DataContext;
             Title = vm.Title;
 
-            ViewModel.Study.FdaStudyVM test = (ViewModel.Study.FdaStudyVM)vm.CurrentView;
+            HEC.FDA.ViewModel.Study.FdaStudyVM test = (FdaStudyVM)vm.CurrentView;
 
             test.RequestShapefilePaths += RequestShapefilePaths;
             test.RequestShapefilePathsOfType += RequestShapefilePathsOfType;
@@ -57,7 +56,7 @@ namespace View
 
         private void RequestAddToMapWindow(object sender, AddMapFeatureEventArgs args)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
 
@@ -68,15 +67,15 @@ namespace View
               
                 RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
-                if (sender.GetType().Name == nameof(ViewModel.Watershed.TerrainElement))
+                if (sender.GetType().Name == nameof(TerrainElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((ViewModel.Watershed.TerrainElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((TerrainElement)sender).removedcallback;
                 }
-                if (sender.GetType().Name == nameof(ViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement))
+                if (sender.GetType().Name == nameof(WaterSurfaceElevationElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((ViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((WaterSurfaceElevationElement)sender).removedcallback;
                 }
 
             }
@@ -93,14 +92,14 @@ namespace View
 
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
-                    vfn.RemoveLayerCalled += ((ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+                    vfn.RemoveLayerCalled += ((ImpactAreaElement)sender).removedcallback;
                 }
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
                 {
                     VectorFeatureNode vfn = new VectorFeatureNode(new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
-                    vfn.RemoveLayerCalled += ((ViewModel.Inventory.InventoryElement)sender).removedcallback;
+                    vfn.RemoveLayerCalled += ((InventoryElement)sender).removedcallback;
                 }
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.LineFeatures))
                 {
@@ -127,7 +126,7 @@ namespace View
             return null;
         }
 
-        private void OpenStructureAttributeTable(object sender, Study.StudyView sv, AddMapFeatureEventArgs args)
+        private void OpenStructureAttributeTable(object sender, HEC.FDA.View.Study.StudyView sv, AddMapFeatureEventArgs args)
         {
             MapTreeView mtv = sv.MapTreeView;
             VectorFeatureNode nodeInMapTab = GetMapTabFeature(args.MapFeatureHash, mtv);
@@ -151,7 +150,7 @@ namespace View
 
             //OpenStructureAttributeTableEventArgs sargs = args as OpenStructureAttributeTableEventArgs;
 
-            ////if (sender.GetType().Name == nameof(ViewModel.ImpactArea.ImpactAreaElement))
+            ////if (sender.GetType().Name == nameof(HEC.FDA.ViewModel.ImpactArea.ImpactAreaElement))
             //if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
             //{
             //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
@@ -161,9 +160,9 @@ namespace View
 
             //    mtv.AddGisData(vfn, 0, true);
             //    args.MapFeatureHash = vfn.GetHashCode();
-            //    vfn.RemoveLayerCalled += ((ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+            //    vfn.RemoveLayerCalled += ((HEC.FDA.ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
             //}
-            ////else if (sender.GetType().Name == nameof(ViewModel.Inventory.InventoryElement))
+            ////else if (sender.GetType().Name == nameof(HEC.FDA.ViewModel.Inventory.InventoryElement))
             //else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
             //{
             //    MapPoints mapPoints = new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow);
@@ -183,7 +182,7 @@ namespace View
 
         private void RequestRemoveFromMapWindow(object sender, RemoveMapFeatureEventArgs args)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             foreach (OpenGLMapping.FeatureNodeHeader f in mtv.GetAllFeatureNodes())
@@ -197,7 +196,7 @@ namespace View
         }
         private void RequestShapefilePaths(ref System.Collections.Generic.List<string> files)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             List<OpenGLMapping.VectorFeatureNode> v = mtv.GetVectorFeatureNodes();
@@ -208,7 +207,7 @@ namespace View
         }
         private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, VectorFeatureType featureType)
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
             if (sv == null) { return; }
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             List<OpenGLMapping.VectorFeatureNode> v = mtv.GetVectorFeatureNodes();
@@ -301,9 +300,9 @@ namespace View
                 aTimer.Close();
             }
             WindowVM vm = (WindowVM)this.DataContext;
-            if (vm.CurrentView.GetType() == typeof(ViewModel.Study.FdaStudyVM))
+            if (vm.CurrentView.GetType() == typeof(FdaStudyVM))
             {
-                ViewModel.Study.FdaStudyVM studyVM = (ViewModel.Study.FdaStudyVM)vm.CurrentView;
+                HEC.FDA.ViewModel.Study.FdaStudyVM studyVM = (FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
             }
             else
@@ -332,7 +331,7 @@ namespace View
             //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;
             //}
 
-            // if (this.DataContext.GetType() != typeof(ViewModel.Study.FdaStudyVM))
+            // if (this.DataContext.GetType() != typeof(HEC.FDA.ViewModel.Study.FdaStudyVM))
             // {
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             //then we want the window to size to the content better.
@@ -435,7 +434,7 @@ namespace View
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            //ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
+            //ViewModel.Study.FdaStudyVM vm = (HEC.FDA.ViewModel.Study.FdaStudyVM)this.DataContext;
             ////vm.MWMTVConn. MapTreeView = MapTreeView;
             //if (vm.MWMTVConn != null)
             //{
@@ -663,7 +662,7 @@ namespace View
 
         private TabControl GetTabControlFromMainWindow()
         {
-            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(_MainWindow.masterControl);
+            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(_MainWindow.masterControl);
             if (sv == null)
             {
                 return null;

@@ -1,30 +1,29 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
 
-namespace ViewModel.StageTransforms
+namespace HEC.FDA.ViewModel.StageTransforms
 {
-    public class RatingCurveElement : ChildElement
+    public class RatingCurveElement : CurveChildElement
     {
         
         #region Notes
         #endregion
         #region Fields
-
         #endregion
         #region Properties
         #endregion
         #region Constructors
 
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, UncertainPairedData ratingCurve) : base()
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, ComputeComponentVM ratingCurve, int id) : base(id)
         {
             LastEditDate = creationDate;
             Name = userprovidedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/RatingCurve.png");
 
-            Curve = ratingCurve;
+            ComputeComponentVM = ratingCurve;
             Description = desc;
             if (Description == null) Description = "";
             NamedAction editRatingCurve = new NamedAction();
@@ -51,7 +50,12 @@ namespace ViewModel.StageTransforms
         #region Voids
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            return new RatingCurveElement(elementToClone.Name, elementToClone.LastEditDate, elementToClone.Description, elementToClone.Curve);
+            ChildElement clonedElem = null;
+            if(elementToClone is RatingCurveElement elem)
+            {
+                clonedElem = new RatingCurveElement(elementToClone.Name, elementToClone.LastEditDate, elementToClone.Description, elem.ComputeComponentVM, elem.ID);
+            }
+            return clonedElem;
         }
         public void RemoveElement(object sender, EventArgs e)
         {
@@ -60,63 +64,16 @@ namespace ViewModel.StageTransforms
 
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {       
-            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetRatingManager(),this, (editorVM) => CreateElementFromEditor(editorVM),
-                (editorVM, element) => AssignValuesFromElementToCurveEditor(editorVM, element),
-                 (editorVM, elem) => AssignValuesFromCurveEditorToElement(editorVM, elem));
-
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
-           
-            CurveEditorVM vm = new CurveEditorVM(this,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);
+
+            RatingCurveEditorVM vm = new RatingCurveEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   
         }   
 
-        public  ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            CurveEditorVM editorVM = (CurveEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-            return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-        }
-
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-        }
-
         #endregion
 
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(RatingCurveElement))
-            {
-                RatingCurveElement elem = (RatingCurveElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if(Description == null && elem.Description != null)
-                {
-                    retval = false;
-                }
-                else if (Description != null && !Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
     }
 }

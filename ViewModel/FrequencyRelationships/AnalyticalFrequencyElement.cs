@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using ViewModel.Editors;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.TableWithPlot;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyElement : ChildElement
+    public class AnalyticalFrequencyElement : CurveChildElement
     {
         #region Notes
         #endregion
@@ -28,10 +29,12 @@ namespace ViewModel.FrequencyRelationships
         public List<double> AnalyticalFlows { get; } = new List<double>();
         public List<double> GraphicalFlows { get; } = new List<double>();
 
+        public UncertainPairedData PairedData { get; set; }
+
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, UncertainPairedData function) : base()
+            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, ComputeComponentVM function, int id) : base(id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -46,13 +49,12 @@ namespace ViewModel.FrequencyRelationships
             Name = name;
             Description = desc;
             if (Description == null) Description = "";
-            Curve = function; 
-            
+            ComputeComponentVM = function;
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }
 
-        public AnalyticalFrequencyElement(string name, string description, string xmlString)
+        public AnalyticalFrequencyElement(string name, string description, string xmlString, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
@@ -85,7 +87,7 @@ namespace ViewModel.FrequencyRelationships
                 //this is fit to flow
                 lp3 = (LogPearson3)lp3.Fit(AnalyticalFlows.ToArray());
             }
-            Curve = UncertainPairedDataFactory.CreateLP3Data(lp3);
+            PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
@@ -120,13 +122,7 @@ namespace ViewModel.FrequencyRelationships
         }
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
-            //create save helper
-            SaveHelper saveHelper = new SaveHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
-                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
-                (editor, element) => AssignValuesFromEditorToElement(editor, element));
-            //create action manager
             EditorActionManager actionManager = new EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);
@@ -139,38 +135,9 @@ namespace ViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows, elem.Curve);
+                elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows, elem.ComputeComponentVM, elem.ID);
         }
-
-        public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
-        {
-            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
-            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
-            element.Name = vm.Name;
-            element.Description = vm.Description;
-            element.Curve = vm.Curve;
-            element.UpdateTreeViewHeader(vm.Name);
-        }
-
-        public void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement elem)
-        {
-            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
-            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
-
-            vm.Name = element.Name;
-            vm.Description = element.Description;
-            vm.LastEditDate = element.LastEditDate;
-            vm.PeriodOfRecord = element.POR;
-            vm.IsAnalytical = element.IsAnalytical;
-            vm.IsStandard = element.IsStandard;
-            vm.Mean = element.Mean;
-            vm.StandardDeviation = element.StDev;
-            vm.Skew = element.Skew;
-            vm.IsLogFlow = element.IsLogFlow;
-            vm.AnalyticalFlows = ConvertDoublesToFlowWrappers(element.AnalyticalFlows);
-            vm.GraphicalFlows =  ConvertDoublesToFlowWrappers(element.GraphicalFlows);
-        }
-
+       
         private ObservableCollection<FlowDoubleWrapper> ConvertDoublesToFlowWrappers(List<double> flows)
         {
             ObservableCollection<FlowDoubleWrapper> flowWrappers = new ObservableCollection<FlowDoubleWrapper>();
@@ -183,62 +150,7 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowWrappers;
         }
-        public ChildElement CreateElementFromEditor(BaseEditorVM editorVM)
-        {
-            //will be formatted like: 2/27/2009 12:12:22 PM
-            string editDate = DateTime.Now.ToString("G"); 
-            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
-            double mean = vm.Mean;
-            double stDev = vm.StandardDeviation;
-            double skew = vm.Skew;
-            int por = vm.PeriodOfRecord;
-            bool isAnalytical = vm.IsAnalytical;
-            bool isStandard = vm.IsStandard;
-            bool isLogFlow = vm.IsLogFlow;
-            List<double> analyticalFlows = new List<double>();
-            foreach (FlowDoubleWrapper d in vm.AnalyticalFlows)
-            {
-                analyticalFlows.Add(d.Flow);
-            }
-            List<double> graphicalFlows = new List<double>();
-            foreach (FlowDoubleWrapper d in vm.GraphicalFlows)
-            {
-                graphicalFlows.Add(d.Flow);
-            }
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, por, isAnalytical, isStandard, mean, stDev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows, vm.CreateFdaFunction());
-        }
-        
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(AnalyticalFrequencyElement))
-            {
-                AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if(Description == null)
-                {
-                    Description = "";
-                }
-                if (!Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
-
+               
         #endregion
 
         List<double> ConvertStringToFlows(string flows)

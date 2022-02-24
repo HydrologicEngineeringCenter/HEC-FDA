@@ -4,9 +4,9 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     internal class OccupancyType : BaseViewModel,  IOccupancyType
     {

@@ -1,8 +1,8 @@
 ﻿using HEC.CS.Collections;
 using System.Collections.Generic;
-using ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class OccTypeSelectionRowItem : BaseViewModel
     {

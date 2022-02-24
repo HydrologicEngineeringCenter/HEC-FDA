@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace View.Inventory
+namespace HEC.FDA.View.Inventory
 {
 
     public partial class StructureMissingElevationEditor : UserControl

@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Study;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace View.Study
+namespace HEC.FDA.View.Study
 {
     /// <summary>
     /// Interaction logic for ImportFromOldFda.xaml

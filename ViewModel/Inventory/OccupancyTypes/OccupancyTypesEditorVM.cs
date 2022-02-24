@@ -7,12 +7,12 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
     public class OccupancyTypesEditorVM : BaseEditorVM
@@ -727,7 +727,8 @@ namespace ViewModel.Inventory.OccupancyTypes
             OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
             int groupID = manager.GetUnusedId();
             string groupName = "Occupancy Type Group";
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>());
+            int id = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>(), id);
             //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
             //if it is open. see AddGroup() in this class.
             manager.SaveNew(elem);

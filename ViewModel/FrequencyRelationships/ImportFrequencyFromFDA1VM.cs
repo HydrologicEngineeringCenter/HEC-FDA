@@ -1,9 +1,9 @@
 ﻿using Importer;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     public class ImportFrequencyFromFDA1VM : ImportFromFDA1VM
     {

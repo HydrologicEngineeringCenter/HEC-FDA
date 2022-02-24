@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Threading.Tasks;
-
-namespace ViewModel.WaterSurfaceElevation
+﻿namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:32:06 AM)]
     public class WaterSurfaceElevationRowItemVM:BaseViewModel

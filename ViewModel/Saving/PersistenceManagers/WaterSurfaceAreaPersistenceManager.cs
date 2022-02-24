@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class WaterSurfaceAreaPersistenceManager : SavingBase
     {
@@ -65,7 +65,8 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
             }
-            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]));
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]), id);
             if(ppList.Count>0 && ppList[0].Path.Equals("NA"))
             {
                 wse.HasAssociatedFiles = false;
@@ -179,14 +180,14 @@ namespace ViewModel.Saving.PersistenceManagers
 
         }
 
-        public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex )
+        public void SaveExisting( ChildElement element )
         {
-            base.SaveExisting(oldElement, element);
-            UpdateThePaths((WaterSurfaceElevationElement)element);
-            Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
-            SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
-            //rename the folder in the study directory
-            RenameHydraulicsDirectory(oldElement.Name, element.Name);
+            //base.SaveExisting( element);
+            //UpdateThePaths((WaterSurfaceElevationElement)element);
+            //Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
+            //SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
+            ////rename the folder in the study directory
+            //RenameHydraulicsDirectory(oldElement.Name, element.Name);
         }
 
         private void UpdateThePaths(WaterSurfaceElevationElement element)

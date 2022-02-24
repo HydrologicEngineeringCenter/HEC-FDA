@@ -1,27 +1,19 @@
-﻿using ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace ViewModel.Watershed
+namespace HEC.FDA.ViewModel.Watershed
 {
     public class TerrainElement : ChildElement
     {
-
         #region Notes
         #endregion
         #region Fields
-        private const string _TableConstant = "Terrain - ";
         private string _FileName;
         private int _featureHashCode;
         private const string TERRAIN_ICON = "pack://application:,,,/View;component/Resources/Terrain.png";
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return _TableConstant;
-        //}
         public OpenGLMapping.RasterFeatureNode NodeToAddBackToMapWindow
         {
             get;set;
@@ -34,15 +26,15 @@ namespace ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, bool isTemporaryNode = false) : base()
+        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(id)
         {
             //vrt and auxilary files?  hdf5?
-                Name = name;
-                _FileName = fileName;
+            Name = name;
+            _FileName = fileName;
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON, " -Saving",true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON, " -Saving", true);
             }
             else
             {
@@ -71,7 +63,8 @@ namespace ViewModel.Watershed
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            return new TerrainElement(elementToClone.Name, ((TerrainElement)elementToClone).FileName);
+            TerrainElement elem = (TerrainElement)elementToClone;
+            return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
@@ -103,8 +96,6 @@ namespace ViewModel.Watershed
         }
         private void AddTerrainToMapWindow(object arg1, EventArgs arg2)
         {
-
-            //OpenGLMapping.MapRasters rfn = new OpenGLMapping.MapRasters() 
             string filePath = Storage.Connection.Instance.GetTerrainFile(Name);
             if(filePath == null) { return; }
             LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(filePath);
@@ -127,55 +118,7 @@ namespace ViewModel.Watershed
         public string GetTerrainPath()
         {
             return Storage.Connection.Instance.TerrainDirectory + "\\" + Name + ".tif";
-            //return  FileName;
-
         }
-
-        //public override void Remove(object arg1, EventArgs arg2)
-        //{
-        //    if (_Owner.GetType().BaseType == typeof(OwnerElement))
-        //    {
-        //        OwnerElement o = (OwnerElement)_Owner;
-        //        o.Elements.Remove(this);
-        //        //delete the terrain file.
-        //        //System.IO.File.Delete(FilePath);
-        //    }
-        //    else
-        //    {
-        //        //not good...
-        //    }
-        //}
-
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        throw new NotSupportedException("There is no terrain table. look for a Terrains table"); // these are not the droids you are looking for...
-        //    }
-        //}
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
-       
-
-        //public override void Save()
-        //{
-        //    //throw new NotImplementedException();
-        //}
-
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name, FileName };
-        //}
-        //public override bool SavesToRow()
-        //{
-        //    return true;
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return false;
-        //}
     }
 }

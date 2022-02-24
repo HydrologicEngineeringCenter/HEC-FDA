@@ -1,16 +1,10 @@
 ﻿using FdaLogging;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace View.Commands
+namespace HEC.FDA.View.Commands
 {
     [ValueConversion(typeof(string), typeof(SolidColorBrush))]
     class ErrorLevelToBackgroundColorConverter : IValueConverter

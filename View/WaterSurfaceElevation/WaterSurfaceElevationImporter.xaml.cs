@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 
-namespace View.WaterSurfaceElevation
+namespace HEC.FDA.View.WaterSurfaceElevation
 {
     /// <summary>
     /// Interaction logic for WaterSurfaceElevationImporter.xaml
@@ -19,7 +20,7 @@ namespace View.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            WaterSurfaceElevationImporterVM vm = (WaterSurfaceElevationImporterVM)this.DataContext;
             //clear out any already existing rows
             if (!System.IO.Directory.Exists(fullpath))
             {
@@ -74,7 +75,7 @@ namespace View.WaterSurfaceElevation
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            HEC.FDA.ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (WaterSurfaceElevationImporterVM)this.DataContext;
             if(vm.IsEditor == true)
             {
                 //get rid of the folder selection because we no longer know where the user pulled the data from

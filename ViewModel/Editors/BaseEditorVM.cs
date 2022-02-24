@@ -1,20 +1,23 @@
 ﻿using System.Collections.Generic;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using ViewModel.Watershed;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using System;
 
-namespace ViewModel.Editors
+namespace HEC.FDA.ViewModel.Editors
 {
     public abstract class BaseEditorVM : BaseViewModel
     {
+        private string _SavingText;
+        private string _Name;
         private string _Description = "";
         public string Description
         {
@@ -23,14 +26,24 @@ namespace ViewModel.Editors
         }
         //This lets me not add the sibling rules to itself when saving.
         public bool InTheProcessOfSaving = false;
-        public bool IsImporter { get; set; }
+
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value;NotifyPropertyChanged(); }
+        }
+        public bool IsCreatingNewElement { get; set; }
         public bool HasSaved { get; set; } = false;
+        /// <summary>
+        /// This is important for when saving and not exiting right away. I need access to the element id.
+        /// </summary>
         public ChildElement OriginalElement { get; set; }
         public EditorActionManager ActionManager { get; set; }
-
-        public ChildElement CurrentElement { 
-            get; 
-            set; }
+        public string SavingText
+        {
+            get { return _SavingText; }
+            set { _SavingText = value; NotifyPropertyChanged(); }
+        }
 
         /// <summary>
         /// Call this one for importers.
@@ -38,7 +51,7 @@ namespace ViewModel.Editors
         /// <param name="actionManager"></param>
         public BaseEditorVM(EditorActionManager actionManager)
         {
-            IsImporter = true;
+            IsCreatingNewElement = true;
             ActionManager = actionManager;
             if (actionManager != null )
             {
@@ -52,19 +65,16 @@ namespace ViewModel.Editors
         /// <param name="actionManager"></param>
         public BaseEditorVM(ChildElement elem, EditorActionManager actionManager)
         {
-            IsImporter = false;
+            Name = elem.Name;
+            Description = elem.Description;
+            IsCreatingNewElement = false;
             OriginalElement = elem.CloneElement(elem);
-            CurrentElement = elem;
 
             ActionManager = actionManager;
 
             if (actionManager != null)
             {
                 SetActionManagerValues();
-                if (actionManager.SaveHelper != null)
-                {
-                    actionManager.SaveHelper.AssignValuesFromElementToEditorAction(this, elem);
-                }
             }
         }
 
@@ -83,16 +93,43 @@ namespace ViewModel.Editors
             }
         }
 
-        /// <summary>
-        /// This will get called when the OK button is clicked on the editor
-        /// </summary>
         public abstract void Save();
         /// <summary>
-        /// This gets used when the "OK" or the "Save" button gets pressed on a form.
-        /// It runs validation to see if the form is in state that can be closed or saved.
+        /// This will get called when the OK or save button is clicked on the editor
         /// </summary>
+        public void Save(ChildElement elementToSave)
+        {
+            InTheProcessOfSaving = true;
+            LastEditDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = LastEditDate;
+            //elementToSave.Curve = Curve;
+            Saving.IElementManager elementManager = Saving.PersistenceFactory.GetElementManager(elementToSave);
+
+            if (IsCreatingNewElement)
+            {
+                elementManager.SaveNew(elementToSave);
+                IsCreatingNewElement = false;
+            }
+            else
+            {
+                elementManager.SaveExisting(elementToSave);
+            }
+
+            SavingText = CreateLastSavedText(elementToSave);
+            HasChanges = false;
+            OriginalElement = elementToSave;
+        }
+
+        /// <summary>
+        /// I wanted this here so that the text could live in one place.
+        /// That way if we want to change it, it should change all the places that use it.
+        /// </summary>
+        /// <param name="elem"></param>
         /// <returns></returns>
-        public virtual bool RunSpecialValidation() { return true; }
+        private string CreateLastSavedText(ChildElement elem)
+        {
+            return "Last Saved: " + elem.LastEditDate;
+        }
 
         public override void AddValidationRules()
         {

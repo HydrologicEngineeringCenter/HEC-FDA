@@ -1,9 +1,8 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System;
-using ViewModel.ImpactArea;
-using ViewModel.Utilities;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageRowItem : BaseViewModel
     {
@@ -21,19 +20,14 @@ namespace ViewModel.AggregatedStageDamage
             get { return _DamCat; }
             set { _DamCat = value; NotifyPropertyChanged(); }
         }
-        public CoordinatesFunctionEditorVM EditorVM { get; set; }
+        public ComputeComponentVM ComputeComponent { get; set; }
 
-
-        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, UncertainPairedData function)
+        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function)
         {
             ID = id;
             ImpactArea = impArea;
             DamageCategory = damCat;
-            EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
+            ComputeComponent = function;
         }
-
-
-
-
     }
 }

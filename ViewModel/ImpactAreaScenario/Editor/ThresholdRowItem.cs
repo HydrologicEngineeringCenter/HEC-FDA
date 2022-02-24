@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class ThresholdRowItem
     {
@@ -28,7 +28,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public Threshold GetMetric()
         {
-            return new Threshold(-1, ThresholdType.Metric, ThresholdValue);
+            Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
+            return new Threshold(-1, convergenceCriteria, ThresholdType.Metric, ThresholdValue);
         }
     }
 }

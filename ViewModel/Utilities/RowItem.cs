@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 11 / 3 / 2016 9:59:31 AM)]
     public class RowItem:BaseViewModel,IRowItem

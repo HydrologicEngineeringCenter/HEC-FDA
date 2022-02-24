@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author("q0heccdm", "10 / 14 / 2016 10:17:27 AM")]
     public class DatabaseColumn : BaseViewModel //suggest a renaming because technically row item could represent many columns (it represents 2 in the case you have made)

@@ -2,9 +2,9 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
-namespace View.Inventory.OccupancyTypes.Controls
+namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 {
     /// <summary>
     /// Interaction logic for OccTypeEditorControl.xaml
@@ -48,7 +48,7 @@ namespace View.Inventory.OccupancyTypes.Controls
         }
         private void OccTypeNameBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //if (vm.SelectedOccType == null) { return; }
             //vm.UpdateKeyInTabsDictionary(vm.SelectedOccType.Name, OccTypeNameBox.Text);
@@ -62,14 +62,14 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         //private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
         //{
-        //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+        //    HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
         //    if (vm == null) { return; }
         //    vm.LaunchDepthDamageEditor();
         //}
 
         private void StructureValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) 
             //{ 
             //    return; 
@@ -81,28 +81,28 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         private void ContentValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.ContentValueUncertainty = ContentValueUncertainty.ReturnDistribution();
         }
 
         private void VehicleValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.VehicleValueUncertainty = VehicleValueUncertainty.ReturnDistribution();
         }
 
         private void OtherValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.OtherValueUncertainty = OtherValueUncertainty.ReturnDistribution();
         }
 
         private void OccTypeDescriptionBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null || vm.SelectedOccType == null) { return; }
             //string desc = OccTypeDescriptionBox.Text;
             //if(desc == null)
@@ -114,7 +114,7 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         private void FoundationHeightUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if(vm == null) { return; }
             //vm.SelectedOccType.FoundationHeightUncertainty = FoundationHeightUncertainty.ReturnDistribution();
         }

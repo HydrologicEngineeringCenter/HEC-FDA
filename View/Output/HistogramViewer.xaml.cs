@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.Output;
+using HEC.FDA.ViewModel.Output;
 
-namespace View.Output
+namespace HEC.FDA.View.Output
 {
     /// <summary>
     /// Interaction logic for HistogramViewer.xaml

@@ -1,6 +1,6 @@
 ﻿using HEC.CS.Collections;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class ComparisonRowItemVM : BaseViewModel
     {

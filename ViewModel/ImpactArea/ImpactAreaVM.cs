@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.ImpactArea
+﻿namespace HEC.FDA.ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 10:41:09 AM")]
     public class ImpactAreaVM:BaseViewModel

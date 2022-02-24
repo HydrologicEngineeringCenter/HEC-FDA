@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class StructureMissingElevationEditorVM : BaseViewModel
     {

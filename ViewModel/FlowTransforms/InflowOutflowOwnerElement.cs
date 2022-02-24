@@ -1,9 +1,9 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
 
-namespace ViewModel.FlowTransforms
+namespace HEC.FDA.ViewModel.FlowTransforms
 {
     public class InflowOutflowOwnerElement : ParentElement
     {
@@ -12,7 +12,6 @@ namespace ViewModel.FlowTransforms
         #region Fields
         #endregion
         #region Properties
-
         #endregion
         #region Constructors
         public InflowOutflowOwnerElement( ) : base()
@@ -43,7 +42,7 @@ namespace ViewModel.FlowTransforms
         #region Voids
         private void UpdateInflowOutflowElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddInflowOutflowElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -64,34 +63,16 @@ namespace ViewModel.FlowTransforms
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
-            List<double> xs = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            List<double> ys = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-
-            //create save helper
-            Editors.SaveHelper saveHelper = new Editors.SaveHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
-                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-            //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveHelper(saveHelper)
                 .WithSiblingRules(this);
-            UncertainPairedData defaultCurve = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Inflow", "Outflow", "Inflow-Outflow");
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Inflow-Outflow", "Inflow", "Outflow");
+            Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(computeComponentVM, actionManager);
 
             string title = "Create Inflow Outflow";
             DynamicTabVM tab = new DynamicTabVM(title, vm, "NewInflowOutflow" + Name);
             Navigate( tab, false, false);
         }
       
-        #endregion
-        #region Functions  
-        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
-        {
-            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
-
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new InflowOutflowElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
-        }
         #endregion
     }
 }

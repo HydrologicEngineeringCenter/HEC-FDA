@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaElement : ChildElement
     {
@@ -28,10 +28,10 @@ namespace ViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows) : this(userdefinedname,description,collectionOfRows, "")
+        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, int id) : this(userdefinedname,description,collectionOfRows, "", id)
         {
         }
-        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath ) : base()
+        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
         {
             Name = userdefinedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
@@ -156,7 +156,7 @@ namespace ViewModel.ImpactArea
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ImpactAreaElement elem = (ImpactAreaElement)elementToClone;
-            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath);
+            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath, elem.ID);
         }
         #endregion
     }

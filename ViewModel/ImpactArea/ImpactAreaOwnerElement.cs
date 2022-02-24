@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaOwnerElement : ParentElement
     {
@@ -37,7 +37,7 @@ namespace ViewModel.ImpactArea
         #region Voids
         private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -47,8 +47,6 @@ namespace ViewModel.ImpactArea
         {
             RemoveElement(e.Element);
         }
-        #endregion
-        #region Functions
         #endregion
         public void AddNew(object arg1, EventArgs arg2)
         {

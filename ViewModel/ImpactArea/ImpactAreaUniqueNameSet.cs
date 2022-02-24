@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace ViewModel.ImpactArea
+namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaUniqueNameSet: BaseViewModel
     {

@@ -1,11 +1,7 @@
-﻿using ViewModel.Editors;
-using System;
+﻿using HEC.FDA.ViewModel.Editors;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 21 / 2017 1:26:32 PM)]
     public class CreateNewDamCatVM : BaseEditorVM 
@@ -16,9 +12,7 @@ namespace ViewModel.Inventory.OccupancyTypes
         #endregion
         #region Fields
         #endregion
-        #region Properties
-        
-        
+        #region Properties        
         #endregion
         #region Constructors
         public CreateNewDamCatVM(List<string> bannedNames):base(null)
@@ -33,8 +27,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             SetDimensions(360, 120, 200, 70);
         }
 
-
-
         #endregion
         #region Voids
         public override void Save()
@@ -46,8 +38,7 @@ namespace ViewModel.Inventory.OccupancyTypes
         #endregion
         private void AddValidationRules(List<string> bannedNames)
         {
-            AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
-
+            base.AddValidationRules();
             foreach (string bannedName in bannedNames)
             {
                 AddRule(nameof(Name), () => {
@@ -60,7 +51,6 @@ namespace ViewModel.Inventory.OccupancyTypes
                 }, "Name already exists.");
             }
         }
-
-       
+  
     }
 }

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario.Results;
-using ViewModel.Saving;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactAreaScenario
+namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class IASElementSet : ChildElement
     {
@@ -24,11 +24,6 @@ namespace ViewModel.ImpactAreaScenario
 
         #region Properties
         public bool HasComputed { get; set; }
-        /// <summary>
-        /// These are the results after doing a compute. If a compute has not been
-        /// done, then this will be null.
-        /// </summary>
-        //public IConditionLocationYearResult ComputeResults { get; set; }
 
         public string Description
         {
@@ -47,7 +42,7 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, int year, List<SpecificIAS> elems) : base()
+        public IASElementSet(string name, string description, int year, List<SpecificIAS> elems, int id) : base(id)
         {
             SpecificIASElements.AddRange( elems);
             Name = name;
@@ -63,7 +58,7 @@ namespace ViewModel.ImpactAreaScenario
         /// The ctor used to load an element set from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public IASElementSet(string xml)
+        public IASElementSet(string xml, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement setElem = doc.Element(IAS_SET);
@@ -205,7 +200,7 @@ namespace ViewModel.ImpactAreaScenario
                 ias.ComputeScenario(arg1, arg2);
             }
             //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
-            PersistenceFactory.GetIASManager().SaveExisting(this, this);
+            PersistenceFactory.GetIASManager().SaveExisting(this);
         }
         #endregion
 
@@ -213,7 +208,7 @@ namespace ViewModel.ImpactAreaScenario
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, elem.SpecificIASElements);
+            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
 

@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactAreaScenario.Editor;
-using ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.StageTransforms;
 
-namespace ViewModel.ImpactAreaScenario
+namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class SpecificIAS:BaseViewModel
     {

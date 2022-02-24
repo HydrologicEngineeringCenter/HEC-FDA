@@ -1,4 +1,4 @@
-﻿namespace ViewModel.ImpactArea
+﻿namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaRowItem : BaseViewModel
     {

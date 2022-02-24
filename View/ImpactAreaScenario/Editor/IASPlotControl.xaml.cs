@@ -2,14 +2,11 @@
 using HEC.Plotting.Core.Charts;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
-using HEC.Plotting.SciChart2D.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 
-namespace View.ImpactAreaScenario.Editor
+namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// Interaction logic for IASPlotControl.xaml

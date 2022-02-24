@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Study
+namespace HEC.FDA.ViewModel.Study
 {
     public class PropertiesVM : Editors.BaseEditorVM
     {
@@ -78,15 +78,14 @@ namespace ViewModel.Study
             {
                 //the properties are unique in that it gets saved when the study is created. This editor
                 //is, therefore, always in 'edit mode'. We are always saving an existing element.
+                int id = Saving.PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
                 StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
-                    CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis);
+                    CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, id);
 
                 Saving.PersistenceManagers.StudyPropertiesPersistenceManager manager = Saving.PersistenceFactory.GetStudyPropertiesManager();
-                manager.SaveExisting(CurrentElement, elemToSave);
+                manager.SaveExisting( elemToSave);
             }
         }
         #endregion        
-        #region Functions
-        #endregion
     }
 }

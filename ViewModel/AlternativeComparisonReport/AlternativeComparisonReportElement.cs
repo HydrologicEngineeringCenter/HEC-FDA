@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using ViewModel.AlternativeComparisonReport.Results;
-using ViewModel.Alternatives.Results;
-using ViewModel.Alternatives.Results.ResultObject;
-using ViewModel.Saving;
-using ViewModel.Study;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AlternativeComparisonReport
+namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class AlternativeComparisonReportElement: ChildElement
     {
         private const string ALTERNATIVE_COMP_REPORT = "AlternativeComparisonReport";
         private const string NAME = "Name";
         private const string DESCRIPTION = "Description";
-        private const string ID = "ID";
+        private const string ID_STRING = "ID";
         private const string WITHOUT_PROJ_ID = "WithoutProjID";
         private const string WITH_PROJ_ELEM = "WithProjectElement";
 
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
-        public AlternativeComparisonReportElement(string name, string desc,int withoutProjectAltId, List<int> withProjAlternativeIds)
+        public AlternativeComparisonReportElement(string name, string desc,int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
         {
             Name = name;
             Description = desc;
@@ -36,7 +36,7 @@ namespace ViewModel.AlternativeComparisonReport
         /// The ctor used to load an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeComparisonReportElement(string xml)
+        public AlternativeComparisonReportElement(string xml, int id):base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
@@ -47,7 +47,7 @@ namespace ViewModel.AlternativeComparisonReport
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
             {
-                int iasID = Int32.Parse(elem.Attribute(ID).Value);
+                int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
@@ -86,14 +86,13 @@ namespace ViewModel.AlternativeComparisonReport
             Actions = localActions;
         }
 
-
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AlternativeComparisonReportElement elemToReturn = null;
             if (elementToClone is AlternativeComparisonReportElement)
             {
                 AlternativeComparisonReportElement elem = (AlternativeComparisonReportElement)elementToClone;
-                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.WithoutProjAltID, elem.WithProjAltIDs);
+                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.WithoutProjAltID, elem.WithProjAltIDs, elem.ID);
             }
             return elemToReturn;
         }
@@ -107,7 +106,7 @@ namespace ViewModel.AlternativeComparisonReport
             foreach (int elemID in WithProjAltIDs)
             {
                 XElement setElement = new XElement(WITH_PROJ_ELEM);
-                setElement.SetAttributeValue(ID, elemID);
+                setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
             return altElement.ToString();
@@ -162,6 +161,5 @@ namespace ViewModel.AlternativeComparisonReport
         {
             PersistenceFactory.GetAlternativeCompReportManager().Remove(this);
         }
-
     }
 }

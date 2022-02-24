@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Saving;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 6 / 2017 10:22:36 AM)]
     public class OccupancyTypesOwnerElement : ParentElement

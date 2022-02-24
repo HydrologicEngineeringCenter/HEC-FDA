@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.Inventory
+﻿namespace HEC.FDA.ViewModel.Inventory
 {
     //[Author("q0heccdm", "10 / 21 / 2016 9:09:52 AM")]
     public class ImportFromNSIVM : BaseViewModel

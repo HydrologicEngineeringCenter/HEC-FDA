@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace View.Utilities
+namespace HEC.FDA.View.Utilities
 {
     /// <summary>
     /// Interaction logic for CustomMessageBox.xaml
@@ -37,40 +26,40 @@ namespace View.Utilities
         {
             string name = ((Button)sender).Content.ToString();
 
-            ViewModel.Utilities.CustomMessageBoxVM vm = (ViewModel.Utilities.CustomMessageBoxVM)this.DataContext;
+            HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM vm = (HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM)this.DataContext;
             switch (name)
             {
 
                 case "Yes":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes;
 
                     break;
                 case "No":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.No;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.No;
 
                     break;
                 case "OK":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK;
                    
                     break;
                 case "Cancel":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Cancel;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Cancel;
 
                     break;
                 case "Close":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Close;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Close;
 
                     break;
                 case "Abort":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Abort;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Abort;
 
                     break;
                 case "Retry":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Retry;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Retry;
 
                     break;
                 case "Ignore":
-                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Ignore;
+                    vm.ClickedButton = HEC.FDA.ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Ignore;
 
                     break;
             }

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class StructureInventoryOwnerElement : ParentElement
     {
@@ -15,8 +15,7 @@ namespace ViewModel.Inventory
         #endregion
         #region Fields
         #endregion
-        #region Properties
-        
+        #region Properties       
         #endregion
         #region Constructors
         public StructureInventoryOwnerElement( ) : base()
@@ -42,7 +41,7 @@ namespace ViewModel.Inventory
         #region Voids
         private void UpdateStructureInventoryElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
 
         private void RemoveStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
@@ -83,9 +82,7 @@ namespace ViewModel.Inventory
             Navigate(tab, false, false);
         }
 
-        #endregion
-        #region Functions
-        #endregion   
+        #endregion 
 
     }
 }

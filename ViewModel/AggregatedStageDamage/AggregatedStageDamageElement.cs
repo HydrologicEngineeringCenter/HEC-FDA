@@ -4,12 +4,12 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.Inventory;
-using ViewModel.Utilities;
-using ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageElement : ChildElement
     {
@@ -33,7 +33,7 @@ namespace ViewModel.AggregatedStageDamage
         #endregion
         #region Constructors
 
-        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual) : base()
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual, int id) : base(id)
         {
             LastEditDate = lastEditDate;
             CustomTreeViewHeader = new CustomHeaderVM(name, "pack://application:,,,/View;component/Resources/StageDamage.png");
@@ -47,6 +47,8 @@ namespace ViewModel.AggregatedStageDamage
             Name = name;
             Curves = curves;
             IsManual = isManual;
+            SelectedWSE = selectedWSE;
+            SelectedStructures = selectedStructs;
 
             NamedAction editDamageCurve = new NamedAction();
             editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
@@ -78,17 +80,13 @@ namespace ViewModel.AggregatedStageDamage
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual);
+            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual, elem.ID);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetStageDamageManager().Remove(this);
         }
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-        }
+
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
             //create action manager
@@ -192,38 +190,5 @@ namespace ViewModel.AggregatedStageDamage
 
         #endregion
 
-        public override bool Equals(object obj)
-        {
-            bool retval = true;
-            if (obj.GetType() == typeof(AggregatedStageDamageElement))
-            {
-                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)obj;
-                if (!Name.Equals(elem.Name))
-                {
-                    retval = false;
-                }
-                if (Description == null && elem.Description != null)
-                {
-                    retval = false;
-                }
-                else if (Description != null && !Description.Equals(elem.Description))
-                {
-                    retval = false;
-                }
-                if (!LastEditDate.Equals(elem.LastEditDate))
-                {
-                    retval = false;
-                }
-                if (Method != elem.Method)
-                {
-                    retval = false;
-                }             
-            }
-            else
-            {
-                retval = false;
-            }
-            return retval;
-        }
     }
 }

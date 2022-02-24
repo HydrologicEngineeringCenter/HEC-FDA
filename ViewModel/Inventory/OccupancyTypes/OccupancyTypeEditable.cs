@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Utilities;
-using ViewModel.Editors;
-using ViewModel.Inventory.DamageCategory;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
-using ViewModel.Utilities.Transactions;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     /// <summary>
     /// This represents an IOccupancyType while it is in the occupancy type editor. All the values can be edited.

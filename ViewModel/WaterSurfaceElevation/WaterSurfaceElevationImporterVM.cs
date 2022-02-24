@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System.IO;
 
-namespace ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class WaterSurfaceElevationImporterVM:Editors.BaseEditorVM
+    public class WaterSurfaceElevationImporterVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -44,13 +41,11 @@ namespace ViewModel.WaterSurfaceElevation
             set { _ListOfRows = value; NotifyPropertyChanged(); }
         }
 
-        //public bool HasFatalError { get; internal set; }
         #endregion
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
             IsEditor = false;
-
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         }
         /// <summary>
@@ -72,7 +67,6 @@ namespace ViewModel.WaterSurfaceElevation
                 string filename = Path.GetFileName(pp.Path);
                 AddRow(true, filename, pp.Path, pp.Probability);
             }
-
         }
 
         #endregion
@@ -86,28 +80,8 @@ namespace ViewModel.WaterSurfaceElevation
 
         public override void AddValidationRules()
         {
-
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
             AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
-           
-            ////don't allow clicking with a name that already exists
-            //AddRule(nameof(Name), () =>
-            //{
-                
-            //    foreach (Utilities.OwnedElement ele in ParentElement.Elements)
-            //    {
-            //        if(Name == ele.Name)
-            //        {
-            //            return false;
-            //        }
-            //    }
-
-            //        return true;
-                
-
-            //}, "A water surface profile with that name already exists.");
-
-
 
             AddRule(nameof(ListOfRows), () =>
              {
@@ -156,53 +130,8 @@ namespace ViewModel.WaterSurfaceElevation
 
             }, "Duplicate probabilities are not allowed.", true);
 
-            //AddRule(nameof(ListOfRows), () =>
-            //{
-            //    bool allFilesHaveToBeVRT = false;
-            //    bool atLeastOneFileIsATif = false;
-            //    bool atLeastOneFileIsAFlt = false;
-            //    foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-            //    {
-            //       if(row.IsVRT == true)
-            //        {
-            //            allFilesHaveToBeVRT = true;
-            //        }
-            //       else if(row.IsFLT == true)
-            //        {
-            //            atLeastOneFileIsAFlt = true;
-            //        }
-            //       else if(row.IsTIF == true)
-            //        {
-            //            atLeastOneFileIsATif = true;
-
-            //        }
-            //    }
-
-
-
-            //    return true;
-
-
-            //}, "cody");
-
         }
 
-
-
-        //public override void Save()
-        //{
-        //    //load the list of relative paths
-        //    //   WHEN DOES THIS GET CALLED??????
-        //    _ListOfRelativePaths = new List<PathAndProbability>();
-        //    foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-        //    {
-        //        if (row.IsChecked)
-        //        {
-        //            string relativePath = System.IO.Path.GetDirectoryName(row.Path) + "\\" + System.IO.Path.GetFileName(row.Path);
-        //            _ListOfRelativePaths.Add(new PathAndProbability(relativePath, row.Probability));
-        //        }
-        //    }
-        //}
         private void StoreTheOriginalPaths()
         {
             ListOfOriginalPaths = new List<string>();
@@ -217,10 +146,8 @@ namespace ViewModel.WaterSurfaceElevation
             }
         }
 
-        public override bool RunSpecialValidation()
+        public bool RunSpecialValidation()
         {
-
-
             StoreTheOriginalPaths();
             ListOfRelativePaths = new List<PathAndProbability>();
 
@@ -236,7 +163,7 @@ namespace ViewModel.WaterSurfaceElevation
                 if (row.IsChecked == false) { continue; }
 
                 numberOfSelectedRows++;
-                rowExtension = System.IO.Path.GetExtension(row.Path);
+                rowExtension = Path.GetExtension(row.Path);
                 switch (rowExtension)
                 {
                     case ".vrt":
@@ -263,7 +190,7 @@ namespace ViewModel.WaterSurfaceElevation
             {
                 if (atLeastOneFileIsFlt == true || atLeastOneFileIsTif == true)
                 {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, 
+                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, 
                         "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
                     string header = "Incompatible File Types";
                     DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "IncompatibleFileTypes");
@@ -272,12 +199,12 @@ namespace ViewModel.WaterSurfaceElevation
                 }
                 else if (numberOfSelectedRows < 8)
                 {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, 
+                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, 
                         "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
                     string header = "Small Number of Files Selected";
                     DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
                     Navigate(tab, true, true);
-                    if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
+                    if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
                     {
                         //close the form and save the wse's
                         if (HasFatalError == true)
@@ -327,11 +254,11 @@ namespace ViewModel.WaterSurfaceElevation
 
             if (atLeastOneFileIsFlt == true)
             {
-                Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
+                CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
                 string header = "Change flt to tif";
                 DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ChangeFltToTif");
                 Navigate(tab, true, true);
-                if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
+                if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
                 {
                     //change flt to tif and proceed somehow
                 }
@@ -344,11 +271,11 @@ namespace ViewModel.WaterSurfaceElevation
             {
                 if (numberOfSelectedRows < 8)
                 {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
+                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
                     string header = "SmallNumberOfFilesSelected";
                     DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
                     Navigate(tab, true, true);
-                    if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
+                    if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
                     {
                         //close the form and save the wse's
                         if (HasFatalError == true)
@@ -404,44 +331,47 @@ namespace ViewModel.WaterSurfaceElevation
         {
             string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
             string destinationDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
-            if (!System.IO.Directory.Exists(destinationDirectory))
+            if (!Directory.Exists(destinationDirectory))
             {
-                System.IO.Directory.CreateDirectory(destinationDirectory);
+                Directory.CreateDirectory(destinationDirectory);
             }
             try
             {
-                System.IO.File.Copy(path, destinationFilePath);
+                File.Copy(path, destinationFilePath);
             }
             catch (Exception e)
             {
-                Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "An error occured while trying to copy the selected files into the hydraulics directory in your study.\n\n" + e.Message);
+                CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "An error occured while trying to copy the selected files into the hydraulics directory in your study.\n\n" + e.Message);
                 string header = "Error Copying Files";
                 DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ErrorCopyingFiles");
                 Navigate(tab, true, true);
                 return false;
             }
-            //string relativePath = System.IO.Path.GetDirectoryName(destinationFilePath) + "\\" + System.IO.Path.GetFileName(destinationFilePath);
             ListOfRelativePaths.Add(new PathAndProbability(Name + "\\" + nameWithExtension, probability));
             return true;
         }
 
         public override void Save()
         {
-            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked);
-            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-            if (IsImporter && HasSaved == false)
+            bool isValid = RunSpecialValidation();
+            if (isValid)
             {
-                manager.SaveNew(elementToSave);
-                HasSaved = true;
-                OriginalElement = elementToSave;
-            }
-            else
-            {
-                manager.SaveExisting((WaterSurfaceElevationElement)OriginalElement, elementToSave, 0);
+                int id = Saving.PersistenceFactory.GetWaterSurfaceManager().GetNextAvailableId();
+                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);
+                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                if (IsCreatingNewElement && HasSaved == false)
+                {
+                    manager.SaveNew(elementToSave);
+                    HasSaved = true;
+                    OriginalElement = elementToSave;
+                }
+                else
+                {
+                    manager.SaveExisting(elementToSave);
+                }
             }
         }
         #endregion
-        #region Functions
-        #endregion
+
     }
 }

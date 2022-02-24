@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public static class OverlappingRangeHelper
     {
@@ -41,7 +41,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
                 //check rating stages with stage-damage stages
                 CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
-
             }
             else
             {
@@ -51,7 +50,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 //check rating stages with stage-damage stages
                 CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
             }
-
         }
 
         /// <summary>
@@ -70,14 +68,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
             double otherMin = -1;
             double otherMax = -1;
 
-            UncertainPairedData otherCurve = otherElem.ChildElement.Curve;
+            //todo: can i change the row item so i don't have to cast here?
 
-            stageDamageMin = selectedDamageCurve.Function.xs().Min();
-            stageDamageMax = selectedDamageCurve.Function.xs().Last();
+            UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).ComputeComponentVM.SelectedItemToPairedData();
+
+            stageDamageMin = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Min();
+            stageDamageMax = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Last();
 
             //todo: not sure i did this right.
-            otherMin = otherCurve.ys().First().CDF(.5);
-            otherMax = otherCurve.ys().Last().CDF(.5);
+            otherMin = otherCurve.Yvals.First().CDF(.5);
+            otherMax = otherCurve.Yvals.Last().CDF(.5);
 
             AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE,
                 stageDamElem.Name, otherElem.ChildElement.Name, messageRows);
@@ -101,20 +101,27 @@ namespace ViewModel.ImpactAreaScenario.Editor
             ChildElement elem1 = element1.ChildElement;
             ChildElement elem2 = element2.ChildElement;
 
+            //todo: can i change the row item so i don't have to cast here?
+            CurveChildElement curveElem1 = elem1 as CurveChildElement;
+            CurveChildElement curveElem2 = elem2 as CurveChildElement;
+
+            UncertainPairedData data1 = curveElem1.ComputeComponentVM.SelectedItemToPairedData();
+            UncertainPairedData data2 = curveElem2.ComputeComponentVM.SelectedItemToPairedData();
+
             string name1 = elem1.Name;
             string name2 = elem2.Name;
 
-            double x1Min = elem1.Curve.xs().First();
-            double x1Max = elem1.Curve.xs().Last();
+            double x1Min = data1.Xvals.First();
+            double x1Max = data1.Xvals.Last();
 
-            double x2Min = elem2.Curve.xs().First();
-            double x2Max = elem2.Curve.xs().First();
+            double x2Min = data2.Xvals.First();
+            double x2Max = data2.Xvals.First();
 
-            double y1Min = elem1.Curve.ys().First().InverseCDF(minProb);
-            double y1Max = elem1.Curve.ys().Last().InverseCDF(maxProb);
+            double y1Min = data1.Yvals.First().InverseCDF(minProb);
+            double y1Max = data1.Yvals.Last().InverseCDF(maxProb);
 
-            double y2Min = elem2.Curve.ys().First().InverseCDF(minProb);
-            double y2Max = elem2.Curve.ys().First().InverseCDF(maxProb);
+            double y2Min = data2.Yvals.First().InverseCDF(minProb);
+            double y2Max = data2.Yvals.First().InverseCDF(maxProb);
 
             //these will be the min and max for the axes that we care about
             double min1;

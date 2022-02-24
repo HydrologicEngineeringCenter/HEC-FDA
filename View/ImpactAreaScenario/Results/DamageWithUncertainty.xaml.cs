@@ -1,16 +1,10 @@
 ﻿using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using ViewModel.ImpactAreaScenario.Results;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 
-namespace View.ImpactAreaScenario.Results
+namespace HEC.FDA.View.ImpactAreaScenario.Results
 {
     /// <summary>
     /// Interaction logic for DamageWithUncertainty.xaml

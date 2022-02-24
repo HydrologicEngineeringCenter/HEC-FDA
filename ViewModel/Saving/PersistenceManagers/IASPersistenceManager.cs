@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class IASPersistenceManager : SavingBase
     {
@@ -82,7 +82,8 @@ namespace ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string xml = (string)rowData[XML_COLUMN];
-            return new IASElementSet(xml);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            return new IASElementSet(xml, id);
         }
 
         #endregion
@@ -122,9 +123,9 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="oldElement"></param>
         /// <param name="element"></param>
         /// <param name="changeTableIndex"></param>
-        public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
+        public void SaveExisting( ChildElement element)
         {
-            base.SaveExisting(oldElement, element);
+            base.SaveExisting( element);
         }
 
         /// <summary>

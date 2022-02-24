@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.Utilities
+﻿namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 10 / 6 / 2017 4:00:37 PM)]
     class RecentFileNamedAction:NamedAction

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace View.StageTransforms
+namespace HEC.FDA.View.StageTransforms
 {
     /// <summary>
     /// Interaction logic for RatingCurveEditor.xaml

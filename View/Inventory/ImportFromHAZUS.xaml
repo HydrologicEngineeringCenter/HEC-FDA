@@ -1,13 +1,11 @@
-﻿<UserControl x:Class="View.Inventory.ImportFromHAZUS"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:View.Inventory"
-        xmlns:ViewModel="clr-namespace:ViewModel.Inventory;assembly=ViewModel"
-        xmlns:OkClose="clr-namespace:View.Utilities"
+﻿<UserControl x:Class="HEC.FDA.View.Inventory.ImportFromHAZUS"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-        mc:Ignorable="d"
+             xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             mc:Ignorable="d"
         Height="230" Width="526" >
     <UserControl.Resources>
         <!--<ViewModel:ImportFromHAZUSVM x:Key="vm"/>-->

@@ -1,10 +1,10 @@
 ﻿using Importer;
 using System.Collections.Generic;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class ImportOcctypesFromFDA1VM : ImportFromFDA1VM
     {

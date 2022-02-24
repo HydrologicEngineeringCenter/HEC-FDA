@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace View.ImpactAreaScenario.Editor
+namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// This is the control that goes at the bottom of the IASEditor and gives the user information about

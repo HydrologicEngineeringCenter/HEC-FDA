@@ -1,9 +1,9 @@
 ﻿using Importer;
 using System.Collections.Generic;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 
-namespace ViewModel.StageTransforms
+namespace HEC.FDA.ViewModel.StageTransforms
 {
     public class ImportRatingsFromFDA1VM : ImportFromFDA1VM
     {

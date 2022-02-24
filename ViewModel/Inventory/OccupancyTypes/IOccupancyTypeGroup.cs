@@ -1,11 +1,7 @@
-﻿using ViewModel.Inventory.DamageCategory;
-using System;
+﻿using HEC.FDA.ViewModel.Inventory.DamageCategory;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public interface IOccupancyTypeGroup
     {

@@ -1,21 +1,9 @@
 ﻿using HEC.Plotting.SciChart2D.Charts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results;
 
-namespace View.Alternatives.Results
+namespace HEC.FDA.View.Alternatives.Results
 {
     /// <summary>
     /// Interaction logic for EADDamageWithUncertainty.xaml

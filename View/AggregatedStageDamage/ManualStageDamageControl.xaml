@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="View.AggregatedStageDamage.ManualStageDamageControl"
+﻿<UserControl x:Class="HEC.FDA.View.AggregatedStageDamage.ManualStageDamageControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:utils="clr-namespace:View.Utilities"
+             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -21,7 +21,7 @@
                     <Button Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
                 </StackPanel>
 
-                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Curve" Width="50" DisplayMemberBinding="{Binding ID}" />
@@ -48,12 +48,8 @@
         </GroupBox>
 
         <Grid x:Name="editorGrid" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*" MinWidth="200"/>
-            </Grid.ColumnDefinitions>
             <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <utils:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
         </Grid>
     </Grid>
 </UserControl>

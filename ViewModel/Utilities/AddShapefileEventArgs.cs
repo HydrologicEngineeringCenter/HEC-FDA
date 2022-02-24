@@ -1,6 +1,6 @@
 ﻿
 
-namespace ViewModel.Utilities
+namespace HEC.FDA.ViewModel.Utilities
 {
     public class AddShapefileEventArgs : AddMapFeatureEventArgs
     {

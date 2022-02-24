@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using ViewModel.Editors;
-using ViewModel.ImpactArea;
-using ViewModel.Inventory.OccupancyTypes;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.AggregatedStageDamage
+namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageOwnerElement : ParentElement
     {
@@ -45,7 +45,7 @@ namespace ViewModel.AggregatedStageDamage
         #region Voids
         private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -92,7 +92,7 @@ namespace ViewModel.AggregatedStageDamage
                 EditorActionManager actionManager = new EditorActionManager()
                      .WithSiblingRules(this);
 
-                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(null, "Stage - Damage", "Stage", "Damage", actionManager);
+                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM( actionManager);
                 DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
                 Navigate(tab, false, true);
             }

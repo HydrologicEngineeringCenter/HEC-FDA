@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.TableWithPlot;
 
-namespace ViewModel.Saving.PersistenceManagers
+namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class RatingElementPersistenceManager : SavingBase
     {
@@ -59,7 +60,17 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.Description = "";
             }
             
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.WriteToXML().ToString()};
+            if(element is CurveChildElement curveChildElement)
+            {
+
+                return new object[] { element.Name, element.LastEditDate, element.Description, curveChildElement.ComputeComponentVM.ToXML().ToString()};
+            }
+            else
+            {
+                return null;
+            }
+
+            
         }
        
         /// <summary>
@@ -69,10 +80,11 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
+            int id = Convert.ToInt32(rowData[ID_COL]);
             string curveXML = (string)rowData[CURVE_COL];
-            UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(curveXML);
             RatingCurveElement rc = new RatingCurveElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
-                (string)rowData[DESC_COL], upd);
+                (string)rowData[DESC_COL], computeComponentVM, id);
             return rc;
         }
 

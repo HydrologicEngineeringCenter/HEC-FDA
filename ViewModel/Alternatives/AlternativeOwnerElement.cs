@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.Alternatives
+namespace HEC.FDA.ViewModel.Alternatives
 {
     public class AlternativeOwnerElement: ParentElement
     {
@@ -39,7 +39,7 @@ namespace ViewModel.Alternatives
 
         private void UpdateAlternativeElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddAlternativeElement(object sender, Saving.ElementAddedEventArgs e)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 
 
-namespace ViewModel.Inventory.DepthDamage
+namespace HEC.FDA.ViewModel.Inventory.DepthDamage
 {
     //[Author(q0heccdm, 8 / 1 / 2017 3:52:10 PM)]
     public class DepthDamageCurveEditorVM : BaseViewModel

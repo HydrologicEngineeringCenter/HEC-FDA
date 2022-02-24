@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using ViewModel.Inventory.DamageCategory;
+using HEC.FDA.ViewModel.Inventory.DamageCategory;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     internal class OccupancyTypeGroup : IOccupancyTypeGroup
     {

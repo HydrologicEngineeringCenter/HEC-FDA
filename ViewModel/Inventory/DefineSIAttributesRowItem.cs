@@ -1,6 +1,6 @@
 ﻿using HEC.CS.Collections;
 
-namespace ViewModel.Inventory
+namespace HEC.FDA.ViewModel.Inventory
 {
     public class DefineSIAttributesRowItem
     {

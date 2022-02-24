@@ -1,17 +1,11 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.Editors;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.ImpactAreaScenario
+namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class IASOwnerElement : ParentElement
     {
@@ -71,7 +65,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
-            int removedElementID = args.ID;
+            int removedElementID = args.NewElement.ID;
             if (args.NewElement is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.NewElement;
@@ -89,7 +83,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementRemoved(object sender, Saving.ElementAddedEventArgs args)
         {
-            int removedElementID = args.ID;
+            int removedElementID = args.Element.ID;
             if (args.Element is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.Element;
@@ -102,7 +96,7 @@ namespace ViewModel.ImpactAreaScenario
 
         private void UpdateIASElementSet(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void AddIASElementSet(object sender, Saving.ElementAddedEventArgs e)
         {

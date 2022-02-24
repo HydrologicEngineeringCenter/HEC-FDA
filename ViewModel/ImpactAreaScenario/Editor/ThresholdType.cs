@@ -1,6 +1,6 @@
 ﻿using metrics;
 
-namespace ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class ThresholdType
     {

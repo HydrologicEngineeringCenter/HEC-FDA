@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ViewModel.Inventory.DepthDamage
+namespace HEC.FDA.ViewModel.Inventory.DepthDamage
 {
     //[Author(q0heccdm, 8 / 15 / 2017 9:18:56 AM)]
 

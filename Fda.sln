@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\SimpleBuild.yml = .github\workflows\SimpleBuild.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{2BF5D01A-B8CA-4D47-B9FE-01E7A5C30074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.ViewModel", "ViewModel\HEC.FDA.ViewModel.csproj", "{2BF5D01A-B8CA-4D47-B9FE-01E7A5C30074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

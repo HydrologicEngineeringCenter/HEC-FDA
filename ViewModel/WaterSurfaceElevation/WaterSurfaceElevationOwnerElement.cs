@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities;
 
-namespace ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:46:34 AM)]
     public class WaterSurfaceElevationOwnerElement : ParentElement
@@ -16,8 +13,7 @@ namespace ViewModel.WaterSurfaceElevation
         #endregion
         #region Fields
         #endregion
-        #region Properties
-       
+        #region Properties   
         #endregion
         #region Constructors
         public WaterSurfaceElevationOwnerElement( ):base()
@@ -43,7 +39,7 @@ namespace ViewModel.WaterSurfaceElevation
         #region Voids
         private void UpdateWaterSurfaceElevationElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement(e.OldElement, e.NewElement);
+            UpdateElement( e.NewElement);
         }
         private void RemoveWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -65,9 +61,6 @@ namespace ViewModel.WaterSurfaceElevation
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
             Navigate(tab, false,false);
         }
-        #endregion
-        #region Functions
-        #endregion
-      
+        #endregion     
     }
 }

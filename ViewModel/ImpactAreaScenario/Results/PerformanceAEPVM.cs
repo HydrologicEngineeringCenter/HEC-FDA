@@ -2,9 +2,9 @@
 using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
 using System.Collections.Generic;
-using ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAEPVM : PerformanceVMBase
     {

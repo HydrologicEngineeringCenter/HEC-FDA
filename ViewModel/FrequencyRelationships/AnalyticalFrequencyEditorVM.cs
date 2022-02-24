@@ -1,13 +1,12 @@
-﻿using FdaLogging;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.Plotting.SciChart2D.ViewModel;
-using paireddata;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Editors;
 
-namespace ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     public class AnalyticalFrequencyEditorVM :CurveEditorVM
     {
@@ -90,14 +89,13 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(UncertainPairedData defaultCurve, string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
             UpdateChartLineData();
             LoadDefaultFlows();
         }
-        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
-            CurrentElement = elem;
             UpdateChartLineData();
             if(elem.AnalyticalFlows.Count == 0)
             {
@@ -105,8 +103,7 @@ namespace ViewModel.FrequencyRelationships
             }
         }
         #endregion
-        #region Voids
-        
+        #region Voids     
         private void LoadDefaultFlows()
         {
             for(int i = 0;i<10;i++)
@@ -126,7 +123,7 @@ namespace ViewModel.FrequencyRelationships
         {
             try
             {
-                UncertainPairedData function = GetCoordinatesFunction();
+                //UncertainPairedData function = GetCoordinatesFunction();
 
                 //todo: leaving this here until we get the new table and plot 
 
@@ -141,67 +138,68 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
 
-        public override UncertainPairedData GetCoordinatesFunction()
-        {
-            double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
-            List<double> yVals = new List<double>();
+        //public override UncertainPairedData GetCoordinatesFunction()
+        //{
+        //    double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
+        //    List<double> yVals = new List<double>();
 
-            try
-            {
-                if (IsAnalytical)
-                {
-                    LogPearson3 lp3 = new LogPearson3();
-                    if (IsStandard)
-                    {
-                        lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
-                    }
-                    else
-                    {
-                        //this is fit to flow
-                        List<double> flows = new List<double>();
-                        foreach(FlowDoubleWrapper d in AnalyticalFlows)
-                        {
-                            flows.Add(d.Flow);
-                        }
+        //    try
+        //    {
+        //        if (IsAnalytical)
+        //        {
+        //            LogPearson3 lp3 = new LogPearson3();
+        //            if (IsStandard)
+        //            {
+        //                lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
+        //            }
+        //            else
+        //            {
+        //                //this is fit to flow
+        //                List<double> flows = new List<double>();
+        //                foreach(FlowDoubleWrapper d in AnalyticalFlows)
+        //                {
+        //                    flows.Add(d.Flow);
+        //                }
 
-                        lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
-                    }
-                    lp3.Validate();
-                    if (lp3.HasErrors)
-                    {
-                        System.Collections.IEnumerable enumerable = lp3.GetErrors();
-                        Base.Enumerations.ErrorLevel errorLevel = lp3.ErrorLevel;
-                        //todo: do what?
-                    }
-                    else
-                    {
-                        double mean = lp3.Mean;
-                        double stDev = lp3.StandardDeviation;
-                        double skew = lp3.Skewness;
-                        FitToFlowMean = "Mean: " + mean.ToString(".##");
-                        FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
-                        FitToFlowSkew = "Skew: " + skew.ToString(".##");
-                        foreach (double prob in probs)
-                        {
-                            yVals.Add(lp3.InverseCDF(prob));
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                FitToFlowMean = "Mean: N/A";
-                FitToFlowStDev = "Mean: N/A";
-                FitToFlowSkew = "Mean: N/A";
-                //todo: do what?
-                //return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
-            }
-            FitToFlowMean = "Mean: N/A";
-            FitToFlowStDev = "Mean: N/A";
-            FitToFlowSkew = "Mean: N/A";
-            return Utilities.UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
-        }
+        //                lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
+        //            }
+        //            lp3.Validate();
+        //            if (lp3.HasErrors)
+        //            {
+        //                System.Collections.IEnumerable enumerable = lp3.GetErrors();
+        //                ErrorLevel errorLevel = lp3.ErrorLevel;
+        //                //todo: do what?
+        //            }
+        //            else
+        //            {
+        //                double mean = lp3.Mean;
+        //                double stDev = lp3.StandardDeviation;
+        //                double skew = lp3.Skewness;
+        //                FitToFlowMean = "Mean: " + mean.ToString(".##");
+        //                FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
+        //                FitToFlowSkew = "Skew: " + skew.ToString(".##");
+        //                foreach (double prob in probs)
+        //                {
+        //                    yVals.Add(lp3.InverseCDF(prob));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        FitToFlowMean = "Mean: N/A";
+        //        FitToFlowStDev = "Mean: N/A";
+        //        FitToFlowSkew = "Mean: N/A";
+        //        //todo: do what?
+        //        //return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
+        //    }
+        //    FitToFlowMean = "Mean: N/A";
+        //    FitToFlowStDev = "Mean: N/A";
+        //    FitToFlowSkew = "Mean: N/A";
+        //    return Utilities.UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
+        //}
 
+        //todo: is this necessary?
         public bool CanCreateValidFunction()
         {
             List<double> xs = new List<double>();
@@ -242,27 +240,41 @@ namespace ViewModel.FrequencyRelationships
 
         }
 
-        public UncertainPairedData CreateFdaFunction()
-        {
-            if(CanCreateValidFunction())
-            {
-                return  GetCoordinatesFunction();
-            }
-            return null;
-        }
-
-        public override void SaveWhileEditing()
+        public override void Save()
         {
             UpdateChartLineData();
             if (CanCreateValidFunction())
             {
-                base.SaveWhileEditing();
+                string editDate = DateTime.Now.ToString("G");
+                double mean = Mean;
+                double stDev = StandardDeviation;
+                double skew = Skew;
+                int por = PeriodOfRecord;
+                bool isAnalytical = IsAnalytical;
+                bool isStandard = IsStandard;
+                bool isLogFlow = IsLogFlow;
+                List<double> analyticalFlows = new List<double>();
+                foreach (FlowDoubleWrapper d in AnalyticalFlows)
+                {
+                    analyticalFlows.Add(d.Flow);
+                }
+                List<double> graphicalFlows = new List<double>();
+                foreach (FlowDoubleWrapper d in GraphicalFlows)
+                {
+                    graphicalFlows.Add(d.Flow);
+                }
+                int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
+
+                AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
+                    isLogFlow, analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
+                base.Save(elem);
             }
             else
             {
+                //todo: i commented this out 2/21/22
                 //update error saving message
-                TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not construct a valid function"));
-                UpdateMessages(true);
+                //TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not construct a valid function"));
+                //UpdateMessages(true);
             }
         }
 

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
-using ViewModel.Editors;
-using ViewModel.Utilities;
 
-namespace ViewModel
+namespace HEC.FDA.ViewModel
 {
     public delegate void TransactionEventHandler(object sender, Utilities.Transactions.TransactionEventArgs args);
     /// <summary>
@@ -19,7 +18,9 @@ namespace ViewModel
         private CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
         private string _Tooltip = null;
-
+        private bool _IsExpanded = true;
+        private int _FontSize = 14;
+        private bool _IsBold = true;
         #endregion
         #region Events
         public event EventHandler RenameMapTreeViewElement;
@@ -35,7 +36,21 @@ namespace ViewModel
         }
         #endregion
         #region Properties
-
+        public bool IsExpanded
+        {
+            get { return _IsExpanded; }
+            set { _IsExpanded = value; NotifyPropertyChanged(nameof(IsExpanded)); }
+        }
+        public int FontSize
+        {
+            get { return _FontSize; }
+            set { _FontSize = value; NotifyPropertyChanged(nameof(FontSize)); }
+        }
+        public bool IsBold
+        {
+            get { return _IsBold; }
+            set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
+        }
         public String ToolTip
         {
             get { return _Tooltip; }
@@ -75,7 +90,13 @@ namespace ViewModel
 
         #endregion
         #region Voids
-      
+
+        public override void AddValidationRules()
+        {
+            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
+        }
+
         public void UpdateTreeViewHeader(string newName)
         {
             if (_CustomTreeViewHeader == null) { return; }
@@ -85,31 +106,6 @@ namespace ViewModel
             CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
         }
 
-        public void AssignValuesFromCurveEditorToElement(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-            element.Name = vm.Name;
-            element.Description = vm.Description;
-            element.Curve = vm.Curve;
-            element.UpdateTreeViewHeader(vm.Name);
-        }
-
-        public void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-
-            vm.Name = element.Name;
-            vm.Description = element.Description;
-            vm.Curve = element.Curve;
-            if (vm.EditorVM != null)
-            {
-                vm.EditorVM.Function = element.Curve;
-            }
-        }
-
         #endregion
-        #region Functions
-        #endregion
-
     }
 }

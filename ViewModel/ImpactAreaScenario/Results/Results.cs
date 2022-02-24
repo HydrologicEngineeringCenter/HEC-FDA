@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.ImpactArea;
+﻿using HEC.FDA.ViewModel.ImpactArea;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class Results
     {
