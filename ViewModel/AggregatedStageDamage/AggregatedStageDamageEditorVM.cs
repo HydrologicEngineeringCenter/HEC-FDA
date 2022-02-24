@@ -83,19 +83,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 int structID = CalculatedVM.SelectedStructures.ID;
                 LastEditDate = DateTime.Now.ToString("G");
                 int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
-                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);
-               
-                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-
-                if (IsCreatingNewElement)
-                {
-                    manager.SaveNew(elemToSave);
-                }
-                else
-                {
-                    manager.SaveExisting(elemToSave);
-                    IsCreatingNewElement = false;
-                }
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);              
+                base.Save(elemToSave);
             }
             else
             {
@@ -109,20 +98,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (valid)
             {
                 LastEditDate = DateTime.Now.ToString("G");
-
-                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-
                 int id = GetElementID();
                 AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
-                if (IsCreatingNewElement)
-                {
-                    manager.SaveNew(elem);
-                }
-                else
-                {
-                    manager.SaveExisting(elem);
-                    IsCreatingNewElement = false;
-                }
+                base.Save(elem);
             }
         }
 

@@ -19,6 +19,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Data.Add(new DeterministicRow(10000.0d, 10000.0d));
             LinkList();
         }
+        public DeterministicDataProvider(UncertainPairedData upd)
+        {
+            Name = "Deterministic";
+            for(int i = 0; i < upd.Xvals.Length; i++)
+            {
+                Data.Add(new DeterministicRow(upd.Xvals[i], upd.Yvals[i].InverseCDF(.5)));
+            }
+            LinkList();
+        }
         override public void AddUnlinkedRow(int i)
         {
             double x0 = 0.0;
