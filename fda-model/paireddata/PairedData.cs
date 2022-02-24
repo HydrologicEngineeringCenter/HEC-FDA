@@ -12,7 +12,7 @@ namespace paireddata
     {
         private CurveMetaData _metadata;
         public double[] Xvals { get; }
-        public double[] Yvals { get; }
+        public double[] Yvals { get; private set; }
         public string Category
         {
             get { return _metadata.Category; }
@@ -97,7 +97,7 @@ namespace paireddata
 
                 //Ok. Interpolate Y=mx+b
                 double yidxminus1 = Yvals[idx - 1];
-                double xidxminus1 = Xvals[idx-1];
+                double xidxminus1 = Xvals[idx - 1];
                 double m = (Yvals[idx] - yidxminus1) / (Xvals[idx] - xidxminus1);
                 double b = yidxminus1;
                 double dx = x - xidxminus1;
@@ -297,12 +297,42 @@ namespace paireddata
         {
             IDistribution[] ydists = new IDistribution[Yvals.Length];
             int idx = 0;
-            foreach(double val in Yvals)
+            foreach (double val in Yvals)
             {
                 ydists[idx] = new Deterministic(val);
                 idx++;
             }
             return new UncertainPairedData(Xvals, ydists, _metadata);
+        }
+
+        public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
+        {
+            double prevYval = min;
+
+            double[] update = new double[Yvals.Length];
+            int idx = 0;
+            foreach (double y in Yvals)
+            {
+                if (prevYval > y)
+                {
+                    update[idx] = prevYval;
+                }
+                else
+                {
+                    if (y > max)
+                    {
+                        update[idx] = max;
+                        prevYval = max;
+                    }
+                    else
+                    {
+                        update[idx] = y;
+                        prevYval = y;
+                    }
+                }
+                idx++;
+            }
+            Yvals = update;
         }
     }
 }
