@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.FlowTransforms"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:CA="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="610">

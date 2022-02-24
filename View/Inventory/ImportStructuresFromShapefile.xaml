@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="575" d:DesignWidth="600">
     <Grid>
@@ -19,7 +20,8 @@
                 <TextBlock Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <TextBox Margin="5,0,0,0" Name="NameTextBox" Text="{Binding Path=Name,ValidatesOnDataErrors=True}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="156" />
                 <TextBlock Text="Description:" VerticalAlignment="Center" Margin="5,0,0,0" />
-                <CA:TextBoxDescription HorizontalAlignment="Stretch" Text="{Binding Description}"  Width="200" Margin="10,0,0,0"/>
+                <UserControls:TextBoxDescription  Text="{Binding Description}" Margin="5"/>
+
             </StackPanel>
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
                 <TextBlock Name="SILabel" Text="Structure Inventory Shapefile:" TextAlignment="left" HorizontalAlignment="Left" VerticalAlignment="Center" />

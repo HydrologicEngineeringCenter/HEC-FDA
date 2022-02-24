@@ -1,10 +1,7 @@
-﻿using paireddata;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.TableWithPlot;
+using System;
+using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -75,9 +72,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedImpArea = rowItem.SelectedImpArea;
             DamageCategories = rowItem.DamageCategories;
             SelectedDamCat = rowItem.SelectedDamCat;
-            ComputeComponent = rowItem.ComputeComponent;
+            ComputeComponent = rowItem.ComputeComponent.Clone();
         }
-
         
     }
 }

@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private ManualStageDamageRowItem _SelectedRow;
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private ObservableCollection<String> _DamageCategories;
-        private int _SelectedRowIndex = 0;
         public ObservableCollection<ManualStageDamageRowItem> Rows { get; } = new ObservableCollection<ManualStageDamageRowItem>();
         public TableWithPlotVM TableWithPlot
         {
@@ -87,7 +86,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private ComputeComponentVM CreateDefaultCurve()
         {
             return new ComputeComponentVM("Stage Damage", "Stage", "Damage");
-            //return Utilities.UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
         }
 
         private void loadImpactAreas()
@@ -135,19 +133,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             if(SelectedRow != null)
             {
-                ManualStageDamageRowItem currentRI = SelectedRow;
-                try
-                {
-                    //UncertainPairedData coordinatesFunction = currentRI.EditorVM.CreateFunctionFromTables();
-                    //currentRI.EditorVM.Function = coordinatesFunction;
-                    //currentRI.ComputeComponent = 
-                }
-                catch(InvalidConstructorArgumentsException ex)
-                {
-                    String msg = "Unable to copy current coordinates function:" + Environment.NewLine + ex.Message;
-                    MessageBox.Show(msg, "Unable to Copy", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
                 int lastRowId = Rows[Rows.Count - 1].ID;
                 ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(lastRowId+1, SelectedRow);
                 Rows.Add(newRow);
@@ -182,8 +167,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
             foreach (ManualStageDamageRowItem r in Rows)
             {
-                //in theory this call can throw an exception, but we handle that in the validation
-                //if we get here, then the curves should be constructable.
                 StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent);
                 curves.Add(curve);
             }
@@ -201,44 +184,43 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private bool AreThereTwoPointsPerCurve()
         {
-            return true;
-            //List<string> rowsThatFailed = new List<string>();
-            //foreach (ManualStageDamageRowItem r in Rows)
-            //{
-            //    UncertainPairedData coordFunc = r.EditorVM.CreateFunctionFromTables();
-            //    if (coordFunc.Xvals.Length < 2)
-            //    {
-            //        rowsThatFailed.Add(r.ID.ToString());
-            //    }
-            //}
+            List<string> rowsThatFailed = new List<string>();
+            foreach (ManualStageDamageRowItem r in Rows)
+            {
+                UncertainPairedData upd = r.ComputeComponent.SelectedItemToPairedData();
+                if (upd.Xvals.Length < 2)
+                {
+                    rowsThatFailed.Add(r.ID.ToString());
+                }
+            }
 
-            //if(rowsThatFailed.Count>0)
-            //{
-            //    //\u2022 is a bullet character
-            //    String msg = "Manually entered curves must have at least 2 points." + Environment.NewLine + "Curves in error:" + Environment.NewLine + "\t\u2022 ";
-            //    MessageBox.Show(msg + string.Join(Environment.NewLine + "\t\u2022 ", rowsThatFailed), "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-            //return rowsThatFailed.Count == 0;
+            if (rowsThatFailed.Count > 0)
+            {
+                //\u2022 is a bullet character
+                String msg = "Manually entered curves must have at least 2 points." + Environment.NewLine + "Curves in error:" + Environment.NewLine + "\t\u2022 ";
+                MessageBox.Show(msg + string.Join(Environment.NewLine + "\t\u2022 ", rowsThatFailed), "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return rowsThatFailed.Count == 0;
         }
 
         private bool AreManualCurvesValid()
         {
-            //ObservableCollection<ManualStageDamageRowItem> rows = Rows;
-            //foreach (ManualStageDamageRowItem r in rows)
-            //{
-            //    try
-            //    {
-            //        r.EditorVM.CreateFunctionFromTables();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        //we have an invalid curve
-            //        String msg = "An invalid curve was detected." + Environment.NewLine +
-            //            "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
-            //        MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
-            //        return false;
-            //    }
-            //}
+            ObservableCollection<ManualStageDamageRowItem> rows = Rows;
+            foreach (ManualStageDamageRowItem r in rows)
+            {
+                try
+                {
+                    UncertainPairedData upd = r.ComputeComponent.SelectedItemToPairedData();
+                }
+                catch (Exception ex)
+                {
+                    //we have an invalid curve
+                    String msg = "An invalid curve was detected." + Environment.NewLine +
+                        "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
+                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -288,7 +270,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void RowChanged()
         {
-            TableWithPlot = new TableWithPlotVM( SelectedRow.ComputeComponent);
+            if (SelectedRow != null)
+            {
+                TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
+            }
         }
 
     }

@@ -113,6 +113,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Methods
+
+        public ComputeComponentVM Clone()
+        {
+            XElement thisData = ToXML();
+            return new ComputeComponentVM(thisData);
+        }
+
         private void Initialize()
         {
             Options = new ObservableCollection<IDataProvider>()

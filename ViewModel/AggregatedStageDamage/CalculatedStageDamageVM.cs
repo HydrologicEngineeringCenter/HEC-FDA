@@ -11,10 +11,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {
-        private ObservableCollection<WaterSurfaceElevationElement> _WaterSurfaceElevations;
         private WaterSurfaceElevationElement _SelectedWaterSurfaceElevation;
-
-        private ObservableCollection<InventoryElement> _StructureInventoryElements;
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
@@ -39,11 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged();}
         }
 
-        public ObservableCollection<InventoryElement> Structures
-        {
-            get { return _StructureInventoryElements; }
-            set { _StructureInventoryElements = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<InventoryElement> Structures { get; } = new ObservableCollection<InventoryElement>();
 
         public InventoryElement SelectedStructures
         {
@@ -51,11 +44,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedStructureInventoryElement = value; NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations
-        {
-            get { return _WaterSurfaceElevations; }
-            set { _WaterSurfaceElevations = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations { get; } = new ObservableCollection<WaterSurfaceElevationElement>();
 
         public WaterSurfaceElevationElement SelectedWaterSurfaceElevation
         {
@@ -120,7 +109,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         private void loadDepthGrids()
         {
-            WaterSurfaceElevations = new ObservableCollection<WaterSurfaceElevationElement>();
             List<WaterSurfaceElevationElement> WSEElements = StudyCache.GetChildElementsOfType<WaterSurfaceElevationElement>();
             foreach (WaterSurfaceElevationElement elem in WSEElements)
             {
@@ -134,7 +122,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void loadStructureInventories()
         {
-            Structures = new ObservableCollection<InventoryElement>();
             List<InventoryElement> inventoryElements = StudyCache.GetChildElementsOfType<InventoryElement>();
             foreach(InventoryElement elem in inventoryElements)
             {
@@ -151,7 +138,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = new FdaValidationResult();
             if(SelectedWaterSurfaceElevation == null || SelectedStructures == null)
             {
-                vr.AddErrorMessage("A water surface elevation and a structure inventory selection is required to compute.");
+                vr.AddErrorMessage("A hydraulics data set and a structure inventory selection is required to compute.");
             }
             return vr;
         }
@@ -226,7 +213,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, null); 
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent); 
                 curves.Add(curve);
             }
             return curves;

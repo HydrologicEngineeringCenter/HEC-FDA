@@ -16,16 +16,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Notes
         #endregion
         #region Fields
-        private readonly CreationMethodEnum _Method;
         #endregion
         #region Properties
         public bool CanEdit { get; }
         public int SelectedWSE { get; set; }
         public int SelectedStructures { get; set; }
-        public CreationMethodEnum Method
-        {
-            get { return _Method; }
-        }
 
         public List<StageDamageCurve> Curves { get; }
         public bool IsManual { get; }
@@ -94,7 +89,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                  .WithSiblingRules(this);
 
             AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, actionManager);
-            vm.AddSiblingRules( this);
 
             string title = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
