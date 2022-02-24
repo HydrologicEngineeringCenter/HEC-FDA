@@ -89,7 +89,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                  .WithSiblingRules(this);
 
             AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, actionManager);
-            //vm.AddSiblingRules( this);
 
             string title = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
