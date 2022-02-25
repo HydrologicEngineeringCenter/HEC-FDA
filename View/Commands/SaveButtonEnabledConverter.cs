@@ -23,11 +23,11 @@ namespace HEC.FDA.View.Commands
             bool hasFatalError = (bool)values[0];
             bool hasChanges = (bool)values[1];
 
-            if(hasFatalError == true || hasChanges == false)
+            if(hasFatalError == true)
             {
-                //This used to be false but it wasn't always enabling after changing things in the the UI. 
+                //This used to be false if has changes == false but it wasn't always enabling after changing things in the the UI. 
                 //I decided that it would be best to have the save button always enabled for now. -Cody 2/25/22
-                return true;
+                return false;
             }
             else
             {
