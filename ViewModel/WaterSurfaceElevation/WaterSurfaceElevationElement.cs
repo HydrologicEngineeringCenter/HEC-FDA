@@ -12,10 +12,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         // Created Date: 9/6/2017 9:47:42 AM
         #endregion
         #region Fields
-        private const string _TableConstant = "Water Surface Elevation - ";
-
-        private string _Name;
-        private string _Description;
         private List<PathAndProbability> _RelativePathAndProbability;
         private List<int> _featureNodeHashs;
         #endregion

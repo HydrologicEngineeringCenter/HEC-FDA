@@ -25,7 +25,9 @@ namespace HEC.FDA.View.Commands
 
             if(hasFatalError == true || hasChanges == false)
             {
-                return false;
+                //This used to be false but it wasn't always enabling after changing things in the the UI. 
+                //I decided that it would be best to have the save button always enabled for now. -Cody 2/25/22
+                return true;
             }
             else
             {

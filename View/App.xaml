@@ -203,14 +203,6 @@
             <InventoryView:ImportStructuresFromShapefile/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
-            <InventoryView:ImportFromHAZUS/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
-            <InventoryView:ImportFromNSI/>
-        </DataTemplate>
-
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
