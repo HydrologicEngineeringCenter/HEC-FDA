@@ -54,7 +54,6 @@ namespace paireddata
 
 
         }
-        //, string xlabel, string ylabel, string name, string description, int ID
         
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
         {
@@ -94,6 +93,7 @@ namespace paireddata
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a > b)), "Y must be strictly monotonically increasing"));
                     break;
+                //TODO: These cases seem perfectly possible. Why are they commented out?
                 //case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
                 //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
                 //    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
@@ -144,18 +144,16 @@ namespace paireddata
                 
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    //Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
                     pairedData.ForceMonotonic();
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     Array.Sort(pairedData.Xvals);//bad news.
-                    // throw new Exception("the produced paired data is not monotonically increasing.");
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
                 {
-                   // throw new Exception("the produced paired data is not monotonically increasing.");
+                    //TODO: do something
                 }
 
                 

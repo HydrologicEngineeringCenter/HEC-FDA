@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Statistics.Distributions;
 using Utilities;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace Statistics.GraphicalRelationships
 {
-    public class Graphical
+    public class Graphical: HEC.MVVMFramework.Base.Implementations.Validation
     {
         #region Fields
         private double _pMax; //the maximum exceedance probability possible in the frequency curve
@@ -131,11 +132,28 @@ namespace Statistics.GraphicalRelationships
             {
                 _InputFlowOrStageValues = flowOrStageValues;
             }
+            AddRules();
         }
         #endregion
 
-
         #region Methods
+        private void AddRules()
+        {
+                AddSinglePropertyRule(nameof(_InputExceedanceProbabilities), new Rule(() => IsArrayValid(_InputExceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
+                AddSinglePropertyRule(nameof(_InputFlowOrStageValues), new Rule(() => IsArrayValid(_InputFlowOrStageValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+        }
+        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        {
+            if (arrayOfData == null) return false;
+            for (int i = 0; i < arrayOfData.Length - 1; i++)
+            {
+                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         /// <summary>
         /// This method implements the less simple method to compute confidence limits about a graphical frequency relationship. 
         /// </summary>
@@ -153,30 +171,6 @@ namespace Statistics.GraphicalRelationships
             _FlowOrStageDistributions = ConstructNormalDistributions();
         }
       
-        private bool IsMonotonicallyIncreasing(double[] arrayOfData)
-        {
-
-            for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {
-                if (arrayOfData[i] >= arrayOfData[i + 1])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        private bool IsMonotonicallyDecreasing(double[] arrayOfData)
-        {
-
-            for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {
-                if (arrayOfData[i] <= arrayOfData[i + 1])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
         private double[] LogFlows(double[] unloggedFlows)
         {
             double[] loggedFlows = new double[unloggedFlows.Length];

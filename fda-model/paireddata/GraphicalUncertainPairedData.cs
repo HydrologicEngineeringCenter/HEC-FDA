@@ -76,6 +76,7 @@ namespace paireddata
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, maximumProbability, minimumProbability, usingFlows, flowsAreNotLogged);
+            graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
             _NonMontonicDistributions = graphical.FlowOrStageDistributions;
@@ -84,6 +85,7 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name);
             AddRules();
+
         }
         #endregion
 
