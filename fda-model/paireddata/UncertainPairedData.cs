@@ -50,6 +50,9 @@ namespace paireddata
         public UncertainPairedData()
         {
             _metadata = new CurveMetaData();
+            AddRules();
+
+
         }
         //, string xlabel, string ylabel, string name, string description, int ID
         
@@ -58,18 +61,21 @@ namespace paireddata
             _xvals = xs;
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel,ylabel,name);
+            AddRules();
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
         {
             _xvals = xs;
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel, ylabel, name, category);
+            AddRules();
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
             _xvals = xs;
             _yvals = ys;
             _metadata = metadata;
+            AddRules();
         }
         #endregion
 
