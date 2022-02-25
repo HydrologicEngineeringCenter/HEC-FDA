@@ -15,14 +15,21 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="5" Orientation="Vertical">
-            <StackPanel Height="23" Name="NameStackPanel" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="2">
-                <TextBlock Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBox Margin="5,0,0,0" Name="NameTextBox" Text="{Binding Path=Name,ValidatesOnDataErrors=True}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="156" />
-                <TextBlock Text="Description:" VerticalAlignment="Center" Margin="5,0,0,0" />
-                <UserControls:TextBoxDescription  Text="{Binding Description}" Margin="5"/>
+        <StackPanel Grid.Row="0" Margin="5" Orientation="Vertical" >
+            
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <TextBlock Grid.Column="0" Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Margin="5,0,0,0" Name="NameTextBox" Text="{Binding Path=Name,ValidatesOnDataErrors=True}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="156" />
+                    <TextBlock  Text="Description:" VerticalAlignment="Center" Margin="5,0,0,0"  />
+                </StackPanel>
+                <UserControls:TextBoxDescription Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding Description}" Margin="5"/>
 
-            </StackPanel>
+            </Grid>
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
                 <TextBlock Name="SILabel" Text="Structure Inventory Shapefile:" TextAlignment="left" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Grid Height="27" Name="SIStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">

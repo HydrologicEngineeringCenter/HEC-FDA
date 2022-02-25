@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             loadDamageCategories();
             Rows.Add(CreateNewRow(1));
             SelectedRow = Rows[0];
-            TableWithPlot = new TableWithPlotVM(CreateDefaultCurve());
+            TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
         }
 
         public ManualStageDamageVM(List<StageDamageCurve> curves)
