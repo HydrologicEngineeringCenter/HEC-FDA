@@ -2,6 +2,7 @@
 using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
+using paireddata;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
@@ -12,6 +13,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Name = "LogNormal";
             Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0)));
             Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2)));
+            LinkList();
+        }
+        public LogNormalDataProvider(UncertainPairedData upd)
+        {
+            Name = "LogNormal";
+            for (int i = 0; i < upd.Xvals.Length; i++)
+            {
+                Data.Add(new LogNormalRow(upd.Xvals[i], (LogNormal)upd.Yvals[i]));
+            }
             LinkList();
         }
         override public void AddUnlinkedRow(int i)

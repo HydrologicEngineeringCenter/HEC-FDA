@@ -1,10 +1,14 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using FdaLogging;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
-using HEC.Plotting.SciChart2D.ViewModel;
+using HEC.FDA.ViewModel.Utilities;
+using OxyPlot;
+using paireddata;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -15,17 +19,32 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Fields     
         private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
+        private const string MEAN = "Mean: ";
+        private const string SKEW = "Skew: ";
+        private const string ST_DEV = "St. Dev.: ";
+
         private double _Mean = 2;
         private double _StDev = 2;
         private double _Skew = 2;
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
-        private string _FitToFlowMean = "Mean: N/A";
-        private string _FitToFlowStDev = "St. Dev.: N/A";
-        private string _FitToFlowSkew = "Skew: N/A";
+        private string _FitToFlowMean = MEAN + "N/A";
+        private string _FitToFlowStDev = ST_DEV + "N/A";
+        private string _FitToFlowSkew = SKEW + "N/A";
         private int _POR = 200;
+        private PlotModel _plotModel;
+
         #endregion
         #region Properties
+        public PlotModel PlotModel
+        {
+            get { return _plotModel; }
+            set
+            {
+                _plotModel = value;
+                NotifyPropertyChanged();
+            }
+        }
         public string FitToFlowMean
         {
             get { return _FitToFlowMean; }
@@ -73,9 +92,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public bool IsLogFlow { get; set; }
 
-        public SciChart2DChartViewModel StandardChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
-        public SciChart2DChartViewModel FitToFLowChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
-
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
             get  {return _AnalyticalFlows; }
@@ -91,24 +107,49 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
-            UpdateChartLineData();
             LoadDefaultFlows();
+            InitializePlotModel();
         }
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
-            UpdateChartLineData();
             if(elem.AnalyticalFlows.Count == 0)
             {
                 LoadDefaultFlows();
             }
+            InitializePlotModel();
         }
         #endregion
         #region Voids     
+        private void InitializePlotModel()
+        {
+            _plotModel = new PlotModel();
+            _plotModel.Title = "Flow-Frequency";
+            _plotModel.LegendPosition = LegendPosition.BottomRight;
+
+            OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis()
+            {
+                Position = OxyPlot.Axes.AxisPosition.Bottom,
+                StartPosition = 1,
+                EndPosition = 0,
+                Title = "Frequency"
+            };
+            _plotModel.Axes.Add(x);
+
+            OxyPlot.Axes.LinearAxis y = new OxyPlot.Axes.LinearAxis()
+            {
+                Position = OxyPlot.Axes.AxisPosition.Left,
+                Title = "Flow"
+            };
+            _plotModel.Axes.Add(y);
+
+            UpdateChartLineData();
+        }
+
         private void LoadDefaultFlows()
         {
-            for(int i = 0;i<10;i++)
+            for(int i = 1;i<11;i++)
             {
-                FlowDoubleWrapper fdw = new FlowDoubleWrapper(i);
+                FlowDoubleWrapper fdw = new FlowDoubleWrapper(i*1000);
                 fdw.FlowChanged += FlowValue_FlowChanged;
                 AnalyticalFlows.Add(fdw);
             }
@@ -121,129 +162,107 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public void UpdateChartLineData()
         {
-            try
+            _plotModel.Series.Clear();
+            OxyPlot.Series.LineSeries lineSeries = new OxyPlot.Series.LineSeries();
+            UncertainPairedData function = GetCoordinatesFunction();
+            if (function != null)
             {
-                //UncertainPairedData function = GetCoordinatesFunction();
-
-                //todo: leaving this here until we get the new table and plot 
-
-                //List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
-                //StandardChartViewModel.LineData.Set(lineData);
+                for (int i = 0; i < function.Xvals.Length; i++)
+                {
+                    //todo: should we do uncertainty bounds around the y?
+                    double xVal = function.Xvals[i];
+                    double yVal = function.Yvals[i].InverseCDF(.5);
+                    lineSeries.Points.Add(new DataPoint(xVal, yVal));
+                }
+                _plotModel.Series.Add(lineSeries);
             }
-            catch (Exception e)
+            else
             {
-                //do nothing?
+                _plotModel.Series.Clear();
             }
+            _plotModel.InvalidatePlot(true);
         }
 
         #endregion
 
-        //public override UncertainPairedData GetCoordinatesFunction()
-        //{
-        //    double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
-        //    List<double> yVals = new List<double>();
-
-        //    try
-        //    {
-        //        if (IsAnalytical)
-        //        {
-        //            LogPearson3 lp3 = new LogPearson3();
-        //            if (IsStandard)
-        //            {
-        //                lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
-        //            }
-        //            else
-        //            {
-        //                //this is fit to flow
-        //                List<double> flows = new List<double>();
-        //                foreach(FlowDoubleWrapper d in AnalyticalFlows)
-        //                {
-        //                    flows.Add(d.Flow);
-        //                }
-
-        //                lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
-        //            }
-        //            lp3.Validate();
-        //            if (lp3.HasErrors)
-        //            {
-        //                System.Collections.IEnumerable enumerable = lp3.GetErrors();
-        //                ErrorLevel errorLevel = lp3.ErrorLevel;
-        //                //todo: do what?
-        //            }
-        //            else
-        //            {
-        //                double mean = lp3.Mean;
-        //                double stDev = lp3.StandardDeviation;
-        //                double skew = lp3.Skewness;
-        //                FitToFlowMean = "Mean: " + mean.ToString(".##");
-        //                FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
-        //                FitToFlowSkew = "Skew: " + skew.ToString(".##");
-        //                foreach (double prob in probs)
-        //                {
-        //                    yVals.Add(lp3.InverseCDF(prob));
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        FitToFlowMean = "Mean: N/A";
-        //        FitToFlowStDev = "Mean: N/A";
-        //        FitToFlowSkew = "Mean: N/A";
-        //        //todo: do what?
-        //        //return Utilities.DefaultPairedData.CreateDefaultDeterminateUncertainPairedData(xs, ys, "", "", "");
-        //    }
-        //    FitToFlowMean = "Mean: N/A";
-        //    FitToFlowStDev = "Mean: N/A";
-        //    FitToFlowSkew = "Mean: N/A";
-        //    return Utilities.UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
-        //}
-
-        //todo: is this necessary?
-        public bool CanCreateValidFunction()
+        public LogPearson3 CreateLP3()
         {
-            List<double> xs = new List<double>();
-            List<double> ys = new List<double>();
             LogPearson3 lp3 = new LogPearson3();
-
-            try
+            if (IsAnalytical)
             {
-                if (IsAnalytical)
+                if (IsStandard)
                 {
-                    if (IsStandard)
+                    lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
+                }
+                else
+                {
+                    //this is fit to flow
+                    List<double> flows = new List<double>();
+                    foreach (FlowDoubleWrapper d in AnalyticalFlows)
                     {
-                        lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
-                    }
-                    else
-                    {
-                        List<double> flows = new List<double>();
-                        foreach (FlowDoubleWrapper d in AnalyticalFlows)
-                        {
-                            flows.Add(d.Flow);
-                        }
-
-                        lp3 = (LogPearson3)lp3.Fit(flows.ToArray());                     
+                        flows.Add(d.Flow);
                     }
 
-                    lp3.Validate();
-                    if (!lp3.HasErrors)
-                    {
-                        return true;
-                    }
+                    lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
+                }
+                
+            }
+            return lp3;
+        }
+
+        public FdaValidationResult IsLP3Valid(LogPearson3 lp3)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            lp3.Validate();
+            if (lp3.HasErrors)
+            {
+                List<string> errors = lp3.GetErrors().Cast<string>().ToList();
+                vr.AddErrorMessages(errors);
+            }
+            return vr;
+        }
+
+        public UncertainPairedData GetCoordinatesFunction()
+        {
+            UncertainPairedData upd = null;
+            LogPearson3 lp3 = CreateLP3();
+            FdaValidationResult result = IsLP3Valid(lp3);
+            if (result.IsValid)
+            {
+
+                double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
+                List<double> yVals = new List<double>();
+                foreach (double prob in probs)
+                {
+                    yVals.Add(lp3.InverseCDF(prob));
+                }
+                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
+                if (!IsStandard)
+                {
+                    //if we are on "fit to flows" then update the labels.
+                    FitToFlowMean = MEAN + Math.Round(lp3.Mean, 2);
+                    FitToFlowSkew = SKEW + Math.Round(lp3.Skewness, 2);
+                    FitToFlowStDev = ST_DEV + Math.Round(lp3.StandardDeviation, 2);
                 }
             }
-            catch (Exception e)
+            else
             {
-                return false;
-            }
-            return false;
+                //clear the labels
+                FitToFlowMean = MEAN + "N/A";
+                FitToFlowStDev = ST_DEV + "N/A";
+                FitToFlowSkew = SKEW + "N/A";
 
+                LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, result.ErrorMessage);
+                MessageRows.Add(logItem);
+            }
+            return upd;
         }
 
         public override void Save()
         {
-            UpdateChartLineData();
-            if (CanCreateValidFunction())
+            LogPearson3 lp3 = CreateLP3();
+            FdaValidationResult result = IsLP3Valid(lp3);
+            if (result.IsValid)
             {
                 string editDate = DateTime.Now.ToString("G");
                 double mean = Mean;
@@ -271,10 +290,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             else
             {
-                //todo: i commented this out 2/21/22
-                //update error saving message
-                //TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not construct a valid function"));
-                //UpdateMessages(true);
+                LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not save with an invalid function.");
+                MessageRows.Add(logItem);
             }
         }
 
@@ -283,8 +300,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             for(int i = 0;i<numRows;i++)
             {
                 FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
+                emptyFlow.FlowChanged += FlowValue_FlowChanged;
                 AnalyticalFlows.Insert(startRow, emptyFlow);
             }
+            UpdateChartLineData();
         }
 
         /// <summary>
@@ -295,8 +314,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         /// <param name="numRows"></param>
         public void AddRow()
         {          
-            FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-            AnalyticalFlows.Add(emptyFlow);         
+            FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(1000);
+            emptyFlow.FlowChanged += FlowValue_FlowChanged;
+            AnalyticalFlows.Add(emptyFlow);
+            UpdateChartLineData();
         }
 
         public void DeleteRows(List<int> indexes)
@@ -305,11 +326,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 AnalyticalFlows.RemoveAt(indexes[i] - i);
             }
-            //if all rows are gone then tell the parent so that it can delete this table
+            //if all rows are gone then add a new default row
             if (AnalyticalFlows.Count == 0)
             {
-                AnalyticalFlows.Add(new FlowDoubleWrapper(0));
+                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
+                emptyFlow.FlowChanged += FlowValue_FlowChanged;
+                AnalyticalFlows.Add(emptyFlow);
             }
+            UpdateChartLineData();
         }
     }
 }

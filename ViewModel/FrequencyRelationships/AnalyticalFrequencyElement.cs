@@ -89,6 +89,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
+            ComputeComponentVM = new ComputeComponentVM();
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }
@@ -136,21 +137,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
                 elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows, elem.ComputeComponentVM, elem.ID);
-        }
-       
-        private ObservableCollection<FlowDoubleWrapper> ConvertDoublesToFlowWrappers(List<double> flows)
-        {
-            ObservableCollection<FlowDoubleWrapper> flowWrappers = new ObservableCollection<FlowDoubleWrapper>();
-            if (flows != null)
-            {
-                foreach (double d in flows)
-                {
-                    flowWrappers.Add(new FlowDoubleWrapper(d));
-                }
-            }
-            return flowWrappers;
-        }
-               
+        }     
         #endregion
 
         List<double> ConvertStringToFlows(string flows)
@@ -168,7 +155,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             catch (Exception e)
             {
-                //couldn't convert to doubles
+                //todo: Do something? Couldn't convert to doubles
             }
             return flowDoubles;
         }

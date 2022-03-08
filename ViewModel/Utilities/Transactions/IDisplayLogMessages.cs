@@ -7,8 +7,8 @@ namespace HEC.FDA.ViewModel.Utilities.Transactions
     public interface IDisplayLogMessages
     {
         void UpdateMessages(bool saving);
-        void FilterRowsByLevel(LoggingLevel level);
-        void DisplayAllMessages();
+        //void FilterRowsByLevel(LoggingLevel level);
+        //void DisplayAllMessages();
         LoggingLevel SaveStatusLevel { get; }
         bool IsExpanded { get; set; }
         ObservableCollection<LogItem> MessageRows { get; set; }

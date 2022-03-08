@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using paireddata;
+using Statistics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 NotifyPropertyChanged();
             }
         }
-        public ObservableCollection<IDataProvider> Options { get; set; }
+        public ObservableCollection<IDataProvider> Options { get; } = new ObservableCollection<IDataProvider>();
         public IDataProvider SelectedItem
         {
             get
@@ -120,16 +121,50 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             return new ComputeComponentVM(thisData);
         }
 
+        /// <summary>
+        /// Use the default ctor and then call this to assign a specified uncertain paired data
+        /// </summary>
+        /// <param name="upd"></param>
+        public void SetPairedData(UncertainPairedData upd)
+        {
+            if (upd.Yvals.Length > 0)
+            {
+                IDistributionEnum distType = upd.Yvals[0].Type;
+                switch(distType)
+                {
+                    case IDistributionEnum.Deterministic:
+                        Options[0] = new DeterministicDataProvider(upd);
+                        SelectedItem = Options[0];
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Options[1] = new UniformDataProvider(upd);
+                        SelectedItem = Options[1];
+                        break;
+                    case IDistributionEnum.Normal:
+                        Options[2] = new NormalDataProvider(upd);
+                        SelectedItem = Options[2];
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Options[3] = new TriangularDataProvider(upd);
+                        SelectedItem = Options[3];
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        Options[4] = new LogNormalDataProvider(upd);
+                        SelectedItem = Options[4];
+                        break;
+                }
+            }
+
+        }
+
         private void Initialize()
         {
-            Options = new ObservableCollection<IDataProvider>()
-            {
-                new DeterministicDataProvider(),
-                new UniformDataProvider(),
-                new NormalDataProvider(),
-                new TriangularDataProvider(),
-                new LogNormalDataProvider()
-            };
+            Options.Add( new DeterministicDataProvider());
+            Options.Add(new UniformDataProvider());
+            Options.Add(new NormalDataProvider());
+            Options.Add(new TriangularDataProvider());
+            Options.Add(new LogNormalDataProvider());
+
             SelectedItem = Options.First();
             // This is just so our initial set of data we load is valid. Eventually we can crush this if condition. 
             if (Name == "Fragility Curve")
@@ -168,7 +203,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         public virtual void LoadFromXML(XElement element)
         {
-            Options = new ObservableCollection<IDataProvider>();
             string selectedItemName = element.Attribute("selectedItem")?.Value;
             foreach (XElement updEl in element.Elements())
             {

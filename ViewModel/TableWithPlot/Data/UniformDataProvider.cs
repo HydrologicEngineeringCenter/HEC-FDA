@@ -15,6 +15,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Data.Add(new UniformRow(2.0d, new Uniform(0, 2)));
             LinkList();
         }
+        public UniformDataProvider(UncertainPairedData upd)
+        {
+            Name = "Uniform";
+            for (int i = 0; i < upd.Xvals.Length; i++)
+            {
+                Data.Add(new UniformRow(upd.Xvals[i],  (Uniform)upd.Yvals[i]));
+            }
+            LinkList();
+        }
         override public void AddUnlinkedRow(int i)
         {
             double min0 = 0.0;

@@ -276,9 +276,9 @@ namespace HEC.FDA.ViewModel.Utilities
                     //message user if it does not.
                     if (row.Name.Equals(damageReachName))
                     {
-                        //impactAreaMatches = true;
-                        //todo: uncomment and handle it
-                        //curve = new StageDamageCurve(row, damCat, stageDamagePairedData);
+                        ComputeComponentVM vm = new ComputeComponentVM();
+                        vm.SetPairedData(stageDamagePairedData);
+                        curve = new StageDamageCurve(row, damCat, vm);
                         break;
                     }
                     else
