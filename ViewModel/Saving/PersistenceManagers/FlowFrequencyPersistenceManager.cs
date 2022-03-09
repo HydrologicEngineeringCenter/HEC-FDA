@@ -24,7 +24,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public static readonly string ST_DEV = "StDev";
         public static readonly string SKEW = "Skew";
         public static readonly string FIT_TO_FLOWS = "FitToFlows";
-        public static readonly string IS_LOG = "IsLog";
         public static readonly string FLOWS = "Flows";
 
         private const int DESC_COL = 2;
@@ -187,7 +186,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 {
                     XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
                     analyticalElem.Add(fitToFlowsElem);
-                    fitToFlowsElem.SetAttributeValue(IS_LOG, elem.IsLogFlow);
                     fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
                 }
             }

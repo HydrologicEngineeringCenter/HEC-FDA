@@ -15,8 +15,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #region Backing Fields
         private PlotModel _plotModel;
         private ComputeComponentVM _computeComponentVM;
-        //private bool _plotExtended = true;
-        //private bool _tableExtended = true;
+        private bool _plotExtended = true;
+        private bool _tableExtended = true;
         public event UpdatePlotEventHandler UpdatePlotEvent;
         private bool _reverseXAxis;
         #endregion
@@ -35,44 +35,24 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             get { return _computeComponentVM; }
         }
-        //public bool PlotExtended
-        //{
-        //    get { return _plotExtended; }
-        //    set { _plotExtended = value;
-        //        NotifyPropertyChanged();
-        //    }
-        //}
-        //public bool TableExtended
-        //{
-        //    get { return _tableExtended; }
-        //    set { _tableExtended = value;
-        //        NotifyPropertyChanged();
-        //    }
-        //}
-
-
-        #region NamedActions
-        //private NamedAction _plotExtender;
-        //private NamedAction _tableExtender;
-        //public NamedAction PlotExtender
-        //{
-        //    get { return _plotExtender; }
-        //    set
-        //    {
-        //        _plotExtender = value;
-        //        NotifyPropertyChanged();
-        //    }
-        //}
-        //public NamedAction TableExtender
-        //{
-        //    get { return _tableExtender; }
-        //    set
-        //    {
-        //        _tableExtender = value;
-        //        NotifyPropertyChanged();
-        //    }
-        //}
-        #endregion
+        public bool PlotExtended
+        {
+            get { return _plotExtended; }
+            set
+            {
+                _plotExtended = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public bool TableExtended
+        {
+            get { return _tableExtended; }
+            set
+            {
+                _tableExtended = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -85,12 +65,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
 
         #endregion
-        public TableWithPlotVM(XElement ele)
-        {
-            LoadFromXML(ele);
-            Initialize();
-
-        }
 
         #region Methods
         private void Initialize()
@@ -113,38 +87,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
             SelectedItemToPlotModel();
             AddHandlers();
-
-            //PlotExtender = new NamedAction();
-            //PlotExtender.Name = ">";
-            //PlotExtender.Action = PlotExtenderAction;
-            //TableExtender = new NamedAction();
-            //TableExtender.Name= "<";
-            //TableExtender.Action = TableExtenderAction;
         }
-        //private void PlotExtenderAction(object sender, EventArgs e)
-        //{
-        //    if(PlotExtender.Name == "<")
-        //    {
-        //        PlotExtender.Name = ">";
-        //    }
-        //    else
-        //    {
-        //        PlotExtender.Name = "<";
-        //    }
-        //    PlotExtended = !PlotExtended;
-        //}
-        //private void TableExtenderAction(object sender, EventArgs e)
-        //{
-        //    if (TableExtender.Name == "<")
-        //    {
-        //        TableExtender.Name = ">";
-        //    }
-        //    else
-        //    {
-        //        TableExtender.Name = "<";
-        //    }
-        //    TableExtended = !TableExtended;
-        //}
+        
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
@@ -158,28 +102,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             return ComputeComponentVM.SelectedItem.ToUncertainPairedData(ComputeComponentVM.XLabel, ComputeComponentVM.YLabel, ComputeComponentVM.Name, ComputeComponentVM.Description, "testCategory?");
         }
 
-        private void LoadFromXML(XElement ele)
-        {
-            //_reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);
-            //var elements = ele.Descendants();
-            //XElement computeCompElement = elements.First();
-            //string componentType = (computeCompElement.Attribute("Name").Value);
-            //switch (componentType)
-            //{
-            //    case "Fragility Curve":
-            //        _computeComponentVM = new FragilityComponentVM(computeCompElement);
-            //        break;
-            //    case "Rating Curve":
-            //        _computeComponentVM = new ComputeComponentVM(computeCompElement);
-            //        break;
-            //    case "Graphical Flow Frequency":
-            //        _computeComponentVM = new GraphicalVM(computeCompElement);
-            //        break;
-            //    case "Stage-Damage Curve":
-            //        _computeComponentVM = new ComputeComponentVM(computeCompElement);
-            //        break;
-            //}
-        }
         private void AddHandlers() //Make sure new rows get added to this.
         {
             foreach (IDataProvider idp in _computeComponentVM.Options)

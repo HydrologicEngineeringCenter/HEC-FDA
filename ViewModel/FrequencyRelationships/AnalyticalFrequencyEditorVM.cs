@@ -90,7 +90,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _POR; }
             set { _POR = value; UpdateChartLineData(); NotifyPropertyChanged(); }
         }
-        public bool IsLogFlow { get; set; }
 
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
@@ -110,16 +109,33 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             LoadDefaultFlows();
             InitializePlotModel();
         }
-        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
-            if(elem.AnalyticalFlows.Count == 0)
-            {
-                LoadDefaultFlows();
-            }
+            IsAnalytical = elem.IsAnalytical;
+            IsStandard = elem.IsStandard;
+            LoadFlows(elem);
             InitializePlotModel();
         }
         #endregion
-        #region Voids     
+        #region Voids  
+        
+        private void LoadFlows(AnalyticalFrequencyElement elem)
+        {
+            if (elem.AnalyticalFlows.Count == 0)
+            {
+                LoadDefaultFlows();
+            }
+            else
+            {
+                foreach (double flow in elem.AnalyticalFlows)
+                {
+                    FlowDoubleWrapper fdw = new FlowDoubleWrapper(flow);
+                    fdw.FlowChanged += FlowValue_FlowChanged;
+                    AnalyticalFlows.Add(fdw);
+                }
+            }
+        }
+
         private void InitializePlotModel()
         {
             _plotModel = new PlotModel();
@@ -204,8 +220,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     }
 
                     lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
-                }
-                
+                }               
             }
             return lp3;
         }
@@ -271,7 +286,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 int por = PeriodOfRecord;
                 bool isAnalytical = IsAnalytical;
                 bool isStandard = IsStandard;
-                bool isLogFlow = IsLogFlow;
                 List<double> analyticalFlows = new List<double>();
                 foreach (FlowDoubleWrapper d in AnalyticalFlows)
                 {
@@ -285,7 +299,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
 
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
-                    isLogFlow, analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
+                     analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
                 base.Save(elem);
             }
             else

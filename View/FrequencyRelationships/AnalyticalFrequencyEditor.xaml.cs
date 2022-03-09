@@ -172,20 +172,5 @@ namespace HEC.FDA.View.FrequencyRelationships
             return null;
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
-            {
-                vm.UpdateChartLineData();
-            }
-        }
-
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
-            {
-                vm.UpdateChartLineData();
-            }
-        }
     }
 }

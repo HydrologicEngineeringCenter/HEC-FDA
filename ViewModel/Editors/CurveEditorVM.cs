@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Editors
@@ -27,20 +26,5 @@ namespace HEC.FDA.ViewModel.Editors
             TableWithPlot = new TableWithPlotVM(elem.ComputeComponentVM);
         }
         #endregion
-
-        public int GetElementID(SavingBase persistenceManager)
-        {
-            int id = -1;
-            if (IsCreatingNewElement)
-            {
-                id = persistenceManager.GetNextAvailableId();
-            }
-            else
-            {
-                id = OriginalElement.ID;
-            }
-            return id;
-        }
-
     }
 }

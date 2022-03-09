@@ -19,6 +19,8 @@
             get { return _IsChecked; }
             set { _IsChecked = value; NotifyPropertyChanged(); }
         }
+
+        public bool IsEnabled { get; }
         public bool IsVRT
         {
             get { return _IsVRT; }
@@ -40,25 +42,16 @@
         }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationRowItemVM(bool isChecked,string name, string path, double probability)
+        public WaterSurfaceElevationRowItemVM(bool isChecked,string name, string path, double probability, bool isEnabled)
         {
+            IsEnabled = isEnabled;
             Path = path;
             ReturnYear = 1 / probability;
             IsChecked = isChecked;
             Name = name;
             Probability = probability;
         }
+        #endregion
 
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-     
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
     }
 }

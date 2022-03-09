@@ -12,6 +12,7 @@
              d:DesignHeight="400" d:DesignWidth="650">
     <UserControl.Resources>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
+        <Utilities:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +20,6 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
-
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="Auto" />
@@ -79,7 +79,7 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
                 <RadioButton x:Name="rad_standard" Content="Fit to Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
-                <RadioButton x:Name="rad_fitToFlows" Content="Fit to Flows" Checked="rad_fitToFlows_Checked" Margin="5"/>
+                <RadioButton x:Name="rad_fitToFlows" Content="Fit to Flows" IsChecked="{Binding IsStandard, Converter={StaticResource InverseBooleanConverter}}" Checked="rad_fitToFlows_Checked" Margin="5"/>
             </StackPanel>
 
             <Grid x:Name="grid_analyticalLeft_standard" Grid.Row="1" Grid.Column="0" Visibility="Visible">
@@ -109,14 +109,11 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0" Content="Is Logged Flow" IsChecked="{Binding IsLogFlow}" Unchecked="CheckBox_Unchecked" Checked="CheckBox_Checked" Margin="10,0,0,0" />
-
-                    <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding AnalyticalFlows}" 
+                    <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="0" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding AnalyticalFlows}" 
                    HorizontalAlignment="Left" Margin="5" BorderThickness="1" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
@@ -126,7 +123,7 @@
                         </DataGrid.Columns>
                     </controls:CopyPasteDataGrid>
 
-                    <Grid Grid.Row="2" Grid.Column="0">
+                    <Grid Grid.Row="1" Grid.Column="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
