@@ -1,14 +1,13 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
+using paireddata;
 using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -25,7 +24,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public double Mean { get; set; }
         public double StDev { get; set; }
         public double Skew { get; set; }
-        public bool IsLogFlow { get; set; }
         public List<double> AnalyticalFlows { get; } = new List<double>();
         public List<double> GraphicalFlows { get; } = new List<double>();
 
@@ -34,7 +32,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, ComputeComponentVM function, int id) : base(id)
+            double mean, double stDev, double skew, List<double> analyticalFlows, List<double> graphicalFlows, ComputeComponentVM function, int id) : base(id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -42,7 +40,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Mean = mean;
             StDev = stDev;
             Skew = skew;
-            IsLogFlow = isLogFlow;
             AnalyticalFlows = analyticalFlows;
             GraphicalFlows = graphicalFlows;
             LastEditDate = lastEditDate;
@@ -73,7 +70,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Skew = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.SKEW);
 
             XElement fitToFlowsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.FIT_TO_FLOWS);
-            IsLogFlow = (bool)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.IS_LOG);
             string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
             AnalyticalFlows = ConvertStringToFlows(flows);
 
@@ -126,7 +122,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
@@ -136,7 +132,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows, elem.ComputeComponentVM, elem.ID);
+                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.GraphicalFlows, elem.ComputeComponentVM, elem.ID);
         }     
         #endregion
 

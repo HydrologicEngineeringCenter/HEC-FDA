@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -93,11 +94,48 @@ namespace HEC.FDA.ViewModel.Editors
             }
         }
 
-        public abstract void Save();
         /// <summary>
         /// This will get called when the OK or save button is clicked on the editor
         /// </summary>
         public abstract void Save();
+
+        /// <summary>
+        /// This will get called when the OK or save button is clicked on the editor
+        /// </summary>
+        public void Save(ChildElement elementToSave)
+        {
+            InTheProcessOfSaving = true;
+            LastEditDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = LastEditDate;
+            //elementToSave.Curve = Curve;
+            IElementManager elementManager = PersistenceFactory.GetElementManager(elementToSave);
+
+            if (IsCreatingNewElement)
+            {
+                elementManager.SaveNew(elementToSave);
+                IsCreatingNewElement = false;
+            }
+            else
+            {
+                elementManager.SaveExisting(elementToSave);
+            }
+
+            SavingText = CreateLastSavedText(elementToSave);
+            HasChanges = false;
+            HasSaved = true;
+            OriginalElement = elementToSave;
+        }
+
+        /// <summary>
+        /// I wanted this here so that the text could live in one place.
+        /// That way if we want to change it, it should change all the places that use it.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <returns></returns>
+        private string CreateLastSavedText(ChildElement elem)
+        {
+            return "Last Saved: " + elem.LastEditDate;
+        }
 
         public override void AddValidationRules()
         {
@@ -204,7 +242,7 @@ namespace HEC.FDA.ViewModel.Editors
             }
 
         }
-        private void SiblingNameChanged(object sender, Saving.ElementUpdatedEventArgs args)
+        private void SiblingNameChanged(object sender, ElementUpdatedEventArgs args)
         {
             string newName = args.NewElement.Name;
             //this gets called even if it is changing its own name
@@ -220,7 +258,7 @@ namespace HEC.FDA.ViewModel.Editors
             }, "This name is already used. Names must be unique.");
         }
 
-        private void SiblingWasAdded(object sender, Saving.ElementAddedEventArgs args)
+        private void SiblingWasAdded(object sender, ElementAddedEventArgs args)
         {
             string newName = args.Element.Name;
             //this gets called even if it is changing its own name
@@ -258,6 +296,20 @@ namespace HEC.FDA.ViewModel.Editors
                 }, "This name is already used. Names must be unique.");
             }
 
+        }
+
+        public int GetElementID(SavingBase persistenceManager)
+        {
+            int id = -1;
+            if (IsCreatingNewElement)
+            {
+                id = persistenceManager.GetNextAvailableId();
+            }
+            else
+            {
+                id = OriginalElement.ID;
+            }
+            return id;
         }
 
     }

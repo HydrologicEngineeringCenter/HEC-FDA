@@ -1,82 +1,70 @@
-﻿namespace HEC.FDA.ViewModel.FrequencyRelationships
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+
+namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    class FrequencyRelationshipsOwnerElement : Utilities.ParentElement
+    public class FrequencyRelationshipsOwnerElement : ParentElement
     {
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
-        #endregion
         #region Constructors
         public FrequencyRelationshipsOwnerElement( ) : base()
         {
             Name = "Frequency Relationships";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
-            //Utilities.NamedAction add = new Utilities.NamedAction();
-            //add.Header = "Create New Levee Feature";
-            //add.Action = AddNewLeveeFeature;
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
+            NamedAction createNew = new NamedAction();
+            createNew.Header = "Create New Analyitical Flow Frequency Curve...";
+            createNew.Action = AddNewFlowFrequencyCurve;
 
-            //List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
-            //localActions.Add(add);
+            NamedAction importFlowFreq = new NamedAction();
+            importFlowFreq.Header = StringConstants.ImportFromOldFda("Analyitical Flow Frequency");
+            importFlowFreq.Action = ImportFlowFreqFromAscii;
 
-            //Actions = localActions;
+            List<NamedAction> localActions = new List<NamedAction>();
+            localActions.Add(createNew);
+            localActions.Add(importFlowFreq);
+
+            Actions = localActions;
+
+            StudyCache.FlowFrequencyAdded += AddFlowFrequencyElement;
+            StudyCache.FlowFrequencyRemoved += RemoveFlowFrequencyElement;
+            StudyCache.FlowFrequencyUpdated += UpdateFlowFrequencyElement;
         }
         #endregion
         #region Voids
-        public  void AddBaseElements(Study.FDACache cache)
+        private void UpdateFlowFrequencyElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            AnalyticalFrequencyOwnerElement r = new AnalyticalFrequencyOwnerElement();
-            AddElement(r);
-            cache.FlowFrequencyParent = r;
-
-            GraphicalFrequencyOwnerElement i = new GraphicalFrequencyOwnerElement();
-            //AddElement(i);
-
-            StageFrequencyOwnerElement s = new StageFrequencyOwnerElement();
-            //AddElement(s);
+            UpdateElement(e.NewElement);
         }
-        public override void AddValidationRules()
+        private void RemoveFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            //throw new NotImplementedException();
+            RemoveElement(e.Element);
         }
-        #endregion
-        #region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "";
-        //    }
-        //}
-        //public override void Save()
-        //{
-        //    foreach (Utilities.ChildElement ele in _Elements)
-        //    {
-        //        ele.Save();
-        //    }
-        //}
+        private void AddFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
 
-        //public override string[] TableColumnNames()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public override Type[] TableColumnTypes()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    //AddElement(new InflowOutflowElement((string)rowData[0], (string)rowData[1], new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), this));
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return false;
-        //}
+        private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)
+        {
+            ImportFromFDA1VM vm = new ImportFrequencyFromFDA1VM();
+            string header = "Import Frequency Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequencyCurve");
+            Navigate(tab, false, true);
+        }
+
+        public void AddNewFlowFrequencyCurve(object arg1, EventArgs arg2)
+        {
+            EditorActionManager actionManager = new EditorActionManager()
+               .WithSiblingRules(this);
+
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Flow - Frequency", "Frequency", "Flow");
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
+            string header = "Import Frequency";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequency");
+            Navigate(tab, false, false);
+        }
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
@@ -18,12 +19,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Properties
      
         public bool IsDepthGrids { get; set; }
-        
-        //public override string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; }
-        //}
        
         public List<PathAndProbability> RelativePathAndProbability
         {
@@ -69,7 +64,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
             NamedAction editElement = new NamedAction(this);
-            editElement.Header = "Edit Water Surface Elevations...";
+            editElement.Header = "Edit Hydraulics...";
             editElement.Action = EditElement;
 
             NamedAction remove = new NamedAction();
@@ -167,7 +162,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\" + file.Path);
                 OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
                 AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
-                args.FeatureName = Name;
+                args.FeatureName = Name + " - " + Path.GetFileNameWithoutExtension(file.Path);
                 AddToMapWindow(this, args);
 
                 _featureNodeHashs.Add(args.MapFeatureHash);
@@ -183,7 +178,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
             }
         }
-
 
         #endregion
         #region Functions

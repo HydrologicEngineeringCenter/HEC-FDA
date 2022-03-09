@@ -21,9 +21,7 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public static class ImportFromFDA1Helper
     {
-
         #region Rating
-
         public static List<RatingCurveElement> CreateRatingElements(RatingFunctionList ratings)
         {
             List<RatingCurveElement> elems = new List<RatingCurveElement>();
@@ -161,11 +159,6 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             return ys;
         }
-        
-
-        
-
-
         #endregion
 
         #region Stage Damage
@@ -331,7 +324,6 @@ namespace HEC.FDA.ViewModel.Utilities
 
             bool isAnalytical = true;
             bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
-            bool isLogFlow = false;
 
             //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
@@ -339,7 +331,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows, null, id);
+                 analyticalFlows, graphicalFlows, null, id);
         }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)

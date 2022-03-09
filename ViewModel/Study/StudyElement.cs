@@ -380,7 +380,6 @@ namespace HEC.FDA.ViewModel.Study
                 AddElement(wse);
 
                 FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement();
-                f.AddBaseElements(cache);
                 AddElement(f);
 
                 FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement();
