@@ -28,7 +28,7 @@ namespace StatisticsTests.Distributions
             Assert.False(dist.HasErrors);
         }
 
-
+        // source: https://docs.google.com/spreadsheets/d/1EgzPIF8BgHSKnCVC3eCsbNLsg4I1teQT/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(-1.5, .25, .974, .3633)]
         [InlineData(-.5,.75,.152,.2802)]
@@ -43,6 +43,7 @@ namespace StatisticsTests.Distributions
             Assert.Equal(expected, actual, 1);
         }
 
+        //source: https://docs.google.com/spreadsheets/d/1EgzPIF8BgHSKnCVC3eCsbNLsg4I1teQT/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(-.5, .75, .895, .349,.698)]
         [InlineData(0.5, 1.25, 1.527,.398,.476)]
