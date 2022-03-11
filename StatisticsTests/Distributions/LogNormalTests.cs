@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Statistics.Distributions;
+using System;
 
 namespace StatisticsTests.Distributions
 {
@@ -59,5 +60,31 @@ namespace StatisticsTests.Distributions
             Assert.Equal(expectedCDF, actualCDF, 2);
         }
 
+        [Theory]
+        [InlineData(.01)]
+        [InlineData(.05)]
+        [InlineData(.25)]
+        [InlineData(.5)]
+        [InlineData(.75)]
+        [InlineData(.95)]
+        [InlineData(.99)]
+        public void UnloggedToLogged_Test(double prob)
+        {
+            double[] basicSample = new double[100];
+            double[] basicLoggedSample = new double[100];
+            for (int i = 1; i < basicSample.Length; i++)
+            {
+                basicSample[i] = i*0.5;
+                basicLoggedSample[i] = Math.Log(basicSample[i]);
+            }
+            Statistics.SampleStatistics unloggedSampleStatistics = new Statistics.SampleStatistics(basicSample);
+            Statistics.SampleStatistics loggedSampleStatistics = new Statistics.SampleStatistics(basicLoggedSample);
+
+            LogNormal loggedParametersDistribution = new LogNormal(loggedSampleStatistics.Mean, loggedSampleStatistics.StandardDeviation);
+            LogNormal unloggedParametersDistribution = new LogNormal(unloggedSampleStatistics.Mean, unloggedSampleStatistics.StandardDeviation, unlogged: true);
+
+            Assert.Equal(loggedParametersDistribution.InverseCDF(prob), unloggedParametersDistribution.InverseCDF(prob), 1);
+            
+        }
     }
 }

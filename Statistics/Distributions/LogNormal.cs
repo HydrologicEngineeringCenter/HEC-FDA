@@ -35,13 +35,33 @@ namespace Statistics.Distributions
         /// <param name="mean"></param> mean of the logged data
         /// <param name="sd"></param> standard deviation of the logged data
         /// <param name="sampleSize"></param>
-        public LogNormal(double mean, double sd, int sampleSize = int.MaxValue)
+        ///  <param name="unlogged"></param> Unlogged is true if the mean and standard deviation reflect unlogged data 
+        public LogNormal(double mean, double sd, int sampleSize = int.MaxValue, bool unlogged = false)
         {
-            Mean = mean;
-            StandardDeviation = sd;
+            if (unlogged == false)
+            {
+                Mean = mean;
+                StandardDeviation = sd;
+            }
+            else
+            {
+                Mean = UnloggedMeanToLoggedMean(mean, sd);
+                StandardDeviation = UnloggedSDToLoggedSD(mean, sd);
+            }
             SampleSize = sampleSize;
             addRules();
         }
+
+        private double UnloggedSDToLoggedSD(double mean, double sd)
+        {
+            return Math.Sqrt(Math.Log(1 + (Math.Pow(sd,2)/Math.Pow(mean,2))));
+        }
+
+        private double UnloggedMeanToLoggedMean(double mean, double sd)
+        {
+            return Math.Log(mean / (Math.Sqrt(1 + (Math.Pow(sd, 2) / Math.Pow(mean, 2)))));
+        }
+
         private void addRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
