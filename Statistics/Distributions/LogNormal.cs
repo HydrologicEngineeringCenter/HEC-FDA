@@ -30,7 +30,7 @@ namespace Statistics.Distributions
             addRules();
         }
         /// <summary>
-        /// Construct the log normal distribution using moments of logged data
+        /// Construct the log normal distribution using moments of logged data where the log is the natural log NOT log base 10
         /// </summary>
         /// <param name="mean"></param> mean of the logged data
         /// <param name="sd"></param> standard deviation of the logged data
