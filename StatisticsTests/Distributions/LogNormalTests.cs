@@ -55,7 +55,7 @@ namespace StatisticsTests.Distributions
             double actualPDF = logNormal.PDF(unloggedValue);
             double actualCDF = logNormal.CDF(unloggedValue);
             Assert.Equal(expectedPDF, actualPDF, 2);
-            //Assert.Equal(expectedCDF, actualPDF, 2);
+            Assert.Equal(expectedCDF, actualCDF, 2);
         }
 
     }
