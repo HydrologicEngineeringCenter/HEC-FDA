@@ -29,6 +29,12 @@ namespace Statistics.Distributions
             StandardDeviation = 1.0;
             addRules();
         }
+        /// <summary>
+        /// Construct the log normal distribution using moments of logged data
+        /// </summary>
+        /// <param name="mean"></param> mean of the logged data
+        /// <param name="sd"></param> standard deviation of the logged data
+        /// <param name="sampleSize"></param>
         public LogNormal(double mean, double sd, int sampleSize = int.MaxValue)
         {
             Mean = mean;
@@ -68,18 +74,19 @@ namespace Statistics.Distributions
         #region Functions
         #region IDistribution
         public override double PDF(double x){
-            Normal sn = new Normal();
-            return sn.PDF(Math.Log(x));
+            Normal standardNormal = new Normal();
+            double z = (Math.Log(x) - Mean) / StandardDeviation;
+            return standardNormal.PDF(z);
         }
         public override double CDF(double x){
-            Normal sn = new Normal();
-            return sn.CDF(Math.Log(x));
+            Normal standardNormal = new Normal();
+            double z = (Math.Log(x) - Mean) / StandardDeviation;
+            return standardNormal.CDF(z);
         }
         public override double InverseCDF(double p)
         {
             if (p <= 0) return 0;
             if (p >= 1) return double.PositiveInfinity;
-            Normal sn = new Normal();
             return Math.Exp(Mean+Normal.StandardNormalInverseCDF(p)*StandardDeviation);
         }
         public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"LogNormal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
