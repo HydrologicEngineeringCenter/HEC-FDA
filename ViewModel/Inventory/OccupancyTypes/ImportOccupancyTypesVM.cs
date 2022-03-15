@@ -262,9 +262,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
                     //}
-                    int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
                     int id = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-                    OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, newGroupID, row.ListOfOccTypes, id);
+                    OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, id);
                     //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
                     elementsToSave.Add(elem);
                 }

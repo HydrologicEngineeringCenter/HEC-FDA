@@ -2,6 +2,7 @@
 using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
+using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -14,7 +15,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public event EventHandler WasModified;
 
         #region fields
-        private IDistribution _ValueUncertainty;
+        private ContinuousDistribution _Distribution;
         private IValueUncertainty _CurrentVM;
 
         public NormalControlVM _NormalControlVM;
@@ -22,7 +23,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public UniformControlVM _UniformControlVM;
         public LogNormalControlVM _LogNormalControlVM;
 
-        private ValueUncertaintyType _valueUncertaintyType;
+        //private ValueUncertaintyType _valueUncertaintyType;
 
         #endregion
 
@@ -50,15 +51,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set;
         }
 
-        public IDistribution ValueUncertainty
+        public ContinuousDistribution Distribution
         {
             get
             {
-                return _ValueUncertainty;
+                return _Distribution;
             }
             set
             {
-                _ValueUncertainty = value;
+                _Distribution = value;
                 SelectedDistributionTypeChanged();
                 NotifyPropertyChanged();
             }
@@ -67,7 +68,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region constructors
-        public ValueUncertaintyVM(IDistribution valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType, String labelString)
+        public ValueUncertaintyVM(ContinuousDistribution valueUncertaintyOrdinate)
         {
             //create the options for the combobox
             UncertaintyTypes = new ObservableCollection<IDistributionEnum>()
@@ -83,7 +84,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //set what values you can, then set some defaults for the other dist types?
             //CreateDistributionControls(valueUncertaintyOrdinate, labelString);
 
-            ValueUncertainty = valueUncertaintyOrdinate;
+            Distribution = valueUncertaintyOrdinate;
 
             LoadControlVMs(valueUncertaintyOrdinate);
 
@@ -93,7 +94,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
 
-        public abstract void LoadControlVMs(IOrdinate ordinate);
+        public abstract void LoadControlVMs(IDistribution ordinate);
 
         /// <summary>
         /// The selected type of ordinate has changed. This method will convert the current ordinate
@@ -106,7 +107,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 IDistributionEnum newType = (IDistributionEnum)newValue;
                 //if newtype is the same as current then do nothing
-                if (newType != _ValueUncertainty.Type)
+                if (newType != _Distribution.Type)
                 {
                     WasModified(this, new EventArgs());
                     //it is possible that the current state of this control can't make an IOrdinate.
@@ -123,15 +124,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                         //else
                         //{
                             //create a default IOrdinate of the new type
-                            ValueUncertainty = CreateDefaultIOdinate(newType);
+                            Distribution = CreateDefaultIOdinate(newType);
                         //}
                     
                     }
                     catch(Exception ex)
                     {
-                        //create a default IOrdinate of the new type
-                        IDistribution newOrdinate = CreateDefaultIOdinate(newType);
-                        ValueUncertainty = newOrdinate;
+                        Distribution = CreateDefaultIOdinate(newType);
                     }
 
                 }
@@ -165,7 +164,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //}
         }
 
-        private IDistribution CreateDefaultIOdinate(IDistributionEnum type)
+        private ContinuousDistribution CreateDefaultIOdinate(IDistributionEnum type)
         {
             switch(type)
             {
@@ -187,8 +186,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                         return new Uniform(0, 0);
 
                     }
+                default:
+                    {
+                        return new Deterministic(0);
+                    }
             }
-            return ordinate;
+            
         }
 
         /// <summary>
@@ -229,7 +232,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 triMin = ((Triangular)ordinate).Min;
                 triMax = ((Triangular)ordinate).Max;
             }
-            _TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, labelString);
+            //todo: fix label string
+            _TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax,"testMinLabelString", labelString);
             _TriangularControlVM.WasModified += ControlWasModified;
 
             //create the uniform option
@@ -299,35 +303,39 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public void SelectedDistributionTypeChanged()
         {
-            switch(_ValueUncertainty.Type)
+            if (_Distribution != null)
             {
-                case IDistributionEnum.Deterministic:
-                    {
-                        CurrentVM = null;//todo: ???
-                        break;
-                    }
-                case IDistributionEnum.Normal:
-                    {
-                        
-                        CurrentVM = _NormalControlVM;
-                        break;
-                    }
-                case IDistributionEnum.Triangular:
-                    {
-                        CurrentVM = _TriangularControlVM;
-                        break;
-                    }
-                case IDistributionEnum.Uniform:
-                    {
-                        CurrentVM = _UniformControlVM;
-                        break;
-                default:
+                switch (_Distribution.Type)
+                {
+                    case IDistributionEnum.Deterministic:
+                        {
+                            CurrentVM = null;//todo: ???
+                            break;
+                        }
+                    case IDistributionEnum.Normal:
+                        {
+
+                            CurrentVM = _NormalControlVM;
+                            break;
+                        }
+                    case IDistributionEnum.Triangular:
+                        {
+                            CurrentVM = _TriangularControlVM;
+                            break;
+                        }
+                    case IDistributionEnum.Uniform:
+                        {
+                            CurrentVM = _UniformControlVM;
+                            break;
+                        }
+                    default:
                         CurrentVM = null;
                         break;
+                }
             }
         }
 
-        public IDistribution CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
             if (CurrentVM == null)
             {

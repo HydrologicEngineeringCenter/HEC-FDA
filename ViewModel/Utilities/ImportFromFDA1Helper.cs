@@ -480,12 +480,15 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
+            int groupID = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            int occtypeID = Saving.PersistenceFactory.GetOccTypeManager().getIdForNewOccType();
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
                 try
                 {
-                    fda2Occtypes.Add(GetFDA2OccupancyType(ot));
+                    fda2Occtypes.Add(GetFDA2OccupancyType(ot, groupID, occtypeID));
+                    occtypeID++;
                 }
                 catch(Exception e)
                 {
@@ -493,58 +496,73 @@ namespace HEC.FDA.ViewModel.Utilities
                     messages += errorMsg + Environment.NewLine + e.Message + Environment.NewLine;
                 }
             }
-            int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
 
-            int id = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, fda2Occtypes, id);
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, fda2Occtypes, groupID);
             return elem;
         }
 
-        private static IOccupancyType GetFDA2OccupancyType(Importer.OccupancyType importedOT)
+        private static IOccupancyType GetFDA2OccupancyType(Importer.OccupancyType importedOT, int groupID, int ID)
         {
             List<string> errorMessages = new List<string>();
-            IOccupancyType ot = OccupancyTypeFactory.Factory();
 
-            //what do i need for a new ot
-            ot.Name = importedOT.Name;
-            ot.Description = importedOT.Description;
-            ot.DamageCategory = DamageCategoryFactory.Factory(importedOT.CategoryName);
+
 
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
             //this list is in the order of the enum
             List<UncertainPairedData> coordFunctions = TranslateSingleDamageFunctionToCoordinatesFunctions(importedOT, errorMessages);
-            ot.StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
-            ot.ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
-            ot.VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
-            ot.OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
+            UncertainPairedData StructureDepthDamageFunction = coordFunctions[(int)StructureValueType.STRUCTURE];
+            UncertainPairedData ContentDepthDamageFunction = coordFunctions[(int)StructureValueType.CONTENT];
+            UncertainPairedData VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
+            UncertainPairedData OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
 
-            List<IDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
-            ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
-            ot.StructureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
-            ot.ContentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
-            ot.OtherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
-            ot.VehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
+            ComputeComponentVM structureComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            structureComponent.SetPairedData(StructureDepthDamageFunction);
 
-            //there is no concept of a value uncertainty type in old FDA, so default to percent of mean
-            ot.StructureUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.ContentUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.VehicleUncertaintyType = ValueUncertaintyType.PercentOfMean;
-            ot.OtherUncertaintyType = ValueUncertaintyType.PercentOfMean;
+            ComputeComponentVM contentComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            contentComponent.SetPairedData(ContentDepthDamageFunction);
 
-            ot.IsContentRatio = true;
-            ot.IsOtherRatio = true;
-            ot.IsVehicleRatio = true;
+            ComputeComponentVM vehicleComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            vehicleComponent.SetPairedData(VehicleDepthDamageFunction);
 
-            ot.CalculateStructureDamage = true;
-            ot.CalculateContentDamage = true;
-            ot.CalculateVehicleDamage = true;
-            ot.CalculateOtherDamage = false;
+            ComputeComponentVM otherComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            otherComponent.SetPairedData(OtherDepthDamageFunction);
 
+            List<ContinuousDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
+            ContinuousDistribution foundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
+            ContinuousDistribution structureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
+            ContinuousDistribution contentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
+            ContinuousDistribution otherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
+            ContinuousDistribution vehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
+
+            bool CalculateStructureDamage = true;
+            bool CalculateContentDamage = true;
+            bool CalculateVehicleDamage = true;
+            bool CalculateOtherDamage = false;
+
+            OccTypeItem StructureItem = new OccTypeItem(CalculateStructureDamage, structureComponent, structureValueUncertainty);
+            OccTypeItem ContentItem = new OccTypeItem(CalculateContentDamage, contentComponent, contentValueUncertainty);
+            OccTypeItem VehicleItem = new OccTypeItem(CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
+            OccTypeItem OtherItem = new OccTypeItem(CalculateOtherDamage, otherComponent, otherValueUncertainty);
+
+            ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
+
+            //todo: is this correct?
+            ContinuousDistribution ContentToStructureValueUncertainty = new Deterministic(0);
+            ContinuousDistribution OtherToStructureValueUncertainty = new Deterministic(0);
+
+            //todo: what is this?
+            bool IsContentRatio = true;
+            bool IsOtherRatio = true;
+            bool IsVehicleRatio = true;
+
+            IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
+                StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ContentToStructureValueUncertainty,
+                OtherToStructureValueUncertainty, ID);
             return ot;
         }
 
-        private static IDistribution TranslateStructureValueUncertainty(ErrorDistribution errorDist)
+        private static ContinuousDistribution TranslateStructureValueUncertainty(ErrorDistribution errorDist)
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
             double mostLikelyValue = 100;
@@ -553,7 +571,7 @@ namespace HEC.FDA.ViewModel.Utilities
             double stDev = errorDist.GetStdDev();
             double max = errorDist.GetUpper();
             ErrorType type = errorDist.GetErrorType();
-            IDistribution dist = new Deterministic(mostLikelyValue);
+            ContinuousDistribution dist = new Deterministic(mostLikelyValue);
             switch (type)
             {
                 case ErrorType.NONE:
@@ -575,7 +593,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return dist;
         }
 
-        private static IDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
+        private static ContinuousDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
             //double mostLikelyValue = 100;
@@ -584,7 +602,7 @@ namespace HEC.FDA.ViewModel.Utilities
             double stDev = errorDist.GetStdDev();
             double max = errorDist.GetUpper();
             ErrorType type = errorDist.GetErrorType();
-            IDistribution dist = new Deterministic(mean);
+            ContinuousDistribution dist = new Deterministic(mean);
             switch (type)
             {
                 case ErrorType.NONE:
@@ -606,9 +624,9 @@ namespace HEC.FDA.ViewModel.Utilities
             return dist;
         }
 
-        private static IDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist, OccTypeStrucComponent componentType)
+        private static ContinuousDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist, OccTypeStrucComponent componentType)
         {
-            IDistribution dist = new Deterministic(0);
+            ContinuousDistribution dist = new Deterministic(0);
             switch(componentType)
             {
                 case OccTypeStrucComponent.FFLOOR:
@@ -623,9 +641,9 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             return dist;
         }
-        private static List<IDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
+        private static List<ContinuousDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
         {
-            List<IDistribution> ordinates = new List<IDistribution>();
+            List<ContinuousDistribution> ordinates = new List<ContinuousDistribution>();
             if(errorDists.Length >= 5)
             {
                 ordinates.Add(TranslateErrorDistToOrdinate(errorDists[0], OccTypeStrucComponent.FFLOOR));

@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             StDev = stDev;
         }
 
-        public IDistribution CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
             return new Normal(Mean, StDev);
         }

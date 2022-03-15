@@ -11,6 +11,8 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
+using Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -251,6 +253,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
+                //todo: why is this here?
                 occTypeGroup.Occtypes.Add(CreateDefaultOcctype(group.ID));
             }
             return occTypeGroup;
@@ -595,6 +598,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                         damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
                     
+                    //todo: seems like we need an occtype id here? I guess it gets it when it eventually saves?
+
                     //create the new occupancy type
                     IOccupancyType newOT = OccupancyTypeFactory.Factory(vm.Name, damCatName, SelectedOccTypeGroup.ID);
                     OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT,ref damCatOptions, false);
@@ -784,10 +789,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public void CreateDefaultOccTypeGroup()
         {
             OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            int groupID = manager.GetUnusedId();
             string groupName = "Occupancy Type Group";
-            int id = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>(), id);
+            int groupId = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, new List<IOccupancyType>(), groupId);
             //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
             //if it is open. see AddGroup() in this class.
             manager.SaveNew(elem);
@@ -1574,8 +1578,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             // 2.) Temp messages from the validation of the "rules" (ie. Name cannot be blank)
             // 3.) Temp messages from any object that implements IValidate. These messages come out of the model, stats, functions
 
-            //this gets called when still constructing everything. Exit is everything is still null
-            if (SelectedOccType == null || SelectedOccType.StructureEditorVM == null)
+            //this gets called when still constructing everything. Exit if everything is still null
+            if (SelectedOccType == null)// || SelectedOccType.StructureEditorVM == null)
             {
                 return;
             }
@@ -1625,51 +1629,51 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
             List<LogItem> logs = new List<LogItem>();
-            List<IMessage> messagesFromEditor = new List<IMessage>();
+            //List<IMessage> messagesFromEditor = new List<IMessage>();
 
-            //get messages from the editors
-            if (SelectedOccType.StructureEditorVM != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Messages);
-                if (SelectedOccType.StructureEditorVM.Function.Messages != null)
-                {
-                    messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Function.Messages);
-                }
-            }
-            if (SelectedOccType.ContentEditorVM != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Messages);
-                if (SelectedOccType.ContentEditorVM.Function.Messages != null)
-                {
-                    messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Function.Messages);
-                }
-            }
-            if (SelectedOccType.VehicleEditorVM != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Messages);
-                if (SelectedOccType.VehicleEditorVM.Function.Messages != null)
-                {
-                    messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Function.Messages);
-                }
-            }
-            if (SelectedOccType.OtherEditorVM != null)
-            {
-                messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Messages);
-                if (SelectedOccType.OtherEditorVM.Function.Messages != null)
-                {
-                    messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Function.Messages);
-                }
-            }
+            ////get messages from the editors
+            //if (SelectedOccType.StructureEditorVM != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Messages);
+            //    if (SelectedOccType.StructureEditorVM.Function.Messages != null)
+            //    {
+            //        messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Function.Messages);
+            //    }
+            //}
+            //if (SelectedOccType.ContentEditorVM != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Messages);
+            //    if (SelectedOccType.ContentEditorVM.Function.Messages != null)
+            //    {
+            //        messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Function.Messages);
+            //    }
+            //}
+            //if (SelectedOccType.VehicleEditorVM != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Messages);
+            //    if (SelectedOccType.VehicleEditorVM.Function.Messages != null)
+            //    {
+            //        messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Function.Messages);
+            //    }
+            //}
+            //if (SelectedOccType.OtherEditorVM != null)
+            //{
+            //    messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Messages);
+            //    if (SelectedOccType.OtherEditorVM.Function.Messages != null)
+            //    {
+            //        messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Function.Messages);
+            //    }
+            //}
 
-            foreach (IMessage message in messagesFromEditor)
-            {
-                LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
-                logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
-            }
-            //order the list by the log level. Highest on top
-            var sortedLogList = logs
-                .OrderByDescending(x => (int)(x.LogLevel))
-                .ToList();
+            //foreach (IMessage message in messagesFromEditor)
+            //{
+            //    LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
+            //    logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
+            //}
+            ////order the list by the log level. Highest on top
+            //var sortedLogList = logs
+            //    .OrderByDescending(x => (int)(x.LogLevel))
+            //    .ToList();
 
             return logs;
         }

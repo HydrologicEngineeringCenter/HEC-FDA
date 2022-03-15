@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Max = max;
         }
 
-        public IDistribution CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
             //for now (8/10/20) we don't show the user the "MostLikely" value. We don't care
             //what it is, we just want it to always work so we will set it to be the same

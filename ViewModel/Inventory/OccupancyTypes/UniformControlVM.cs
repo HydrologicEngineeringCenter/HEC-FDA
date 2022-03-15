@@ -38,7 +38,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Max = max;
         }
 
-        public IDistribution CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
             //min should be 0 - 100
             if (Min > 100 || Min < 0)

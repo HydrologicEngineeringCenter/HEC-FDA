@@ -38,10 +38,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
 
         }
-        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes, int id):base(id)
+        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes, int id):base(id)
         {
             Name = occTypesGroupName;
-            ID = groupID;
+            ID = id;
             //OccTypesSelectedTabsDictionary = occtypesSelectedTabs;
             //OccTypesGroupName = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;

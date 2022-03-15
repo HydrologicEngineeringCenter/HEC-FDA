@@ -20,21 +20,21 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         string Description { get; set; }
         string DamageCategory { get; set; }
         bool IsModified { get; set; }
-        ValueUncertaintyVM StructureValueUncertainty { get; set; }
-        ValueUncertaintyVM ContentValueUncertainty { get; set; }
-        ValueUncertaintyVM VehicleValueUncertainty { get; set; }
-        ValueUncertaintyVM OtherValueUncertainty { get; set; }
+        //ValueUncertaintyVM StructureValueUncertainty { get; set; }
+        //ValueUncertaintyVM ContentValueUncertainty { get; set; }
+        //ValueUncertaintyVM VehicleValueUncertainty { get; set; }
+        //ValueUncertaintyVM OtherValueUncertainty { get; set; }
         ValueUncertaintyVM FoundationHeightUncertainty { get; set; }
 
-        CoordinatesFunctionEditorVM StructureEditorVM { get; set; }
-        CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
-        CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
-        CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
+        //CoordinatesFunctionEditorVM StructureEditorVM { get; set; }
+        //CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
+        //CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
+        //CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
 
-        bool CalculateStructureDamage { get; set; }
-        bool CalculateContentDamage { get; set; }
-        bool CalculateVehicleDamage { get; set; }
-        bool CalculateOtherDamage { get; set; }
+        //bool CalculateStructureDamage { get; set; }
+        //bool CalculateContentDamage { get; set; }
+        //bool CalculateVehicleDamage { get; set; }
+        //bool CalculateOtherDamage { get; set; }
 
         ObservableCollection<string> DamageCategoriesList { get; set; }
         /// <summary>

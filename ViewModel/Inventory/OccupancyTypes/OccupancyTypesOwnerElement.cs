@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                // CreateDefaultOccTypeGroup();
                 
                 
-                //return;
+                return;
             }
 
             _IsEditorOpen = true;

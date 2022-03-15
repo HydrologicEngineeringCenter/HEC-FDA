@@ -52,34 +52,34 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             //AddChart();
         }
 
-        private void UpdateChart(ref Chart2D chart, CoordinatesFunctionEditorVM editorVM)
-        {
-            SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-            chart = new Chart2D(sciChart2DChartViewModel);
-            editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
-        }
+        //private void UpdateChart(ref Chart2D chart, CoordinatesFunctionEditorVM editorVM)
+        //{
+        //    SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+        //    chart = new Chart2D(sciChart2DChartViewModel);
+        //    editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+        //}
 
         private void AddChart()
         {
             if (DataContext is OccupancyTypeEditable vm)
             {
                 //structure
-                UpdateChart(ref _StructureChart, vm.StructureEditorVM);
+                //UpdateChart(ref _StructureChart, vm.StructureEditorVM);
                 StructureTabGrid.Children.Add(_StructureChart);
                 Grid.SetRow(_StructureChart, 2);
                 Grid.SetColumn(_StructureChart, 2);
                 //content
-                UpdateChart(ref _ContentChart, vm.ContentEditorVM);
+                //UpdateChart(ref _ContentChart, vm.ContentEditorVM);
                 ContentTabGrid.Children.Add(_ContentChart);
                 Grid.SetRow(_ContentChart, 2);
                 Grid.SetColumn(_ContentChart, 2);
                 //vehicle
-                UpdateChart(ref _VehicleChart, vm.VehicleEditorVM);
+                //UpdateChart(ref _VehicleChart, vm.VehicleEditorVM);
                 VehicleTabGrid.Children.Add(_VehicleChart);
                 Grid.SetRow(_VehicleChart, 2);
                 Grid.SetColumn(_VehicleChart, 2);
                 //other
-                UpdateChart(ref _OtherChart, vm.OtherEditorVM);
+                //UpdateChart(ref _OtherChart, vm.OtherEditorVM);
                 OtherTabGrid.Children.Add(_OtherChart);
                 Grid.SetRow(_OtherChart, 2);
                 Grid.SetColumn(_OtherChart, 2);
@@ -88,7 +88,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            AddChart();
+            //AddChart();
         }
     }
 }

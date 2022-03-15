@@ -98,7 +98,6 @@ namespace HEC.FDA.ViewModel.Study
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
         public ImpactAreaOwnerElement ImpactAreaParent { get; set; }
-        public AnalyticalFrequencyOwnerElement FlowFrequencyParent { get; set; }
         public InflowOutflowOwnerElement InflowOutflowParent { get; set; }
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
@@ -519,10 +518,6 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(WaterSurfaceElements);
             }
-            else if (element is AnalyticalFrequencyOwnerElement)
-            {
-                retVal.AddRange(FlowFrequencyElements);
-            }
             else if (element is InflowOutflowOwnerElement)
             {
                 retVal.AddRange(InflowOutflowElements);
@@ -582,10 +577,6 @@ namespace HEC.FDA.ViewModel.Study
             if (parentType == typeof( WaterSurfaceElevationOwnerElement))
             {
                 //todo: is this needed? Doesn't look like it.
-            }
-            if (parentType == typeof(AnalyticalFrequencyOwnerElement))
-            {
-                return FlowFrequencyParent as T;
             }
             if (parentType == typeof(InflowOutflowOwnerElement))
             {

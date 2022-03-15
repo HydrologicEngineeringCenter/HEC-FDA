@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         StructureInventoryBaseElement.geomField,
         StructureInventoryBaseElement.OccupancyTypeField,
         StructureInventoryBaseElement.damCatField,
-        StructureInventoryBaseElement.OccupancyTypeGroupName,
+        StructureInventoryBaseElement.OccupancyTypeGroup,
         StructureInventoryBaseElement.FoundationHeightField,
         StructureInventoryBaseElement.StructureValueField,
         StructureInventoryBaseElement.ContentValueField,
@@ -82,9 +82,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         };
 
         private Type[] ChildTableTypes = new Type[] {typeof(int), typeof(string),
+        typeof(int),
         typeof(string),
-        typeof(string),
-        typeof(string),
+        typeof(int),
         typeof(double),
         typeof(double),
         typeof(double),
@@ -108,10 +108,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             newStructureTable.Columns.Add(StructureInventoryBaseElement.fidField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.geomField, typeof(string));
 
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeField, typeof(int));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.damCatField, typeof(string));
 
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeGroupName, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeGroup, typeof(int));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.FoundationHeightField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.StructureValueField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.ContentValueField, typeof(string));
@@ -297,38 +297,38 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return GetRowDataFromElement((InventoryElement)elem);
         }
 
-        public void UpdateOccTypeNames( string oldGroupName,string newGroupName, string oldOcctypeName, string newOcctypeName)
-        {
-            string[] keys = new string[] { oldOcctypeName, oldGroupName };
-            string[] keyColNames = new string[] { StructureInventoryBaseElement.OccupancyTypeField, StructureInventoryBaseElement.OccupancyTypeGroupName };
+        //public void UpdateOccTypeNames( string oldGroupName,string newGroupName, string oldOcctypeName, string newOcctypeName)
+        //{
+        //    string[] keys = new string[] { oldOcctypeName, oldGroupName };
+        //    string[] keyColNames = new string[] { StructureInventoryBaseElement.OccupancyTypeField, StructureInventoryBaseElement.OccupancyTypeGroup };
 
-            //update the whole row
-            object[] newValues = new object[] { newOcctypeName, newGroupName };
+        //    //update the whole row
+        //    object[] newValues = new object[] { newOcctypeName, newGroupName };
 
-            //i need to loop over all of the inventory tables and update all the occtypes
-            List<string> names = GetStructureInventoryNames();
-            foreach(string name in names)
-            {
-                string tableName = STRUCTURE_INVENTORY_TABLE_CONSTANT + name;
-                UpdateTableRowWithCompoundKey(tableName, keys, keyColNames, keyColNames, newValues);
-            }
-        }
+        //    //i need to loop over all of the inventory tables and update all the occtypes
+        //    List<string> names = GetStructureInventoryNames();
+        //    foreach(string name in names)
+        //    {
+        //        string tableName = STRUCTURE_INVENTORY_TABLE_CONSTANT + name;
+        //        UpdateTableRowWithCompoundKey(tableName, keys, keyColNames, keyColNames, newValues);
+        //    }
+        //}
 
-        private List<string> GetStructureInventoryNames()
-        {
-            List<string> names = new List<string>();
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+        //private List<string> GetStructureInventoryNames()
+        //{
+        //    List<string> names = new List<string>();
+        //    if (!Connection.Instance.IsOpen)
+        //    {
+        //        Connection.Instance.Open();
+        //    }
 
-            DataTable table = Connection.Instance.GetDataTable(TableName);
-            foreach (DataRow row in table.Rows)
-            {              
-                names.Add(row.ItemArray[NAME_COL].ToString());
-            }
-            return names;
-        }
+        //    DataTable table = Connection.Instance.GetDataTable(TableName);
+        //    foreach (DataRow row in table.Rows)
+        //    {              
+        //        names.Add(row.ItemArray[NAME_COL].ToString());
+        //    }
+        //    return names;
+        //}
 
     }
 }

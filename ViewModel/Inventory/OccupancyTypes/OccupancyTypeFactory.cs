@@ -23,25 +23,25 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         //    return retval;
         //}
 
-        public static IOccupancyType Factory()
-        {
-            return new OccupancyType();
-        }
+        //public static IOccupancyType Factory()
+        //{
+        //    return new OccupancyType();
+        //}
 
-        public static IOccupancyType Factory(string name, string selectedDamageCategoryName)
-        {
-            return new OccupancyType(name, selectedDamageCategoryName);
-        }
+        //public static IOccupancyType Factory(string name, string selectedDamageCategoryName)
+        //{
+        //    return new OccupancyType(name, selectedDamageCategoryName);
+        //}
 
         public static IOccupancyType Factory(string name, string damCatName, int groupId)
         {
             OccupancyType ot = new OccupancyType();
             ot.Name = name;
             //todo: default the occtype is selected values to false?
-            ot.CalculateStructureDamage = true;
-            ot.CalculateContentDamage = true;
-            ot.CalculateVehicleDamage = true;
-            ot.CalculateOtherDamage = false;
+            //ot.CalculateStructureDamage = true;
+            //ot.CalculateContentDamage = true;
+            //ot.CalculateVehicleDamage = true;
+            //ot.CalculateOtherDamage = false;
 
             //todo: what about damage category?
             ot.DamageCategory = damCatName;
@@ -55,16 +55,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             UncertainPairedData defaultVehicle = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
             UncertainPairedData defaultOther = UncertainPairedDataFactory.CreateDeterminateData(xs, ys, "Stage", "Damage", "Occtype");
 
-            ot.StructureDepthDamageFunction = defaultStruct;
-            ot.ContentDepthDamageFunction = defaultCont;
-            ot.VehicleDepthDamageFunction = defaultVehicle;
-            ot.OtherDepthDamageFunction = defaultOther;
+            //ot.StructureDepthDamageFunction = defaultStruct;
+            //ot.ContentDepthDamageFunction = defaultCont;
+            //ot.VehicleDepthDamageFunction = defaultVehicle;
+            //ot.OtherDepthDamageFunction = defaultOther;
 
             //value uncertainties
-            ot.StructureValueUncertainty = new Deterministic(0);
-            ot.ContentValueUncertainty = new Deterministic(0);
-            ot.VehicleValueUncertainty = new Deterministic(0);
-            ot.OtherValueUncertainty = new Deterministic(0);
+            //ot.StructureValueUncertainty = new Deterministic(0);
+            //ot.ContentValueUncertainty = new Deterministic(0);
+            //ot.VehicleValueUncertainty = new Deterministic(0);
+            //ot.OtherValueUncertainty = new Deterministic(0);
             ot.FoundationHeightUncertainty = new Deterministic(0);
 
             //group id

@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 List<IOccupancyType> occTypes = row.GroupElement.ListOfOccupancyTypes;
                 foreach(IOccupancyType ot in occTypes)
                 {
-                    PossibleOccTypes.Add(new OccTypeDisplayName(groupName, ot));
+                    PossibleOccTypes.Add(new OccTypeDisplayName(groupName,row.GroupElement.ID, ot));
                 }
             }
 

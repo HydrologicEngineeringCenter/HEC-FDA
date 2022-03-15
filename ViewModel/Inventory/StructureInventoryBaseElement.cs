@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Properties
         //public static string BldgTypeField = "BldgType";
-        public static string OccupancyTypeGroupName = "OccTypeGroupName";
+        public static string OccupancyTypeGroup = "OccTypeGroup";
         public static string GroundElevationField = "GroundElevation";
         public static string FirstFloorElevationField = "FirstFloorElevation";
         public static string YearField = "Year";

@@ -1,11 +1,8 @@
-﻿using Functions;
+﻿using Statistics;
+using Statistics.Distributions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ViewModel.Inventory.OccupancyTypes
+namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class LogNormalControlVM : IValueUncertainty
     {
@@ -43,9 +40,9 @@ namespace ViewModel.Inventory.OccupancyTypes
             StDev = stDev;
         }
 
-        public IOrdinate CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
-            return IDistributedOrdinateFactory.FactoryLogNormal(Mean, StDev);
+            return new LogNormal(Mean, StDev);
         }
     }
 }

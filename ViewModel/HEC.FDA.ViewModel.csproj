@@ -14,6 +14,9 @@
     <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
     <Compile Remove="FlowTransforms\InflowOutflowEditorVM.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
+    <Compile Remove="Inventory\DamageCategories\DamageCategory.cs" />
+    <Compile Remove="Inventory\DamageCategories\DamageCategoryFactory.cs" />
+    <Compile Remove="Inventory\OccupancyTypes\OtherNormalControlVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
     <Compile Remove="Output\LinkedPlotsVM.cs" />
   </ItemGroup>

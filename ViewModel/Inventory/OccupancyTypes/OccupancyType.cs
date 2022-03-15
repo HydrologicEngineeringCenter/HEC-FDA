@@ -1,10 +1,8 @@
 ﻿using FdaLogging;
-using paireddata;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Inventory.DamageCategory;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -14,80 +12,78 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private string _Name;
         private string _Description;
         //todo: what about damage category changing name?
-        private bool _CalculateStructureDamage;
-        private bool _CalculateContentDamage;
-        private bool _CalculateVehicleDamage;
-        private bool _CalculateOtherDamage;
-        private bool _IsModified;
-
-        /// <summary>
-        /// This is used by the occtype editor to determine if this occtype
-        /// was edited. This value should be set to false every time the editor
-        /// is opened.
-        /// </summary>
-        public bool IsModified 
-        {
-            get{ return _IsModified;}
-            set{_IsModified = value; NotifyPropertyChanged();}
-        }
+        //private bool _CalculateStructureDamage;
+        //private bool _CalculateContentDamage;
+        //private bool _CalculateVehicleDamage;
+        //private bool _CalculateOtherDamage;
 
         public string Name
         {
             get  { return _Name;}
-            set { _Name = value; IsModified = true; NotifyPropertyChanged(); }
+            set { _Name = value;  }
         }
 
         public string Description
         {
             get { return _Description; }
-            set { _Description = value; IsModified = true; }
+            set { _Description = value;}
         }
 
         public string DamageCategory { get; set; }
 
-        public bool CalculateStructureDamage
-        {
-            get { return _CalculateStructureDamage; }
-            set { _CalculateStructureDamage = value; IsModified = true; }
-        }
+        //public bool CalculateStructureDamage
+        //{
+        //    get { return _CalculateStructureDamage; }
+        //    set { _CalculateStructureDamage = value; IsModified = true; }
+        //}
 
-        public bool CalculateContentDamage
-        {
-            get { return _CalculateContentDamage; }
-            set { _CalculateContentDamage = value; IsModified = true; }
-        }
+        //public bool CalculateContentDamage
+        //{
+        //    get { return _CalculateContentDamage; }
+        //    set { _CalculateContentDamage = value; IsModified = true; }
+        //}
 
-        public bool CalculateVehicleDamage
-        {
-            get { return _CalculateVehicleDamage; }
-            set { _CalculateVehicleDamage = value; IsModified = true; }
-        }
+        //public bool CalculateVehicleDamage
+        //{
+        //    get { return _CalculateVehicleDamage; }
+        //    set { _CalculateVehicleDamage = value; IsModified = true; }
+        //}
 
-        public bool CalculateOtherDamage
-        {
-            get { return _CalculateOtherDamage; }
-            set { _CalculateOtherDamage = value; IsModified = true; }
-        }
+        //public bool CalculateOtherDamage
+        //{
+        //    get { return _CalculateOtherDamage; }
+        //    set { _CalculateOtherDamage = value; IsModified = true; }
+        //}
 
-        public UncertainPairedData StructureDepthDamageFunction { get; set; }
-        public UncertainPairedData ContentDepthDamageFunction { get; set; }
-        public UncertainPairedData VehicleDepthDamageFunction { get; set; }
-        public UncertainPairedData OtherDepthDamageFunction { get; set; }
-        public IDistribution StructureValueUncertainty { get; set; }
-        public IDistribution ContentValueUncertainty { get; set; }
-        public IDistribution VehicleValueUncertainty { get; set; }
-        public IDistribution OtherValueUncertainty { get; set; }
-        public IDistribution FoundationHeightUncertainty { get; set; }
+        //public UncertainPairedData StructureDepthDamageFunction { get; set; }
+        //public UncertainPairedData ContentDepthDamageFunction { get; set; }
+        //public UncertainPairedData VehicleDepthDamageFunction { get; set; }
+        //public UncertainPairedData OtherDepthDamageFunction { get; set; }
+        //public IDistribution StructureValueUncertainty { get; set; }
+        //public IDistribution ContentValueUncertainty { get; set; }
+        //public IDistribution VehicleValueUncertainty { get; set; }
+        //public IDistribution OtherValueUncertainty { get; set; }
+      
 
-        public IOrdinate ContentToStructureValueUncertainty { get; set; }
+        public ContinuousDistribution ContentToStructureValueUncertainty { get; set; }
         public double ContentToStructureValue { get; set; }
-        public IOrdinate OtherToStructureValueUncertainty { get; set; }
+        public ContinuousDistribution OtherToStructureValueUncertainty { get; set; }
         public double OtherToStructureValue { get; set; }
 
         //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
         public bool IsContentRatio { get; set; }
         public bool IsVehicleRatio { get; set; }
         public bool IsOtherRatio { get; set; }
+        public OccTypeItem StructureItem { get; set; }
+        public OccTypeItem ContentItem { get; set; }
+        public OccTypeItem VehicleItem { get; set; }
+        public OccTypeItem OtherItem { get; set; }
+
+        //public ValueUncertaintyType StructureUncertaintyType { get; set; }
+        //public ValueUncertaintyType ContentUncertaintyType { get; set; }
+        //public ValueUncertaintyType VehicleUncertaintyType { get; set; }
+        //public ValueUncertaintyType OtherUncertaintyType { get; set; }
+        public ContinuousDistribution FoundationHeightUncertainty { get; set; }
 
         public int GroupID { get; set; }
         public int ID { get; set; }
@@ -96,11 +92,50 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
 
         }
+        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeItem structureItem,
+            OccTypeItem contentItem, OccTypeItem vehicleItem, OccTypeItem otherItem, ContinuousDistribution foundationHtUncertainty,
+            ContinuousDistribution contentToStructureValueUncertainty, ContinuousDistribution otherToStructureValueUncertainty, int id)
+        {
+            Name = name;
+            Description = description;
+            GroupID = groupID;
+            DamageCategory = damageCategory;
+            StructureItem = structureItem;
+            ContentItem = contentItem;
+            VehicleItem = vehicleItem;
+            OtherItem = otherItem;
+            FoundationHeightUncertainty = foundationHtUncertainty;
+            ContentToStructureValueUncertainty = contentToStructureValueUncertainty;
+            OtherToStructureValueUncertainty = otherToStructureValueUncertainty;
+            ID = id;
+        }
         public OccupancyType(string name, string damageCategoryName)
         {
             Name = name;
             DamageCategory = damageCategoryName;
         }
+
+        public OccupancyType(IOccupancyType ot)
+        {
+            Name = ot.Name;
+            Description = ot.Description;
+            DamageCategory = ot.DamageCategory;
+            FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
+            ContentToStructureValueUncertainty = ot.ContentToStructureValueUncertainty;
+            OtherToStructureValueUncertainty = ot.OtherToStructureValueUncertainty;
+            IsContentRatio = ot.IsContentRatio;
+            IsVehicleRatio = ot.IsVehicleRatio;
+            IsOtherRatio = ot.IsOtherRatio;
+            StructureItem = ot.StructureItem;
+            ContentItem = ot.ContentItem;
+            VehicleItem = ot.VehicleItem;
+            OtherItem = ot.OtherItem;
+            GroupID = ot.GroupID;
+            ID = ot.ID;
+            
+        }
+
+
 
 
         #region messages section
@@ -113,6 +148,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public int MessageCount => throw new NotImplementedException();
 
         public List<LogItem> TempErrors { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
         /// <summary>
         /// Gets rid of any temperary messages from the list of messages and adds the new list of temp
         /// messages from "TempErrors" property.

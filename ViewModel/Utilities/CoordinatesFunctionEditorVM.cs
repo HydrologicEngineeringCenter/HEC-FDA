@@ -25,10 +25,10 @@ namespace HEC.FDA.ViewModel.Utilities
 
         }
 
-        public UncertainPairedData CreateFunctionFromTables()
-        {
-            return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", "");
-        }
+        //public UncertainPairedData CreateFunctionFromTables()
+        //{
+        //    return UncertainPairedDataFactory.CreateDefaultDeterminateData("", "", "");
+        //}
 
     }
 }
