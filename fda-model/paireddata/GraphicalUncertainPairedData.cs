@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace paireddata
 {
@@ -69,11 +70,13 @@ namespace paireddata
         public GraphicalUncertainPairedData()
         {
             _metaData = new CurveMetaData();
+            AddRules();
         }
 
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, maximumProbability, minimumProbability, usingFlows, flowsAreNotLogged);
+            graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
             _NonMontonicDistributions = graphical.FlowOrStageDistributions;
@@ -81,10 +84,45 @@ namespace paireddata
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions);
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name);
+            AddRules();
+
         }
         #endregion
 
         #region Functions
+        /// <summary>
+        /// We have rules on monotonicity for exceedance probabilities. We expect the flow or stage distributions 
+        /// to have situations where monotonicity is not satisfied. 
+        /// Using monotonic decreasing because we use exceedance probabilities
+        /// </summary>
+        private void AddRules()
+        {
+            switch (_metaData.CurveType)
+            {
+                case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
+                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
+                    break;
+                case CurveTypesEnum.MonotonicallyDecreasing:
+                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a > b)), "X must be monotonically decreasing"));
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        {
+            if (arrayOfData == null) return false;
+            for (int i = 0; i < arrayOfData.Length - 1; i++)
+            {
+                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public IPairedData SamplePairedData(double probability)
         {
             double[] y = new double[_NonMontonicDistributions.Length];
@@ -108,7 +146,7 @@ namespace paireddata
             {
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pairedData.Yvals);//sorts but doesnt solve the problem of repeated values.
+                    pairedData.ForceMonotonic();
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
@@ -117,7 +155,7 @@ namespace paireddata
                 pairedData.Validate();
                 if (pairedData.HasErrors)
                 {
-                    // throw new Exception("the produced paired data is not monotonically increasing.");
+                    //TODO: do something
                 }
             }
             return pairedData;
