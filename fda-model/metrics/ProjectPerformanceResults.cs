@@ -85,6 +85,7 @@ namespace metrics
         public bool ConditionalNonExceedanceProbabilityIsConverged()
         {
             //dont like this.
+            //couldn't we nix the foreach and just return _cnep[0.98].IsConverged?
             foreach (double key in _cnep.Keys)
             {
                 if (key == 0.98)
