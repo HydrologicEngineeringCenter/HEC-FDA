@@ -366,6 +366,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 StudyPropertiesElement = (StudyPropertiesElement)newElement;
             }
+            else if(newElement.GetType().Equals(typeof(OccupancyTypesElement)))
+            {
+                UpdateOccTypeElement( (OccupancyTypesElement)newElement);
+            }
         }
 
         public void UpdateTerrain( TerrainElement newElement)

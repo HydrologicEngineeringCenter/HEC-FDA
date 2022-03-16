@@ -14,8 +14,6 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         public override void LoadControlVMs(IDistribution ordinate)
         {
-            
-
             IDistributionEnum ordType = ordinate.Type;
             //create constant option
             if (ordType == IDistributionEnum.Deterministic)

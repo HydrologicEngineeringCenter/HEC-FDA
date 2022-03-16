@@ -50,5 +50,9 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             owner.ValueUncertaintyVM = valueUncertaintyVM;
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            int test = 0;
+        }
     }
 }

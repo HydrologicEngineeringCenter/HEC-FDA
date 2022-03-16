@@ -11,9 +11,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class OccTypeItem:BaseViewModel
     {
+        public event EventHandler DataModified;
+
         private bool _IsChecked;
         private ComputeComponentVM _Curve;
-        //private ContinuousDistribution _Distribution;
         private TableWithPlotVM _StructureTableWithPlot;
         private ValueUncertaintyVM _StructureValueUncertainty;
 
@@ -21,7 +22,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public bool IsChecked
         {
             get { return _IsChecked; }
-            set { _IsChecked = value; NotifyPropertyChanged(); }
+            set { _IsChecked = value; SomethingChanged(this, EventArgs.Empty); NotifyPropertyChanged(); }
         }
         public ComputeComponentVM Curve
         {
@@ -60,7 +61,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         private void SomethingChanged(object sender, EventArgs e)
         {
-            //IsModified = true;
+            DataModified?.Invoke(this, EventArgs.Empty);
         }
 
     }

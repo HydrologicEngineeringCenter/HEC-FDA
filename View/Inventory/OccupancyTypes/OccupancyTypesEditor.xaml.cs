@@ -33,6 +33,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
             vm.CloseEditor += Vm_CloseEditor;
             UpdateTheListView(sender, e);
+            vm.ClearAllModifiedLists();
            // if (vm.OccTypeGroups.Count > 0)
            // {
                 //if (vm.OccTypeGroups.Count > 0)

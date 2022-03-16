@@ -45,8 +45,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         //ValueUncertaintyType OtherUncertaintyType { get; set; }
         //ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
 
-        //double ContentToStructureValue { get; set; }
-        //double OtherToStructureValue { get; set; }
+        double ContentToStructureValue { get; set; }
+        double OtherToStructureValue { get; set; }
 
         ContinuousDistribution ContentToStructureValueUncertainty { get; set; }
         ContinuousDistribution OtherToStructureValueUncertainty { get; set; }

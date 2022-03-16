@@ -481,7 +481,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
             int groupID = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            int occtypeID = Saving.PersistenceFactory.GetOccTypeManager().getIdForNewOccType();
+            int occtypeID = Saving.PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
@@ -551,6 +551,9 @@ namespace HEC.FDA.ViewModel.Utilities
             ContinuousDistribution ContentToStructureValueUncertainty = new Deterministic(0);
             ContinuousDistribution OtherToStructureValueUncertainty = new Deterministic(0);
 
+            double contToStrucValue = 1;
+            double otherToStrucValue = 1;
+
             //todo: what is this?
             bool IsContentRatio = true;
             bool IsOtherRatio = true;
@@ -558,7 +561,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ContentToStructureValueUncertainty,
-                OtherToStructureValueUncertainty, ID);
+                OtherToStructureValueUncertainty, contToStrucValue, otherToStrucValue, ID);
             return ot;
         }
 

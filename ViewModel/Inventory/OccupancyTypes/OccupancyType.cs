@@ -94,7 +94,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeItem structureItem,
             OccTypeItem contentItem, OccTypeItem vehicleItem, OccTypeItem otherItem, ContinuousDistribution foundationHtUncertainty,
-            ContinuousDistribution contentToStructureValueUncertainty, ContinuousDistribution otherToStructureValueUncertainty, int id)
+            ContinuousDistribution contentToStructureValueUncertainty, ContinuousDistribution otherToStructureValueUncertainty,
+            double contentToStructureValue, double otherToStructureValue, int id)
         {
             Name = name;
             Description = description;
@@ -107,6 +108,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FoundationHeightUncertainty = foundationHtUncertainty;
             ContentToStructureValueUncertainty = contentToStructureValueUncertainty;
             OtherToStructureValueUncertainty = otherToStructureValueUncertainty;
+            ContentToStructureValue = contentToStructureValue;
+            OtherToStructureValue = otherToStructureValue;
             ID = id;
         }
         public OccupancyType(string name, string damageCategoryName)
@@ -123,6 +126,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
             ContentToStructureValueUncertainty = ot.ContentToStructureValueUncertainty;
             OtherToStructureValueUncertainty = ot.OtherToStructureValueUncertainty;
+            ContentToStructureValue = ot.ContentToStructureValue;
+            OtherToStructureValue = ot.OtherToStructureValue;
             IsContentRatio = ot.IsContentRatio;
             IsVehicleRatio = ot.IsVehicleRatio;
             IsOtherRatio = ot.IsOtherRatio;
