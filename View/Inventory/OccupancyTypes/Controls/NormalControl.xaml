@@ -24,8 +24,6 @@
             <Label Content="Standard Deviation:" />
             <TextBox x:Name="txt_StandDeviation" Text="{Binding StDev, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
             <Label Content="{Binding LabelString}" />
-
         </StackPanel>
-
     </Grid>
 </UserControl>

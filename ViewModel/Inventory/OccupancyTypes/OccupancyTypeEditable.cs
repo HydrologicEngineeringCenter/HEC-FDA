@@ -1,18 +1,14 @@
 ﻿using FdaLogging;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Utilities;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Inventory.DamageCategory;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using ViewModel.Inventory.OccupancyTypes;
-using HEC.FDA.ViewModel.TableWithPlot;
-using Statistics;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -149,9 +145,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
 
-        #region Constructors
-
-        
+        #region Constructors      
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             StructureItem = new OccTypeItem(occtype.StructureItem.IsChecked, occtype.StructureItem.Curve, occtype.StructureItem.ValueUncertainty.Distribution);
@@ -168,7 +162,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             HasBeenSaved = occtypeHasBeenSaved;
             //clone the occtype so that changes to it will not go into effect
             //unless the user saves.
-            IOccupancyType clonedOcctype = new OccupancyType(occtype); //Saving.PersistenceFactory.GetOccTypeManager().CloneOccType(occtype);
+            IOccupancyType clonedOcctype = new OccupancyType(occtype);
 
             Name = clonedOcctype.Name;
             Description = clonedOcctype.Description;
@@ -224,35 +218,36 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         
-        private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
-        {
-            List<LogItem> logs = new List<LogItem>();
-            return logs;
-        }
+        //cdm - leaving this here until we know what we are doing for error messaging. (3/16/22)
+        //private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
+        //{
+        //    List<LogItem> logs = new List<LogItem>();
+        //    return logs;
+        //}
 
-        private LoggingLevel TranslateValidationLevelToLogLevel(IMessageLevels level)
-        {
-            LoggingLevel logLevel = LoggingLevel.Info;
-            switch (level)
-            {
-                case IMessageLevels.FatalError:
-                    {
-                        logLevel = LoggingLevel.Fatal;
-                        break;
-                    }
-                case IMessageLevels.Error:
-                    {
-                        logLevel = LoggingLevel.Error;
-                        break;
-                    }
-                case IMessageLevels.Message:
-                    {
-                        logLevel = LoggingLevel.Warn;
-                        break;
-                    }
-            }
-            return logLevel;
-        }
+        //private LoggingLevel TranslateValidationLevelToLogLevel(IMessageLevels level)
+        //{
+        //    LoggingLevel logLevel = LoggingLevel.Info;
+        //    switch (level)
+        //    {
+        //        case IMessageLevels.FatalError:
+        //            {
+        //                logLevel = LoggingLevel.Fatal;
+        //                break;
+        //            }
+        //        case IMessageLevels.Error:
+        //            {
+        //                logLevel = LoggingLevel.Error;
+        //                break;
+        //            }
+        //        case IMessageLevels.Message:
+        //            {
+        //                logLevel = LoggingLevel.Warn;
+        //                break;
+        //            }
+        //    }
+        //    return logLevel;
+        //}
 
         public IOccupancyType CreateOccupancyType(out List<LogItem> errors)
         {
@@ -328,8 +323,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IOccupancyType ot = CreateOccupancyType(out errors);
             if (ot == null)
             {
-                //if the occtype is null then it failed. There should be errors to add.
-                
+                //if the occtype is null then it failed. There should be errors to add.            
                 return errors;
             }
             else if (HasBeenSaved)

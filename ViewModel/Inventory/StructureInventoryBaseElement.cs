@@ -12,10 +12,8 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created Date: 6/14/2017 4:00:20 PM
         #endregion
         #region Fields
-
         #endregion
         #region Properties
-        //public static string BldgTypeField = "BldgType";
         public static string OccupancyTypeGroup = "OccTypeGroup";
         public static string GroundElevationField = "GroundElevation";
         public static string FirstFloorElevationField = "FirstFloorElevation";
@@ -25,7 +23,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public static string geomField = "geom";
         public static string damCatField = "damage_category";
 
-        //public string Path { get; set; }
         public string Description { get; set; }
         public string Name { get; set; }
         #endregion
@@ -33,61 +30,43 @@ namespace HEC.FDA.ViewModel.Inventory
         public StructureInventoryBaseElement(string name,string description):
             base(Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT + name)
         {
-            //Path = path;
             Name = name;
             Description = description;
         }
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
+
+        #region Interface methods
         public override void DeleteFromLookupTable()
-        {
-            // The look up table is a table in the sqlite file that holds the names of your struc inventories
-            
+        {           
         }
 
         public override IStructureBase[] GetStructureInventory()
         {
-            // this will be my computable object. It will be the entire SI with values that we can do math on.
             throw new NotImplementedException();
         }
 
         public override string[] GetTableColumnNames()
         {
-            //Woody uses this to get the column names of the lookup table. I have written it to get the column names of the SI
             return DataBaseView.ColumnNames;
-            //return null;
         }
 
         public override Type[] GetTableColumnTypes()
         {
-            //Woody uses this to get the column types of the lookup table. I have written it to get the column types of the SI
-
             return DataBaseView.ColumnTypes;
-            //return null;
         }
 
         public override bool IsDataValid(ref string MessageOut)
         {
-            //first call "ContainsRequiredStructureAttributes"
-            //loop through all rows and evaluate each cell to see if it has acceptable values. Mostly checking against negative values.
             throw new NotImplementedException();
         }
 
         public override ISerializeToSQLiteRow SaveAs(string newName)
         {
-            //this function is copying an existing SI
-            //first - geopackage copy features
-            //add the new name to the lookup table. 
-            //return the new structureinventorybaseElement
             throw new NotImplementedException();
         }
 
         public override void SaveToLookupTable()
         {
-            //This will add the newly created SI name to the lookup table.
             throw new NotImplementedException();
         }
 
@@ -131,5 +110,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
             return true;
         }
+        #endregion
     }
 }

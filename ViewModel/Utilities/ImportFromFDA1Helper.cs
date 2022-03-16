@@ -1,4 +1,12 @@
-﻿using Importer;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.TableWithPlot;
+using Importer;
 using paireddata;
 using Statistics;
 using Statistics.Distributions;
@@ -6,16 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
-using HEC.FDA.ViewModel.FlowTransforms;
-using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.GeoTech;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Inventory.DamageCategory;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using HEC.FDA.ViewModel.StageTransforms;
 using static Importer.ProbabilityFunction;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -505,8 +504,6 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             List<string> errorMessages = new List<string>();
 
-
-
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
             //this list is in the order of the enum
@@ -557,7 +554,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //todo: what is this?
             bool IsContentRatio = true;
             bool IsOtherRatio = true;
-            bool IsVehicleRatio = true;
+            
 
             IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ContentToStructureValueUncertainty,

@@ -43,7 +43,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public string MaxLabelString { get; set; }
         public bool DisplayMostLikely { get; set; }
 
-
         public TriangularControlVM(double mode, double min, double max, string minLabelString, string maxLabelString, bool displayMostLikely = false)
         {
             DisplayMostLikely = displayMostLikely;

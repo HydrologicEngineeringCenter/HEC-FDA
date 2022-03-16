@@ -4,12 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
-             xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d"  
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
-             Loaded="UserControl_Loaded"
-             DataContextChanged="UserControl_DataContextChanged"
              d:DesignHeight="580" d:DesignWidth="700">
     <Grid>
         <Grid.RowDefinitions>
@@ -45,9 +42,6 @@
         </Grid>
 
         <GroupBox Header="Foundation Height Uncertainty" BorderBrush="Black" BorderThickness=".5" Margin="0,5,0,5"  Padding="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <!--<local:PercentOfMeanUncertainty x:Name="FoundationHeightUncertainty" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center" IsPercentOfMean="True" ParameterName="Variation in Foundation Height as %:"/>-->
-            <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="FoundationHeightUncertainty" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center" LostFocus="FoundationHeightUncertainty_LostFocus" /> -->
-            <!-- ContinuousDistribution="{Binding SelectedOccType.FoundationHeightUncertainty}" />-->
             <local:ValueUncertaintyControl DataContext="{Binding FoundationHeightUncertainty}" />
         </GroupBox>
 
@@ -69,14 +63,9 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <GroupBox Header="Structure Value Uncertainty" Grid.Row="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness=".5"  Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                        <!--<local:PercentOfMeanUncertainty x:Name="StructureValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Structure Value as %:"/>-->
-                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="StructureValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Structure Value as %:" LostFocus="StructureValueUncertainty_LostFocus"/>-->
                         <local:ValueUncertaintyControl DataContext="{Binding StructureItem.ValueUncertainty}" />
                     </GroupBox>
                     <twp:TableWithPlotControl DataContext="{Binding StructureItem.TableWithPlot}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
-                    <!--<Utils:CoordinatesFunctionEditor Grid.Row="1" />-->
-                    <!--<CA:TableWithPlot x:Name="tableWithPlot_Structures" Grid.Row="2" Curve="{Binding StructureDepthDamageCurve}" IsReadOnly="False" TableWidth="250" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Structural Depth-Damage Curve" />-->
-                    <!--<local:CurveEditorControl x:Name="StructureCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Structural Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
             <TabItem Name="ContentDDTabItem" >
@@ -98,8 +87,6 @@
                     </Grid.RowDefinitions>
 
                     <GroupBox Header="Content Value Uncertainty" BorderBrush="Black" BorderThickness=".5"  Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
-                        <!--<local:PercentOfMeanUncertainty x:Name="ContentValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top" ParameterName="Variation in Content Value as %:"/>-->
-                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="ContentValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top" ParameterName="Variation in Content Value as %:" LostFocus="ContentValueUncertainty_LostFocus"/>-->
                         <local:ValueUncertaintyControl DataContext="{Binding ContentItem.ValueUncertainty}" />
                     </GroupBox>
                     <Grid Grid.Row="1" Margin="5,5,0,0" Name="ContentDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
@@ -108,19 +95,8 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <!--<TextBlock Name="ContentDamageLabel" Grid.Column="0" Text="Content Damage Relationship: " TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox Name="ContentDamageComboBox" Grid.Column="1" ItemsSource="{Binding ContentDepthDamageStringNames}"  SelectedItem="{Binding SelectedContentDepthDamage}" />
-                        <Button Name="EditContentDamageButton" Grid.Column="2" Margin="3,0,0,0" IsEnabled="False"  Padding="0" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Edit Depth-Damage Data" ToolTipService.ShowOnDisabled="True" >
-                            -->
-                        <!--<Image Width="16" Height="16" Source="pack://application:,,,/HEC-LifeSim;component/Resources/EditButtonIcon_Disabled.png"/>-->
-                        <!--
-                        </Button>-->
                     </Grid>
                     <twp:TableWithPlotControl DataContext="{Binding ContentItem.TableWithPlot}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
-
-                    <!--<Utils:CoordinatesFunctionEditor Grid.Row="2"  />-->
-                    <!--<CA:TableWithPlot x:Name="tableWithPlot_Content" Grid.Row="2" Curve="{Binding ContentDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Content Depth-Damage Curve" Grid.ColumnSpan="2"  />-->
-                    <!--<local:CurveEditorControl x:Name="ContentCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Content Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
             <TabItem Name="VehicleDDTabItem">
@@ -141,8 +117,6 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
                     <GroupBox Header="Vehicle Value Uncertainty" BorderBrush="Black" BorderThickness=".5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
-                        <!--<local:PercentOfMeanUncertainty x:Name="VehicleValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Vehicle Value as %:"/>-->
-                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="VehicleValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Vehicle Value as %:" LostFocus="VehicleValueUncertainty_LostFocus"/>-->
                         <local:ValueUncertaintyControl DataContext="{Binding VehicleItem.ValueUncertainty}" />
                     </GroupBox>
                     <Grid Grid.Row="1" Margin="5,5,0,0" Name="VehicleDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
@@ -151,19 +125,8 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <!--<TextBlock Name="VehicleDamageLabel" Grid.Column="0" Text="Vehicle Damage Relationship: " TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox Name="VehicleDamageComboBox" Grid.Column="1" ItemsSource="{Binding VehicleDepthDamageStringNames}"  SelectedItem="{Binding SelectedVehicleDepthDamage}" />
-                        <Button Name="EditVehicleDamageButton" Grid.Column="2" Margin="3,0,0,0" IsEnabled="False"  Padding="0" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Edit Depth-Damage Data" ToolTipService.ShowOnDisabled="True" >
-                            -->
-                        <!--<Image Width="16" Height="16" Source="pack://application:,,,/HEC-LifeSim;component/Resources/EditButtonIcon_Disabled.png"/>-->
-                        <!--
-                        </Button>-->
                     </Grid>
                     <twp:TableWithPlotControl DataContext="{Binding VehicleItem.TableWithPlot}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
-
-                    <!--<Utils:CoordinatesFunctionEditor Grid.Row="2" />-->
-                    <!--<CA:TableWithPlot x:Name="tableWithPlot_vehicle" Grid.Row="2" Curve="{Binding VehicleDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Vehicle Depth-Damage Curve" />-->
-                    <!--<local:CurveEditorControl x:Name="VehicleCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Vehicle Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
             <TabItem Name="OtherDDTabItem">
@@ -185,8 +148,6 @@
                     </Grid.RowDefinitions>
 
                     <GroupBox Header="Other Value Uncertainty" BorderBrush="Black" BorderThickness=".5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
-                        <!--<local:PercentOfMeanUncertainty x:Name="OtherValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Other Value as %:"/>-->
-                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="OtherValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Other Value as %:" LostFocus="OtherValueUncertainty_LostFocus"/>-->
                         <local:ValueUncertaintyControl DataContext="{Binding OtherItem.ValueUncertainty}" />
                     </GroupBox>
                     <Grid Grid.Row="1" Margin="5,5,0,0" Name="OtherDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
@@ -195,69 +156,10 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <!--<TextBlock Name="OtherDamageLabel" Grid.Column="0" Text="Other Damage Relationship: " TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox Name="OtherDamageComboBox" Grid.Column="1" ItemsSource="{Binding OtherDepthDamageStringNames}"  SelectedItem="{Binding SelectedOtherDepthDamage}" />
-                        <Button Name="EditOtherDamageButton" Grid.Column="2" Margin="3,0,0,0" IsEnabled="False"  Padding="0" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Edit Depth-Damage Data" ToolTipService.ShowOnDisabled="True" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/EditButtonIcon.png"/>
-                        </Button>-->
                     </Grid>
                     <twp:TableWithPlotControl DataContext="{Binding OtherItem.TableWithPlot}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
-
-                    <!--<Utils:CoordinatesFunctionEditor Grid.Row="2"  />-->
-                    <!--<CA:TableWithPlot x:Name="tableWithPlot_other" Grid.Row="2" Curve="{Binding OtherDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Other Depth-Damage Curve"  />-->
-                    <!--<local:CurveEditorControl x:Name="OtherCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Other Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
-            <!--<TabItem Name="EvacTabItem" IsEnabled="True" Header="Evacuation Parameters">
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <CheckBox Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Name="AllWarnSameTimeCheckbox" VerticalAlignment="Center"  />
-                    <TextBlock Grid.Column="1" Grid.Row="0" Text="Population in structure warned at the same time" VerticalAlignment="Center" Margin="5"/>
-
-                    <CheckBox Name="AllPAISameTimeCheckbox" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1"/>
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="Population in structure takes protective action at the same time" VerticalAlignment="Center" Margin="5"/>
-
-                    -->
-            <!--<local:NumericTextBox x:Name="FracVerticalU65Box" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="2" MinValue="0" MaxValue="1" IsWholeNumber="False" CanBeNegative="False"/>-->
-            <!--
-                    <TextBlock Text="Probability of access to roof/attic under 65" VerticalAlignment="Center" Margin="5" Grid.Column="1" Grid.Row="2"/>
-
-                    <TextBox Name="FracVerticalO65Box" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="3"/>
-                    <TextBlock Text="Probability of access to roof/attic over 65" VerticalAlignment="Center" Margin="5" Grid.Column="1" Grid.Row="3"/>
-
-                    <TextBox Name="FracRoofvAtticBox" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="4"/>
-                    <TextBlock Text="Fraction to roof vs attic (if access is possible)" VerticalAlignment="Center" Margin="5" Grid.Column="1" Grid.Row="4"/>
-
-                  
-                    <TextBox Name="VehicleEvacRateBox" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="7"/>
-                    <TextBlock Text="Fraction of population that evacuate in vehicles vs on foot" VerticalAlignment="Center" Margin="5" Grid.Column="1" Grid.Row="7"/>
-
-                    <TextBox Name="VehicleOccRateBox" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="8"/>
-                    <TextBlock Text="Evacuating Group Size (e.g. number of people per evacuating vehicle)" VerticalAlignment="Center" Margin="5" Grid.Column="1" Grid.Row="8"/>
-
-                    -->
-            <!--<local:PercentOfMeanUncertainty x:Name="OnRoofSubmergence" HasLindell="False" ParameterName="High Hazard Depth Above Rooftop (ft):" ToolTip="If depth on top of structure is greater than the criteria then people caught on roof will be placed in the high hazard zone." Grid.Row="9" Grid.ColumnSpan="2"/>-->
-            <!--<local:PercentOfMeanUncertainty x:Name="InStructureSubmergence" Margin="13,0,0,0" HasLindell="False" ParameterName="High Hazard Depth From Ceiling (ft):" ToolTip="If depth from top of ceiling is within the criteria then people will be placed in the high hazard zone." Grid.Row="10" Grid.ColumnSpan="2"/>-->
-            <!--
-                </Grid>
-            </TabItem>-->
             <TabItem Name="EconTabItem" IsEnabled="True" Header="Other Parameters">
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
@@ -277,12 +179,8 @@
                     <TextBlock Text="Other-to-structure value:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5" Grid.Column="0" Grid.Row="1"/>
                     <TextBox  VerticalAlignment="Center" Text="{Binding OtherToStructure}" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1"/>
                     <local:ValueUncertaintyControl DataContext="{Binding OtherToStructureValueUncertainty}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"/>
-
                 </Grid>
             </TabItem>
         </TabControl>
-
-
-
     </Grid>
 </UserControl>

@@ -1,14 +1,14 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot;
 using Statistics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
+    /// <summary>
+    /// The "Item" is either structure, content, or other.
+    /// This class holds the value uncertainty, the "is selected", and the curve
+    /// </summary>
     public class OccTypeItem:BaseViewModel
     {
         public event EventHandler DataModified;
@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private ComputeComponentVM _Curve;
         private TableWithPlotVM _StructureTableWithPlot;
         private ValueUncertaintyVM _StructureValueUncertainty;
-
 
         public bool IsChecked
         {
@@ -29,11 +28,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        //public ContinuousDistribution Distribution
-        //{
-        //    get { return _Distribution; }
-        //    set { _Distribution = value; NotifyPropertyChanged(); }
-        //}
+
         public TableWithPlotVM TableWithPlot
         {
             get { return _StructureTableWithPlot; }
@@ -54,10 +49,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             IsChecked = isChecked;
             Curve = curve;
-            //ValueUncertainty = valueUncertainty;
             TableWithPlot = new TableWithPlotVM(Curve);
             ValueUncertainty = new MonetaryValueUncertaintyVM(valueUncertainty);
-
         }
         private void SomethingChanged(object sender, EventArgs e)
         {

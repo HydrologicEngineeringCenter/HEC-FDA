@@ -6,7 +6,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class LogNormalControlVM : IValueUncertainty
     {
-
         public event EventHandler WasModified;
         private double _StDev;
         private double _Mean;

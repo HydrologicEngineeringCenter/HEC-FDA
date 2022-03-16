@@ -77,7 +77,6 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler AlternativeUpdated;
         public event UpdateElementEventHandler AlternativeCompReportUpdated;
 
-
         #region Properties
         public List<RatingCurveElement> RatingCurveElements { get; } = new List<RatingCurveElement>();
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();

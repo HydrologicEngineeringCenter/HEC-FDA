@@ -15,6 +15,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
     public class OccTypePersistenceManager : SavingBase
     {
         private const string OCCTYPES_TABLE_NAME = "occupancy_types";
+        private const string CONT_TO_STRUCT = "ContentToStructureValue";
+        private const string OTHER_TO_STRUCT = "OtherToStructureValue";
+        private const string CONT_TO_STRUCT_VALUE = "ContentToStructureValue";
+        private const string OTHER_TO_STRUCT_VALUE = "OtherToStructureValue";
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
@@ -97,7 +101,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-        //todo: i don't think this method is used, but it needs to be hear for the abstract
+        //This method is not used, but it needs to be hear for the abstract
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
@@ -257,7 +261,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
         
-
         /// <summary>
         /// The only way to modify an occtype group is to change its name. This method finds the element
         /// in the cache and updates the name.
@@ -452,11 +455,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return occtype;
         }
 
-        private const string CONT_TO_STRUCT = "ContentToStructureValue";
-        private const string OTHER_TO_STRUCT = "OtherToStructureValue";
-        private const string CONT_TO_STRUCT_VALUE = "ContentToStructureValue";
-        private const string OTHER_TO_STRUCT_VALUE = "OtherToStructureValue";
-
         private string WriteOtherParamsToXML(IOccupancyType ot)
         {
             XElement otherParamsElem = new XElement(OTHER_PARAMS);
@@ -593,8 +591,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="elementName"></param>
         public override void Log(LoggingLevel level, string message, string elementName)
         {
-            // int elementId = GetElementId(TableName, elementName);
-            //LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
         }
 
         /// <summary>
@@ -606,8 +602,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
-            //int id = GetElementId(TableName, elementName);
-            //return RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
             return new ObservableCollection<LogItem>();
         }
 
@@ -620,10 +614,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
         {
-            //int id = GetElementId(TableName, elementName);
-            //return RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
             return new ObservableCollection<LogItem>();
-
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
@@ -635,6 +626,5 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     occElem.IsSelected
             };
         }
-
     }
 }

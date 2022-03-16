@@ -18,7 +18,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             //create constant option
             if (ordType == IDistributionEnum.Deterministic)
             {
-                //todo: i don't really know how to handle constant right now
                 ControlWasModified(this, new EventArgs());
             }
 
@@ -34,7 +33,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             _NormalControlVM.WasModified += ControlWasModified;
 
             //create log normal option
-            //create normal option
             double logNormalMean = 0;
             double logNormalStDev = 0;
             if (ordType == IDistributionEnum.LogNormal)
@@ -68,9 +66,6 @@ namespace ViewModel.Inventory.OccupancyTypes
             }
             _UniformControlVM = new UniformControlVM(uniMin, uniMax, "from expected value");
             _UniformControlVM.WasModified += ControlWasModified;
-
-
         }
-
     }
 }
