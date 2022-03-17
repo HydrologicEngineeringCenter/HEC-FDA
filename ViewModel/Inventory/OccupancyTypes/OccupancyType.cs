@@ -9,19 +9,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     {
         public string Description { get; set; }
         public string DamageCategory { get; set; }
-        public ContinuousDistribution ContentToStructureValueUncertainty { get; set; }
-        public double ContentToStructureValue { get; set; }
-        public ContinuousDistribution OtherToStructureValueUncertainty { get; set; }
-        public double OtherToStructureValue { get; set; }
 
-        //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
-        public bool IsContentRatio { get; set; }
-        public bool IsVehicleRatio { get; set; }
-        public bool IsOtherRatio { get; set; }
         public OccTypeItem StructureItem { get; set; }
-        public OccTypeItem ContentItem { get; set; }
+        public OccTypeItemWithRatio ContentItem { get; set; }
         public OccTypeItem VehicleItem { get; set; }
-        public OccTypeItem OtherItem { get; set; }
+        public OccTypeItemWithRatio OtherItem { get; set; }
         public ContinuousDistribution FoundationHeightUncertainty { get; set; }
 
         public int GroupID { get; set; }
@@ -34,22 +26,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Description = "";
             GroupID = groupId;
             StructureItem = CreateDefaultItem(true);
-            ContentItem = CreateDefaultItem(true);
+            ContentItem = CreateDefaultItemWithRatio(true);
             VehicleItem = CreateDefaultItem(true);
-            OtherItem = CreateDefaultItem(false);
+            OtherItem = CreateDefaultItemWithRatio(false);
             FoundationHeightUncertainty = new Deterministic(0);
-            ContentToStructureValueUncertainty = new Deterministic(0);
-            OtherToStructureValueUncertainty = new Deterministic(0);
 
             OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
             ID = manager.GetNextAvailableId();
         }
 
-
         public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeItem structureItem,
-            OccTypeItem contentItem, OccTypeItem vehicleItem, OccTypeItem otherItem, ContinuousDistribution foundationHtUncertainty,
-            ContinuousDistribution contentToStructureValueUncertainty, ContinuousDistribution otherToStructureValueUncertainty,
-            double contentToStructureValue, double otherToStructureValue, int id)
+            OccTypeItemWithRatio contentItem, OccTypeItem vehicleItem, OccTypeItemWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
         {
             Name = name;
             Description = description;
@@ -60,10 +47,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             VehicleItem = vehicleItem;
             OtherItem = otherItem;
             FoundationHeightUncertainty = foundationHtUncertainty;
-            ContentToStructureValueUncertainty = contentToStructureValueUncertainty;
-            OtherToStructureValueUncertainty = otherToStructureValueUncertainty;
-            ContentToStructureValue = contentToStructureValue;
-            OtherToStructureValue = otherToStructureValue;
             ID = id;
         }
         public OccupancyType(string name, string damageCategoryName)
@@ -78,13 +61,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Description = ot.Description;
             DamageCategory = ot.DamageCategory;
             FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
-            ContentToStructureValueUncertainty = ot.ContentToStructureValueUncertainty;
-            OtherToStructureValueUncertainty = ot.OtherToStructureValueUncertainty;
-            ContentToStructureValue = ot.ContentToStructureValue;
-            OtherToStructureValue = ot.OtherToStructureValue;
-            IsContentRatio = ot.IsContentRatio;
-            IsVehicleRatio = ot.IsVehicleRatio;
-            IsOtherRatio = ot.IsOtherRatio;
             StructureItem = ot.StructureItem;
             ContentItem = ot.ContentItem;
             VehicleItem = ot.VehicleItem;
@@ -98,6 +74,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
             ContinuousDistribution structValueUncert = new Deterministic(0);
             return new OccTypeItem(isSelected, structureCurve, structValueUncert);
+        }
+
+        private OccTypeItemWithRatio CreateDefaultItemWithRatio(bool isSelected)
+        {
+            ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
+            ContinuousDistribution structValueUncert = new Deterministic(0);
+            ContinuousDistribution structValueUncertRatio = new Deterministic(0);
+            bool isByVal = true;
+            return new OccTypeItemWithRatio(isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
         }
     }
 }

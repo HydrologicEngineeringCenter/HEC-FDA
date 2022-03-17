@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using Utilities;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -18,7 +17,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// </summary>
     public class OccupancyTypeEditable : BaseViewModel, IOccupancyTypeEditable
     {
-
         #region Fields
         public event EventHandler UpdateMessagesEvent;
 
@@ -27,14 +25,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private string _DamageCategory;
         private bool _IsModified;
         private ObservableCollection<string> _DamageCategoriesList = new ObservableCollection<string>();
-        private ValueUncertaintyVM _ContentToStructureValueUncertainty;
-        private double _ContentToStructure;
-        private ValueUncertaintyVM _OtherToStructureValueUncertainty;
-        private double _OtherToStructure;
+        private ValueUncertaintyVM _FoundationHeightUncertainty;
 
         #endregion
 
-        #region Properties
+        #region Properties 
+
         public ObservableCollection<string> DamageCategoriesList
         {
             get { return _DamageCategoriesList; }
@@ -59,15 +55,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public bool IsModified
         {
-            get
-            {
-                return _IsModified;
-            }
-            set
-            {
-                _IsModified = value;
-                NotifyPropertyChanged();
-            }
+            get {return _IsModified;}
+            set{ _IsModified = value; NotifyPropertyChanged();}
         }
         public string Description
         {
@@ -86,40 +75,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public ValueUncertaintyVM ContentToStructureValueUncertainty
-        {
-            get { return _ContentToStructureValueUncertainty; }
-            set
-            {
-                _ContentToStructureValueUncertainty = value;
-                _ContentToStructureValueUncertainty.WasModified += SomethingChanged;
-                IsModified = true;
-            }
-        }
-        public double ContentToStructure
-        {
-            get { return _ContentToStructure; }
-            set { _ContentToStructure = value; IsModified = true; NotifyPropertyChanged(); }
-        }
-
-        public ValueUncertaintyVM OtherToStructureValueUncertainty
-        {
-            get { return _OtherToStructureValueUncertainty; }
-            set
-            {
-                _OtherToStructureValueUncertainty = value;
-                _OtherToStructureValueUncertainty.WasModified += SomethingChanged;
-                IsModified = true;
-            }
-        }
-
-        public double OtherToStructure
-        {
-            get { return _OtherToStructure; }
-            set { _OtherToStructure = value; IsModified = true; NotifyPropertyChanged(); }
-        }
-
-        private ValueUncertaintyVM _FoundationHeightUncertainty;
         public ValueUncertaintyVM FoundationHeightUncertainty
         {
             get { return _FoundationHeightUncertainty; }
@@ -132,9 +87,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         public OccTypeItem StructureItem { get; set; }
-        public OccTypeItem ContentItem { get; set; }
+        public OccTypeItemWithRatio ContentItem { get; set; }
         public OccTypeItem VehicleItem { get; set; }
-        public OccTypeItem OtherItem { get; set; }
+        public OccTypeItemWithRatio OtherItem { get; set; }
 
         /// <summary>
         /// This indicates if the occtype has ever been saved before. If false, then
@@ -149,9 +104,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             StructureItem = new OccTypeItem(occtype.StructureItem.IsChecked, occtype.StructureItem.Curve, occtype.StructureItem.ValueUncertainty.Distribution);
-            ContentItem = new OccTypeItem(occtype.ContentItem.IsChecked, occtype.ContentItem.Curve, occtype.ContentItem.ValueUncertainty.Distribution);
+            ContentItem = new OccTypeItemWithRatio(occtype.ContentItem);               
             VehicleItem = new OccTypeItem(occtype.VehicleItem.IsChecked, occtype.VehicleItem.Curve, occtype.VehicleItem.ValueUncertainty.Distribution);
-            OtherItem = new OccTypeItem(occtype.OtherItem.IsChecked, occtype.OtherItem.Curve, occtype.OtherItem.ValueUncertainty.Distribution);
+            OtherItem = new OccTypeItemWithRatio(occtype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;
             ContentItem.DataModified += OcctypeItemDataModified;
@@ -171,13 +126,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ID = clonedOcctype.ID;
             GroupID = clonedOcctype.GroupID;
 
-            ContentToStructure = clonedOcctype.ContentToStructureValue;
-            OtherToStructure = clonedOcctype.OtherToStructureValue;
-
-            ContentToStructureValueUncertainty = new OtherValueUncertaintyVM(clonedOcctype.ContentToStructureValueUncertainty);
-            OtherToStructureValueUncertainty = new OtherValueUncertaintyVM(clonedOcctype.OtherToStructureValueUncertainty);
-
             FoundationHeightUncertainty = new FoundationValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty);
+
             HasChanges = false;
             IsModified = false;
         }
@@ -188,7 +138,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         #endregion
-
         public void LaunchNewDamCatWindow()
         {
             CreateNewDamCatVM vm = new CreateNewDamCatVM(DamageCategoriesList.ToList());
@@ -217,38 +166,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
         }
 
-        
-        //cdm - leaving this here until we know what we are doing for error messaging. (3/16/22)
-        //private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
-        //{
-        //    List<LogItem> logs = new List<LogItem>();
-        //    return logs;
-        //}
-
-        //private LoggingLevel TranslateValidationLevelToLogLevel(IMessageLevels level)
-        //{
-        //    LoggingLevel logLevel = LoggingLevel.Info;
-        //    switch (level)
-        //    {
-        //        case IMessageLevels.FatalError:
-        //            {
-        //                logLevel = LoggingLevel.Fatal;
-        //                break;
-        //            }
-        //        case IMessageLevels.Error:
-        //            {
-        //                logLevel = LoggingLevel.Error;
-        //                break;
-        //            }
-        //        case IMessageLevels.Message:
-        //            {
-        //                logLevel = LoggingLevel.Warn;
-        //                break;
-        //            }
-        //    }
-        //    return logLevel;
-        //}
-
         public IOccupancyType CreateOccupancyType(out List<LogItem> errors)
         {
             bool success = true;
@@ -269,36 +186,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
             }
 
-            ContinuousDistribution contentToStructureUncertainty = null;
-            try
-            {
-                contentToStructureUncertainty = ContentToStructureValueUncertainty.CreateOrdinate();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                                        .Append("Content to structure: ").Append(e.Message);
-                string logMessage = "Error constructing content to structure uncertainty: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
-
-            ContinuousDistribution otherToStructureUncertainty = null;
-            try
-            {
-                otherToStructureUncertainty = OtherToStructureValueUncertainty.CreateOrdinate();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                                        .Append("Other to structure: ").Append(e.Message);
-                string logMessage = "Error constructing other to structure uncertainty: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
-
             OccupancyType ot = new OccupancyType(Name, Description, GroupID,DamageCategory,StructureItem,ContentItem,VehicleItem,OtherItem,
-                foundHtUncertainty,contentToStructureUncertainty, otherToStructureUncertainty, ContentToStructure, OtherToStructure, ID);
+                foundHtUncertainty, ID);
 
             if (success)
             {
@@ -310,12 +199,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 errors = constructionErrors;
                 return null;
             }
-
         }
 
         public List<LogItem> SaveOcctype()
         {
-            FdaValidationResult vr = new FdaValidationResult();
 
             OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
 

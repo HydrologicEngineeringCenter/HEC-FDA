@@ -14,11 +14,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase
     {
+        private const string VALUE_UNCERT_RATIO = "ValueUncertaintyRatio";
+        private const string IS_BY_VALUE = "IsByValue";
         private const string OCCTYPES_TABLE_NAME = "occupancy_types";
-        private const string CONT_TO_STRUCT = "ContentToStructureValue";
-        private const string OTHER_TO_STRUCT = "OtherToStructureValue";
-        private const string CONT_TO_STRUCT_VALUE = "ContentToStructureValue";
-        private const string OTHER_TO_STRUCT_VALUE = "OtherToStructureValue";
+
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
@@ -439,71 +438,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string otherItemXML = (string)rowData[OTHER_ITEM_COL];
 
             OccTypeItem structItem = ReadItemFromXML(structureItemXML);
-            OccTypeItem contentItem = ReadItemFromXML(contentItemXML);
+            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(contentItemXML);
             OccTypeItem vehicleItem = ReadItemFromXML(vehicleItemXML);
-            OccTypeItem otherItem = ReadItemFromXML(otherItemXML);
+            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(otherItemXML);
 
             ContinuousDistribution foundHtUncert = (ContinuousDistribution)ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
-            ContinuousDistribution contToStruct = ReadContentToStructureValueUncertainty((string)rowData[OTHER_PARAMS_COL]);
-            ContinuousDistribution otherToStruct = ReadOtherToStructureValueUncertainty((string)rowData[OTHER_PARAMS_COL]);
-            double contToStrucValue = ReadContentToStructureValue((string)rowData[OTHER_PARAMS_COL]);
-            double otherToStrucValue = ReadOtherToStructureValue((string)rowData[OTHER_PARAMS_COL]);
 
             IOccupancyType occtype = new OccupancyType(name, desc, groupId, damCatName, structItem, contentItem,
-                vehicleItem, otherItem, foundHtUncert, contToStruct, otherToStruct,contToStrucValue, otherToStrucValue, occtypId);
+                vehicleItem, otherItem, foundHtUncert, occtypId);
 
             return occtype;
-        }
-
-        private string WriteOtherParamsToXML(IOccupancyType ot)
-        {
-            XElement otherParamsElem = new XElement(OTHER_PARAMS);
-
-            XElement contentToStructureElem = new XElement(CONT_TO_STRUCT);
-            contentToStructureElem.SetAttributeValue(CONT_TO_STRUCT_VALUE, ot.ContentToStructureValue);
-            contentToStructureElem.Add(ot.ContentToStructureValueUncertainty.ToXML());
-
-            XElement otherToStructureElem = new XElement(OTHER_TO_STRUCT);
-            otherToStructureElem.SetAttributeValue(OTHER_TO_STRUCT_VALUE, ot.OtherToStructureValue);
-            otherToStructureElem.Add(ot.OtherToStructureValueUncertainty.ToXML());
-
-            otherParamsElem.Add(contentToStructureElem);
-            otherParamsElem.Add(otherToStructureElem);
-
-            return otherParamsElem.ToString();
-        }
-
-        private double ReadContentToStructureValue(string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement otherParamsElem = doc.Element(OTHER_PARAMS);
-            XElement contToStructElem = otherParamsElem.Element(CONT_TO_STRUCT);
-            return Convert.ToDouble(contToStructElem.Attribute(CONT_TO_STRUCT_VALUE).Value);
-        }
-
-        private double ReadOtherToStructureValue(string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement otherParamsElem = doc.Element(OTHER_PARAMS);
-            XElement otherToStructElem = otherParamsElem.Element(OTHER_TO_STRUCT);
-            return Convert.ToDouble(otherToStructElem.Attribute(OTHER_TO_STRUCT_VALUE).Value);
-        }
-
-        private ContinuousDistribution ReadContentToStructureValueUncertainty(string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement otherParamsElem = doc.Element(OTHER_PARAMS);
-            XElement contToStructElem = otherParamsElem.Element(CONT_TO_STRUCT);
-            XElement contElem = contToStructElem.Elements().First();
-            return (ContinuousDistribution)ContinuousDistribution.FromXML(contElem);
-        }
-        private ContinuousDistribution ReadOtherToStructureValueUncertainty(string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement otherParamsElem = doc.Element(OTHER_PARAMS);
-            XElement otherToStructElem = otherParamsElem.Element(OTHER_TO_STRUCT);
-            XElement contElem = otherToStructElem.Elements().First();
-            return (ContinuousDistribution)ContinuousDistribution.FromXML(contElem);
         }
 
         /// <summary>
@@ -532,11 +476,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
 
             rowsList[STRUCT_ITEM_COL] = WriteOccTypeItemToXML(ot.StructureItem);
-            rowsList[CONT_ITEM_COL] = WriteOccTypeItemToXML(ot.ContentItem);
+            rowsList[CONT_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.ContentItem);
             rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
-            rowsList[OTHER_ITEM_COL] = WriteOccTypeItemToXML(ot.OtherItem);
+            rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
 
-            rowsList[OTHER_PARAMS_COL] = WriteOtherParamsToXML(ot);
+            //rowsList[OTHER_PARAMS_COL] = WriteOtherParamsToXML(ot);
             return rowsList.ToList();
         }
 
@@ -556,6 +500,27 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new OccTypeItem(isChecked, comp, valueUncertainty);
         }
 
+        private OccTypeItemWithRatio ReadItemWithRatioFromXML(string xmlString)
+        {
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(ITEM_DATA);
+            bool isChecked = Convert.ToBoolean(itemElem.Attribute(IS_ITEM_CHECKED).Value);
+            bool isByVal = Convert.ToBoolean(itemElem.Attribute(IS_BY_VALUE).Value);
+
+            XElement curveElem = itemElem.Element(COMP_COMP);
+            ComputeComponentVM comp = new ComputeComponentVM(curveElem);
+
+            XElement valueUncertParent = itemElem.Element(VALUE_UNCERT);
+            XElement valueUncert = valueUncertParent.Elements().First();
+            ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
+
+            XElement valueUncertRatioParent = itemElem.Element(VALUE_UNCERT_RATIO);
+            XElement valueUncertRatio = valueUncertRatioParent.Elements().First();
+            ContinuousDistribution valueUncertaintyRatio = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncertRatio);
+
+            return new OccTypeItemWithRatio(isChecked, comp, valueUncertainty, valueUncertaintyRatio, isByVal);
+        }
+
         private string WriteOccTypeItemToXML(OccTypeItem item)
         {
             XElement itemElem = new XElement(ITEM_DATA);
@@ -569,9 +534,30 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return itemElem.ToString();
         }
 
+        private string WriteOccTypeItemWithRatioToXML(OccTypeItemWithRatio item)
+        {
+            XElement itemElem = new XElement(ITEM_DATA);
+            itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
+            itemElem.SetAttributeValue(IS_BY_VALUE, item.IsByValue);
+
+            XElement curveElem = item.Curve.ToXML();
+            itemElem.Add(curveElem);
+
+            itemElem.Add(WriteContinuousDistToXML(item.ValueUncertainty.Distribution));
+            itemElem.Add(WriteContinuousDistRatioToXML(item.ContentByRatioVM.Distribution));
+            return itemElem.ToString();
+        }
+
         private XElement WriteContinuousDistToXML(ContinuousDistribution cd)
         {
             XElement valueUncertParentElem = new XElement(VALUE_UNCERT);
+            XElement valueUncertElem = cd.ToXML();
+            valueUncertParentElem.Add(valueUncertElem);
+            return valueUncertParentElem;
+        }
+        private XElement WriteContinuousDistRatioToXML(ContinuousDistribution cd)
+        {
+            XElement valueUncertParentElem = new XElement(VALUE_UNCERT_RATIO);
             XElement valueUncertElem = cd.ToXML();
             valueUncertParentElem.Add(valueUncertElem);
             return valueUncertParentElem;

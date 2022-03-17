@@ -36,5 +36,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
                 ListViewNeedsUpdating(this, new EventArgs());
             }
         }
+
     }
 }

@@ -163,7 +163,11 @@
             <OccupancyTypesView:SaveAllReport/>
         </DataTemplate>
 
-        <!--Occupancy Types Controls Region-->       
+        <!--Occupancy Types Controls Region-->
+
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }" >
+            <OccupancyTypesControlsView:ValueUncertaintyControl/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>

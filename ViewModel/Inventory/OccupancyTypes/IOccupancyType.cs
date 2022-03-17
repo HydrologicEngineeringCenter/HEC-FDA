@@ -11,20 +11,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         string DamageCategory { get; set; }
 
         OccTypeItem StructureItem { get; set; }
-        OccTypeItem ContentItem { get; set; }
+        OccTypeItemWithRatio ContentItem { get; set; }
         OccTypeItem VehicleItem { get; set; }
-        OccTypeItem OtherItem { get; set; }
+        OccTypeItemWithRatio OtherItem { get; set; }
         ContinuousDistribution FoundationHeightUncertainty { get; set; }
-
-        //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
-        bool IsContentRatio { get; set; }
-        bool IsVehicleRatio { get; set; }
-        bool IsOtherRatio { get; set; }
-
-        double ContentToStructureValue { get; set; }
-        double OtherToStructureValue { get; set; }
-
-        ContinuousDistribution ContentToStructureValueUncertainty { get; set; }
-        ContinuousDistribution OtherToStructureValueUncertainty { get; set; }
+        
     }
 }

@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private ComputeComponentVM _Curve;
         private TableWithPlotVM _StructureTableWithPlot;
         private ValueUncertaintyVM _StructureValueUncertainty;
-
+ 
         public bool IsChecked
         {
             get { return _IsChecked; }
@@ -45,6 +45,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        public OccTypeItem(OccTypeItem item)
+        {
+            IsChecked = item.IsChecked;
+            Curve = item.Curve;
+            TableWithPlot = new TableWithPlotVM(Curve);
+            ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
+        }
+
         public OccTypeItem(bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty)
         {
             IsChecked = isChecked;
@@ -52,10 +60,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             TableWithPlot = new TableWithPlotVM(Curve);
             ValueUncertainty = new MonetaryValueUncertaintyVM(valueUncertainty);
         }
-        private void SomethingChanged(object sender, EventArgs e)
+        public void SomethingChanged(object sender, EventArgs e)
         {
             DataModified?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }

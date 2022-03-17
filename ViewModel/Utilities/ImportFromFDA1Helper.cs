@@ -528,37 +528,33 @@ namespace HEC.FDA.ViewModel.Utilities
             List<ContinuousDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
             ContinuousDistribution foundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
             ContinuousDistribution structureValueUncertainty = uncertainties[(int)OccTypeStrucComponent.STRUCTURE];
-            ContinuousDistribution contentValueUncertainty = uncertainties[(int)OccTypeStrucComponent.CONTENT];
-            ContinuousDistribution otherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
             ContinuousDistribution vehicleValueUncertainty = uncertainties[(int)OccTypeStrucComponent.AUTO];
+
+            //the content and other value uncertainties can either be "by value" or "ratio to structures". 
+            //if the value is null, then it is "By value". If there is a value in the array then it is "by ratio".
+            ContinuousDistribution contentValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.CONTENT];
+            ContinuousDistribution otherValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.OTHER];
+
+            bool isContentByValue = contentValueUncertaintyByRatio == null;
+            bool isOtherByValue = otherValueUncertaintyByRatio == null;
+
+            ContinuousDistribution contentValueUncertaintyByValue = new Deterministic();
+            ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();
 
             bool CalculateStructureDamage = true;
             bool CalculateContentDamage = true;
             bool CalculateVehicleDamage = true;
             bool CalculateOtherDamage = false;
 
-            OccTypeItem StructureItem = new OccTypeItem(CalculateStructureDamage, structureComponent, structureValueUncertainty);
-            OccTypeItem ContentItem = new OccTypeItem(CalculateContentDamage, contentComponent, contentValueUncertainty);
+            OccTypeItem StructureItem = new OccTypeItem(CalculateStructureDamage, structureComponent, structureValueUncertainty);           
+            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
             OccTypeItem VehicleItem = new OccTypeItem(CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
-            OccTypeItem OtherItem = new OccTypeItem(CalculateOtherDamage, otherComponent, otherValueUncertainty);
+            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
 
-            ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
-
-            //todo: is this correct?
-            ContinuousDistribution ContentToStructureValueUncertainty = new Deterministic(0);
-            ContinuousDistribution OtherToStructureValueUncertainty = new Deterministic(0);
-
-            double contToStrucValue = 1;
-            double otherToStrucValue = 1;
-
-            //todo: what is this?
-            bool IsContentRatio = true;
-            bool IsOtherRatio = true;
-            
+            ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;      
 
             IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
-                StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ContentToStructureValueUncertainty,
-                OtherToStructureValueUncertainty, contToStrucValue, otherToStrucValue, ID);
+                StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ID);
             return ot;
         }
 
@@ -596,7 +592,6 @@ namespace HEC.FDA.ViewModel.Utilities
         private static ContinuousDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
-            //double mostLikelyValue = 100;
             double mean = errorDist.GetCentralValue();
             //st dev gets reused as min
             double stDev = errorDist.GetStdDev();
@@ -626,18 +621,21 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static ContinuousDistribution TranslateErrorDistToOrdinate(ErrorDistribution errorDist, OccTypeStrucComponent componentType)
         {
-            ContinuousDistribution dist = new Deterministic(0);
-            switch(componentType)
+            ContinuousDistribution dist = null;
+            if (errorDist != null)
             {
-                case OccTypeStrucComponent.FFLOOR:
-                case OccTypeStrucComponent.STRUCTURE:
-                    dist = TranslateStructureValueUncertainty(errorDist);
-                    break;
-                case OccTypeStrucComponent.CONTENT:
-                case OccTypeStrucComponent.AUTO:
-                case OccTypeStrucComponent.OTHER:
-                    dist = TranslateRatioValueUncertainty(errorDist);
-                    break;
+                switch (componentType)
+                {
+                    case OccTypeStrucComponent.FFLOOR:
+                    case OccTypeStrucComponent.STRUCTURE:
+                        dist = TranslateStructureValueUncertainty(errorDist);
+                        break;
+                    case OccTypeStrucComponent.CONTENT:
+                    case OccTypeStrucComponent.AUTO:
+                    case OccTypeStrucComponent.OTHER:
+                        dist = TranslateRatioValueUncertainty(errorDist);
+                        break;
+                }
             }
             return dist;
         }

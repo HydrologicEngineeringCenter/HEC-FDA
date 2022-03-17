@@ -55,11 +55,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public ContinuousDistribution CreateOrdinate()
         {
-            //for now (8/10/20) we don't show the user the "MostLikely" value. We don't care
-            //what it is, we just want it to always work so we will set it to be the same
-            //as the min.
-            MostLikely = Min;
-
             if (Min > 100 || Min < 0)
             {
                 throw new InvalidConstructorArgumentsException("Triangular distribution min value needs to be between 0 and 100");
@@ -70,7 +65,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
             else
             {
-                return new Triangular(MostLikely, Min, Max);
+                return new Triangular(Min, MostLikely, Max);
             }
         }
     }
