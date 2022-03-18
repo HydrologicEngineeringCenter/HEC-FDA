@@ -562,7 +562,6 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
             double mostLikelyValue = 100;
-            //double mean = errorDist.GetCentralValue();
             //st dev gets reused as min
             double stDev = errorDist.GetStdDev();
             double max = errorDist.GetUpper();

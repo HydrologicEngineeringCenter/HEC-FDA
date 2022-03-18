@@ -7,11 +7,14 @@ using OxyPlot;
 using System.Reflection;
 using System.Xml.Linq;
 using paireddata;
+using System;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
     public class TableWithPlotVM : ValidatingBaseViewModel, MVVMFramework.ViewModel.Interfaces.IUpdatePlot
     {
+        public event EventHandler WasModified;
+
         #region Backing Fields
         private PlotModel _plotModel;
         private ComputeComponentVM _computeComponentVM;
@@ -135,6 +138,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private void Row_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             _plotModel.InvalidatePlot(true);
+            WasModified?.Invoke(this, e);
         }
 
         private void SelectedItemToPlotModel()
@@ -180,6 +184,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             if (e.PropertyName == nameof(_computeComponentVM.SelectedItem))
             {
                 SelectedItemToPlotModel();
+                WasModified?.Invoke(sender, e);
             }
         }
 

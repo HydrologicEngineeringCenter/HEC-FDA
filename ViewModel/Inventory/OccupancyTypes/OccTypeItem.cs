@@ -50,6 +50,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsChecked = item.IsChecked;
             Curve = item.Curve;
             TableWithPlot = new TableWithPlotVM(Curve);
+            TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
         }
 
@@ -58,6 +59,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsChecked = isChecked;
             Curve = curve;
             TableWithPlot = new TableWithPlotVM(Curve);
+            TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(valueUncertainty);
         }
         public void SomethingChanged(object sender, EventArgs e)
