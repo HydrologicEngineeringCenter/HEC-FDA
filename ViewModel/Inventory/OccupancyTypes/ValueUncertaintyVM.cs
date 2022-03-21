@@ -15,16 +15,35 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #region fields
         private IValueUncertainty _CurrentVM;
-        public NormalControlVM _NormalControlVM;
-        public TriangularControlVM _TriangularControlVM;
-        public UniformControlVM _UniformControlVM;
-        public LogNormalControlVM _LogNormalControlVM;
+        private NormalControlVM _NormalControlVM;
+        private TriangularControlVM _TriangularControlVM;
+        private UniformControlVM _UniformControlVM;
+        private LogNormalControlVM _LogNormalControlVM;
 
         private IDistributionEnum _SelectedType;
         #endregion
 
         #region properties
-
+        public TriangularControlVM TriangularControlVM
+        {
+            get { return _TriangularControlVM; }
+            set { _TriangularControlVM = value; }
+        }
+        public UniformControlVM UniformControlVM
+        {
+            get { return _UniformControlVM; }
+            set { _UniformControlVM = value; }
+        }
+        public NormalControlVM NormalControlVM
+        {
+            get { return _NormalControlVM; }
+            set { _NormalControlVM = value; }
+        }
+        public LogNormalControlVM LogNormalControlVM
+        {
+            get { return _LogNormalControlVM; }
+            set { _LogNormalControlVM = value; }
+        }
         public IDistributionEnum SelectedType
         {
             get { return _SelectedType; }

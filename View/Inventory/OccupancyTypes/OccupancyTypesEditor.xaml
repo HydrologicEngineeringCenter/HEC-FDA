@@ -61,7 +61,7 @@
                 </ToolBarPanel>
             </StackPanel>
 
-            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectionChanged="OccTypeListView_SelectionChanged" SelectedItem="{Binding SelectedOccType}" Grid.ColumnSpan="2" >
+            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectedItem="{Binding SelectedOccType}" Grid.ColumnSpan="2" >
                 <ListView.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.ContainerStyle>
@@ -100,12 +100,9 @@
         <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" DataContext="{Binding SelectedOccType}" Margin="5,5,5,0"  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
    
         <Utils:MessageExpanderControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
-        <!--<Label Grid.Row="2"  Name="lbl_Saving" Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" Width="185" Margin="0,0,100,5"/>-->
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Utils:SaveControl />
             <Utils:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
-        <!--<Utils:SaveCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Bottom"/>-->
-
     </Grid>
 </UserControl>

@@ -31,7 +31,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int NAME_COL = 2;
         private const int DESC_COL = 3;
         private const int DAM_CAT_COL = 4;
-        //private const int FOUND_HT_UNCERTAINTY_TYPE_COL = 5;
         private const int FOUND_HT_UNCERTAINTY_COL = 5;
 
         private const int STRUCT_ITEM_COL = 6;
@@ -40,9 +39,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int OTHER_ITEM_COL = 9;
 
         private const int OTHER_PARAMS_COL = 10;
-
-        
-
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class

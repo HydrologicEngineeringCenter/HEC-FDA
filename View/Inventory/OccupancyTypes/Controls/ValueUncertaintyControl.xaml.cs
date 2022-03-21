@@ -19,28 +19,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
         public ValueUncertaintyControl()
         {
             InitializeComponent();
-            if (ValueUncertaintyVM != null)
-            {
-               // cmb_UncertaintyType.ItemsSource = ValueUncertaintyVM.UncertaintyTypes;
-            }
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if(typeof(ValueUncertaintyVM).IsAssignableFrom(DataContext.GetType()))
-            //{
-            //    int i = 0;
-            //}
-
-            if (DataContext is ValueUncertaintyVM vm)
-            {
-                //ValueUncertaintyVM vm = DataContext;
-                if (e.AddedItems.Count > 0)
-                {
-                    vm.SelectionChanged(e.AddedItems[0]);
-                    //vm.SelectedDistributionTypeChanged();
-                }
-            }
         }
 
         private static void ValueUncertaintyVMChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -50,9 +28,5 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             owner.ValueUncertaintyVM = valueUncertaintyVM;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            int test = 0;
-        }
     }
 }

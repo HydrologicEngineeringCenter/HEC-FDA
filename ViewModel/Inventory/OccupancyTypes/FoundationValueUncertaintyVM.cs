@@ -28,8 +28,8 @@ namespace ViewModel.Inventory.OccupancyTypes
                 normalMean = ((Normal)ordinate).Mean;
                 normalStDev = ((Normal)ordinate).StandardDeviation;
             }
-            _NormalControlVM = new NormalControlVM(normalMean, normalStDev, "");
-            _NormalControlVM.WasModified += ControlWasModified;
+            NormalControlVM = new NormalControlVM(normalMean, normalStDev, "");
+            NormalControlVM.WasModified += ControlWasModified;
 
             //create log normal option
             double logNormalMean = 0;
@@ -39,8 +39,8 @@ namespace ViewModel.Inventory.OccupancyTypes
                 logNormalMean = ((LogNormal)ordinate).Mean;
                 logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
             }
-            _LogNormalControlVM = new LogNormalControlVM(logNormalMean, logNormalStDev, "");
-            _LogNormalControlVM.WasModified += ControlWasModified;
+            LogNormalControlVM = new LogNormalControlVM(logNormalMean, logNormalStDev, "");
+            LogNormalControlVM.WasModified += ControlWasModified;
 
             //create the triangular option
             double triMostLikely = 1;
@@ -52,8 +52,8 @@ namespace ViewModel.Inventory.OccupancyTypes
                 triMin = ((Triangular)ordinate).Min;
                 triMax = ((Triangular)ordinate).Max;
             }
-            _TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "units below most likely", "units above most likely");
-            _TriangularControlVM.WasModified += ControlWasModified;
+            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "units below most likely", "units above most likely");
+            TriangularControlVM.WasModified += ControlWasModified;
 
             //create the uniform option
             double uniMin = 0;
@@ -63,8 +63,8 @@ namespace ViewModel.Inventory.OccupancyTypes
                 uniMin = ((Uniform)ordinate).Min;
                 uniMax = ((Uniform)ordinate).Max;
             }
-            _UniformControlVM = new UniformControlVM(uniMin, uniMax, "from expected value");
-            _UniformControlVM.WasModified += ControlWasModified;
+            UniformControlVM = new UniformControlVM(uniMin, uniMax, "from expected value");
+            UniformControlVM.WasModified += ControlWasModified;
 
         }
     }
