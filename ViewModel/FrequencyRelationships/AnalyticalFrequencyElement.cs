@@ -9,6 +9,8 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.TableWithPlot;
+using System.Text;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -143,21 +145,32 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         List<double> ConvertStringToFlows(string flows)
         {
             List<double> flowDoubles = new List<double>();
-            try
-            {
-                string[] flowStrings = flows.Split(',');
+            List<string> badStrings = new List<string>();
+            
+            string[] flowStrings = flows.Split(',');
 
-                foreach (string flow in flowStrings)
+            foreach (string flow in flowStrings)
+            {
+                try
                 {
                     double d = Convert.ToDouble(flow);
                     flowDoubles.Add(d);
                 }
+                catch (Exception e)
+                {
+                    badStrings.Add(flow);
+                }
             }
-            catch (Exception e)
+            if(badStrings.Count > 0)
             {
-                //todo: Do something? Couldn't convert to doubles
+
+                string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
+                    "The following flow texts were not able to be converted to numeric values: ";
+                string errorVals = string.Join(Environment.NewLine + "\t",badStrings);              
+                MessageBox.Show(msg + Environment.NewLine + "\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return flowDoubles;
+            
         }
         public ContinuousDistribution GetDistribution()
         {
