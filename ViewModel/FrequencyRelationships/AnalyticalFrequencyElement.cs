@@ -7,6 +7,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
