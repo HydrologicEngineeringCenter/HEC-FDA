@@ -214,9 +214,6 @@
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
-            <OccupancyTypesView:ImportOccupancyTypeGroups/>
-        </DataTemplate>
 
         <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
             <AlternativeComparisonReport:ComparisonRowItem/>

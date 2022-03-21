@@ -63,6 +63,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 throw new InvalidConstructorArgumentsException("Triangular distribution max value cannot be less than 0");
             }
+            else if(Max<Min)
+            {
+                throw new InvalidConstructorArgumentsException("Triangular distribution max cannot be less than min");
+            }
+            else if (Max < MostLikely)
+            {
+                throw new InvalidConstructorArgumentsException("Triangular distribution max cannot be less than most likely");
+            }
+            else if (Min > MostLikely)
+            {
+                throw new InvalidConstructorArgumentsException("Triangular distribution most likely cannot be less than min");
+            }
             else
             {
                 return new Triangular(Min, MostLikely, Max);

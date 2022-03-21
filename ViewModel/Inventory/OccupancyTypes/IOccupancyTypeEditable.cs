@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         bool HasBeenSaved { get; }
         List<LogItem> SaveOcctype();
-        IOccupancyType CreateOccupancyType(out List<LogItem> errors);
-
+        List<LogItem> IsOccupancyTypeConstructable();
+        IOccupancyType CreateOccupancyType();
     }
 }

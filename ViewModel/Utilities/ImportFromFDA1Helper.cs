@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
 using static Importer.ProbabilityFunction;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -546,10 +547,10 @@ namespace HEC.FDA.ViewModel.Utilities
             bool CalculateVehicleDamage = true;
             bool CalculateOtherDamage = false;
 
-            OccTypeItem StructureItem = new OccTypeItem(CalculateStructureDamage, structureComponent, structureValueUncertainty);           
-            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
-            OccTypeItem VehicleItem = new OccTypeItem(CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
-            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
+            OccTypeItem StructureItem = new OccTypeItem(OcctypeItemType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);           
+            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeItemType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
+            OccTypeItem VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
+            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(OcctypeItemType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
 
             ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;      
 

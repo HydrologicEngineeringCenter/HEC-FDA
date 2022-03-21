@@ -1,13 +1,12 @@
 ﻿using FdaLogging;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using ViewModel.Inventory.OccupancyTypes;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -103,10 +102,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region Constructors      
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
-            StructureItem = new OccTypeItem(occtype.StructureItem.IsChecked, occtype.StructureItem.Curve, occtype.StructureItem.ValueUncertainty.Distribution);
-            ContentItem = new OccTypeItemWithRatio(occtype.ContentItem);               
-            VehicleItem = new OccTypeItem(occtype.VehicleItem.IsChecked, occtype.VehicleItem.Curve, occtype.VehicleItem.ValueUncertainty.Distribution);
-            OtherItem = new OccTypeItemWithRatio(occtype.OtherItem);   
+            StructureItem = new OccTypeItem(OcctypeItemType.structure, occtype.StructureItem.IsChecked, occtype.StructureItem.Curve, occtype.StructureItem.ValueUncertainty.Distribution);
+            ContentItem = new OccTypeItemWithRatio( occtype.ContentItem);               
+            VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, occtype.VehicleItem.IsChecked, occtype.VehicleItem.Curve, occtype.VehicleItem.ValueUncertainty.Distribution);
+            OtherItem = new OccTypeItemWithRatio( occtype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;
             ContentItem.DataModified += OcctypeItemDataModified;
@@ -166,75 +165,74 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
         }
 
-        public IOccupancyType CreateOccupancyType(out List<LogItem> errors)
+        public List<LogItem> IsOccupancyTypeConstructable()
         {
-            bool success = true;
-            StringBuilder errorMsg = new StringBuilder("Occupancy Type: ").Append(Name);
             List<LogItem> constructionErrors = new List<LogItem>();
+            constructionErrors.AddRange(IsValueUncertaintyConstructable(FoundationHeightUncertainty, "foundation height uncertainty"));
+            constructionErrors.AddRange(StructureItem.IsItemValid());
+            constructionErrors.AddRange(ContentItem.IsItemValid());
+            constructionErrors.AddRange(VehicleItem.IsItemValid());
+            constructionErrors.AddRange(OtherItem.IsItemValid());
 
-            ContinuousDistribution foundHtUncertainty = null;
+            return constructionErrors;
+        }
+
+        private List<LogItem> IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
+        {
+            List<LogItem> constructionErrors = new List<LogItem>();
             try
             {
-                foundHtUncertainty = FoundationHeightUncertainty.CreateOrdinate();
+                uncertaintyVM.CreateOrdinate();
             }
             catch (Exception e)
             {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                                        .Append("Foundation Height Uncertainty: ").Append(e.Message);
-                string logMessage = "Error constructing foundation height uncertainty: " + e.Message;
+                string logMessage = "Error constructing " + uncertaintyName + ": " + e.Message;
                 constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
             }
-
-            OccupancyType ot = new OccupancyType(Name, Description, GroupID,DamageCategory,StructureItem,ContentItem,VehicleItem,OtherItem,
-                foundHtUncertainty, ID);
-
-            if (success)
-            {
-                errors = null;
-                return ot;
-            }
-            else
-            {
-                errors = constructionErrors;
-                return null;
-            }
+            return constructionErrors;
         }
 
-        public List<LogItem> SaveOcctype()
+        public IOccupancyType CreateOccupancyType()
         {
 
-            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
 
-            List<LogItem> errors = new List<LogItem>();
-            IOccupancyType ot = CreateOccupancyType(out errors);
-            if (ot == null)
+            return new OccupancyType(Name, Description, GroupID,DamageCategory,StructureItem,ContentItem,VehicleItem,OtherItem,
+                FoundationHeightUncertainty.CreateOrdinate(), ID);
+       
+        }
+
+        /// <summary>
+        /// Tries to save the occtype. If the occtype was not constructable, then a list of errors
+        /// is returned and the occtype didn't save.
+        /// </summary>
+        /// <returns></returns>
+        public List<LogItem> SaveOcctype()
+        {
+            List<LogItem> errors = IsOccupancyTypeConstructable();
+            if (errors.Count == 0)
             {
-                //if the occtype is null then it failed. There should be errors to add.            
-                return errors;
-            }
-            else if (HasBeenSaved)
-            {
-                //update the existing occtype
-                manager.SaveModifiedOcctype(ot);
-            }
-            else if (!HasBeenSaved)
-            {
-                //save this as a new occtype
-                //if it has never been saved then we need a new occtype id for it.
-                ot.ID = manager.GetIdForNewOccType(ot.GroupID);
-                manager.SaveNewOccType(ot);
+                OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+                IOccupancyType ot = CreateOccupancyType();
+
+                if (HasBeenSaved)
+                {
+                    manager.SaveModifiedOcctype(ot);
+                }
+                else if (!HasBeenSaved)
+                {
+                    //save this as a new occtype
+                    //if it has never been saved then we need a new occtype id for it.
+                    ot.ID = manager.GetIdForNewOccType(ot.GroupID);
+                    manager.SaveNewOccType(ot);
+                }
+
+                IsModified = false;
+                //this will disable the save button.
+                HasChanges = false;
             }
 
-            IsModified = false;
-            
-            //this will disable the save button.
-            HasChanges = false;
-            if(errors == null)
-            {
-                errors = new List<LogItem>();
-            }
             return errors;
         }
+        
     }
 }

@@ -1,18 +1,16 @@
 ﻿using FdaLogging;
-using HEC.Plotting.SciChart2D.Charts;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Utilities.Transactions;
-using Utilities;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -146,7 +144,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region Constructors
         public OccupancyTypesEditorVM(EditorActionManager manager) : base(manager)
         {
-            Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
+            //I just needed some name so that it doesn't fail the empty name test that is now universal.
+            Name = "OccTypeEditor";
             Chart = new Chart2D();
             OccTypeGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
             SetDimensions(950, 600, 400, 400);
@@ -281,35 +280,39 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             if (SelectedOccType == null) { return; }
 
-            List<LogItem> errors = new List<LogItem>();
-            IOccupancyType newOT = SelectedOccType.CreateOccupancyType(out errors);
-            if(newOT == null)
+            List<LogItem> errors = SelectedOccType.IsOccupancyTypeConstructable();
+
+            if (errors.Count > 0)
             {
                 StringBuilder sb = new StringBuilder().AppendLine("A copy of the selected occupancy type cannot be completed until the following errors are fixed:");
-                foreach(LogItem li in errors)
+                foreach (LogItem li in errors)
                 {
                     sb.AppendLine(li.Message);
                 }
                 MessageBox.Show(sb.ToString(), "Occupancy Type is in Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-
-            CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
-            string header = "Copy Occupancy Type";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CopyOccupancyType");
-            Navigate(tab, true, true);
-            if (vm.WasCanceled == false)
+            else
             {
-                if (vm.HasError == false)
-                {
-                    newOT.Name = vm.Name;
-                    ObservableCollection<string> damcats = _GroupsToDamcats[newOT.GroupID];
-                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damcats, false);
-                    otEditable.RequestNavigation += this.Navigate;
+                IOccupancyType newOT = SelectedOccType.CreateOccupancyType();
 
-                    SelectedOccTypeGroup.Occtypes.Add(otEditable);
-                    SelectedOccType = otEditable;
-                    otEditable.IsModified = true;
+                CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
+                string header = "Copy Occupancy Type";
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "CopyOccupancyType");
+                Navigate(tab, true, true);
+                if (vm.WasCanceled == false)
+                {
+                    if (vm.HasError == false)
+                    {
+                        newOT.Name = vm.Name;
+                        ObservableCollection<string> damcats = _GroupsToDamcats[newOT.GroupID];
+                        OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damcats, false);
+                        otEditable.RequestNavigation += this.Navigate;
+
+                        SelectedOccTypeGroup.Occtypes.Add(otEditable);
+                        SelectedOccType = otEditable;
+                        otEditable.IsModified = true;
+                    }
                 }
             }
         }
@@ -517,7 +520,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 originalGroupNames.Add(group.OriginalName);
                 newGroupNames.Add(group.Name);
             }
-            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
             manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);
             
 
@@ -530,6 +533,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 string lastEditDate = DateTime.Now.ToString("G");
                 SavingText = "Last Saved: " + lastEditDate;
                 TempErrors.AddRange(errors);
+                for (int i = TempErrors.Count - 1; i >= 0; i--)
+                {
+                    MessageRows.Insert(0, TempErrors[i]);
+                }
                 UpdateMessages(true);
             }
 

@@ -82,7 +82,7 @@
                 </TabItem.Header>
                 <Grid x:Name="ContentTabGrid" IsEnabled="{Binding ElementName=ContentCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="97*"/>
+                        <ColumnDefinition Width="120*"/>
                         <ColumnDefinition Width="133*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -136,7 +136,7 @@
                 </TabItem.Header>
                 <Grid x:Name="OtherTabGrid" IsEnabled="{Binding ElementName=OtherCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="97*"/>
+                        <ColumnDefinition Width="110*"/>
                         <ColumnDefinition Width="133*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>

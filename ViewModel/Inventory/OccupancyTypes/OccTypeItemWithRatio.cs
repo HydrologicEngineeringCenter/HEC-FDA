@@ -1,10 +1,16 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
+﻿using FdaLogging;
+using HEC.FDA.ViewModel.TableWithPlot;
 using Statistics;
 using System;
+using System.Collections.Generic;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
+    /// <summary>
+    /// This class extends OccTypeItem. The "Content" and "Other" have an extra boolean option
+    /// where the curve can be by value or by a ratio of the structure curve.
+    /// </summary>
     public class OccTypeItemWithRatio : OccTypeItem
     {
         private bool _IsByValue;
@@ -31,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             { 
                 _IsByValue = value; 
                 IsNotByValue = !value; 
-                UpdateContentValueUncertaintyVM(); 
+                UpdateCurrentValueUncertaintyVM(); 
                 SomethingChanged(this, EventArgs.Empty); 
                 NotifyPropertyChanged(); 
             }
@@ -49,15 +55,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsByValue = item.IsByValue;
         }
 
-        public OccTypeItemWithRatio(bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
-            ContinuousDistribution ratioUncertainty, bool isByValue) : base(isChecked, curve, valueUncertainty)
+        public OccTypeItemWithRatio(OcctypeItemType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
+            ContinuousDistribution ratioUncertainty, bool isByValue) : base(itemType, isChecked, curve, valueUncertainty)
         {
             _ContentByRatioVM = new OtherValueUncertaintyVM(ratioUncertainty);
             _ContentByRatioVM.WasModified += SomethingChanged;
             IsByValue = isByValue;
         }
 
-        private void UpdateContentValueUncertaintyVM()
+        private void UpdateCurrentValueUncertaintyVM()
         {
             if (IsByValue)
             {
@@ -67,6 +73,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 CurrentValueVM = _ContentByRatioVM;
             }
+        }
+
+        public List<LogItem> IsItemValid()
+        {
+            List<LogItem> constructionErrors = new List<LogItem>();
+            constructionErrors.AddRange(base.IsItemValid());
+            constructionErrors.AddRange(IsValueUncertaintyConstructable(ContentByRatioVM, ItemType + " value uncertainty"));
+            return constructionErrors;
         }
 
     }

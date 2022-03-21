@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.TableWithPlot;
 using Statistics;
 using Statistics.Distributions;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -25,10 +26,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DamageCategory = damCatName;
             Description = "";
             GroupID = groupId;
-            StructureItem = CreateDefaultItem(true);
-            ContentItem = CreateDefaultItemWithRatio(true);
-            VehicleItem = CreateDefaultItem(true);
-            OtherItem = CreateDefaultItemWithRatio(false);
+            StructureItem = CreateDefaultItem(OcctypeItemType.structure, true);
+            ContentItem = CreateDefaultItemWithRatio(OcctypeItemType.content, true);
+            VehicleItem = CreateDefaultItem(OcctypeItemType.vehicle, true);
+            OtherItem = CreateDefaultItemWithRatio(OcctypeItemType.other, false);
             FoundationHeightUncertainty = new Deterministic(0);
 
             OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
@@ -69,20 +70,20 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ID = ot.ID;        
         }
 
-        private OccTypeItem CreateDefaultItem(bool isSelected)
+        private OccTypeItem CreateDefaultItem(OcctypeItemType itemType, bool isSelected)
         {
             ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
             ContinuousDistribution structValueUncert = new Deterministic(0);
-            return new OccTypeItem(isSelected, structureCurve, structValueUncert);
+            return new OccTypeItem(itemType,  isSelected, structureCurve, structValueUncert);
         }
 
-        private OccTypeItemWithRatio CreateDefaultItemWithRatio(bool isSelected)
+        private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeItemType itemType, bool isSelected)
         {
             ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
             ContinuousDistribution structValueUncert = new Deterministic(0);
             ContinuousDistribution structValueUncertRatio = new Deterministic(0);
             bool isByVal = true;
-            return new OccTypeItemWithRatio(isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
+            return new OccTypeItemWithRatio(itemType, isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
         }
     }
 }
