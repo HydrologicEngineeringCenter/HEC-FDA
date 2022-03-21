@@ -1,5 +1,4 @@
 ﻿using FdaLogging;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -46,12 +45,6 @@ namespace HEC.FDA.View.Utilities
         public MessageExpanderControl()
         {
             InitializeComponent();
-            cmb_Filter.Items.Add("All");
-            cmb_Filter.Items.Add(LoggingLevel.Fatal);
-            cmb_Filter.Items.Add(LoggingLevel.Error);
-            cmb_Filter.Items.Add(LoggingLevel.Warn);
-            cmb_Filter.Items.Add(LoggingLevel.Info);
-            cmb_Filter.SelectedIndex = 0;
         }
         private void UpdateStatusText(LoggingLevel level)
         {
@@ -93,15 +86,13 @@ namespace HEC.FDA.View.Utilities
         {
             MessageExpanderControl owner = d as MessageExpanderControl;
             String headerText = (String)e.NewValue;
-            owner.MessagesExpander.Header = headerText;
-            
+            owner.MessagesExpander.Header = headerText;       
         }
         private static void StatusLevelCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MessageExpanderControl owner = d as MessageExpanderControl;
             LoggingLevel level = (LoggingLevel)e.NewValue;
             owner.UpdateStatusText(level);
-
         }
         private static void StatusVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -115,7 +106,6 @@ namespace HEC.FDA.View.Utilities
             {
                 owner.StatusPanel.Height = 0;
             }
-
         }
         private static void ExpandedHeightCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -135,7 +125,6 @@ namespace HEC.FDA.View.Utilities
             {
                 MainGrid.RowDefinitions[LIST_ROW].Height = GridLength.Auto;
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 5);
-
             }
         }
 
@@ -146,72 +135,7 @@ namespace HEC.FDA.View.Utilities
                 MainGrid.RowDefinitions[LIST_ROW].Height = new GridLength(1,GridUnitType.Star);
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 40);
             }
-
         }
-
-        private void cmb_Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if(cmb_Filter.SelectedItem is LoggingLevel)
-            {
-                LoggingLevel level = (LoggingLevel)cmb_Filter.SelectedItem;
-                if(level == LoggingLevel.Fatal)
-                {
-                    SetMessageRows(LoggingLevel.Fatal);
-                }
-                else if (level == LoggingLevel.Error)
-                {
-                    SetMessageRows(LoggingLevel.Error);
-                }
-                else if (level == LoggingLevel.Warn)
-                {
-                    SetMessageRows(LoggingLevel.Warn);
-                }
-                else if (level == LoggingLevel.Info)
-                {
-                    SetMessageRows(LoggingLevel.Info);
-                }
-            }
-            else
-            {
-                //its "all"
-                DisplayAllMessages();
-            }
-        }
-
-        private void DisplayAllMessages()
-        {
-            if (this.DataContext is IDisplayLogMessages)
-            {
-                IDisplayLogMessages messageVM = (IDisplayLogMessages)this.DataContext;
-                messageVM.DisplayAllMessages();
-            }
-        }
-        private void SetMessageRows(LoggingLevel level)
-        {
-            if(this.DataContext is IDisplayLogMessages)
-            {
-                IDisplayLogMessages messageVM = (IDisplayLogMessages)this.DataContext;
-                messageVM.FilterRowsByLevel(level);
-            }
-            //WindowVM vm = (WindowVM)this.DataContext;
-
-            //if (vm != null && vm.Tab != null && vm.Tab.BaseVM != null && vm.Tab.BaseVM is ITransactionsAndMessages)
-            //{
-            //    MessagesListView.ItemsSource = ((ITransactionsAndMessages)vm.Tab.BaseVM).MessageRows;
-            //    MessagesListView.DisplayMemberPath = "Message";
-            //}
-        }
-
-        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    WindowVM vm = (WindowVM)this.DataContext;
-
-        //    if (vm != null && vm.Tab != null && vm.Tab.BaseVM != null && vm.Tab.BaseVM is ITransactionsAndMessages)
-        //    {
-        //        MessagesListView.ItemsSource = ((ITransactionsAndMessages)vm.Tab.BaseVM).MessageRows;
-        //        MessagesListView.DisplayMemberPath = "Message";
-        //    }
-        //}
     }
 
     [ValueConversion(typeof(string), typeof(SolidColorBrush))]
@@ -246,5 +170,4 @@ namespace HEC.FDA.View.Utilities
             return Brushes.Black;
         }
     }
-
 }

@@ -68,9 +68,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             else
             {
                 return null;
-            }
-
-            
+            }          
         }
        
         /// <summary>
@@ -82,7 +80,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
             string curveXML = (string)rowData[CURVE_COL];
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(curveXML);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(XElement.Parse(curveXML));
             RatingCurveElement rc = new RatingCurveElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
                 (string)rowData[DESC_COL], computeComponentVM, id);
             return rc;

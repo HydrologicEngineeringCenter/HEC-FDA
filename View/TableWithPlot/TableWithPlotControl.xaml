@@ -12,27 +12,15 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <!--<ColumnDefinition Width="10"/>-->
-            </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
-                <local:ComputeComponentControl DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
+                <local:ComputeComponentControl x:Name="compComp"  DataContext="{Binding Path=ComputeComponentVM}"  Grid.Column="0"/>
             </Grid>
-            <!--<view:NamedActionButton Grid.Column="1" NamedAction="{Binding TableExtender}" />-->
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" />
         <Grid Grid.Column="2">
-            <Grid.ColumnDefinitions>
-                <!--<ColumnDefinition Width="10"/>-->
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <!--<view:NamedActionButton Grid.Column="0" NamedAction="{Binding PlotExtender}" />-->
             <Grid Grid.Column="1" Visibility="{Binding Path=PlotExtended, Converter={StaticResource VisibileIfTrueConverter}}" MinWidth="200">
                 <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel}"/>
             </Grid>

@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using paireddata;
 using Statistics.Distributions;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
@@ -12,6 +13,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Name = "Triangular";
             Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1)));
             Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3)));
+            LinkList();
+        }
+        public TriangularDataProvider(UncertainPairedData upd)
+        {
+            Name = "Triangular";
+            for (int i = 0; i < upd.Xvals.Length; i++)
+            {
+                Data.Add(new TriangularRow(upd.Xvals[i], (Triangular)upd.Yvals[i]));
+            }
             LinkList();
         }
         override public void AddUnlinkedRow(int i)

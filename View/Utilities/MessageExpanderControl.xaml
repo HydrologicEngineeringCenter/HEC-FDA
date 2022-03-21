@@ -6,8 +6,6 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-
     <UserControl.Resources>
 
         <local:LogLevelToTextColorConverter x:Key="LogLevelToColorConverter"/>
@@ -93,10 +91,8 @@
 
     </UserControl.Resources>
 
-
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
-            <!--<RowDefinition x:Name="StatusRow" Height="0"/>-->
             <RowDefinition x:Name="ListRow" Height="35"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -104,61 +100,51 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        
-        
+
+
         <Expander Name="MessagesExpander" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsExpanded="{Binding IsExpanded}" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5,5,0,5" >
             <Expander.Header>
                 <StackPanel Orientation="Horizontal"  >
-                    <!--<TextBlock Name="HeaderBaseText" Text="Errors " VerticalAlignment="Center" />-->
-                    <ComboBox Name="cmb_Filter"  HorizontalAlignment="Left" VerticalAlignment="Center" Text="Filter" Width="60" Height="20" Margin="5,0,5,0" SelectionChanged="cmb_Filter_SelectionChanged" />
                     <TextBlock Text="{Binding MessageCount, StringFormat=({0})}" Height="20" VerticalAlignment="Center"/>
                 </StackPanel>
             </Expander.Header>
             <StackPanel>
-            <StackPanel x:Name="StatusPanel" Height="0" Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                <Label Name="lbl_StatusMessage" VerticalAlignment="Bottom" Padding="0" Margin="5,0,0,0"/>
-                <Label Name="lbl_StatusEnding" VerticalAlignment="Bottom" Padding="0" Margin="0" Foreground="{Binding Path=SaveStatusLevel, Converter={StaticResource LogLevelToColorConverter}}"/>
-            </StackPanel>
-            <!--<ScrollViewer VerticalScrollBarVisibility="Visible" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled" Margin="5" Height="Auto" BorderThickness="3" BorderBrush="Red">-->
+                <StackPanel x:Name="StatusPanel" Height="0" Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Label Name="lbl_StatusMessage" VerticalAlignment="Bottom" Padding="0" Margin="5,0,0,0"/>
+                    <Label Name="lbl_StatusEnding" VerticalAlignment="Bottom" Padding="0" Margin="0" Foreground="{Binding Path=SaveStatusLevel, Converter={StaticResource LogLevelToColorConverter}}"/>
+                </StackPanel>
                 <ListView Name="MessagesListView" ItemsSource="{Binding MessageRows}" MaxHeight="150" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="5,5,0,0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                        <Expander Style="{StaticResource StatusGroupExpander}" Name="InnerExpander" ExpandDirection="Down" Margin="0">
+                            <Expander Style="{StaticResource StatusGroupExpander}" Name="InnerExpander" ExpandDirection="Down" Margin="0">
                                 <Expander.Header>
                                     <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Message}"  Foreground="{Binding Path=LogLevel, Converter={StaticResource LogLevelToColorConverter}}" TextWrapping="Wrap" VerticalAlignment="Bottom" />
-                                </StackPanel>
+                                        <TextBlock Text="{Binding Message}"  Foreground="{Binding Path=LogLevel, Converter={StaticResource LogLevelToColorConverter}}" TextWrapping="Wrap" VerticalAlignment="Bottom" />
+                                    </StackPanel>
                                 </Expander.Header>
                                 <StackPanel Orientation="Horizontal" Margin="0" >
                                     <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
                                         <Label Content="Date: " Margin="0"/>
-                                    <Label Content="{Binding Date, StringFormat=d}" Margin="0"/>
+                                        <Label Content="{Binding Date, StringFormat=d}" Margin="0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
                                         <Label Content="User: " Margin="0"/>
                                         <Label Content="{Binding User}" Margin="0"/>
                                     </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
-                                    <Label Content="Log Level: " Margin="0"/>
-                                    <Label Content="{Binding LogLevel}" Margin="0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                        <Label Content="Log Level: " Margin="0"/>
+                                        <Label Content="{Binding LogLevel}" Margin="0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                        <Label Content="Source: " Margin="0"/>
+                                        <Label Content="{Binding Logger}" Margin="0"/>
+                                    </StackPanel>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
-                                    <Label Content="Source: " Margin="0"/>
-                                    <Label Content="{Binding Logger}" Margin="0"/>
-                                </StackPanel>
-                            </StackPanel>
                             </Expander>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </StackPanel>
-            <!--</ScrollViewer>-->
         </Expander>
-
-        <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-            <Label Content="Filter:" />
-            <ComboBox Name="cmb_Filter2"  HorizontalAlignment="Left" VerticalAlignment="Top" Text="Filter" Width="20" Height="20" Margin="5" SelectionChanged="cmb_Filter_SelectionChanged" />
-        </StackPanel>-->
-
     </Grid>
 </UserControl>

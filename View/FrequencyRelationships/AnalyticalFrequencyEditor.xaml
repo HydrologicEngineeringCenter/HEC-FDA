@@ -3,12 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             Loaded="UserControl_Loaded"
+             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="650">
     <UserControl.Resources>
@@ -144,6 +143,9 @@
 
                     </Grid>
                 </Grid>
+
+                <fdaView:ExpandedOxyPlot Grid.Column="2" Grid.Row="4" Model="{Binding Path= PlotModel}"/>
+
             </Grid>
         </GroupBox>
 

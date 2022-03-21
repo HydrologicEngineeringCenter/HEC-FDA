@@ -54,7 +54,7 @@
         </GroupBox>
 
         <Grid x:Name="editorGrid" Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
-            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}"  Grid.Column="0" Margin="5" IsEnabled="False"/>
         </Grid>
     </Grid>
 </UserControl>

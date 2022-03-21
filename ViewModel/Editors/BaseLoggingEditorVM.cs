@@ -1,13 +1,9 @@
 ﻿using FdaLogging;
-using paireddata;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using Utilities;
-using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -16,26 +12,18 @@ namespace HEC.FDA.ViewModel.Editors
         private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private LoggingLevel _SaveStatusLevel;
         private bool _IsExpanded;
-        private CoordinatesFunctionEditorVM _EditorVM;
         private bool _SaveStatusVisible;
-        private string _SavingText;
 
-
-        public string SavingText
-        {
-            get { return _SavingText; }
-            set { _SavingText = value; NotifyPropertyChanged(); }
-        }
+        /// <summary>
+        /// TODO: It looks like this is not being used. I think it is used by the message expander control to expand some panel and display
+        /// that the element has saved. I'm not sure what we are doing with the message expander at this time. 3/8/22
+        /// </summary>
         public bool SaveStatusVisible
         {
             get { return _SaveStatusVisible; }
             set { _SaveStatusVisible = value; NotifyPropertyChanged(); }
         }
-        public CoordinatesFunctionEditorVM EditorVM
-        {
-            get { return _EditorVM; }
-            set { _EditorVM = value; NotifyPropertyChanged(); }
-        }
+
         /// <summary>
         /// Used to color the last couple of words in the top log item in the expander if there are errors or messages
         /// </summary>
@@ -92,24 +80,12 @@ namespace HEC.FDA.ViewModel.Editors
             set; 
         }
         #region Constructors
-        public BaseLoggingEditorVM(UncertainPairedData defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
+        public BaseLoggingEditorVM( EditorActionManager actionManager) : base(actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve, xLabel, yLabel, chartTitle);
-            EditorVM.TableChanged += EditorVM_TableChanged;
         }
 
-        public BaseLoggingEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
+        public BaseLoggingEditorVM(ChildElement elem, EditorActionManager actionManager):base(elem, actionManager)
         {
-            if (elem.Curve != null)
-            {
-                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve, xLabel, yLabel, chartTitle);
-            }
-            else
-            {
-                EditorVM = new CoordinatesFunctionEditorVM();
-            }
-            EditorVM.TableChanged += EditorVM_TableChanged;
-            ReloadMessages();
         }
         #endregion
         /// <summary>
@@ -169,15 +145,6 @@ namespace HEC.FDA.ViewModel.Editors
             }
             return retval;
         }
-        public void FilterRowsByLevel(LoggingLevel level)
-        {
-            MessageRows = PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
-        }
-
-        public void DisplayAllMessages()
-        {
-            MessageRows = PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
-        }
 
         /// <summary>
         /// Gets rid of any temperary messages from the list of messages and adds the new list of temp
@@ -201,12 +168,6 @@ namespace HEC.FDA.ViewModel.Editors
                 }              
             }
 
-            //get IMessages from the coord func editor
-            //and convert them into temp log messages
-            List<LogItem> funcLogs = GetTempLogsFromCoordinatesFunctionEditor();
-            //add them to the temp errors so that they will be included
-            TempErrors.AddRange(funcLogs);
-
             //i want all of these messages to be put on the top of the list, but i want to respect their order. This 
             //means i need to insert at 0 and start with the last in the list
             for (int i = TempErrors.Count-1;i>=0; i--)
@@ -225,90 +186,5 @@ namespace HEC.FDA.ViewModel.Editors
                 SaveStatusLevel = LoggingLevel.Debug;
             }
         }
-        /// <summary>
-        /// Grabs the logs from the sqlite database. Adds the "TempErrors". Adds any messages that are on the IFdaFunction's CoordinatesFunction. 
-        /// </summary>
-        public void ReloadMessages(bool saving = false)
-        {
-            if (CurrentElement != null)
-            {
-                IElementManager manager = PersistenceFactory.GetElementManager(CurrentElement);
-                //get log messages from DB
-                MessageRows = manager.GetLogMessages(CurrentElement.Name);
-                UpdateMessages(saving);
-            }
-        }
-
-        /// <summary>
-        /// Updates the saving text, reloads the messages and toggles the has changes so that the save gets disabled.
-        /// </summary>
-        /// <param name="elementToSave"></param>
-        public void UpdateSave(ChildElement elementToSave)
-        {
-            SavingText = CreateLastSavedText(elementToSave);
-            ReloadMessages(true);
-            HasChanges = false;
-        }
-
-        private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
-        {
-            List<LogItem> logs = new List<LogItem>();
-            List<IMessage> messagesFromEditor = new List<IMessage>();
-            if(EditorVM == null || EditorVM.Function == null)
-            {
-                return logs;
-            }
-            //todo: waiting to see what we are going to do with logging
-            //get messages from the editor
-            //messagesFromEditor.AddRange(EditorVM.Messages);
-
-            //get messages from the editor's function
-
-            //if( EditorVM.Function.Messages != null)
-            //{
-            //    messagesFromEditor.AddRange(EditorVM.Function.Messages);
-            //}
-            foreach (IMessage message in messagesFromEditor)
-            {
-                LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
-                logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
-            }
-            //order the list by the log level. Highest on top
-            var sortedLogList = logs
-                .OrderByDescending(x => (int)(x.LogLevel))
-                .ToList();
-            
-            return logs;
-        }
-
-        private LoggingLevel TranslateValidationLevelToLogLevel(IMessageLevels level)
-        {
-            LoggingLevel logLevel = LoggingLevel.Info;
-            switch (level)
-            {
-                case IMessageLevels.FatalError:
-                    {
-                        logLevel = LoggingLevel.Fatal;
-                        break;
-                    }
-                case IMessageLevels.Error:
-                    {
-                        logLevel = LoggingLevel.Error;
-                        break;
-                    }
-                case IMessageLevels.Message:
-                    {
-                        logLevel = LoggingLevel.Warn;
-                        break;
-                    }
-            }
-            return logLevel;
-        }
-
-        private string CreateLastSavedText(ChildElement elem)
-        {
-            return "Last Saved: " + elem.LastEditDate;
-        }
-
     }
 }

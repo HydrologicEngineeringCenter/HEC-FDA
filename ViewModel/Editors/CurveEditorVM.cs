@@ -4,7 +4,7 @@ using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Editors
 {
-    public abstract class CurveEditorVM : BaseEditorVM
+    public abstract class CurveEditorVM : BaseLoggingEditorVM
     {
         private TableWithPlotVM _TableWithPlot;
 
