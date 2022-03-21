@@ -15,13 +15,16 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private ObservableCollection<WaterSurfaceElevationRowItemVM> _ListOfRows;
         private List<PathAndProbability> _ListOfRelativePaths;
         private bool _IsDepthGridChecked;
-
+        private bool _IsEditor;
         #endregion
         #region Properties
-        public bool IsEditor { get; set; }
+        public bool IsEditor
+        {
+            get { return _IsEditor; }
+            set { _IsEditor = value; NotifyPropertyChanged(); }
+        }
         public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's
         public List<PathAndProbability> ListOfRelativePaths
         {
@@ -35,18 +38,13 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             get { return _IsDepthGridChecked; }
             set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
         }
-            public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows
-        {
-            get { return _ListOfRows; }
-            set { _ListOfRows = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
 
         #endregion
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
             IsEditor = false;
-            _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
@@ -56,24 +54,22 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(actionManager)
         {
             IsEditor = true;
-            _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
             Name = elem.Name;
             Description = elem.Description;
             ListOfRelativePaths = elem.RelativePathAndProbability;
             IsDepthGridChecked = elem.IsDepthGrids;
-            // looks like i have to rebuild this ListOfRows = elem.
             foreach(PathAndProbability pp in ListOfRelativePaths)
             {
                 string filename = Path.GetFileName(pp.Path);
-                AddRow(true, filename, pp.Path, pp.Probability);
+                AddRow(true, filename, pp.Path, pp.Probability, false);
             }
         }
 
         #endregion
         #region Voids
-        public void AddRow(bool isChecked, string name, string path, double probability)
+        public void AddRow(bool isChecked, string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM(isChecked, name, path, probability);
+            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM(isChecked, name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
             NotifyPropertyChanged("ListOfRows");
         }
@@ -103,7 +99,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                      return true;
                  }
 
-             }, "You have fewer than 8 files selected. You will get better results if you select more files.",false);
+             }, "You have fewer than 8 files selected. You will get better results if you select more files.", false);
             AddRule(nameof(ListOfRows), () =>
             {
                 List<double> probabilitiesList = new List<double>();
@@ -111,7 +107,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 {
                     if (row.IsChecked == true)
                     {
-                        if(probabilitiesList.Contains(row.Probability))
+                        if (probabilitiesList.Contains(row.Probability))
                         {
                             //error
                             return false;
@@ -123,13 +119,9 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                     }
                 }
 
-                
-                
-                    return true;
-                
+                return true;
 
             }, "Duplicate probabilities are not allowed.", true);
-
         }
 
         private void StoreTheOriginalPaths()
@@ -184,7 +176,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
 
             }
-
 
             if (atLeastOneFileIsVRT == true)
             {
@@ -248,7 +239,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                         }
                         return true;
                     }
-
                 }
             }
 
@@ -322,9 +312,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
             }
 
-
             return false;//shouldn't ever get to here unless nothing was selected.
-
         }
 
         private bool CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension,double probability)
@@ -351,25 +339,71 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             return true;
         }
 
+        private FdaValidationResult ValidateImporter()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            return vr;
+        }
+
+        public void FileSelected(string fullpath)
+        {
+            //clear out any already existing rows
+            if (!Directory.Exists(fullpath))
+            {
+                ListOfRows.Clear();
+                return;
+            }
+            //is this an old fda study?
+
+            List<string> tifFiles = new List<string>();
+            List<string> fltFiles = new List<string>();
+            List<string> vrtFiles = new List<string>();
+
+            string[] fileList = Directory.GetFiles(fullpath);
+
+            if (fileList.Length == 0)
+            {
+                return;
+            }
+
+            foreach (string file in fileList)
+            {
+                if (Path.GetExtension(file) == ".tif") { tifFiles.Add(file); }
+                if (Path.GetExtension(file) == ".flt") { fltFiles.Add(file); }
+                if (Path.GetExtension(file) == ".vrt") { vrtFiles.Add(file); }
+
+            }
+
+            //clear out any already existing rows
+            ListOfRows.Clear();
+
+            double prob = 0;
+            foreach (string tifFile in tifFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(tifFile), Path.GetFullPath(tifFile), prob);
+            }
+            prob = 0;
+            foreach (string fltFile in fltFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(fltFile), Path.GetFullPath(fltFile), prob);
+            }
+            prob = 0;
+            foreach (string vrtFile in vrtFiles)
+            {
+                prob += .1;
+                AddRow(true, Path.GetFileName(vrtFile), Path.GetFullPath(vrtFile), prob);
+            }
+        }
+
         public override void Save()
         {
-            bool isValid = RunSpecialValidation();
-            if (isValid)
-            {
-                int id = Saving.PersistenceFactory.GetWaterSurfaceManager().GetNextAvailableId();
-                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);
-                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                if (IsCreatingNewElement && HasSaved == false)
-                {
-                    manager.SaveNew(elementToSave);
-                    HasSaved = true;
-                    OriginalElement = elementToSave;
-                }
-                else
-                {
-                    manager.SaveExisting(elementToSave);
-                }
-            }
+            int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);
+            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+            base.Save(elementToSave);
         }
         #endregion
 

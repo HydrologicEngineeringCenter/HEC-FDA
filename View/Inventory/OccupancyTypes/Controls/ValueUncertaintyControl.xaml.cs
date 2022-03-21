@@ -19,21 +19,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
         public ValueUncertaintyControl()
         {
             InitializeComponent();
-            if (ValueUncertaintyVM != null)
-            {
-               // cmb_UncertaintyType.ItemsSource = ValueUncertaintyVM.UncertaintyTypes;
-            }
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-           
-            ValueUncertaintyVM vm = (ValueUncertaintyVM)this.DataContext;
-            if (e.AddedItems.Count > 0)
-            {
-                vm.SelectionChanged(e.AddedItems[0]);
-                //vm.SelectedDistributionTypeChanged();
-            }
         }
 
         private static void ValueUncertaintyVMChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)

@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Constructors
         public WaterSurfaceElevationOwnerElement( ):base()
         {
-            Name = "Water Surface Elevations";
+            Name = "Hydraulics";
             IsBold = true;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 

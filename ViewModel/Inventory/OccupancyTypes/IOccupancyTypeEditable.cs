@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Inventory.DamageCategory;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -18,23 +16,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         int ID { get; set; }
         int GroupID { get; set; }
         string Description { get; set; }
-        IDamageCategory DamageCategory { get; set; }
+        string DamageCategory { get; set; }
         bool IsModified { get; set; }
-        ValueUncertaintyVM StructureValueUncertainty { get; set; }
-        ValueUncertaintyVM ContentValueUncertainty { get; set; }
-        ValueUncertaintyVM VehicleValueUncertainty { get; set; }
-        ValueUncertaintyVM OtherValueUncertainty { get; set; }
+
         ValueUncertaintyVM FoundationHeightUncertainty { get; set; }
-
-        CoordinatesFunctionEditorVM StructureEditorVM { get; set; }
-        CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
-        CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
-        CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
-
-        bool CalculateStructureDamage { get; set; }
-        bool CalculateContentDamage { get; set; }
-        bool CalculateVehicleDamage { get; set; }
-        bool CalculateOtherDamage { get; set; }
 
         ObservableCollection<string> DamageCategoriesList { get; set; }
         /// <summary>
@@ -42,9 +27,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// and has never been saved.
         /// </summary>
         bool HasBeenSaved { get; }
-        bool SaveWithReturnValue();
-        IOccupancyType CreateOccupancyType(out List<LogItem> errors);
-
-
+        List<LogItem> SaveOcctype();
+        List<LogItem> IsOccupancyTypeConstructable();
+        IOccupancyType CreateOccupancyType();
     }
 }

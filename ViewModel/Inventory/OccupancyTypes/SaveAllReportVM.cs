@@ -6,20 +6,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     public class SaveAllReportVM:BaseViewModel
     {
         public DataTable SaveReportDataTable { get; set; }
-        public List<SaveAllReportGroupVM> SuccessfulGroups { get; set; }
-        public List<SaveAllReportGroupVM> UnsuccessfulGroups { get; set; }
         public List<string> OriginalGroupNames { get; set; }
         public List<string> NewGroupNames { get; set; }
 
-        public SaveAllReportVM(List<string> originalGroupNames, List<string> newGroupNames, List<SaveAllReportGroupVM> successfulGroups, List<SaveAllReportGroupVM> unsuccessfulGroups)
+        public SaveAllReportVM(List<string> originalGroupNames, List<string> newGroupNames, List<SaveAllReportGroupVM> groups)
         {
             OriginalGroupNames = originalGroupNames;
             NewGroupNames = newGroupNames;
-            SuccessfulGroups = successfulGroups;
-            UnsuccessfulGroups = unsuccessfulGroups;
             SetDimensions(560, 310, 200, 200);
-            CreateDataTable(successfulGroups);
-
+            CreateDataTable(groups);
         }
 
         private void CreateDataTable( List<SaveAllReportGroupVM> groups)
@@ -39,7 +34,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
 
             SaveReportDataTable = dt;
-
         }
 
         private List<object[]> CreateRowsForGroup(SaveAllReportGroupVM group)
@@ -49,17 +43,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             int numSaved = group.SuccessfulList.Count;
             int numNotSaved = group.UnsuccessfulList.Count;
             int higherNum = numSaved;
-            if(numNotSaved > numSaved)
+            if (numNotSaved > numSaved)
             {
                 higherNum = numNotSaved;
             }
 
-            //handle the first row special because it has the group name
-           
-            
-            for(int i = 0;i<higherNum;i++)
+            //handle the first row special because it has the group name               
+            for (int i = 0; i < higherNum; i++)
             {
-
                 rows.Add(GetRowValueForGroup(group, i));
             }
             return rows;

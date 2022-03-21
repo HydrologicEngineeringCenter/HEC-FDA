@@ -16,27 +16,20 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" MinWidth="150"/>
             <ColumnDefinition Width="*" MinWidth="500"/>
-
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <!--<RowDefinition Height="Auto"/>-->
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-            
-        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="33*"/>
-                <ColumnDefinition Width="67*"/>
-            </Grid.ColumnDefinitions>-->
 
+        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Header="Occupancy Types Group" Grid.Row="0" Margin="0,0,5,0">
-
                 <StackPanel>
                     <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                         <Button Name="CreateNewOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Import New Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeGroupButton_Click" >
@@ -54,7 +47,7 @@
             </GroupBox>
 
             <StackPanel Grid.Row="1">
-            <Label Content="Occupancy Types:" Grid.ColumnSpan="2" />
+                <Label Content="Occupancy Types:" Grid.ColumnSpan="2" />
                 <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                     <Button Name="CreateNewOccTypeButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Create New Occupancy Type" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeButton_Click" >
                         <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
@@ -67,8 +60,8 @@
                     </Button>
                 </ToolBarPanel>
             </StackPanel>
-            
-            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectionChanged="OccTypeListView_SelectionChanged" SelectedItem="{Binding SelectedOccType}" Grid.ColumnSpan="2" >
+
+            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectedItem="{Binding SelectedOccType}" Grid.ColumnSpan="2" >
                 <ListView.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.ContainerStyle>
@@ -100,36 +93,16 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
         </Grid>
-
-        
-        <!--<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-            <Button Name="CreateNewButton" Click="CreateNewButton_Click">Create New</Button>
-            <Button Name="CopyExistingButton" Margin="5,0,0,0" Click="CopyExistingButton_Click">Create Copy</Button>
-            <Button Name="DeleteButton" Margin="5,0,0,0" Click="DeleteButton_Click">Delete</Button>
-        </StackPanel>-->
 
         <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="2" Background="Gray" VerticalAlignment="Stretch" Margin="0" ></GridSplitter>
 
-        <!--<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">-->
-
         <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" DataContext="{Binding SelectedOccType}" Margin="5,5,5,0"  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
-        <!--</ScrollViewer>-->
-
-        <!--<local:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"></local:OccTypeEditorControl>-->
-        <!--<local:OccTypeDefaultsControl x:Name="OccTypeDefaultsControl" Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Visibility="Collapsed"></local:OccTypeDefaultsControl>-->
-
-        <!--Standard Buttons-->
-        <!--<StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,5">
-            <Button Content="OK" Height="23" Name="OKButton" Width="35" VerticalAlignment="Top" />
-            <Button Content="Cancel" Height="23" Name="CancelButton" Width="45" Margin="5,0,0,0" />
-        </StackPanel>-->
-
-        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5,5,10,5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
-
-        
-        <!--<Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>-->
-
+   
+        <Utils:MessageExpanderControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Utils:SaveControl />
+            <Utils:SaveCloseControl VerticalAlignment="Bottom"/>
+        </StackPanel>
     </Grid>
 </UserControl>

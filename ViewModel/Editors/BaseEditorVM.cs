@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -93,7 +94,11 @@ namespace HEC.FDA.ViewModel.Editors
             }
         }
 
+        /// <summary>
+        /// This will get called when the OK or save button is clicked on the editor
+        /// </summary>
         public abstract void Save();
+
         /// <summary>
         /// This will get called when the OK or save button is clicked on the editor
         /// </summary>
@@ -103,7 +108,7 @@ namespace HEC.FDA.ViewModel.Editors
             LastEditDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = LastEditDate;
             //elementToSave.Curve = Curve;
-            Saving.IElementManager elementManager = Saving.PersistenceFactory.GetElementManager(elementToSave);
+            IElementManager elementManager = PersistenceFactory.GetElementManager(elementToSave);
 
             if (IsCreatingNewElement)
             {
@@ -117,6 +122,7 @@ namespace HEC.FDA.ViewModel.Editors
 
             SavingText = CreateLastSavedText(elementToSave);
             HasChanges = false;
+            HasSaved = true;
             OriginalElement = elementToSave;
         }
 
@@ -236,7 +242,7 @@ namespace HEC.FDA.ViewModel.Editors
             }
 
         }
-        private void SiblingNameChanged(object sender, Saving.ElementUpdatedEventArgs args)
+        private void SiblingNameChanged(object sender, ElementUpdatedEventArgs args)
         {
             string newName = args.NewElement.Name;
             //this gets called even if it is changing its own name
@@ -252,7 +258,7 @@ namespace HEC.FDA.ViewModel.Editors
             }, "This name is already used. Names must be unique.");
         }
 
-        private void SiblingWasAdded(object sender, Saving.ElementAddedEventArgs args)
+        private void SiblingWasAdded(object sender, ElementAddedEventArgs args)
         {
             string newName = args.Element.Name;
             //this gets called even if it is changing its own name
@@ -290,6 +296,20 @@ namespace HEC.FDA.ViewModel.Editors
                 }, "This name is already used. Names must be unique.");
             }
 
+        }
+
+        public int GetElementID(SavingBase persistenceManager)
+        {
+            int id = -1;
+            if (IsCreatingNewElement)
+            {
+                id = persistenceManager.GetNextAvailableId();
+            }
+            else
+            {
+                id = OriginalElement.ID;
+            }
+            return id;
         }
 
     }

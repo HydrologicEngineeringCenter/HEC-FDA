@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaLogging;
+using System;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -7,6 +8,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     {
         private List<String> _SuccessfulList = new List<string>() {};
         private List<String> _UnsuccessfulList = new List<string>() { };
+
+
+        public List<LogItem> Errors { get; } = new List<LogItem>();
 
         public List<String> SuccessfulList
         {

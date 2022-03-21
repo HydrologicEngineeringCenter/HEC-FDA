@@ -163,7 +163,11 @@
             <OccupancyTypesView:SaveAllReport/>
         </DataTemplate>
 
-        <!--Occupancy Types Controls Region-->       
+        <!--Occupancy Types Controls Region-->
+
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }" >
+            <OccupancyTypesControlsView:ValueUncertaintyControl/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>
@@ -171,7 +175,11 @@
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
             <OccupancyTypesControlsView:NormalControl/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:LogNormalControlVM}">
+            <OccupancyTypesControlsView:LogNormalControl/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
             <OccupancyTypesControlsView:TriangularControl/>
         </DataTemplate>
@@ -205,9 +213,6 @@
 
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
-            <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >

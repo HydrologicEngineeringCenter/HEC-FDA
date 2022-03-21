@@ -4,26 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
-                          xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
-               Loaded="UserControl_Loaded"
+             xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
+             Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
              d:DesignHeight="123" d:DesignWidth="500">
-        <!--Height="100"-->
-        <!--Width="250"-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <!--<StackPanel Name="NameStackPanel" Margin="5,10,5,5" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical">-->
         <DockPanel LastChildFill="True" Margin="5,10,5,0" >
             <TextBlock Grid.Row="0" Margin="5,0,0,0" Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Name="txt_NameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" />
         </DockPanel >
-        <!--</StackPanel>-->
-        <!--Standard Buttons-->
+        <Label Grid.Row="1" Content="* Hit tab and click OK" VerticalAlignment="Bottom" />
         <Utilities:OKCloseControl Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </UserControl>

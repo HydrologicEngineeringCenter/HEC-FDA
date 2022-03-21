@@ -194,7 +194,6 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\Importer\Importer.csproj" />
-    <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
     <ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
   </ItemGroup>

@@ -9,6 +9,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public event EventHandler WasModified;
         private double _StDev;
         private double _Mean;
+
+        public bool DisplayMean { get; set; }
         public double StDev
         {
             get { return _StDev; }
@@ -29,14 +31,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         public string LabelString { get; set; }
-        public NormalControlVM(double mean, double stDev, string labelString)
+        public NormalControlVM(double mean, double stDev, string labelString, bool displayMean = false)
         {
+            DisplayMean = displayMean;
             LabelString = labelString;
             Mean = mean;
             StDev = stDev;
         }
 
-        public IDistribution CreateOrdinate()
+        public ContinuousDistribution CreateOrdinate()
         {
             return new Normal(Mean, StDev);
         }
