@@ -8,7 +8,7 @@ namespace metrics
 {
     public class Results: IContainResults
     {
-        public PerformanceByThresholds PerformanceByThresholds { get; }
+        public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
         public ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; }
         public Results()
         {
@@ -19,7 +19,7 @@ namespace metrics
         {
             return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
         }
-        private bool IsPerformanceConverged()
+        public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
         {
             
             List<bool> convergedList = new List<bool>();
