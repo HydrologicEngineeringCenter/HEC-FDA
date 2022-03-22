@@ -203,18 +203,20 @@ namespace fda_model_test
             projectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(firstKeyForCNEP, convergenceCriteria);
             projectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(secondKeyForCNEP, convergenceCriteria);
 
-            int iterations = 3500;
-            Random random = new Random();
+            int iterations = 2250;
+            int seed = 1234;
+            Random random = new Random(seed);
+            Normal normal = new Normal();
 
             for (int i = 0; i < iterations; i++)
             {
-                double uniformObservation1 = random.NextDouble();
-                double uniformObservation2 = random.NextDouble();
-                double messyObservation = random.NextDouble() * random.NextDouble() + random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
-
+                double uniformObservation1 = random.NextDouble()+1;
+                double uniformObservation2 = random.NextDouble()+2;
+                double messyObservation = normal.InverseCDF(random.NextDouble())* random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
+                double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
                 projectPerformanceResults.AddStageForCNEP(firstKeyForCNEP, uniformObservation1, i);
                 projectPerformanceResults.AddStageForCNEP(firstKeyForCNEP, uniformObservation2, i);
-                projectPerformanceResults.AddStageForCNEP(secondKeyForCNEP, messyObservation * random.NextDouble(), i);
+                projectPerformanceResults.AddStageForCNEP(secondKeyForCNEP, messyObservationLogged, i);
                 projectPerformanceResults.AddStageForCNEP(secondKeyForCNEP, messyObservation, i);
             }
 
