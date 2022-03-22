@@ -28,6 +28,13 @@ namespace metrics
                 return _aep;
             }
         }
+        public Dictionary<double, ThreadsafeInlineHistogram> CNEPHistogramOfStages
+        {
+            get
+            {
+                return _cnep;
+            }
+        }
         public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
         {
             _thresholdType = thresholdType;

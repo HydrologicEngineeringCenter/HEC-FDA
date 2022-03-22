@@ -190,6 +190,45 @@ namespace fda_model_test
             Assert.True(relativeDifference < tolerance);
         }
 
+        [Fact]
+        public void ConvergenceTest()
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ThresholdEnum thresholdType = ThresholdEnum.ExteriorStage;
+            double thresholdValue = 4.1;
+            ProjectPerformanceResults projectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, convergenceCriteria);
+
+            double firstKeyForCNEP = .95;
+            double secondKeyForCNEP = .99;
+            projectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(firstKeyForCNEP, convergenceCriteria);
+            projectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(secondKeyForCNEP, convergenceCriteria);
+
+            int iterations = 3500;
+            Random random = new Random();
+
+            for (int i = 0; i < iterations; i++)
+            {
+                double uniformObservation1 = random.NextDouble();
+                double uniformObservation2 = random.NextDouble();
+                double messyObservation = random.NextDouble() * random.NextDouble() + random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
+
+                projectPerformanceResults.AddStageForCNEP(firstKeyForCNEP, uniformObservation1, i);
+                projectPerformanceResults.AddStageForCNEP(firstKeyForCNEP, uniformObservation2, i);
+                projectPerformanceResults.AddStageForCNEP(secondKeyForCNEP, messyObservation * random.NextDouble(), i);
+                projectPerformanceResults.AddStageForCNEP(secondKeyForCNEP, messyObservation, i);
+            }
+
+            double upperConfidenceLimitProbability = 0.975;
+            double lowerConfidenceLimitProbability = 0.025;
+            bool isCNEPConverged = projectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+            bool isFirstCNEPConverged = projectPerformanceResults.CNEPHistogramOfStages[firstKeyForCNEP].TestForConvergence(upperConfidenceLimitProbability,lowerConfidenceLimitProbability);
+            bool isSecondCNEPConverged = projectPerformanceResults.CNEPHistogramOfStages[secondKeyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+
+            Assert.True(isFirstCNEPConverged);
+            Assert.False(isSecondCNEPConverged);
+            Assert.False(isCNEPConverged);
+        }
+
     }
 
 }
