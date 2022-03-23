@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using Statistics;
 using Statistics.Histograms;
 using paireddata;
+using System.Linq;
 namespace metrics
 {
     public class Results: IContainResults
     {
-        public PerformanceByThresholds PerformanceByThresholds { get; }
+        public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
         public ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; }
         public Results()
         {
@@ -18,12 +19,25 @@ namespace metrics
         {
             return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
         }
-        private bool IsPerformanceConverged()
+        public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
         {
-            //dont like this.
+            
+            List<bool> convergedList = new List<bool>();
+            //dont like this
             foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                return PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged();
+                convergedList.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged());
+            }
+            foreach (var convergenceResult in convergedList)
+            {
+                if (convergenceResult)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    return false;
+                } 
             }
             return true;
         }
@@ -34,27 +48,40 @@ namespace metrics
         public bool TestResultsForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             bool eadIsConverged = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-            bool cnepIsConverged = false;
+            bool cnepIsConverged = true;
+            List<bool> convergedList = new List<bool>();
+
             //dont like this.
-            foreach(var key in PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                cnepIsConverged = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-                break;
+                convergedList.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+          
             }
-            
+            foreach (var convergenceResult in convergedList)
+            {
+                if (convergenceResult)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    cnepIsConverged = false;
+                }
+            }
             return eadIsConverged && cnepIsConverged;
         }
         public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
-            Int64 ead = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-            Int64 performance = 0;
+            Int64 eadIterationsRemaining = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+
+            List<Int64> performanceIterationsRemaining = new List<Int64>();
+
             //i do not like this, but the keys are frustrating.
             foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
             {
-                performance = PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-                break;
+                performanceIterationsRemaining.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
             }
-            return Math.Max(ead, performance);
+            return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
         }
         public void ParalellTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {

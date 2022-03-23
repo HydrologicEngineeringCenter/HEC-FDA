@@ -28,6 +28,13 @@ namespace metrics
                 return _aep;
             }
         }
+        public Dictionary<double, ThreadsafeInlineHistogram> CNEPHistogramOfStages
+        {
+            get
+            {
+                return _cnep;
+            }
+        }
         public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
         {
             _thresholdType = thresholdType;
@@ -84,18 +91,12 @@ namespace metrics
         }
         public bool ConditionalNonExceedanceProbabilityIsConverged()
         {
-            //dont like this.
-            foreach (double key in _cnep.Keys)
-            {
-                if (key == 0.98)
-                {
-                    return _cnep[key].IsConverged;
-                }
-            }
-            return false;
+            double key = 0.98;
+            return _cnep[key].IsConverged;
         }
         public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
+
             //dont like this.
             foreach( double key in _cnep.Keys)
             {

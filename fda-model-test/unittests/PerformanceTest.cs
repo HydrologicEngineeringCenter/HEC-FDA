@@ -22,7 +22,6 @@ namespace fda_model_test
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static int id = 1;
 
         /// <summary>
         /// The calculations for the results in the test below can be found at https://docs.google.com/spreadsheets/d/1UUNgHYq1_zV4ifnu0iVmiPOzL2szyBCX/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
@@ -190,6 +189,56 @@ namespace fda_model_test
             double tolerance = 0.025;
             Assert.True(relativeDifference < tolerance);
         }
+
+        [Fact]
+        public void ConvergenceTest()
+        {            
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ThresholdEnum thresholdType = ThresholdEnum.ExteriorStage;
+            double thresholdValue = 4.1;
+            int thresholdID1 = 1;
+            int thresholdID2 = 2;
+            Threshold threshold1 = new Threshold(thresholdID1, convergenceCriteria, thresholdType,thresholdValue);
+            Threshold threshold2 = new Threshold(thresholdID2, convergenceCriteria, thresholdType, thresholdValue);
+            PerformanceByThresholds performanceByThresholds = new PerformanceByThresholds();
+            performanceByThresholds.AddThreshold(threshold1);
+            performanceByThresholds.AddThreshold(threshold2);
+
+            double keyForCNEP = .98;
+            performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
+            performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
+
+            int iterations = 2250;
+            int seed = 1234;
+            Random random = new Random(seed);
+            Normal normal = new Normal();
+
+            for (int i = 0; i < iterations; i++)
+            {
+                double uniformObservation1 = random.NextDouble()+1;
+                double uniformObservation2 = random.NextDouble()+2;
+                double messyObservation = normal.InverseCDF(random.NextDouble())* random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
+                double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
+                performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation1, i);
+                performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation2, i);
+                performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservationLogged, i);
+                performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservation, i);
+            }
+
+            double upperConfidenceLimitProbability = 0.975;
+            double lowerConfidenceLimitProbability = 0.025;
+            Results results = new Results();
+            results.PerformanceByThresholds = performanceByThresholds;
+
+            bool isFirstThresholdConverged = performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+            bool isSecondThresholdConverged = performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+            bool isPerformanceConverged = results.IsPerformanceConverged();
+
+            Assert.True(isFirstThresholdConverged);
+            Assert.False(isSecondThresholdConverged);
+            Assert.False(isPerformanceConverged);
+        }
+
     }
 
 }
