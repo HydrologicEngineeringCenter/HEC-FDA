@@ -5,11 +5,11 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public class FdaValidationResult
     {
+        private readonly List<string> _Errors = new List<string>();
         public bool IsValid
         {
             get { return _Errors.Count == 0; }
         }
-        private readonly List<string> _Errors = new List<string>();
 
         public string ErrorMessage
         {

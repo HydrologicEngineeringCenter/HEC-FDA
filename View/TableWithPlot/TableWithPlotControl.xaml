@@ -20,9 +20,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
+            <ScrollViewer Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
+                <Grid Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
                 <local:ComputeComponentControl x:Name="compComp" DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
             </Grid>
+            </ScrollViewer>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" />
         <Grid Grid.Column="2">

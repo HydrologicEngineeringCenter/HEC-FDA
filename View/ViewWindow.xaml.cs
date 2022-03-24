@@ -265,7 +265,7 @@ namespace HEC.FDA.View
 
             newvm.Scalable = false;
             ViewWindow newwindow = new ViewWindow(newvm);
-            //newwindow.Owner = this;
+            newwindow.Owner = this;
 
             //hide the top row with the pop in button if this vm doesn't support that
             if (newvm.Tab.CanPopOut == false)

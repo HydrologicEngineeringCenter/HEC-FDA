@@ -1,8 +1,8 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -86,26 +86,31 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DataModified?.Invoke(this, EventArgs.Empty);
         }
 
-        public List<LogItem> IsItemValid()
+        public virtual FdaValidationResult IsItemValid()
         {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            constructionErrors.AddRange(IsValueUncertaintyConstructable(ValueUncertainty, ItemType + " value uncertainty"));
-            return constructionErrors;
-        }
+            FdaValidationResult vr = new FdaValidationResult();
 
-        public List<LogItem> IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
-        {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            try
+            FdaValidationResult valueUncertVR = ValueUncertainty.IsValueUncertaintyValid();
+            //I want to indicate what "item type" this is.
+            if(!valueUncertVR.IsValid)
             {
-                uncertaintyVM.CreateOrdinate();
+                string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
+                vr.AddErrorMessage(errorMessage + Environment.NewLine);
             }
-            catch (Exception e)
+
+            //todo: this isn't working. I don't know how to get the errors from the table.
+            paireddata.UncertainPairedData curve = TableWithPlot.ComputeComponentVM.SelectedItemToPairedData();
+            curve.Validate();
+            if(curve.HasErrors)
             {
-                string logMessage = "Error constructing " + uncertaintyName + ": " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+                IEnumerable errors = curve.GetErrors();
+                foreach(var error in errors)
+                {
+                    vr.AddErrorMessage(error.ToString());
+                }
             }
-            return constructionErrors;
+
+            return vr;
         }
     }
 }

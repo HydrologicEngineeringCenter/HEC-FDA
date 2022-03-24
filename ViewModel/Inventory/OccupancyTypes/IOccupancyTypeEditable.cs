@@ -1,4 +1,5 @@
 ﻿using FdaLogging;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,8 +28,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// and has never been saved.
         /// </summary>
         bool HasBeenSaved { get; }
-        List<LogItem> SaveOcctype();
-        List<LogItem> IsOccupancyTypeConstructable();
+        FdaValidationResult HasWarnings();
+        FdaValidationResult HasFatalErrors(List<string> occtypeNames);
+        void SaveOcctype();
         IOccupancyType CreateOccupancyType();
     }
 }

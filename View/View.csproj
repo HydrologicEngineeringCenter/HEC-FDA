@@ -332,5 +332,6 @@
 		echo "unpacking the .dlls from GDAL into your output directory"
 		Xcopy  %userprofile%\.nuget\packages\gdal-hec\0.0.1\content\GDAL\csharp\*  $(TargetDir) /Y
 	</PostBuildEvent>
+    <RootNamespace>HEC.FDA.View</RootNamespace>
   </PropertyGroup>
 </Project>

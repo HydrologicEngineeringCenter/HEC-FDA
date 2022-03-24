@@ -1,7 +1,7 @@
-﻿using Statistics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 using System;
-using Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -41,18 +41,26 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public ContinuousDistribution CreateOrdinate()
         {
             //min should be 0 - 100
+            return new Uniform(Min, Max);
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
             if (Min > 100 || Min < 0)
             {
-                throw new InvalidConstructorArgumentsException("Uniform distribution min value needs to be between 0 and 100");
+                
+                vr.AddErrorMessage("Uniform distribution min value needs to be between 0 and 100");
             }
-            if(Max < 0)
+            if (Max < 0 || Max > 100)
             {
-                throw new InvalidConstructorArgumentsException("Uniform distribution max value cannot be less than 0");
+                vr.AddErrorMessage("Uniform distribution max value cannot be less than 0");
             }
-            else
+            if (Min > Max)
             {
-                return new Uniform(Min, Max);
+                vr.AddErrorMessage("Uniform distribution max value cannot be less than min");
             }
+            return vr;
         }
     }
 }

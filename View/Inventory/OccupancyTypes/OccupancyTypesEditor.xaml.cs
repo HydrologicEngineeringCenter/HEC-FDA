@@ -14,8 +14,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
     /// </summary>
     public partial class OccupancyTypesEditor : UserControl
     {
-        private bool handleSelection = true;
-        private bool _isFirstSettingOfOcctypeGroup = true;
 
         public OccupancyTypesEditor()
         {
@@ -26,10 +24,11 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             // I wanted the editor to open up with a group and occtype selected. This gets the first group and the first occtype.
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.CloseEditor += Vm_CloseEditor;
-            UpdateTheListView(sender, e);
-            vm.ClearAllModifiedLists();
+            if(DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.CloseEditor += Vm_CloseEditor;
+                UpdateTheListView(sender, e);
+            }
         }
 
         /// <summary>
@@ -45,51 +44,56 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
         public void UpdateTheListView(object sender, EventArgs e)
         {
             //load the list view
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            if (vm.SelectedOccTypeGroup == null) { return; }
-
-            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
-            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+            if (DataContext is OccupancyTypesEditorVM vm)
             {
-                collectionOfOccTypes.Add(ot);
+                if (vm.SelectedOccTypeGroup == null) 
+                { 
+                    return; 
+                }
+
+                ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+                foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+                {
+                    collectionOfOccTypes.Add(ot);
+                }
+                ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
+
+                lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));
+
+                lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
+                lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
+
+                OccTypeListView.ItemsSource = lcv;
             }
-            ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
-
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));        
-
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
-
-            OccTypeListView.ItemsSource = lcv;
         }    
 
         private void cmb_Group_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;           
-            handleSelection = true;
-            //load the list view
-            if (vm.SelectedOccTypeGroup == null) { return; }
-
-            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
-            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+            if (DataContext is OccupancyTypesEditorVM vm)
             {
-                collectionOfOccTypes.Add(ot);
+                //load the list view
+                if (vm.SelectedOccTypeGroup == null) { return; }
+
+                ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+                foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+                {
+                    collectionOfOccTypes.Add(ot);
+                }
+                ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
+
+                lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));
+
+                lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
+                lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
+
+                OccTypeListView.ItemsSource = lcv;
+                if (OccTypeListView.Items.Count == 0)
+                {
+                    return;
+                }
+                OccTypeListView.SelectedItem = OccTypeListView.Items[0];
+                UpdateTheListView(sender, e);
             }
-            ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
-
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));
-
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
-
-            OccTypeListView.ItemsSource = lcv;
-            if (OccTypeListView.Items.Count == 0)
-            {
-                return;
-            }
-            OccTypeListView.SelectedItem = OccTypeListView.Items[0];
-            _isFirstSettingOfOcctypeGroup = false;
-            UpdateTheListView(sender, e);
         }
 
         private void ClearAllControls()
@@ -107,46 +111,58 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
 
         private void CreateNewOccTypeButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.LaunchNewOccTypeWindow();
-            UpdateTheListView(sender, e);
-            EnableAllControls();
+            if (DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.LaunchNewOccTypeWindow();
+                UpdateTheListView(sender, e);
+                EnableAllControls();
+            }
         }
 
         private void CopyExistingButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.LaunchCopyOccTypeWindow();
-            UpdateTheListView(sender, e);
+            if (DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.LaunchCopyOccTypeWindow();
+                UpdateTheListView(sender, e);
+            }
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.DeleteOccType();
-            UpdateTheListView(sender, e);
-            if(vm.SelectedOccType == null)
+            if (DataContext is OccupancyTypesEditorVM vm)
             {
-                ClearAllControls();
+                vm.DeleteOccType();
+                UpdateTheListView(sender, e);
+                if (vm.SelectedOccType == null)
+                {
+                    ClearAllControls();
+                }
             }
         }
 
         private void CreateNewOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.LaunchImportNewOccTypeGroup();
+            if (DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.LaunchImportNewOccTypeGroup();
+            }
         }
 
         private void RenameOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.LaunchRenameOcctypeGroup();
+            if (DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.LaunchRenameOcctypeGroup();
+            }
         }
 
         private void DeleteOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.DeleteOccTypeGroup();
+            if (DataContext is OccupancyTypesEditorVM vm)
+            {
+                vm.DeleteOccTypeGroup();
+            }
         }
     }
 }
