@@ -152,7 +152,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         #endregion
 
-        public void SaveNew(ChildElement element)
+        public override void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(WaterSurfaceElevationElement))
             {

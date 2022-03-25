@@ -443,7 +443,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             if (!vr.IsValid)
             {
-                vr.InsertNewLineMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
+                vr.InsertMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
             }
             return vr;
         }

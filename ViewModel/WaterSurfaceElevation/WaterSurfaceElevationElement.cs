@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
@@ -154,20 +155,50 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
         }
 
+        private string GetVRTFilePath(string vrtDirectoryPath)
+        {
+            string vrtFilePath = null;
+            try
+            {
+                //get the vrt from the directory 
+                string[] fileList = Directory.GetFiles(vrtDirectoryPath);
+                foreach (string file in fileList)
+                {
+                    if (Path.GetExtension(file) == ".vrt")
+                    {
+                        vrtFilePath = file;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = "Unable to find a .vrt file in directory: " + vrtDirectoryPath +
+                    Environment.NewLine + ex.Message;
+                MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
+            return vrtFilePath;
+        }
+
         private void AddWSEToMapWindow(object arg1, EventArgs arg2)
         {
             _featureNodeHashs = new List<int>();
-            foreach (PathAndProbability file in RelativePathAndProbability)
+            foreach (PathAndProbability directory in RelativePathAndProbability)
             {
-                LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\" + file.Path);
-                OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-                AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
-                args.FeatureName = Name + " - " + Path.GetFileNameWithoutExtension(file.Path);
-                AddToMapWindow(this, args);
+                string vrtDirectoryPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + directory.Path;
+                string vrtFilePath = GetVRTFilePath(vrtDirectoryPath);
+                if (vrtFilePath != null)
+                {                 
+                    LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(vrtFilePath);
+                    OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
+                    AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
+                    args.FeatureName = Name + " - " + Path.GetFileName(vrtDirectoryPath);
+                    AddToMapWindow(this, args);
 
-                _featureNodeHashs.Add(args.MapFeatureHash);
+                    _featureNodeHashs.Add(args.MapFeatureHash);
+                }
             }
-
 
             foreach (NamedAction a in Actions)
             {
@@ -187,6 +218,5 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             return new WaterSurfaceElevationElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.ID);
         }
         #endregion
-
     }
 }

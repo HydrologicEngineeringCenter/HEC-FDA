@@ -66,6 +66,7 @@ namespace HEC.FDA.ViewModel.Watershed
         {
             if (TerrainPath != null && TerrainPath != "")
             {
+                //todo: CreateNewPathName doesn't seem right. I should just call it before saving.
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
                 TerrainElement t = new TerrainElement(Name,System.IO.Path.GetFileName(TerrainPath), id, true); // file extention?

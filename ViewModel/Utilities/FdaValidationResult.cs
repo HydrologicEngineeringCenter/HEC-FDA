@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.Utilities
         /// </summary>
         /// <param name="index"></param>
         /// <param name="message"></param>
-        public void InsertNewLineMessage(int index, string message)
+        public void InsertMessage(int index, string message)
         {
             _Errors.Insert(index, message);
         }

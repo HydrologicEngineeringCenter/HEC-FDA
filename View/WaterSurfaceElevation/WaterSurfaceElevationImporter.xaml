@@ -62,7 +62,7 @@
         </Grid>
 
         <DataGrid Grid.Row="5" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+                   HorizontalAlignment="Left" CanUserAddRows="False" CanUserDeleteRows="False"
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
