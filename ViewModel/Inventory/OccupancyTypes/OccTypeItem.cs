@@ -97,19 +97,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
                 vr.AddErrorMessage(errorMessage + Environment.NewLine);
             }
-
-            //todo: this isn't working. I don't know how to get the errors from the table.
-            paireddata.UncertainPairedData curve = TableWithPlot.ComputeComponentVM.SelectedItemToPairedData();
-            curve.Validate();
-            if(curve.HasErrors)
-            {
-                IEnumerable errors = curve.GetErrors();
-                foreach(var error in errors)
-                {
-                    vr.AddErrorMessage(error.ToString());
-                }
-            }
-
+            FdaValidationResult fdaValidationResult = TableWithPlot.GetTableErrors();
+            vr.AddErrorMessage(fdaValidationResult.ErrorMessage);
             return vr;
         }
     }
