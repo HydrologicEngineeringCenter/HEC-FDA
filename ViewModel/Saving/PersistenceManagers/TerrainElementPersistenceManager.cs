@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         #region utilities
 
-        public string OriginalTerrainPath { get; set; }
+        //public string OriginalTerrainPath { get; set; }
 
         public override string TableName
         {
@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
         }
 
-        private async void CopyFileOnBackgroundThread(TerrainElement element)
+        private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
         {
             await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
 
@@ -156,10 +156,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public void SaveNew(ChildElement element)
+        public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
             SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
-            CopyFileOnBackgroundThread((TerrainElement)element);
+            CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
         public void Remove(ChildElement element)
         {

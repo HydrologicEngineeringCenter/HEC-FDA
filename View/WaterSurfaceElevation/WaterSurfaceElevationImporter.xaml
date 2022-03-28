@@ -56,7 +56,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
-                <RadioButton Name="RDBWSE" Content="Water Surface Elevation" IsChecked="True" />
+                <RadioButton Name="RDBWSE" Content="Water Surface Elevation Grids" IsChecked="True" />
                 <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
@@ -83,12 +83,12 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Probability}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Probability" TextWrapping="Wrap" />
+                        <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Return Year" TextWrapping="Wrap" />
+                        <TextBlock Text="Return Interval" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

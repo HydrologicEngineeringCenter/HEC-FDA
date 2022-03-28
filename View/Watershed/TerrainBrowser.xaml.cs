@@ -13,10 +13,12 @@ namespace HEC.FDA.View.Watershed
             InitializeComponent();
         }
 
-        private void cmb_Path_CmbSelectionMade(string path)
+        private void cmb_Path_CmbSelectionMade(string fullpath, string filename)
         {
-            HEC.FDA.ViewModel.Watershed.TerrainBrowserVM vm = (TerrainBrowserVM)this.DataContext;
-            vm.OriginalPath = cmb_Path.SelectedPath;
+            if (DataContext is TerrainBrowserVM vm)
+            {
+                vm.FileSelected(fullpath);
+            }
         }
     }
 }

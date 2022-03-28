@@ -1,9 +1,9 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 using System.IO;
+using System.Linq;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
@@ -25,17 +25,12 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             get { return _IsEditor; }
             set { _IsEditor = value; NotifyPropertyChanged(); }
         }
-        public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's
-        public List<PathAndProbability> ListOfRelativePaths{ get; } = new List<PathAndProbability>();
-        public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
-   
         public bool IsDepthGridChecked
         {
             get { return _IsDepthGridChecked; }
             set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
         }
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
-
         #endregion
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
@@ -52,15 +47,13 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             IsEditor = true;
             Name = elem.Name;
             Description = elem.Description;
-            ListOfRelativePaths = elem.RelativePathAndProbability;
             IsDepthGridChecked = elem.IsDepthGrids;
-            foreach(PathAndProbability pp in ListOfRelativePaths)
+            foreach(PathAndProbability pp in elem.RelativePathAndProbability)
             {
                 string filename = Path.GetFileName(pp.Path);
                 AddRow(true, filename, pp.Path, pp.Probability, false);
             }
         }
-
         #endregion
         #region Voids
         public void AddRow(bool isChecked, string name, string path, double probability, bool isEnabled = true)
@@ -70,58 +63,9 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             NotifyPropertyChanged("ListOfRows");
         }
 
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
-            AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
+        #region copy files
 
-            AddRule(nameof(ListOfRows), () =>
-             {
-                 int numberOfSelectedRows = 0;
-                 foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                 {
-                     if (row.IsChecked == true)
-                     {
-                         numberOfSelectedRows++;
-                     }
-                 }
-
-                 if (numberOfSelectedRows < 8)
-                 {
-                     return false;
-                 }
-                 else
-                 {
-                     return true;
-                 }
-
-             }, "You have fewer than 8 files selected. You will get better results if you select more files.", false);
-            AddRule(nameof(ListOfRows), () =>
-            {
-                List<double> probabilitiesList = new List<double>();
-                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                {
-                    if (row.IsChecked == true)
-                    {
-                        if (probabilitiesList.Contains(row.Probability))
-                        {
-                            //error
-                            return false;
-                        }
-                        else
-                        {
-                            probabilitiesList.Add(row.Probability);
-                        }
-                    }
-                }
-
-                return true;
-
-            }, "Duplicate probabilities are not allowed.", true);
-        }
-
-
-        public static void Copy(string sourceDirectory, string targetDirectory)
+        private void Copy(string sourceDirectory, string targetDirectory)
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
@@ -129,7 +73,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             CopyAll(diSource, diTarget);
         }
 
-        public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        private void CopyAll(DirectoryInfo source, DirectoryInfo target)
         {
             Directory.CreateDirectory(target.FullName);
 
@@ -153,8 +97,28 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
             Copy(path, destinationFilePath);
         }
+        #endregion
 
-       
+        #region validation
+        private FdaValidationResult ValidateImporter()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (ListOfRows.Count != 8)
+            {
+                vr.AddErrorMessage("Eight hydraulic files are required to import.");
+            }
+            List<double> probs = new List<double>();
+            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+            {
+                vr.AddErrorMessage(row.IsValid().ErrorMessage);
+                probs.Add(row.Probability);
+            }
+            if (probs.Count != probs.Distinct().Count())
+            {
+                vr.AddErrorMessage("Duplicate probabilities found. Probabilities must be unique.");
+            }
+            return vr;
+        }
 
         private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
         {
@@ -209,6 +173,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             return vr;
         }
 
+        #endregion
+
         public void FileSelected(string fullpath)
         {
             FdaValidationResult importResult = new FdaValidationResult();
@@ -235,10 +201,17 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
 
             //we require 8 valid directories
-            if (validDirectories.Count != 8)
+            if (validDirectories.Count < 8)
             {
                 string dirName = Path.GetFileNameWithoutExtension(fullpath);
                 importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." +
+                    " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n");
+                MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else if(validDirectories.Count>8)
+            {
+                string dirName = Path.GetFileNameWithoutExtension(fullpath);
+                importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." +
                     " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n");
                 MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -259,30 +232,30 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
         }
 
-        private FdaValidationResult ValidateImporter()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            return vr;
-        }
-
         public override void Save()
         {
-            
-            //validate?
-            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+            FdaValidationResult validResult = ValidateImporter();
+            if (validResult.IsValid)
             {
-                string nameWithExtension = Path.GetFileName(row.Path);
-                ListOfRelativePaths.Add(new PathAndProbability(Name + "\\" + nameWithExtension, row.Probability));
-                CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability);
-            }
+                List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+                {
+                    string directoryName = Path.GetFileName(row.Name);
+                    pathProbs.Add(new PathAndProbability(Name + "\\" + directoryName, row.Probability));
 
-            int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
-            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);
-            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-            base.Save(elementToSave);
+                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability);
+                }
+                
+                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, pathProbs, IsDepthGridChecked, id);
+                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                base.Save(elementToSave);
+            }
+            else
+            {
+                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         #endregion
-
     }
 }
