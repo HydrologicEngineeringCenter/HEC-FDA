@@ -34,7 +34,6 @@
                             <Label Content="Occupancy Group: "/>
                             <Label Content="{Binding Name}"  />
                         </StackPanel>
-                        <!--<Label Content="{Binding Name}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />-->
                         <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding OcctypesWithFatalErrors}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
