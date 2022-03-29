@@ -202,7 +202,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FdaValidationResult uncertaintyVR = uncertaintyVM.IsValueUncertaintyValid();
             if (!uncertaintyVR.IsValid)
             {
-                uncertaintyVR.InsertNewLineMessage(0, "Foundation Height Uncertainty:");
+                uncertaintyVR.InsertMessage(0, "Foundation Height Uncertainty:");
             }
             return uncertaintyVR;
         }
