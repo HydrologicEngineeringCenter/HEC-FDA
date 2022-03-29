@@ -18,6 +18,9 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Fields
         private bool _IsDepthGridChecked;
         private bool _IsEditor;
+        private int _ID;
+        private List<string> _OriginalFolderNames = new List<string>();
+        private string _OriginalFolderName;
         #endregion
         #region Properties
         public bool IsEditor
@@ -45,20 +48,24 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(actionManager)
         {
             IsEditor = true;
+            _ID = elem.ID;
             Name = elem.Name;
+            _OriginalFolderName = elem.Name;
             Description = elem.Description;
             IsDepthGridChecked = elem.IsDepthGrids;
             foreach(PathAndProbability pp in elem.RelativePathAndProbability)
             {
-                string filename = Path.GetFileName(pp.Path);
-                AddRow(true, filename, pp.Path, pp.Probability, false);
+                string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
+                string folderName = Path.GetFileName(pp.Path);
+                _OriginalFolderNames.Add(folderName);
+                AddRow(folderName, path, pp.Probability, false);
             }
         }
         #endregion
         #region Voids
-        public void AddRow(bool isChecked, string name, string path, double probability, bool isEnabled = true)
+        public void AddRow( string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM(isChecked, name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM( name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
             NotifyPropertyChanged("ListOfRows");
         }
@@ -221,7 +228,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 foreach (string dir in validDirectories)
                 {
                     prob += .1;
-                    AddRow(true, Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                    AddRow( Path.GetFileName(dir), Path.GetFullPath(dir), prob);
                 }
                 //we might have some message for the user?
                 if(!importResult.IsValid)
@@ -234,22 +241,70 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public override void Save()
         {
+            if(IsEditor)
+            {
+                SaveExisting();
+            }
+            else
+            {
+                SaveNew();            
+            }
+        }
+
+        private void SaveExisting()
+        {
+            //the user can not change files when editing, so the only changes would be new names and probs.    
+            //if name is different then we need to update the directory name in the study hydraulics folder.
+            if(!Name.Equals(_OriginalFolderName))
+            {
+                string sourceFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
+                string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                Directory.Move(sourceFilePath, destinationFilePath);
+            }
+            //might have to rename the sub folders.
+            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            for(int i = 0;i<ListOfRows.Count;i++)
+            {
+                string newName = ListOfRows[i].Name;
+                string originalName = _OriginalFolderNames[i];
+                if (!newName.Equals(originalName))
+                {
+                    string sourceFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
+                    string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                    Directory.Move(sourceFilePath, destinationFilePath);
+                    _OriginalFolderNames[i] = newName;
+                }
+                newPathProbs.Add(new PathAndProbability(Name + "\\" + newName, ListOfRows[i].Probability));
+            }
+
+            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
+            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+            manager.SaveExisting(elementToSave, _OriginalFolderName);
+            _OriginalFolderName = Name;
+        }
+
+        private void SaveNew()
+        {
+            IsEditor = true;
             FdaValidationResult validResult = ValidateImporter();
             if (validResult.IsValid)
             {
                 List<PathAndProbability> pathProbs = new List<PathAndProbability>();
                 foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
                 {
+                    _OriginalFolderNames.Add(row.Name);
                     string directoryName = Path.GetFileName(row.Name);
                     pathProbs.Add(new PathAndProbability(Name + "\\" + directoryName, row.Probability));
 
                     CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability);
                 }
-                
+
                 int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
                 WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, pathProbs, IsDepthGridChecked, id);
-                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
                 base.Save(elementToSave);
+                _OriginalFolderName = Name;
+                _ID = id;
+
             }
             else
             {

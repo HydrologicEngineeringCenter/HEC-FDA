@@ -38,9 +38,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-
-        //public string OriginalTerrainPath { get; set; }
-
         public override string TableName
         {
             get { return TABLE_NAME; }
@@ -67,7 +64,32 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
         {
-            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
+            string terrainPath = element.FileName;
+            Directory.CreateDirectory(Path.GetDirectoryName(terrainPath));
+
+            bool isVRT = Path.GetExtension(terrainPath).Equals(".vrt");
+
+            if(isVRT)
+            {
+                //then copy all the vrt and tif files
+                string newDirName = Path.GetDirectoryName(terrainPath);
+                string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
+
+                string[] paths = Directory.GetFiles(originalDirName);
+                foreach(string path in paths)
+                {
+                    string extension = Path.GetExtension(path);
+                    if(extension.Equals(".vrt") || extension.Equals(".tif"))
+                    {
+                        await Task.Run(() => File.Copy(path, newDirName + "\\"+ Path.GetFileName(path)));
+                    }
+                }
+            }
+            else
+            {
+                //.tifs and .flts i just copy the file.
+                await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
+            }
 
             string name = element.Name;
             //remove the temporary node and replace it
@@ -105,7 +127,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
-
         }
 
         private async void RenameTheTerrainFileOnBackgroundThread(ChildElement oldElement, ChildElement newElement)

@@ -12,16 +12,9 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Fields
         private double _Probability;
         private double _ReturnYear;
-        private bool _IsChecked;
         #endregion
         #region Properties
-        public bool IsChecked
-        {
-            get { return _IsChecked; }
-            set { _IsChecked = value; NotifyPropertyChanged(); }
-        }
         public bool IsEnabled { get; }
-        public string Name { get; set; }
         public string Path { get; set; }
         public double Probability
         {
@@ -35,12 +28,11 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationRowItemVM(bool isChecked,string name, string path, double probability, bool isEnabled)
+        public WaterSurfaceElevationRowItemVM(string name, string path, double probability, bool isEnabled)
         {
             IsEnabled = isEnabled;
             Path = path;
             ReturnYear = 1 / probability;
-            IsChecked = isChecked;
             Name = name;
             Probability = probability;
         }

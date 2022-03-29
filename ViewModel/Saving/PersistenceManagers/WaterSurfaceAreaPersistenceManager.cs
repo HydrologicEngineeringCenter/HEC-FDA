@@ -118,38 +118,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }   
         }
 
-        private void RenameHydraulicsDirectory(string oldName, string newName)
-        {
-            string oldPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + oldName;
-            if(Directory.Exists(oldPath))
-            {
-                string newPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + newName;
-
-                try
-                {
-                    Directory.Move(oldPath, newPath);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception();
-                }
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
-
-        private void SaveFilesToStudyDirectory(string directoryName)
-        {
-            string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + directoryName;
-            if(Directory.Exists(path))
-            {
-                throw new Exception();
-            }
-
-        }
-
         #endregion
 
         public override void SaveNew(ChildElement element)
@@ -177,26 +145,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
             }
             StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
-
         }
 
-        public void SaveExisting( ChildElement element )
+        public void SaveExisting( ChildElement element, string oldName )
         {
-            //base.SaveExisting( element);
-            //UpdateThePaths((WaterSurfaceElevationElement)element);
-            //Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
-            //SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
-            ////rename the folder in the study directory
-            //RenameHydraulicsDirectory(oldElement.Name, element.Name);
-        }
-
-        private void UpdateThePaths(WaterSurfaceElevationElement element)
-        {
-            foreach(PathAndProbability pp in element.RelativePathAndProbability)
-            {
-                string fileName = Path.GetFileName(pp.Path);
-                pp.Path = element.Name + "\\" + fileName;
-            }
+            base.SaveExisting( element);
+            //delete the old table and create a new one
+            Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + oldName);
+            SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
         }
 
         public override void Load()

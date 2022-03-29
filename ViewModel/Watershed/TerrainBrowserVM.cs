@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -12,25 +14,8 @@ namespace HEC.FDA.ViewModel.Watershed
         #endregion
         #region Fields
         private string _TerrainPath;
-        private string _OriginalPath;
-        private List<string> _AvailablePaths;
         #endregion
         #region Properties
-     
-        /// <summary>
-        /// This is the original path that the user selected.
-        /// </summary>
-        //public string OriginalPath
-        //{
-        //    get { return _OriginalPath; }
-        //    set { _OriginalPath = value; CreateNewPathName(); NotifyPropertyChanged(); }
-        //}
-
-        //public List<string> AvailablePaths
-        //{
-        //    get { return _AvailablePaths; }
-        //    set { _AvailablePaths = value; NotifyPropertyChanged(); }
-        //}
 
         /// <summary>
         /// This is the new location for the terrain file. We are copying the original file and placing it within the study directory.
@@ -41,47 +26,125 @@ namespace HEC.FDA.ViewModel.Watershed
             set
             {
                 _TerrainPath = value;NotifyPropertyChanged();
-
             }
         }
         #endregion
         #region Constructors
         public TerrainBrowserVM(List<string> availablePaths, Editors.EditorActionManager actionManager) : base(actionManager)
         {
-            //AvailablePaths = availablePaths;
         }       
 
-        //public override void AddValidationRules()
-        //{
-        //    AddRule(nameof(Name), () => Name != null, "Terrain Name cannot be empty.");
-        //    AddRule(nameof(Name), () => Name != "", "Terrain Name cannot be empty.");
+        public FdaValidationResult IsValidPath()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (TerrainPath != null && TerrainPath != "")
+            {
+                //check extension
+                string pathExtension = Path.GetExtension(TerrainPath);
+                switch (pathExtension)
+                {
+                    case ".vrt":
+                        //if we have a vrt then we need to check that we only have one and that there are tifs next to it. 
+                        FdaValidationResult vrtResult = IsVRTPathValid();
+                        vr.AddErrorMessage(vrtResult.ErrorMessage);
+                        break;
+                    case ".flt":
+                    case ".tif":
+                        //do nothing
+                        break;
+                    default:
+                        {
+                            vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                vr.AddErrorMessage("A terrain file is required.");
+            }
+            return vr;
+        }
 
-        //    AddRule(nameof(OriginalPath), () => OriginalPath != null, "Path cannot be null.");
-        //    AddRule(nameof(OriginalPath), () => OriginalPath != "", "Path cannot be null.");
+        private FdaValidationResult IsVRTPathValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            string dirName = Path.GetDirectoryName(TerrainPath);
+            vr.AddErrorMessage(ContainsVRTAndTIF(dirName).ErrorMessage);
+            return vr;
+        }
 
-        //    AddRule(nameof(TerrainPath), () =>
-        //    { return System.IO.File.Exists(TerrainPath) != true; }, "A file with this name already exists.");
-        //}
+        private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            List<string> tifFiles = new List<string>();
+            List<string> vrtFiles = new List<string>();
+
+            string[] fileList = Directory.GetFiles(directoryPath);
+            foreach (string file in fileList)
+            {
+                if (Path.GetExtension(file) == ".tif")
+                {
+                    tifFiles.Add(file);
+                }
+                if (Path.GetExtension(file) == ".vrt")
+                {
+                    vrtFiles.Add(file);
+                }
+            }
+
+            string dirName = Path.GetFileNameWithoutExtension(directoryPath);
+
+            vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
+            vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
+
+            return vr;
+        }
+        private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (tifFiles.Count == 0)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            if (vrtFiles.Count == 0)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
+            }
+            else if (vrtFiles.Count > 1)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
+            }
+            return vr;
+        }
 
         public override void Save()
         {
-            //todo: validate.
-
-            if (TerrainPath != null && TerrainPath != "")
+            FdaValidationResult isValidResult = IsValidPath();
+            if (isValidResult.IsValid)
             {
-                //todo: i need to change the path on the element
-
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
                 string studyPath = CreateNewPathName();
-                TerrainElement t = new TerrainElement(Name,studyPath, id, true); // file extention?
+                TerrainElement t = new TerrainElement(Name, studyPath, id, true); // file extention?
                 StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, studyPath, id);
 
                 Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
-                //manager.OriginalTerrainPath = OriginalPath;
                 manager.SaveNew(TerrainPath, newElement);
-            }   
+            }
+            else
+            {
+                MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         #endregion
@@ -93,10 +156,7 @@ namespace HEC.FDA.ViewModel.Watershed
 
         private string CreateNewPathName()
         {
-            //if (Name == null || Name == "") { return; }
-            //if (OriginalPath == null || OriginalPath == "") { return; }
             string fileName = Path.GetFileName(TerrainPath);
-            //string originalExtension = System.IO.Path.GetExtension(TerrainPath);
             return Storage.Connection.Instance.TerrainDirectory + "\\" + Name + "\\" + fileName;
         }
         #endregion

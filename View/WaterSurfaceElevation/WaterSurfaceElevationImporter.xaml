@@ -66,16 +66,6 @@
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsChecked}" Width="110" >
-                    <DataGridCheckBoxColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
-                        </Style>
-                    </DataGridCheckBoxColumn.CellStyle>
-                    <DataGridCheckBoxColumn.Header>
-                        <TextBlock Text="Import" TextWrapping="Wrap" />
-                    </DataGridCheckBoxColumn.Header>
-                </DataGridCheckBoxColumn>
                 <DataGridTextColumn Binding="{Binding Name}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Name" TextWrapping="Wrap" />
