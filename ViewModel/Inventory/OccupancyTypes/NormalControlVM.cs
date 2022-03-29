@@ -1,4 +1,5 @@
-﻿using Statistics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 using System;
 
@@ -42,6 +43,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public ContinuousDistribution CreateOrdinate()
         {
             return new Normal(Mean, StDev);
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            //todo: are there any rules for normal?
+            FdaValidationResult vr = new FdaValidationResult();
+            return vr;
         }
     }
 }

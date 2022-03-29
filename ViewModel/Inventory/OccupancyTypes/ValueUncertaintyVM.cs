@@ -1,14 +1,11 @@
-﻿using Statistics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    /// <summary>
-    /// Note that there are only 5 of these in the occtype editor. There is NOT 5 per occtype.
-    /// That means that these need to get updated with the new values everytime the occtype changes.
-    /// </summary>
     public abstract class ValueUncertaintyVM : BaseViewModel
     {
         public event EventHandler WasModified;
@@ -66,18 +63,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             get
             {
-                //the currentVM can equal null. That is the deterministic case
-                if(CurrentVM == null)
-                {
-                    return new Deterministic(0);
-                }
-                else
-                {
-
-                    return CurrentVM.CreateOrdinate();
-                }
+                return CreateOrdinate();
             }
         }
+        
 
         #endregion
 
@@ -98,6 +87,33 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         #endregion
+
+        public ContinuousDistribution CreateOrdinate()
+        {
+            //the currentVM can equal null. That is the deterministic case
+            if (CurrentVM == null)
+            {
+                return new Deterministic(0);
+            }
+            else
+            {
+                return CurrentVM.CreateOrdinate();
+            }
+        }
+
+        public FdaValidationResult IsValueUncertaintyValid()
+        {
+            //the currentVM can equal null. That is the deterministic case
+            if (CurrentVM == null)
+            {
+                //if it is deterministic then it is valid.
+                return new FdaValidationResult();
+            }
+            else
+            {
+                return CurrentVM.IsValid();
+            }
+        }
 
         public abstract void LoadControlVMs(IDistribution ordinate);
 
@@ -154,18 +170,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
             WasModified?.Invoke(this, new EventArgs());
         }
-
-        public ContinuousDistribution CreateOrdinate()
-        {
-            if (CurrentVM == null)
-            {
-                //then it is a constant
-                return new Deterministic(0);
-            }
-            else
-            {
-                return CurrentVM.CreateOrdinate();
-            }           
-        }
+    
     }
 }

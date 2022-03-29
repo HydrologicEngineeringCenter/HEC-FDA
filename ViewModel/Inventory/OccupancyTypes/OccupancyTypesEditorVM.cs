@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -161,14 +160,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = CreateEditableOcctypeGroups(occtypeElements);
                 OccTypeGroups = editableGroups;
-                //set the selected occtype group
-                SelectedOccTypeGroup = OccTypeGroups.First();
-                //set all the "isModified" flags to false.
                 LoadDamageCategoriesList();
             }
+            SelectedOccTypeGroup = OccTypeGroups.First();
             SelectedOccType = SelectedOccTypeGroup.Occtypes.FirstOrDefault();
+            ClearAllModifiedLists();
         }
-
         #endregion
         #region Voids
 
@@ -204,7 +201,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
-                //todo: why is this here?
                 occTypeGroup.Occtypes.Add(CreateDefaultOcctype(group.ID));
             }
             return occTypeGroup;
@@ -278,21 +274,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public void LaunchCopyOccTypeWindow()
         {
-            if (SelectedOccType == null) { return; }
-
-            List<LogItem> errors = SelectedOccType.IsOccupancyTypeConstructable();
-
-            if (errors.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder().AppendLine("A copy of the selected occupancy type cannot be completed until the following errors are fixed:");
-                foreach (LogItem li in errors)
-                {
-                    sb.AppendLine(li.Message);
-                }
-                MessageBox.Show(sb.ToString(), "Occupancy Type is in Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
-            else
+            if (SelectedOccType != null)
             {
                 IOccupancyType newOT = SelectedOccType.CreateOccupancyType();
 
@@ -369,7 +351,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 return;
             }
-
         }
 
         private IOccupancyTypeEditable CreateDefaultOcctype(int groupID)
@@ -512,52 +493,41 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public void SaveAll()
         {
-            List<string> originalGroupNames = new List<string>();
-            List<string> newGroupNames = new List<string>();
-
-            foreach (IOccupancyTypeGroupEditable group in _GroupsToUpdateInParentTable)
-            {
-                originalGroupNames.Add(group.OriginalName);
-                newGroupNames.Add(group.Name);
-            }
             OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);
-            
+            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
 
-            List<SaveAllReportGroupVM> groupReports = new List<SaveAllReportGroupVM>();
-            foreach(IOccupancyTypeGroupEditable group in OccTypeGroups)
+            List<SaveAllReportGroupVM> warningReports = new List<SaveAllReportGroupVM>();
+            List<SaveAllReportGroupVM> fatalErrorReports = new List<SaveAllReportGroupVM>();
+
+            foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
                 SaveAllReportGroupVM saveAllReport = group.SaveAll();
-                groupReports.Add(saveAllReport);
-                List<LogItem> errors = saveAllReport.Errors;
+                if(saveAllReport != null && saveAllReport.HasWarnings)
+                {
+                    warningReports.Add(saveAllReport);
+                }
+                if(saveAllReport != null && saveAllReport.HasFatalErrors)
+                {
+                    fatalErrorReports.Add(saveAllReport);
+                }
                 string lastEditDate = DateTime.Now.ToString("G");
                 SavingText = "Last Saved: " + lastEditDate;
-                TempErrors.AddRange(errors);
-                for (int i = TempErrors.Count - 1; i >= 0; i--)
-                {
-                    MessageRows.Insert(0, TempErrors[i]);
-                }
-                UpdateMessages(true);
-            }
-
-            //we have all the group messages lumped into one list,
-            //now sort them out
-            List<SaveAllReportGroupVM> badGroups = new List<SaveAllReportGroupVM>();
-            foreach(SaveAllReportGroupVM group in groupReports)
-            {
-                if(group.UnsuccessfulList.Count>0)
-                {
-                    badGroups.Add(group);
-                }
             }
 
             //we only want to show the save report if there are occtypes that did not save
-            if (badGroups.Count > 0)
+            if (warningReports.Count > 0)
             {
-                SaveAllReportVM report = new SaveAllReportVM(originalGroupNames, newGroupNames, groupReports);
-                string header = "Save All Report";
+                SaveAllReportVM report = new SaveAllReportVM(warningReports);
+                string header = "Save Warnings";
                 DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport");
-                Navigate(tab, true, true);
+                Navigate(tab, true, true); 
+            }
+            if(fatalErrorReports.Count > 0)
+            {
+                OcctypeErrorsReportVM report = new OcctypeErrorsReportVM(fatalErrorReports);
+                string errorHeader = "Occupancy Type Errors";
+                DynamicTabVM errorTab = new DynamicTabVM(errorHeader, report, "ErrorReport");
+                Navigate(errorTab, true, true);
             }
 
             //clear the modified groups
@@ -633,13 +603,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public void UpdateMessages(bool saving = false)
         {
-            //todo: just fire update message to the occtype editor
-            //UpdateMessagesEvent?.Invoke(this, new EventArgs());
-            //there are three places that messages come from.
-            // 1.) The sqlite database
-            // 2.) Temp messages from the validation of the "rules" (ie. Name cannot be blank)
-            // 3.) Temp messages from any object that implements IValidate. These messages come out of the model, stats, functions
-
             //this gets called when still constructing everything. Exit if everything is still null
             if (SelectedOccType == null)
             {

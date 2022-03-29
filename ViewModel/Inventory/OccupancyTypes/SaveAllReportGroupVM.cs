@@ -1,51 +1,35 @@
 ﻿using FdaLogging;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     public class SaveAllReportGroupVM:BaseViewModel
     {
-        private List<String> _SuccessfulList = new List<string>() {};
-        private List<String> _UnsuccessfulList = new List<string>() { };
+        public bool HasFatalErrors { get { return OcctypesWithFatalErrors.Any(); } }
 
+        public List<TableErrorsReport> OcctypesWithFatalErrors { get; } = new List<TableErrorsReport>();
 
-        public List<LogItem> Errors { get; } = new List<LogItem>();
+        public bool HasWarnings { get { return OcctypesWithWarnings.Any(); } }   
 
-        public List<String> SuccessfulList
+        public List<TableErrorsReport> OcctypesWithWarnings { get; } = new List<TableErrorsReport>();
+
+        public SaveAllReportGroupVM(string name, List<TableErrorsReport> occtypesWithWarnings, List<TableErrorsReport> occtypesWithFatalErrors)
         {
-            get
-            {
-                return _SuccessfulList;
-            }
-            set
-            {
-                _SuccessfulList = value;
-            }
+            Name = name;
+            OcctypesWithWarnings = occtypesWithWarnings;
+            OcctypesWithFatalErrors = occtypesWithFatalErrors;
         }
 
-        public List<String> UnsuccessfulList
+        public void SaveOcctypes()
         {
-            get
+            foreach(TableErrorsReport report in OcctypesWithWarnings)
             {
-                return _UnsuccessfulList;
-            }
-            set
-            {
-                _UnsuccessfulList = value;
+                report.OccType.SaveOcctype();
             }
         }
-
-        public string GroupName
-        {
-            get;set;
-        }
-
-        public SaveAllReportGroupVM(string name)
-        {
-            GroupName = name;
-        }
-
 
     }
 }

@@ -115,6 +115,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             IsStandard = elem.IsStandard;
             LoadFlows(elem);
             InitializePlotModel();
+            Mean = elem.Mean;
+            StandardDeviation = elem.StDev;
+            Skew = elem.Skew;
         }
         #endregion
         #region Voids  
@@ -201,7 +204,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         #endregion
 
-        public LogPearson3 CreateLP3()
+        private LogPearson3 CreateLP3()
         {
             LogPearson3 lp3 = new LogPearson3();
             if (IsAnalytical)

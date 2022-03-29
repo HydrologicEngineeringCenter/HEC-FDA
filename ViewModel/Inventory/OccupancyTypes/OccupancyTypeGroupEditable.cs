@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using System.Collections.Generic;
 using System.Text;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     class OccupancyTypeGroupEditable : BaseViewModel, IOccupancyTypeGroupEditable
     {
+        private bool _IsModified;
         public List<IOccupancyTypeEditable> Occtypes { get; set; }
         public List<IOccupancyTypeEditable> ModifiedOcctypes
         {
@@ -22,123 +24,62 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }       
 
-        /// <summary>
-        /// Used to find the correct child element in the study cache in order to 
-        /// remove it or update it when saving from the occtype editor.
-        /// </summary>
-        public string OriginalName { get; set; }
-
         public int ID { get; }
 
-        /// <summary>
-        /// This indicates if the occtype group has ever been saved before. If false, then
-        /// this is a brand new occtype group. It needs to be saved new and not just an update on 
-        /// an existing one in the database.
-        /// </summary>
-       // public bool HasBeenSaved { get; set; }
-
-        //we don't actually care if the list of occtypes has changed. We only care if the name has changed
-        //because then we need to update the parent table
-        public bool IsModified { get; set; }
+        public bool IsModified
+        {
+            get { return _IsModified; }
+            set { _IsModified = value; NotifyPropertyChanged(); }
+        }
         public OccupancyTypeGroupEditable(int id, string name, List<IOccupancyTypeEditable> occtypes)
         {
             ID = id;
             Name = name;
             Occtypes = occtypes;
-            OriginalName = name;
         }
 
-
-         private List<IOccupancyTypeEditable> _savedSuccessful = new List<IOccupancyTypeEditable>();
-         private List<IOccupancyTypeEditable> _savedUnsuccessful = new List<IOccupancyTypeEditable>();
-
-        //group id to list of occtype name
-        //Dictionary<int, List<string>> _savedSuccessful = new Dictionary<int, List<string>>();
-       // Dictionary<int, List<string>> _savedUnsuccessful = new Dictionary<int, List<string>>();
-        public string PrintUnsuccessfullySavedOcctypes()
+        private List<string> GetOcctypeNames()
         {
-            if(_savedUnsuccessful.Count == 0)
+            List<string> names = new List<string>();
+            foreach(IOccupancyTypeEditable ot in Occtypes)
             {
-                return "";
+                names.Add(ot.Name);
             }
-            StringBuilder sb = new StringBuilder().AppendLine(Name+ ":");
-            foreach(IOccupancyTypeEditable ot in _savedUnsuccessful)
-            {
-                sb.Append("\t-").AppendLine(ot.Name);
-            }
-
-            //for(int i = 0;i<150;i++)
-            //{
-            //    sb.Append("\t-").AppendLine("test dummy name");
-            //}
-
-            return sb.ToString();
-        }
-        public string PrintSuccessfullySavedOcctypes()
-        {
-            if (_savedSuccessful.Count == 0)
-            {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder().AppendLine(Name + ":");
-            foreach (IOccupancyTypeEditable ot in _savedSuccessful)
-            {
-                sb.Append("\t-").AppendLine(ot.Name);
-            }
-            return sb.ToString();
+            return names;
         }
         public SaveAllReportGroupVM  SaveAll()
         {
-            //if this group has not saved, then we need to do that first
-            //if(!HasBeenSaved)
-            //{
-            //    //in order to get here, no occtype has been saved with in the group
-            //    //a group id needs to be gotten, and then set on each occtype in the occtype list.
-            //    List<FdaLogging.LogItem> errors = Saving.PersistenceFactory.GetOccTypeManager().SaveNew(this);
 
-            //}
-            SaveAllReportGroupVM saveAllGroup = new SaveAllReportGroupVM(Name);
+            List<TableErrorsReport> occtypesWithWarningsAndNoFatalErrors = new List<TableErrorsReport>();
+            List<TableErrorsReport> occtypesWithFatalErrors = new List<TableErrorsReport>();
 
-            foreach(IOccupancyTypeEditable otEditable in ModifiedOcctypes)
+            SaveAllReportGroupVM saveAllGroup = null;
+
+            foreach (IOccupancyTypeEditable otEditable in ModifiedOcctypes)
             {
-                List<FdaLogging.LogItem> errorsWhileSaving = otEditable.SaveOcctype();
+
+                Utilities.FdaValidationResult warningsResult = otEditable.HasWarnings();
+                Utilities.FdaValidationResult fatalErrorsResult = otEditable.HasFatalErrors(GetOcctypeNames());
                 
-                saveAllGroup.Errors.AddRange(errorsWhileSaving);
-                if(errorsWhileSaving.Count>0)
+                if(warningsResult.IsValid && fatalErrorsResult.IsValid)
                 {
-                    saveAllGroup.UnsuccessfulList.Add(otEditable.Name);
+                    otEditable.SaveOcctype();
                 }
-                else
+                else if(!warningsResult.IsValid && fatalErrorsResult.IsValid)
                 {
-                    saveAllGroup.SuccessfulList.Add(otEditable.Name);
+                    //it only has warnings
+                    occtypesWithWarningsAndNoFatalErrors.Add(new TableErrorsReport(otEditable, warningsResult.ErrorMessage));
                 }
+                else if(!fatalErrorsResult.IsValid)
+                {
+                    occtypesWithFatalErrors.Add(new TableErrorsReport(otEditable, fatalErrorsResult.ErrorMessage));
+                }
+   
+                saveAllGroup = new SaveAllReportGroupVM(Name, occtypesWithWarningsAndNoFatalErrors, occtypesWithFatalErrors);
             }
 
             return saveAllGroup;
         }
-
-        //private void AddOcctypeToSuccessfullSaveDictionary(IOccupancyTypeEditable ot)
-        //{
-        //    if (_savedSuccessful.ContainsKey(ot.GroupID))
-        //    {
-        //        _savedSuccessful[ot.GroupID].Add(ot.Name);
-        //    }
-        //    else
-        //    {
-        //        _savedSuccessful.Add(ot.GroupID, new List<string>() { ot.Name });
-        //    }
-        //}
-        //private void AddOcctypeToUnsuccessfullSaveDictionary(IOccupancyTypeEditable ot)
-        //{
-        //    if(_savedUnsuccessful.ContainsKey(ot.GroupID))
-        //    {
-        //        _savedUnsuccessful[ot.GroupID].Add(ot.Name);
-        //    }
-        //    else
-        //    {
-        //        _savedUnsuccessful.Add(ot.GroupID, new List<string>() { ot.Name });
-        //    }
-        //}
 
     }
 }

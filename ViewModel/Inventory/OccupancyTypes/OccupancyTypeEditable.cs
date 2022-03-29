@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -165,40 +164,53 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
         }
 
-        public List<LogItem> IsOccupancyTypeConstructable()
+        public FdaValidationResult HasWarnings()
         {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            constructionErrors.AddRange(IsValueUncertaintyConstructable(FoundationHeightUncertainty, "foundation height uncertainty"));
-            constructionErrors.AddRange(StructureItem.IsItemValid());
-            constructionErrors.AddRange(ContentItem.IsItemValid());
-            constructionErrors.AddRange(VehicleItem.IsItemValid());
-            constructionErrors.AddRange(OtherItem.IsItemValid());
+            FdaValidationResult vr = new FdaValidationResult();
+            vr.AddErrorMessage(IsValueUncertaintyConstructable(FoundationHeightUncertainty, "foundation height uncertainty").ErrorMessage);
+            vr.AddErrorMessage(StructureItem.IsItemValid().ErrorMessage);
+            vr.AddErrorMessage(ContentItem.IsItemValid().ErrorMessage);
+            vr.AddErrorMessage(VehicleItem.IsItemValid().ErrorMessage);
+            vr.AddErrorMessage(OtherItem.IsItemValid().ErrorMessage);
 
-            return constructionErrors;
+            return vr;
         }
 
-        private List<LogItem> IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
+        public FdaValidationResult HasFatalErrors(List<string> occtypeNames)
         {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            try
+            FdaValidationResult vr = new FdaValidationResult();
+            //check for blank name and name conflicts
+            if(HasFatalError)
             {
-                uncertaintyVM.CreateOrdinate();
+                vr.AddErrorMessage(Error);
             }
-            catch (Exception e)
+
+            IEnumerable<string> duplicates = occtypeNames.GroupBy(x => x)
+                         .Where(group => group.Count() > 1)
+                         .Select(group => group.Key);
+
+            if(duplicates.Contains(Name))
             {
-                string logMessage = "Error constructing " + uncertaintyName + ": " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+                vr.AddErrorMessage("The name '" + Name + "' already exists. Occupancy type names must be unique.");
             }
-            return constructionErrors;
+
+            return vr;
+        }
+
+        private FdaValidationResult IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
+        {
+            FdaValidationResult uncertaintyVR = uncertaintyVM.IsValueUncertaintyValid();
+            if (!uncertaintyVR.IsValid)
+            {
+                uncertaintyVR.InsertNewLineMessage(0, "Foundation Height Uncertainty:");
+            }
+            return uncertaintyVR;
         }
 
         public IOccupancyType CreateOccupancyType()
         {
-
-
-            return new OccupancyType(Name, Description, GroupID,DamageCategory,StructureItem,ContentItem,VehicleItem,OtherItem,
+            return new OccupancyType(Name, Description, GroupID, DamageCategory, StructureItem, ContentItem, VehicleItem, OtherItem,
                 FoundationHeightUncertainty.CreateOrdinate(), ID);
-       
         }
 
         /// <summary>
@@ -206,33 +218,26 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// is returned and the occtype didn't save.
         /// </summary>
         /// <returns></returns>
-        public List<LogItem> SaveOcctype()
+        public void SaveOcctype()
         {
-            List<LogItem> errors = IsOccupancyTypeConstructable();
-            if (errors.Count == 0)
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            IOccupancyType ot = CreateOccupancyType();
+
+            if (HasBeenSaved)
             {
-                OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
-                IOccupancyType ot = CreateOccupancyType();
-
-                if (HasBeenSaved)
-                {
-                    manager.SaveModifiedOcctype(ot);
-                }
-                else if (!HasBeenSaved)
-                {
-                    //save this as a new occtype
-                    //if it has never been saved then we need a new occtype id for it.
-                    ot.ID = manager.GetIdForNewOccType(ot.GroupID);
-                    manager.SaveNewOccType(ot);
-                }
-
-                IsModified = false;
-                //this will disable the save button.
-                HasChanges = false;
+                manager.SaveModifiedOcctype(ot);
+            }
+            else if (!HasBeenSaved)
+            {
+                //save this as a new occtype
+                //if it has never been saved then we need a new occtype id for it.
+                ot.ID = manager.GetIdForNewOccType(ot.GroupID);
+                manager.SaveNewOccType(ot);
             }
 
-            return errors;
-        }
-        
+            IsModified = false;
+            //this will disable the save button.
+            HasChanges = false;
+        }       
     }
 }
