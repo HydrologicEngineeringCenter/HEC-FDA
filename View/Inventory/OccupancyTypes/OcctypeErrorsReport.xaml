@@ -56,18 +56,6 @@
                                             <Label Content="{Binding Name}"  />
                                         </StackPanel>
                                         <Label Content="{Binding Errors}" Grid.Row="1" Grid.Column="1" />
-                                        <!--<ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Errors}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Label Grid.Column="1" Content="{Binding Message}" />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>-->
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -76,7 +64,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
             <Button  Content="OK" Click="OKButton_Click" Width="40" Height="22" Margin="5,5,2,5"/>
