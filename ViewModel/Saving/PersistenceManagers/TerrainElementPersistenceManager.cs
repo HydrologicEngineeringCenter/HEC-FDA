@@ -111,9 +111,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    if (File.Exists(element.FileName))
+                    string directoryName = Path.GetDirectoryName(element.FileName);
+                    if(Directory.Exists(directoryName))
                     {
-                        File.Delete(element.FileName);
+                        Directory.Delete(directoryName,true);
                     }
                 });
             }
