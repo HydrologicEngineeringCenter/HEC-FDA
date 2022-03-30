@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -13,6 +14,10 @@ namespace HEC.FDA.ViewModel.Watershed
         // Created Date: 10/11/2016 11:13:25 AM
         #endregion
         #region Fields
+        private const string VRT = ".vrt";
+        private const string FLT = ".flt";
+        private const string TIF = ".tif";
+
         private string _TerrainPath;
         #endregion
         #region Properties
@@ -32,7 +37,7 @@ namespace HEC.FDA.ViewModel.Watershed
         #region Constructors
         public TerrainBrowserVM(List<string> availablePaths, Editors.EditorActionManager actionManager) : base(actionManager)
         {
-        }       
+        }
 
         public FdaValidationResult IsValidPath()
         {
@@ -41,22 +46,19 @@ namespace HEC.FDA.ViewModel.Watershed
             {
                 //check extension
                 string pathExtension = Path.GetExtension(TerrainPath);
-                switch (pathExtension)
+                if(VRT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    case ".vrt":
-                        //if we have a vrt then we need to check that we only have one and that there are tifs next to it. 
-                        FdaValidationResult vrtResult = IsVRTPathValid();
-                        vr.AddErrorMessage(vrtResult.ErrorMessage);
-                        break;
-                    case ".flt":
-                    case ".tif":
-                        //do nothing
-                        break;
-                    default:
-                        {
-                            vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
-                            break;
-                        }
+                    //if we have a vrt then we need to check that we only have one and that there are tifs next to it. 
+                    FdaValidationResult vrtResult = IsVRTPathValid();
+                    vr.AddErrorMessage(vrtResult.ErrorMessage);
+                }
+                else if(FLT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || TIF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    //do nothing
+                }
+                else
+                {
+                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
                 }
             }
             else

@@ -24,11 +24,6 @@
         <CA:TextBoxFileBrowser Grid.Row="1" Grid.Column="1" Height="22" Margin="5" Filter="Grid files (*.vrt;*.tif;*.flt)|*.vrt;*.tif;*.flt|All files (*.*) |*.*"  
                                SelectionMade="cmb_Path_CmbSelectionMade" />
 
-        <!--<CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}"  SelectedPath="{Binding OriginalPath}" 
-                                Filter="Grid files (*.vrt;*.tif;*.flt)|*.vrt;*.tif;*.flt|All files (*.*) |*.*" 
-                                ValidateToShapeTypes="False" Margin="5" Name="cmb_Path" Grid.Row="1" Grid.Column="1" 
-                                CmbSelectionMade="cmb_Path_CmbSelectionMade"/>-->
-
         <OkClose:OKCloseControl Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>

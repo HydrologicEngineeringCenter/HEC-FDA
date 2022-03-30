@@ -10,6 +10,7 @@ using paireddata;
 using System;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
@@ -58,7 +59,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 NotifyPropertyChanged();
             }
         }
-
         #endregion
 
         #region Constructors
@@ -213,7 +213,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                     if (sequentialRow.HasErrors)
                     {
                         vr.AddErrorMessage("Errors in row: " + i);
-                        System.Collections.IEnumerable enumerable = sequentialRow.GetErrors();
+                        IEnumerable enumerable = sequentialRow.GetErrors();
                         List<string> errors = enumerable as List<string>;
                         vr.AddErrorMessages(errors);
                         vr.AddErrorMessage("\n");

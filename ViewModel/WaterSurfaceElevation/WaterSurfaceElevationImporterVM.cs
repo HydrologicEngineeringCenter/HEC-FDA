@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,7 +56,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             IsDepthGridChecked = elem.IsDepthGrids;
             foreach(PathAndProbability pp in elem.RelativePathAndProbability)
             {
-                string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
                 string folderName = Path.GetFileName(pp.Path);
                 _OriginalFolderNames.Add(folderName);
                 AddRow(folderName, path, pp.Probability, false);
@@ -101,7 +102,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension,double probability)
         {
-            string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
+            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
             Copy(path, destinationFilePath);
         }
         #endregion
@@ -257,8 +258,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             //if name is different then we need to update the directory name in the study hydraulics folder.
             if(!Name.Equals(_OriginalFolderName))
             {
-                string sourceFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
-                string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
+                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
                 Directory.Move(sourceFilePath, destinationFilePath);
             }
             //might have to rename the sub folders.
@@ -269,8 +270,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 string originalName = _OriginalFolderNames[i];
                 if (!newName.Equals(originalName))
                 {
-                    string sourceFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                    string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
+                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFolderNames[i] = newName;
                 }

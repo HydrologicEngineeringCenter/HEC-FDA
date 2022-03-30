@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using HEC.FDA.ViewModel.Utilities;
+using LifeSimGIS;
+using OpenGLMapping;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
@@ -190,8 +192,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 string vrtFilePath = GetVRTFilePath(vrtDirectoryPath);
                 if (vrtFilePath != null)
                 {                 
-                    LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(vrtFilePath);
-                    OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
+                    RasterFeatures r = new RasterFeatures(vrtFilePath);
+                    ColorRamp c = new ColorRamp(ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
                     AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
                     args.FeatureName = Name + " - " + Path.GetFileName(vrtDirectoryPath);
                     AddToMapWindow(this, args);
