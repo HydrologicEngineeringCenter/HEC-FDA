@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private string _FitToFlowSkew = SKEW + "N/A";
         private int _POR = 200;
         private PlotModel _plotModel;
-
+        private int _StandardPOR = 200;
         #endregion
         #region Properties
         public PlotModel PlotModel
@@ -60,15 +60,28 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _FitToFlowSkew; }
             set { _FitToFlowSkew = value; NotifyPropertyChanged(); }
         }
-        public bool IsAnalytical
-        {
-            get { return _IsStandard; }
-            set { _IsStandard = value; NotifyPropertyChanged(); }
-        }
         public bool IsStandard
         {
+            get { return _IsStandard; }
+            set 
+            { 
+                _IsStandard = value; 
+                if(_IsStandard)
+                {
+                    _POR = _StandardPOR;
+                }
+                else
+                {
+                    _StandardPOR = _POR;
+                }
+                NotifyPropertyChanged(nameof(PeriodOfRecord));
+                NotifyPropertyChanged(); 
+            }
+        }
+        public bool IsAnalytical
+        {
             get { return _IsAnalytical; }
-            set { _IsAnalytical = value; NotifyPropertyChanged(); }
+            set  { _IsAnalytical = value; NotifyPropertyChanged();}
         }
         public double Mean
         {
@@ -88,7 +101,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public int PeriodOfRecord
         {
             get { return _POR; }
-            set { _POR = value; UpdateChartLineData(); NotifyPropertyChanged(); }
+            set 
+            { 
+                _POR = value; 
+                UpdateChartLineData(); 
+                NotifyPropertyChanged(); 
+            }
         }
 
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
@@ -109,7 +127,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             LoadDefaultFlows();
             InitializePlotModel();
         }
-        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             IsAnalytical = elem.IsAnalytical;
             IsStandard = elem.IsStandard;
@@ -118,6 +136,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Mean = elem.Mean;
             StandardDeviation = elem.StDev;
             Skew = elem.Skew;
+            PeriodOfRecord = elem.POR;
         }
         #endregion
         #region Voids  
@@ -148,13 +167,15 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis()
             {
                 Position = OxyPlot.Axes.AxisPosition.Bottom,
-                StartPosition = 1,
-                EndPosition = 0,
-                Title = "Frequency"
+                StartPosition = .999,
+                EndPosition = .001,
+                AbsoluteMaximum = .999,
+                AbsoluteMinimum = .001,
+                Title = "Exceedance Probability"
             };
             _plotModel.Axes.Add(x);
 
-            OxyPlot.Axes.LinearAxis y = new OxyPlot.Axes.LinearAxis()
+            OxyPlot.Axes.LogarithmicAxis y = new OxyPlot.Axes.LogarithmicAxis()
             {
                 Position = OxyPlot.Axes.AxisPosition.Left,
                 Title = "Flow"
@@ -189,7 +210,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 for (int i = 0; i < function.Xvals.Length; i++)
                 {
                     //todo: should we do uncertainty bounds around the y?
-                    double xVal = function.Xvals[i];
+                    double xVal = 1 - function.Xvals[i];
                     double yVal = function.Yvals[i].InverseCDF(.5);
                     lineSeries.Points.Add(new DataPoint(xVal, yVal));
                 }
@@ -223,6 +244,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     }
 
                     lp3 = (LogPearson3)lp3.Fit(flows.ToArray());
+                    _POR = flows.Count;
+                    NotifyPropertyChanged(nameof(PeriodOfRecord));
                 }               
             }
             return lp3;
@@ -352,5 +375,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             UpdateChartLineData();
         }
+
     }
 }
