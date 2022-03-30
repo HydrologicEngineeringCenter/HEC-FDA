@@ -302,7 +302,7 @@ namespace HEC.FDA.View
             WindowVM vm = (WindowVM)this.DataContext;
             if (vm.CurrentView.GetType() == typeof(FdaStudyVM))
             {
-                HEC.FDA.ViewModel.Study.FdaStudyVM studyVM = (FdaStudyVM)vm.CurrentView;
+                FdaStudyVM studyVM = (FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
             }
             else

@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
 using static compute.Simulation;
+using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -25,6 +26,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly bool _UseLevee;
         private readonly int _ImpactAreaID;
 
+        private SimulationBuilder _SimulationBuilder;
+
         public SimulationCreator(AnalyticalFrequencyElement freqElem, InflowOutflowElement inOutElem, RatingCurveElement ratElem,
             ExteriorInteriorElement extIntElem, LeveeFeatureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
         {
@@ -40,7 +43,31 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             _UseLevee = levElem != null;
 
             _ImpactAreaID = currentImpactAreaID;
+
+            LoadSimulationBuilder();
         }
+
+        private void LoadSimulationBuilder()
+        {
+            _SimulationBuilder = Simulation.builder()
+                .withFlowFrequency(GetFrequencyDistribution())
+                .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData())
+                .withStageDamages(GetStageDamagesAsPairedData());
+
+            if (_UseInOut)
+            {
+                _SimulationBuilder.withInflowOutflow(_InOutElem.ComputeComponentVM.SelectedItemToPairedData());
+            }
+            if (_UseExtInt)
+            {
+                _SimulationBuilder.withInteriorExterior(_ExtIntElem.ComputeComponentVM.SelectedItemToPairedData());
+            }
+            if (_UseLevee)
+            {
+                _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+            }
+        }
+
 
         private ContinuousDistribution GetFrequencyDistribution()
         {
@@ -66,29 +93,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public Simulation BuildSimulation()
         {
-            //todo: cody commented out on 2/21/22
-
-            //SimulationBuilder sb = Simulation.builder()
-            //    .withFlowFrequency(GetFrequencyDistribution())
-            //    .withFlowStage(_RatElem.Curve)
-            //    .withStageDamages(GetStageDamagesAsPairedData());
-
-            //if(_UseInOut)
-            //{
-            //    sb.withInflowOutflow(_InOutElem.Curve);
-            //}
-            //if(_UseExtInt)
-            //{
-            //    sb.withInteriorExterior(_ExtIntElem.Curve);
-            //}
-            //if(_UseLevee)
-            //{
-            //    sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
-            //}
-
-            //return sb.build();
-
-            return null;
+            return _SimulationBuilder.build();
         }
+
+        public void WithAdditionalThresholds(List<Threshold> additionalThresholds)
+        {
+            foreach (Threshold threshold in additionalThresholds)
+            {
+                _SimulationBuilder.withAdditionalThreshold(threshold);
+            }
+        }
+
+        public void WithAdditionalThreshold(Threshold additionalThreshold)
+        {
+            _SimulationBuilder.withAdditionalThreshold(additionalThreshold);
+        }
+
     }
 }

@@ -132,7 +132,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
             Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 150000);
-            //sc.WithAdditionalThreshold(threshold);
+            sc.WithAdditionalThreshold(threshold);
             Simulation simulation = sc.BuildSimulation();
             
             MeanRandomProvider mrp = new MeanRandomProvider();

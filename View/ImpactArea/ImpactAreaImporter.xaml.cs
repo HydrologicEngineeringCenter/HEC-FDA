@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.ImpactArea
@@ -11,35 +12,23 @@ namespace HEC.FDA.View.ImpactArea
         public ImpactAreaImporter()
         {
             InitializeComponent();
-            cmb_Path.CmbSelectionMade += Cmb_Path_CmbSelectionMade;
-            
+            cmb_Path.CmbSelectionMade += Cmb_Path_CmbSelectionMade;           
         }
         private void Cmb_Path_CmbSelectionMade(string path)
         {
-            HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM vm = (HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
-            vm.loadUniqueNames(path);
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
+            vm.LoadUniqueNames(path);
         }
 
         private void Cmb_UniqueName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM vm = (HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
             vm.LoadTheRows();
         }
 
-        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM vm = (HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
-        //    if (vm == null) { return; }
-        //    if (vm.IsNameReadOnly)
-        //    {
-        //        row_SelectPath.Height = new GridLength(0);
-        //        row_SelectUniqueName.Height = new GridLength(0);
-        //    }
-        //}
-
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM vm = (HEC.FDA.ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
             if (vm == null) { return; }
             if (vm.IsInEditMode)
             {

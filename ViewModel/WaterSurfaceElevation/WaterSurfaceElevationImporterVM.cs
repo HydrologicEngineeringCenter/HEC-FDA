@@ -148,7 +148,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
             }
 
-            string dirName = Path.GetFileNameWithoutExtension(directoryPath);
+            string dirName = Path.GetFileName(directoryPath);
 
             vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
             vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
@@ -208,19 +208,19 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
             }
 
+            string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
+
             //we require 8 valid directories
             if (validDirectories.Count < 8)
             {
                 string dirName = Path.GetFileNameWithoutExtension(fullpath);
-                importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." +
-                    " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n");
+                importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
                 MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else if(validDirectories.Count>8)
             {
                 string dirName = Path.GetFileNameWithoutExtension(fullpath);
-                importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." +
-                    " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n");
+                importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
                 MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
