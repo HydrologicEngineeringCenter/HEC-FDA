@@ -47,8 +47,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public FdaValidationResult IsValid()
         {
-            //todo: are there any rules for log normal?
             FdaValidationResult vr = new FdaValidationResult();
+            if (StDev < 0)
+            {
+                vr.AddErrorMessage("Log normal distribution standard deviation value cannot be less than 0");
+            }
             return vr;
         }
     }

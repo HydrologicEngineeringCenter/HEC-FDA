@@ -68,7 +68,7 @@ namespace HEC.FDA.ViewModel.Saving
         #endregion
 
         #region save new
-        public void SaveNew(ChildElement element)
+        public virtual void SaveNew(ChildElement element)
         {
             OpenConnection();
             //update the edit date

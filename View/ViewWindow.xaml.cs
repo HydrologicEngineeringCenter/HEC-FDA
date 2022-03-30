@@ -41,7 +41,7 @@ namespace HEC.FDA.View
             WindowVM vm = (WindowVM)this.DataContext;
             Title = vm.Title;
 
-            HEC.FDA.ViewModel.Study.FdaStudyVM test = (FdaStudyVM)vm.CurrentView;
+            FdaStudyVM test = (FdaStudyVM)vm.CurrentView;
 
             test.RequestShapefilePaths += RequestShapefilePaths;
             test.RequestShapefilePathsOfType += RequestShapefilePathsOfType;
@@ -56,7 +56,7 @@ namespace HEC.FDA.View
 
         private void RequestAddToMapWindow(object sender, AddMapFeatureEventArgs args)
         {
-            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
+            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
 
@@ -64,8 +64,8 @@ namespace HEC.FDA.View
             if (args.GetType().Name == nameof(AddGriddedDataEventArgs))
             {
                 AddGriddedDataEventArgs gargs = args as AddGriddedDataEventArgs;
-              
-                RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
+                MapRaster mapRaster = new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow);
+                RasterFeatureNode rfn = new RasterFeatureNode(mapRaster, args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
                 if (sender.GetType().Name == nameof(TerrainElement))
                 {

@@ -449,7 +449,6 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    //i am using the outflow for the mean.
                     ords.Add(new Normal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
                 }
             }

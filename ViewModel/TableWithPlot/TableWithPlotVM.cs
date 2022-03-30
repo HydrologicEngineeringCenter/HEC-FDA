@@ -8,6 +8,9 @@ using System.Reflection;
 using System.Xml.Linq;
 using paireddata;
 using System;
+using HEC.FDA.ViewModel.Utilities;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
@@ -56,7 +59,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 NotifyPropertyChanged();
             }
         }
-
         #endregion
 
         #region Constructors
@@ -197,6 +199,30 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             UpdatePlotEvent?.Invoke(sender, e);
         }
+
+        public FdaValidationResult GetTableErrors()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int i = 0;
+            foreach (object row in _computeComponentVM.SelectedItem.Data)
+            {
+                i++;
+                if (row is SequentialRow sequentialRow)
+                {
+                    sequentialRow.Validate();
+                    if (sequentialRow.HasErrors)
+                    {
+                        vr.AddErrorMessage("Errors in row: " + i);
+                        IEnumerable enumerable = sequentialRow.GetErrors();
+                        List<string> errors = enumerable as List<string>;
+                        vr.AddErrorMessages(errors);
+                        vr.AddErrorMessage("\n");
+                    }
+                }
+            }
+            return vr;
+        }
+
         #endregion
     }
 }

@@ -60,15 +60,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public FdaValidationResult IsValid()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (Min > 100 || Min < 0)
-            {
-                vr.AddErrorMessage("Triangular distribution min value needs to be between 0 and 100");
-            }
-            if (Max < 0)
-            {
-                vr.AddErrorMessage("Triangular distribution max value cannot be less than 0");
-            }
+            FdaValidationResult vr = new FdaValidationResult();          
             if (Max < Min)
             {
                 vr.AddErrorMessage("Triangular distribution max cannot be less than min");
@@ -81,7 +73,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
             }
-
             return vr;
         }
     }

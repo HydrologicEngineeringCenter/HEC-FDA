@@ -38,9 +38,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-
-        public string OriginalTerrainPath { get; set; }
-
         public override string TableName
         {
             get { return TABLE_NAME; }
@@ -65,9 +62,34 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
         }
 
-        private async void CopyFileOnBackgroundThread(TerrainElement element)
+        private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
         {
-            await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
+            string terrainPath = element.FileName;
+            Directory.CreateDirectory(Path.GetDirectoryName(terrainPath));
+
+            bool isVRT = Path.GetExtension(terrainPath).Equals(".vrt");
+
+            if(isVRT)
+            {
+                //then copy all the vrt and tif files
+                string newDirName = Path.GetDirectoryName(terrainPath);
+                string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
+
+                string[] paths = Directory.GetFiles(originalDirName);
+                foreach(string path in paths)
+                {
+                    string extension = Path.GetExtension(path);
+                    if(extension.Equals(".vrt") || extension.Equals(".tif"))
+                    {
+                        await Task.Run(() => File.Copy(path, newDirName + "\\"+ Path.GetFileName(path)));
+                    }
+                }
+            }
+            else
+            {
+                //.tifs and .flts i just copy the file.
+                await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
+            }
 
             string name = element.Name;
             //remove the temporary node and replace it
@@ -89,9 +111,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    if (File.Exists(element.FileName))
+                    string directoryName = Path.GetDirectoryName(element.FileName);
+                    if(Directory.Exists(directoryName))
                     {
-                        File.Delete(element.FileName);
+                        Directory.Delete(directoryName,true);
                     }
                 });
             }
@@ -105,7 +128,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
-
         }
 
         private async void RenameTheTerrainFileOnBackgroundThread(ChildElement oldElement, ChildElement newElement)
@@ -156,10 +178,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public void SaveNew(ChildElement element)
+        public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
             SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
-            CopyFileOnBackgroundThread((TerrainElement)element);
+            CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
         public void Remove(ChildElement element)
         {

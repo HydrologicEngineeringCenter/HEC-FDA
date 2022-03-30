@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction import = new NamedAction();
-            import.Header = "Import Water Surface Elevations";
+            import.Header = "Import Hydraulics";
             import.Action = ImportWaterSurfaceElevations;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
 
-            string header = "Import Water Surface Elevation";
+            string header = "Import Hydraulics";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
             Navigate(tab, false,false);
         }
