@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using HEC.FDA.ViewModel.Editors;
 using System.Windows;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -78,13 +79,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
         /// <param name="path"></param>
         public void LoadUniqueNames(string path)
         {
-            if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
+            if (!File.Exists(Path.ChangeExtension(path, "dbf")))
             {
                 MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
             SelectedPath = path; //isnt this bound??
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
+            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
             List<string> uniqueNameList = new List<string>();
@@ -106,13 +107,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public void LoadTheRows()
         {
-            if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(SelectedPath, "dbf")))
+            if (!File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
             {
                 MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
+            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
             for (int i = 0; i < dtv.ColumnNames.Count(); i++)
@@ -137,7 +138,10 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public override void Save()
         {
-            if (Description == null) { Description = ""; }
+            if (Description == null) 
+            { 
+                Description = ""; 
+            }
             Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager();
             int id = GetElementID(Saving.PersistenceFactory.GetImpactAreaManager());
             ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows, SelectedPath, id);

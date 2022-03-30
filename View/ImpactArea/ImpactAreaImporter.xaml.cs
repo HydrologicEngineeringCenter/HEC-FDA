@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.ImpactArea
@@ -15,19 +16,19 @@ namespace HEC.FDA.View.ImpactArea
         }
         private void Cmb_Path_CmbSelectionMade(string path)
         {
-            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
             vm.LoadUniqueNames(path);
         }
 
         private void Cmb_UniqueName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
             vm.LoadTheRows();
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
             if (vm == null) { return; }
             if (vm.IsInEditMode)
             {

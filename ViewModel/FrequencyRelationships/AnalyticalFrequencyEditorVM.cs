@@ -3,6 +3,8 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using paireddata;
 using Statistics.Distributions;
 using System;
@@ -164,9 +166,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _plotModel.Title = "Flow-Frequency";
             _plotModel.LegendPosition = LegendPosition.BottomRight;
 
-            OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis()
+            LinearAxis x = new LinearAxis()
             {
-                Position = OxyPlot.Axes.AxisPosition.Bottom,
+                Position = AxisPosition.Bottom,
                 StartPosition = .999,
                 EndPosition = .001,
                 AbsoluteMaximum = .999,
@@ -175,9 +177,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             };
             _plotModel.Axes.Add(x);
 
-            OxyPlot.Axes.LogarithmicAxis y = new OxyPlot.Axes.LogarithmicAxis()
+            LogarithmicAxis y = new LogarithmicAxis()
             {
-                Position = OxyPlot.Axes.AxisPosition.Left,
+                Position = AxisPosition.Left,
                 Title = "Flow"
             };
             _plotModel.Axes.Add(y);
@@ -203,7 +205,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public void UpdateChartLineData()
         {
             _plotModel.Series.Clear();
-            OxyPlot.Series.LineSeries lineSeries = new OxyPlot.Series.LineSeries();
+            LineSeries lineSeries = new LineSeries();
             UncertainPairedData function = GetCoordinatesFunction();
             if (function != null)
             {
