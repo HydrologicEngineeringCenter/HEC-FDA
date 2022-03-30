@@ -1,15 +1,15 @@
 ﻿using compute;
-using metrics;
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Xml.Linq;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
+using metrics;
+using Statistics;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -67,9 +67,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// </summary>
         public int StageDamageID { get; set; }
 
-
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
-
         #endregion
         #region Constructors
 
@@ -103,8 +101,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
         {
-            List<ThresholdRowItem> thresholdRows = new List<ThresholdRowItem>();
-
             ImpactAreaID = Int32.Parse(iasElem.Attribute(IMPACT_AREA).Value);
 
             FlowFreqID = Int32.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
@@ -135,29 +131,31 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
-
+            Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 150000);
+            sc.WithAdditionalThreshold(threshold);
             Simulation simulation = sc.BuildSimulation();
-
+            
             MeanRandomProvider mrp = new MeanRandomProvider();
-            try
-            {
-                //todo: how many iterations?
-                //metrics.Results result = simulation.Compute(mrp, 1);
-                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                //ComputeResults = result;
-                //return result;
-                return null;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                return null;
-            }
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            metrics.Results r = simulation.Compute(mrp, cc); //here we test compute, below we test preview compute 
+            return r;
+            //try
+            //{
+            //    //todo: how many iterations?
+            //    //metrics.Results result = simulation.Compute(mrp, 1);
+            //    //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+            //    //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+            //    //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+            //    //ComputeResults = result;
+            //    //return result;
+            //    return null;
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //    return null;
+            //}
         }
-
-
 
         private XElement WriteThresholdsToXML()
         {
@@ -173,9 +171,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             return functionsElem;
         }
-
-        
-    
 
         public XElement WriteToXML()
         {
