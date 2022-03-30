@@ -139,22 +139,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.Results r = simulation.Compute(mrp, cc); //here we test compute, below we test preview compute 
             return r;
-            //try
-            //{
-            //    //todo: how many iterations?
-            //    //metrics.Results result = simulation.Compute(mrp, 1);
-            //    //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-            //    //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-            //    //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-            //    //ComputeResults = result;
-            //    //return result;
-            //    return null;
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show(e.Message);
-            //    return null;
-            //}
         }
 
         private XElement WriteThresholdsToXML()

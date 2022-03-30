@@ -86,11 +86,11 @@ namespace HEC.FDA.ViewModel.Watershed
             string[] fileList = Directory.GetFiles(directoryPath);
             foreach (string file in fileList)
             {
-                if (Path.GetExtension(file) == ".tif")
+                if (Path.GetExtension(file) == TIF)
                 {
                     tifFiles.Add(file);
                 }
-                if (Path.GetExtension(file) == ".vrt")
+                if (Path.GetExtension(file) == VRT)
                 {
                     vrtFiles.Add(file);
                 }
