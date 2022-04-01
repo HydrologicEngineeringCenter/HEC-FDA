@@ -112,17 +112,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Actions = localActions;
         }
 
-
-        /// <summary>
-        /// Deletes a conditions element
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            PersistenceFactory.GetIASManager().Remove(this);
-        }
-
         /// <summary>
         /// Opens the conditions editor.
         /// </summary>

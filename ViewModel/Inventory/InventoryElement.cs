@@ -100,10 +100,7 @@ namespace HEC.FDA.ViewModel.Inventory
             //it opens the attribute table. See ViewWindow.OpenStructureAttributeTable()
             AddToMapWindow(this, args);
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetStructureInventoryManager().Remove(this);
-        }
+
         private void InventoryToMapWindow(object arg1, EventArgs arg2)
         {
             IsInMapWindow = true;

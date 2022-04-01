@@ -18,17 +18,19 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #endregion
         #region Fields
         private bool _IsDepthGridChecked;
-        private bool _IsEditor;
         private int _ID;
         private List<string> _OriginalFolderNames = new List<string>();
         private string _OriginalFolderName;
+        private string _SelectedPath;
+
         #endregion
         #region Properties
-        public bool IsEditor
+        public string SelectedPath
         {
-            get { return _IsEditor; }
-            set { _IsEditor = value; NotifyPropertyChanged(); }
+            get { return _SelectedPath; }
+            set { _SelectedPath = value; NotifyPropertyChanged(); }
         }
+
         public bool IsDepthGridChecked
         {
             get { return _IsDepthGridChecked; }
@@ -39,16 +41,15 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
-            IsEditor = false;
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(actionManager)
+        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            IsEditor = true;
+            SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             _ID = elem.ID;
             Name = elem.Name;
             _OriginalFolderName = elem.Name;
@@ -77,7 +78,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-
             CopyAll(diSource, diTarget);
         }
 
@@ -100,7 +100,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
         }
 
-        private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension,double probability)
+        private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
         {
             string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
             Copy(path, destinationFilePath);
@@ -213,13 +213,13 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             //we require 8 valid directories
             if (validDirectories.Count < 8)
             {
-                string dirName = Path.GetFileNameWithoutExtension(fullpath);
+                string dirName = Path.GetFileName(fullpath);
                 importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
                 MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else if(validDirectories.Count>8)
             {
-                string dirName = Path.GetFileNameWithoutExtension(fullpath);
+                string dirName = Path.GetFileName(fullpath);
                 importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
                 MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -242,21 +242,22 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public override void Save()
         {
-            if(IsEditor)
+            if(IsCreatingNewElement)
             {
-                SaveExisting();
+                SaveNew();            
             }
             else
             {
-                SaveNew();            
+                SaveExisting();
             }
         }
 
         private void SaveExisting()
         {
+            InTheProcessOfSaving = true;
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
-            if(!Name.Equals(_OriginalFolderName))
+            if (!Name.Equals(_OriginalFolderName))
             {
                 string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
                 string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
@@ -264,7 +265,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
             //might have to rename the sub folders.
             List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
-            for(int i = 0;i<ListOfRows.Count;i++)
+            for (int i = 0; i < ListOfRows.Count; i++)
             {
                 string newName = ListOfRows[i].Name;
                 string originalName = _OriginalFolderNames[i];
@@ -281,12 +282,14 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
             Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
             manager.SaveExisting(elementToSave, _OriginalFolderName);
+            SavingText = "Last Saved: " + elementToSave.LastEditDate;
+            HasChanges = false;
+            HasSaved = true;
             _OriginalFolderName = Name;
         }
 
         private void SaveNew()
         {
-            IsEditor = true;
             FdaValidationResult validResult = ValidateImporter();
             if (validResult.IsValid)
             {
@@ -297,7 +300,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                     string directoryName = Path.GetFileName(row.Name);
                     pathProbs.Add(new PathAndProbability(Name + "\\" + directoryName, row.Probability));
 
-                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability);
+                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 }
 
                 int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
@@ -305,7 +308,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;
                 _ID = id;
-
             }
             else
             {

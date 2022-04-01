@@ -69,30 +69,34 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
-            if (iasElems.Count > 0)
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                StringBuilder sb = new StringBuilder(Environment.NewLine).Append(Environment.NewLine);
-                foreach(IASElementSet set in iasElems)
+                List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
+                if (iasElems.Count > 0)
                 {
-                    sb.Append("\t").Append("* ").Append(set.Name).Append(Environment.NewLine);
-                }
-
-                var result = MessageBox.Show("Deleting the impact area will also delete all existing impact area scenarios: " +
-                    sb.ToString() + Environment.NewLine + "Do you want to continue with the delete?", "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
-                    //delete the IAS's.
-                    foreach(IASElementSet set in iasElems)
+                    StringBuilder sb = new StringBuilder(Environment.NewLine).Append(Environment.NewLine);
+                    foreach (IASElementSet set in iasElems)
                     {
-                        Saving.PersistenceFactory.GetIASManager().Remove(set);
+                        sb.Append("\t").Append("* ").Append(set.Name).Append(Environment.NewLine);
+                    }
+
+                    var result = MessageBox.Show("Deleting the impact area will also delete all existing impact area scenarios: " +
+                        sb.ToString() + Environment.NewLine + "Do you want to continue with the delete?", "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                        //delete the IAS's.
+                        foreach (IASElementSet set in iasElems)
+                        {
+                            Saving.PersistenceFactory.GetIASManager().Remove(set);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                else
+                {
+                    Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                }
             }
         }
 

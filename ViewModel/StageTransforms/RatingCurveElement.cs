@@ -57,10 +57,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
             }
             return clonedElem;
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetRatingManager().Remove(this);
-        }
 
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {       

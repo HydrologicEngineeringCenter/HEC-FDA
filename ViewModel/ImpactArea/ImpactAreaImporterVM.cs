@@ -23,6 +23,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         private string _SelectedUniqueName;
         #endregion
         #region Properties
+     
         public bool IsInEditMode
         {
             get { return _IsInEditMode; }

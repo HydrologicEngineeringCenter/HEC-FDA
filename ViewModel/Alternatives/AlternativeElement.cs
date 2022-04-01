@@ -93,10 +93,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             Actions = localActions;
         }
 
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            PersistenceFactory.GetAlternativeManager().Remove(this);
-        }
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
             FdaValidationResult vr = RunPreComputeValidation();
