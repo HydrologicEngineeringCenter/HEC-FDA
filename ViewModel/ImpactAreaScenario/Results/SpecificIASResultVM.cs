@@ -86,7 +86,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #endregion
 
-        //todo: once we have the actual results object, that will be passed in here
         public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.Results iasResult)
         {
             _IASResult = iasResult;
@@ -126,6 +125,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         private void loadVMs()
         {
+            //todo: do i pass the results into all of these?
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
             _damageByDamageCategoryVM = new DamageByDamageCategoryVM();
             _performanceAEPVM = new PerformanceAEPVM(Thresholds);

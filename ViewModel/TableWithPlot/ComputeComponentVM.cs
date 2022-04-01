@@ -184,9 +184,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 }
             }
         }
-        public UncertainPairedData SelectedItemToPairedData()
+        public UncertainPairedData SelectedItemToPairedData(string damCat = "")
         {
-            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, "residential");
+            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, damCat);
         }
         public virtual XElement ToXML()
         {
@@ -195,7 +195,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             ele.SetAttributeValue("Name", Name);
             foreach (IDataProvider idp in Options)
             {
-                XElement child = new XElement(idp.ToUncertainPairedData(XLabel, YLabel, Name, Description, "residential").WriteToXML());
+                XElement child = new XElement(idp.ToUncertainPairedData(XLabel, YLabel, Name, Description, "").WriteToXML());
                 child.SetAttributeValue("DistributionProviderType", idp.GetType().Name);
                 ele.Add(child);
             }

@@ -24,7 +24,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Frequency" TextWrapping="Wrap" />
+                        <TextBlock Text="AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding AEP}" Width="*">

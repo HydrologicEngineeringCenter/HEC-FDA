@@ -5,10 +5,12 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
@@ -122,6 +124,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="arg2"></param>
         public metrics.Results ComputeScenario(object arg1, EventArgs arg2)
         {
+            metrics.Results results = null;
+
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
@@ -131,14 +135,33 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
-            Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 150000);
-            sc.WithAdditionalThreshold(threshold);
-            Simulation simulation = sc.BuildSimulation();
-            
-            MeanRandomProvider mrp = new MeanRandomProvider();
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            metrics.Results r = simulation.Compute(mrp, cc); //here we test compute, below we test preview compute 
-            return r;
+                //Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 150000);
+            //sc.WithAdditionalThreshold(threshold);
+
+            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            if (configurationValidationResult.IsValid)
+            {
+                Simulation simulation = sc.BuildSimulation();
+                int seed = 999;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                try
+                {
+                    results = simulation.Compute(randomProvider, cc); 
+                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            return results;
+
         }
 
         private XElement WriteThresholdsToXML()

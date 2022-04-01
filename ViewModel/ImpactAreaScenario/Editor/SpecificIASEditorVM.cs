@@ -460,9 +460,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID);
 
-            Simulation simulation = sc.BuildSimulation();
+            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            if(configurationValidationResult.IsValid)
+            {
+                //todo: run the compute and display results?
+                Simulation simulation = sc.BuildSimulation();
+                MeanRandomProvider mrp = new MeanRandomProvider();
 
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            }
+
+
             try
             {
                 //metrics.Results result = simulation.Compute(mrp, 1);

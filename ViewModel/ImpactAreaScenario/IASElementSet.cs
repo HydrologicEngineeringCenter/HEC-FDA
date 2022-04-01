@@ -148,6 +148,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             //todo: get a list of result objects
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            int i = 0;
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
@@ -155,9 +156,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 if (impactAreaName != null)
                 {
                     //todo: put the _Results into here where it is null.
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, null);
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, _Results[i]);
                     results.Add(result);
                 }
+                i++;
             }
             return results;
         }
