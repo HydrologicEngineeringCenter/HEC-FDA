@@ -135,20 +135,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
-                //Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 150000);
-            //sc.WithAdditionalThreshold(threshold);
+                Threshold threshold = new Threshold(1, new ConvergenceCriteria(), ThresholdEnum.ExteriorStage, 3.5);
+            sc.WithAdditionalThreshold(threshold);
 
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
                 Simulation simulation = sc.BuildSimulation();
                 int seed = 999;
-                RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
+                MeanRandomProvider randomProvider = new MeanRandomProvider();
+                ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
                 try
                 {
                     results = simulation.Compute(randomProvider, cc); 
-                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 }
                 catch (Exception ex)

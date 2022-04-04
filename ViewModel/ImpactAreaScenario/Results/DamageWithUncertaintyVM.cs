@@ -3,6 +3,7 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using System.Linq;
+using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -15,33 +16,33 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public double Mean { get; set; }
         public DamageWithUncertaintyVM(metrics.Results iasResult)
         {
-            iasResult.PerformanceByThresholds.ThresholdsDictionary[1].ProjectPerformanceResults.AssuranceOfAEP(.25); //slide 4
-            iasResult.PerformanceByThresholds.ThresholdsDictionary[1].ProjectPerformanceResults.LongTermExceedanceProbability(10);//slide 5
-            iasResult.PerformanceByThresholds.ThresholdsDictionary[1].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.1);//slide 6
+            iasResult.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.AssuranceOfAEP(.25); //slide 4
+            iasResult.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.LongTermExceedanceProbability(10);//slide 5
+            //iasResult.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.1);//slide 6
             //iasResult.PerformanceByThresholds.ThresholdsDictionary[1].ProjectPerformanceResults.HistogramOfAEPs
 
             //todo: what are these strings that i pass in?
-            //Mean = iasResult.ExpectedAnnualDamageResults.MeanEAD("Total");
-            //Statistics.Histograms.ThreadsafeInlineHistogram totalHistogram = iasResult.ExpectedAnnualDamageResults.HistogramsOfEADs["Total"];
-            //int[] binCounts = totalHistogram.BinCounts;
-            //double binWidth = totalHistogram.BinWidth;
-            //double min = totalHistogram.Min;
+            Mean = iasResult.ExpectedAnnualDamageResults.MeanEAD("Total");
+            Statistics.Histograms.ThreadsafeInlineHistogram totalHistogram = iasResult.ExpectedAnnualDamageResults.HistogramsOfEADs["Total"];
+            int[] binCounts = totalHistogram.BinCounts;
+            double binWidth = totalHistogram.BinWidth;
+            double min = totalHistogram.Min;
 
-            //double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+            double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
             ////load with dummy data
-            //_data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+            _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
             //ChartViewModel.LineData.Add(_data);
-
+            ExpectedAnnualDamageResults eadResults = iasResult.ExpectedAnnualDamageResults;
             //double yVal =  iasResult.ExpectedAnnualDamageResults.EADExceededWithProbabilityQ("Total", .25);
 
-            loadDummyData();
+            loadTableValues(eadResults);
             //Mean = .123;
         }
 
-        private void loadDummyData()
+        private void loadTableValues(ExpectedAnnualDamageResults eadResults)
         {
-            List<double> xVals = loadXData();
-            List<double> yVals = loadYData();
+            List<double> xVals = new List<double>() { .75, .5, .25 };
+            List<double> yVals = loadYData(xVals, eadResults);
 
             List<EadRowItem> rows = new List<EadRowItem>();
             for(int i = 0;i<xVals.Count;i++)
@@ -52,22 +53,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             Rows.AddRange( rows);
         }
 
-        private List<double> loadXData()
-        {
-            List<double>  xValues = new List<double>();
-            xValues.Add(.75);
-            xValues.Add(.5);
-            xValues.Add(.25);
+        //private List<double> loadXData()
+        //{
+        //    List<double>  xValues = new List<double>();
+        //    xValues.Add(.75);
+        //    xValues.Add(.5);
+        //    xValues.Add(.25);
 
-            return xValues;
-        }
+        //    return xValues;
+        //}
 
-        private List<double> loadYData()
+        private List<double> loadYData(List<double> xVals, ExpectedAnnualDamageResults eadResults)
         {
             List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
-            yValues.Add(3);
+            foreach(double x in xVals)
+            {
+                yValues.Add( eadResults.EADExceededWithProbabilityQ("Total", x));
+            }
             return yValues;
         }
 

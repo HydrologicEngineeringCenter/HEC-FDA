@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void Initialize()
         {
             _additionalThresholdsVM = new ThresholdsVM();
-            _additionalThresholdsVM.RequestNavigation += Navigate;
+            //_additionalThresholdsVM.RequestNavigation += Navigate;
 
             LoadElements();
 

@@ -127,8 +127,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             //todo: do i pass the results into all of these?
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
-            _damageByDamageCategoryVM = new DamageByDamageCategoryVM();
-            _performanceAEPVM = new PerformanceAEPVM(Thresholds);
+            _damageByDamageCategoryVM = new DamageByDamageCategoryVM(_IASResult);
+            _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
             _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(Thresholds);
             _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(Thresholds);
 
