@@ -59,6 +59,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Min), new Rule(() => { if (PreviousRow == null) return true; return Min >= ((UniformRow)PreviousRow).Min; }, "Min values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Max), new Rule(() => { if (PreviousRow == null) return true; return Max >= ((UniformRow)PreviousRow).Max; }, "Min values are not increasing.", ErrorLevel.Severe));
         }
+        public override void UpdateRow(int col, double value)
+        {
+            switch (col)
+            {
+                case 0:
+                    X = value;
+                    break;
+                case 1:
+                    Min = value;
+                    break;
+                case 2:
+                    Max = value;
+                    break;
+            }
+        }
     }
 
 }

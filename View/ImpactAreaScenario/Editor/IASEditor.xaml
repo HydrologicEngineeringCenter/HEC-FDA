@@ -37,15 +37,10 @@
             <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
             <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
-
             <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
-            <!--<UserControls:TextBoxDescription Grid.Column="3" Description="{Binding Description}" />-->
-
             <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" Margin="0,0,7,0" />
             <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-
             <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
-
         </Grid>
 
         <Grid x:Name="SecondRowGrid" Grid.Row="1" Margin="0,5,5,0">
@@ -61,9 +56,10 @@
 
             <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreas}" DisplayMemberPath="Name"  SelectedItem="{Binding SelectedImpactArea}" IsEnabled="{Binding HasImpactArea}" />
         </Grid>
-        
         <local:SpecificIASControl DataContext="{Binding SelectedEditorVM}" Grid.Row="2" />
-        <Utilities:SaveCloseControl Grid.Row="5" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Utilities:SaveControl />
+            <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -23,7 +23,8 @@ namespace HEC.FDA.ViewModel.Editors
 
         public CurveEditorVM(CurveChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            TableWithPlot = new TableWithPlotVM(elem.ComputeComponentVM);
+            ComputeComponentVM comp = new ComputeComponentVM( elem.ComputeComponentVM.ToXML());
+            TableWithPlot = new TableWithPlotVM(comp);
         }
         #endregion
     }

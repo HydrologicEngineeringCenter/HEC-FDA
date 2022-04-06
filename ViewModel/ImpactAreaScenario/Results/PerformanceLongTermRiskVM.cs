@@ -6,50 +6,29 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceLongTermRiskVM : PerformanceVMBase
     {
-
-        public PerformanceLongTermRiskVM(List<ThresholdComboItem> metrics)
+        public PerformanceLongTermRiskVM(metrics.Results iasResult, List<ThresholdComboItem> metrics)
         {
-            loadDummyData(metrics);
+            LoadData(iasResult, metrics);
         }
 
-
-        private void loadDummyData(List<ThresholdComboItem> metrics)
+        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> metrics)
         {
-
             MetricsToRows = new Dictionary<Threshold, List<IPerformanceRowItem>>();
 
             for (int i = 0; i < metrics.Count; i++)
             {
-                List<int> xVals = loadXData(i);
-                List<double> yVals = loadYData(i);
+                int thresholdKey = metrics[i].Metric.ThresholdID;
 
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                for (int j = 0; j < xVals.Count; j++)
+                List<int> xVals = new List<int>() { 10,20,30 };
+                foreach (int xVal in xVals)
                 {
-                    rows.Add(new PerformancePeriodRowItem(xVals[j], yVals[j]));
+                    double yVal = iasResult.PerformanceByThresholds.ThresholdsDictionary[thresholdKey].ProjectPerformanceResults.LongTermExceedanceProbability(xVal);
+                    rows.Add(new PerformancePeriodRowItem(xVal, yVal));
                 }
                 MetricsToRows.Add(metrics[i].Metric, rows);
-
             }
             Rows = MetricsToRows[metrics[0].Metric];
-        }
-
-        private List<int> loadXData(int i)
-        {
-            List<int> xValues = new List<int>();
-            xValues.Add(i );
-            xValues.Add(i );
-
-            return xValues;
-        }
-
-        private List<double> loadYData(int i)
-        {
-            List<double> yValues = new List<double>();
-            yValues.Add(i);
-            yValues.Add(i + 1);
-
-            return yValues;
         }
 
     }

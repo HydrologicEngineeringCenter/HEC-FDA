@@ -1,55 +1,45 @@
 ﻿using metrics;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using System;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAssuranceOfThresholdVM :  PerformanceVMBase
     {
 
-        public PerformanceAssuranceOfThresholdVM(List<ThresholdComboItem> metrics)
+        public PerformanceAssuranceOfThresholdVM(metrics.Results iasResult, List<ThresholdComboItem> metrics)
         {
-            loadDummyData(metrics);
+            LoadData(iasResult, metrics);
         }
 
-
-        private void loadDummyData(List<ThresholdComboItem> metrics)
+        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> metrics)
         {
             MetricsToRows = new Dictionary<Threshold, List<IPerformanceRowItem>>();
 
             for (int i = 0; i < metrics.Count; i++)
             {
-                List<double> xVals = loadXData(i);
-                List<double> yVals = loadYData(i);
-
+                int thresholdKey = metrics[i].Metric.ThresholdID;
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                for (int j = 0; j < xVals.Count; j++)
+                List<double> xVals = new List<double>(){ .1, .04, .02, .01, .005, .002};
+                foreach (double xVal in xVals)
                 {
-                    rows.Add(new PerformanceFrequencyRowItem(xVals[j], yVals[j]));
+                    double exceedanceProb = 1.0 - xVal;
+                    try
+                    {
+                        Threshold threshold = iasResult.PerformanceByThresholds.ThresholdsDictionary[thresholdKey];
+                        ProjectPerformanceResults projectPerformanceResults = threshold.ProjectPerformanceResults;
+                        double yVal = projectPerformanceResults.ConditionalNonExceedanceProbability(exceedanceProb);
+                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
+                    }
+                    catch (Exception e)
+                    {
+                        //todo: Getting the y value can throw an exception if the exceedanceProb isn't in the dictionary
+                    }
                 }
                 MetricsToRows.Add(metrics[i].Metric, rows);
-            }
-            
+            }         
             Rows = MetricsToRows[metrics[0].Metric];
         }
-
-        private List<double> loadXData(int i)
-        {
-            List<double> xValues = new List<double>();
-            xValues.Add(i / 10);
-            xValues.Add(i / 2);
-
-            return xValues;
-        }
-
-        private List<double> loadYData(int i)
-        {
-            List<double> yValues = new List<double>();
-            yValues.Add(i);
-            yValues.Add(i + 1);
-
-            return yValues;
-        }
-
     }
 }

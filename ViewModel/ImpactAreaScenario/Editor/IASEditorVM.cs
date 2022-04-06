@@ -218,9 +218,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     Description = "";
                 }
 
-                int id = Saving.PersistenceFactory.GetIASManager().GetNextAvailableId();
+                Saving.PersistenceManagers.IASPersistenceManager iASPersistenceManager = Saving.PersistenceFactory.GetIASManager();
+                int id = GetElementID(iASPersistenceManager);
+
                 IASElementSet elemToSave = new IASElementSet(Name, Description, Year.Value, elementsToSave, id);
-                Save(elemToSave);
+
+                if (IsCreatingNewElement)
+                {
+                    iASPersistenceManager.SaveNew(elemToSave);
+                    IsCreatingNewElement = false;
+                }
+                else
+                {
+                    iASPersistenceManager.SaveExisting(elemToSave);
+                }
+
+                SavingText = "Last Saved: " + elemToSave.LastEditDate;
+                HasChanges = false;
+                HasSaved = true;
+                OriginalElement = elemToSave;
+
             }
         }
 
