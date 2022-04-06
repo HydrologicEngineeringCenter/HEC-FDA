@@ -150,7 +150,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
         }
 
-        public void removedCallback(FeatureNodeHeader node, bool includeSelected)
+        public void RemovedCallback(FeatureNodeHeader node, bool includeSelected)
         {
             foreach (NamedAction a in Actions)
             {
