@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
-using System.Collections;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -66,7 +65,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             ItemType = item.ItemType;
             IsChecked = item.IsChecked;
-            Curve = item.Curve;
+            Curve = new ComputeComponentVM(item.Curve.ToXML());
             TableWithPlot = new TableWithPlotVM(Curve);
             TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
