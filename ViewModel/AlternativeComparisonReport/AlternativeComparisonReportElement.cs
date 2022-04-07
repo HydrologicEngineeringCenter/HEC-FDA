@@ -156,10 +156,5 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
             return altResult;
         }
-
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            PersistenceFactory.GetAlternativeCompReportManager().Remove(this);
-        }
     }
 }

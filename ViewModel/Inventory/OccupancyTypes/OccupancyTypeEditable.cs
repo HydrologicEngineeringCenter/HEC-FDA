@@ -101,10 +101,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region Constructors      
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
-            StructureItem = new OccTypeItem(OcctypeItemType.structure, occtype.StructureItem.IsChecked, occtype.StructureItem.Curve, occtype.StructureItem.ValueUncertainty.Distribution);
-            ContentItem = new OccTypeItemWithRatio( occtype.ContentItem);               
-            VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, occtype.VehicleItem.IsChecked, occtype.VehicleItem.Curve, occtype.VehicleItem.ValueUncertainty.Distribution);
-            OtherItem = new OccTypeItemWithRatio( occtype.OtherItem);   
+            //clone the occtype so that changes to it will not go into effect unless the user saves.
+            IOccupancyType clonedOcctype = new OccupancyType(occtype);
+
+            StructureItem = new OccTypeItem(OcctypeItemType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
+            ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
+            VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
+            OtherItem = new OccTypeItemWithRatio(clonedOcctype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;
             ContentItem.DataModified += OcctypeItemDataModified;
@@ -113,9 +116,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             DamageCategoriesList = damageCategoriesList;
             HasBeenSaved = occtypeHasBeenSaved;
-            //clone the occtype so that changes to it will not go into effect
-            //unless the user saves.
-            IOccupancyType clonedOcctype = new OccupancyType(occtype);
 
             Name = clonedOcctype.Name;
             Description = clonedOcctype.Description;

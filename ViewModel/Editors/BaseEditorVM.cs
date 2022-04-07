@@ -20,6 +20,7 @@ namespace HEC.FDA.ViewModel.Editors
         private string _SavingText;
         private string _Name;
         private string _Description = "";
+        private bool _IsCreatingNewElement;
         public string Description
         {
             get { return _Description; }
@@ -33,7 +34,11 @@ namespace HEC.FDA.ViewModel.Editors
             get { return _Name; }
             set { _Name = value;NotifyPropertyChanged(); }
         }
-        public bool IsCreatingNewElement { get; set; }
+        public bool IsCreatingNewElement
+        {
+            get { return _IsCreatingNewElement;}
+            set { _IsCreatingNewElement = value; NotifyPropertyChanged(); }
+        }
         public bool HasSaved { get; set; } = false;
         /// <summary>
         /// This is important for when saving and not exiting right away. I need access to the element id.

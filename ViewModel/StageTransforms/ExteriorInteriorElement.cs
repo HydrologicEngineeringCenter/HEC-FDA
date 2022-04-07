@@ -1,9 +1,8 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -26,7 +25,10 @@ namespace HEC.FDA.ViewModel.StageTransforms
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
 
             Description = desc;
-            if (Description == null) Description = "";
+            if (Description == null)
+            {
+                Description = "";
+            }
             ComputeComponentVM = exteriorInteriorCurve;
 
             NamedAction editExteriorInteriorCurve = new NamedAction();
@@ -53,13 +55,9 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ExteriorInteriorElement elem = (ExteriorInteriorElement)elementToClone;
-
             return new ExteriorInteriorElement(elem.Name, elem.LastEditDate, elem.Description, elem.ComputeComponentVM, elem.ID);
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetExteriorInteriorManager().Remove(this);
-        }
+
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
             //create action manager

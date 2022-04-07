@@ -75,7 +75,7 @@ namespace HEC.FDA.View
                 if (sender.GetType().Name == nameof(WaterSurfaceElevationElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((WaterSurfaceElevationElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((WaterSurfaceElevationElement)sender).RemovedCallback;
                 }
 
             }

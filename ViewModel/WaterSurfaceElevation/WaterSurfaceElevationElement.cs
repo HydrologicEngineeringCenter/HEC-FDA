@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using LifeSimGIS;
 using OpenGLMapping;
@@ -118,13 +119,17 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, actionManager);
 
-            string header = "Edit Water Surface Elevation -" + Name;
+            string header = "Edit Hydraulics -" + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElev" + Name);
             Navigate(tab, false, false);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);
+            }
         }
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
@@ -145,7 +150,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             }
         }
 
-        public void removedcallback(OpenGLMapping.FeatureNodeHeader node, bool includeSelected)
+        public void RemovedCallback(FeatureNodeHeader node, bool includeSelected)
         {
             foreach (NamedAction a in Actions)
             {
@@ -211,6 +216,26 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
             }
         }
+
+        public override void Rename(object sender, EventArgs e)
+        {
+            string originalName = Name;
+            RenameVM renameViewModel = new RenameVM(this, CloneElement);
+            string header = "Rename";
+            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
+            Navigate(tab);
+            string newName = renameViewModel.Name;
+            //rename the folders in the study.
+            if (!originalName.Equals(newName))
+            {
+                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
+                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
+                Directory.Move(sourceFilePath, destinationFilePath);
+            }
+            //rename the child table in the DB
+            Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
+        }
+
 
         #endregion
         #region Functions

@@ -48,10 +48,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         }
         #endregion
         #region Voids
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetInflowOutflowManager().Remove(this);
-        }
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 

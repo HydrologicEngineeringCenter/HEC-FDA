@@ -117,10 +117,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             Actions = localActions;
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetFlowFrequencyManager().Remove(this);
-        }
+
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
             EditorActionManager actionManager = new EditorActionManager()
