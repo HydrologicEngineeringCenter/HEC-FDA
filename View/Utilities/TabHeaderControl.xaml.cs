@@ -19,9 +19,13 @@ namespace HEC.FDA.View.Utilities
             InitializeComponent();
         }
 
-        
+        private void btn_PopOut_Click(object sender, RoutedEventArgs e)
+        {
+            DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+            vm.PopTabIntoWindow();
+        }
 
-        private void btn_Close_Click(object sender, RoutedEventArgs e)
+            private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
 
             DynamicTabVM vm = (DynamicTabVM)this.DataContext;
@@ -54,43 +58,43 @@ namespace HEC.FDA.View.Utilities
         //    vm.PopTabIntoWindow();
         //}
 
-        private void TextBlock_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (_MouseDown && HasDraggedMinimumDistance(e))
-            {
-                Mouse.Capture(null);//releases the capture
-                if (this.DataContext is DynamicTabVM)
-                {
-                    DynamicTabVM vm = (DynamicTabVM)this.DataContext;
-                    if (vm.CanPopOut)
-                    {
-                        vm.PopTabIntoWindowDragging();
-                    }
-                }
-            }
+        //private void TextBlock_PreviewMouseMove(object sender, MouseEventArgs e)
+        //{
+        //    if (_MouseDown && HasDraggedMinimumDistance(e))
+        //    {
+        //        Mouse.Capture(null);//releases the capture
+        //        if (this.DataContext is DynamicTabVM)
+        //        {
+        //            DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+        //            if (vm.CanPopOut)
+        //            {
+        //                vm.PopTabIntoWindowDragging();
+        //            }
+        //        }
+        //    }
 
-        }
+        //}
 
-       private bool HasDraggedMinimumDistance(MouseEventArgs e)
-        {
-            return Math.Abs(e.GetPosition(null).X - _StartPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
-            Math.Abs(e.GetPosition(null).Y - _StartPoint.Y) >= SystemParameters.MinimumVerticalDragDistance;           
-        }
+       //private bool HasDraggedMinimumDistance(MouseEventArgs e)
+       // {
+       //     return Math.Abs(e.GetPosition(null).X - _StartPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+       //     Math.Abs(e.GetPosition(null).Y - _StartPoint.Y) >= SystemParameters.MinimumVerticalDragDistance;           
+       // }
 
-        private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            _MouseDown = false;
-            Mouse.Capture(null);//releases the capture
-        }
+       // private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+       // {
+       //     _MouseDown = false;
+       //     Mouse.Capture(null);//releases the capture
+       // }
        
 
-        private void TextBlock_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _MouseDown = true;
-            _StartPoint = e.GetPosition(null);
-            Mouse.Capture(txt_block);
+       // private void TextBlock_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+       // {
+       //     _MouseDown = true;
+       //     _StartPoint = e.GetPosition(null);
+       //     Mouse.Capture(txt_block);
        
-        }
+       // }
 
         
     }

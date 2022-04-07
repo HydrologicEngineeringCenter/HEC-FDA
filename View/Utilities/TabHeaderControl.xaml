@@ -19,7 +19,10 @@
             <!--<Button Name="btn_PopOut" Click="btn_PopOut_Click" Background="Transparent" ToolTip="Pop Tab Out" BorderThickness="0" Margin="0,0,5,0" Visibility="{Binding CanPopOut,Converter={StaticResource BoolToVisibilityConverter}}" >
                 <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopUp.png"/>
             </Button>-->
-            <TextBlock Name="txt_block" Text="{Binding Header}"  PreviewMouseLeftButtonDown="TextBlock_PreviewMouseLeftButtonDown" PreviewMouseMove="TextBlock_PreviewMouseMove" PreviewMouseUp="TextBlock_PreviewMouseUp" />
+            <TextBlock Name="txt_block" Text="{Binding Header}"  />
+            <Button Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="5,0,0,0" >
+                <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopOut.png"/>
+            </Button>
             <Button Name="btn_Close"  Click="btn_Close_Click" Background="Transparent" BorderThickness="0" Margin="5,0,0,0" Visibility="{Binding CanDelete,Converter={StaticResource BoolToVisibilityConverter}}">
                 <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
             </Button>

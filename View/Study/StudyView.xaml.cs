@@ -13,17 +13,10 @@ namespace HEC.FDA.View.Study
     public partial class StudyView : UserControl
     {
         public bool WasXClicked { get; set; } = false;
-        public bool WasPopOutClicked { get; set; } = false;
 
         public StudyView()
         { 
             InitializeComponent();
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            FdaStudyVM vm = DataContext as FdaStudyVM;
-            vm?.AddMapsTab(MapTreeView);
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -36,19 +29,5 @@ namespace HEC.FDA.View.Study
             WasXClicked = true;
         }
 
-        private void txt_PopOut_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            WasPopOutClicked = true;
-        }
-
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                FdaStudyVM vm = DataContext as FdaStudyVM;
-                //todo: testing only
-                vm?.UpdateMapTabTest();
-            }));
-        }
     }
 }

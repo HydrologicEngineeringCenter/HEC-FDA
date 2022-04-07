@@ -8,9 +8,7 @@
              xmlns:VMUtils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
-             Loaded="UserControl_Loaded"             
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
-
 
     <UserControl.Resources>
         <utils:ContextMenuConverter x:Key="converter"/>
@@ -86,13 +84,13 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Name="Maps" Header="Map Layers">
+            <!--<TabItem Name="Maps" Header="Map Layers">
                 <Grid Name="MaptreeviewGRID">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <OpenGL:MapTreeView x:Name="MapTreeView" />
                     </ScrollViewer>
                 </Grid>
-            </TabItem>
+            </TabItem>-->
         </TabControl>
 
 
