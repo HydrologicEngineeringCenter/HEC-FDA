@@ -106,32 +106,14 @@ namespace Statistics.GraphicalRelationships
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
         /// <param name="maximumProbability"></param> The maximum exceedance probability used in the frequency relationship.
         /// <param name="minimumProbability"></param> The minimum exceedance probability used in the frequency relationship. 
-        /// <param name="usingFlows"></param> True if the frequency relationship is a flow-frequency relationship.
-        /// <param name="flowsAreNotLogged"></param> True if the flows provided by the user have not been logged. 
       
-        public Graphical(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, double maximumProbability = 0.9999, double minimumProbability = 0.0001, bool usingFlows = false, bool flowsAreNotLogged = false)
+        public Graphical(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             _SampleSize = equivalentRecordLength;
-            _UsingFlows = usingFlows;
             _InputExceedanceProbabilities = exceedanceProbabilities;
             _pMax = maximumProbability;
             _pMin = minimumProbability;
-
-            //2. Log flows if using flows 
-            if (usingFlows)
-            {
-                if (flowsAreNotLogged)
-                {
-                    _InputFlowOrStageValues = LogFlows(flowOrStageValues);
-
-                } else
-                {
-                    _InputFlowOrStageValues = flowOrStageValues;
-                }
-            } else
-            {
-                _InputFlowOrStageValues = flowOrStageValues;
-            }
+            _InputFlowOrStageValues = flowOrStageValues;
             AddRules();
         }
         #endregion

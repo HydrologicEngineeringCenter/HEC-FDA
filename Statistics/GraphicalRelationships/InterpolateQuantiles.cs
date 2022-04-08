@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Statistics.Graphical
 {
-    class InterpolateQuantiles
+    public class InterpolateQuantiles
     {
 
         private double[] _InputXValues;
