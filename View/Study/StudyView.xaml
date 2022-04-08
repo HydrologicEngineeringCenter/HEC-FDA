@@ -64,11 +64,9 @@
         <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
 
 
-        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
-
-            <TabItem Header="Study Tree" Name="StudyTree">
-                <Grid>
-                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
+    
+                
+                    <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
@@ -81,17 +79,10 @@
                             </Style>
                         </TreeView.ItemContainerStyle>
                     </TreeView>
-                </Grid>
-            </TabItem>
+               
+            
 
-            <!--<TabItem Name="Maps" Header="Map Layers">
-                <Grid Name="MaptreeviewGRID">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <OpenGL:MapTreeView x:Name="MapTreeView" />
-                    </ScrollViewer>
-                </Grid>
-            </TabItem>-->
-        </TabControl>
+        
 
 
 
