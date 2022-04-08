@@ -7,16 +7,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageByDamageCategoryVM : BaseViewModel
     {
-
         public List<DamageCategoryRowItem> Rows { get; set; }
 
         public DamageByDamageCategoryVM(metrics.Results iasResult)
         {
             ExpectedAnnualDamageResults eadResults = iasResult.ExpectedAnnualDamageResults;
-            //eadResults.HistogramsOfEADs["blah"].Mean
             LoadDamCatTable(eadResults);
         }
-
 
         private void LoadDamCatTable(ExpectedAnnualDamageResults eadResults)
         {
@@ -37,23 +34,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
             Rows = rows;
         }
-
-        //private List<string> loadXData()
-        //{
-
-        //    List<string> xValues = new List<string>();
-        //    xValues.Add("Residential");
-        //    xValues.Add("Commercial");
-        //    return xValues;
-        //}
-
-        //private List<double> loadYData()
-        //{
-        //    List<double> yValues = new List<double>();
-        //    yValues.Add(1);
-        //    yValues.Add(2);
-        //    return yValues;
-        //}
 
     }
 }

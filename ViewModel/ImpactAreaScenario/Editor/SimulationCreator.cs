@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.StageTransforms;
 using static compute.Simulation;
 using metrics;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Events;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {

@@ -12,16 +12,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
-        public PerformanceAEPVM(metrics.Results iasResult, List<ThresholdComboItem> metrics)
+        public PerformanceAEPVM(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
-            LoadData(iasResult, metrics);
+            LoadData(iasResult, thresholdComboItems);
         }
 
-        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> metrics)
+        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
-            for (int i = 0; i < metrics.Count; i++)
+            for (int i = 0; i < thresholdComboItems.Count; i++)
             {
-                Threshold threshold = metrics[i].Metric;
+                Threshold threshold = thresholdComboItems[i].Metric;
                 ThresholdEnum thresholdType = threshold.ThresholdType;
                 ProjectPerformanceResults performanceResults = GetResultsOfType(iasResult, thresholdType);
 

@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
     {
         private List<IPerformanceRowItem> _rows;
 
-        public Dictionary<Threshold, List<IPerformanceRowItem>> MetricsToRows { get; set; } = new Dictionary<Threshold, List<IPerformanceRowItem>>();
+        public Dictionary<Threshold, List<IPerformanceRowItem>> MetricsToRows { get;} = new Dictionary<Threshold, List<IPerformanceRowItem>>();
         public List<IPerformanceRowItem> Rows
         {
             get { return _rows; }

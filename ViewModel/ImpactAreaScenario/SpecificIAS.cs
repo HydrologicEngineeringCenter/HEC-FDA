@@ -6,6 +6,7 @@ using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Events;
 using metrics;
 using Statistics;
 using System;
@@ -135,6 +136,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
+
             int thresholdIndex = 1;
             foreach(ThresholdRowItem thresholdRow in Thresholds)
             {
@@ -168,6 +170,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
 
         }
+
+ 
 
         private XElement WriteThresholdsToXML()
         {
