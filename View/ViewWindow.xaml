@@ -18,90 +18,14 @@
         <Utils:WindowVM/>
     </Window.DataContext>
 
-        <Grid Name="MainGrid">
-            <Grid.RowDefinitions>
-                <!--<RowDefinition Height="27"/>-->
+    <Grid Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-                <RowDefinition Height="*"/>
-                <!--<RowDefinition Height="5"/>-->
-                <!--<RowDefinition Height="Auto" MaxHeight="210"/>-->
-            </Grid.RowDefinitions>
-
-            <!--<Grid.Resources>
-                <ImageBrush x:Key="Close_inact" ImageSource="UI_RES\Close_inact.png" />
-                <ImageBrush x:Key="Min_inact" ImageSource="UI_RES\Minimize_inact.png" />
-                <ImageBrush x:Key="Max_inact" ImageSource="UI_RES\Maximize_inact.png" />
-                <ImageBrush x:Key="Close_act" ImageSource="UI_RES\Close_act.png" />
-                <ImageBrush x:Key="Min_act" ImageSource="UI_RES\Minimize_act.png" />
-                <ImageBrush x:Key="Max_act" ImageSource="UI_RES\Maximize_act.png" />
-                <ImageBrush x:Key="Close_pr" ImageSource="UI_RES\Close_pr.png" />
-                <ImageBrush x:Key="Min_pr" ImageSource="UI_RES\Minimize_pr.png" />
-                <ImageBrush x:Key="Max_pr" ImageSource="UI_RES\Maximize_pr.png" />
-            </Grid.Resources>-->
-
-
-
-            <!--<Rectangle Grid.Row="0" Height="30" Width="5" VerticalAlignment="Top" HorizontalAlignment="Left" MouseDown="move_window">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_left.png" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Rectangle Name="TitleBarRectangle" Height="30" Margin="5,0,5,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseLeftButtonDown="move_window" MouseLeftButtonUp="TitleBarRectangle_MouseLeftButtonUp">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_middle.png" />
-                </Rectangle.Fill>
-            </Rectangle>
-
-            <Image Source="/Resources/FDA.ico" HorizontalAlignment="Left" Width="18" Height="18" Margin="5,0,0,0"/>
-            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-
-            <Rectangle Margin="8,4,0,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                   Width="56" Height="15" Fill="Transparent"
-                   MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" />
-            <Ellipse Margin="8,4,8,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="EXIT" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Close_pressing" Name="Close_btn" 
-                 Fill="{DynamicResource Close_inact}" />
-            <Ellipse Margin="29,4,50,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="MINIMIZE" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Min_pressing" Name="Min_btn" 
-                 Fill="{StaticResource Min_inact}" />
-            <Ellipse Margin="50,4,29,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="MAX_RESTORE" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Max_pressing" Name="Max_btn" 
-                 Fill="{StaticResource Max_inact}" />
-            <Rectangle Height="30" Width="5" VerticalAlignment="Top" HorizontalAlignment="Right" MouseDown="move_window">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_right.png" />
-                </Rectangle.Fill>
-            </Rectangle>-->
-
-
-
-            <!--<Border Grid.Column="0" Grid.RowSpan="2" BorderThickness="2,2,2,2">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="AliceBlue" />
-            </Border.BorderBrush>
-        </Border>-->
-            <!--<Button Grid.Row="0" Name="btn_PopWindowInToTabs" Background="Transparent" ToolTip="Move To Tabs" BorderThickness="0" Margin="5,0,70,0" HorizontalAlignment="Right"  Click="btn_PopWindowInToTabs_Click" >
-                <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopIn.png"/>
-            </Button>-->
         <Button Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" >
             <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopOut.png"/>
         </Button>
         <ContentControl Grid.Row="0" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
-            <!--<GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" />-->
-            <!--<utils:MessageExpanderControl Grid.Row="3"/>-->
-            <!--<Expander Name="MessagesExpander" Header="Errors" Grid.Row="3" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5" MaxHeight="200">
-            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Margin="5" Height="Auto" BorderThickness="3" BorderBrush="Red">
-                <ListView Name="MessagesListView" />
-            </ScrollViewer>
-        </Expander>-->
-            <!--<Canvas Name="myCanvas" Grid.Row="0" Grid.RowSpan="3" />-->
-
-        </Grid>
-    <!--</Border>-->
+    </Grid>
 </Window>

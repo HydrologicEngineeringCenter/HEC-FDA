@@ -19,6 +19,7 @@
     <Compile Remove="Inventory\OccupancyTypes\OtherNormalControlVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
     <Compile Remove="Output\LinkedPlotsVM.cs" />
+    <Compile Remove="Utilities\MapWindowMapTreeViewConnector.cs" />
   </ItemGroup>
 	
   <ItemGroup>

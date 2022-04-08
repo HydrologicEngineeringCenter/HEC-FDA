@@ -26,6 +26,9 @@
     <Compile Remove="GeoTech\FailureFunctionEditor.xaml.cs" />
     <Compile Remove="Inventory\AttributeLinkingListRowItem.xaml.cs" />
     <Compile Remove="Inventory\OccupancyTypesFromFile.xaml.cs" />
+    <Compile Remove="Utilities\DynamicTab.cs" />
+    <Compile Remove="Utilities\MapWindowControl.xaml.cs" />
+    <Compile Remove="Utilities\MapWindowWrapper.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +45,8 @@
     <Page Remove="GeoTech\FailureFunctionEditor.xaml" />
     <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
     <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
+    <Page Remove="Utilities\MapWindowControl.xaml" />
+    <Page Remove="Utilities\MapWindowWrapper.xaml" />
   </ItemGroup>
 	
   <ItemGroup>

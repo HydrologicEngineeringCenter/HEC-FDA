@@ -13,9 +13,6 @@ namespace HEC.FDA.ViewModel.Tabs
     /// </summary>
     public sealed class TabController : BaseViewModel
     {
-        private static readonly FdaLogging.FdaLogger logger = new FdaLogging.FdaLogger("TabController");
-
-
         private static readonly TabController _Instance = new TabController();
         
         private int _SelectedTabIndex;
@@ -24,9 +21,6 @@ namespace HEC.FDA.ViewModel.Tabs
 
 
         #region Properties
-
-        public MapWindowMapTreeViewConnector MWMTVConnector { get; set; }
-
         /// <summary>
         /// The list of tabs in the main UI
         /// </summary>
@@ -41,20 +35,7 @@ namespace HEC.FDA.ViewModel.Tabs
         public int SelectedDynamicTabIndex
         {
             get { return _SelectedTabIndex; }
-            set
-            {
-                _SelectedTabIndex = value; NotifyPropertyChanged();
-                //I don't like this one bit. It would be nice if we could pop the map window out etc
-                //Now i have to have access to the connector in this class which i don't want to do.
-                //I don't think this is even working, so probably get rid of it once i know how to update
-                //the map window when it is selected.
-                if (_SelectedTabIndex == 0 && MWMTVConnector != null)
-                {
-
-                    MWMTVConnector.UpdateMapWindow();
-                    //UpdateMapWindow();
-                }
-            }
+            set { _SelectedTabIndex = value; NotifyPropertyChanged();}
         }
         #endregion
 
@@ -145,14 +126,6 @@ namespace HEC.FDA.ViewModel.Tabs
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
-            //logger.LogInfo("testing the new fda logger.", typeof(CurveEditorVM), tab.BaseVM.Name);
-
-            //Logger.Fatal("Adding tab: {0}. Fatal message", tab.Header);
-            //Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
-            //Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
-            //Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);
-            //Logger.Debug("Adding tab: {0}. From ViewModel", tab.Header );
-
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
             {
@@ -170,7 +143,6 @@ namespace HEC.FDA.ViewModel.Tabs
                 tab.RemoveTabEvent += RemoveTab;
                 tab.PopWindowIntoTabEvent += PopWindowIntoTab;
                 tab.RemoveWindowEvent += RemoveWindow;
-                tab.PopTabIntoWindowDraggingEvent += PopTabIntoWindowDragging;
 
                 _Tabs.Add(tab);
                 SelectedDynamicTabIndex = Tabs.Count - 1;
@@ -261,18 +233,6 @@ namespace HEC.FDA.ViewModel.Tabs
             _Windows.Add(tabToPopOut);
             Navigate(tabToPopOut, true, false);
         }
-
-        private void PopTabIntoWindowDragging(object sender, EventArgs e)
-        {
-            DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
-            tabToPopOut.IsDragging = true;
-            _Tabs.Remove(tabToPopOut);
-            _Windows.Add(tabToPopOut);
-            Navigate(tabToPopOut, true, false);
-        }
         #endregion
-
-       
-
     }
 }

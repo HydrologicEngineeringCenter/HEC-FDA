@@ -317,10 +317,6 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:DynamicTabVM }" >
             <UtilitiesView:TabHeaderControl/>
         </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type UtilitiesVM:MapWindowControlVM }" >
-            <UtilitiesView:MapWindowWrapper/>
-        </DataTemplate>
 
         <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>

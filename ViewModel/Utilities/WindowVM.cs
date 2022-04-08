@@ -11,10 +11,6 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Fields
         private string _Title;
         private BaseViewModel _currentViewModel;
-        private double _MinimumScaleFactor = .5;
-        private double _MaximumScaleFactor = 2.5;
-        private double _InitialScaleFactor = 1;
-        private bool _Scalable = false;
         #endregion
         #region Events
         public event LaunchNewWindowHandler LaunchNewWindow;
@@ -34,49 +30,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
         public IDynamicTab Tab { get; set; }
-        public double MinimumScaleFactor
-        {
-            get { return _MinimumScaleFactor; }
-            set
-            {
-                _MinimumScaleFactor = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(CurrentScaleFactor));
-            }
-        }
-        public double MaximumScaleFactor
-        {
-            get { return _MaximumScaleFactor; }
-            set
-            {
-                _MaximumScaleFactor = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(CurrentScaleFactor));
-            }
-        }
-        public double InitialScaleFactor
-        {
-            get { return _InitialScaleFactor; }
-            set
-            {
-                _InitialScaleFactor = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(CurrentScaleFactor));
-            }
-        }
-        public string CurrentScaleFactor
-        {
-            get { return _InitialScaleFactor.ToString("#0%"); }
-        }
-        public bool Scalable
-        {
-            get { return _Scalable; }
-            set
-            {
-                _Scalable = value;
-                NotifyPropertyChanged();
-            }
-        }
+
         public string Title
         {
             get { return _Title; }
@@ -109,7 +63,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             Tab = tab;
             CurrentView = tab.BaseVM;
-            Title = tab.Header; //vm.GetType().Name;
+            Title = tab.Header;
 
             //the view windows size is bound to these properties. Set the 
             //dimensions to be what the CurrentView VM wants to be.
@@ -127,41 +81,16 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (newWindow)
                 {
                     WindowVM tmp = new WindowVM(tab);
-                    tmp.Scalable = true;
                     tmp.Title = tab.Header;
                     LaunchNewWindow(tmp,asDialog);
                 }
                 else
                 {
-                    //if(StudyVM.Tabs == null)
-                    //{
-                    //    StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<IDynamicTab>();
-                    //}
-                    //vm.CanPopIn = true;
-                    //DynamicTabVM tab = new DynamicTabVM(title, vm, true);
-                   
-                    //old tab method
-                    //StudyVM.AddTab(tab);
-                    //new tab method
                     TabController tabFactory = TabController.Instance;
                     tabFactory.AddTab(tab);
-                   
-                    
-                    // StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
-                    //CurrentView = vm;
                 }
-            }else
-            {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A new window launch was requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
-
         }
-
-        
-
         #endregion
-        #region Functions
-        #endregion
-
     }
 }
