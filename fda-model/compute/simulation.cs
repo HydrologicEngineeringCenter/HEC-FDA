@@ -427,7 +427,15 @@ namespace compute
 
                 if (_frequency_stage.IsNull)
                 {
-                    IPairedData frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_flow, 1000);
+                    IPairedData frequencyFlow;
+                    if (_frequency_flow_graphical.IsNull)
+                    {
+                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_flow, 1000);
+                    }
+                    else
+                    {
+                        frequencyFlow = _frequency_flow_graphical.SamplePairedData(meanRandomProvider.NextRandom());
+                    }
                     if (_inflow_outflow.IsNull)
                     {
                         if (_flow_stage.IsNull)
