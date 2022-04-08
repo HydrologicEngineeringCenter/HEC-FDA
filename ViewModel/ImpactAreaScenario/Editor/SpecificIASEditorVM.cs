@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedExteriorInteriorElement;
         private bool _showEAD;
         private double _EAD;
-        PairedData _DamageFrequencyCurve = null;
+        private PairedData _DamageFrequencyCurve = null;
 
 
         public ImpactAreaRowItem CurrentImpactArea { get; }
@@ -482,8 +482,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 try
                 {
                     metrics.Results result = simulation.PreviewCompute();
-                    //metrics.Results results = simulation.PreviewCompute(randomProvider, cc);
-                    //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
                     EAD = result.ExpectedAnnualDamageResults.MeanEAD("Total");
                 }
                 catch (Exception ex)

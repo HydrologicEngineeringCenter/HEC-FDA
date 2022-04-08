@@ -1,17 +1,16 @@
 ﻿using compute;
-using paireddata;
-using Statistics;
-using System.Collections.Generic;
-using System.Linq;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
-using static compute.Simulation;
-using metrics;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Events;
+using metrics;
+using paireddata;
+using Statistics;
+using System.Collections.Generic;
+using System.Linq;
+using static compute.Simulation;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
