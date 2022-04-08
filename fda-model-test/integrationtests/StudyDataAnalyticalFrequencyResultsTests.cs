@@ -28,7 +28,6 @@ namespace fda_model_test
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static int id = 1;
 
 
         static IDistribution[] StageDistributions =
