@@ -13,7 +13,7 @@ using Statistics.Distributions;
 namespace fda_model_test
 {
     [Trait("Category","Integration")]
-    public class StudyDataResultsTests
+    public class StudyDataAnalyticalFrequencyResultsTests
     {
 
         /// <summary>
