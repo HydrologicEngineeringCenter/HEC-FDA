@@ -75,18 +75,6 @@ namespace Statistics.GraphicalRelationships
                 _FlowOrStageDistributions = value;
             }
         }
-        [Stored(Name = "UsingFlows", type = typeof(bool))]
-        public bool UsingFlows
-        {
-            get
-            {
-                return _UsingFlows;
-            }
-            set
-            {
-                _UsingFlows = value;
-            }
-        }
         //TODO: Add validation and set these properties 
         public IMessageLevels State { get; private set; }
 
