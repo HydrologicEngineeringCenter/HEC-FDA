@@ -36,7 +36,7 @@ namespace Statistics.GraphicalRelationships
         /// <summary>
         /// _FlowOrStageDistributions represet the set of normal distributions with mean and standard deviation computed using the less simple method
         /// </summary>
-        private Normal[] _StageOrLogFlowDistributions;
+        private ContinuousDistribution[] _StageOrLogFlowDistributions;
         #endregion
 
         #region Properties
@@ -74,7 +74,7 @@ namespace Statistics.GraphicalRelationships
             }
         }
         [Stored(Name = "FlowOrStageDistributions", type = typeof(IDistribution[]))]
-        public Normal[] StageOrLogFlowDistributions
+        public ContinuousDistribution[] StageOrLogFlowDistributions
         {
             get
             {
@@ -148,11 +148,11 @@ namespace Statistics.GraphicalRelationships
             {
                 if (unloggedFlows[i] < minFlow)
                 {
-                    loggedFlows[i] = Math.Log10(minFlow);
+                    loggedFlows[i] = Math.Log(minFlow);
                 }
                 else
                 {
-                    loggedFlows[i] = Math.Log10(unloggedFlows[i]);
+                    loggedFlows[i] = Math.Log(unloggedFlows[i]);
                 }
             }
             return loggedFlows;
@@ -171,7 +171,7 @@ namespace Statistics.GraphicalRelationships
             _ExpandedStageOrLogFlowValues = interpolatedQuantiles.ComputeQuantiles(finalProbabilities.ToArray());
             _FinalExceedanceProbabilities = finalProbabilities.ToArray();
             _StageOrLogFlowStandardErrorsComputed = ComputeStandardDeviations(useConstantStandardError, lowerExceedanceProbabilityHoldStandardErrorConstant, higherExceedanceProbabilityHoldStandardErrorConstant);
-            _StageOrLogFlowDistributions = ConstructNormalDistributions();
+            _StageOrLogFlowDistributions = ConstructContinuousDistributions();
         }
 
         public void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
@@ -365,14 +365,27 @@ namespace Statistics.GraphicalRelationships
 
             return _scurve;
         }
-        private Normal[] ConstructNormalDistributions()
+        private ContinuousDistribution[] ConstructContinuousDistributions()
         {
-            Normal[] distributionArray = new Normal[_StageOrLogFlowStandardErrorsComputed.Length];
-            for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
+            ContinuousDistribution[] distributionArray = new ContinuousDistribution[_StageOrLogFlowStandardErrorsComputed.Length];
+            
+            if (_UsingStagesNotFlows)
             {
-                distributionArray[i] = new Distributions.Normal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
+                for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
+                {
+                    distributionArray[i] = new Distributions.Normal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
+                }
+                return distributionArray;
             }
-            return distributionArray;
+            else
+            {
+                for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
+                {
+                    distributionArray[i] = new Distributions.LogNormal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
+                }
+                return distributionArray;
+            }
+
         }
         /// <summary>
         /// This is Equation 6 from CPD-72a HEC-FDA Technical Reference 
