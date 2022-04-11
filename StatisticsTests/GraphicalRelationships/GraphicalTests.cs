@@ -38,7 +38,7 @@ namespace StatisticsTests.GraphicalRelationships
                 int idx = exceedanceProbabilityList.IndexOf(exceedanceProbabilities[i]);
                 if (idx >= 0)
                 {
-                    computedStandardDeviations[i] = graphical.FlowOrStageDistributions[idx].StandardDeviation;
+                    computedStandardDeviations[i] = graphical.StageOrLogFlowDistributions[idx].StandardDeviation;
                     confirmExceedanceProbabilities[i] = graphical.ExceedanceProbabilities[idx];
                 }
             }
@@ -77,7 +77,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Normal[] dists = graphical.FlowOrStageDistributions;
+            Normal[] dists = graphical.StageOrLogFlowDistributions;
             double[] means = new double[dists.Length];
             for (int i = 0; i < dists.Length; i++)
             {
@@ -97,7 +97,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Normal[] dists = graphical.FlowOrStageDistributions;
+            Normal[] dists = graphical.StageOrLogFlowDistributions;
             double[] prob = graphical.ExceedanceProbabilities;
             Assert.Equal(dists.Length, prob.Length);
         }

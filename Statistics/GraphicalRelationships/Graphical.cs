@@ -17,9 +17,10 @@ namespace Statistics.GraphicalRelationships
         private double _MinimumExceedanceProbability; //the minimum exceedanace probability possible in the frequency curve
         private double _Tolerance = 0.0001;
         private int _SampleSize;
-        private double[] _ExpandedFlowOrStageValues;
-        private double[] _FlowOrStageStandardErrorsComputed;
-        private double[] _FinalProbabilities;
+        private double[] _ExpandedStageOrLogFlowValues;
+        private double[] _StageOrLogFlowStandardErrorsComputed;
+        private double[] _FinalExceedanceProbabilities;
+        private bool _UsingStagesNotFlows;
         /// <summary>
         /// _InputExceedanceProbabilities represents the 8 or so exceedance probabilities passed into the constructor 
         /// </summary>
@@ -27,7 +28,7 @@ namespace Statistics.GraphicalRelationships
         /// <summary>
         /// _InputFlowOrStageValues represent the 8 or so flow or stage values passed into the constructor 
         /// </summary>
-        private double[] _InputFlowOrStageValues;
+        private double[] _InputStageOrUnLoggedFlowValues;
         /// <summary>
         /// _ExceedanceProbabilities represent the interpolated and extrapolated set of exceedance probabilities. These are the compute points in HEC-FDA Version 1.4.3
         /// </summary>
@@ -35,10 +36,19 @@ namespace Statistics.GraphicalRelationships
         /// <summary>
         /// _FlowOrStageDistributions represet the set of normal distributions with mean and standard deviation computed using the less simple method
         /// </summary>
-        private Normal[] _FlowOrStageDistributions;
+        private Normal[] _StageOrLogFlowDistributions;
         #endregion
 
         #region Properties
+        [Stored(Name ="Using Stages Not Flows", type = typeof(bool))]
+        public bool UsingStagesNotFlows
+        {
+            get
+            {
+                return _UsingStagesNotFlows;
+            }
+        }
+
         [Stored(Name = "Sample Size", type = typeof(int))]
         public int SampleSize
         {
@@ -56,23 +66,23 @@ namespace Statistics.GraphicalRelationships
         {
             get
             {
-                return _FinalProbabilities;
+                return _FinalExceedanceProbabilities;
             }
             set
             {
-                _FinalProbabilities = value;
+                _FinalExceedanceProbabilities = value;
             }
         }
         [Stored(Name = "FlowOrStageDistributions", type = typeof(IDistribution[]))]
-        public Normal[] FlowOrStageDistributions
+        public Normal[] StageOrLogFlowDistributions
         {
             get
             {
-                return _FlowOrStageDistributions;
+                return _StageOrLogFlowDistributions;
             }
             set
             {
-                _FlowOrStageDistributions = value;
+                _StageOrLogFlowDistributions = value;
             }
         }
         //TODO: Add validation and set these properties 
@@ -89,18 +99,25 @@ namespace Statistics.GraphicalRelationships
         /// TODO: Add validation
         /// </summary>
         /// <param name="exceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
-        /// <param name="flowOrStageValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
+        /// <param name="stageOrUnloggedFlowValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
         /// <param name="maximumProbability"></param> The maximum exceedance probability used in the frequency relationship.
         /// <param name="minimumProbability"></param> The minimum exceedance probability used in the frequency relationship. 
       
-        public Graphical(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        public Graphical(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             _SampleSize = equivalentRecordLength;
             _InputExceedanceProbabilities = exceedanceProbabilities;
             _MaximumExceedanceProbability = maximumProbability;
             _MinimumExceedanceProbability = minimumProbability;
-            _InputFlowOrStageValues = flowOrStageValues;
+            _UsingStagesNotFlows = usingStagesNotFlows;
+            if (_UsingStagesNotFlows)
+            {
+                _InputStageOrUnLoggedFlowValues = stageOrUnloggedFlowValues;
+            } else
+            {
+                _InputStageOrUnLoggedFlowValues = LogFlows(stageOrUnloggedFlowValues);
+            }
             AddRules();
         }
         #endregion
@@ -109,7 +126,7 @@ namespace Statistics.GraphicalRelationships
         private void AddRules()
         {
                 AddSinglePropertyRule(nameof(_InputExceedanceProbabilities), new Rule(() => IsArrayValid(_InputExceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
-                AddSinglePropertyRule(nameof(_InputFlowOrStageValues), new Rule(() => IsArrayValid(_InputFlowOrStageValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+                AddSinglePropertyRule(nameof(_InputStageOrUnLoggedFlowValues), new Rule(() => IsArrayValid(_InputStageOrUnLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -123,6 +140,23 @@ namespace Statistics.GraphicalRelationships
             }
             return true;
         }
+        private double[] LogFlows(double[] unloggedFlows)
+        {
+            double[] loggedFlows = new double[unloggedFlows.Length];
+            double minFlow = 0.01; //for log conversion not to fail 
+            for (int i = 0; i < unloggedFlows.Length; i++)
+            {
+                if (unloggedFlows[i] < minFlow)
+                {
+                    loggedFlows[i] = Math.Log10(minFlow);
+                }
+                else
+                {
+                    loggedFlows[i] = Math.Log10(unloggedFlows[i]);
+                }
+            }
+            return loggedFlows;
+        }
         /// <summary>
         /// This method implements the less simple method to compute confidence limits about a graphical frequency relationship. 
         /// </summary>
@@ -133,11 +167,11 @@ namespace Statistics.GraphicalRelationships
         {   
             ExtendFrequencyCurveBasedOnNormalProbabilityPaper();
             List<double> finalProbabilities = GetFinalProbabilities();
-            InterpolateQuantiles interpolatedQuantiles = new InterpolateQuantiles(_InputFlowOrStageValues, _InputExceedanceProbabilities);
-            _ExpandedFlowOrStageValues = interpolatedQuantiles.ComputeQuantiles(finalProbabilities.ToArray());
-            _FinalProbabilities = finalProbabilities.ToArray();
-            _FlowOrStageStandardErrorsComputed = ComputeStandardDeviations(useConstantStandardError, lowerExceedanceProbabilityHoldStandardErrorConstant, higherExceedanceProbabilityHoldStandardErrorConstant);
-            _FlowOrStageDistributions = ConstructNormalDistributions();
+            InterpolateQuantiles interpolatedQuantiles = new InterpolateQuantiles(_InputStageOrUnLoggedFlowValues, _InputExceedanceProbabilities);
+            _ExpandedStageOrLogFlowValues = interpolatedQuantiles.ComputeQuantiles(finalProbabilities.ToArray());
+            _FinalExceedanceProbabilities = finalProbabilities.ToArray();
+            _StageOrLogFlowStandardErrorsComputed = ComputeStandardDeviations(useConstantStandardError, lowerExceedanceProbabilityHoldStandardErrorConstant, higherExceedanceProbabilityHoldStandardErrorConstant);
+            _StageOrLogFlowDistributions = ConstructNormalDistributions();
         }
 
         public void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
@@ -146,7 +180,7 @@ namespace Statistics.GraphicalRelationships
             List<double> listOfInputExceedanceProbabilities = new List<double>();
             for (int i = 0; i < _InputExceedanceProbabilities.Count(); i++)
             {
-                listOfInputFlowOrStageValues.Add(_InputFlowOrStageValues[i]);
+                listOfInputFlowOrStageValues.Add(_InputStageOrUnLoggedFlowValues[i]);
                 listOfInputExceedanceProbabilities.Add(_InputExceedanceProbabilities[i]);
             }
 
@@ -193,7 +227,7 @@ namespace Statistics.GraphicalRelationships
                 listOfInputFlowOrStageValues.Add(upperFlowOrStage);
                 listOfInputExceedanceProbabilities.Add(_MinimumExceedanceProbability);
             }
-            _InputFlowOrStageValues = listOfInputFlowOrStageValues.ToArray();
+            _InputStageOrUnLoggedFlowValues = listOfInputFlowOrStageValues.ToArray();
             _InputExceedanceProbabilities = listOfInputExceedanceProbabilities.ToArray();
         }
 
@@ -267,9 +301,9 @@ namespace Statistics.GraphicalRelationships
             double diffHi = 0;
             double diffLo = 0;
             double p;
-            for (int i = 0; i < _FinalProbabilities.Count(); i++)
+            for (int i = 0; i < _FinalExceedanceProbabilities.Count(); i++)
             {
-                p = _FinalProbabilities[i];
+                p = _FinalExceedanceProbabilities[i];
                 diffHi = Math.Abs(p - lowerExceedanceProbabilityHoldStandardErrorConstant);
                 diffLo = Math.Abs(p - higherExceedanceProbabilityHoldStandardErrorConstant);
 
@@ -290,27 +324,27 @@ namespace Statistics.GraphicalRelationships
             double p2;
             double slope;
             double standardErrorSquared;
-            double[] _scurve = new double[_FinalProbabilities.Count()];
+            double[] _scurve = new double[_FinalExceedanceProbabilities.Count()];
             
-            for (int i = 1; i < _FinalProbabilities.Count() - 1; i++)
+            for (int i = 1; i < _FinalExceedanceProbabilities.Count() - 1; i++)
             {
-                p = 1 - _FinalProbabilities[i];
-                p2 = 1 - _FinalProbabilities[i + 1];
-                p1 = 1 - _FinalProbabilities[i - 1];
-                slope = (_ExpandedFlowOrStageValues[i + 1] - _ExpandedFlowOrStageValues[i - 1]) / (p2 - p1);
+                p = 1 - _FinalExceedanceProbabilities[i];
+                p2 = 1 - _FinalExceedanceProbabilities[i + 1];
+                p1 = 1 - _FinalExceedanceProbabilities[i - 1];
+                slope = (_ExpandedStageOrLogFlowValues[i + 1] - _ExpandedStageOrLogFlowValues[i - 1]) / (p2 - p1);
                 _scurve[i] = Equation6StandardError(p, slope);
 
                 //hold slope constant and calculate standard error for the first coordinate
                 if (i == 1)
                 { 
-                    p = 1 - _FinalProbabilities[i - 1];
+                    p = 1 - _FinalExceedanceProbabilities[i - 1];
                     _scurve[i - 1] = Equation6StandardError(p, slope);
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == _FinalProbabilities.Count() -2 )
+                if (i == _FinalExceedanceProbabilities.Count() -2 )
                 {
-                    p = 1 - _FinalProbabilities[i + 1];
+                    p = 1 - _FinalExceedanceProbabilities[i + 1];
                     standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * _SampleSize);
                     _scurve[i +1 ] = Math.Sqrt(standardErrorSquared);
                 }
@@ -319,7 +353,7 @@ namespace Statistics.GraphicalRelationships
             //            !Hold standard Error Constant
             if (useConstantStandardError)
             {
-                for (int i = ixSlopeHiConst; i < _FinalProbabilities.Count(); i++)
+                for (int i = ixSlopeHiConst; i < _FinalExceedanceProbabilities.Count(); i++)
                 {
                     _scurve[i] = _scurve[ixSlopeHiConst];
                 }
@@ -333,10 +367,10 @@ namespace Statistics.GraphicalRelationships
         }
         private Normal[] ConstructNormalDistributions()
         {
-            Normal[] distributionArray = new Normal[_FlowOrStageStandardErrorsComputed.Length];
-            for (int i = 0; i < _FlowOrStageStandardErrorsComputed.Length; i++)
+            Normal[] distributionArray = new Normal[_StageOrLogFlowStandardErrorsComputed.Length];
+            for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
             {
-                distributionArray[i] = new Distributions.Normal(_ExpandedFlowOrStageValues[i], _FlowOrStageStandardErrorsComputed[i]);
+                distributionArray[i] = new Distributions.Normal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
             }
             return distributionArray;
         }

@@ -79,7 +79,7 @@ namespace paireddata
             graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
-            _NonMontonicDistributions = graphical.FlowOrStageDistributions;
+            _NonMontonicDistributions = graphical.StageOrLogFlowDistributions;
             _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions);
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions);
             _EquivalentRecordLength = equivalentRecordLength;
