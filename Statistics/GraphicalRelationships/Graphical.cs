@@ -188,7 +188,7 @@ namespace Statistics.GraphicalRelationships
                 double zValueOfLastInputProbability = standardNormalDistribution.InverseCDF(lastInputExceedanceProbability);
                 double penultimateInputFlowOrStage = listOfInputFlowOrStageValues[listOfInputFlowOrStageValues.Count - 2];
                 double lastInputFlowOrStage = listOfInputFlowOrStageValues.Last();
-                double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability);
+                double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability); //TODO: figure out what c represents and give it a good name
                 double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
                 listOfInputFlowOrStageValues.Add(upperFlowOrStage);
                 listOfInputExceedanceProbabilities.Add(_MinimumExceedanceProbability);
