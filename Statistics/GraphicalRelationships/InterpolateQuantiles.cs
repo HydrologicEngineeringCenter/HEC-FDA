@@ -28,17 +28,17 @@ namespace Statistics.Graphical
                 p = probabilities[i];
                 xn = standardNormalDistribution.InverseCDF(p);
                 //
-                for (int j = 0; j < _InputXValues.Count(); j++)
+                for (int j = 0; j < _InputXValues.Count(); j++) //look over input exceedance probabilities
                 {
-                    if ((p - _InputYValues[j]) > -1.0e-5)
+                    if ((p - _InputYValues[j]) > -1.0e-5) //if the required exceedance probability matches the input exceedance probability
                     {
-                        inputOrdinate = j;
+                        inputOrdinate = j; //get the index of the input flow or exceedance value 
                         break;
                     }
                 }
-                if (inputOrdinate == 0)
+                if (inputOrdinate == 0) //if the index is for the first input flow or stage value
                 {
-                    output[i] = _InputXValues[inputOrdinate];
+                    output[i] = _InputXValues[inputOrdinate];  
 
                 }
                 else

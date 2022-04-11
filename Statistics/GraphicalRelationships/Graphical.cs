@@ -13,8 +13,8 @@ namespace Statistics.GraphicalRelationships
     public class Graphical: HEC.MVVMFramework.Base.Implementations.Validation
     {
         #region Fields
-        private double _pMax; //the maximum exceedance probability possible in the frequency curve
-        private double _pMin; //the minimum exceedanace probability possible in the frequency curve
+        private double _MaximumExceedanceProbability; //the maximum exceedance probability possible in the frequency curve
+        private double _MinimumExceedanceProbability; //the minimum exceedanace probability possible in the frequency curve
         private double _Tolerance = 0.0001;
         private int _SampleSize;
         private double[] _ExpandedFlowOrStageValues;
@@ -36,7 +36,6 @@ namespace Statistics.GraphicalRelationships
         /// _FlowOrStageDistributions represet the set of normal distributions with mean and standard deviation computed using the less simple method
         /// </summary>
         private Normal[] _FlowOrStageDistributions;
-        private bool _UsingFlows;
         #endregion
 
         #region Properties
@@ -111,8 +110,8 @@ namespace Statistics.GraphicalRelationships
         {
             _SampleSize = equivalentRecordLength;
             _InputExceedanceProbabilities = exceedanceProbabilities;
-            _pMax = maximumProbability;
-            _pMin = minimumProbability;
+            _MaximumExceedanceProbability = maximumProbability;
+            _MinimumExceedanceProbability = minimumProbability;
             _InputFlowOrStageValues = flowOrStageValues;
             AddRules();
         }
@@ -155,60 +154,59 @@ namespace Statistics.GraphicalRelationships
 
         public void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
         {
-            List<double> xvals = new List<double>();
-            List<double> yvals = new List<double>();
+            List<double> listOfInputFlowOrStageValues = new List<double>();
+            List<double> listOfInputExceedanceProbabilities = new List<double>();
             for (int i = 0; i < _InputExceedanceProbabilities.Count(); i++)
             {
-                xvals.Add(_InputFlowOrStageValues[i]);
-                yvals.Add(_InputExceedanceProbabilities[i]);
+                listOfInputFlowOrStageValues.Add(_InputFlowOrStageValues[i]);
+                listOfInputExceedanceProbabilities.Add(_InputExceedanceProbabilities[i]);
             }
 
             //more frequent of the frequency curve
-            if (_pMax - yvals.First() > _Tolerance)
+            if (_MaximumExceedanceProbability - listOfInputExceedanceProbabilities.First() > _Tolerance)
             { //if the maximum exceedance probability is sufficiently larger than the largest exceedance probabiltiy 
 
 
                 // let x1 be the lowest value in xvals 
-                double xl = xvals[0];
+                double smallestInputFlowOrStage = listOfInputFlowOrStageValues[0];
 
                 //insert the maximum probability into the first location 
-                yvals.Insert(0, _pMax);
+                listOfInputExceedanceProbabilities.Insert(0, _MaximumExceedanceProbability);
                
-                if (xl < 0) { xvals.Insert(0, 1.001 * xl); } //if the first value is negative then make it slightly more negative
+                if (smallestInputFlowOrStage < 0) { listOfInputFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
 
-                if (xl > 0)
+                if (smallestInputFlowOrStage > 0)
                 {
-                    xvals.Insert(0, .999 * xl);
+                    listOfInputFlowOrStageValues.Insert(0, .999 * smallestInputFlowOrStage);
                 } //insert a slightly smaller value 
 
-                else if (xl < -1.0e-4)
+                else if (smallestInputFlowOrStage < -1.0e-4)
                 {
-                    xvals[0] = 1.001 * xl;//why are we doing it a second time?
+                    listOfInputFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
                 }                   
                 else
                 {
-                    xvals.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
+                    listOfInputFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
                 } 
             }
             //less frequent end of the frequency curve
-            if (yvals.Last() - _pMin > _Tolerance)
+            if (listOfInputExceedanceProbabilities.Last() - _MinimumExceedanceProbability > _Tolerance)
             {
                 Distributions.Normal standardNormalDistribution = new Distributions.Normal();
-                double probabilityLower = _pMin;
-                double p1 = yvals[yvals.Count - 2];
-                double p2 = yvals.Last();
-                double xk = standardNormalDistribution.InverseCDF(probabilityLower);
-                double xk1 = standardNormalDistribution.InverseCDF(p1);
-                double xk2 = standardNormalDistribution.InverseCDF(p2);
-                double x1 = xvals[xvals.Count - 2];
-                double x2 = xvals.Last();
-                double c = (xk2 - xk1) / (xk - xk1);
-                double upperFlowOrStage = ((x2 - x1) + c * x1) / c;
-                xvals.Add(upperFlowOrStage);
-                yvals.Add(probabilityLower);
+                double penultimateInputExceedanceProbability = listOfInputExceedanceProbabilities[listOfInputExceedanceProbabilities.Count - 2];
+                double lastInputExceedanceProbability = listOfInputExceedanceProbabilities.Last();
+                double zValueOfMin = standardNormalDistribution.InverseCDF(_MinimumExceedanceProbability);
+                double zValueOfPenultimateInputProbability = standardNormalDistribution.InverseCDF(penultimateInputExceedanceProbability);
+                double zValueOfLastInputProbability = standardNormalDistribution.InverseCDF(lastInputExceedanceProbability);
+                double penultimateInputFlowOrStage = listOfInputFlowOrStageValues[listOfInputFlowOrStageValues.Count - 2];
+                double lastInputFlowOrStage = listOfInputFlowOrStageValues.Last();
+                double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability);
+                double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
+                listOfInputFlowOrStageValues.Add(upperFlowOrStage);
+                listOfInputExceedanceProbabilities.Add(_MinimumExceedanceProbability);
             }
-            _InputFlowOrStageValues = xvals.ToArray();
-            _InputExceedanceProbabilities = yvals.ToArray();
+            _InputFlowOrStageValues = listOfInputFlowOrStageValues.ToArray();
+            _InputExceedanceProbabilities = listOfInputExceedanceProbabilities.ToArray();
         }
 
         private List<double> GetFinalProbabilities()
