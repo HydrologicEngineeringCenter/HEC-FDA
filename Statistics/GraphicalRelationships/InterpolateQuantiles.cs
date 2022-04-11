@@ -18,7 +18,7 @@ namespace Statistics.Graphical
         }
         public double[] ComputeQuantiles(double[] finalExceedanceProbabilities)
         {
-            double[] output = new double[finalExceedanceProbabilities.Count()];
+            double[] quantiles = new double[finalExceedanceProbabilities.Count()];
             Distributions.Normal standardNormalDistribution = new Distributions.Normal();
             double exceedanceProbability;
             int inputOrdinate = 0;
@@ -35,7 +35,7 @@ namespace Statistics.Graphical
                 }
                 if (inputOrdinate == 0) //if the index is for the first input flow or stage value
                 {
-                    output[i] = _InputXValues[inputOrdinate];  
+                    quantiles[i] = _InputXValues[inputOrdinate];  
 
                 }
                 else
@@ -43,17 +43,17 @@ namespace Statistics.Graphical
                     if (_InputYValues[inputOrdinate - 1] < .99999)
                     {
                         double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(exceedanceProbability);
-                        double xk1 = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
-                        double xk2 = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
-                        output[i] = _InputXValues[inputOrdinate - 1] + ((zValueExceedanceProbability - xk1) / (xk2 - xk1)) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        double zValueSmallerInputExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
+                        double zValueLargerExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
+                        quantiles[i] = _InputXValues[inputOrdinate - 1] + ((zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability)) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
                     }
                     else//out at the tail, use linear interpolation...
                     {
-                        output[i] = _InputXValues[inputOrdinate - 1] + ((finalExceedanceProbabilities[i] - _InputYValues[inputOrdinate - 1]) / (_InputYValues[inputOrdinate] - _InputYValues[inputOrdinate - 1])) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        quantiles[i] = _InputXValues[inputOrdinate - 1] + ((finalExceedanceProbabilities[i] - _InputYValues[inputOrdinate - 1]) / (_InputYValues[inputOrdinate] - _InputYValues[inputOrdinate - 1])) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
                     }
                 }
             }
-            return output;
+            return quantiles;
         }
     }
 }
