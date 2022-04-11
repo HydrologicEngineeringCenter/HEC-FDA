@@ -152,23 +152,6 @@ namespace Statistics.GraphicalRelationships
             _FlowOrStageStandardErrorsComputed = ComputeStandardDeviations(useConstantStandardError, lowerExceedanceProbabilityHoldStandardErrorConstant, higherExceedanceProbabilityHoldStandardErrorConstant);
             _FlowOrStageDistributions = ConstructNormalDistributions();
         }
-      
-        private double[] LogFlows(double[] unloggedFlows)
-        {
-            double[] loggedFlows = new double[unloggedFlows.Length];
-            double minFlow = 0.01; //for log conversion not to fail 
-            for (int i = 0; i<unloggedFlows.Length; i++)
-            {
-                if (unloggedFlows[i] < minFlow)
-                {
-                    loggedFlows[i] = Math.Log10(minFlow);
-                } else
-                {
-                    loggedFlows[i] = Math.Log10(unloggedFlows[i]);
-                }
-            }
-            return loggedFlows;
-        }
 
         private void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
         {
