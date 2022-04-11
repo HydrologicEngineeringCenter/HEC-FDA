@@ -153,7 +153,7 @@ namespace Statistics.GraphicalRelationships
             _FlowOrStageDistributions = ConstructNormalDistributions();
         }
 
-        private void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
+        public void ExtendFrequencyCurveBasedOnNormalProbabilityPaper() //I think we need a better name. 
         {
             List<double> xvals = new List<double>();
             List<double> yvals = new List<double>();
