@@ -73,7 +73,9 @@ namespace HEC.FDA.View.Utilities
                         {
                             ContentPresenter cp = FindChildContentPresenter(item);
                             if (cp != null)
+                            {
                                 ItemsHolderPanel.Children.Remove(cp);
+                            }
                         }
                     }
 

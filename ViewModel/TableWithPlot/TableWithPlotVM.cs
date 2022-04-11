@@ -1,16 +1,18 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
-using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Events;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
-using System.Reflection;
-using System.Xml.Linq;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using paireddata;
 using System;
-using HEC.FDA.ViewModel.Utilities;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
@@ -19,7 +21,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public event EventHandler WasModified;
 
         #region Backing Fields
-        private PlotModel _plotModel;
+        private PlotModel _plotModel = new PlotModel();
         private ComputeComponentVM _computeComponentVM;
         private bool _plotExtended = true;
         private bool _tableExtended = true;
@@ -28,14 +30,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
 
         #region Properties
+        public bool ReverseXAxis
+        {
+            get { return _reverseXAxis; }
+        }
         public PlotModel PlotModel
         {
             get { return _plotModel; }
-            set
-            {
-                _plotModel = value;
-                NotifyPropertyChanged();
-            }
         }
         public ComputeComponentVM ComputeComponentVM
         {
@@ -75,25 +76,36 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private void Initialize()
         {
             _computeComponentVM.PropertyChanged += _computeComponentVM_PropertyChanged;
+            InitPlotModel(_plotModel);
+            SelectedItemToPlotModel();
+
+            AddHandlers();
+        }
+
+        public void InitModel()
+        {
             _plotModel = new PlotModel();
-            _plotModel.Title = _computeComponentVM.Name;
-            _plotModel.LegendPosition = LegendPosition.BottomRight;
+            InitPlotModel(_plotModel);
+            SelectedItemToPlotModel();
+        }
+
+        private void InitPlotModel(PlotModel plotModel)
+        {
+            plotModel.Title = _computeComponentVM.Name;
+            plotModel.LegendPosition = LegendPosition.BottomRight;
 
             if (_reverseXAxis)
             {
-                OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis()
+                LinearAxis x = new LinearAxis()
                 {
-                    Position = OxyPlot.Axes.AxisPosition.Bottom,
+                    Position = AxisPosition.Bottom,
                     StartPosition = 1,
                     EndPosition = 0
                 };
-                _plotModel.Axes.Add(x);
+                plotModel.Axes.Add(x);
             }
-
-            SelectedItemToPlotModel();
-            AddHandlers();
         }
-        
+
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
@@ -152,7 +164,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 DisplayAsLineAttribute dispAsLineAttribute = (DisplayAsLineAttribute)pi.GetCustomAttribute(typeof(DisplayAsLineAttribute));
                 if (dispAsLineAttribute != null)
                 {
-                    OxyPlot.Series.LineSeries lineSeries = new OxyPlot.Series.LineSeries();
+                    LineSeries lineSeries = new LineSeries();
                     lineSeries.Title = dispAsLineAttribute.DisplayName;
                     switch (dispAsLineAttribute.Color)
                     {

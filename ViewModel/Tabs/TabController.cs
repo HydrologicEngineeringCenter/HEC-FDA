@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -204,7 +205,6 @@ namespace HEC.FDA.ViewModel.Tabs
             return retval;
         }
         
-
         private void PopWindowIntoTab(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopIn = (DynamicTabVM)sender;
@@ -212,7 +212,13 @@ namespace HEC.FDA.ViewModel.Tabs
             //when the window closes it will call RemoveWindow()
             _Tabs.Add(tabToPopIn);
             SelectedDynamicTabIndex = Tabs.Count - 1;
-
+            if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)
+            {
+                //only one plot model can be linked to one plot view. An exception was getting thrown when trying
+                //to open this vm in a tab. It seems as thought the window was still holding onto a connection even
+                //though the window has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
+                curveEditorVM.TableWithPlot.InitModel();
+            }
         }
 
         private void RemoveWindow(object sender, EventArgs e)
@@ -231,6 +237,14 @@ namespace HEC.FDA.ViewModel.Tabs
             DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
             _Tabs.Remove(tabToPopOut);
             _Windows.Add(tabToPopOut);
+
+            if(tabToPopOut.BaseVM is CurveEditorVM curveEditorVM)
+            {
+                //only one plot model can be linked to one plot view. An exception was getting thrown when trying
+                //to open this vm in a window. It seems as thought the tab was still holding onto a connection even
+                //though the tab has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
+                curveEditorVM.TableWithPlot.InitModel();
+            }
             Navigate(tabToPopOut, true, false);
         }
         #endregion

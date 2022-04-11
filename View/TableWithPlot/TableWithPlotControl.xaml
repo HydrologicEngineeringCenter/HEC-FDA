@@ -32,7 +32,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" Visibility="{Binding Path=PlotExtended, Converter={StaticResource VisibileIfTrueConverter}}" MinWidth="200">
-                <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel}"/>
+                <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel, Mode=OneTime}" />
             </Grid>
         </Grid>
     </Grid>
