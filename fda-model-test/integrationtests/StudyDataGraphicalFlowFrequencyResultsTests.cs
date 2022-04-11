@@ -70,13 +70,8 @@ namespace fda_model_test.integrationtests
         [InlineData(1234, 105.55)]
         public void ComputeMeanEADWithIterations_Test(int seed, double expected)
         {
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, xLabel, yLabel, name);
-            double[] discharges = new double[stageDischargeFunctionDischarges.Length];
-            for (int i = 0; i < stageDischargeFunctionDischarges.Length; i++)
-            {
-                discharges[i] = Math.Log10(stageDischargeFunctionDischarges[i]);
-            }
-            UncertainPairedData stageDischarge = new UncertainPairedData(discharges, stageDischargeFunctionStageDistributions, xLabel, yLabel, name);
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, xLabel, yLabel, name, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, xLabel, yLabel, name);
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
