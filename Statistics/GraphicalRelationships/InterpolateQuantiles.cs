@@ -42,10 +42,10 @@ namespace Statistics.Graphical
                 {
                     if (_InputYValues[inputOrdinate - 1] < .99999)
                     {
-                        double xk = standardNormalDistribution.InverseCDF(finalExceedanceProbabilities[i]);
+                        double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(exceedanceProbability);
                         double xk1 = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
                         double xk2 = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
-                        output[i] = _InputXValues[inputOrdinate - 1] + ((xk - xk1) / (xk2 - xk1)) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        output[i] = _InputXValues[inputOrdinate - 1] + ((zValueExceedanceProbability - xk1) / (xk2 - xk1)) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
                     }
                     else//out at the tail, use linear interpolation...
                     {
