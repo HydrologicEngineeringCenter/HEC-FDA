@@ -28,7 +28,7 @@ namespace StatisticsTests.GraphicalRelationships
         public void GraphicalFunction_Test()
         {
 
-            Graphical graphical = new Graphical(exceedanceProbabilities, quantileValues, equivalentRecordLength, .999, .001);
+            Graphical graphical = new Graphical(exceedanceProbabilities, quantileValues, equivalentRecordLength, maximumProbability: .999, minimumProbability: .001);
             graphical.ComputeGraphicalConfidenceLimits();
             double[] computedStandardDeviations = new double[standardDeviations.Length];
             double[] confirmExceedanceProbabilities = new double[standardDeviations.Length];
@@ -38,7 +38,7 @@ namespace StatisticsTests.GraphicalRelationships
                 int idx = exceedanceProbabilityList.IndexOf(exceedanceProbabilities[i]);
                 if (idx >= 0)
                 {
-                    computedStandardDeviations[i] = graphical.StageOrLogFlowDistributions[idx].StandardDeviation;
+                    computedStandardDeviations[i] = ((Normal)graphical.StageOrLogFlowDistributions[idx]).StandardDeviation;
                     confirmExceedanceProbabilities[i] = graphical.ExceedanceProbabilities[idx];
                 }
             }
@@ -77,11 +77,11 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Normal[] dists = graphical.StageOrLogFlowDistributions;
+            Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] means = new double[dists.Length];
             for (int i = 0; i < dists.Length; i++)
             {
-                means[i] = dists[i].Mean;
+                means[i] = ((Normal)dists[i]).Mean;
             }
             foreach (double value in flows)
             {
@@ -97,7 +97,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Normal[] dists = graphical.StageOrLogFlowDistributions;
+            Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] prob = graphical.ExceedanceProbabilities;
             Assert.Equal(dists.Length, prob.Length);
         }

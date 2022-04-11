@@ -9,6 +9,7 @@ using Statistics.Distributions;
 
 namespace fda_model_test.unittests
 {
+    [Trait("Category", "Unit")]
     public class GraphicalUncertaintyPairedDataTests
     {
         private static string xLabel = "x label";
