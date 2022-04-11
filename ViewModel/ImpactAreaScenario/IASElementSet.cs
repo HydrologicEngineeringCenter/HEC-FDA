@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Xml.Linq;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -144,21 +145,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-            //this is kind of messy. Quite a bit of code to get the name of the impact area from the impact area id.
-            //todo: get a list of result objects
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            int i = 0;
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
                 string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
                 if (impactAreaName != null)
                 {
-                    //todo: put the _Results into here where it is null.
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, null);
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, _Results[i]);
                     results.Add(result);
                 }
+                i++;
             }
+
             return results;
         }
 
@@ -179,10 +180,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ViewResults(object arg1, EventArgs arg2)
         {
             List<SpecificIASResultVM> results = GetResults();
-            IASResultsVM resultViewer = new IASResultsVM(results);
-            string header = "Results for " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
-            Navigate(tab, false, false);
+            if (results.Count > 0)
+            {
+                IASResultsVM resultViewer = new IASResultsVM(results);
+                string header = "Results for " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
+                Navigate(tab, false, false);
+            }
+            else
+            {
+                MessageBox.Show("There are no results to display.", "No Results", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
         
         private void ComputeScenario(object arg1, EventArgs arg2)

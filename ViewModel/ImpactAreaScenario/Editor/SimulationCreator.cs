@@ -1,15 +1,16 @@
 ﻿using compute;
-using paireddata;
-using Statistics;
-using System.Collections.Generic;
-using System.Linq;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
-using static compute.Simulation;
+using HEC.FDA.ViewModel.Utilities;
 using metrics;
+using paireddata;
+using Statistics;
+using System.Collections.Generic;
+using System.Linq;
+using static compute.Simulation;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -45,6 +46,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             _ImpactAreaID = currentImpactAreaID;
 
             LoadSimulationBuilder();
+        }
+
+        public FdaValidationResult IsConfigurationValid()
+        {
+            FdaValidationResult vr = IsStageDamageValid();
+
+            return vr;
+        }
+        private FdaValidationResult IsStageDamageValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            //stage damages
+            List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+            if(stageDamageCurves.Count == 0)
+            {
+                //todo: maybe get the impact area name for this message?
+                vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
+                    "with the impact area.");
+            }
+            return vr;
         }
 
         private void LoadSimulationBuilder()
@@ -86,7 +107,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
+                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat));
             }
             return stageDamages;
         }

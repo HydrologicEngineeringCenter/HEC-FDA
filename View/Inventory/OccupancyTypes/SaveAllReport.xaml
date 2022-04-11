@@ -9,10 +9,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0" Content="The following occupancy types have errors that will prevent a compute. Do you want to save the data with errors?" Margin="5"/>
 
+        <ScrollViewer Grid.Row="1">
+            
         <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Groups}" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -64,8 +67,9 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        </ScrollViewer>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
             <Button  Content="Save" Click="SaveButton_Click" Width="40" Height="22" Margin="5,5,2,5"/>
             <Button Content="Cancel" Click="CancelButton_Click" Width="40" Height="22" Margin="5,5,2,5"/>
         </StackPanel>

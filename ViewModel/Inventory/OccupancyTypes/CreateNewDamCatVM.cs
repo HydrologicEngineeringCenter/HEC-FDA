@@ -38,7 +38,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
         private void AddValidationRules(List<string> bannedNames)
         {
-            base.AddValidationRules();
             foreach (string bannedName in bannedNames)
             {
                 AddRule(nameof(Name), () => {

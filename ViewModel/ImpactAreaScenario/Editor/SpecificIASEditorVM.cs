@@ -15,6 +15,9 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
+using metrics;
+using Statistics;
+using HEC.MVVMFramework.Base.Events;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -32,6 +35,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedExteriorInteriorElement;
         private bool _showEAD;
         private double _EAD;
+        private PairedData _DamageFrequencyCurve = null;
+
 
         public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
@@ -127,7 +132,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void Initialize()
         {
             _additionalThresholdsVM = new ThresholdsVM();
-            _additionalThresholdsVM.RequestNavigation += Navigate;
 
             LoadElements();
 
@@ -460,34 +464,54 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID);
 
-            Simulation simulation = sc.BuildSimulation();
+            int thresholdIndex = 1;
+            foreach (ThresholdRowItem thresholdRow in Thresholds)
+            {
+                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdRow.ThresholdValue);
+                sc.WithAdditionalThreshold(threshold);
+                thresholdIndex++;
+            }
 
-            MeanRandomProvider mrp = new MeanRandomProvider();
-            try
+            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            if(configurationValidationResult.IsValid)
             {
-                //metrics.Results result = simulation.Compute(mrp, 1);
-                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                //int i = 0;
+                Simulation simulation = sc.BuildSimulation();
+                simulation.MessageReport += MyMessageHandler;
+                MeanRandomProvider randomProvider = new MeanRandomProvider();
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                try
+                {
+                    metrics.Results result = simulation.PreviewCompute();
+                    EAD = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Setup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+    
         }
 
-        private List<UncertainPairedData> GetStageDamagesAsPairedData()
+        public void MyMessageHandler(object sender, MessageEventArgs e)
         {
-            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
-            List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
-            foreach (StageDamageCurve curve in stageDamageCurves)
-            {
-                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
-            }
-            return stageDamages;
-        }
+            //The following 3 messages are coming into here.
+            //default
+            //Ead message
+            //total
 
+            if (e.Message is FrequencyDamageMessage damageMessage)
+            {
+                //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
+                if(e.Message.Message.Equals("default"))
+                {
+                    _DamageFrequencyCurve = damageMessage.FrequencyDamage;
+                }
+            }
+        }
 
         #region PlotCurves
         private UncertainPairedData getFrequencyRelationshipFunction()
@@ -508,7 +532,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             UncertainPairedData retval = null;
             if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
             {
-                //todo: do i cast to curveChildElem or do i change the row item to hold a curve child elem, or do i make a new row item
                 CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
                 retval = elem.ComputeComponentVM.SelectedItemToPairedData();
             }
@@ -528,17 +551,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private UncertainPairedData getDamageFrequencyFunction()
         {
-            //todo: this will be the result from the compute. I don't think we need this method once the compute is happening.
-            double[] xs = new double[10];
-            Normal[] ys = new Normal[10];
-            for (int i = 0; i < 10; i++)
+            UncertainPairedData curve = null;
+            if (_DamageFrequencyCurve != null)
             {
-                xs[i] = i;
-                ys[i] = new Normal(i, 0);
-            }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, "Stage", "Damage", "Stage-Damage", "");
-            return curve;
+                double[] xs = _DamageFrequencyCurve.Xvals;
+                double[] ys = _DamageFrequencyCurve.Yvals;
+                IDistribution[] yDists = new IDistribution[ys.Length];
+                for (int i = 0; i < ys.Length; i++)
+                {
+                    yDists[i] = new Deterministic(ys[i]);
+                }
 
+                curve = new UncertainPairedData(xs, yDists, "Stage", "Damage", "Stage-Damage", "");
+            }
+            return curve;
         }
 
         public void Plot()
@@ -561,7 +587,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
                 PlotControlVM.Plot();
                 ShowWarnings = true;
-                EAD = .123;
                 ShowEAD = true;
             }
             else

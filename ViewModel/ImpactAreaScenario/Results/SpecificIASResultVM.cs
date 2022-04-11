@@ -86,11 +86,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #endregion
 
-        //todo: once we have the actual results object, that will be passed in here
         public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.Results iasResult)
         {
             _IASResult = iasResult;
-            LoadThresholdData(thresholds);
+            LoadThresholdData(iasResult);
             loadVMs();
             CurrentResultVM = _damageWithUncertaintyVM;
 
@@ -103,37 +102,34 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         }
 
-        private void LoadThresholdData(List<ThresholdRowItem> thresholdRows)
-        {            
-            //the thresholds being passed in from the specific ias doesn't include the "default"
-            //threshold. That needs to be added here.
-            List<ThresholdComboItem> comboItems = new List<ThresholdComboItem>();
-            //todo: After talking with Richard it sounds like this default threshold might not
-            //always be a constant value (it might depend on the study?). Update this when the new
-            //model and compute are finished.
-            Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
-            Threshold defaultMetric = new Threshold(-1,convergenceCriteria, ThresholdEnum.ExteriorStage, 5);
-            comboItems.Add(new ThresholdComboItem(defaultMetric));
-            foreach(ThresholdRowItem row in thresholdRows)
-            {              
-                comboItems.Add(new ThresholdComboItem(row.GetMetric()));
+        private void LoadThresholdData(metrics.Results iasResult)
+        {
+            Dictionary<int, Threshold> thresholdsDictionary = iasResult.PerformanceByThresholds.ThresholdsDictionary;
+            foreach(KeyValuePair<int, Threshold> threshold in thresholdsDictionary)
+            {
+                 ThresholdRowItem row = new ThresholdRowItem(threshold.Key, threshold.Value.ThresholdType, threshold.Value.ThresholdValue);
+                Thresholds.Add(new ThresholdComboItem(row.GetMetric()));
             }
 
-            Thresholds.AddRange( comboItems);
-            SelectedThreshold = comboItems[0];
+            if(Thresholds.Count > 0)
+            {
+                SelectedThreshold = Thresholds.First();
+            }
         }
 
 
         private void loadVMs()
         {
+            //todo: do i pass the results into all of these?
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
-            _damageByDamageCategoryVM = new DamageByDamageCategoryVM();
-            _performanceAEPVM = new PerformanceAEPVM(Thresholds);
-            _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(Thresholds);
-            _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(Thresholds);
-
+            _damageByDamageCategoryVM = new DamageByDamageCategoryVM(_IASResult);
+            _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
+            _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
+            _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(_IASResult, Thresholds);
+            _performanceAssuranceOfThresholdVM.updateSelectedMetric(SelectedThreshold);
+            _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(_IASResult, Thresholds);
+            _performanceLongTermRiskVM.updateSelectedMetric(SelectedThreshold);
         }
-
 
         private void ThresholdChanged()
         {
@@ -178,7 +174,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
 
         }
-
 
         private void SelectedOutcomeChanged()
         {

@@ -14,7 +14,7 @@
         
         <fda_view:FdaDataGrid Grid.Row="0" RowsAdded="MyDataGrid_RowsAdded"
                               x:Name="MyDataGrid" PreviewDeleteRows="MyDataGrid_PreviewDeleteRows" RowsDeleted="MyDataGrid_RowsDeleted"
-                              ItemsSource="{Binding Path=Data}" AutoGenerateColumns="True" SelectionUnit="Cell" >
+                              ItemsSource="{Binding Path=Data}" AutoGenerateColumns="True" CanUserSortColumns="false" SelectionUnit="Cell" >
             <DataGrid.Resources>
                 <Style x:Key="errorStyle" TargetType="{x:Type TextBox}">
                     <Style.Triggers>
