@@ -13,46 +13,6 @@ namespace StatisticsTests.GraphicalRelationships
     [Trait("Category", "Unit")]
     public class GraphicalTests
     {
-        /// <summary>
-        /// Test data based on Table 2.13 from "Uncertainty Estimates for Grahpical (Non-Analytic) Frequency Curves - HEC-FDA Technical Reference" CPD-72a
-        /// Standard deviations computed in Excel. See: https://drive.google.com/file/d/1CUAJ0UckcreU9Nis8edNvyadkHDymTZs/view?usp=sharing
-        /// </summary>
-        static double[] exceedanceProbabilities = new double[] { .99, .95, .90, .85, .8, .75, .7, .65, .6, .55, .5, .45, .4, .35, .3, .25, .2, .15, .1, .05, .02, .01, .005, .0025 };
-        static double[] quantileValues = new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 18.25, 19, 19.7, 20.3, 21.1, 21.95, 23, 24.2, 25.7, 27.4, 28.4, 29.1, 29.4 };
-        static double[] standardDeviations = new double[] { 0.366239124,1.055902721,1.710592003,2.355386115,2.459674775,2.275377716,2.049390153,2.079746078,2.19089023,1.891130614,1.732952683,1.66864466,1.588395417,1.386497386,1.434573107,1.59760563,1.699411663,1.796480935,1.811215062,1.949358869,2.113084239,2.521507486,2.102908039,1.460149895
- };
-        static int equivalentRecordLength = 20;
-
-
-        [Fact]
-        public void GraphicalFunction_Test()
-        {
-
-            Graphical graphical = new Graphical(exceedanceProbabilities, quantileValues, equivalentRecordLength, maximumProbability: .999, minimumProbability: .001);
-            graphical.ComputeGraphicalConfidenceLimits();
-            double[] computedStandardDeviations = new double[standardDeviations.Length];
-            double[] confirmExceedanceProbabilities = new double[standardDeviations.Length];
-            List<double> exceedanceProbabilityList = graphical.ExceedanceProbabilities.ToList();
-            for (int i = 0; i < exceedanceProbabilities.Length; i++)
-            {
-                int idx = exceedanceProbabilityList.IndexOf(exceedanceProbabilities[i]);
-                if (idx >= 0)
-                {
-                    computedStandardDeviations[i] = ((Normal)graphical.StageOrLogFlowDistributions[idx]).StandardDeviation;
-                    confirmExceedanceProbabilities[i] = graphical.ExceedanceProbabilities[idx];
-                }
-            }
-            //Spot check the standard deviation compute
-            //Interpolation logic makes it difficult to compute standard deviations externally
-            int[] indices = new int[] { 0, 11, 19 };
-            double tolerance = 0.01;
-            for (int i = 0; i < indices.Length; i++)
-            {
-                double relativeError = Math.Abs(standardDeviations[indices[i]] - computedStandardDeviations[indices[i]]) / computedStandardDeviations[indices[i]];
-                Assert.True(relativeError < tolerance);
-            }
-        }
-
         [Theory]
         [InlineData(new double[] { .99, .5, .1, .02, .01, .002 }, new double[] { 500, 2000, 34900, 66900, 86000, 146000 }, 10)] //Based on Elkhorn River at Highway 91 Dodge County FIS 2008
         [InlineData(new double[] { .99, .95, .90, .85, .8, .75, .7, .65, .6, .55, .5, .45, .4, .35, .3, .25, .2, .15, .1, .05, .02, .01, .005, .0025 },
@@ -141,6 +101,33 @@ namespace StatisticsTests.GraphicalRelationships
             }
         }
 
+        /// <summary>
+        /// Test data: https://docs.google.com/spreadsheets/d/1GhRe3ECAFIKgRqEE8Xo6f_0lHYnHqUW0/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        [Theory]
+        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, true, new double[] { 1509.709341, 1509.709341, 1509.709341, 1301.445858, 938.8908066, 808.033152, 744.7167479, 706.5653964, 681.6351651, 665.0216065, 654.3338407, 648.3264276, 936.6950816, 1518.409711, 1521.72264, 1527.325654, 1535.346512, 1545.975949, 1559.481499, 1576.228586, 1578.083495, 1604.155949, 1614.132482, 1624.903159, 1636.533478, 1649.098368, 1662.683898, 1677.389407, 1693.330149, 1710.640633, 1951.727123, 2444.050451, 2458.749416, 2474.122124, 2490.212619, 2507.069295, 2524.745459, 2543.299991, 2562.798112, 2583.31229, 2604.923306, 2627.721527, 2651.808416, 2677.298352, 2704.32083, 2733.023137, 2763.573636, 2796.165822, 2831.023388, 2868.406597, 3213.971137, 3560.721092, 3617.441053, 3679.148427, 3746.598515, 3820.719884, 3902.669555, 3993.911539, 3988.108179, 4111.327802, 4133.627306, 4156.500353, 4179.971818, 4204.068126, 4228.81738, 4254.2495, 4280.396379, 4307.292051, 4334.972887, 4363.477797, 4392.848473, 4423.129643, 4454.36937, 4486.619376, 4519.935408, 4554.377658, 4590.011227, 4626.906655, 4665.140523, 4704.796141, 4745.964326, 4788.744304, 4833.244742, 4879.584943, 4927.896225, 4978.323539, 5031.027349, 5086.185848, 5143.997574, 5204.684513, 5268.495807, 5335.712205, 5406.651447, 5481.674814, 5561.195163, 5645.686861, 5735.698178, 5831.866883, 6066.152997, 6570.886102, 6632.639747, 6696.793405, 6763.508959, 6832.96414, 6905.354588, 6980.896258, 7059.828225, 7142.415991, 7228.955379, 7319.777166, 7415.25261, 7515.800087, 7621.893119, 7734.070145, 7852.946505, 7979.22926, 8113.73567, 8257.416468, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428, 7900.752428 })]
+        //[InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, false, new double[] { 1.206231855, 1.206231855, 1.206231855, 0.289603274, 0.147164305, 0.108752318, 0.090920763, 0.080080975, 0.072647537, 0.067191684, 0.063016368, 0.059738529, 0.082510398, 0.128142493, 0.12282549, 0.118090615, 0.113861567, 0.110078444, 0.106694698, 0.103675137, 0.101002804, 0.099917003, 0.098983772, 0.098100751, 0.097267932, 0.096485621, 0.095754471, 0.09507553, 0.094450297, 0.093880799, 0.105633381, 0.130438049, 0.129700555, 0.128990953, 0.128309625, 0.12765705, 0.127033814, 0.126440622, 0.125878311, 0.125347868, 0.12485045, 0.124387406, 0.123960311, 0.123570994, 0.123221584, 0.122914559, 0.122652814, 0.122439731, 0.122279287, 0.122176168, 0.134756331, 0.146913767, 0.146602158, 0.146391636, 0.146294441, 0.146325818, 0.146504973, 0.146856446, 0.144823989, 0.147380399, 0.147522845, 0.147675515, 0.147838828, 0.148013228, 0.148199192, 0.148397224, 0.148607863, 0.148831685, 0.149069306, 0.149321385, 0.149588629, 0.149871797, 0.150171705, 0.150489229, 0.150825319, 0.151180996, 0.151557368, 0.151955635, 0.1523771, 0.15282318, 0.153295423, 0.153795518, 0.154325316, 0.15488685, 0.155482357, 0.156114309, 0.156785438, 0.157498784, 0.158257728, 0.159066056, 0.159928011, 0.160848378, 0.161832569, 0.162886738, 0.164017914, 0.16523417, 0.166544836, 0.167960756, 0.173587036, 0.186791006, 0.187640103, 0.188528207, 0.189457929, 0.190432139, 0.191453992, 0.19252697, 0.193654926, 0.194842137, 0.196093363, 0.197413928, 0.198809797, 0.200287694, 0.20185522, 0.20352101, 0.205294928, 0.207188293, 0.20921418, 0.211387781, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225, 0.200844225 })]
+        public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] expected)
+        {
+            Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows: usingStagesNotFlows);
+            graphical.ComputeGraphicalConfidenceLimits();
+            Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
+            for (int i = 0; i < actualDistributions.Length; i++)
+            {
+                double actual;
+                if (usingStagesNotFlows)
+                {
+                    actual = ((Normal)actualDistributions[i]).StandardDeviation;
+                }
+                else
+                {
+                    actual = ((LogNormal)actualDistributions[i]).StandardDeviation;
+                }
+                double tolerance = 0.025;
+                double relativeError = Math.Abs((actual - expected[i]) / expected[i]);
+                Assert.True(relativeError < tolerance);
+            }
+        }
 
     }
 }
