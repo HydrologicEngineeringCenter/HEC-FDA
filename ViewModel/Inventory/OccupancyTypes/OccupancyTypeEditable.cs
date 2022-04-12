@@ -233,6 +233,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 //if it has never been saved then we need a new occtype id for it.
                 ot.ID = manager.GetIdForNewOccType(ot.GroupID);
                 manager.SaveNewOccType(ot);
+                HasBeenSaved = true;
             }
 
             IsModified = false;
