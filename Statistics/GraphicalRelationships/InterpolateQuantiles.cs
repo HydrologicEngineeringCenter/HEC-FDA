@@ -45,7 +45,9 @@ namespace Statistics.Graphical
                         double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(exceedanceProbability);
                         double zValueSmallerInputExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
                         double zValueLargerExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
-                        quantiles[i] = _InputXValues[inputOrdinate - 1] + ((zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability)) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        double fractionOfQuantileDifference = ((zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability));
+                        quantiles[i] = fractionOfQuantileDifference * _InputXValues[inputOrdinate] + (1-fractionOfQuantileDifference)* _InputXValues[inputOrdinate - 1];
+                        
                     }
                     else//out at the tail, use linear interpolation...
                     {
