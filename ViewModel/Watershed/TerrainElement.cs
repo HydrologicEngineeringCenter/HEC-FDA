@@ -1,6 +1,8 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -66,7 +68,6 @@ namespace HEC.FDA.ViewModel.Watershed
             TerrainElement elem = (TerrainElement)elementToClone;
             return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
         }
-
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(_featureHashCode));
@@ -113,8 +114,31 @@ namespace HEC.FDA.ViewModel.Watershed
 
         public string GetTerrainPath()
         {
-            return Storage.Connection.Instance.TerrainDirectory + "\\" + Name + ".tif";
+            return Connection.Instance.TerrainDirectory + "\\" + Name + ".tif";
         }
+
+        public override void Rename(object sender, EventArgs e)
+        {
+            string originalName = Name;
+            RenameVM renameViewModel = new RenameVM(this, CloneElement);
+            string header = "Rename";
+            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
+            Navigate(tab);
+            if (!renameViewModel.WasCanceled)
+            {
+                string newName = renameViewModel.Name;
+                //rename the folders in the study.
+                if (!originalName.Equals(newName))
+                {
+                    string sourceFilePath = Connection.Instance.TerrainDirectory + "\\" + originalName;
+                    string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + newName;
+                    Directory.Move(sourceFilePath, destinationFilePath);
+                }
+                //rename the child table in the DB
+                //Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
+            }
+        }
+
         #endregion
     }
 }
