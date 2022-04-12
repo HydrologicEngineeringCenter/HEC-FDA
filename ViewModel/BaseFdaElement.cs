@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel
 {
-    public delegate void TransactionEventHandler(object sender, Utilities.Transactions.TransactionEventArgs args);
     /// <summary>
     /// Base class for all "elements" in FDA. Elements are broken into two categories- parents and children. This
     /// class contains all the shared functionality among all elements.

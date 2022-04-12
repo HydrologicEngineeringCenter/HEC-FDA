@@ -71,7 +71,6 @@
              
              xmlns:UtilitiesView="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UtilitiesVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             xmlns:TransactionsVM="clr-namespace:HEC.FDA.ViewModel.Utilities.Transactions;assembly=HEC.FDA.ViewModel"
              
              xmlns:WaterSurfaceElevationsView="clr-namespace:HEC.FDA.View.WaterSurfaceElevation"
              xmlns:WaterSurfaceElevationsVM="clr-namespace:HEC.FDA.ViewModel.WaterSurfaceElevation;assembly=HEC.FDA.ViewModel"
@@ -341,9 +340,9 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomHeaderVM }" >
             <UtilitiesView:CustomHeader/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type TransactionsVM:TransactionVM }" >
+        <!--<DataTemplate DataType="{x:Type TransactionsVM:TransactionVM }" >
             <UtilitiesView:TransactionView/>
-        </DataTemplate>
+        </DataTemplate>-->
         <!--Water Surface Elevations region-->
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>

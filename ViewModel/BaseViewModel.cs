@@ -1,11 +1,10 @@
 ﻿using FdaLogging;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 
 namespace HEC.FDA.ViewModel
 {
@@ -34,12 +33,6 @@ namespace HEC.FDA.ViewModel
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
-
-        
-
-        public TransactionEventHandler TransactionEvent;
-
-
 
         #endregion
         #region Fields
@@ -136,11 +129,6 @@ namespace HEC.FDA.ViewModel
         #endregion
         #region Voids     
 
-        public void AddTransaction(object sender, TransactionEventArgs transaction)
-        {
-            TransactionEvent?.Invoke(this, transaction);
-        }
-
         /// <summary>
         /// Virtual method that can be overriden in any view model class to add its own validation rules. 
         /// This gets called in the constructor of BaseViewModel.
@@ -182,11 +170,6 @@ namespace HEC.FDA.ViewModel
                 Error = errors.ToString().Remove(errors.ToString().Length - 2);
             }
 
-            if (this is IDisplayLogMessages)
-            {
-                ((IDisplayLogMessages)this).TempErrors = errorMessages;
-                ((IDisplayLogMessages)this).UpdateMessages(false);
-            }
             NotifyPropertyChanged(nameof(Error));
         }
 

@@ -1,13 +1,12 @@
 ﻿using FdaLogging;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.Editors
 {
-    public abstract class BaseLoggingEditorVM : BaseEditorVM, IDisplayLogMessages
+    public abstract class BaseLoggingEditorVM : BaseEditorVM
     {
         private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private LoggingLevel _SaveStatusLevel;

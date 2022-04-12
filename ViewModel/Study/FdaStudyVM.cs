@@ -1,8 +1,6 @@
-﻿
-using FdaLogging;
+﻿using FdaLogging;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +17,6 @@ namespace HEC.FDA.ViewModel.Study
         private StudyElement _StudyElement;
         private int _SelectedTab = 0;
         private int _SelectedTabIndex;
-        private ObservableCollection<TransactionRowItem> _TransactionRows;
         private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private bool _TransactionsMessagesVisible;
         private string _SaveStatus;
@@ -68,12 +65,6 @@ namespace HEC.FDA.ViewModel.Study
         {
             get { return _StudyElement; }
             set { _StudyElement = value; NotifyPropertyChanged(); }
-        }
-
-        public ObservableCollection<TransactionRowItem> TransactionRows
-        {
-            get { return _TransactionRows; }
-            set { _TransactionRows = value; NotifyPropertyChanged(); }
         }
 
         public ObservableCollection<FdaLogging.LogItem> MessageRows

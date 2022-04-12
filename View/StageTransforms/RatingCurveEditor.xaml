@@ -45,7 +45,6 @@
             <!--<Utilities:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />-->
             <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
         </Grid>
-        <Utilities:MessageExpanderControl Grid.Row="3" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Utilities:SaveControl />
             <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>

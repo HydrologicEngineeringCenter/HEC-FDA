@@ -300,8 +300,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
 
-                LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, result.ErrorMessage);
-                MessageRows.Add(logItem);
+                //LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, result.ErrorMessage);
+                //MessageRows.Add(logItem);
             }
             return upd;
         }
@@ -337,8 +337,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             else
             {
-                LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not save with an invalid function.");
-                MessageRows.Add(logItem);
+                //LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not save with an invalid function.");
+                //MessageRows.Add(logItem);
             }
         }
 

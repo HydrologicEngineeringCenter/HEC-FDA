@@ -123,7 +123,6 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
-            <utils:MessageExpanderControl ExpandedHeight="200" HeaderText="Messages" />
             <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,0" FontSize="10" />
         </Grid>
     </Grid>

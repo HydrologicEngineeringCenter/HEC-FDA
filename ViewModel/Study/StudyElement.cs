@@ -68,18 +68,12 @@ namespace HEC.FDA.ViewModel.Study
             save.Action = SaveStudy;
             save.IsEnabled = false;
 
-            NamedAction transactions = new NamedAction();
-            transactions.Header = "View Transactions";
-            transactions.Action = ViewTransactions;
-            transactions.IsEnabled = false;
-
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(create);
             localactions.Add(open);
             localactions.Add(importStudyFromOldFda);
             localactions.Add(properties);
             localactions.Add(save);
-            localactions.Add(transactions);
 
             NamedAction seperator = new NamedAction();
             seperator.Header = "seperator";
@@ -99,13 +93,6 @@ namespace HEC.FDA.ViewModel.Study
             localactions.Add(seperator);
 
             Actions = localactions;
-        }
-
-        private void ViewTransactions(object arg1, EventArgs arg2)
-        {
-            string header = "Transactions";
-            DynamicTabVM tab = new DynamicTabVM(header, new Utilities.Transactions.TransactionVM(), "Transactions");
-            Navigate(tab );
         }
 
         #endregion
@@ -235,7 +222,6 @@ namespace HEC.FDA.ViewModel.Study
             {
                 Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
-            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(studyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
             foreach (NamedAction action in Actions)
             {
                 if (action.Header == "Save Study")

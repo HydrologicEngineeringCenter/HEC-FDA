@@ -76,7 +76,6 @@ namespace HEC.FDA.ViewModel.Utilities
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
             ele.RequestAddToMapWindow += AddToMapWindow;
             ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            ele.TransactionEvent += AddTransaction;
             Elements.Insert(index,ele);
             
             IsExpanded = true;
@@ -91,7 +90,6 @@ namespace HEC.FDA.ViewModel.Utilities
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
             ele.RequestAddToMapWindow += AddToMapWindow;
             ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            ele.TransactionEvent += AddTransaction;
             Elements.Add(ele);
 
             IsExpanded = true;         

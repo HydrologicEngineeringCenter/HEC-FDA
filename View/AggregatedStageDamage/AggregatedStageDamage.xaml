@@ -46,7 +46,6 @@
 
         <ContentControl Grid.Row="3" Content="{Binding CurrentVM}" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-        <Utilities:MessageExpanderControl Grid.Row="4" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Utilities:SaveControl   />
             <Utilities:SaveCloseControl  VerticalAlignment="Bottom"/>

@@ -50,9 +50,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         #region Voids
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
-            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 
-                "Openning " + Name + " for editing.",nameof(InflowOutflowElement)));
-
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
 
