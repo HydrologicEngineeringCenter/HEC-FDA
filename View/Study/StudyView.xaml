@@ -8,6 +8,10 @@
              xmlns:VMUtils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
+        
+             MinWidth="800"
+             MinHeight="600"
+   
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
 
     <UserControl.Resources>

@@ -54,10 +54,10 @@ namespace HEC.FDA.ViewModel.Utilities
             CurrentView = StudyVM;
             Title = "FDA 2.0";
 
-            MinWidth = 800;
-            MinHeight = 500;
-            Width = 1200;
-            Height = 800;
+            //MinWidth = 800;
+            //MinHeight = 500;
+            //Width = 1200;
+            //Height = 800;
         }
         public WindowVM(IDynamicTab tab)
         {
@@ -67,10 +67,10 @@ namespace HEC.FDA.ViewModel.Utilities
 
             //the view windows size is bound to these properties. Set the 
             //dimensions to be what the CurrentView VM wants to be.
-            Width = CurrentView.Width;
-            Height = CurrentView.Height;
-            MinWidth = CurrentView.MinWidth;
-            MinHeight = CurrentView.MinHeight;
+            //Width = CurrentView.Width;
+            //Height = CurrentView.Height;
+            //MinWidth = CurrentView.MinWidth;
+            //MinHeight = CurrentView.MinHeight;
         }
         #endregion
         #region Voids

@@ -33,7 +33,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             IsCreatingNewElement = true;
             HasChanges = true;
-            SetDimensions(800, 600, 400, 400);
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
             CurrentVM = CalculatedVM;

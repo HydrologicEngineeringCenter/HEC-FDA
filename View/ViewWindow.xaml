@@ -8,24 +8,24 @@
         Icon="FDA.ico"
         Closing="Window_Closing"
         ResizeMode="CanResize"
-        MinWidth="{Binding MinWidth, Mode=TwoWay}"
-        MinHeight="{Binding MinHeight, Mode=TwoWay}"
-        Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}"
-        Title="ViewWindow" >
+        SizeToContent="WidthAndHeight"
+        Title="ViewWindow" 
+        Loaded="Window_Loaded"     
+        >
 
     <Window.DataContext>
         <Utils:WindowVM/>
     </Window.DataContext>
 
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" >
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" >
+        <Button Grid.Row="0" Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" >
             <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopOut.png"/>
         </Button>
-        <ContentControl Grid.Row="0" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
+        <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

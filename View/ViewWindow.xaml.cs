@@ -110,5 +110,26 @@ namespace HEC.FDA.View
 
         }
 
+        static public void EnumVisual(Visual myVisual)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
+            {
+                // Retrieve child visual at specified index value.
+                Visual childVisual = (Visual)VisualTreeHelper.GetChild(myVisual, i);
+
+                // Do processing of the child visual object.
+
+                // Enumerate children of the child visual object.
+                EnumVisual(childVisual);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Height = this.DesiredSize.Height;
+            this.MinHeight = this.DesiredSize.Height;
+            this.MinWidth = this.DesiredSize.Width;
+            this.Width = this.DesiredSize.Width;
+        }
     }
 }
