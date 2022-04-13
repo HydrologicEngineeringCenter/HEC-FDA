@@ -1,9 +1,7 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Tabs;
+﻿using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 
 namespace HEC.FDA.ViewModel.Study
@@ -17,8 +15,6 @@ namespace HEC.FDA.ViewModel.Study
         private StudyElement _StudyElement;
         private int _SelectedTab = 0;
         private int _SelectedTabIndex;
-        private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<LogItem>();
-        private bool _TransactionsMessagesVisible;
         private string _SaveStatus;
         private bool _MapViewVisible;
         private bool _TabsViewVisible;
@@ -60,38 +56,10 @@ namespace HEC.FDA.ViewModel.Study
             set { _MainStudyTree = value; NotifyPropertyChanged(nameof(MainStudyTree)); }
         }
 
-
         public StudyElement CurrentStudyElement
         {
             get { return _StudyElement; }
             set { _StudyElement = value; NotifyPropertyChanged(); }
-        }
-
-        public ObservableCollection<FdaLogging.LogItem> MessageRows
-        {
-            get { return _MessageRows; }
-            set { _MessageRows = value; NotifyPropertyChanged(); }
-        }
-
-        public int MessageCount
-        {
-            get 
-            {
-                if (_MessageRows != null)
-                {
-                    return _MessageRows.Count;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
-        public bool TransactionsMessagesVisible
-        {
-            get { return _TransactionsMessagesVisible; }
-            set { _TransactionsMessagesVisible = value; NotifyPropertyChanged(); }
         }
 
         /// <summary>
@@ -100,22 +68,6 @@ namespace HEC.FDA.ViewModel.Study
         public TabController TabFactoryInstance
         {
             get; set;
-        }
-        //todo: implement error level?
-        public LoggingLevel SaveStatusLevel
-        {
-            get { return LoggingLevel.Debug; }
-        }
-
-        public bool IsExpanded
-        {
-            get;
-            set;
-        }
-        public List<LogItem> TempErrors
-        {
-            get;
-            set;
         }
 
         #endregion

@@ -14,14 +14,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class IASPersistenceManager : SavingBase
     {
-        //todo: get rid of the logging stuff once we know what we are doing with logging.
-
-        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
-        //of the element. But since they get stored as strings if a developer changes the name of the class
-        //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "IAS";
         private const int XML_COLUMN = 2;
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("IASPersistenceManager");
 
         private const string TABLE_NAME = "ImpactAreaScenarios";
         private static readonly string[] ColumnNames = { "Name","XML"};
@@ -139,48 +132,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
-
-        #region logging
-
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
-        {
-            int elementId = GetElementId(TableName, elementName);
-            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
-        }
-
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
-        }
-        #endregion
 
         private string WasAnalyticalFrequencyElementModified(IASElementSet iasElems,ChildElement elem, int elemID )
         {

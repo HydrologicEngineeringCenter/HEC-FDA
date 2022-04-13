@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;

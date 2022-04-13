@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
@@ -25,9 +24,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created Date: 7/14/2017 1:55:50 PM
         #endregion
         #region Fields
-        private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-        private LoggingLevel _SaveStatusLevel;
-        private bool _IsExpanded;
         private string _SavingText;
         private IOccupancyTypeGroupEditable _SelectedOccTypeGroup;
         private List<string> _DamageCategoriesList = new List<string>();
@@ -35,57 +31,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private string _Module;
         #endregion
         #region Properties
-        public List<LogItem> TempErrors
-        {
-            get;
-            set;
-        }
-        public LoggingLevel SaveStatusLevel
-        {
-            get { return _SaveStatusLevel; }
-            set
-            {
-                if (_SaveStatusLevel != value)
-                {
-                    _SaveStatusLevel = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
 
-        public bool IsExpanded
-        {
-            get { return _IsExpanded; }
-            set
-            {
-                if (_IsExpanded != value)
-                {
-                    _IsExpanded = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public ObservableCollection<LogItem> MessageRows
-        {
-            get { return _MessageRows; }
-            set
-            {
-                _MessageRows = value;
-                NotifyPropertyChanged(nameof(SaveStatusLevel));
-                NotifyPropertyChanged("MessageRows");
-                NotifyPropertyChanged("MessageCount");
-            }
-        }
         public string SavingText
         {
             get { return _SavingText; }
             set { _SavingText = value; NotifyPropertyChanged(); }
         }
 
-        public int MessageCount
-        {
-            get { return _MessageRows.Count; }
-        }
         public ObservableCollection<IOccupancyTypeGroupEditable> OccTypeGroups
         {
             get { return _OccTypeGroups; }
@@ -598,26 +550,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         #endregion
-
-        public void UpdateMessages(bool saving = false)
-        {
-            //this gets called when still constructing everything. Exit if everything is still null
-            if (SelectedOccType == null)
-            {
-                return;
-            }
-
-            //get rid of any temp logs
-            ObservableCollection<LogItem> tempList = new ObservableCollection<LogItem>();
-            foreach (LogItem li in MessageRows)
-            {
-                //exclude any temp logs
-                if (!li.IsTempLog())
-                {
-                    tempList.Add(li);
-                }
-            }
-        }
 
     }
 }

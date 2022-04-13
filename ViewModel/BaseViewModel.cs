@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -21,9 +20,6 @@ namespace HEC.FDA.ViewModel
     /// </summary>
     public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
-
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
-
         #region Notes
         #endregion
         #region Events
@@ -145,7 +141,6 @@ namespace HEC.FDA.ViewModel
             NotifyPropertyChanged("HasError");
             NotifyPropertyChanged("HasFatalError");
             StringBuilder errors = new StringBuilder();
-            List<LogItem> errorMessages = new List<LogItem>();
             Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
@@ -159,7 +154,6 @@ namespace HEC.FDA.ViewModel
                         NotifyPropertyChanged("HasFatalError");
                     }
                     errors.AppendLine(pr.Error);
-                    errorMessages.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, pr.Error));
                     HasError = true;
                     NotifyPropertyChanged("HasError");
                 }

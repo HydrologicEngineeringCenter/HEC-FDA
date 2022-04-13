@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -18,7 +17,6 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
         #region Properties
         public int ID { get; }
-        public ObservableCollection<FdaLogging.LogItem> Logs { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 
         public int FontSize

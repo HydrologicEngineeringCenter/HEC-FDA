@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
@@ -39,12 +38,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int OTHER_ITEM_COL = 9;
 
         private const int OTHER_PARAMS_COL = 10;
-
-        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
-        //of the element. But since they get stored as strings if a developer changes the name of the class
-        //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "OccType";
-        private static readonly FdaLogger.FdaLogger LOGGER = new FdaLogger.FdaLogger("OccTypePersistenceManager");
 
         private const string ParentTableName = "occupancy_type_groups";
 
@@ -558,46 +551,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement valueUncertElem = cd.ToXML();
             valueUncertParentElem.Add(valueUncertElem);
             return valueUncertParentElem;
-        }
-
-        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public override void Log(LoggingLevel level, string message, string elementName)
-        {
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            return new ObservableCollection<LogItem>();
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
