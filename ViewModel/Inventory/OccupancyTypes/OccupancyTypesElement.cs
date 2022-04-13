@@ -19,9 +19,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// only ever be one element that is turned to "true".
         /// </summary>
         public bool IsSelected { get; set; }
-        public List<IOccupancyType> ListOfOccupancyTypes { get; set; }
-        public int ID { get; set; }
-        
+        public List<IOccupancyType> ListOfOccupancyTypes { get; set; }        
 
         #endregion
         #region Constructors
@@ -29,7 +27,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes, int id):base(id)
         {
             Name = occTypesGroupName;
-            ID = id;
             ListOfOccupancyTypes = listOfOccTypes;
         }
         #endregion
@@ -40,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             HashSet<String> dams = new HashSet<String>();
             foreach (IOccupancyType ot in ListOfOccupancyTypes)
             {
-                dams.Add(Name + " -> " + ot.DamageCategory);
+                dams.Add(ot.DamageCategory);
             }
             return dams.ToList<String>();
         }

@@ -1,13 +1,12 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.TableWithPlot;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Utilities;
-using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using HEC.FDA.ViewModel.TableWithPlot;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -32,7 +31,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ManualStageDamageVM()
         {
             loadImpactAreas();
-            loadDamageCategories();
+            LoadDamageCategories();
             Rows.Add(CreateNewRow(1));
             SelectedRow = Rows[0];
             TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
@@ -41,7 +40,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
             loadImpactAreas();
-            loadDamageCategories();
+            LoadDamageCategories(curves);
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
@@ -64,7 +63,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void SelectItemsInRow(StageDamageCurve curve, ManualStageDamageRowItem row)
         {
             ImpactAreaRowItem selectedImpArea = curve.ImpArea;
-            string selectedDamCat = curve.DamCat;
             foreach(ImpactAreaRowItem ia in _ImpactAreas)
             {
                 if(ia.ID == selectedImpArea.ID)
@@ -73,6 +71,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     break;
                 }
             }
+            string selectedDamCat = curve.DamCat;
             foreach (string dc in _DamageCategories)
             {
                 if (dc.Equals(selectedDamCat))
@@ -103,14 +102,37 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private void loadDamageCategories()
+        private void LoadDamageCategories(List<StageDamageCurve> curves)
+        {
+            LoadDamageCategories();
+            //it is possible that the damcat that each curve has is not in the list of current occtypes
+            //so we add them here
+            foreach(StageDamageCurve curve in curves)
+            {
+                string damCat = curve.DamCat;
+                if(!_DamageCategories.Contains(damCat))
+                {
+                    _DamageCategories.Add(damCat);
+                }
+            }
+        }
+
+        private void LoadDamageCategories()
         {
             List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
             _DamageCategories = new ObservableCollection<String>();
+            HashSet<String> damCats = new HashSet<String>();
             foreach(OccupancyTypesElement elem in occupancyTypesElements)
             {
                 List<String> damageCategories = elem.getUniqueDamageCategories();
-                damageCategories.ForEach(_DamageCategories.Add);
+                foreach(string dc in damageCategories)
+                {
+                    damCats.Add(dc);
+                }
+            }
+            foreach(string dc in damCats)
+            {
+                _DamageCategories.Add(dc);
             }
         }
 

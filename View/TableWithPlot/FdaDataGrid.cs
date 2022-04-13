@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using HEC.FDA.View.TableWithPlot.CustomEventArgs;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 
 namespace HEC.FDA.View.TableWithPlot
@@ -282,9 +283,13 @@ namespace HEC.FDA.View.TableWithPlot
                         for (Int32 j = 0; j <= clipboardData[i].Count() - 1; j++)
                         {
                             if ((ColumnIndex + j) > Columns.Count - 1)
+                            {
                                 continue;
+                            }
                             if (Columns[ColumnIndex + j].IsReadOnly)
+                            {
                                 continue;
+                            }
                             Binding binding = (Columns[ColumnIndex + j] as DataGridBoundColumn).Binding as Binding;
                             Type RowType = Items[RowIndex + i].GetType();
                             PropertyInfo y = RowType.GetProperty(binding.Path.Path);
@@ -296,7 +301,6 @@ namespace HEC.FDA.View.TableWithPlot
                             {
                                 y.SetValue(Items[RowIndex + i], Convert.ChangeType(clipboardData[i][j + 1], y.PropertyType));
                             }
-                            
                         }
                     }
                 }
@@ -348,8 +352,16 @@ namespace HEC.FDA.View.TableWithPlot
                                 continue;
                             Binding binding = (this.Columns[ColumnIndex + j] as DataGridBoundColumn).Binding as Binding;
                             Type RowType = Items[RowIndex + i].GetType();
-                            System.Reflection.PropertyInfo y = RowType.GetProperty(binding.Path.Path);
-                            y.SetValue(this.Items[RowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType));
+                            PropertyInfo y = RowType.GetProperty(binding.Path.Path);
+                            try
+                            {
+                                var newVal = Convert.ChangeType(clipboardData[i][j], y.PropertyType);
+                                ((SequentialRow)Items[RowIndex + i]).UpdateRow(ColumnIndex + j, (double)newVal);
+                            }
+                            catch (Exception ex)
+                            {
+                                //ignore
+                            }
                         }
                     }
                 }

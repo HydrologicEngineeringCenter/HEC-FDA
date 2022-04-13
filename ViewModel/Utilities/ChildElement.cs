@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -52,6 +53,15 @@ namespace HEC.FDA.ViewModel.Utilities
             string header = "Rename";
             DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
             Navigate(tab);
+        }
+
+        public virtual void RemoveElement(object sender, EventArgs e)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if(messageBoxResult == MessageBoxResult.Yes)
+            {
+                Saving.PersistenceFactory.GetElementManager(this).Remove(this);
+            }
         }
 
         /// <summary>

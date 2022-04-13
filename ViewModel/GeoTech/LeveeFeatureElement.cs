@@ -71,10 +71,6 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         #endregion
         #region Voids
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetLeveeManager().Remove(this);
-        }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
             EditorActionManager actionManager = new EditorActionManager()

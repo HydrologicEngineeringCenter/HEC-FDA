@@ -1,4 +1,5 @@
-﻿using Statistics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 using System;
 
@@ -42,6 +43,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public ContinuousDistribution CreateOrdinate()
         {
             return new LogNormal(Mean, StDev);
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (StDev < 0)
+            {
+                vr.AddErrorMessage("Log normal distribution standard deviation value cannot be less than 0");
+            }
+            return vr;
         }
     }
 }

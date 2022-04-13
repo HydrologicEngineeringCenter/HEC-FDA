@@ -6,7 +6,6 @@
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d"
-             Loaded="UserControl_Loaded"
              d:DesignHeight="520" d:DesignWidth="550">
     <UserControl.Resources>
         <Util:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />
@@ -48,7 +47,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Source Directory:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <CA:TextBoxFolderBrowser Name="TxtDirectory" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" SelectionMade="TxtDirectory_SelectionMade"/>
+            <CA:TextBoxFolderBrowser Name="TxtDirectory" FolderPath="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" SelectionMade="TxtDirectory_SelectionMade"/>
         </Grid>
         <Grid  Grid.Row="4">
             <Grid.ColumnDefinitions>
@@ -56,26 +55,16 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
-                <RadioButton Name="RDBWSE" Content="Water Surface Elevation" IsChecked="True" />
+                <RadioButton Name="RDBWSE" Content="Water Surface Elevation Grids" IsChecked="True" />
                 <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
 
         <DataGrid Grid.Row="5" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+                   HorizontalAlignment="Left" CanUserAddRows="False" CanUserDeleteRows="False"
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsChecked}" Width="110" >
-                    <DataGridCheckBoxColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
-                        </Style>
-                    </DataGridCheckBoxColumn.CellStyle>
-                    <DataGridCheckBoxColumn.Header>
-                        <TextBlock Text="Import" TextWrapping="Wrap" />
-                    </DataGridCheckBoxColumn.Header>
-                </DataGridCheckBoxColumn>
                 <DataGridTextColumn Binding="{Binding Name}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Name" TextWrapping="Wrap" />
@@ -83,12 +72,12 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Probability}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Probability" TextWrapping="Wrap" />
+                        <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Return Year" TextWrapping="Wrap" />
+                        <TextBlock Text="Return Interval" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

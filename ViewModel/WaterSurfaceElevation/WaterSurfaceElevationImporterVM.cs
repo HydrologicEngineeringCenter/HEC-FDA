@@ -1,9 +1,11 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
 using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
@@ -15,397 +17,303 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private List<PathAndProbability> _ListOfRelativePaths;
         private bool _IsDepthGridChecked;
-        private bool _IsEditor;
+        private int _ID;
+        private List<string> _OriginalFolderNames = new List<string>();
+        private string _OriginalFolderName;
+        private string _SelectedPath;
+
         #endregion
         #region Properties
-        public bool IsEditor
+        public string SelectedPath
         {
-            get { return _IsEditor; }
-            set { _IsEditor = value; NotifyPropertyChanged(); }
+            get { return _SelectedPath; }
+            set { _SelectedPath = value; NotifyPropertyChanged(); }
         }
-        public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's
-        public List<PathAndProbability> ListOfRelativePaths
-        {
-            get { return _ListOfRelativePaths; }
-            set { _ListOfRelativePaths = value; NotifyPropertyChanged(); }
-        }
-        public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
-   
+
         public bool IsDepthGridChecked
         {
             get { return _IsDepthGridChecked; }
             set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
         }
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
-
         #endregion
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
-            IsEditor = false;
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(actionManager)
+        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            IsEditor = true;
+            SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
+            _ID = elem.ID;
             Name = elem.Name;
+            _OriginalFolderName = elem.Name;
             Description = elem.Description;
-            ListOfRelativePaths = elem.RelativePathAndProbability;
             IsDepthGridChecked = elem.IsDepthGrids;
-            foreach(PathAndProbability pp in ListOfRelativePaths)
+            foreach(PathAndProbability pp in elem.RelativePathAndProbability)
             {
-                string filename = Path.GetFileName(pp.Path);
-                AddRow(true, filename, pp.Path, pp.Probability, false);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
+                string folderName = Path.GetFileName(pp.Path);
+                _OriginalFolderNames.Add(folderName);
+                AddRow(folderName, path, pp.Probability, false);
             }
         }
-
         #endregion
         #region Voids
-        public void AddRow(bool isChecked, string name, string path, double probability, bool isEnabled = true)
+        public void AddRow( string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM(isChecked, name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM( name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
             NotifyPropertyChanged("ListOfRows");
         }
 
-        public override void AddValidationRules()
+        #region copy files
+
+        private void Copy(string sourceDirectory, string targetDirectory)
         {
-            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
-            AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
-
-            AddRule(nameof(ListOfRows), () =>
-             {
-                 int numberOfSelectedRows = 0;
-                 foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                 {
-                     if (row.IsChecked == true)
-                     {
-                         numberOfSelectedRows++;
-                     }
-                 }
-
-                 if (numberOfSelectedRows < 8)
-                 {
-                     return false;
-                 }
-                 else
-                 {
-                     return true;
-                 }
-
-             }, "You have fewer than 8 files selected. You will get better results if you select more files.", false);
-            AddRule(nameof(ListOfRows), () =>
-            {
-                List<double> probabilitiesList = new List<double>();
-                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                {
-                    if (row.IsChecked == true)
-                    {
-                        if (probabilitiesList.Contains(row.Probability))
-                        {
-                            //error
-                            return false;
-                        }
-                        else
-                        {
-                            probabilitiesList.Add(row.Probability);
-                        }
-                    }
-                }
-
-                return true;
-
-            }, "Duplicate probabilities are not allowed.", true);
+            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+            CopyAll(diSource, diTarget);
         }
 
-        private void StoreTheOriginalPaths()
+        private void CopyAll(DirectoryInfo source, DirectoryInfo target)
         {
-            ListOfOriginalPaths = new List<string>();
+            Directory.CreateDirectory(target.FullName);
 
-            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
             {
-                
-                if (row.IsChecked)
-                {
-                    ListOfOriginalPaths.Add(row.Path);
-                }
+                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+            }
+
+            // Copy each subdirectory using recursion.
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir =
+                    target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyAll(diSourceSubDir, nextTargetSubDir);
             }
         }
 
-        public bool RunSpecialValidation()
+        private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
         {
-            StoreTheOriginalPaths();
-            ListOfRelativePaths = new List<PathAndProbability>();
-
-            bool atLeastOneFileIsVRT = false;
-            bool atLeastOneFileIsTif = false;
-            bool atLeastOneFileIsFlt = false;
-
-            int numberOfSelectedRows = 0;
-
-            string rowExtension;
-            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-            {
-                if (row.IsChecked == false) { continue; }
-
-                numberOfSelectedRows++;
-                rowExtension = Path.GetExtension(row.Path);
-                switch (rowExtension)
-                {
-                    case ".vrt":
-                        {
-                            atLeastOneFileIsVRT = true;
-                            break;
-                        }
-                    case ".flt":
-                        {
-                            atLeastOneFileIsFlt = true;
-                            break;
-                        }
-                    case ".tif":
-                        {
-                            atLeastOneFileIsTif = true;
-                            break;
-                        }
-                }
-
-            }
-
-            if (atLeastOneFileIsVRT == true)
-            {
-                if (atLeastOneFileIsFlt == true || atLeastOneFileIsTif == true)
-                {
-                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, 
-                        "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
-                    string header = "Incompatible File Types";
-                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "IncompatibleFileTypes");
-                    Navigate(tab, true, true);
-                    return false;
-                }
-                else if (numberOfSelectedRows < 8)
-                {
-                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, 
-                        "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
-                    string header = "Small Number of Files Selected";
-                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
-                    Navigate(tab, true, true);
-                    if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
-                    {
-                        //close the form and save the wse's
-                        if (HasFatalError == true)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            //i need to copy the files over to the new location
-                            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                            {
-                                if (row.IsChecked == true)
-                                {
-                                    if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
-                                }
-                            }
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    //close the form and save the wse's
-                    if (HasFatalError == true)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        //i need to copy the files over to the new location
-                        foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                        {
-                            if (row.IsChecked == true)
-                            {
-                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
-                            }
-                        }
-                        return true;
-                    }
-                }
-            }
-
-            if (atLeastOneFileIsFlt == true)
-            {
-                CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
-                string header = "Change flt to tif";
-                DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ChangeFltToTif");
-                Navigate(tab, true, true);
-                if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
-                {
-                    //change flt to tif and proceed somehow
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            if (atLeastOneFileIsTif == true)
-            {
-                if (numberOfSelectedRows < 8)
-                {
-                    CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
-                    string header = "SmallNumberOfFilesSelected";
-                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
-                    Navigate(tab, true, true);
-                    if (msgBoxVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes)
-                    {
-                        //close the form and save the wse's
-                        if (HasFatalError == true)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            //i need to copy the files over to the new location
-                            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                            {
-                                if (row.IsChecked == true)
-                                {
-                                    if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
-                                }
-                            }
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    //close the form and save the wse's
-                    if (HasFatalError == true)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        //i need to copy the files over to the new location
-                        foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                        {
-                            if (row.IsChecked == true)
-                            {
-                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
-                            }
-                        }
-                        return true;
-                    }
-                }
-            }
-
-            return false;//shouldn't ever get to here unless nothing was selected.
+            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
+            Copy(path, destinationFilePath);
         }
+        #endregion
 
-        private bool CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension,double probability)
-        {
-            string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
-            string destinationDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
-            if (!Directory.Exists(destinationDirectory))
-            {
-                Directory.CreateDirectory(destinationDirectory);
-            }
-            try
-            {
-                File.Copy(path, destinationFilePath);
-            }
-            catch (Exception e)
-            {
-                CustomMessageBoxVM msgBoxVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "An error occured while trying to copy the selected files into the hydraulics directory in your study.\n\n" + e.Message);
-                string header = "Error Copying Files";
-                DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ErrorCopyingFiles");
-                Navigate(tab, true, true);
-                return false;
-            }
-            ListOfRelativePaths.Add(new PathAndProbability(Name + "\\" + nameWithExtension, probability));
-            return true;
-        }
-
+        #region validation
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new FdaValidationResult();
+            if (ListOfRows.Count != 8)
+            {
+                vr.AddErrorMessage("Eight hydraulic files are required to import.");
+            }
+            List<double> probs = new List<double>();
+            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+            {
+                vr.AddErrorMessage(row.IsValid().ErrorMessage);
+                probs.Add(row.Probability);
+            }
+            if (probs.Count != probs.Distinct().Count())
+            {
+                vr.AddErrorMessage("Duplicate probabilities found. Probabilities must be unique.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            List<string> tifFiles = new List<string>();
+            List<string> vrtFiles = new List<string>();
+
+            string[] fileList = Directory.GetFiles(directoryPath);
+            foreach (string file in fileList)
+            {
+                if (Path.GetExtension(file) == ".tif") 
+                { 
+                    tifFiles.Add(file); 
+                }
+                if (Path.GetExtension(file) == ".vrt") 
+                { 
+                    vrtFiles.Add(file); 
+                }
+            }
+
+            string dirName = Path.GetFileName(directoryPath);
+
+            vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
+            vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
 
             return vr;
         }
 
+        private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (tifFiles.Count == 0)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            if (vrtFiles.Count == 0)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
+            }
+            else if (vrtFiles.Count > 1)
+            {
+                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
+            }
+            return vr;
+        }
+
+        #endregion
+
         public void FileSelected(string fullpath)
         {
+            FdaValidationResult importResult = new FdaValidationResult();
+            ListOfRows.Clear();
             //clear out any already existing rows
             if (!Directory.Exists(fullpath))
             {
-                ListOfRows.Clear();
-                return;
-            }
-            //is this an old fda study?
-
-            List<string> tifFiles = new List<string>();
-            List<string> fltFiles = new List<string>();
-            List<string> vrtFiles = new List<string>();
-
-            string[] fileList = Directory.GetFiles(fullpath);
-
-            if (fileList.Length == 0)
-            {
                 return;
             }
 
-            foreach (string file in fileList)
+            List<string> validDirectories = new List<string>();
+            string[] directories = Directory.GetDirectories(fullpath);
+            foreach(string directory in directories)
             {
-                if (Path.GetExtension(file) == ".tif") { tifFiles.Add(file); }
-                if (Path.GetExtension(file) == ".flt") { fltFiles.Add(file); }
-                if (Path.GetExtension(file) == ".vrt") { vrtFiles.Add(file); }
-
+                FdaValidationResult result = ContainsVRTAndTIF(directory);
+                if(result.IsValid)
+                {
+                    validDirectories.Add(directory);
+                }
+                else
+                {
+                    importResult.AddErrorMessage(result.ErrorMessage);
+                }
             }
 
-            //clear out any already existing rows
-            ListOfRows.Clear();
+            string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
 
-            double prob = 0;
-            foreach (string tifFile in tifFiles)
+            //we require 8 valid directories
+            if (validDirectories.Count < 8)
             {
-                prob += .1;
-                AddRow(true, Path.GetFileName(tifFile), Path.GetFullPath(tifFile), prob);
+                string dirName = Path.GetFileName(fullpath);
+                importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
+                MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            prob = 0;
-            foreach (string fltFile in fltFiles)
+            else if(validDirectories.Count>8)
             {
-                prob += .1;
-                AddRow(true, Path.GetFileName(fltFile), Path.GetFullPath(fltFile), prob);
+                string dirName = Path.GetFileName(fullpath);
+                importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
+                MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            prob = 0;
-            foreach (string vrtFile in vrtFiles)
+            else
             {
-                prob += .1;
-                AddRow(true, Path.GetFileName(vrtFile), Path.GetFullPath(vrtFile), prob);
+                double prob = 0;
+                foreach (string dir in validDirectories)
+                {
+                    prob += .1;
+                    AddRow( Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                }
+                //we might have some message for the user?
+                if(!importResult.IsValid)
+                {
+                    importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
+                    MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
         }
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
-            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked, id);
+            if(IsCreatingNewElement)
+            {
+                SaveNew();            
+            }
+            else
+            {
+                SaveExisting();
+            }
+        }
+
+        private void SaveExisting()
+        {
+            InTheProcessOfSaving = true;
+            //the user can not change files when editing, so the only changes would be new names and probs.    
+            //if name is different then we need to update the directory name in the study hydraulics folder.
+            if (!Name.Equals(_OriginalFolderName))
+            {
+                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
+                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                Directory.Move(sourceFilePath, destinationFilePath);
+            }
+            //might have to rename the sub folders.
+            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            for (int i = 0; i < ListOfRows.Count; i++)
+            {
+                string newName = ListOfRows[i].Name;
+                string originalName = _OriginalFolderNames[i];
+                if (!newName.Equals(originalName))
+                {
+                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
+                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                    Directory.Move(sourceFilePath, destinationFilePath);
+                    _OriginalFolderNames[i] = newName;
+                }
+                newPathProbs.Add(new PathAndProbability(Name + "\\" + newName, ListOfRows[i].Probability));
+            }
+
+            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
             Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-            base.Save(elementToSave);
+            manager.SaveExisting(elementToSave, _OriginalFolderName);
+            SavingText = "Last Saved: " + elementToSave.LastEditDate;
+            HasChanges = false;
+            HasSaved = true;
+            _OriginalFolderName = Name;
+        }
+
+        private void SaveNew()
+        {
+            FdaValidationResult validResult = ValidateImporter();
+            if (validResult.IsValid)
+            {
+                List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+                {
+                    _OriginalFolderNames.Add(row.Name);
+                    string directoryName = Path.GetFileName(row.Name);
+                    pathProbs.Add(new PathAndProbability(Name + "\\" + directoryName, row.Probability));
+
+                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
+                }
+
+                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, pathProbs, IsDepthGridChecked, id);
+                base.Save(elementToSave);
+                _OriginalFolderName = Name;
+                _ID = id;
+            }
+            else
+            {
+                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         #endregion
-
     }
 }

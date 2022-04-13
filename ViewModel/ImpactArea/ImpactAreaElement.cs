@@ -73,7 +73,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             if (iasElems.Count > 0)
             {
                 StringBuilder sb = new StringBuilder(Environment.NewLine).Append(Environment.NewLine);
-                foreach(IASElementSet set in iasElems)
+                foreach (IASElementSet set in iasElems)
                 {
                     sb.Append("\t").Append("* ").Append(set.Name).Append(Environment.NewLine);
                 }
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 {
                     Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
                     //delete the IAS's.
-                    foreach(IASElementSet set in iasElems)
+                    foreach (IASElementSet set in iasElems)
                     {
                         Saving.PersistenceFactory.GetIASManager().Remove(set);
                     }
@@ -92,8 +92,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             else
             {
-                Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                }
             }
+
         }
 
         private void ImpactAreasToMapWindow(object arg1, EventArgs arg2)

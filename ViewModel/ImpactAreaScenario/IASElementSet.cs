@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Xml.Linq;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
+
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -20,6 +22,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private string _Description = "";
         private int _AnalysisYear;
+
+        private List<metrics.Results> _Results = new List<metrics.Results>();
+
         #endregion
 
         #region Properties
@@ -108,17 +113,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Actions = localActions;
         }
 
-
-        /// <summary>
-        /// Deletes a conditions element
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            PersistenceFactory.GetIASManager().Remove(this);
-        }
-
         /// <summary>
         /// Opens the conditions editor.
         /// </summary>
@@ -151,21 +145,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-            //this is kind of messy. Quite a bit of code to get the name of the impact area from the impact area id.
-            //todo: get a list of result objects
-            List<metrics.Results> iasResults = new List<metrics.Results>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            int i = 0;
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
                 string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
                 if (impactAreaName != null)
                 {
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, null);
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, _Results[i]);
                     results.Add(result);
                 }
+                i++;
             }
+
             return results;
         }
 
@@ -186,10 +180,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ViewResults(object arg1, EventArgs arg2)
         {
             List<SpecificIASResultVM> results = GetResults();
-            IASResultsVM resultViewer = new IASResultsVM(results);
-            string header = "Results for " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
-            Navigate(tab, false, false);
+            if (results.Count > 0)
+            {
+                IASResultsVM resultViewer = new IASResultsVM(results);
+                string header = "Results for " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
+                Navigate(tab, false, false);
+            }
+            else
+            {
+                MessageBox.Show("There are no results to display.", "No Results", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
         
         private void ComputeScenario(object arg1, EventArgs arg2)
@@ -197,9 +198,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             HasComputed = true;
             foreach(SpecificIAS ias in SpecificIASElements)
             {
-                ias.ComputeScenario(arg1, arg2);
+                _Results.Add( ias.ComputeScenario(arg1, arg2));
             }
-            //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
+            //todo: i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
             PersistenceFactory.GetIASManager().SaveExisting(this);
         }
         #endregion

@@ -1,15 +1,18 @@
 ﻿using compute;
-using metrics;
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Xml.Linq;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Events;
+using metrics;
+using Statistics;
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -67,9 +70,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// </summary>
         public int StageDamageID { get; set; }
 
-
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
-
         #endregion
         #region Constructors
 
@@ -103,8 +104,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
         {
-            List<ThresholdRowItem> thresholdRows = new List<ThresholdRowItem>();
-
             ImpactAreaID = Int32.Parse(iasElem.Attribute(IMPACT_AREA).Value);
 
             FlowFreqID = Int32.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
@@ -126,6 +125,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="arg2"></param>
         public metrics.Results ComputeScenario(object arg1, EventArgs arg2)
         {
+            metrics.Results results = null;
+
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
@@ -136,28 +137,41 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
 
-            Simulation simulation = sc.BuildSimulation();
+            int thresholdIndex = 1;
+            foreach(ThresholdRowItem thresholdRow in Thresholds)
+            {
+                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdRow.ThresholdValue);
+                sc.WithAdditionalThreshold(threshold);
+                thresholdIndex++;
+            }
 
-            MeanRandomProvider mrp = new MeanRandomProvider();
-            try
+            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            if (configurationValidationResult.IsValid)
             {
-                //todo: how many iterations?
-                //metrics.Results result = simulation.Compute(mrp, 1);
-                //Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
-                //double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
-                //double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
-                //ComputeResults = result;
-                //return result;
-                return null;
+                Simulation simulation = sc.BuildSimulation();
+                int seed = 999;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                try
+                {
+                    results = simulation.Compute(randomProvider, cc); 
+                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show(e.Message);
-                return null;
+                MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+            return results;
+
         }
 
-
+ 
 
         private XElement WriteThresholdsToXML()
         {
@@ -173,9 +187,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             return functionsElem;
         }
-
-        
-    
 
         public XElement WriteToXML()
         {

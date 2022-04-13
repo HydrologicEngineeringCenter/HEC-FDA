@@ -93,5 +93,24 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Max), new Rule(() => { if (NextRow == null) return true; return Max < ((Triangular)NextRow.Y).Max; }, "Max values are not increasing.", ErrorLevel.Severe));
             AddMultiPropertyRule(new List<string> { "Min", "MostLikely", "Max" }, new Rule(() => { return ((Min < MostLikely) && (MostLikely < Max)); }, "Min must be less than most likely, which must be less than Max", ErrorLevel.Severe));
         }
+
+        public override void UpdateRow(int col, double value)
+        {
+            switch (col)
+            {
+                case 0:
+                    X = value;
+                    break;
+                case 1:
+                    Min = value;
+                    break;
+                case 2:
+                    MostLikely = value;
+                    break;
+                case 3:
+                    Max = value;
+                    break;
+            }
+        }
     }
 }

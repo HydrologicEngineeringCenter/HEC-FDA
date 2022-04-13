@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.Inventory.OccupancyTypes
@@ -13,12 +14,20 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             InitializeComponent();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            data_grid.Columns[2].CellStyle = this.FindResource("RedCellStyle") as Style;
-
+            if(DataContext is SaveAllReportVM vm)
+            {
+                vm.SaveOcctypes();
+            }
+            var myWindow = Window.GetWindow(this);
+            myWindow.Close();
         }
 
-       
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var myWindow = Window.GetWindow(this);
+            myWindow.Close();
+        }
     }
 }

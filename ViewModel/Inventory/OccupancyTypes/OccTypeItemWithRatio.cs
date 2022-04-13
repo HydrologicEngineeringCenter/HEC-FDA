@@ -1,8 +1,7 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
-using System.Collections.Generic;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -75,12 +74,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public List<LogItem> IsItemValid()
+        public override FdaValidationResult IsItemValid()
         {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            constructionErrors.AddRange(base.IsItemValid());
-            constructionErrors.AddRange(IsValueUncertaintyConstructable(ContentByRatioVM, ItemType + " value uncertainty"));
-            return constructionErrors;
+            FdaValidationResult vr = new FdaValidationResult();
+            vr.AddErrorMessage(base.IsItemValid().ErrorMessage);
+            FdaValidationResult valueUncertVR = ContentByRatioVM.IsValueUncertaintyValid();
+            if (!valueUncertVR.IsValid)
+            {
+                string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
+                vr.AddErrorMessage(errorMessage + Environment.NewLine);
+            }
+            return vr;
         }
 
     }

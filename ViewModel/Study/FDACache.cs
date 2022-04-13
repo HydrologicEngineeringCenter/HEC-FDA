@@ -37,7 +37,6 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler InflowOutflowAdded;
         public event AddElementEventHandler ExteriorInteriorAdded;
         public event AddElementEventHandler LeveeAdded;
-        public event AddElementEventHandler FailureFunctionAdded;
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
         public event AddElementEventHandler IASElementAdded;
@@ -53,7 +52,6 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler InflowOutflowRemoved;
         public event AddElementEventHandler ExteriorInteriorRemoved;
         public event AddElementEventHandler LeveeRemoved;
-        public event AddElementEventHandler FailureFunctionRemoved;
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
         public event AddElementEventHandler IASElementRemoved;
@@ -69,7 +67,6 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler InflowOutflowUpdated;
         public event UpdateElementEventHandler ExteriorInteriorUpdated;
         public event UpdateElementEventHandler LeveeUpdated;
-        public event UpdateElementEventHandler FailureFunctionUpdated;
         public event UpdateElementEventHandler StageDamageUpdated;
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
@@ -112,10 +109,7 @@ namespace HEC.FDA.ViewModel.Study
         private FDACache()
         {
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+
         public static FDACache Create()
         {
             return new FDACache();
@@ -130,7 +124,6 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="elem">The element to remove</param>
         public void RemoveElement(ChildElement elem)
         {
-
             ElementAddedEventArgs elementAddedEventArgs = new ElementAddedEventArgs(elem);
 
             if (elem.GetType() == typeof(TerrainElement))

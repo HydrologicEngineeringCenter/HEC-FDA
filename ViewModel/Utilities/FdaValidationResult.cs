@@ -5,11 +5,11 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public class FdaValidationResult
     {
+        private readonly List<string> _Errors = new List<string>();
         public bool IsValid
         {
             get { return _Errors.Count == 0; }
         }
-        private readonly List<string> _Errors = new List<string>();
 
         public string ErrorMessage
         {
@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.Utilities
         /// </summary>
         /// <param name="index"></param>
         /// <param name="message"></param>
-        public void InsertNewLineMessage(int index, string message)
+        public void InsertMessage(int index, string message)
         {
             _Errors.Insert(index, message);
         }

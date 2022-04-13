@@ -44,6 +44,18 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((DeterministicRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
         }
 
+        public override void UpdateRow(int col, double value)
+        {
+            switch (col)
+            {
+                case 0:
+                    X = value;
+                    break;
+                case 1:
+                    Value = value;
+                    break;
+            }
+        }
     }
 }
 

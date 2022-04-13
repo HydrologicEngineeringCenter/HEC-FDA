@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public override void SaveElements()
         {
             ExteriorInteriorPersistenceManager manager = Saving.PersistenceFactory.GetExteriorInteriorManager();
-            foreach (RatingCurveElement elem in ElementsToImport)
+            foreach (ExteriorInteriorElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -41,6 +41,5 @@ namespace HEC.FDA.ViewModel.StageTransforms
                 }
             }
         }
-
     }
 }

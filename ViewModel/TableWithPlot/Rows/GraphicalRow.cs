@@ -109,5 +109,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             NotifyPropertyChanged(nameof(Confidence95));
             NotifyPropertyChanged(nameof(Confidence05));
         }
+
+        public override void UpdateRow(int col, double value)
+        {
+            switch (col)
+            {
+                case 0:
+                    X = value;
+                    break;
+            }
+        }
     }
 }

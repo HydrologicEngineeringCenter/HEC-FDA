@@ -46,7 +46,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Record Length:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Text="{Binding PeriodOfRecord, ValidatesOnDataErrors=True}" Margin="5"/>
+            <TextBox Grid.Column="1" Text="{Binding PeriodOfRecord, ValidatesOnDataErrors=True}" IsEnabled="{Binding IsStandard}" Margin="5"/>
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,5,0,0">

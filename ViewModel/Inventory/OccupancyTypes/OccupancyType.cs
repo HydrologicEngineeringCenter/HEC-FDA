@@ -62,10 +62,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Description = ot.Description;
             DamageCategory = ot.DamageCategory;
             FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
-            StructureItem = ot.StructureItem;
-            ContentItem = ot.ContentItem;
-            VehicleItem = ot.VehicleItem;
-            OtherItem = ot.OtherItem;
+            StructureItem = new OccTypeItem( ot.StructureItem);
+            ContentItem = new OccTypeItemWithRatio( ot.ContentItem);
+            VehicleItem = new OccTypeItem( ot.VehicleItem);
+            OtherItem = new OccTypeItemWithRatio( ot.OtherItem);
             GroupID = ot.GroupID;
             ID = ot.ID;        
         }

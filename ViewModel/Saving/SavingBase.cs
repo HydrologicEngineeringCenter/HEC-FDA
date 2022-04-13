@@ -68,7 +68,7 @@ namespace HEC.FDA.ViewModel.Saving
         #endregion
 
         #region save new
-        public void SaveNew(ChildElement element)
+        public virtual void SaveNew(ChildElement element)
         {
             OpenConnection();
             //update the edit date
@@ -292,6 +292,13 @@ namespace HEC.FDA.ViewModel.Saving
 
         public int GetNextAvailableId(int idColNumber = 0)
         {
+            //make sure the table exists
+            OpenConnection();
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(TableName);
+            if (tbl == null)
+            {
+                Connection.Instance.CreateTableWithPrimaryKey(TableName, TableColumnNames, TableColumnTypes);
+            }
             int retval = -1;
             string tableName = TableName;
             try
@@ -302,7 +309,8 @@ namespace HEC.FDA.ViewModel.Saving
                 object id = command.ExecuteScalar();
                 if (id == null)
                 {
-                    retval = -1;
+                    //if the id is null, then there is nothing in the table. The first id will be 1.
+                    retval = 1;
                 }
                 else
                 {

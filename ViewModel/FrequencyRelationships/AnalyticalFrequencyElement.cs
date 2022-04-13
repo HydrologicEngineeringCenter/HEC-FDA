@@ -72,7 +72,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             XElement fitToFlowsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.FIT_TO_FLOWS);
             string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
-            AnalyticalFlows = ConvertStringToFlows(flows);
+            if (!String.IsNullOrEmpty(flows))
+            {
+                AnalyticalFlows = ConvertStringToFlows(flows);
+            }
 
             LogPearson3 lp3 = new LogPearson3();
             if (IsStandard)
@@ -86,7 +89,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
-            ComputeComponentVM = new ComputeComponentVM();
+            ComputeComponentVM = new ComputeComponentVM("Frequency Element", "Frequency", "Flow");
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }
@@ -114,10 +117,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             Actions = localActions;
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetFlowFrequencyManager().Remove(this);
-        }
+
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
             EditorActionManager actionManager = new EditorActionManager()

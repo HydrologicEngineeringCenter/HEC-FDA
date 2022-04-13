@@ -7,6 +7,7 @@ using System.Linq;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using DatabaseManager;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -66,7 +67,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
         {
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
-            DatabaseManager.DataTableView indexTable = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + impactAreaSetName);
+            DataTableView indexTable = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + impactAreaSetName);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows - 1))
             {
                 int id = (int)row[INDEX_TABLE_ID_COL];
@@ -100,13 +101,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     dt.Rows.Add(row.Name);
                 }
 
-                DatabaseManager.InMemoryReader imr = new DatabaseManager.InMemoryReader(dt);
+                InMemoryReader imr = new InMemoryReader(dt);
                 gpw.AddFeatures(IMPACT_AREA_TABLE_PREFIX + element.Name, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
             }
         }
         private void UpdateExistingTable(ImpactAreaElement element)
         {
-            DatabaseManager.DataTableView dtv = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + element.Name);
+            DataTableView dtv = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + element.Name);
 
             object[] nameArray = new object[element.ImpactAreaRows.Count];
             for(int i = 0;i<element.ImpactAreaRows.Count;i++)
@@ -148,17 +149,22 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             StudyCacheForSaving.RemoveElement(element);
         }
 
-        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
         {
             base.SaveExisting(elementToSave);
+
             if (!oldElement.Name.Equals(elementToSave.Name))
             {
                 string oldName = IMPACT_AREA_TABLE_PREFIX + oldElement.Name;
                 string newName = IMPACT_AREA_TABLE_PREFIX + elementToSave.Name;
+                if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
+                {
+                    StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
+                }
                 LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
-                myGeoPackWriter.RenameFeatures(oldName, newName);               
+                myGeoPackWriter.RenameFeatures(oldName, newName);
             }
-                UpdateExistingTable((ImpactAreaElement)elementToSave);
+            UpdateExistingTable((ImpactAreaElement)elementToSave);
         }
 
         public override void Load()

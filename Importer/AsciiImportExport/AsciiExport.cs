@@ -102,8 +102,8 @@ namespace Importer
                     if (ExportLevees)
                     { GlobalVariables.mp_fdaStudy.GetLeveeList().Export(writer, delimiterChar); }
 
-                    writer.WriteLine($"\n\nBegin to Export Aggregatted Damage Functions.");
-                    WriteLine($"\n\nBegin to Export Aggregatted Damage Functions.");
+                    writer.WriteLine($"\n\nBegin to Export Aggregated Damage Functions.");
+                    WriteLine($"\n\nBegin to Export Aggregated Damage Functions.");
                     if (ExportStageDamage)
                     { GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Export(writer, delimiterChar); }
                 }

@@ -41,7 +41,7 @@ namespace HEC.FDA.View
             WindowVM vm = (WindowVM)this.DataContext;
             Title = vm.Title;
 
-            HEC.FDA.ViewModel.Study.FdaStudyVM test = (FdaStudyVM)vm.CurrentView;
+            FdaStudyVM test = (FdaStudyVM)vm.CurrentView;
 
             test.RequestShapefilePaths += RequestShapefilePaths;
             test.RequestShapefilePathsOfType += RequestShapefilePathsOfType;
@@ -56,7 +56,7 @@ namespace HEC.FDA.View
 
         private void RequestAddToMapWindow(object sender, AddMapFeatureEventArgs args)
         {
-            HEC.FDA.View.Study.StudyView sv = GetTheVisualChild<HEC.FDA.View.Study.StudyView>(masterControl);
+            Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
 
@@ -64,8 +64,8 @@ namespace HEC.FDA.View
             if (args.GetType().Name == nameof(AddGriddedDataEventArgs))
             {
                 AddGriddedDataEventArgs gargs = args as AddGriddedDataEventArgs;
-              
-                RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
+                MapRaster mapRaster = new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow);
+                RasterFeatureNode rfn = new RasterFeatureNode(mapRaster, args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
                 if (sender.GetType().Name == nameof(TerrainElement))
                 {
@@ -75,7 +75,7 @@ namespace HEC.FDA.View
                 if (sender.GetType().Name == nameof(WaterSurfaceElevationElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((WaterSurfaceElevationElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((WaterSurfaceElevationElement)sender).RemovedCallback;
                 }
 
             }
@@ -265,7 +265,7 @@ namespace HEC.FDA.View
 
             newvm.Scalable = false;
             ViewWindow newwindow = new ViewWindow(newvm);
-            //newwindow.Owner = this;
+            newwindow.Owner = this;
 
             //hide the top row with the pop in button if this vm doesn't support that
             if (newvm.Tab.CanPopOut == false)
@@ -302,7 +302,7 @@ namespace HEC.FDA.View
             WindowVM vm = (WindowVM)this.DataContext;
             if (vm.CurrentView.GetType() == typeof(FdaStudyVM))
             {
-                HEC.FDA.ViewModel.Study.FdaStudyVM studyVM = (FdaStudyVM)vm.CurrentView;
+                FdaStudyVM studyVM = (FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
             }
             else

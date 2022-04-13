@@ -62,17 +62,43 @@ namespace Importer
             int itype = (int)typeValue;
             _SingleDamageFunction[itype] = ObjectCopier.Clone(singleDamageFunction);
         }
+
         public void Print(AsyncLogger logger)
         {
             logger.Log($"\nOccupancy Name: {this.Name}");
-            logger.Log($"\tOccupancy ID: {Id}");
             logger.Log($"\tDescription: {this.Description}");
             logger.Log($"\tCategory Name: {this.CategoryName}");
-            logger.Log($"\tCategory ID: {CategoryId}");
             logger.Log($"\tUses Direct Dollar: {this.UsesDollar}");
-            logger.Log($"\tContent-To-Structure Value Ratio: {this._ErrorDistribution[2].GetCentralValue()}");
-            logger.Log($"\tOther-To-Structure Value Ratio: {this._ErrorDistribution[3].GetCentralValue()}");
-            logger.Log($"\tAutomobile-To-Structure Value Ratio: {this._ErrorDistribution[4].GetCentralValue()}");
+            double contToStructRatio = this._ErrorDistribution[2].GetCentralValue();
+            if(contToStructRatio == -901)
+            {
+                logger.Log($"\tContent-To-Structure Value Ratio:");
+            }
+            else
+            {
+                logger.Log($"\tContent-To-Structure Value Ratio: {contToStructRatio}");
+            }
+
+            double otherToStrucRatio = this._ErrorDistribution[3].GetCentralValue();
+            if(otherToStrucRatio == -901)
+            {
+                logger.Log($"\tOther-To-Structure Value Ratio:");
+            }
+            else
+            {
+                logger.Log($"\tOther-To-Structure Value Ratio: {otherToStrucRatio}");
+            }
+
+            double carToStrctRatio = this._ErrorDistribution[4].GetCentralValue();
+            if(carToStrctRatio == -901)
+            {
+                logger.Log($"\tAutomobile-To-Structure Value Ratio:");
+            }
+            else
+            {
+                logger.Log($"\tAutomobile-To-Structure Value Ratio: {carToStrctRatio}");
+            }
+            logger.Append($"\n\tFunctions:");
 
             //Depth-Damage Functions
             for (int itype = 0; itype < 4; itype++)
@@ -86,11 +112,9 @@ namespace Importer
                     double[] err = null;
                     double[] errLo = null;
 
-                    logger.Append($"\n\n\tType of Function: {(StructureValueType)itype}");
-
-                    logger.Append($"\n\tStage:");
+                    logger.Append($"\n\tType of Function: {(StructureValueType)itype}");
+                    logger.Append("\tNumber of coordinates: " + numRows);
                     for (int i = 0; i < numRows; i++) Write($"\t{depth[i]}");
-                    logger.Append($"\n\tDamage:");
                     for (int i = 0; i < numRows; i++) Write($"\t{damage[i]}");
                     switch (sdf.GetTypeError())
                     {
@@ -98,21 +122,16 @@ namespace Importer
                             break;
                         case ErrorType.NORMAL:
                             err = sdf.StdDev;
-                            logger.Append($"\n\tNormal Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.LOGNORMAL:
                             err = sdf.StdDev;
-                            logger.Append($"\n\tLog Normal Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.TRIANGULAR:
                             err = sdf.ErrHi;
-                            //errLo = sdf.GetTriangularLower();
                             errLo = sdf.StdDev;
-                            logger.Append($"\n\tTriangular Upper Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
-                            logger.Append($"\n\tTriangular Lower Error: ");
                             for (int i = 0; i < numRows; i++) Write($"\t{errLo[i]}");
                             break;
                         default:

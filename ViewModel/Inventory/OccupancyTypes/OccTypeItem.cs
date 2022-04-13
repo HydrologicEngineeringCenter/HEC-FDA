@@ -1,8 +1,7 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
-using System.Collections.Generic;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -66,7 +65,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             ItemType = item.ItemType;
             IsChecked = item.IsChecked;
-            Curve = item.Curve;
+            Curve = new ComputeComponentVM(item.Curve.ToXML());
             TableWithPlot = new TableWithPlotVM(Curve);
             TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
@@ -86,26 +85,20 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DataModified?.Invoke(this, EventArgs.Empty);
         }
 
-        public List<LogItem> IsItemValid()
+        public virtual FdaValidationResult IsItemValid()
         {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            constructionErrors.AddRange(IsValueUncertaintyConstructable(ValueUncertainty, ItemType + " value uncertainty"));
-            return constructionErrors;
-        }
+            FdaValidationResult vr = new FdaValidationResult();
 
-        public List<LogItem> IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
-        {
-            List<LogItem> constructionErrors = new List<LogItem>();
-            try
+            FdaValidationResult valueUncertVR = ValueUncertainty.IsValueUncertaintyValid();
+            //I want to indicate what "item type" this is.
+            if(!valueUncertVR.IsValid)
             {
-                uncertaintyVM.CreateOrdinate();
+                string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
+                vr.AddErrorMessage(errorMessage + Environment.NewLine);
             }
-            catch (Exception e)
-            {
-                string logMessage = "Error constructing " + uncertaintyName + ": " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
-            return constructionErrors;
+            FdaValidationResult fdaValidationResult = TableWithPlot.GetTableErrors();
+            vr.AddErrorMessage(fdaValidationResult.ErrorMessage);
+            return vr;
         }
     }
 }

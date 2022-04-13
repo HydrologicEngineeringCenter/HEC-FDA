@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
-            loadDummyData(other);
+            LoadData(other);
             Mean = mean;
         }
 
@@ -41,11 +41,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
-            loadDummyData(other);
+            LoadData(other);
             Mean = mean;
         }
 
-        private void loadDummyData(double other)
+        private void LoadData(double other)
         {
             List<double> xVals = loadXData();
             List<double> yVals = loadYData(other);

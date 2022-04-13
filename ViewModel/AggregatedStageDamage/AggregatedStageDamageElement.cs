@@ -77,10 +77,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
             return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual, elem.ID);
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetStageDamageManager().Remove(this);
-        }
 
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    

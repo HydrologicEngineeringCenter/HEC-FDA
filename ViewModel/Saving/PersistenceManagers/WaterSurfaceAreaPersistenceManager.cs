@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -60,7 +61,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             List<PathAndProbability> ppList = new List<PathAndProbability>();
 
-            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
+            DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
             {
                 ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
@@ -77,19 +78,19 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private void SavePathAndProbabilitiesTable(WaterSurfaceElevationElement element)
         {
             //gets called if savestotable is true
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            if (!Connection.Instance.IsConnectionNull)
             {
-                if (Storage.Connection.Instance.TableNames().Contains(PathAndProbTableConstant + element.Name))
+                if (Connection.Instance.TableNames().Contains(PathAndProbTableConstant + element.Name))
                 {
                     //already exists... delete?
-                    Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
+                    Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
                 }
 
                 string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
                 Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
 
-                Storage.Connection.Instance.CreateTable(PathAndProbTableConstant + element.Name, colNames, colTypes);
-                DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + element.Name);
+                Connection.Instance.CreateTable(PathAndProbTableConstant + element.Name, colNames, colTypes);
+                DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(PathAndProbTableConstant + element.Name);
 
                 object[][] rows = new object[element.RelativePathAndProbability.Count][];
                 int i = 0;
@@ -110,7 +111,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             try
             {
-                Directory.Delete(Storage.Connection.Instance.HydraulicsDirectory + "\\" + element.Name,true);
+                Directory.Delete(Connection.Instance.HydraulicsDirectory + "\\" + element.Name,true);
             }
             catch (Exception e)
             {
@@ -118,41 +119,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }   
         }
 
-        private void RenameHydraulicsDirectory(string oldName, string newName)
-        {
-            string oldPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + oldName;
-            if(Directory.Exists(oldPath))
-            {
-                string newPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + newName;
-
-                try
-                {
-                    Directory.Move(oldPath, newPath);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception();
-                }
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
-
-        private void SaveFilesToStudyDirectory(string directoryName)
-        {
-            string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + directoryName;
-            if(Directory.Exists(path))
-            {
-                throw new Exception();
-            }
-
-        }
-
         #endregion
 
-        public void SaveNew(ChildElement element)
+        public override void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(WaterSurfaceElevationElement))
             {
@@ -169,7 +138,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            RemoveTable(PathAndProbTableConstant + element.Name); 
+            RemoveTable(PathAndProbTableConstant + element.Name);
             //if the wse was imported from old fda, then it won't have associated files.
             WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)element;
             if (elem.HasAssociatedFiles)
@@ -177,26 +146,19 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
             }
             StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
-
         }
 
-        public void SaveExisting( ChildElement element )
+        public void SaveExisting( ChildElement element, string oldName )
         {
-            //base.SaveExisting( element);
-            //UpdateThePaths((WaterSurfaceElevationElement)element);
-            //Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
-            //SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
-            ////rename the folder in the study directory
-            //RenameHydraulicsDirectory(oldElement.Name, element.Name);
+            base.SaveExisting( element);
+            //delete the old table and create a new one
+            Connection.Instance.DeleteTable(PathAndProbTableConstant + oldName);
+            SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);        
         }
 
-        private void UpdateThePaths(WaterSurfaceElevationElement element)
+        public void RenamePathAndProbabilitesTableName(string oldName, string newName)
         {
-            foreach(PathAndProbability pp in element.RelativePathAndProbability)
-            {
-                string fileName = Path.GetFileName(pp.Path);
-                pp.Path = element.Name + "\\" + fileName;
-            }
+            Connection.Instance.RenameTable(PathAndProbTableConstant + oldName, PathAndProbTableConstant + newName);
         }
 
         public override void Load()

@@ -52,9 +52,8 @@ namespace HEC.FDA.ViewModel.Utilities
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
             int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
 
-            //todo: you need to pass in the UPD
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
-
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Rating Curve", "xlabel", "ylabel");
+            computeComponentVM.SetPairedData(ratingPairedData);
             RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, id);
             return elem;
         }
@@ -80,8 +79,12 @@ namespace HEC.FDA.ViewModel.Utilities
                     ys = CreateDeterministicDistributions(rat);
                     break;
             }
-
-            return new UncertainPairedData(rat.GetStage(), ys.ToArray(), "Stage", "Flow", "Rating", "");
+            List<double> stagesList = new List<double>();
+            for (int i = 0; i < rat.NumberOfPoints; i++)
+            {
+                stagesList.Add(rat.GetStage()[i]);
+            }
+            return new UncertainPairedData(stagesList.ToArray(), ys.ToArray(), "Stage", "Flow", "Rating", "");
         }
 
         private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
@@ -194,6 +197,8 @@ namespace HEC.FDA.ViewModel.Utilities
             AggregatedStageDamageElement elem = null;
             if (funcs.Count > 0)
             {
+                string name = funcs[0].PlanName.Trim() + " - " + funcs[0].YearName.Trim();
+                messages += "\nAttempting to create group: '" + name + "' from " + funcs.Count + " curves\n";
                 //for the creation date, i am grabbing the creation date from one of the curves
                 List<StageDamageCurve> curves = new List<StageDamageCurve>();
                 foreach (AggregateDamageFunction func in funcs)
@@ -206,13 +211,16 @@ namespace HEC.FDA.ViewModel.Utilities
                     }
                 }
 
-                string name = funcs[0].PlanName.Trim() + " - " + funcs[0].YearName.Trim();
-                messages += "Group: " + name;
-                messages += "\n\tNumber of curves: " + curves.Count + "\n\n";
+                messages += "\nNumber of curves successfully created: " + curves.Count;
+
                 if (curves.Count > 0)
                 {
                     int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
                     elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true, id);
+                }
+                else
+                {
+                    messages += "\nUnable to create group.\n\n";
                 }
             }
             return elem;
@@ -262,6 +270,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 ObservableCollection<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)impactAreaElements[0]).ImpactAreaRows;
 
+                bool nameMatchedImpactArea = false;
                 //does this curve's damage reach equal an existing impact area?
                 foreach (ImpactAreaRowItem row in impactAreaRows)
                 {
@@ -269,16 +278,16 @@ namespace HEC.FDA.ViewModel.Utilities
                     //message user if it does not.
                     if (row.Name.Equals(damageReachName))
                     {
-                        ComputeComponentVM vm = new ComputeComponentVM();
+                        ComputeComponentVM vm = new ComputeComponentVM("Stage Damage", "xlabel", "ylabel");
                         vm.SetPairedData(stageDamagePairedData);
                         curve = new StageDamageCurve(row, damCat, vm);
+                        nameMatchedImpactArea = true;
                         break;
                     }
-                    else
-                    {
-                        messages += Environment.NewLine + "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
-
-                    }
+                }
+                if (!nameMatchedImpactArea)
+                {
+                    messages += Environment.NewLine + "The stage damage curve with damage reach of '" + damageReachName + "' could not be imported because it does not match any existing impact area names.";
                 }
             }
 
@@ -328,10 +337,11 @@ namespace HEC.FDA.ViewModel.Utilities
             //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
             List<double> graphicalFlows = new List<double>();
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Frequency Element", "Frequency", "Flow");
 
             int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalFlows, null, id);
+                 analyticalFlows, graphicalFlows, computeComponentVM, id);
         }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
@@ -426,8 +436,9 @@ namespace HEC.FDA.ViewModel.Utilities
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
             int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
-            //todo:
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Inflow Outflow", "xlabel", "ylabel");
+            computeComponentVM.SetPairedData(func);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, id);
         }
 
@@ -438,7 +449,6 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    //todo: what is the mean here? i am using the outflow for now.
                     ords.Add(new Normal(probFunction.TransFlowOutflow[i], probFunction.TransFlowStdDev[i]));
                 }
             }
@@ -514,6 +524,11 @@ namespace HEC.FDA.ViewModel.Utilities
             UncertainPairedData VehicleDepthDamageFunction = coordFunctions[(int)StructureValueType.CAR];
             UncertainPairedData OtherDepthDamageFunction = coordFunctions[(int)StructureValueType.OTHER];
 
+            bool CalculateStructureDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.STRUCTURE]);
+            bool CalculateContentDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.CONTENT]); ;
+            bool CalculateVehicleDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.CAR]); ;
+            bool CalculateOtherDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.OTHER]); ;
+
             ComputeComponentVM structureComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
             structureComponent.SetPairedData(StructureDepthDamageFunction);
 
@@ -533,19 +548,23 @@ namespace HEC.FDA.ViewModel.Utilities
 
             //the content and other value uncertainties can either be "by value" or "ratio to structures". 
             //if the value is null, then it is "By value". If there is a value in the array then it is "by ratio".
+            //The ratio uncertainties also need to be converted to FDA 2.0 standard. 
             ContinuousDistribution contentValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.CONTENT];
             ContinuousDistribution otherValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.OTHER];
+            if(contentValueUncertaintyByRatio != null)
+            {
+                contentValueUncertaintyByRatio = ConvertRatioValueToFDA2(contentValueUncertaintyByRatio);
+            }
+            if (otherValueUncertaintyByRatio != null)
+            {
+                otherValueUncertaintyByRatio = ConvertRatioValueToFDA2(otherValueUncertaintyByRatio);
+            }
 
             bool isContentByValue = contentValueUncertaintyByRatio == null;
             bool isOtherByValue = otherValueUncertaintyByRatio == null;
 
             ContinuousDistribution contentValueUncertaintyByValue = new Deterministic();
-            ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();
-
-            bool CalculateStructureDamage = true;
-            bool CalculateContentDamage = true;
-            bool CalculateVehicleDamage = true;
-            bool CalculateOtherDamage = false;
+            ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();          
 
             OccTypeItem StructureItem = new OccTypeItem(OcctypeItemType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);           
             OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeItemType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
@@ -557,6 +576,31 @@ namespace HEC.FDA.ViewModel.Utilities
             IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ID);
             return ot;
+        }
+
+        private static ContinuousDistribution ConvertRatioValueToFDA2(ContinuousDistribution dist)
+        {
+            ContinuousDistribution retval = dist;
+            switch (dist.Type)
+            {
+                case IDistributionEnum.Normal:
+                    Normal normalDist = dist as Normal;
+                    double mean = normalDist.Mean;
+                    double stDev = normalDist.StandardDeviation;
+                    //divide stDev by 100 to convert to decimal percentage
+                    double newStDev = mean * stDev/100;
+                    retval = new Normal(mean, newStDev);
+                    break;
+                case IDistributionEnum.LogNormal:
+                    LogNormal logNormalDist = dist as LogNormal;
+                    double logMean = logNormalDist.Mean;
+                    double logStDev = logNormalDist.StandardDeviation;
+                    //divide stDev by 100 to convert to decimal percentage
+                    double newLogStDev = logMean * logStDev/100;
+                    retval = new LogNormal(logMean, newLogStDev);
+                    break;
+            }
+            return retval;
         }
 
         private static ContinuousDistribution TranslateStructureValueUncertainty(ErrorDistribution errorDist)
@@ -675,7 +719,6 @@ namespace HEC.FDA.ViewModel.Utilities
                 else
                 {
                     function = CreateCoordinatesFunction(ot.Name, func, type, errorMessages);
-
                 }
 
                 //the coordinates function will be null if it was not able to be created
@@ -692,27 +735,14 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static UncertainPairedData CreateEmptyFunction()
         {
-            List<double> xs = new List<double>() { 1, 2, 3 };
-            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(1),new Deterministic(2),new Deterministic(3) };
-            //todo: not sure these labels are correct.
+            List<double> xs = new List<double>() {0};
+            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0)};
             return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "");
         }
 
         private static bool IsEmptyFunction(SingleDamageFunction function)
         {
-            List<double> depths = function.Depth.ToList<double>();
-            List<double> damages = function.Damage.ToList<double>();
-
-            for (int i = 0; i < depths.Count; i++)
-            {
-                double depth = depths[i];
-                double damage = damages[i];
-                if (depth != 0 || damage != 0)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return function.NumOrdinates == 0;
         }
 
         private static UncertainPairedData CreateCoordinatesFunction(string name, SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)
@@ -722,7 +752,6 @@ namespace HEC.FDA.ViewModel.Utilities
             //stDevs get reused as min values if the type is triangular
             List<double> stDevs = function.StdDev.ToList<double>();
             List<double> maxValues = function.ErrHi.ToList<double>();
-            //todo: should i check the lists are the same size?
             switch (function.GetTypeError())
             {
                 case ErrorType.NONE:
@@ -946,8 +975,9 @@ namespace HEC.FDA.ViewModel.Utilities
                 isDefault = false;
             }
             int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
-            //todo:
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Levee", "xlabel", "ylabel");
+            computeComponentVM.SetPairedData(func);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
             return leveeFeatureElement;
         }
@@ -980,13 +1010,12 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
             int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
-            //todo:
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM();
+   
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior Interior", "xlabel", "ylabel");
+            computeComponentVM.SetPairedData(func);
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, id);
             return elem;
         }
-
         #endregion
-
     }
 }

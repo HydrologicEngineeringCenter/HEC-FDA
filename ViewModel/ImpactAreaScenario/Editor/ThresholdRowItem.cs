@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public Threshold GetMetric()
         {
             Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
-            return new Threshold(-1, convergenceCriteria, ThresholdType.Metric, ThresholdValue);
+            return new Threshold(ID, convergenceCriteria, ThresholdType.Metric, ThresholdValue);
         }
     }
 }

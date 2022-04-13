@@ -1,13 +1,15 @@
 ﻿using compute;
-using paireddata;
-using Statistics;
-using System.Collections.Generic;
-using System.Linq;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Utilities;
+using metrics;
+using paireddata;
+using Statistics;
+using System.Collections.Generic;
+using System.Linq;
 using static compute.Simulation;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
@@ -25,6 +27,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly bool _UseLevee;
         private readonly int _ImpactAreaID;
 
+        private SimulationBuilder _SimulationBuilder;
+
         public SimulationCreator(AnalyticalFrequencyElement freqElem, InflowOutflowElement inOutElem, RatingCurveElement ratElem,
             ExteriorInteriorElement extIntElem, LeveeFeatureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
         {
@@ -40,7 +44,51 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             _UseLevee = levElem != null;
 
             _ImpactAreaID = currentImpactAreaID;
+
+            LoadSimulationBuilder();
         }
+
+        public FdaValidationResult IsConfigurationValid()
+        {
+            FdaValidationResult vr = IsStageDamageValid();
+
+            return vr;
+        }
+        private FdaValidationResult IsStageDamageValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            //stage damages
+            List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+            if(stageDamageCurves.Count == 0)
+            {
+                //todo: maybe get the impact area name for this message?
+                vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
+                    "with the impact area.");
+            }
+            return vr;
+        }
+
+        private void LoadSimulationBuilder()
+        {
+            _SimulationBuilder = Simulation.builder()
+                .withFlowFrequency(GetFrequencyDistribution())
+                .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData())
+                .withStageDamages(GetStageDamagesAsPairedData());
+
+            if (_UseInOut)
+            {
+                _SimulationBuilder.withInflowOutflow(_InOutElem.ComputeComponentVM.SelectedItemToPairedData());
+            }
+            if (_UseExtInt)
+            {
+                _SimulationBuilder.withInteriorExterior(_ExtIntElem.ComputeComponentVM.SelectedItemToPairedData());
+            }
+            if (_UseLevee)
+            {
+                _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+            }
+        }
+
 
         private ContinuousDistribution GetFrequencyDistribution()
         {
@@ -59,36 +107,28 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData());
+                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat));
             }
             return stageDamages;
         }
 
         public Simulation BuildSimulation()
         {
-            //todo: cody commented out on 2/21/22
-
-            //SimulationBuilder sb = Simulation.builder()
-            //    .withFlowFrequency(GetFrequencyDistribution())
-            //    .withFlowStage(_RatElem.Curve)
-            //    .withStageDamages(GetStageDamagesAsPairedData());
-
-            //if(_UseInOut)
-            //{
-            //    sb.withInflowOutflow(_InOutElem.Curve);
-            //}
-            //if(_UseExtInt)
-            //{
-            //    sb.withInteriorExterior(_ExtIntElem.Curve);
-            //}
-            //if(_UseLevee)
-            //{
-            //    sb.withLevee(_LeveeElem.Curve, _LeveeElem.Elevation);
-            //}
-
-            //return sb.build();
-
-            return null;
+            return _SimulationBuilder.build();
         }
+
+        public void WithAdditionalThresholds(List<Threshold> additionalThresholds)
+        {
+            foreach (Threshold threshold in additionalThresholds)
+            {
+                _SimulationBuilder.withAdditionalThreshold(threshold);
+            }
+        }
+
+        public void WithAdditionalThreshold(Threshold additionalThreshold)
+        {
+            _SimulationBuilder.withAdditionalThreshold(additionalThreshold);
+        }
+
     }
 }

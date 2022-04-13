@@ -1,7 +1,7 @@
-﻿using Statistics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 using System;
-using Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -55,30 +55,25 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public ContinuousDistribution CreateOrdinate()
         {
-            if (Min > 100 || Min < 0)
+            return new Triangular(Min, MostLikely, Max);
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();          
+            if (Max < Min)
             {
-                throw new InvalidConstructorArgumentsException("Triangular distribution min value needs to be between 0 and 100");
+                vr.AddErrorMessage("Triangular distribution max cannot be less than min");
             }
-            if (Max < 0)
+            if (Max < MostLikely)
             {
-                throw new InvalidConstructorArgumentsException("Triangular distribution max value cannot be less than 0");
+                vr.AddErrorMessage("Triangular distribution max cannot be less than most likely");
             }
-            else if(Max<Min)
+            if (Min > MostLikely)
             {
-                throw new InvalidConstructorArgumentsException("Triangular distribution max cannot be less than min");
+                vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
             }
-            else if (Max < MostLikely)
-            {
-                throw new InvalidConstructorArgumentsException("Triangular distribution max cannot be less than most likely");
-            }
-            else if (Min > MostLikely)
-            {
-                throw new InvalidConstructorArgumentsException("Triangular distribution most likely cannot be less than min");
-            }
-            else
-            {
-                return new Triangular(Min, MostLikely, Max);
-            }
+            return vr;
         }
     }
 }

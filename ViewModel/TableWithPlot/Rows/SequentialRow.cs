@@ -22,6 +22,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
 
         }
+        public abstract void UpdateRow(int col, double x);
         protected abstract List<string> YMinProperties { get; }
         protected abstract List<string> YMaxProperties { get; }
 

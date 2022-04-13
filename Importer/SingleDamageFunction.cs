@@ -22,6 +22,7 @@ namespace Importer
 
         #endregion
         #region Properties
+        public int NumOrdinates { get { return _NumOrdinates; } }
         public double[] Depth { get => _Depth; set => _Depth = value; }
         public double[] Damage { get => _Damage; set => _Damage = value; }
         public double[] StdDev { get => _StdDev; set => _StdDev = value; }

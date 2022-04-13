@@ -54,7 +54,7 @@ namespace Importer
         }
         public void Print(AsyncLogger logger)
         {
-            logger.Log($"\nAggregatted Damage Function Name: {this.Name}");
+            logger.Log($"\nAggregated Damage Function Name: {this.Name}");
             logger.Log($"\tDescription: {this.Description}");
             logger.Log($"\tCategory Name: {this.CategoryName}");
         }
@@ -62,7 +62,7 @@ namespace Importer
         {
             StreamWriter wr = Study._StreamWriter;
 
-            wr.WriteLine($"\nAggregatted Damage Function Name: {this.Name}");
+            wr.WriteLine($"\nAggregated Damage Function Name: {this.Name}");
             wr.WriteLine($"\tDescription: {this.Description}");
             wr.WriteLine($"\tCategory Name: {this.CategoryName}");
 

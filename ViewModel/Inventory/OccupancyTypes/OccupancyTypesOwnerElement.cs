@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using HEC.FDA.ViewModel.Saving;
+﻿using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -63,7 +62,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 _OccTypeEditor.AddGroup(elem);
             }          
         }
-        private void UpdateOccTypeElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateOccTypeElement(object sender, ElementUpdatedEventArgs e)
         {
             OccupancyTypesElement newElement = (OccupancyTypesElement)e.NewElement;
             int index = -1;
@@ -81,25 +80,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 ListOfOccupancyTypesGroups.Insert(index, newElement);
             }
         }
-        private void RemoveOccTypeElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveOccTypeElement(object sender, ElementAddedEventArgs e)
         {
             ListOfOccupancyTypesGroups.Remove((OccupancyTypesElement)e.Element);
         }
         private void EditOccupancyTypes(object arg1, EventArgs arg2)
         {
-            //dont open the editor if there are no occtype groups to edit
-            if (ListOfOccupancyTypesGroups.Count < 1)
-            {
-                MessageBox.Show("There are no occupancy types to edit. You must first import a group of occupancy types.", "No Occupancy Types", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
-
             _IsEditorOpen = true;
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
 
             _OccTypeEditor = new OccupancyTypesEditorVM( actionManager);
-            _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
             _OccTypeEditor.RequestNavigation += Navigate;
+            _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
             string header = "Edit Occupancy Types";
             DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
             tab.RemoveTabEvent += Tab_RemoveTabEvent;

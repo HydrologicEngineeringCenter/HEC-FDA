@@ -66,10 +66,6 @@ namespace HEC.FDA.ViewModel.Watershed
             TerrainElement elem = (TerrainElement)elementToClone;
             return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            Saving.PersistenceFactory.GetTerrainManager().Remove(this);
-        }
 
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {

@@ -62,5 +62,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.00001); }, "A value of .00001 yeilds a non monotonic extreme", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.99999); }, "A value of .99999 yeilds a non monotonic extreme", ErrorLevel.Severe));
         }
+
+        public override void UpdateRow(int col, double value)
+        {
+            switch (col)
+            {
+                case 0:
+                    X = value;
+                    break;
+                case 1:
+                    Mean = value;
+                    break;
+                case 2:
+                    Standard_Deviation = value;
+                    break;
+            }
+        }
     }
 }
