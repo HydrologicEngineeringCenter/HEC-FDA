@@ -266,6 +266,7 @@ namespace HEC.FDA.View.TableWithPlot
                     DataGridCellInfo cellinfo = SelectedCells[0];
                     RowIndex = Items.IndexOf(cellinfo.Item);
                     ColumnIndex = cellinfo.Column.DisplayIndex;
+                    //so this is tricky, because when we sift through the properties on the row objects, it's always going to be X last, but in our clipboards, it'll always be the unique properties first, then X. so I need to skip the first 
                     for (Int32 i = 0; i <= clipboardData.Count() - 1; i++)
                     {
                         if ((RowIndex + i) > Items.Count - 1)
@@ -286,8 +287,16 @@ namespace HEC.FDA.View.TableWithPlot
                                 continue;
                             Binding binding = (Columns[ColumnIndex + j] as DataGridBoundColumn).Binding as Binding;
                             Type RowType = Items[RowIndex + i].GetType();
-                            System.Reflection.PropertyInfo y = RowType.GetProperty(binding.Path.Path);
-                            y.SetValue(Items[ RowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType));
+                            PropertyInfo y = RowType.GetProperty(binding.Path.Path);
+                            if(ColumnIndex+j == Columns.Count-1)
+                            {
+                                y.SetValue(Items[RowIndex + i], Convert.ChangeType(clipboardData[i][0], y.PropertyType));
+                            }
+                            else
+                            {
+                                y.SetValue(Items[RowIndex + i], Convert.ChangeType(clipboardData[i][j + 1], y.PropertyType));
+                            }
+                            
                         }
                     }
                 }
