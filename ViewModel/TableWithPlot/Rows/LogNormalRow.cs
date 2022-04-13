@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
     internal class LogNormalRow: SequentialRow
     {
         [DisplayAsColumn("Mean")]
-        [DisplayAsLine("Max")]
+        [DisplayAsLine("Mean")]
         public double Mean
         {
             get
@@ -21,6 +21,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 ((LogNormal)Y).Mean = value;
                 NotifyPropertyChanged();
+                ((LogNormalRow)PreviousRow)?.NotifyPropertyChanged(nameof(Mean));
+                ((LogNormalRow)NextRow)?.NotifyPropertyChanged(nameof(Mean));
             }
         }
         [DisplayAsColumn("Standard Deviation")]

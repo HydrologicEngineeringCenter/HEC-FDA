@@ -20,6 +20,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 Y = new Deterministic(value);
                 NotifyPropertyChanged();
+                ((DeterministicRow)PreviousRow)?.NotifyPropertyChanged(nameof(Value));
+                ((DeterministicRow)NextRow)?.NotifyPropertyChanged(nameof(Value));
             }
         }
         protected override List<string> YMinProperties { 

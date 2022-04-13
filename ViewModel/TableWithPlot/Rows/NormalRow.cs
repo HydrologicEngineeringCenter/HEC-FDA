@@ -22,6 +22,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 ((Normal)Y).Mean = value;
                 NotifyPropertyChanged();
+                ((NormalRow)PreviousRow)?.NotifyPropertyChanged(nameof(Mean));
+                ((NormalRow)NextRow)?.NotifyPropertyChanged(nameof(Mean));
             }
         }
         [DisplayAsLine("95% CI", Enumerables.ColorEnum.Blue, true)]

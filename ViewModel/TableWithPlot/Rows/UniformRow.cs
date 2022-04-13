@@ -21,6 +21,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 ((Uniform)Y).Min = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Max));
+                ((UniformRow)PreviousRow)?.NotifyPropertyChanged(nameof(Min));
+                ((UniformRow)NextRow)?.NotifyPropertyChanged(nameof(Min));
             }
         }
         [DisplayAsColumn("Max")]
@@ -36,6 +38,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 ((Uniform)Y).Max = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Min));
+                ((UniformRow)PreviousRow)?.NotifyPropertyChanged(nameof(Max));
+                ((UniformRow)NextRow)?.NotifyPropertyChanged(nameof(Max));
             }
         }
         protected override List<string> YMinProperties
