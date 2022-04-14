@@ -24,6 +24,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Max));
                 NotifyPropertyChanged(nameof(MostLikely));
+                ((TriangularRow)PreviousRow)?.NotifyPropertyChanged(nameof(Min));
+                ((TriangularRow)NextRow)?.NotifyPropertyChanged(nameof(Min));
             }
         }
 
@@ -42,6 +44,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Max));
                 NotifyPropertyChanged(nameof(Min));
+                ((TriangularRow)PreviousRow)?.NotifyPropertyChanged(nameof(MostLikely));
+                ((TriangularRow)NextRow)?.NotifyPropertyChanged(nameof(MostLikely));
             }
         }
 
@@ -59,6 +63,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(MostLikely));
                 NotifyPropertyChanged(nameof(Min));
+                ((TriangularRow)PreviousRow)?.NotifyPropertyChanged(nameof(Max));
+                ((TriangularRow)NextRow)?.NotifyPropertyChanged(nameof(Max));
             }
         }
 

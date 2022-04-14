@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
     internal class LogNormalRow: SequentialRow
     {
         [DisplayAsColumn("Mean")]
-        [DisplayAsLine("Max")]
+        [DisplayAsLine("Mean")]
         public double Mean
         {
             get
@@ -21,6 +21,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 ((LogNormal)Y).Mean = value;
                 NotifyPropertyChanged();
+                ((LogNormalRow)PreviousRow)?.NotifyPropertyChanged(nameof(Mean));
+                ((LogNormalRow)NextRow)?.NotifyPropertyChanged(nameof(Mean));
             }
         }
         [DisplayAsColumn("Standard Deviation")]
@@ -55,8 +57,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { if (PreviousRow == null) return true; return Mean > ((LogNormalRow)PreviousRow).Mean; }, "Mean values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return Mean > 0; }, "Mean value must be greater than 0.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return Standard_Deviation > 0; }, "Standard deviation is less than 0.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.00001); }, "A value of .00001 yeilds a non monotonic extreme", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.99999); }, "A value of .99999 yeilds a non monotonic extreme", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.00001); }, "The lower confidence limit of .00001 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.99999); }, "The lower confidence limit of .99999 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.00001); }, "A value of .00001 yeilds a non monotonic extreme", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.99999); }, "A value of .99999 yeilds a non monotonic extreme", ErrorLevel.Severe));
         }

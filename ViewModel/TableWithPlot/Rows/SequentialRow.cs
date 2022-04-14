@@ -17,8 +17,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 _x = value;
                 NotifyPropertyChanged();
-                NextRow?.NotifyPropertyChanged("X");
-                PreviousRow?.NotifyPropertyChanged("X");
+                PreviousRow?.NotifyPropertyChanged(nameof(X));
+                NextRow?.NotifyPropertyChanged(nameof(X));
             }
 
         }
