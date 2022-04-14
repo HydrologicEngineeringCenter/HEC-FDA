@@ -19,7 +19,7 @@ namespace metrics
         private double _thresholdValue;
         private ThreadsafeInlineHistogram _aep = null;
         private Dictionary<double, ThreadsafeInlineHistogram> _cnep;
-        private UncertainPairedData _leveeCurve;
+        private UncertainPairedData _systemResponseFunction;
 
         public ThreadsafeInlineHistogram HistogramOfAEPs
         {
@@ -44,14 +44,14 @@ namespace metrics
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData leveeCurve, ConvergenceCriteria  c)
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
         {
-            _leveeCurve = leveeCurve;
+            _systemResponseFunction = systemResponseFunction;
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
-            _aep.SetIterationSize(c.MaxIterations);
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, convergenceCriteria);
+            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
 
         }
@@ -63,9 +63,9 @@ namespace metrics
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                var histo = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
-                histo.SetIterationSize(c.MaxIterations);
-                _cnep.Add(standardNonExceedanceProbability, histo);
+                var histogram = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
+                histogram.SetIterationSize(c.MaxIterations);
+                _cnep.Add(standardNonExceedanceProbability, histogram);
             }
         }
 
@@ -119,28 +119,28 @@ namespace metrics
             }
             return 0;
         }
-        public double ConditionalNonExceedanceProbability(double exceedanceProbability)
+        public double ConditionalNonExceedanceProbability(double standardNonExceedanceProbability)
         {
             if (_calculatePerformanceForLevee)
             {
-                return CalculateConditionalNonExceedanceProbabilityForLevee(exceedanceProbability);
+                return CalculateConditionalNonExceedanceProbabilityForLevee(standardNonExceedanceProbability);
             }
             else
             {
-                _cnep[exceedanceProbability].ForceDeQueue();
-                double conditionalNonExceedanceProbability = _cnep[exceedanceProbability].CDF(_thresholdValue);
+                _cnep[standardNonExceedanceProbability].ForceDeQueue();
+                double conditionalNonExceedanceProbability = _cnep[standardNonExceedanceProbability].CDF(_thresholdValue);
                 return conditionalNonExceedanceProbability;
             }
 
         }
 
-        private double CalculateConditionalNonExceedanceProbabilityForLevee(double exceedanceProbability)
+        private double CalculateConditionalNonExceedanceProbabilityForLevee(double standardNonExceedanceProbability)
         {
-            IPairedData medianLeveeCurve = _leveeCurve.SamplePairedData(0.5);
-            _cnep[exceedanceProbability].ForceDeQueue();
-            double stageStep = _cnep[exceedanceProbability].BinWidth;
-            int stageStepQuantity = _cnep[exceedanceProbability].BinCounts.Length;
-            double[] stages = _leveeCurve.Xvals;
+            IPairedData medianLeveeCurve = _systemResponseFunction.SamplePairedData(0.5);
+            _cnep[standardNonExceedanceProbability].ForceDeQueue();
+            double stageStep = _cnep[standardNonExceedanceProbability].BinWidth;
+            int stageStepQuantity = _cnep[standardNonExceedanceProbability].BinCounts.Length;
+            double[] stages = _systemResponseFunction.Xvals;
             double firstStage = stages[0];
 
             double currentStage;
@@ -159,8 +159,8 @@ namespace metrics
             { 
                 currentStage = firstStage + i * stageStep;
                 nextStage = currentStage + stageStep;
-                currentCumulativeExceedanceProbability = 1-_cnep[exceedanceProbability].CDF(currentStage);
-                nextCumulativeExceedanceProbability = 1-_cnep[exceedanceProbability].CDF(nextStage);
+                currentCumulativeExceedanceProbability = 1-_cnep[standardNonExceedanceProbability].CDF(currentStage);
+                nextCumulativeExceedanceProbability = 1-_cnep[standardNonExceedanceProbability].CDF(nextStage);
                 incrementalProbability = currentCumulativeExceedanceProbability - nextCumulativeExceedanceProbability;
                 averageStage = (currentStage + nextStage) / 2;
                 geotechnicalFailureAtAverageStage = medianLeveeCurve.f(averageStage);
@@ -181,18 +181,18 @@ namespace metrics
             double ltep = 1 - Math.Pow((1 - MeanAEP()), years);
             return ltep;
         }
-        public void ParallelTestForConvergence(double upper, double lower)
+        public void ParallelTestForConvergence(double upperQuantile, double lowerQuantile)
         {
             double[] keys = new double[_cnep.Keys.Count];
-            int idx = 0;
+            int index = 0;
             foreach (var keyvaluepair in _cnep)
             {
-                keys[idx] = keyvaluepair.Key;
-                idx++;
+                keys[index] = keyvaluepair.Key;
+                index++;
             }
             Parallel.For(0, keys.Length, i =>
             {
-                _cnep[keys[i]].TestForConvergence(upper,lower);//this will force dequeue also.
+                _cnep[keys[i]].TestForConvergence(upperQuantile,lowerQuantile);//this will force dequeue also.
             });
         }
     }

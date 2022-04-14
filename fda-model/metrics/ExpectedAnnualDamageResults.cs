@@ -20,14 +20,14 @@ namespace metrics
         public ExpectedAnnualDamageResults(){
             _ead = new Dictionary<string, ThreadsafeInlineHistogram>();
         }
-        public void AddEADKey(string category, ConvergenceCriteria c)
+        public void AddEADKey(string category, ConvergenceCriteria convergenceCriteria)
         {
             if (!_ead.ContainsKey(category))
             {
                 //double[] nullData = null;
-                var histo = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, c);
-                histo.SetIterationSize(c.MaxIterations);
-                _ead.Add(category, histo);
+                var histogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, convergenceCriteria);
+                histogram.SetIterationSize(convergenceCriteria.MaxIterations);
+                _ead.Add(category, histogram);
             }
         }
         public void AddEADEstimate(double eadEstimate, string category, Int64 iteration)
