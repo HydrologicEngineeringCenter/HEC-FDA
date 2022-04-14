@@ -8,11 +8,8 @@
         Icon="FDA.ico"
         Closing="Window_Closing"
         ResizeMode="CanResize"
-        SizeToContent="WidthAndHeight"
         Title="ViewWindow" 
         Loaded="Window_Loaded"
-        MinHeight="100"
-        MinWidth="100"
         >
 
     <Window.DataContext>

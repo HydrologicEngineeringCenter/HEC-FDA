@@ -152,7 +152,10 @@ namespace HEC.FDA.ViewModel.Editors
        
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != ""; }, "Name cannot be blank.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Name), new Rule(() => 
+            { 
+                return Name != ""; 
+            }, "Name cannot be blank.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
         }
 

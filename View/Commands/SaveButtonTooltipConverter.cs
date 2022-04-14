@@ -14,10 +14,10 @@ namespace HEC.FDA.View.Commands
             //seems to happen when initializing and not everything is set up in time
             try
             {
-                ErrorLevel errorLevel = (ErrorLevel)values[0];
-                bool HasChanges = (bool)values[1];
-                List<string> errorMsg = (List<string>)values[2];
-                bool hasErrors = (bool)values[3];
+                bool hasErrors = (bool)values[0];
+                ErrorLevel errorLevel = (ErrorLevel)values[1];
+                bool HasChanges = (bool)values[2];
+                List<string> errorMsg = (List<string>)values[3];
 
                 if(hasErrors)
                 {

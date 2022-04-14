@@ -1,5 +1,7 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.View.Utilities;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -133,6 +135,22 @@ namespace HEC.FDA.View
 
 
             //EnumVisual(this);
+            //this.Resources.Contains()
+            WindowVM winVM = (WindowVM)DataContext;
+            Type editorType = winVM.CurrentView.GetType();
+            Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
+            if(dimensions != null)
+            {
+                MinWidth = dimensions.MinWidth;
+                MinHeight = dimensions.MinHeight;
+
+                Width = dimensions.Width;
+                Height = dimensions.Height;
+
+                MaxWidth = dimensions.MaxWidth;
+                MaxHeight = dimensions.MaxHeight;
+            }
+
         }
     }
 }

@@ -23,6 +23,8 @@ namespace HEC.FDA.View.Commands
             //then we want to return false.
             ErrorLevel errorLevel = (ErrorLevel)values[0];
             bool hasChanges = (bool)values[1];
+            bool hasErrors = (bool)values[2];
+
 
             if (errorLevel >= ErrorLevel.Fatal)
             {

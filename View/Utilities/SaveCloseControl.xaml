@@ -17,23 +17,24 @@
         <cmds:SaveButtonTooltipConverter x:Key="SaveButtonTooltipConverter"/>
     </UserControl.Resources>
     <Grid>
-        <StackPanel Orientation="Horizontal" Width="95" HorizontalAlignment="Right" >
-                     <!--Background="{Binding Path=ErrorLevel, Converter={StaticResource ErrorLevelConverter}, UpdateSourceTrigger=PropertyChanged}"-->
-            <!--IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}"-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Label Name="lbl_Saving" Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>
                     <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
+                        <Binding Path="HasErrors"/>
                         <Binding Path="ErrorLevel"/>
                         <Binding Path="HasChanges"/>
                         <Binding Path="Errors"/>
-                        <Binding Path="HasErrors"/>
                     </MultiBinding>
                 </Button.ToolTip>
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource SaveButtonMultiConverter}" UpdateSourceTrigger="PropertyChanged">
                         <Binding Path="ErrorLevel"/>
                         <Binding Path="HasChanges"/>
+                        <Binding Path="HasErrors"/>
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>
