@@ -8,7 +8,7 @@
              Loaded="UserControl_Loaded"
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-            
+             
              MinWidth="300"
              MinHeight="300"
              d:DesignHeight="420" d:DesignWidth="610">

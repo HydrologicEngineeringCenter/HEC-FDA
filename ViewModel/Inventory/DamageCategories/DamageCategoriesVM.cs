@@ -83,8 +83,7 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
         #endregion
         public override void AddValidationRules()
         {
-            AddRule(nameof(DamageCategories), () => areDamageCategoriesInvalid(), "Damage Categories have validation issues.");
-            //throw new NotImplementedException();
+            //AddRule(nameof(DamageCategories), () => areDamageCategoriesInvalid(), "Damage Categories have validation issues.");
         }
         private bool areDamageCategoriesInvalid()
         {

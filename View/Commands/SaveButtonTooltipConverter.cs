@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HEC.MVVMFramework.Base.Enumerations;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -12,11 +14,16 @@ namespace HEC.FDA.View.Commands
             //seems to happen when initializing and not everything is set up in time
             try
             {
-                bool hasFatalError = (bool)values[0];
+                ErrorLevel errorLevel = (ErrorLevel)values[0];
                 bool HasChanges = (bool)values[1];
-                string errorMsg = (string)values[2];
+                List<string> errorMsg = (List<string>)values[2];
+                bool hasErrors = (bool)values[3];
 
-                if (hasFatalError)
+                if(hasErrors)
+                {
+                    return "cody testing";
+                }
+                else if (errorLevel >= ErrorLevel.Fatal)
                 {
                     return errorMsg;
                 }

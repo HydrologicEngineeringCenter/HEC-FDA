@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace HEC.FDA.ViewModel
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
+    public abstract class BaseViewModel : ValidatingBaseViewModel
     {
         #region Notes
         #endregion
@@ -32,18 +33,21 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Fields
-        /// <summary>
-        /// This is a dictionary of property names, and any rules that go with that property.
-        /// </summary>
-        private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
-
+  
         private bool _HasChanges;
 
         private string _Name;
-        private string _Error;
 
         #endregion
         #region Properties
+
+        public List<string> Errors
+        {
+            get
+            {
+                return (List<string>)GetErrors();
+            }
+        }
 
         /// <summary>
         /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
@@ -62,44 +66,8 @@ namespace HEC.FDA.ViewModel
 
         public string LastEditDate { get; set; }
 
-        /// <summary>
-        /// Required to implement IDataErrorInfo interface
-        /// </summary>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        public string this[string columnName]
-        {
-            get
-            {
-                if (ruleMap.ContainsKey(columnName))
-                {
-                    ruleMap[columnName].Update();
-                    return ruleMap[columnName].Error;
-                }
-                return null;
-            }
-        }
-        /// <summary>
-        /// WPF seems to not use the Error call, theoretically it is used to invalidate an object.
-        /// This is required to implement IDataErrorInfo interface.
-        /// 
-        /// This is used to display a tooltip message on the "Save" button in the SaveCloseControl.
-        /// </summary>
-        public string Error
-        {
-            get { return _Error; }
-            set { _Error = value; NotifyPropertyChanged(); }
-        }
 
-        public string ValidationErrorMessage { get; set; }
 
-        public bool HasError { get; private set; }
-        private bool _HasFatalError;
-        public bool HasFatalError
-        {
-            get { return _HasFatalError; }
-            set { _HasFatalError = value; NotifyPropertyChanged(); }
-        }
         /// <summary>
         /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
         /// It is up to the save method to turn this back to false. 
@@ -125,92 +93,46 @@ namespace HEC.FDA.ViewModel
         #endregion
         #region Voids     
 
-        /// <summary>
-        /// Virtual method that can be overriden in any view model class to add its own validation rules. 
-        /// This gets called in the constructor of BaseViewModel.
-        /// </summary>
-        virtual public void AddValidationRules() { }
 
         /// <summary>
         /// Loops over and evaluates the property rules.
         /// </summary>
-        public void Validate()
-        {
-            HasError = false;
-            HasFatalError = false;
-            NotifyPropertyChanged("HasError");
-            NotifyPropertyChanged("HasFatalError");
-            StringBuilder errors = new StringBuilder();
-            Error = "";
-            foreach (PropertyRule pr in ruleMap.Values)
-            {
+        //public void Validate()
+        //{
+        //    HasError = false;
+        //    HasFatalError = false;
+        //    NotifyPropertyChanged("HasError");
+        //    NotifyPropertyChanged("HasFatalError");
+        //    StringBuilder errors = new StringBuilder();
+        //    Error = "";
+        //    foreach (PropertyRule pr in ruleMap.Values)
+        //    {
                 
-                pr.Update();
-                if (pr.HasError)
-                {
-                    if (pr.HasFatalError == true)
-                    {
-                        HasFatalError = true;
-                        NotifyPropertyChanged("HasFatalError");
-                    }
-                    errors.AppendLine(pr.Error);
-                    HasError = true;
-                    NotifyPropertyChanged("HasError");
-                }
-            }
-            if (HasError)
-            {
-                //this is used to display the tooltip on the OK and SAVE buttons
-                Error = errors.ToString().Remove(errors.ToString().Length - 2);
-            }
+        //        pr.Update();
+        //        if (pr.HasError)
+        //        {
+        //            if (pr.HasFatalError == true)
+        //            {
+        //                HasFatalError = true;
+        //                NotifyPropertyChanged("HasFatalError");
+        //            }
+        //            errors.AppendLine(pr.Error);
+        //            HasError = true;
+        //            NotifyPropertyChanged("HasError");
+        //        }
+        //    }
+        //    if (HasError)
+        //    {
+        //        //this is used to display the tooltip on the OK and SAVE buttons
+        //        Error = errors.ToString().Remove(errors.ToString().Length - 2);
+        //    }
 
-            NotifyPropertyChanged(nameof(Error));
-        }
+        //    NotifyPropertyChanged(nameof(Error));
+        //}
 
-        protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
+ 
 
-            //todo: I don't like excluding properties like this, but if the validate is going to update
-            //properties, then you will get an infinite loop if you don't exclude them.
-            if (propertyName.Equals(nameof(HasError))
-                || propertyName.Equals(nameof(HasFatalError))
-                || propertyName.Equals(nameof(Error))
-                || propertyName.Equals(nameof(HasChanges))
-                || propertyName.Equals("MessageRows")
-                || propertyName.Equals("MessageCount")
-                || propertyName.Equals("SaveStatusLevel")
-                || propertyName.Equals("IsExpanded")
-                || propertyName.Equals("SaveStatusVisible"))
-            {
-                //don't validate
-            }
-            else
-            {
-                HasChanges = true;
-                Validate();
-            }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-        /// <summary>
-        /// Adds a rule to a property in this VM. If that property changes, all rules attached to that property will get
-        /// analyzed. 
-        /// </summary>
-        /// <param name="PropertyName">Name of the property to which this rule applies</param>
-        /// <param name="ruleDelegate">The rule for the property</param>
-        /// <param name="errorMessage">The tooltip message that will get displayed if in error</param>
-        /// <param name="isFatalRule">True: Will disable the OK button and not let the user proceed. False: Will show as an error but will let the user click OK</param>
-        public void AddRule(string PropertyName, Func<bool> ruleDelegate, string errorMessage, bool isFatalRule = true)
-        {
-            if (ruleMap.ContainsKey(PropertyName))
-            {
-                ruleMap[PropertyName].AddRule(ruleDelegate, errorMessage, isFatalRule);
-            }
-            else
-            {
-                ruleMap.Add(PropertyName, new PropertyRule(ruleDelegate, errorMessage, isFatalRule));
-            }
-        }
 
         /// <summary>
         /// Recursively goes up the tree structure to WindowVM.CurrentView_RequestNavigation(). Takes the vm and finds its matching view and displays it.
@@ -278,89 +200,8 @@ namespace HEC.FDA.ViewModel
 
 
         #endregion
-        #region Functions
 
-        #endregion
-        #region InternalClasses
-        /// <summary>
-        /// Each view model class can have "rules" that are used to validate the class.
-        /// The rules are attached to properties. When the property changes then each rule
-        /// is evaluated for that property.
-        /// </summary>
-        protected class PropertyRule
-        {
-            private List<Rule> _rules = new List<Rule>();
-            /// <summary>
-            /// If a rule is in error then there will be some visual indication (turn red) and
-            /// a tooltip message will be displayed over the control
-            /// </summary>
-            internal bool HasError { get; set; }
-            /// <summary>
-            /// If a rule is broken and it is a fatal error then the user will not be allowed to 
-            /// continue by clicking the OK button.
-            /// </summary>
-            internal bool HasFatalError { get; set; }
-            //internal bool IsDirty { get; set; }
-            internal string Error { get; set; }
-            internal PropertyRule(Func<bool> rule, string errormessage, bool isFatalRule = true)
-            {
-                _rules.Add(new Rule(rule, errormessage, isFatalRule));
-            }
-            internal void AddRule(Func<bool> rule, string errormessage, bool isFatalRule = true)
-            {
-                _rules.Add(new Rule(rule, errormessage, isFatalRule));
-            }
-            internal void Update()
-            {
-                Error = null;
-                HasError = false;
-                HasFatalError = false;
-                try
-                {
-                    foreach (Rule r in _rules)
-                    {
-                        if (!r.expression())
-                        {
-                            Error += r.message + "\n";
-                            HasError = true;
-                            if (r.FatalIfInvalid == true)
-                            {
-                                HasFatalError = true;
-                            }
-                        }
-                    }
-                    if (HasError)
-                    {
-                        Error = Error.TrimEnd(new Char[] { '\n' });
-                    }
-                }
-                catch (Exception e)
-                {
-                    Error = e.Message;
-                    HasError = true;
-                }
-            }
-            private class Rule
-            {
-                public readonly Func<bool> expression;
-                public readonly string message;
-                public readonly bool _FatalIfInvalid;
-
-                public bool FatalIfInvalid
-                {
-                    get { return _FatalIfInvalid; }
-                }
-
-
-                internal Rule(Func<bool> expr, string msg, bool fatalIfInvalid = true)
-                {
-                    _FatalIfInvalid = fatalIfInvalid;
-                    expression = expr;
-                    message = msg;
-                }
-            }
-        }
-        #endregion
+        virtual public void AddValidationRules() { }
 
         /// <summary>
         /// When a tab or a window is closing it will first check to see if it is ok to close
@@ -372,5 +213,8 @@ namespace HEC.FDA.ViewModel
         {
             return true;
         }
+
+
+
     }
 }

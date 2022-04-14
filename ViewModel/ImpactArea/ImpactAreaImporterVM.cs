@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using HEC.FDA.ViewModel.Editors;
 using System.Windows;
 using System.IO;
+using HEC.MVVMFramework.ViewModel.Validation;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -131,8 +132,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override void AddValidationRules()
         {
             base.AddValidationRules();
-            AddRule(nameof(SelectedUniqueName), () => Name != null, "A unique name has not been selected.");
-            AddRule(nameof(ListOfRows), () => ListOfRows != null, "There are no impact area rows.");
+
+            AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
+            {
+                return SelectedUniqueName == null;
+            }, "A unique name has not been selected.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+
+            AddSinglePropertyRule(nameof(ListOfRows), new Rule(() =>
+            {
+                return ListOfRows == null;
+            }, "There are no impact area rows.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
         }
 
         public override void Save()

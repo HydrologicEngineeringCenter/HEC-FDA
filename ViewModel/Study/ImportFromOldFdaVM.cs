@@ -69,35 +69,35 @@ namespace HEC.FDA.ViewModel.Study
         }
         public override void AddValidationRules()
         {
-            AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
-            AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
+            //AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
+            //AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
 
-            //path must not contain invalid characters
-            AddRule(nameof(FolderPath), () =>
-            {
-                foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                {
-                    if (FolderPath.Contains(c))
-                    {
-                        return false;
-                    }
-                }
-                if (FolderPath.Contains('?')) return false;
-                return true;
-            }, "Path contains invalid characters.");
-            //study name must not be null
-            AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
-            AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
+            ////path must not contain invalid characters
+            //AddRule(nameof(FolderPath), () =>
+            //{
+            //    foreach (Char c in System.IO.Path.GetInvalidPathChars())
+            //    {
+            //        if (FolderPath.Contains(c))
+            //        {
+            //            return false;
+            //        }
+            //    }
+            //    if (FolderPath.Contains('?')) return false;
+            //    return true;
+            //}, "Path contains invalid characters.");
+            ////study name must not be null
+            //AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
+            //AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
 
-            //check if folder with that name already exists
-            AddRule(nameof(StudyName), () =>
-            {
-                if (System.IO.File.Exists(FolderPath + "\\" + StudyName + "\\" + StudyName + ".sqlite"))
-                {
-                    return false;
-                }
-                return true;
-            }, "A study with that name already exists.");
+            ////check if folder with that name already exists
+            //AddRule(nameof(StudyName), () =>
+            //{
+            //    if (System.IO.File.Exists(FolderPath + "\\" + StudyName + "\\" + StudyName + ".sqlite"))
+            //    {
+            //        return false;
+            //    }
+            //    return true;
+            //}, "A study with that name already exists.");
         }
 
 

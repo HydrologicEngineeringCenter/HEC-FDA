@@ -24,14 +24,15 @@
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>
                     <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
-                        <Binding Path="HasFatalError"/>
+                        <Binding Path="ErrorLevel"/>
                         <Binding Path="HasChanges"/>
-                        <Binding Path="Error"/>
+                        <Binding Path="Errors"/>
+                        <Binding Path="HasErrors"/>
                     </MultiBinding>
                 </Button.ToolTip>
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource SaveButtonMultiConverter}" UpdateSourceTrigger="PropertyChanged">
-                        <Binding Path="HasFatalError"/>
+                        <Binding Path="ErrorLevel"/>
                         <Binding Path="HasChanges"/>
                     </MultiBinding>
                 </Button.IsEnabled>

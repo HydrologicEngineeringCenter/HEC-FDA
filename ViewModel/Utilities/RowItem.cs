@@ -48,9 +48,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
             public override void AddValidationRules()
             {
-                AddRule(nameof(DisplayName), () => DisplayName != null, "Display Name cannot be null.");
-                AddRule(nameof(DisplayName), () => DisplayName != "", "Display Name cannot be null.");
-               // AddRule(nameof(IndexPoint), () => Int32.Parse(IndexPoint) >= 0, "Index Point must be greater than or equal to zero.");
+                //AddRule(nameof(DisplayName), () => DisplayName != null, "Display Name cannot be null.");
+                //AddRule(nameof(DisplayName), () => DisplayName != "", "Display Name cannot be null.");
 
 
             }

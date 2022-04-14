@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Validation;
 using System;
 using System.Collections.Generic;
 
@@ -92,8 +93,7 @@ namespace HEC.FDA.ViewModel
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name == "" || Name == null; }, "Name cannot be blank.",MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
         }
 
         public void UpdateTreeViewHeader(string newName)

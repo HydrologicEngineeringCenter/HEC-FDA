@@ -12,6 +12,8 @@ using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
 using HEC.FDA.ViewModel.Saving;
+using HEC.MVVMFramework.ViewModel.Validation;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.ViewModel.Editors
 {
@@ -32,7 +34,7 @@ namespace HEC.FDA.ViewModel.Editors
         public string Name
         {
             get { return _Name; }
-            set { _Name = value;NotifyPropertyChanged(); }
+            set { _Name = value; NotifyPropertyChanged();}
         }
         public bool IsCreatingNewElement
         {
@@ -147,10 +149,11 @@ namespace HEC.FDA.ViewModel.Editors
             return "Last Saved: " + elem.LastEditDate;
         }
 
+       
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != ""; }, "Name cannot be blank.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
         }
 
         /// <summary>
@@ -183,10 +186,10 @@ namespace HEC.FDA.ViewModel.Editors
 
             foreach (string existingName in existingElements)
             {
-                AddRule(nameof(Name), () =>
+                AddSinglePropertyRule(nameof(Name), new Rule(() => 
                 {
-                    return Name != existingName;
-                }, "This name is already used. Names must be unique.");
+                    return Name == existingName; 
+                }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
             }
 
             AddSiblingUpdatedEvents(element);         
@@ -262,10 +265,12 @@ namespace HEC.FDA.ViewModel.Editors
                 InTheProcessOfSaving = false;
                 return;
             }
-            AddRule(nameof(Name), () =>
+
+            AddSinglePropertyRule(nameof(Name), new Rule(() =>
             {
-                return Name != newName;
-            }, "This name is already used. Names must be unique.");
+                return Name == newName;
+            }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
+
         }
 
         private void SiblingWasAdded(object sender, ElementAddedEventArgs args)
@@ -278,10 +283,10 @@ namespace HEC.FDA.ViewModel.Editors
                 InTheProcessOfSaving = false;
                 return;
             }
-            AddRule(nameof(Name), () =>
+            AddSinglePropertyRule(nameof(Name), new Rule(() =>
             {
-                return Name != newName;
-            }, "This name is already used. Names must be unique.");
+                return Name == newName;
+            }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
         }
 
         /// <summary>
@@ -300,10 +305,10 @@ namespace HEC.FDA.ViewModel.Editors
 
             foreach (string existingName in existingElements)
             {
-                AddRule(nameof(Name), () =>
+                AddSinglePropertyRule(nameof(Name), new Rule(() =>
                 {
                     return Name != existingName;
-                }, "This name is already used. Names must be unique.");
+                }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
             }
 
         }

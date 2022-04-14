@@ -61,8 +61,8 @@ namespace HEC.FDA.ViewModel.Output
         #region Voids
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => !(Name == ""), "The Name cannot be blank.");
-            AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
+            //AddRule(nameof(Name), () => !(Name == ""), "The Name cannot be blank.");
+            //AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
         }
 
      

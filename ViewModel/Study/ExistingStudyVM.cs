@@ -69,35 +69,35 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
-            AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
-            AddRule(nameof(Path), () =>
-            {
-                return System.IO.File.Exists(Path);
-            }, "File does not exist.");
+            //AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
+            //AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
+            //AddRule(nameof(Path), () =>
+            //{
+            //    return System.IO.File.Exists(Path);
+            //}, "File does not exist.");
 
-            AddRule(nameof(Path), () =>
-            {
-                return System.IO.Path.GetExtension(Path) == ".sqlite";
-            }, "Selected file is the wrong file type. File must be '*.sqlite'");
+            //AddRule(nameof(Path), () =>
+            //{
+            //    return System.IO.Path.GetExtension(Path) == ".sqlite";
+            //}, "Selected file is the wrong file type. File must be '*.sqlite'");
 
-            AddRule(nameof(Path), () =>
-            {
-                if (Path != null && Path != "")
-                {
-                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                    {
+            //AddRule(nameof(Path), () =>
+            //{
+            //    if (Path != null && Path != "")
+            //    {
+            //        foreach (Char c in System.IO.Path.GetInvalidPathChars())
+            //        {
 
-                        if (Path.Contains(c))
-                        {
+            //            if (Path.Contains(c))
+            //            {
 
-                            return false;
-                        }
-                    }
-                    if (Path.Contains('?')) return false;
-                }
-                return true;
-            }, "Path contains invalid characters.");
+            //                return false;
+            //            }
+            //        }
+            //        if (Path.Contains('?')) return false;
+            //    }
+            //    return true;
+            //}, "Path contains invalid characters.");
         }
   
         #endregion

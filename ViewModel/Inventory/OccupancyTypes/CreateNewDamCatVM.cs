@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.MVVMFramework.ViewModel.Validation;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -38,14 +39,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             foreach (string bannedName in bannedNames)
             {
-                AddRule(nameof(Name), () => {
-                    if (bannedName.Equals(Name))
-                    {
-                        return false;
-                    }
-                    else { return true; }
+                AddSinglePropertyRule(nameof(Name), new Rule(() =>
+                {
+                    return bannedName.Equals(Name);
+                }, "Name already exists.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
 
-                }, "Name already exists.");
+
             }
         }
   

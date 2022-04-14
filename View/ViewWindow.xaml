@@ -10,7 +10,9 @@
         ResizeMode="CanResize"
         SizeToContent="WidthAndHeight"
         Title="ViewWindow" 
-        Loaded="Window_Loaded"     
+        Loaded="Window_Loaded"
+        MinHeight="100"
+        MinWidth="100"
         >
 
     <Window.DataContext>

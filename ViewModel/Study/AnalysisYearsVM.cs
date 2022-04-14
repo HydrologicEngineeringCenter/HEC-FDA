@@ -41,9 +41,9 @@ namespace HEC.FDA.ViewModel.Study
         public override void AddValidationRules()
         {
 
-            AddRule(nameof(BaseYear), () => BaseYear <= DateTime.Now.Year, "The Base Year must not be in the future.");
-            AddRule(nameof(BaseYear), () => BaseYear >= 1900, "The Base Year must not be less than 1900.");
-            AddRule(nameof(MostLikelyFuture), () => MostLikelyFuture >= BaseYear, "The Most Likely Future must happen after the Base Year.");
+            //AddRule(nameof(BaseYear), () => BaseYear <= DateTime.Now.Year, "The Base Year must not be in the future.");
+            //AddRule(nameof(BaseYear), () => BaseYear >= 1900, "The Base Year must not be less than 1900.");
+            //AddRule(nameof(MostLikelyFuture), () => MostLikelyFuture >= BaseYear, "The Most Likely Future must happen after the Base Year.");
         }
 
       

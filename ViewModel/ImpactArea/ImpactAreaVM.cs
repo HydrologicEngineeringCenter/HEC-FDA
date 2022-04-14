@@ -46,9 +46,9 @@
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(IndexPoint), () => IndexPoint >= 0, "Index Point must be greater than or equal to zero.");
-            AddRule(nameof(Name), () => Name == "", "Name cannot be empty.");
-            AddRule(nameof(Name), () => Name == null, "Name cannot be empty.");
+            //AddRule(nameof(IndexPoint), () => IndexPoint >= 0, "Index Point must be greater than or equal to zero.");
+            //AddRule(nameof(Name), () => Name == "", "Name cannot be empty.");
+            //AddRule(nameof(Name), () => Name == null, "Name cannot be empty.");
 
         }
 

@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
+             MinWidth="200"
+             MinHeight="200"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibileIfTrueConverter"/>

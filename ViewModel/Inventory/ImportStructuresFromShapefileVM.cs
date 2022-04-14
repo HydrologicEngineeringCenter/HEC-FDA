@@ -82,9 +82,9 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             FdaValidationResult vr = new FdaValidationResult();
             Validate();
-            if (HasFatalError)
+            if (HasErrors)
             {
-                vr.AddErrorMessage( Error);
+                //vr.AddErrorMessage( Error);
             }
             return vr;
         }

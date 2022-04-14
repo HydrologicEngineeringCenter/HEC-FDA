@@ -126,10 +126,13 @@ namespace HEC.FDA.View
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Height = this.DesiredSize.Height;
-            this.MinHeight = this.DesiredSize.Height;
-            this.MinWidth = this.DesiredSize.Width;
-            this.Width = this.DesiredSize.Width;
+            //this.Height = this.DesiredSize.Height;
+            //this.MinHeight = this.DesiredSize.Height;
+            //this.MinWidth = this.DesiredSize.Width;
+            //this.Width = this.DesiredSize.Width;
+
+
+            //EnumVisual(this);
         }
     }
 }
