@@ -16,12 +16,13 @@ namespace HEC.FDA.View.Study
 
         public StudyView()
         { 
+            
             InitializeComponent();
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            lbl_Study.ContextMenu.IsOpen = true;
+            //lbl_Study.ContextMenu.IsOpen = true;
         }
 
         private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -29,5 +30,49 @@ namespace HEC.FDA.View.Study
             WasXClicked = true;
         }
 
+        private void New_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is FdaStudyVM study)
+            {
+                if(study.CurrentStudyElement != null)
+                {
+                    study.CurrentStudyElement.CreateStudyFromWindow();
+                }
+            }
+        }
+
+        private void Open_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is FdaStudyVM study)
+            {
+                if (study.CurrentStudyElement != null)
+                {
+                    study.CurrentStudyElement.OpenStudy();
+                }
+            }
+        }
+
+        private void Properties_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is FdaStudyVM study)
+            {
+                if (study.CurrentStudyElement != null)
+                {
+                    study.CurrentStudyElement.StudyProperties();
+                }
+            }
+        }
+
+        private void ImportStudy_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is FdaStudyVM study)
+            {
+                if (study.CurrentStudyElement != null)
+                {
+                    study.CurrentStudyElement.ImportStudyFromOldFda();
+                }
+            }
+        }
+        
     }
 }

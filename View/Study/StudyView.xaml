@@ -50,11 +50,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
+    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" MinHeight="27"/>
@@ -65,12 +65,21 @@
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
 
-        <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
+        <!--<Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>-->
+        <Menu Name="FileMenu" Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Click="New_MenuItem_Click" />
+                <MenuItem Header="_Open" Click="Open_MenuItem_Click"/>
+                <MenuItem Header="_Import Study" Click="ImportStudy_MenuItem_Click"/>
+                <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click"/>
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+        </Menu>
 
 
-    
-                
-                    <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
+
+        <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>

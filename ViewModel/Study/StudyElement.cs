@@ -46,38 +46,38 @@ namespace HEC.FDA.ViewModel.Study
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
             _Elements = new ObservableCollection<BaseFdaElement>();
 
-            NamedAction open = new NamedAction();
-            open.Header = "Open Study";
-            open.Action = OpenStudy;
+            //NamedAction open = new NamedAction();
+            //open.Header = "Open Study";
+            //open.Action = OpenStudy;
 
-            NamedAction importStudyFromOldFda = new NamedAction();
-            importStudyFromOldFda.Header = StringConstants.IMPORT_FROM_OLD_FDA;
-            importStudyFromOldFda.Action = ImportStudyFromOldFda;
+            //NamedAction importStudyFromOldFda = new NamedAction();
+            //importStudyFromOldFda.Header = StringConstants.IMPORT_FROM_OLD_FDA;
+            //importStudyFromOldFda.Action = ImportStudyFromOldFda;
 
-            NamedAction create = new NamedAction();
-            create.Header = "Create Study";
-            create.Action = CreateStudyFromWindow;
+            //NamedAction create = new NamedAction();
+            //create.Header = "Create Study";
+            ////create.Action = CreateStudyFromWindow;
 
-            NamedAction properties = new NamedAction();
-            properties.Header = "Study Properties";
-            properties.Action = StudyProperties;
-            properties.IsEnabled = false;
+            //NamedAction properties = new NamedAction();
+            //properties.Header = "Study Properties";
+            //properties.Action = StudyProperties;
+            //properties.IsEnabled = false;
 
-            NamedAction save = new NamedAction();
-            save.Header = "Save Study";
-            save.Action = SaveStudy;
-            save.IsEnabled = false;
+            //NamedAction save = new NamedAction();
+            //save.Header = "Save Study";
+            //save.Action = SaveStudy;
+            //save.IsEnabled = false;
 
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(create);
-            localactions.Add(open);
-            localactions.Add(importStudyFromOldFda);
-            localactions.Add(properties);
-            localactions.Add(save);
+            //List<NamedAction> localactions = new List<NamedAction>();
+            //localactions.Add(create);
+            //localactions.Add(open);
+            //localactions.Add(importStudyFromOldFda);
+            //localactions.Add(properties);
+            //localactions.Add(save);
 
-            NamedAction seperator = new NamedAction();
-            seperator.Header = "seperator";
-            localactions.Add(seperator);
+            //NamedAction seperator = new NamedAction();
+            //seperator.Header = "seperator";
+            //localactions.Add(seperator);
 
             int i = 1;
             foreach(string path in _RegistryStudies)
@@ -86,13 +86,13 @@ namespace HEC.FDA.ViewModel.Study
                 recentPath.Header =i+": "+ System.IO.Path.GetFileNameWithoutExtension(path);
                 recentPath.FilePath = path;
                 recentPath.Action = OpenStudyFromRecent;
-                localactions.Add(recentPath);
+                //localactions.Add(recentPath);
                 i++;
             }
 
-            localactions.Add(seperator);
+            //localactions.Add(seperator);
 
-            Actions = localactions;
+            //Actions = localactions;
         }
 
         #endregion
@@ -198,7 +198,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             SaveTheOpenTabs?.Invoke(arg1, arg2);
         }
-        private void CreateStudyFromWindow(object arg1, EventArgs arg2)
+        public void CreateStudyFromWindow()
         {
             NewStudyVM vm = new NewStudyVM(this);
             string header = "Create New Study";
@@ -255,7 +255,7 @@ namespace HEC.FDA.ViewModel.Study
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, id);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
-        private void StudyProperties(object arg1, EventArgs arg2)
+        public void StudyProperties()
         {
             List<StudyPropertiesElement> studyProps = StudyCache.GetChildElementsOfType<StudyPropertiesElement>();
             if(studyProps.Count>0)
@@ -290,34 +290,34 @@ namespace HEC.FDA.ViewModel.Study
                     //((ParentElement)ele).AddChildrenFromTable();
                 }
             }
-            foreach (NamedAction action in Actions)
-            {
-                if (action.Header == "Save Study")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Study Properties")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "View Transactions")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Open Study")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Create Study")
-                {
-                    action.IsEnabled = true;
-                }
-            }
+            //foreach (NamedAction action in Actions)
+            //{
+            //    if (action.Header == "Save Study")
+            //    {
+            //        action.IsEnabled = true;
+            //    }
+            //    else if (action.Header == "Study Properties")
+            //    {
+            //        action.IsEnabled = true;
+            //    }
+            //    else if (action.Header == "View Transactions")
+            //    {
+            //        action.IsEnabled = true;
+            //    }
+            //    else if (action.Header == "Open Study")
+            //    {
+            //        action.IsEnabled = true;
+            //    }
+            //    else if (action.Header == "Create Study")
+            //    {
+            //        action.IsEnabled = true;
+            //    }
+            //}
 
             StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
         }
 
-        private void ImportStudyFromOldFda(object sender, EventArgs e)
+        public void ImportStudyFromOldFda()
         {
             ImportFromOldFdaVM vm = new ImportFromOldFdaVM(this);
             string header = StringConstants.IMPORT_FROM_OLD_FDA;
@@ -325,7 +325,7 @@ namespace HEC.FDA.ViewModel.Study
             Navigate(tab, false, false);
         }
 
-        private void OpenStudy(object sender, EventArgs e)
+        public void OpenStudy()
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
             string header = "Open Study";

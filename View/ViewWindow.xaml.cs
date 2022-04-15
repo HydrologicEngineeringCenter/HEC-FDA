@@ -71,25 +71,7 @@ namespace HEC.FDA.View
             }
         }
 
-        public T GetTheVisualChild<T>(Visual Parent) where T : Visual
-        {
-            T child = null;
-            int NumVisuals = VisualTreeHelper.GetChildrenCount(Parent);
-            for (int i = 0; i < NumVisuals; i++)
-            {
-                Visual v = (Visual)VisualTreeHelper.GetChild(Parent, i);
-                child = v as T;
-                if (child == null)
-                {
-                    child = GetTheVisualChild<T>(v);
-                }
-                else
-                {
-                    return child;
-                }
-            }
-            return child;
-        }
+ 
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -112,45 +94,45 @@ namespace HEC.FDA.View
 
         }
 
-        static public void EnumVisual(Visual myVisual)
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
-            {
-                // Retrieve child visual at specified index value.
-                Visual childVisual = (Visual)VisualTreeHelper.GetChild(myVisual, i);
-
-                // Do processing of the child visual object.
-
-                // Enumerate children of the child visual object.
-                EnumVisual(childVisual);
-            }
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //this.Height = this.DesiredSize.Height;
-            //this.MinHeight = this.DesiredSize.Height;
-            //this.MinWidth = this.DesiredSize.Width;
-            //this.Width = this.DesiredSize.Width;
-
-
-            //EnumVisual(this);
-            //this.Resources.Contains()
-            WindowVM winVM = (WindowVM)DataContext;
-            Type editorType = winVM.CurrentView.GetType();
+            WindowVM winVM = (WindowVM)DataContext;          
+            Type editorType = winVM.CurrentView.GetType();            
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
             if(dimensions != null)
             {
-                MinWidth = dimensions.MinWidth;
-                MinHeight = dimensions.MinHeight;
+                if(dimensions.MinWidth != 0)
+                {
+                    MinWidth = dimensions.MinWidth;
+                }
+                if(dimensions.MaxWidth != 0)
+                {
+                    MaxWidth = dimensions.MaxWidth;
+                }
 
-                Width = dimensions.Width;
-                Height = dimensions.Height;
+                if(dimensions.MinHeight != 0)
+                {
+                    MinHeight = dimensions.MinHeight;
+                }
 
-                MaxWidth = dimensions.MaxWidth;
-                MaxHeight = dimensions.MaxHeight;
+                if(dimensions.Width != 0)
+                {
+                    Width = dimensions.Width;
+                }
+
+                if(dimensions.Height != 0)
+                {
+                    Height = dimensions.Height;
+                }
+
+                if(dimensions.MaxHeight != 0)
+                {
+                    MaxHeight = dimensions.MaxHeight;
+                }
             }
 
         }
+
+        
     }
 }

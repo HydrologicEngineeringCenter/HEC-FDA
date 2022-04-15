@@ -25,16 +25,13 @@
                 <Button.ToolTip>
                     <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
                         <Binding Path="HasErrors"/>
-                        <Binding Path="ErrorLevel"/>
-                        <Binding Path="HasChanges"/>
-                        <Binding Path="Errors"/>
+                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
                     </MultiBinding>
                 </Button.ToolTip>
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource SaveButtonMultiConverter}" UpdateSourceTrigger="PropertyChanged">
-                        <Binding Path="ErrorLevel"/>
-                        <Binding Path="HasChanges"/>
                         <Binding Path="HasErrors"/>
+                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>

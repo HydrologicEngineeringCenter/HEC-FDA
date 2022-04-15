@@ -102,13 +102,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Base\Base.csproj" />
+    <ProjectReference Include="..\..\Framework\ViewModel\ViewModel.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="GDAL-HEC" Version="0.0.1" />
-    <PackageReference Include="HEC.MVVMFramework.Base" Version="1.0.0-alpha-2022.2.15.2147" />
-    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />

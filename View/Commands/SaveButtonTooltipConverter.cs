@@ -1,4 +1,5 @@
-﻿using HEC.MVVMFramework.Base.Enumerations;
+﻿using HEC.FDA.ViewModel;
+using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,31 +16,36 @@ namespace HEC.FDA.View.Commands
             try
             {
                 bool hasErrors = (bool)values[0];
-                ErrorLevel errorLevel = (ErrorLevel)values[1];
-                bool HasChanges = (bool)values[2];
-                List<string> errorMsg = (List<string>)values[3];
+                object dataContext = ((System.Windows.Controls.Button)values[1]).DataContext;
 
-                if(hasErrors)
+                if (hasErrors)
                 {
-                    return "cody testing";
+                    if(dataContext is BaseViewModel baseVM)
+                    {
+                        //ErrorLevel errorLevel = baseVM.ErrorLevel;
+                        List<string> errors = (List<string>)baseVM.GetErrors();
+                        string errorMsg = string.Join(Environment.NewLine, errors);
+                        return errorMsg;
+                    }
                 }
-                else if (errorLevel >= ErrorLevel.Fatal)
-                {
-                    return errorMsg;
-                }
-                else if (HasChanges == false)
-                {
-                    return "No changes to save";
-                }
-                else
-                {
-                    return null;
-                }
+                //else if (errorLevel >= ErrorLevel.Fatal)
+                //{
+                //    return errorMsg;
+                //}
+                //else if (HasChanges == false)
+                //{
+                //    return "No changes to save";
+                //}
+                //else
+                //{
+                //    return null;
+                //}
             }
             catch(Exception e)
             {
                 return null;
             }
+            return null;
 
         }
 
