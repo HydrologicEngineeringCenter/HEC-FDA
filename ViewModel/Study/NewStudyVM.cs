@@ -91,9 +91,6 @@ namespace HEC.FDA.ViewModel.Study
             _StudyElement.CreateNewStudy(_StudyName, _Path, _Description);
         }
 
-
-        #endregion
-        #region Functions
         #endregion
 
     }

@@ -1,10 +1,7 @@
 ﻿using HEC.FDA.View.Utilities;
-using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace HEC.FDA.View
 {
@@ -13,23 +10,14 @@ namespace HEC.FDA.View
     /// </summary>
     public partial class ViewWindow : Window
     {
-        private static ViewWindow _MainWindow;
-
         public ViewWindow()
         {
-            //for some reason this only gets called once, but the loaded gets called every time. wierd.
             InitializeComponent();
-            //set this window as the "main window" so that the tabs can be dragged back into it
-            //Every window is using this class so we only want to set this the first time
-            if (_MainWindow == null)
-            {
-                _MainWindow = this;
-            }
-
+            //remove the row that has the pop-in button.
+            MainGrid.RowDefinitions[0].Height = new GridLength(0);
             WindowVM vm = (WindowVM)this.DataContext;
             Title = vm.Title;
             vm.LaunchNewWindow += WindowSpawner;
-            Closing += vm.OnClosing;   
         }
 
         public ViewWindow(WindowVM newvm)
@@ -38,7 +26,6 @@ namespace HEC.FDA.View
             DataContext = newvm;
             Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
-            Closing += newvm.OnClosing;
         }
 
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
@@ -58,7 +45,7 @@ namespace HEC.FDA.View
             //hide the top row with the pop in button if this vm doesn't support that
             if (newvm.Tab.CanPopOut == false)
             {
-                // newwindow.MainGrid.RowDefinitions[0].Height = new GridLength(0);
+                newwindow.MainGrid.RowDefinitions[0].Height = new GridLength(0);
             }
 
             if (asDialogue)
@@ -70,8 +57,6 @@ namespace HEC.FDA.View
                 newwindow.Show();
             }
         }
-
- 
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

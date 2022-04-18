@@ -1,10 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace HEC.FDA.ViewModel
 {
@@ -19,7 +16,7 @@ namespace HEC.FDA.ViewModel
         #region Notes
         #endregion
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
         public event RequestNavigationHandler RequestNavigation;
 
         #endregion
@@ -57,8 +54,6 @@ namespace HEC.FDA.ViewModel
 
         public string LastEditDate { get; set; }
 
-
-
         /// <summary>
         /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
         /// It is up to the save method to turn this back to false. 
@@ -70,7 +65,6 @@ namespace HEC.FDA.ViewModel
         }
         public bool WasCanceled { get; set; }
        
-
 
         #endregion
         #region Constructors
@@ -145,14 +139,14 @@ namespace HEC.FDA.ViewModel
         }
 
 
-        public virtual void OnClosing(object sender, EventArgs e)
-        {
+        //public virtual void OnClosing(object sender, EventArgs e)
+        //{
 
-        }
-        public virtual void Dispose()
-        {
+        //}
+        //public virtual void Dispose()
+        //{
 
-        }
+        //}
 
 
         #endregion
@@ -169,8 +163,6 @@ namespace HEC.FDA.ViewModel
         {
             return true;
         }
-
-
 
     }
 }

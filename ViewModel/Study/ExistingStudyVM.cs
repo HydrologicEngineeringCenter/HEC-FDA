@@ -101,7 +101,5 @@ namespace HEC.FDA.ViewModel.Study
         }
   
         #endregion
-        #region Functions
-        #endregion
     }
 }

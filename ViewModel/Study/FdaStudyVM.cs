@@ -1,14 +1,12 @@
 ﻿using HEC.FDA.ViewModel.Tabs;
-using HEC.FDA.ViewModel.Utilities;
 using System;
 
 
 namespace HEC.FDA.ViewModel.Study
 {
-    public class FdaStudyVM : BaseViewModel, IDisposable
+    public class FdaStudyVM : BaseViewModel
     {
-        #region Notes
-        #endregion
+
         #region Fields
         private StudyElement _StudyElement;
 
@@ -53,6 +51,7 @@ namespace HEC.FDA.ViewModel.Study
 
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
         }
+        #endregion
 
         private void InitializeGDAL()
         {
@@ -70,32 +69,12 @@ namespace HEC.FDA.ViewModel.Study
             {
                 throw;
             }
-        }
-
-        #region Voids
+        }  
         
         private void UpdateSaveStatus(object sender, EventArgs e)
         {
             SaveStatus = (string)sender;
-        }
-
-        /// <summary>
-        /// Adds the "Create New Study" tab to the main window. We remove the tab if the user loads 
-        /// a previously created study.
-        /// </summary>
-        public void AddCreateNewStudyTab()
-        {
-            NewStudyVM vm = new NewStudyVM(CurrentStudyElement);
-            DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
-            newStudyTab.Name = "CreateStudyTab";
-            TabController.Instance.AddTab(newStudyTab);
-        }
-
-        #endregion
-        
-
-
-        #endregion
+        }        
 
     }
 }
