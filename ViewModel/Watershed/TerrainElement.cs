@@ -134,8 +134,6 @@ namespace HEC.FDA.ViewModel.Watershed
                     string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + newName;
                     Directory.Move(sourceFilePath, destinationFilePath);
                 }
-                //rename the child table in the DB
-                //Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
             }
         }
 
