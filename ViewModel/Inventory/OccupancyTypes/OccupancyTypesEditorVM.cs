@@ -3,7 +3,6 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Utilities.Transactions;
 using HEC.Plotting.SciChart2D.Charts;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ using System.Windows;
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
-    public class OccupancyTypesEditorVM : BaseEditorVM, IDisplayLogMessages
+    public class OccupancyTypesEditorVM : BaseEditorVM
     {
         public event EventHandler CloseEditor;
         private List<IOccupancyTypeGroupEditable> _GroupsToUpdateInParentTable = new List<IOccupancyTypeGroupEditable>();
@@ -147,7 +146,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Name = "OccTypeEditor";
             Chart = new Chart2D();
             OccTypeGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
-            SetDimensions(950, 600, 400, 400);
         }
 
         public void FillEditor(List<OccupancyTypesElement> occtypeElements)
@@ -247,9 +245,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             string header = "New Occupancy Type";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "NewOccupancyType");
             Navigate(tab, true, true);
-            if (vm.WasCanceled == false)
+            if (!vm.WasCanceled)
             {
-                if (vm.HasError == false)
+                if (!vm.HasError)
                 {
                     ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
                     string damCatName = "";

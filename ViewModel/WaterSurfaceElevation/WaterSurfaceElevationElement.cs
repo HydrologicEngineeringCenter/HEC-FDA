@@ -224,16 +224,19 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             string header = "Rename";
             DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
             Navigate(tab);
-            string newName = renameViewModel.Name;
-            //rename the folders in the study.
-            if (!originalName.Equals(newName))
+            if (!renameViewModel.WasCanceled)
             {
-                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
-                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
-                Directory.Move(sourceFilePath, destinationFilePath);
+                string newName = renameViewModel.Name;
+                //rename the folders in the study.
+                if (!originalName.Equals(newName))
+                {
+                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
+                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
+                    Directory.Move(sourceFilePath, destinationFilePath);
+                }
+                //rename the child table in the DB
+                Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
             }
-            //rename the child table in the DB
-            Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
         }
 
 

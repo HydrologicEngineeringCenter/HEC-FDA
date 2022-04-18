@@ -145,7 +145,7 @@ namespace HEC.FDA.ViewModel.Watershed
             }
             else
             {
-                MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(isValidResult.ErrorMessage, "Invalid File Path", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
