@@ -30,11 +30,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
             get { return _IsInEditMode; }
             set { _IsInEditMode = value; NotifyPropertyChanged(); }
         }
-        public ObservableCollection<string> AvailablePaths
-        {
-            get { return _Paths; }
-            set { _Paths = value; NotifyPropertyChanged(); }
-        }
+        //public ObservableCollection<string> AvailablePaths
+        //{
+        //    get { return _Paths; }
+        //    set { _Paths = value; NotifyPropertyChanged(); }
+        //}
         public string SelectedPath
         {
             get { return _Path; }
@@ -58,9 +58,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
+        public ImpactAreaImporterVM(EditorActionManager actionManager):base(actionManager)
         {
-            AvailablePaths = PolygonPaths;
             IsInEditMode = false;
         }
 

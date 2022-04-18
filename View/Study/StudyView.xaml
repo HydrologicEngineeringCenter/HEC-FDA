@@ -8,7 +8,7 @@
              xmlns:VMUtils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
-        
+             Loaded="UserControl_Loaded"
              MinWidth="800"
              MinHeight="600"
    
@@ -65,15 +65,13 @@
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
 
-        <!--<Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>-->
-        <Menu Name="FileMenu" Grid.Row="0">
-            <MenuItem Header="_File">
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File" Name="FileMenu">
                 <MenuItem Header="_New" Click="New_MenuItem_Click" />
                 <MenuItem Header="_Open" Click="Open_MenuItem_Click"/>
                 <MenuItem Header="_Import Study" Click="ImportStudy_MenuItem_Click"/>
                 <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click"/>
                 <Separator />
-                <MenuItem Header="_Exit" />
             </MenuItem>
         </Menu>
 
@@ -91,20 +89,12 @@
                                 <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                             </Style>
                         </TreeView.ItemContainerStyle>
-                    </TreeView>
-               
-            
-
-        
-
-
-
+        </TreeView>
 
         <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
                                                    SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}"   
                                                    Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
                                                      IsSynchronizedWithCurrentItem="True"  Style="{StaticResource TabControlNoReloadStyle}">
-
 
             <utils:TabControlNoReload.ItemTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
@@ -113,8 +103,6 @@
                 </DataTemplate>
             </utils:TabControlNoReload.ItemTemplate>
 
-
-
             <utils:TabControlNoReload.ContentTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
                     <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
@@ -122,7 +110,6 @@
             </utils:TabControlNoReload.ContentTemplate>
 
         </utils:TabControlNoReload>
-
 
         <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
 

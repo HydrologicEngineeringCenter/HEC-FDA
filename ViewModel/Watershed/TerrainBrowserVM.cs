@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainBrowserVM(List<string> availablePaths, Editors.EditorActionManager actionManager) : base(actionManager)
+        public TerrainBrowserVM( Editors.EditorActionManager actionManager) : base(actionManager)
         {
         }
 

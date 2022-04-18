@@ -9,11 +9,6 @@ using System.Text;
 namespace HEC.FDA.ViewModel
 {
     public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog);
-    public delegate void RequestShapefilePathsHandler(ref List<string> files);
-    public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, VectorFeatureType type);
-    public delegate void RequestAddToMapWindowHandler(object sender, AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
-    public delegate void RequestRemoveFromMapWindowHandler(object sender, RemoveMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
-
 
     /// <summary>
     /// The base class for all view model classes. Contains methods that are common among all view model classes
@@ -26,10 +21,6 @@ namespace HEC.FDA.ViewModel
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
         public event RequestNavigationHandler RequestNavigation;
-        public event RequestShapefilePathsHandler RequestShapefilePaths;
-        public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
-        public event RequestAddToMapWindowHandler RequestAddToMapWindow;
-        public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
 
         #endregion
         #region Fields
@@ -153,41 +144,6 @@ namespace HEC.FDA.ViewModel
             }     
         }
 
-        /// <summary>
-        /// Recursively goes up to the ViewWindow.xaml.cs and gets any shapefiles in the map window
-        /// </summary>
-        /// <param name="paths"></param>
-        public void ShapefilePaths(ref List<string> paths)
-        {
-            RequestShapefilePaths?.Invoke(ref paths);
-        }
-        /// <summary>
-        /// Recursively goes up to the ViewWindow.xaml.cs and gets any files of the desired VectorFeatureType
-        /// </summary>
-        /// <param name="paths"></param>
-        /// <param name="type">Point, Line, Polygon</param>
-        public void ShapefilePathsOfType(ref List<string> paths, Utilities.VectorFeatureType type)
-        {
-            RequestShapefilePathsOfType?.Invoke(ref paths, type);      
-        }
-        /// <summary>
-        /// Recursively goes up to the ViewWindow.xaml.cs and adds "this" to the map window.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        public void AddToMapWindow(object sender, Utilities.AddMapFeatureEventArgs args)
-        {
-            RequestAddToMapWindow?.Invoke(sender, args);
-        }
-        /// <summary>
-        /// Recursively goes up to the ViewWindow.xaml.cs and removes "this" from the map window 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        public void RemoveFromMapWindow(object sender, Utilities.RemoveMapFeatureEventArgs args)
-        {
-            RequestRemoveFromMapWindow?.Invoke(sender, args);
-        }   
 
         public virtual void OnClosing(object sender, EventArgs e)
         {

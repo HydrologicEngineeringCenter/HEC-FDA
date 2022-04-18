@@ -53,19 +53,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
             //check to see if one already exists
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impAreaElems.Count == 0)
-            {
-                List<string> paths = new List<string>();
-                ShapefilePathsOfType(ref paths, VectorFeatureType.Polygon);
-                ObservableCollection<string> observpaths = new ObservableCollection<string>();
-                foreach (string s in paths)
-                {
-                    observpaths.Add(s);
-                }
-
+            {              
                 EditorActionManager actionManager = new EditorActionManager()
                     .WithSiblingRules(this);
 
-                ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);
+                ImpactAreaImporterVM vm = new ImpactAreaImporterVM(actionManager);
                 string header = "Import Impact Area Set";
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportImpactAreas");
                 Navigate(tab, false, false);

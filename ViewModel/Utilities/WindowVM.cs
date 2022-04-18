@@ -29,6 +29,9 @@ namespace HEC.FDA.ViewModel.Utilities
                 CurrentView.RequestNavigation += CurrentView_RequestNavigation;
             }
         }
+        /// <summary>
+        /// This tab object allows me to grab the baseViewModel as well as handle popping into tabs and windows.
+        /// </summary>
         public IDynamicTab Tab { get; set; }
 
         public string Title
@@ -41,36 +44,26 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Constructors
         public WindowVM()
         {
-            //this is dumb, but for some reason anytime a window is opened in all of FDA it falls into here
+            //Anytime a window is opened in all of FDA it falls into here
             //and recreates the studyVM. This static prop in a static class allows me to not enter if the 
             //study is already open
-            if (ExtentionMethods.IsStudyOpen) 
-            { 
-                return; 
+            if (ExtentionMethods.IsStudyOpen)
+            {
+                return;
             }
-            else { ExtentionMethods.IsStudyOpen = true; }
-
-            StudyVM = new Study.FdaStudyVM();
-            CurrentView = StudyVM;
-            Title = "FDA 2.0";
-
-            //MinWidth = 800;
-            //MinHeight = 500;
-            //Width = 1200;
-            //Height = 800;
+            else
+            {
+                ExtentionMethods.IsStudyOpen = true;
+                StudyVM = new Study.FdaStudyVM();
+                CurrentView = StudyVM;
+                Title = "FDA 2.0";
+            }
         }
         public WindowVM(IDynamicTab tab)
         {
             Tab = tab;
             CurrentView = tab.BaseVM;
             Title = tab.Header;
-
-            //the view windows size is bound to these properties. Set the 
-            //dimensions to be what the CurrentView VM wants to be.
-            //Width = CurrentView.Width;
-            //Height = CurrentView.Height;
-            //MinWidth = CurrentView.MinWidth;
-            //MinHeight = CurrentView.MinHeight;
         }
         #endregion
         #region Voids
@@ -80,9 +73,9 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 if (newWindow)
                 {
-                    WindowVM tmp = new WindowVM(tab);
-                    tmp.Title = tab.Header;
-                    LaunchNewWindow(tmp,asDialog);
+                    WindowVM window = new WindowVM(tab);
+                    window.Title = tab.Header;
+                    LaunchNewWindow(window, asDialog);
                 }
                 else
                 {

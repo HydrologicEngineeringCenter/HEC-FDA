@@ -62,19 +62,10 @@ namespace HEC.FDA.ViewModel.Inventory
                 return;
             }
 
-            //get the list of paths that exist in the map window
-            ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
-            List<string> pointShapePaths = new List<string>();
-            ShapefilePathsOfType(ref pointShapePaths, VectorFeatureType.Point);
-            foreach (string path in pointShapePaths)
-            {
-                collectionOfPointFiles.Add(path);
-            }
-
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
 
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager);
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(actionManager);
             vm.RequestNavigation += Navigate;
             
             string header = "Import Structure Inventory";

@@ -115,11 +115,6 @@
         <!--Editors Region-->
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
-                                         MinWidth="300" Width="500" 
-                                         MinHeight="300" Height="600" />
-            </DataTemplate.Resources>
         </DataTemplate>
 
         <!--Aggrgated Region-->

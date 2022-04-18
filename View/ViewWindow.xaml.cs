@@ -94,6 +94,11 @@ namespace HEC.FDA.View
 
         }
 
+        /// <summary>
+        /// Reads the dimensions defined in the app.xaml (or the default) and sets the window dimensions.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WindowVM winVM = (WindowVM)DataContext;          

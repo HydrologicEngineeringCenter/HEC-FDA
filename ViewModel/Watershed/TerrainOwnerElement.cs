@@ -49,9 +49,7 @@ namespace HEC.FDA.ViewModel.Watershed
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
 
-            List<string> availableVRTPaths = new List<string>();
-            ShapefilePaths(ref availableVRTPaths);
-            TerrainBrowserVM vm = new TerrainBrowserVM(availableVRTPaths, actionManager);
+            TerrainBrowserVM vm = new TerrainBrowserVM( actionManager);
             string header = "Import Terrain";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportTerrain");
             Navigate( tab, false,true);

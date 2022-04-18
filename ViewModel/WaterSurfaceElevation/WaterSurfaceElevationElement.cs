@@ -18,7 +18,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #endregion
         #region Fields
         private List<PathAndProbability> _RelativePathAndProbability;
-        private List<int> _featureNodeHashs;
         #endregion
         #region Properties
      
@@ -79,32 +78,10 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
-            NamedAction mapWindow = new NamedAction();
-            mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-            mapWindow.Action = AddWSEToMapWindow;
-
-            //"NA" has been placed in the "path" column of the database. That means that this WSE came
-            //from old FDA and doesn't have a path associated with it and so we disable this menu item.
-            bool hasMapLayers = true;
-            if(pathAndProbs.Count>0)
-            {
-                if(pathAndProbs[0].Path.Equals("NA"))
-                {
-                    hasMapLayers = false;
-                }
-            }
-
-            if (!hasMapLayers)
-            {
-                mapWindow.IsEnabled = false;
-                mapWindow.ToolTip = "No map layers exist when imported from HEC-FDA 1.4.3";
-            }
-
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(editElement);
             localactions.Add(remove);
             localactions.Add(renameElement);
-            localactions.Add(mapWindow);
 
             Actions = localactions;
             TableContainsGeoData = true;

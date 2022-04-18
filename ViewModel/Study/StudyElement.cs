@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.AlternativeComparisonReport;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
@@ -10,114 +7,58 @@ using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace HEC.FDA.ViewModel.Study
 {
     public class StudyElement : ParentElement
     {
-
-        public event EventHandler RenameTreeViewElement;
-        public event EventHandler AddBackInTreeViewElement;
-        public event EventHandler OpeningADifferentStudy;
-        public event EventHandler SaveTheOpenTabs;
-        public event EventHandler UpdateTransactionsAndMessages;
-        public event EventHandler LoadMapLayers;
+        /// <summary>
+        /// Every study that gets created gets regestered on the local computer. We display the most recent 5 studies
+        /// to the user in the File menu.
+        /// </summary>
         private List<string> _RegistryStudies = new List<string>();
-        private ObservableCollection<ParentElement> _ConditionsTree;
 
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
         #region Properties
-        public ObservableCollection<ParentElement> ConditionsTree
+        public List<string> RegistryStudyPaths
         {
-            get { return _ConditionsTree; }
-            set { _ConditionsTree = value; NotifyPropertyChanged(); }
+            get { return _RegistryStudies; }
         }
+
         #endregion
         #region Constructors
         public StudyElement() : base()
         {
             PopulateRecentStudies();
-
             FontSize = 18;
             Name = "Study";
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
             _Elements = new ObservableCollection<BaseFdaElement>();
-
-            //NamedAction open = new NamedAction();
-            //open.Header = "Open Study";
-            //open.Action = OpenStudy;
-
-            //NamedAction importStudyFromOldFda = new NamedAction();
-            //importStudyFromOldFda.Header = StringConstants.IMPORT_FROM_OLD_FDA;
-            //importStudyFromOldFda.Action = ImportStudyFromOldFda;
-
-            //NamedAction create = new NamedAction();
-            //create.Header = "Create Study";
-            ////create.Action = CreateStudyFromWindow;
-
-            //NamedAction properties = new NamedAction();
-            //properties.Header = "Study Properties";
-            //properties.Action = StudyProperties;
-            //properties.IsEnabled = false;
-
-            //NamedAction save = new NamedAction();
-            //save.Header = "Save Study";
-            //save.Action = SaveStudy;
-            //save.IsEnabled = false;
-
-            //List<NamedAction> localactions = new List<NamedAction>();
-            //localactions.Add(create);
-            //localactions.Add(open);
-            //localactions.Add(importStudyFromOldFda);
-            //localactions.Add(properties);
-            //localactions.Add(save);
-
-            //NamedAction seperator = new NamedAction();
-            //seperator.Header = "seperator";
-            //localactions.Add(seperator);
-
-            int i = 1;
-            foreach(string path in _RegistryStudies)
-            {
-                RecentFileNamedAction recentPath = new RecentFileNamedAction();
-                recentPath.Header =i+": "+ System.IO.Path.GetFileNameWithoutExtension(path);
-                recentPath.FilePath = path;
-                recentPath.Action = OpenStudyFromRecent;
-                //localactions.Add(recentPath);
-                i++;
-            }
-
-            //localactions.Add(seperator);
-
-            //Actions = localactions;
         }
 
         #endregion
         #region Voids
-        private void RenameStudy(object sender, EventArgs e)
+        public void OpenStudyFromRecent(object sender, EventArgs e)
         {
-            //todo: how to rename a study
-            //RenameVM renameViewModel = new RenameVM(this, CloneElement);
-            //renameViewModel.ParentGUID = this.GUID;
-            //Navigate(renameViewModel, false, true, "Rename");
-        }
-        private void OpenStudyFromRecent(object sender, EventArgs e)
-        {
-            string filePath = ((RecentFileNamedAction)sender).FilePath;
-            OpenStudyFromFilePath(System.IO.Path.GetFileNameWithoutExtension(filePath), filePath);
+            if (sender is MenuItem menuItem)
+            {
+                string filePath = menuItem.Tag as string;
+                OpenStudyFromFilePath(System.IO.Path.GetFileNameWithoutExtension(filePath), filePath);
+            }
         }
 
+        /// <summary>
+        /// Reads fda 2.0 studies from the registry so that we can display them to the user to select from in the File menu.
+        /// </summary>
         private void PopulateRecentStudies()
         {
             string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().ToString();
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
             var companyName = fvi.CompanyName;
-            var productNAme = fvi.ProductName;
-            var productVersion = fvi.ProductVersion;
 
             string subKey = companyName + "\\" + appName;
             Microsoft.Win32.RegistryKey registryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(subKey);
@@ -125,12 +66,12 @@ namespace HEC.FDA.ViewModel.Study
             {
                 registryKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(subKey);
             }
-            string registryNextLine = "";
+
             int idx = 0;
             while (idx < registryKey.ValueCount && _RegistryStudies.Count < 5)
             {
-                registryNextLine = registryKey.GetValue(idx.ToString()).ToString();
-                if(System.IO.File.Exists(registryNextLine))
+                string registryNextLine = registryKey.GetValue(idx.ToString()).ToString();
+                if (System.IO.File.Exists(registryNextLine))
                 {
                     _RegistryStudies.Add(registryNextLine);
                 }
@@ -138,6 +79,11 @@ namespace HEC.FDA.ViewModel.Study
             }
         }
 
+        /// <summary>
+        /// Adds a new study to the top of the recent studies list or updates a previous study to be top of the list
+        /// if it has been selected.
+        /// </summary>
+        /// <param name="filepath"></param>
         private void UpdateRecentStudiesFile(string filepath)
         {
             string appname = System.Reflection.Assembly.GetExecutingAssembly().GetName().ToString();
@@ -145,9 +91,6 @@ namespace HEC.FDA.ViewModel.Study
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
             var companyname = fvi.CompanyName;
-            var productNAme = fvi.ProductName;
-            var productVersion = fvi.ProductVersion;
-
 
             string subkey = companyname + "\\" + appname;
             Microsoft.Win32.RegistryKey registrykey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(subkey, true);
@@ -194,11 +137,7 @@ namespace HEC.FDA.ViewModel.Study
             }
         }
 
-        private void SaveStudy(object arg1, EventArgs arg2)
-        {
-            SaveTheOpenTabs?.Invoke(arg1, arg2);
-        }
-        public void CreateStudyFromWindow()
+        public void CreateNewStudyMenuItemClicked()
         {
             NewStudyVM vm = new NewStudyVM(this);
             string header = "Create New Study";
@@ -206,8 +145,9 @@ namespace HEC.FDA.ViewModel.Study
             Navigate( tab, false,false);
         }
       
-        public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy, string description)
+        public void CreateNewStudy(string studyName, string folderPathForNewStudy, string description)
         {
+            TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
             Name = studyName;
             UpdateTreeViewHeader(Name);
             //check if file exists.
@@ -216,35 +156,12 @@ namespace HEC.FDA.ViewModel.Study
             {
                 Connection.Instance.ProjectFile = newStudyPath;
                 UpdateRecentStudiesFile(newStudyPath);
-
             }
             else
             {
                 Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
-            foreach (NamedAction action in Actions)
-            {
-                if (action.Header == "Save Study")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Study Properties")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "View Transactions")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Open Study")
-                {
-                    action.IsEnabled = true;
-                }
-                else if (action.Header == "Create Study")
-                {
-                    action.IsEnabled = true;
-                }
-            }
+
             StudyCache = null;
             AddBaseElements();
             SaveDefaultStudyProperties(studyName, folderPathForNewStudy, description);
@@ -268,10 +185,8 @@ namespace HEC.FDA.ViewModel.Study
         }
 
         public void OpenStudyFromFilePath(string name, string path)
-        {           
-            OpeningADifferentStudy?.Invoke(this, new EventArgs());
-            //if a study is opened and the create new study tab is still in the tabs, then remove it
-            TabController.Instance.RemoveTab("CreateNewStudy");
+        {
+            TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
 
             UpdateRecentStudiesFile(path);
             
@@ -281,38 +196,6 @@ namespace HEC.FDA.ViewModel.Study
             UpdateTreeViewHeader(name);
             StudyCache = null;
             AddBaseElements();
-            // add any children based on tables that exist.
-            foreach (BaseFdaElement ele in Elements)
-            {
-                if (ele is ParentElement)
-                {         
-                    //todo: what is this?
-                    //((ParentElement)ele).AddChildrenFromTable();
-                }
-            }
-            //foreach (NamedAction action in Actions)
-            //{
-            //    if (action.Header == "Save Study")
-            //    {
-            //        action.IsEnabled = true;
-            //    }
-            //    else if (action.Header == "Study Properties")
-            //    {
-            //        action.IsEnabled = true;
-            //    }
-            //    else if (action.Header == "View Transactions")
-            //    {
-            //        action.IsEnabled = true;
-            //    }
-            //    else if (action.Header == "Open Study")
-            //    {
-            //        action.IsEnabled = true;
-            //    }
-            //    else if (action.Header == "Create Study")
-            //    {
-            //        action.IsEnabled = true;
-            //    }
-            //}
 
             StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
         }
@@ -325,36 +208,27 @@ namespace HEC.FDA.ViewModel.Study
             Navigate(tab, false, false);
         }
 
-        public void OpenStudy()
+        public void OpenStudyMenuItemClicked()
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
             string header = "Open Study";
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
             Navigate( tab, false, false);
-
         }
         
         public void AddBaseElements()
         {
-            //clear out any existing ones from an existing study
             Elements.Clear();
             if (Connection.Instance.IsConnectionNull) return;
 
-            //the tabs are in the fdastudyvm, i might need to throw an event here that is saying that a new study is opening and then remove all the tabs and 
-            //deal with the map window.
-            bool loadStudyCache = false;
-            FDACache cache = null;
             if (StudyCache == null)
             {
-                loadStudyCache = true;
-                cache = FDACache.Create();
+                FDACache cache = FDACache.Create();
                 StudyCache = cache;
                 PersistenceFactory.StudyCacheForSaving = cache;
 
                 TerrainOwnerElement t = new TerrainOwnerElement();
                 AddElement(t);
-                t.RenameMapTreeViewElement += RenameTreeViewElement;
-                t.AddMapTreeViewElementBackIn += AddBackInTreeViewElement;
                 cache.TerrainParent = t;
 
                 ImpactAreaOwnerElement i = new ImpactAreaOwnerElement();
@@ -393,14 +267,9 @@ namespace HEC.FDA.ViewModel.Study
                 AlternativeComparisonReportOwnerElement altComparisonReportOwner = new AlternativeComparisonReportOwnerElement();
                 AddElement(altComparisonReportOwner);
 
-                if (loadStudyCache)
-                {
-                    cache.IASParent = c;
-                    LoadElementsFromDB();
-                }
+                cache.IASParent = c;
+                LoadElementsFromDB();
 
-                UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
-                LoadMapLayers?.Invoke(this, new EventArgs());
             }
         }
 
@@ -425,6 +294,5 @@ namespace HEC.FDA.ViewModel.Study
         }
 
         #endregion
-
     }
 }

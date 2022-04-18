@@ -192,7 +192,7 @@ namespace HEC.FDA.ViewModel.Study
             //create the sqlite database for this study
             string studyDescription = "";
             //todo: is there a way to get the description from an old fda study?
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _FolderPath, studyDescription);
+            _StudyElement.CreateNewStudy(_StudyName, _FolderPath, studyDescription);
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
         }

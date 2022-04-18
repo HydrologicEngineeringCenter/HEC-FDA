@@ -61,7 +61,6 @@
 
         public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";
 
-
         public static string ImportFromOldFda(string elementName)
         {
             return "Import " + elementName + " From HEC-FDA Version 1.4.3...";

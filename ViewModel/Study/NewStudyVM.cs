@@ -88,7 +88,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void Save()
         {
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path, _Description);
+            _StudyElement.CreateNewStudy(_StudyName, _Path, _Description);
         }
 
 

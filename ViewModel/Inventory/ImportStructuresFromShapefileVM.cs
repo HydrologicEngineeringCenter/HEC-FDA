@@ -45,16 +45,15 @@ namespace HEC.FDA.ViewModel.Inventory
             set { _SelectedPath = value; SelectedPathChanged(); }
         }
 
-        public ObservableCollection<string> AvailablePaths
-        {
-            get { return _AvailablePaths; }
-            set { _AvailablePaths = value; NotifyPropertyChanged(); }
-        }
+        //public ObservableCollection<string> AvailablePaths
+        //{
+        //    get { return _AvailablePaths; }
+        //    set { _AvailablePaths = value; NotifyPropertyChanged(); }
+        //}
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM(ObservableCollection<string> pointFiles, EditorActionManager actionManager) :base(actionManager)
+        public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
-            AvailablePaths = pointFiles;
             _DefineSIAttributes = new DefineSIAttributesVM();
             _DefineSIAttributes.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;

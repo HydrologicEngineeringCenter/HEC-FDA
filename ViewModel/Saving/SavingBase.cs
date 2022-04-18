@@ -131,9 +131,6 @@ namespace HEC.FDA.ViewModel.Saving
         public virtual void RemoveFromParentTable(ChildElement element, string tableName)
         {
             OpenConnection();
-
-            element.RemoveElementFromMapWindow(this, new EventArgs());
-
             if (Connection.Instance.TableNames().Contains(tableName))
             {
                 DatabaseManager.DataTableView parentTableView = Connection.Instance.GetTable(tableName);

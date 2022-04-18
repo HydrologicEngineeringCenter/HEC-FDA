@@ -69,7 +69,5 @@ namespace HEC.FDA.ViewModel.Utilities
         /// <returns></returns>
         public abstract ChildElement CloneElement(ChildElement elementToClone);
 
-        public virtual void RemoveElementFromMapWindow(object sender, EventArgs e) { }
-
     }
 }

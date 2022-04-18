@@ -247,6 +247,26 @@ namespace HEC.FDA.ViewModel.Tabs
             }
             Navigate(tabToPopOut, true, false);
         }
+
+
+        public void CloseTabsAndWindowsOpeningNewStudy()
+        {
+            _Windows.Clear();
+            _Tabs.Clear();
+            foreach (Window win in Application.Current.Windows)
+            {
+                if (win.DataContext is WindowVM windowVM)
+                {
+                    //the main window doesn't have a tab. Everything else does.
+                    if (windowVM.Tab != null)
+                    {
+                        win.Close();
+                    }
+                }
+            }
+
+        }
+
         #endregion
     }
 }
