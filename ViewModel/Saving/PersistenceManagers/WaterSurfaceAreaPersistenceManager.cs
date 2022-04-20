@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const string ELEMENT_TYPE = "Water_Surface_Area";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("WaterSurfaceAreaPersistenceManager");
 
-        private const string TABLE_NAME = "water_surface_elevations";
+        private const string TABLE_NAME = "hydraulics";
         private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool) };
         /// <summary>
@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get { return TableColTypes; }
         }
-        private static string PathAndProbTableConstant = "WSE -";
+        private const string PATH_AND_PROB_TABLE = "hydraulic_data -";
         internal override string ChangeTableConstant
         {
             get { return "???"; }
@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             List<PathAndProbability> ppList = new List<PathAndProbability>();
 
-            DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
+            DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(PATH_AND_PROB_TABLE + rowData[1]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
             {
                 ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
@@ -80,17 +80,17 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //gets called if savestotable is true
             if (!Connection.Instance.IsConnectionNull)
             {
-                if (Connection.Instance.TableNames().Contains(PathAndProbTableConstant + element.Name))
+                if (Connection.Instance.TableNames().Contains(PATH_AND_PROB_TABLE + element.Name))
                 {
                     //already exists... delete?
-                    Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
+                    Connection.Instance.DeleteTable(PATH_AND_PROB_TABLE + element.Name);
                 }
 
                 string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
                 Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
 
-                Connection.Instance.CreateTable(PathAndProbTableConstant + element.Name, colNames, colTypes);
-                DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(PathAndProbTableConstant + element.Name);
+                Connection.Instance.CreateTable(PATH_AND_PROB_TABLE + element.Name, colNames, colTypes);
+                DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(PATH_AND_PROB_TABLE + element.Name);
 
                 object[][] rows = new object[element.RelativePathAndProbability.Count][];
                 int i = 0;
@@ -138,7 +138,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            RemoveTable(PathAndProbTableConstant + element.Name);
+            RemoveTable(PATH_AND_PROB_TABLE + element.Name);
             //if the wse was imported from old fda, then it won't have associated files.
             WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)element;
             if (elem.HasAssociatedFiles)
@@ -152,13 +152,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             base.SaveExisting( element);
             //delete the old table and create a new one
-            Connection.Instance.DeleteTable(PathAndProbTableConstant + oldName);
+            Connection.Instance.DeleteTable(PATH_AND_PROB_TABLE + oldName);
             SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);        
         }
 
         public void RenamePathAndProbabilitesTableName(string oldName, string newName)
         {
-            Connection.Instance.RenameTable(PathAndProbTableConstant + oldName, PathAndProbTableConstant + newName);
+            Connection.Instance.RenameTable(PATH_AND_PROB_TABLE + oldName, PATH_AND_PROB_TABLE + newName);
         }
 
         public override void Load()
