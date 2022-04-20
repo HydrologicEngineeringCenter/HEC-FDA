@@ -69,7 +69,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         {
             WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM( name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
-            //NotifyPropertyChanged("ListOfRows");
         }
 
         #region copy files
