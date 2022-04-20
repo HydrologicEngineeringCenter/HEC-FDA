@@ -298,9 +298,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowMean = MEAN + "N/A";
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
-
-                //LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, result.ErrorMessage);
-                //MessageRows.Add(logItem);
             }
             return upd;
         }
@@ -333,11 +330,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
                      analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
                 base.Save(elem);
-            }
-            else
-            {
-                //LogItem logItem = LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not save with an invalid function.");
-                //MessageRows.Add(logItem);
             }
         }
 

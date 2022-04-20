@@ -1,9 +1,10 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:32:06 AM)]
-    public class WaterSurfaceElevationRowItemVM:BaseViewModel
+    public class WaterSurfaceElevationRowItemVM:NameValidatingVM
     {
         #region Notes
         // Created By: q0heccdm

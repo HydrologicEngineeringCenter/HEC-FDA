@@ -13,7 +13,6 @@
         <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
         <cmds:SaveButtonEnabledConverter x:Key="SaveButtonMultiConverter"/>
-        <cmds:ErrorLevelToBackgroundColorConverter x:Key="ErrorLevelConverter"/>
         <cmds:SaveButtonTooltipConverter x:Key="SaveButtonTooltipConverter"/>
     </UserControl.Resources>
     <Grid>

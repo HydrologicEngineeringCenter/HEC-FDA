@@ -17,9 +17,13 @@
     <Compile Remove="Inventory\DamageCategories\DamageCategory.cs" />
     <Compile Remove="Inventory\DamageCategories\DamageCategoryFactory.cs" />
     <Compile Remove="Inventory\OccupancyTypes\OtherNormalControlVM.cs" />
+    <Compile Remove="Output\CreateEconImportFileVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
     <Compile Remove="Output\LinkedPlotsVM.cs" />
+    <Compile Remove="Study\AnalysisYearsVM.cs" />
+    <Compile Remove="Utilities\DatabaseColumn.cs" />
     <Compile Remove="Utilities\MapWindowMapTreeViewConnector.cs" />
+    <Compile Remove="Utilities\RowItem.cs" />
   </ItemGroup>
 	
   <ItemGroup>

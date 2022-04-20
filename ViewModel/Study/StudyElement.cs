@@ -21,11 +21,22 @@ namespace HEC.FDA.ViewModel.Study
         /// to the user in the File menu.
         /// </summary>
         private List<string> _RegistryStudies = new List<string>();
+        private bool _StudyLoaded;
 
         #region Properties
         public List<string> RegistryStudyPaths
         {
             get { return _RegistryStudies; }
+        }
+
+        /// <summary>
+        /// Boolean so that i can bind the "Properties" menu item. There is always a study, but the initial one is empty. 
+        /// I needed something to bind to once an actual study is created or opened.
+        /// </summary>
+        public bool StudyLoaded
+        {
+            get { return _StudyLoaded; }
+            set { _StudyLoaded = value; NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -269,6 +280,7 @@ namespace HEC.FDA.ViewModel.Study
 
                 cache.IASParent = c;
                 LoadElementsFromDB();
+                StudyLoaded = true;
 
             }
         }

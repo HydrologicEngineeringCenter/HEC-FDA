@@ -1,11 +1,14 @@
 ﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Validation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -160,8 +163,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public override void AddValidationRules()
         {
-            //AddRule(nameof(Name), () => Name != null, "Name cannot be empty.");
-            //AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != "";}, "Name cannot be blank.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
         }
 
         public FdaValidationResult HasWarnings()

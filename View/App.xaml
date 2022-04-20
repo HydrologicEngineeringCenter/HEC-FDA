@@ -295,9 +295,9 @@
         </DataTemplate>
 
         <!--Study Region-->
-        <DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >
+        <!--<DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >
             <StudyView:AnalysisYears/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type StudyVM:PropertiesVM }" >
             <StudyView:Properties/>
         </DataTemplate>
@@ -345,7 +345,7 @@
             <UtilitiesView:Rename/>
             <DataTemplate.Resources>
                 <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
-                                         MinWidth="100" Width="200" 
+                                         MinWidth="100" Width="450" 
                                          MinHeight="100" Height="150" />
             </DataTemplate.Resources>
         </DataTemplate>

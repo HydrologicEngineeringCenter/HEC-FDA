@@ -1,8 +1,11 @@
-﻿using System.ComponentModel;
+﻿using HEC.MVVMFramework.ViewModel.Validation;
+using System.ComponentModel;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.Inventory.DamageCategory
 {
-    public class DamageCategoriesVM : BaseViewModel
+    public class DamageCategoriesVM : NameValidatingVM
     {
         #region Notes
         #endregion
@@ -83,7 +86,7 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
         #endregion
         public override void AddValidationRules()
         {
-            //AddRule(nameof(DamageCategories), () => areDamageCategoriesInvalid(), "Damage Categories have validation issues.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return areDamageCategoriesInvalid(); }, "Damage Categories have validation issues.", ErrorLevel.Severe));
         }
         private bool areDamageCategoriesInvalid()
         {

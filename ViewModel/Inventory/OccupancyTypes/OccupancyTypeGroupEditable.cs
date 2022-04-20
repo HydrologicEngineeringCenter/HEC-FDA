@@ -7,6 +7,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     class OccupancyTypeGroupEditable : BaseViewModel, IOccupancyTypeGroupEditable
     {
         private bool _IsModified;
+        public string Name { get; set; }
         public List<IOccupancyTypeEditable> Occtypes { get; set; }
         public List<IOccupancyTypeEditable> ModifiedOcctypes
         {

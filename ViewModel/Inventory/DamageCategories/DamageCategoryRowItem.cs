@@ -35,13 +35,9 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
         #region Voids
         public override void AddValidationRules()
         {
-            //name cannot be blank
             AddRule(nameof(Name),() => UniqueRule(nameof(Name), "Name Must be Unique."), "Name Must be Unique.");
             AddRule(nameof(Name), () => Name == null, "Name Must not be null.");
             AddRule(nameof(Name), () => Name == "", "Name Must not be blank.");
-            //AddRule(nameof(Name), () => Name == "", "Name Must not be blank.");
-            //name must be unique
-            //factor must be greater than zero and less than 1?
         }
         #endregion
         #region Functions

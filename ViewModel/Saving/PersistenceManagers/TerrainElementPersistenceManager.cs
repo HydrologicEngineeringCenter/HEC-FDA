@@ -118,7 +118,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 string header = "Error";
                 DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
                 Navigate(tab);
-                element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
+                element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
@@ -180,7 +180,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
+            element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
             element.Actions.Clear();
             RemoveTerrainFileOnBackgroundThread((TerrainElement)element);
         }

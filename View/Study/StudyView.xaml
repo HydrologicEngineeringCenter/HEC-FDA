@@ -18,6 +18,7 @@
         <utils:ContextMenuConverter x:Key="converter"/>
         <utils:BoolToBoldConverter x:Key="BoolToBoldConverter" />
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <utils:EnabledNullConverter x:Key="EnabledNullConverter" />
 
 
 
@@ -65,12 +66,12 @@
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <MenuItem Header="_File" Name="FileMenu">
                 <MenuItem Header="_New" Click="New_MenuItem_Click" />
                 <MenuItem Header="_Open" Click="Open_MenuItem_Click"/>
                 <MenuItem Header="_Import Study" Click="ImportStudy_MenuItem_Click"/>
-                <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click"/>
+                <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click" IsEnabled="{Binding CurrentStudyElement.StudyLoaded}"/>
                 <Separator />
             </MenuItem>
         </Menu>

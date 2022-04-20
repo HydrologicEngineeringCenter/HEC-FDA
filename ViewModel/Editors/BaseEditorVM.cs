@@ -17,10 +17,9 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.ViewModel.Editors
 {
-    public abstract class BaseEditorVM : BaseViewModel
+    public abstract class BaseEditorVM : NameValidatingVM
     {
         private string _SavingText;
-        private string _Name;
         private string _Description = "";
         private bool _IsCreatingNewElement;
         public string Description
@@ -31,11 +30,7 @@ namespace HEC.FDA.ViewModel.Editors
         //This lets me not add the sibling rules to itself when saving.
         public bool InTheProcessOfSaving = false;
 
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged();}
-        }
+     
         public bool IsCreatingNewElement
         {
             get { return _IsCreatingNewElement;}
@@ -150,14 +145,7 @@ namespace HEC.FDA.ViewModel.Editors
         }
 
        
-        public override void AddValidationRules()
-        {
-            AddSinglePropertyRule(nameof(Name), new Rule(() => 
-            { 
-                return Name != ""; 
-            }, "Name cannot be blank.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
-        }
+
 
         /// <summary>
         /// This is used to add rules that the name cannot be the same as a sibling. 

@@ -96,8 +96,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             //save to parent table
             base.SaveNew(element);
-            //log message
-            Log(FdaLogging.LoggingLevel.Info, "Created new rating curve: " + element.Name, element.Name);
         }
        
         /// <summary>
@@ -121,43 +119,5 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
-        {
-            int elementId = GetElementId(TableName, elementName);
-            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessages( id, ELEMENT_TYPE);
-        }
-
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
-        }
     }
 }

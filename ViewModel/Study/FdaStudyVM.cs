@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Study
             CurrentStudyElement = new StudyElement();
             _StudyElement.RequestNavigation += Navigate;
 
-            _StudyElement.AddBaseElements();
+            //_StudyElement.AddBaseElements();
 
             InitializeGDAL();
 

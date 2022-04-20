@@ -1,6 +1,8 @@
-﻿namespace HEC.FDA.ViewModel.ImpactArea
+﻿using HEC.FDA.ViewModel.Editors;
+
+namespace HEC.FDA.ViewModel.ImpactArea
 {
-    public class ImpactAreaRowItem : BaseViewModel
+    public class ImpactAreaRowItem : NameValidatingVM
     {
         #region Notes
         // Created By: q0heccdm

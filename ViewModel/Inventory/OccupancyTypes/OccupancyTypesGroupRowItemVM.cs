@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Editors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region Fields
         private string _Name;
         private string _Path;
-        //private OccupancyTypesElement _OccupancyTypeGroup;
         private List<IOccupancyType> _ListOfOccTypes;
         private int _NumberOfOccTypes;
         #endregion
@@ -27,11 +27,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             get { return System.IO.Path.GetFileName(_Path); }
             set { _Path = value; NotifyPropertyChanged(); }
         }
-        //public string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; NotifyPropertyChanged(); }
-        //}
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
 
         public int NumberOfOccTypes
         {

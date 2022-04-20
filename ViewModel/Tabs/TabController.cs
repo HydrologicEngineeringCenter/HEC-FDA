@@ -102,10 +102,13 @@ namespace HEC.FDA.ViewModel.Tabs
                 if (winVM.Tab == null)
                 {
                     //remove the selected tab
-                    IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
-                    if (selectedTab.BaseVM.IsOkToClose())
+                    if (SelectedDynamicTabIndex != -1)
                     {
-                        Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                        IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
+                        if (selectedTab.BaseVM.IsOkToClose())
+                        {
+                            Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                        }
                     }
                 }
                 else
@@ -140,6 +143,7 @@ namespace HEC.FDA.ViewModel.Tabs
             }
             else
             {
+                //this is a new tab
                 tab.PopTabOutEvent += PopTabIntoWindow;
                 tab.RemoveTabEvent += RemoveTab;
                 tab.PopWindowIntoTabEvent += PopWindowIntoTab;

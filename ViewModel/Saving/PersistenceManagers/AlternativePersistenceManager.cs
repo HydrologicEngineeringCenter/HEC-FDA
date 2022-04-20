@@ -1,9 +1,7 @@
-﻿using FdaLogging;
+﻿using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Alternatives;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -26,26 +24,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             int id = Convert.ToInt32(rowData[ID_COL]);
             AlternativeElement elem = new AlternativeElement(xml, id);
             return elem;
-        }
-
-        #region Logging
-        //todo: not sure what to do with logging stuff yet. Waiting until a later task to determine
-        //if this should all get removed from the base class or not.
-        public ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Log(LoggingLevel level, string message, string elementName)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
+        }        
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {

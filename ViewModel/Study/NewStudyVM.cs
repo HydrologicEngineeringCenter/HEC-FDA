@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HEC.MVVMFramework.ViewModel.Validation;
+using System;
 using System.Linq;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -50,40 +53,38 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public override void AddValidationRules()
         {
-        //    AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
-        //    AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
+            //AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.File.Exists(Path); }, "File does not exist.", ErrorLevel.Severe));
+            //AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() =>
+            {
+                bool pathIsValid = true;
+                if (Path != null && Path != "")
+                {
+                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                    {
+                        if (Path.Contains(c))
+                        {
+                            pathIsValid = false;
+                            break;
+                        }
+                    }
+                    if (Path.Contains('?'))
+                    {
+                        pathIsValid = false;
+                    }
+                }
+                return pathIsValid;
+            }, "Path contains invalid characters.", ErrorLevel.Severe));
 
-        //    //path must not contain invalid characters
-        //    AddRule(nameof(Path), () =>
-        //    {
-        //        foreach (Char c in System.IO.Path.GetInvalidPathChars())
-        //        {
-                    
-        //            if (Path.Contains(c))
-        //            {
-                        
-        //                return false;
-        //            }
-        //        }
-        //        if (Path.Contains('?')) return false;
-        //        return true;
-        //    },"Path contains invalid characters.");
-        ////study name must not be null
-        //    AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
-        //    AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => 
+            {
+                return !System.IO.File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
+            }, "A study with that name already exists.", ErrorLevel.Severe));
 
-        //    //check if folder with that name already exists
-        //    AddRule(nameof(StudyName), () =>
-        //    {
-                
-        //        if(System.IO.File.Exists(Path +"\\"+StudyName +"\\"+ StudyName + ".sqlite"))
-        //        {
-        //            return false;
-        //        }
-        //        return true;
-        //    }, "A study with that name already exists.");
-
-        //    //notes can be null.
         }
 
         public override void Save()

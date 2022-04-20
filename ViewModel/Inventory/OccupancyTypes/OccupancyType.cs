@@ -9,6 +9,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     internal class OccupancyType : BaseViewModel,  IOccupancyType
     {
+
         public string Description { get; set; }
         public string DamageCategory { get; set; }
 
@@ -20,6 +21,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public int GroupID { get; set; }
         public int ID { get; set; }
+        public string Name { get; set; }
+       
 
         public OccupancyType(string name, string damCatName, int groupId)
         {

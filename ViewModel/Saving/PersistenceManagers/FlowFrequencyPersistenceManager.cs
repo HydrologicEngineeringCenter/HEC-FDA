@@ -1,4 +1,4 @@
-﻿using FdaLogging;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -93,8 +93,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 //save to parent table
                 base.SaveNew(element);
-                //log message
-                Log(LoggingLevel.Info, "Created new flow frequency curve: " + element.Name, element.Name);
             }
         }
 
@@ -110,50 +108,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }
-
-        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public override void Log(LoggingLevel level, string message, string elementName)
-        {
-            int elementId = GetElementId(TableName, elementName);
-            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
-        }
-
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

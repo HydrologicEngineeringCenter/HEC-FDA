@@ -17,6 +17,7 @@
         private bool _GifVisible = false;
         #endregion
         #region Properties
+        public string Name { get; set; }
         /// <summary>
         /// A wait gif can be shown at the end of the element name that indicates that it is doing an operation ie: saving, loading
         /// </summary>

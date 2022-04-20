@@ -24,7 +24,7 @@ namespace HEC.FDA.ViewModel
   
         private bool _HasChanges;
 
-        private string _Name;
+        //private string _Name;
 
         #endregion
         #region Properties
@@ -43,14 +43,14 @@ namespace HEC.FDA.ViewModel
         /// </summary>
         public static IStudyCache StudyCache { get; set; }
         public static Saving.PersistenceFactory PersistenceFactory { get; set; }
-        /// <summary>
-        /// The name of the object
-        /// </summary>
-        public virtual string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+        ///// <summary>
+        ///// The name of the object
+        ///// </summary>
+        //public virtual string Name
+        //{
+        //    get { return _Name; }
+        //    set { _Name = value; NotifyPropertyChanged(); }
+        //}
 
         public string LastEditDate { get; set; }
 
@@ -129,8 +129,6 @@ namespace HEC.FDA.ViewModel
         /// <param name="title">The title for the tab or window.</param>
         public void Navigate( IDynamicTab tab, bool newWindow = true, bool asDialog = true)
         {
-            string name = this.Name;
-            string type = this.GetType().ToString();
             if (RequestNavigation != null)
             {
                 tab.BaseVM.WasCanceled = true;

@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
@@ -60,6 +61,8 @@ namespace HEC.FDA.View.Commands
             vm.Validate();
             if (vm.HasErrors)
             {
+                List<string> errors = vm.Errors;
+                MessageBox.Show(String.Join(Environment.NewLine, errors), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (vm.GetType().IsSubclassOf(typeof(BaseEditorVM)))

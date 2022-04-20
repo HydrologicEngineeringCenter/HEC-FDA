@@ -8,7 +8,10 @@ using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Validation;
 using static Importer.AsciiImport;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -69,35 +72,36 @@ namespace HEC.FDA.ViewModel.Study
         }
         public override void AddValidationRules()
         {
-            //AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
-            //AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != null; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != ""; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() =>
+            {
+                bool pathIsValid = true;
+                if (FolderPath != null && FolderPath != "")
+                {
+                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                    {
+                        if (FolderPath.Contains(c))
+                        {
+                            pathIsValid = false;
+                            break;
+                        }
+                    }
+                    if (FolderPath.Contains('?'))
+                    {
+                        pathIsValid = false;
+                    }
+                }
+                return pathIsValid;
+            }, "Path contains invalid characters.", ErrorLevel.Severe));
 
-            ////path must not contain invalid characters
-            //AddRule(nameof(FolderPath), () =>
-            //{
-            //    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-            //    {
-            //        if (FolderPath.Contains(c))
-            //        {
-            //            return false;
-            //        }
-            //    }
-            //    if (FolderPath.Contains('?')) return false;
-            //    return true;
-            //}, "Path contains invalid characters.");
-            ////study name must not be null
-            //AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
-            //AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() =>
+            {
+                return !System.IO.File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
+            }, "A study with that name already exists.", ErrorLevel.Severe));
 
-            ////check if folder with that name already exists
-            //AddRule(nameof(StudyName), () =>
-            //{
-            //    if (System.IO.File.Exists(FolderPath + "\\" + StudyName + "\\" + StudyName + ".sqlite"))
-            //    {
-            //        return false;
-            //    }
-            //    return true;
-            //}, "A study with that name already exists.");
         }
 
 

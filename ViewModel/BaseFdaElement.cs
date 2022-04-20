@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Validation;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace HEC.FDA.ViewModel
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
+        private string _Name;
         #endregion
         #region Events
         public event EventHandler RenameMapTreeViewElement;
@@ -36,6 +38,12 @@ namespace HEC.FDA.ViewModel
         }
         #endregion
         #region Properties
+
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(nameof(Name)); }
+        }
         public bool IsExpanded
         {
             get { return _IsExpanded; }
@@ -90,11 +98,6 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Voids
-
-        public override void AddValidationRules()
-        {
-            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name == "" || Name == null; }, "Name cannot be blank.",MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
-        }
 
         public void UpdateTreeViewHeader(string newName)
         {

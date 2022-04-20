@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
-    public class SpecificIASResultVM : BaseViewModel
+    public class SpecificIASResultVM : NameValidatingVM
     {
         private const string DAMAGE = "Damage";
         private const string PERFORMANCE = "Performance";

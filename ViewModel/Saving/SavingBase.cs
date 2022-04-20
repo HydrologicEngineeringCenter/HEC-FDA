@@ -1,13 +1,11 @@
-﻿using FdaLogging;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
-using HEC.FDA.ViewModel.Storage;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving
 {
@@ -366,21 +364,6 @@ namespace HEC.FDA.ViewModel.Saving
         }
 
         public abstract void Load();
-
-        public virtual  void Log(LoggingLevel level, string message, string elementName)
-        {
-
-        }
-
-        public virtual ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        public virtual ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
 
     }
 }

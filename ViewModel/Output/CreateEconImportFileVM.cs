@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HEC.MVVMFramework.ViewModel.Validation;
+using System.Collections.Generic;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.Output
 {
@@ -61,11 +64,11 @@ namespace HEC.FDA.ViewModel.Output
         #region Voids
         public override void AddValidationRules()
         {
-            //AddRule(nameof(Name), () => !(Name == ""), "The Name cannot be blank.");
-            //AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() =>{return Name != "";}, "Name cannot be blank.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
         }
 
-     
+
         #endregion
         #region Functions
         #endregion
