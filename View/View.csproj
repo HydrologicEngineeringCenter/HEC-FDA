@@ -62,12 +62,6 @@
     </Reference>
     <Reference Include="DataTableViewControl">
       <HintPath>..\lib\DataTableViewControl.dll</HintPath>
-    </Reference>  
-	  <Reference Include="FdaLogger">
-      <HintPath>..\lib\FdaLogger.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaLogging">
-      <HintPath>..\lib\FdaLogging.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>

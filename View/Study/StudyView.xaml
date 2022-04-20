@@ -18,9 +18,6 @@
         <utils:ContextMenuConverter x:Key="converter"/>
         <utils:BoolToBoldConverter x:Key="BoolToBoldConverter" />
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <utils:EnabledNullConverter x:Key="EnabledNullConverter" />
-
-
 
         <Style x:Key="TabControlNoReloadStyle" TargetType="{x:Type utils:TabControlNoReload}">
             <Setter Property="Template">

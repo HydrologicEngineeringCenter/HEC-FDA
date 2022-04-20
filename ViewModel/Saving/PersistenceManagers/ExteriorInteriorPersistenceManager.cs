@@ -14,7 +14,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 3;
         private const int CURVE_COL = 4;
 
-        private const string ELEMENT_TYPE = "exterior_interior";
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>

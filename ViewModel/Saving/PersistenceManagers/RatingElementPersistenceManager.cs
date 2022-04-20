@@ -15,9 +15,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 3;
         private const int CURVE_COL = 4;
 
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("RatingElementPersistenceManager");
-        //ELEMENT_TYPE is used to store the type of element in the log tables.
-        private const string ELEMENT_TYPE = "rating_curve";
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>

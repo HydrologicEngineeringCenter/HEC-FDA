@@ -29,10 +29,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 2;
         private const int XML_COL = 3;
 
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
-        //ELEMENT_TYPE is used to store the type of element in the log tables.
-        private const string ELEMENT_TYPE = "Flow_Freq";
-
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>

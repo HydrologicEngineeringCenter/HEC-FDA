@@ -17,12 +17,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int IS_DEFAULT_COL = 5;
         private const int CURVE_COL = 6;
 
-        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
-        //of the element. But since they get stored as strings if a developer changes the name of the class
-        //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "levee";
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("LeveePersistenceManager");
-
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
