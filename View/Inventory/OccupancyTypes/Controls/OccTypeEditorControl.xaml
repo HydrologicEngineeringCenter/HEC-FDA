@@ -76,17 +76,16 @@
             <TabItem Name="ContentDDTabItem" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0,0,0,0" IsChecked="{Binding ContentItem.IsChecked}" IsEnabled="True" Name="ContentCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding ContentItem.IsChecked}" Name="ContentCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Content Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
                 <Grid x:Name="ContentTabGrid" IsEnabled="{Binding ElementName=ContentCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120*"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
@@ -112,11 +111,10 @@
                 </TabItem.Header>
                 <Grid x:Name="VehicleTabGrid" IsEnabled="{Binding ElementName=VehicleCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="97*"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
@@ -136,11 +134,10 @@
                 </TabItem.Header>
                 <Grid x:Name="OtherTabGrid" IsEnabled="{Binding ElementName=OtherCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="110*"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>

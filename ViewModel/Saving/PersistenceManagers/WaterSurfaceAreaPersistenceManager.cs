@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const string ELEMENT_TYPE = "Water_Surface_Area";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("WaterSurfaceAreaPersistenceManager");
 
-        private const string TABLE_NAME = "water_surface_elevations";
+        private const string TABLE_NAME = "hydraulics";
         private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool) };
         /// <summary>
@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get { return TableColTypes; }
         }
-        private static string PathAndProbTableConstant = "WSE -";
+        private static string PathAndProbTableConstant = "hydraulic_data -";
         internal override string ChangeTableConstant
         {
             get { return "???"; }
