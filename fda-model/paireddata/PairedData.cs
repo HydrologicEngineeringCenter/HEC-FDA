@@ -80,27 +80,27 @@ namespace paireddata
         {
             //binary search.
             //double[] xarr = Xvals; //probably not necessary anymore.
-            Int32 idx = Array.BinarySearch(Xvals, x);
-            if (idx >= 0)
+            Int32 index = Array.BinarySearch(Xvals, x);
+            if (index >= 0)
             {
                 //Matches a value exactly
-                return Yvals[idx];
+                return Yvals[index];
             }
             else
             {
                 //This is the next LARGER value.
-                idx = ~idx;
+                index = ~index;
 
-                if (idx == Xvals.Count()) { return Yvals[Xvals.Length - 1]; }
+                if (index == Xvals.Count()) { return Yvals[Xvals.Length - 1]; }
 
-                if (idx == 0) { return Yvals[0]; }
+                if (index == 0) { return Yvals[0]; }
 
                 //Ok. Interpolate Y=mx+b
-                double yidxminus1 = Yvals[idx - 1];
-                double xidxminus1 = Xvals[idx - 1];
-                double m = (Yvals[idx] - yidxminus1) / (Xvals[idx] - xidxminus1);
-                double b = yidxminus1;
-                double dx = x - xidxminus1;
+                double yIndexMinus1 = Yvals[index - 1];
+                double xIndexMinus1 = Xvals[index - 1];
+                double m = (Yvals[index] - yIndexMinus1) / (Xvals[index] - xIndexMinus1);
+                double b = yIndexMinus1;
+                double dx = x - xIndexMinus1;
                 return m * dx + b;
             }
         }
@@ -110,56 +110,56 @@ namespace paireddata
         public double f_inverse(double y)
         {
             //binary search.
-            double[] yarr = Yvals;
-            Int32 idx = Array.BinarySearch(yarr, y);
-            if (idx >= 0)
+            double[] yvalsArray = Yvals;
+            Int32 index = Array.BinarySearch(yvalsArray, y);
+            if (index >= 0)
             {
                 //Matches a value exactly
-                return Xvals[idx];
+                return Xvals[index];
             }
             else
             {
                 //This is the next LARGER value.
-                idx = ~idx;
+                index = ~index;
 
-                if (idx == Yvals.Count()) { return Xvals[Xvals.Length - 1]; }
+                if (index == Yvals.Count()) { return Xvals[Xvals.Length - 1]; }
 
-                if (idx == 0) { return Xvals[0]; }
+                if (index == 0) { return Xvals[0]; }
 
                 //Ok. Interpolate Y=mx+b
-                double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
-                double b = Xvals[idx - 1];
-                double dy = y - Yvals[idx - 1];
+                double m = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
+                double b = Xvals[index - 1];
+                double dy = y - Yvals[index - 1];
                 return (dy / m) + b;//not sure this is right. Need to develop tests.
             }
         }
         /// <summary>
         /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
-        public IPairedData compose(IPairedData input)
+        public IPairedData compose(IPairedData inputPairedData)
         {
-            int count = input.Xvals.Length;
+            int count = inputPairedData.Xvals.Length;
             double[] x = new double[count];
             double[] y = new double[count];
 
             for (int i = 0; i < count; i++)
             {
-                y[i] = f(input.Yvals[i]);
-                x[i] = input.Xvals[i];
+                y[i] = f(inputPairedData.Yvals[i]);
+                x[i] = inputPairedData.Xvals[i];
             }
             return new PairedData(x, y);
         }
 
-        public PairedData SumYsForGivenX(IPairedData input)
+        public PairedData SumYsForGivenX(IPairedData inputPairedData)
         {
             if (Xvals != null && Yvals != null)
             {
 
-                double[] x = new double[input.Xvals.Length];
-                double[] ySum = new double[input.Yvals.Length];
-                for (int i = 0; i < input.Xvals.Length; i++)
+                double[] x = new double[inputPairedData.Xvals.Length];
+                double[] ySum = new double[inputPairedData.Yvals.Length];
+                for (int i = 0; i < inputPairedData.Xvals.Length; i++)
                 {
-                    int index = Array.BinarySearch(Xvals, input.Xvals[i]);
+                    int index = Array.BinarySearch(Xvals, inputPairedData.Xvals[i]);
                     double yValueFromSubject = 0;
                     if (index >= 0)
                     {
@@ -186,17 +186,17 @@ namespace paireddata
                         { //Interpolate Y=mx+b
                             double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
                             double intercept = Yvals[index] - slope * Xvals[index];
-                            yValueFromSubject = intercept + slope * input.Xvals[i];
+                            yValueFromSubject = intercept + slope * inputPairedData.Xvals[i];
                         }
                     }
-                    ySum[i] = input.Yvals[i] + yValueFromSubject;
-                    x[i] = input.Xvals[i];
+                    ySum[i] = inputPairedData.Yvals[i] + yValueFromSubject;
+                    x[i] = inputPairedData.Xvals[i];
                 }
                 return new PairedData(x, ySum);
             }
             else
             {
-                return new PairedData(input.Xvals, input.Yvals);
+                return new PairedData(inputPairedData.Xvals, inputPairedData.Yvals);
             }
         }
 
@@ -234,55 +234,55 @@ namespace paireddata
         /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
         /// A point is added just above and just below the curve. 
         /// </summary>
-        public IPairedData multiply(IPairedData g)
+        public IPairedData multiply(IPairedData systemResponseFunction)
         {
             double belowFragilityCurveValue = 0.0;
             double aboveFragilityCurveValue = 1.0;
             List<double> newXvals = new List<double>();
             List<double> newYvals = new List<double>();
             double buffer = .001; //buffer to define point just above and just below the multiplying curve.
-            if (Xvals[0] < g.Xvals[0])
+            if (Xvals[0] < systemResponseFunction.Xvals[0])
             {
                 //cacluate no damage until the bottom of the fragility curve
-                double bottom = g.Xvals[0];
-                foreach (double dcx in Xvals)
+                double bottomStageOfSystemResponse = systemResponseFunction.Xvals[0];
+                foreach (double damageValue in Xvals)
                 {
-                    if (dcx < bottom)
+                    if (damageValue < bottomStageOfSystemResponse)
                     {
                         //set to zero
-                        newXvals.Add(dcx);
+                        newXvals.Add(damageValue);
                         newYvals.Add(belowFragilityCurveValue);
                     }
                     else
                     {
                         //create a point on the curve just below the bottom of the levee at damage zero.
-                        newXvals.Add(bottom - buffer);
+                        newXvals.Add(bottomStageOfSystemResponse - buffer);
                         newYvals.Add(belowFragilityCurveValue);
                         break;
                     }
                 }
             }
             // calculate damages for the range of the fragility curve
-            for (int idx = 0; idx < g.Xvals.Count(); idx++)
+            for (int index = 0; index < systemResponseFunction.Xvals.Count(); index++)
             {
                 //modify
-                double lcx = g.Xvals[idx];
-                double damage = f(lcx) * g.Yvals[idx];
-                newXvals.Add(lcx);
-                newYvals.Add(damage);
+                double stageOnSystemResponse = systemResponseFunction.Xvals[index];
+                double probabilityWeightedDamage = f(stageOnSystemResponse) * systemResponseFunction.Yvals[index];
+                newXvals.Add(stageOnSystemResponse);
+                newYvals.Add(probabilityWeightedDamage);
             }
             // calculate damages above the fragility curve
-            if (g.Xvals.Last() < Xvals.Last())
+            if (systemResponseFunction.Xvals.Last() < Xvals.Last())
             {
-                double top = g.Xvals.Last();
+                double topStageOfSystemResponseFunction = systemResponseFunction.Xvals.Last();
                 //create a point at the top of the fragility curve
-                newXvals.Add(top + buffer);
-                double damageabove = f(top + buffer) * aboveFragilityCurveValue;
+                newXvals.Add(topStageOfSystemResponseFunction + buffer);
+                double damageabove = f(topStageOfSystemResponseFunction + buffer) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
                 for (int idx = 0; idx < Xvals.Count(); idx++)
                 {
                     double dcx = Xvals[idx];
-                    if (dcx > top)
+                    if (dcx > topStageOfSystemResponseFunction)
                     {
                         //set to max val
                         newXvals.Add(dcx);
@@ -296,41 +296,41 @@ namespace paireddata
         public UncertainPairedData toUncertainPairedData()
         {
             IDistribution[] ydists = new IDistribution[Yvals.Length];
-            int idx = 0;
-            foreach (double val in Yvals)
+            int index = 0;
+            foreach (double yVal in Yvals)
             {
-                ydists[idx] = new Deterministic(val);
-                idx++;
+                ydists[index] = new Deterministic(yVal);
+                index++;
             }
             return new UncertainPairedData(Xvals, ydists, _metadata);
         }
 
         public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
         {
-            double prevYval = min;
+            double previousYval = min;
 
             double[] update = new double[Yvals.Length];
-            int idx = 0;
-            foreach (double y in Yvals)
+            int index = 0;
+            foreach (double currentY in Yvals)
             {
-                if (prevYval > y)
+                if (previousYval > currentY)
                 {
-                    update[idx] = prevYval;
+                    update[index] = previousYval;
                 }
                 else
                 {
-                    if (y > max)
+                    if (currentY > max)
                     {
-                        update[idx] = max;
-                        prevYval = max;
+                        update[index] = max;
+                        previousYval = max;
                     }
                     else
                     {
-                        update[idx] = y;
-                        prevYval = y;
+                        update[index] = currentY;
+                        previousYval = currentY;
                     }
                 }
-                idx++;
+                index++;
             }
             Yvals = update;
         }

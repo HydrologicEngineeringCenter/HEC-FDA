@@ -27,11 +27,11 @@ namespace metrics
             ThresholdID = thresholdID;
         }
 
-        public Threshold(int thresholdID, UncertainPairedData leveeCurve, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
+        public Threshold(int thresholdID, UncertainPairedData systemResponseCurve, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, leveeCurve, c);
+            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
             ThresholdID = thresholdID;
         }
 

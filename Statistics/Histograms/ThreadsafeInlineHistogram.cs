@@ -303,6 +303,10 @@ namespace Statistics.Histograms
                         while (_bw.IsBusy)
                         {
                             Thread.Sleep(1);
+                            if (_observations.Count == 0)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
