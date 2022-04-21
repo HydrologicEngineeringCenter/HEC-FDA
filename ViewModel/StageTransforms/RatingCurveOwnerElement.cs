@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Rating Curve", "Stage", "Flow");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Rating Curve", "Flow", "Stage");
             RatingCurveEditorVM vm = new RatingCurveEditorVM(computeComponentVM, actionManager);
             string header = "Create Rating Curve " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
