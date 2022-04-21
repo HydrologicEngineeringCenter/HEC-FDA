@@ -16,7 +16,6 @@ namespace HEC.FDA.View
             //remove the row that has the pop-in button.
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
             WindowVM vm = (WindowVM)this.DataContext;
-            Title = vm.Title;
             vm.LaunchNewWindow += WindowSpawner;
         }
 
@@ -24,7 +23,7 @@ namespace HEC.FDA.View
         {
             InitializeComponent();
             DataContext = newvm;
-            Title = newvm.Title;
+            //Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
         }
 

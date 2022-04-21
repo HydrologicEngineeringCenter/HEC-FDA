@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Tabs;
+﻿using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Tabs;
+using System.ComponentModel;
 using ViewModel;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -17,7 +19,7 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
         #region Properties
 
-        public Study.FdaStudyVM StudyVM { get; set; }
+        public FdaStudyVM StudyVM { get; }
 
         public BaseViewModel CurrentView
         {
@@ -36,7 +38,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public string Title
         {
-            get { return _Title; }
+            get  {return _Title;}
             set { _Title = value;  NotifyPropertyChanged(nameof(Title)); }
         }
 
@@ -47,14 +49,11 @@ namespace HEC.FDA.ViewModel.Utilities
             //Anytime a window is opened in all of FDA it falls into here
             //and recreates the studyVM. This static prop in a static class allows me to not enter if the 
             //study is already open
-            if (ExtentionMethods.IsStudyOpen)
-            {
-                return;
-            }
-            else
+            if(!ExtentionMethods.IsStudyOpen)
             {
                 ExtentionMethods.IsStudyOpen = true;
-                StudyVM = new Study.FdaStudyVM();
+                StudyVM = new FdaStudyVM();
+                StudyVM.PropertyChanged += StudyVM_PropertyChanged;
                 CurrentView = StudyVM;
                 Title = "FDA 2.0";
             }
@@ -65,8 +64,17 @@ namespace HEC.FDA.ViewModel.Utilities
             CurrentView = tab.BaseVM;
             Title = tab.Header;
         }
+
         #endregion
         #region Voids
+        private void StudyVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Name"))
+            {
+                Title = "FDA 2.0 - " + StudyVM.CurrentStudyElement.Name; ;
+            }
+        }
+
         private void CurrentView_RequestNavigation( IDynamicTab tab, bool newWindow, bool asDialog)
         {
             if (LaunchNewWindow != null)

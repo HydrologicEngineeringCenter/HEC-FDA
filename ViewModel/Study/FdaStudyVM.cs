@@ -44,12 +44,13 @@ namespace HEC.FDA.ViewModel.Study
 
             CurrentStudyElement = new StudyElement();
             _StudyElement.RequestNavigation += Navigate;
-
-            //_StudyElement.AddBaseElements();
-
+            _StudyElement.PropertyChanged += _StudyElement_PropertyChanged;
             InitializeGDAL();
+        }
 
-            StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
+        private void _StudyElement_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(e.PropertyName);
         }
         #endregion
 

@@ -207,8 +207,6 @@ namespace HEC.FDA.ViewModel.Study
             UpdateTreeViewHeader(name);
             StudyCache = null;
             AddBaseElements();
-
-            StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
         }
 
         public void ImportStudyFromOldFda()

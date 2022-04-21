@@ -8,8 +8,9 @@
         Icon="FDA.ico"
         Closing="Window_Closing"
         ResizeMode="CanResize"
-        Title="ViewWindow" 
+        Title="{Binding Title}" 
         Loaded="Window_Loaded"
+        
         >
 
     <Window.DataContext>

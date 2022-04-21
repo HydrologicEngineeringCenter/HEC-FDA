@@ -55,8 +55,6 @@ namespace HEC.FDA.ViewModel.Study
         {
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
-            //AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.File.Exists(Path); }, "File does not exist.", ErrorLevel.Severe));
-            //AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Path), new Rule(() =>
             {
                 bool pathIsValid = true;
