@@ -38,9 +38,9 @@ namespace Statistics.Distributions
         public LogNormal(double mean, double sd, int sampleSize = int.MaxValue)
         {
                         
-                Mean = mean;
-                StandardDeviation = sd;
-            SampleSize = sampleSize;
+          _mean = mean;
+          _standardDeviation = sd;
+          SampleSize = sampleSize;
             addRules();
         }
 
