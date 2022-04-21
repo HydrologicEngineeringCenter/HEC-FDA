@@ -47,18 +47,18 @@ namespace alternativeComparisonReport
         /// int for the impact area ID, and the third has a key of type string for the damage category. The value of the third dictionary is the histogram of 
         /// damage reduced for a given damage category in a given impact area and for a given alternative comparison. 
         /// </summary>
-        /// <param name="rp"></param> random number provider
+        /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> number of times to sample the aaeq damage histograms
         /// <param name="discountRate"></param> the discount rate at which to calculate the present value of damages, in decimal form
         /// <returns></returns>
-        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate)
+        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
         {
-            Dictionary<int, Dictionary<string, Histogram>> withoutProjectResults = _withoutProjectAlternative.AnnualizationCompute(rp, iterations, discountRate);
+            Dictionary<int, Dictionary<string, Histogram>> withoutProjectResults = _withoutProjectAlternative.AnnualizationCompute(randomProvider, iterations, discountRate);
 
             Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damagesReducedAllAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Dictionary<string, Histogram>> withProjectResults = alternative.AnnualizationCompute(rp, iterations, discountRate);
+                Dictionary<int, Dictionary<string, Histogram>> withProjectResults = alternative.AnnualizationCompute(randomProvider, iterations, discountRate);
 
                 Dictionary<int, Dictionary<string, Histogram>> damageReducedOneAlternative = new Dictionary<int, Dictionary<string, Histogram>>();
                 foreach (int impactAreaID in withProjectResults.Keys)
@@ -86,8 +86,8 @@ namespace alternativeComparisonReport
 
                         for (int i = 0; i < iterations; i++)
                         {
-                            double withProjectDamageAAEQ = (withProjectResults[impactAreaID])[damageCategory].InverseCDF(rp.NextRandom());
-                            double withoutProjectDamageAAEQ = (withoutProjectResults[impactAreaID])[damageCategory].InverseCDF(rp.NextRandom());
+                            double withProjectDamageAAEQ = (withProjectResults[impactAreaID])[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double withoutProjectDamageAAEQ = (withoutProjectResults[impactAreaID])[damageCategory].InverseCDF(randomProvider.NextRandom());
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
                             damageReducedDamageCategory.AddObservationToHistogram(damagesReduced);
                         }
@@ -105,32 +105,32 @@ namespace alternativeComparisonReport
         /// int for the impact area ID, and the third has a key of type string for the damage category. The value of the third dictionary is the histogram of 
         /// damage reduced for a given damage category in a given impact area and for a given alternative comparison. 
         /// </summary>
-        /// <param name="rp"></param> random number provider
+        /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
         /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
         /// <returns></returns>
-        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool iWantBaseYearResults)
+        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, bool iWantBaseYearResults)
         {
             Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> eadReducedAllAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
             if (iWantBaseYearResults)
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(rp,iterations);
+                eadReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider,iterations);
             }
             else
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(rp, iterations);
+                eadReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, iterations);
             }
             return eadReducedAllAlternatives;
         } 
 
-        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers rp, Int64 iterations)
+        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations)
         {
-            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.CurrentYearScenario.Compute(rp, iterations);
+            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.CurrentYearScenario.Compute(randomProvider, iterations);
             Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damageReducedAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Results> withProjectEAD = alternative.CurrentYearScenario.Compute(rp, iterations);
+                Dictionary<int, Results> withProjectEAD = alternative.CurrentYearScenario.Compute(randomProvider, iterations);
 
                 Dictionary<int, Dictionary<string, Histogram>> damageReducedImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
                 foreach (int impactAreaID in withoutProjectEAD.Keys)
@@ -143,8 +143,8 @@ namespace alternativeComparisonReport
                         Histogram damageReduced = new Histogram(min, binWidth);
                         for (int i = 0; i < iterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
+                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReduced.AddObservationToHistogram(eadDamageReduced);
                         }
@@ -159,14 +159,14 @@ namespace alternativeComparisonReport
         }
 
 
-        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers rp, Int64 iterations)
+        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations)
         {
-            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.FutureYearScenario.Compute(rp, iterations);
+            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.FutureYearScenario.Compute(randomProvider, iterations);
             Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damagesReducedAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Results> withProjectEAD = alternative.FutureYearScenario.Compute(rp, iterations);
+                Dictionary<int, Results> withProjectEAD = alternative.FutureYearScenario.Compute(randomProvider, iterations);
 
                 Dictionary<int, Dictionary<string, Histogram>> damageReducedImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
                 foreach (int impactAreaID in withoutProjectEAD.Keys)
@@ -179,8 +179,8 @@ namespace alternativeComparisonReport
                         Histogram damageReduced = new Histogram(min, binWidth);
                         for (int i = 0; i < iterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
+                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReduced.AddObservationToHistogram(eadDamageReduced);
                         }

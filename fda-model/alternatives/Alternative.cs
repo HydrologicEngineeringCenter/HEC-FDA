@@ -43,15 +43,15 @@ namespace alternatives
         /// dictionary of damage results. This internal dictionary consists of a key of type string which is a damage category
         /// and a value which is a histogram of damage in average annual equivalent terms.
         /// </summary>
-        /// <param name="rp"></param> random number provider
+        /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> number of iterations to sample distributions
         /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
         /// <returns></returns>
-        public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate)
+        public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
         {
             _discountRate = discountRate;
-            Dictionary<int,Results> baseYearResults = _currentYear.Compute(rp, iterations);//this is a list of impact area-specific ead
-            Dictionary<int, Results> mlfYearResults = _futureYear.Compute(rp, iterations);
+            Dictionary<int,Results> baseYearResults = _currentYear.Compute(randomProvider, iterations);//this is a list of impact area-specific ead
+            Dictionary<int, Results> mlfYearResults = _futureYear.Compute(randomProvider, iterations);
 
             Dictionary<int, Dictionary<string, Histogram>> damageByImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
 
@@ -78,8 +78,8 @@ namespace alternatives
 
                     for (int i = 0; i < iterations; i++)
                     {
-                        double eadSampledBaseYear = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
-                        double eadSampledFutureYear = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(rp.NextRandom());
+                        double eadSampledBaseYear = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                        double eadSampledFutureYear = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         histogram.AddObservationToHistogram(aaeqDamage);
                     }
@@ -91,11 +91,11 @@ namespace alternatives
         }
         //TODO: these functions should be private, but currently have unit tests 
         //so these will remain public until the unit tests are re-written on the above public method
-        public double ComputeEEAD(double baseEAD, double mlfEAD){
+        public double ComputeEEAD(double baseYearEAD, double mostLikelyFutureEAD){
 
             //probably instantiate a rng to seed each impact area differently
 
-            double[] interpolatedEADs = Interpolate(baseEAD, mlfEAD, _currentYear.Year, _futureYear.Year, _periodOfAnalysis);
+            double[] interpolatedEADs = Interpolate(baseYearEAD, mostLikelyFutureEAD, _currentYear.Year, _futureYear.Year, _periodOfAnalysis);
             double sumPresentValueEAD = PresentValueCompute(interpolatedEADs, _discountRate);
             double averageAnnualEquivalentDamage = IntoAverageAnnualEquivalentTerms(sumPresentValueEAD, _periodOfAnalysis, _discountRate);
             return averageAnnualEquivalentDamage;
@@ -118,18 +118,18 @@ namespace alternatives
             }
             return sumPresentValueEAD;
         }
-        private double[] Interpolate(double baseEAD, double mlfEAD, Int64 baseYear, Int64 mlfYear, Int64 periodOfAnalysis)
+        private double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, Int64 baseYear, Int64 mostLikelyFutureYear, Int64 periodOfAnalysis)
         {
-            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mlfYear - baseYear);
+            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear);
             //Int64 yearsAfterMLF = periodOfAnalysis - yearsBetweenBaseAndMLFInclusive;
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (Int64 i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseEAD + i*(1 / yearsBetweenBaseAndMLFInclusive) * (mlfEAD - baseEAD);
+                interpolatedEADs[i] = baseYearEAD + i*(1 / yearsBetweenBaseAndMLFInclusive) * (mostLikelyFutureEAD - baseYearEAD);
             }
             for (Int64 i = Convert.ToInt64(yearsBetweenBaseAndMLFInclusive); i<periodOfAnalysis; i++)
             {
-                interpolatedEADs[i] = mlfEAD;
+                interpolatedEADs[i] = mostLikelyFutureEAD;
             }
             return interpolatedEADs;
         }
