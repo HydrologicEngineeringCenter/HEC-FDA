@@ -64,13 +64,14 @@ namespace fda_model_test.integrationtests
         static string yLabel = "y label";
         static string name = "name";
         static string category = "residential";
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category);
+        static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType);
         
         [Theory]
         [InlineData(1234, 0.96)]
         public void ComputeMeanEADWithIterations_Test(int seed, double expected)
         {
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, xLabel, yLabel, name, usingStagesNotFlows: false);
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
             UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, xLabel, yLabel, name);
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
@@ -85,7 +86,8 @@ namespace fda_model_test.integrationtests
             metrics.Results results = simulation.Compute(randomProvider,convergenceCriteria);
             double difference = Math.Abs(expected - results.ExpectedAnnualDamageResults.MeanEAD("residential"));
             double relativeDifference = difference / expected;
-            Assert.True(relativeDifference < .25);
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
         }
         
 
