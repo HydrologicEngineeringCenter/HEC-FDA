@@ -139,7 +139,7 @@ namespace paireddata
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pairedData.Xvals);//bad news.
+                    throw new Exception("X values are not monotonically increasing");
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
