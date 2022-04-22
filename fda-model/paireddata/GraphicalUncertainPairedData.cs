@@ -74,7 +74,7 @@ namespace paireddata
             _metaData = new CurveMetaData();
             AddRules();
         }
-
+        [Obsolete("This constructor is deprecated. Please use the constructor that accepts Curve Meta Data as an argument")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
@@ -86,7 +86,22 @@ namespace paireddata
             _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions, usingStagesNotFlows);
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions, usingStagesNotFlows);
             _EquivalentRecordLength = equivalentRecordLength;
-            _metaData = new CurveMetaData(xlabel, ylabel, name);
+            _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
+            AddRules();
+
+        }
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        {
+            Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
+            graphical.Validate();
+            graphical.ComputeGraphicalConfidenceLimits();
+            _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
+            _NonExceedanceProbabilities = ExceedanceToNonExceedance(graphical.ExceedanceProbabilities);
+            _NonMontonicDistributions = graphical.StageOrLogFlowDistributions;
+            _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions, usingStagesNotFlows);
+            _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions, usingStagesNotFlows);
+            _EquivalentRecordLength = equivalentRecordLength;
+            _metaData = curveMetaData;
             AddRules();
 
         }
