@@ -10,8 +10,6 @@ namespace paireddata
     {
         MonotonicallyIncreasing,
         StrictlyMonotonicallyIncreasing,
-        MonotonicallyDecreasing,
-        StrictlyMonotonicallyDecreasing,
         Unassigned
 
     }
