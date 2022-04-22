@@ -55,6 +55,7 @@ namespace metrics
             {
                 XElement rowElement = new XElement($"{key}");
                 rowElement = _ead[key].WriteToXML();
+                rowElement.Name = $"{key}";
                 masterElem.Add(rowElement);
             }
             return masterElem;
