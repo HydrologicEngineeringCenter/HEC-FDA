@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
 using Xunit;
 using metrics;
 using compute;
@@ -237,6 +235,48 @@ namespace fda_model_test.unittests
             Assert.True(isFirstThresholdConverged);
             Assert.False(isSecondThresholdConverged);
             Assert.False(isPerformanceConverged);
+        }
+
+        [Theory]
+        [InlineData(9102, 10001, 16000, .998, .801603)]
+        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
+        {
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
+            }
+
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
+            List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
+            uncertainPairedDataList.Add(stage_damage);
+            int thresholdID = 1;
+
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+
+            Simulation simulation = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(uncertainPairedDataList)
+                .withAdditionalThreshold(threshold)
+                .build();
+
+            RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, cc, false);
+            XElement xElement = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.WriteToXML();
+            ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement);
+            bool success = xElement.Equals(projectPerformanceResults);
+            Assert.True(success);
         }
 
     }

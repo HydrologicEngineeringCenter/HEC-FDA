@@ -27,7 +27,7 @@ namespace fda_model_test.unittests
 
         [Theory]
         [InlineData(1111, 100)]
-        public void Serialization_Test(int seed, int iterations)
+        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
         {
 
             Statistics.ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);

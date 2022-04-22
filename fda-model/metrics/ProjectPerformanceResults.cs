@@ -231,7 +231,15 @@ namespace metrics
                 _cnep[keys[i]].TestForConvergence(upperQuantile,lowerQuantile);//this will force dequeue also.
             });
         }
-
+        public bool Equals(ProjectPerformanceResults projectPerformanceResults)
+        {
+            if(!_aep.Equals(projectPerformanceResults.HistogramOfAEPs)) { return false; }
+            foreach (double key in _cnep.Keys) 
+            {
+                if(!_cnep[key].Equals(projectPerformanceResults.CNEPHistogramOfStages[key])) { return false; }
+            }
+            return true;
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Project_Performance_Results");
@@ -251,7 +259,7 @@ namespace metrics
             {
                 XElement cnepElement = new XElement($"{key}");
                 cnepElement = _cnep[key].WriteToXML();
-                cnepElement.Name = $"{key}";
+                cnepElement.Name = $"prob={key}";
                 masterElement.Add(cnepElement);
                 listOfKeys.Add(key);
             }
@@ -268,7 +276,7 @@ namespace metrics
             foreach (char key in stringListOfKeys)
             {
                 double keyDouble = Convert.ToDouble(key);
-                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"{key}"));
+                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"prob={key}"));
                 cnepHistogramDictionary.Add(keyDouble, threadsafeInlineHistogram);
             }
             ThreadsafeInlineHistogram aepHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("AEP_Histogram"));

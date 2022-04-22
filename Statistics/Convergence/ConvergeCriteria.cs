@@ -20,7 +20,14 @@ namespace Statistics
             ZAlpha = zAlpha;
             Tolerance = tolerance;
         }
-        
+        public bool Equals(ConvergenceCriteria convergenceCriteria)
+        {
+            if(MinIterations != convergenceCriteria.MinIterations) { return false; }
+            else if(MaxIterations != convergenceCriteria.MaxIterations) { return false; }
+            else if (ZAlpha != convergenceCriteria.ZAlpha) { return false; }
+            else if(Tolerance != convergenceCriteria.Tolerance) { return false; }
+            else { return true; }
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Convergence Criteria");

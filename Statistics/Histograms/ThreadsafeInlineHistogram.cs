@@ -59,6 +59,13 @@ namespace Statistics.Histograms
                 return _ConvergedOnMax;
             }
         }
+        public ConvergenceCriteria ConvergenceCriteria
+        {
+            get
+            {
+                return _ConvergenceCriteria;
+            }
+        }
         public double BinWidth
         {
             get
@@ -661,6 +668,14 @@ namespace Statistics.Histograms
             Int64 biggestGuess = Math.Max(upperestimate, lowerestimate);
             Int64 remainingIters = _ConvergenceCriteria.MaxIterations - _N;
             return Math.Min(remainingIters, biggestGuess);
+        }
+        public bool Equals(ThreadsafeInlineHistogram threadsafeInlineHistogram)
+        {
+            if (!_ConvergenceCriteria.Equals(threadsafeInlineHistogram.ConvergenceCriteria)) { return false; }
+            else if (_BinCounts != threadsafeInlineHistogram.BinCounts) { return false; }
+            else if (_Min != threadsafeInlineHistogram.Min) { return false; }
+            else { return true; }
+
         }
         #endregion
     }
