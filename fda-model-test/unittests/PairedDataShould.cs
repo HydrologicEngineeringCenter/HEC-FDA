@@ -1,6 +1,6 @@
 using Xunit;
 using paireddata;
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class PairedDataShould

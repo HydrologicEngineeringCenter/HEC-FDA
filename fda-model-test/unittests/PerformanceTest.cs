@@ -10,7 +10,7 @@ using paireddata;
 using Statistics;
 using Statistics.Distributions;
 
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class PerformanceTest

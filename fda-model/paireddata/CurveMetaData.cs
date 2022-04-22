@@ -59,5 +59,23 @@ namespace paireddata
             Category = "AGAIG";
             IsNull = false;
         }
+        public CurveMetaData(string xlabel, string ylabel, string name, string category, CurveTypesEnum curveType)
+        {
+            CurveType = curveType;
+            XLabel = xlabel;
+            YLabel = ylabel;
+            Name = name;
+            Category = category;
+            IsNull = false;
+        }
+        public CurveMetaData(string xlabel, string ylabel, string name, CurveTypesEnum curveType)
+        {
+            CurveType = curveType;
+            XLabel = xlabel;
+            YLabel = ylabel;
+            Name = name;
+            Category = "AGAIG";
+            IsNull = false;
+        }
     }
 }

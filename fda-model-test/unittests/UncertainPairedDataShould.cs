@@ -8,7 +8,7 @@ using Statistics.Distributions;
 using System.Runtime.Remoting;
 using System.Threading.Tasks;
 
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class UncertainPairedDataShould

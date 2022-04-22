@@ -7,7 +7,7 @@ using Statistics;
 using System.Collections.Generic;
 using System;
 
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class SimulationShould

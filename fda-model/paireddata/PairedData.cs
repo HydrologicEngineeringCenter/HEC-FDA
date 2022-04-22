@@ -17,14 +17,10 @@ namespace paireddata
         {
             get { return _metadata.Category; }
         }
-        //sorting Array.Sort(yarr,System.Collections.Comparer.);//make sure that this is ascending 
-        //or array.reverse
-        //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys)
         {
             Xvals = xs;
             Yvals = ys;
-            //Category = "Default";
             _metadata = new CurveMetaData("default");
             AddRules();
         }
@@ -33,7 +29,6 @@ namespace paireddata
             _metadata = metadata;
             Xvals = xs;
             Yvals = ys;
-            //Category = Category;
             AddRules();
         }
         private void AddRules()
@@ -48,14 +43,6 @@ namespace paireddata
                     AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a > b)), "Y must be monotonically increasing"));
                     break;
-                //case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
-                //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
-                //    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
-                //    break;
-                //case CurveTypesEnum.MonotonicallyDecreasing:
-                //    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically decreasing"));
-                //    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a < b)), "Y must be monotonically decreasing"));
-                //    break;
                 default:
                     break;
             }

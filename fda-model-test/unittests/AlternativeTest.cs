@@ -9,7 +9,7 @@ using paireddata;
 using Statistics;
 using Statistics.Histograms;
 
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class AlternativeTest

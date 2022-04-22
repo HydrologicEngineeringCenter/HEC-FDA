@@ -6,16 +6,18 @@ using interfaces;
 using System.Linq;
 using System.Xml.Linq;
 using System;
-using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 namespace paireddata
 {
-    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull
+    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage
     {
         #region Fields
         private int _EquivalentRecordLength;
         private double[] _ExceedanceProbabilities;
+        private double[] _NonExceedanceProbabilities;
         private Statistics.ContinuousDistribution[] _NonMontonicDistributions;
         private Statistics.ContinuousDistribution[] _DistributionsMonotonicFromAbove;
         private Statistics.ContinuousDistribution[] _DistributionsMonotonicFromBelow;
@@ -65,6 +67,8 @@ namespace paireddata
             }
 
         }
+        public event MessageReportedEventHandler MessageReport;
+
         #endregion
 
         #region Constructors
@@ -73,18 +77,34 @@ namespace paireddata
             _metaData = new CurveMetaData();
             AddRules();
         }
-
+        [Obsolete("This constructor is deprecated. Please use the constructor that accepts Curve Meta Data as an argument")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
             graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
+            _NonExceedanceProbabilities = ExceedanceToNonExceedance(graphical.ExceedanceProbabilities);
             _NonMontonicDistributions = graphical.StageOrLogFlowDistributions;
             _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions, usingStagesNotFlows);
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions, usingStagesNotFlows);
             _EquivalentRecordLength = equivalentRecordLength;
-            _metaData = new CurveMetaData(xlabel, ylabel, name);
+            _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
+            AddRules();
+
+        }
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        {
+            Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
+            graphical.Validate();
+            graphical.ComputeGraphicalConfidenceLimits();
+            _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
+            _NonExceedanceProbabilities = ExceedanceToNonExceedance(graphical.ExceedanceProbabilities);
+            _NonMontonicDistributions = graphical.StageOrLogFlowDistributions;
+            _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions, usingStagesNotFlows);
+            _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions, usingStagesNotFlows);
+            _EquivalentRecordLength = equivalentRecordLength;
+            _metaData = curveMetaData;
             AddRules();
 
         }
@@ -92,19 +112,16 @@ namespace paireddata
 
         #region Functions
         /// <summary>
-        /// We have rules on monotonicity for exceedance probabilities. We expect the flow or stage distributions 
-        /// to have situations where monotonicity is not satisfied. 
-        /// Using monotonic decreasing because we use exceedance probabilities
+        /// We have rules on monotonicity for non-exceedance probabilities. So we test for strict monotonic decreasing. 
+        /// This means that the exceecance probabilities are strictly monotonically increasing
+        /// Satisfying the curve type enum.
         /// </summary>
         private void AddRules()
         {
             switch (_metaData.CurveType)
             {
-                case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
-                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
-                    break;
-                case CurveTypesEnum.MonotonicallyDecreasing:
-                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a > b)), "X must be monotonically decreasing"));
+                case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), "X must be strictly monotonically decreasing"));
                     break;
                 default:
                     break;
@@ -123,35 +140,45 @@ namespace paireddata
             }
             return true;
         }
+        private double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
+        {
+            double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
+            for (int i = 0; i < nonExceedanceProbabilities.Length; i++)
+            {
+                nonExceedanceProbabilities[i] = 1 - exceedanceProbabilities[i];
+            }
+            return nonExceedanceProbabilities;
+        }
 
         public IPairedData SamplePairedData(double probability)
         {
             double[] y = new double[_NonMontonicDistributions.Length];
             if (probability > 0.5)
             {
-                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                for (int i = 0; i < _NonExceedanceProbabilities.Length; i++)
                 {
                     y[i] = _DistributionsMonotonicFromAbove[i].InverseCDF(probability);
                 }
             }
             else
             {
-                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                for (int i = 0; i < _NonExceedanceProbabilities.Length; i++)
                 {
                     y[i] = _DistributionsMonotonicFromBelow[i].InverseCDF(probability);
                 }
             }
-            PairedData pairedData = new PairedData(_ExceedanceProbabilities, y, _metaData);
+            PairedData pairedData = new PairedData(_NonExceedanceProbabilities, y, _metaData);
             pairedData.Validate();
             if (pairedData.HasErrors)
             {
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
+                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pairedData.Xvals);//bad news.
+                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
@@ -230,6 +257,11 @@ namespace paireddata
             }
             return monotonicDistributionArray;
         }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
         #endregion
     }
 }
