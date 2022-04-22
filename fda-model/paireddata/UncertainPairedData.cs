@@ -2,12 +2,14 @@ using interfaces;
 using Statistics;
 using System;
 using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace paireddata
 {
-    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull
+    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull, IReportMessage
     {
         #region Fields 
         private double[] _xvals;
@@ -44,6 +46,8 @@ namespace paireddata
         {
             get { return _yvals; }
         }
+        public event MessageReportedEventHandler MessageReport;
+
         #endregion
 
         #region Constructors 
@@ -136,10 +140,11 @@ namespace paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
+                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    throw new Exception("X values are not monotonically increasing");
+                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
@@ -150,6 +155,10 @@ namespace paireddata
                 
             }
             return pairedData;
+        }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
         }
         public XElement WriteToXML()
         {

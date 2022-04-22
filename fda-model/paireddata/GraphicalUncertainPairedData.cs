@@ -6,12 +6,13 @@ using interfaces;
 using System.Linq;
 using System.Xml.Linq;
 using System;
-using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 namespace paireddata
 {
-    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull
+    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage
     {
         #region Fields
         private int _EquivalentRecordLength;
@@ -66,6 +67,8 @@ namespace paireddata
             }
 
         }
+        public event MessageReportedEventHandler MessageReport;
+
         #endregion
 
         #region Constructors
@@ -171,10 +174,11 @@ namespace paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
+                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    throw new Exception("X Values are nonexceedance and should be strictly monotonically decreasing");
+                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
@@ -253,6 +257,11 @@ namespace paireddata
             }
             return monotonicDistributionArray;
         }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
         #endregion
     }
 }
