@@ -570,7 +570,7 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
             //masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
-            for (int i = 0; i < SampleSize; i++)
+            for (int i = 0; i < _BinCounts.Length; i++)
             {
                 XElement rowElement = new XElement("Coordinate");
                 rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
