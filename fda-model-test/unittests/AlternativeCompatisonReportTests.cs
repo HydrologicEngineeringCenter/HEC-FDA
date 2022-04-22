@@ -10,7 +10,7 @@ using Statistics;
 using Statistics.Histograms;
 using alternativeComparisonReport;
 
-namespace fda_model_test
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class AlternativeComparisonReportTest

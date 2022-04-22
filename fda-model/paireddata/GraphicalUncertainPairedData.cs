@@ -94,16 +94,16 @@ namespace paireddata
 
         #region Functions
         /// <summary>
-        /// We have rules on monotonicity for exceedance probabilities. We expect the flow or stage distributions 
-        /// to have situations where monotonicity is not satisfied. 
-        /// Using monotonic decreasing because we use exceedance probabilities
+        /// We have rules on monotonicity for non-exceedance probabilities. So we test for strict monotonic decreasing. 
+        /// This means that the exceecance probabilities are strictly monotonically increasing
+        /// Satisfying the curve type enum.
         /// </summary>
         private void AddRules()
         {
             switch (_metaData.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a < b)), "X must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), "X must be strictly monotonically decreasing"));
                     break;
                 default:
                     break;
@@ -137,19 +137,19 @@ namespace paireddata
             double[] y = new double[_NonMontonicDistributions.Length];
             if (probability > 0.5)
             {
-                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                for (int i = 0; i < _NonExceedanceProbabilities.Length; i++)
                 {
                     y[i] = _DistributionsMonotonicFromAbove[i].InverseCDF(probability);
                 }
             }
             else
             {
-                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                for (int i = 0; i < _NonExceedanceProbabilities.Length; i++)
                 {
                     y[i] = _DistributionsMonotonicFromBelow[i].InverseCDF(probability);
                 }
             }
-            PairedData pairedData = new PairedData(_ExceedanceProbabilities, y, _metaData);
+            PairedData pairedData = new PairedData(_NonExceedanceProbabilities, y, _metaData);
             pairedData.Validate();
             if (pairedData.HasErrors)
             {
@@ -159,7 +159,7 @@ namespace paireddata
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    throw new Exception("");
+                    throw new Exception("X Values are nonexceedance and should be strictly monotonically decreasing");
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)

@@ -35,7 +35,7 @@ namespace fda_model_test.integrationtests
             new Normal(474.53, .5),
             new Normal(475.11, .5),
             new Normal(477.4, .5)
-        };
+        }; ///observe the large non-overlapping portion of stage-damage vs stage-discharge
         static double[] stageDamageStages = new double[] { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482 };
         static IDistribution[] stageDamageDamageDistributions = new IDistribution[]
         {
