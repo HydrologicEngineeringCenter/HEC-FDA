@@ -12,9 +12,12 @@ namespace fda_model_test.unittests
     [Trait("Category", "Unit")]
     public class GraphicalUncertaintyPairedDataTests
     {
-        private static string xLabel = "x label";
-        private static string yLabel = "y label";
-        private static string name = "name";
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string category = "residential";
+        static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType);
 
         [Theory]
         [InlineData(new double[] { .99, .5, .1, .02, .01, .002 }, new double[] { 500, 2000, 34900, 66900, 86000, 146000 }, 5)] //Based on Elkhorn River at Highway 91 Dodge County FIS 2008
@@ -23,7 +26,7 @@ namespace fda_model_test.unittests
        20)]
         public void ReturnsDistributionsWhereMeanAndConfidenceLimitsAreMonotonicallyIncreasing(double[] probs, double[] flows, int erl)
         {
-            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, xLabel, yLabel, name);
+            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, curveMetaData);
             List<IPairedData> pairedDataList = new List<IPairedData>();
             IPairedData lowerPairedData = graphical.SamplePairedData(0.05);
             pairedDataList.Add(lowerPairedData);
