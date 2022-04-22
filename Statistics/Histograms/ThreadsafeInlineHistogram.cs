@@ -569,7 +569,7 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Max", Max);
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
-            //masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
+            masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
                 XElement rowElement = new XElement("Coordinate");
@@ -588,7 +588,9 @@ namespace Statistics.Histograms
             double binWidth = Convert.ToDouble(binWidthString);
             string sampleSizeString = element.Attribute("Ordinate_Count").Value;
             int sampleSize = Convert.ToInt32(sampleSizeString);
-            Int32[] binCounts = new Int32[sampleSize];
+            string binQuantityString = element.Attribute("Bin_Quantity").Value;
+            int binQuantity = Convert.ToInt32(binQuantityString);
+            Int32[] binCounts = new Int32[binQuantity];
             int i = 0;
             foreach (XElement binCountElement in element.Elements())
             {
