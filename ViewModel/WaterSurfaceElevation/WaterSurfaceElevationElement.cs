@@ -123,14 +123,14 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElev" + Name);
             Navigate(tab, false, false);
         }
-        public void RemoveElement(object sender, EventArgs e)
-        {
-            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);
-            }
-        }
+        //public override void RemoveElement(object sender, EventArgs e)
+        //{
+        //    MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        //    if (messageBoxResult == MessageBoxResult.Yes)
+        //    {
+        //        Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);
+        //    }
+        //}
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             if (_featureNodeHashs != null)

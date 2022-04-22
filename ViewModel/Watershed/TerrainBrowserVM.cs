@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +19,7 @@ namespace HEC.FDA.ViewModel.Watershed
         private const string FLT = ".flt";
         private const string TIF = ".tif";
 
+        private string _PreviousName;
         private string _TerrainPath;
         #endregion
         #region Properties
@@ -30,7 +32,7 @@ namespace HEC.FDA.ViewModel.Watershed
             get { return _TerrainPath; }
             set
             {
-                _TerrainPath = value;NotifyPropertyChanged();
+                _TerrainPath = value; NotifyPropertyChanged();
             }
         }
         #endregion
@@ -39,20 +41,20 @@ namespace HEC.FDA.ViewModel.Watershed
         {
         }
 
-        public FdaValidationResult IsValidPath()
+        public override FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (TerrainPath != null && TerrainPath != "")
             {
                 //check extension
                 string pathExtension = Path.GetExtension(TerrainPath);
-                if(VRT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
+                if (VRT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     //if we have a vrt then we need to check that we only have one and that there are tifs next to it. 
                     FdaValidationResult vrtResult = IsVRTPathValid();
                     vr.AddErrorMessage(vrtResult.ErrorMessage);
                 }
-                else if(FLT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || TIF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
+                else if (FLT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || TIF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     //do nothing
                 }
@@ -60,6 +62,14 @@ namespace HEC.FDA.ViewModel.Watershed
                 {
                     vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
                 }
+
+                string newDirectoryPath = Connection.Instance.TerrainDirectory + "\\" + Name;
+                //if (Directory.Exists(newDirectoryPath))
+                //{
+                //    //vr.AddErrorMessage("This ")
+                //}
+
+
             }
             else
             {
@@ -130,9 +140,11 @@ namespace HEC.FDA.ViewModel.Watershed
 
         public override void Save()
         {
-            FdaValidationResult isValidResult = IsValidPath();
+            FdaValidationResult isValidResult = IsValid();
             if (isValidResult.IsValid)
             {
+                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
+
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
                 string studyPath = CreateNewPathName();
@@ -140,8 +152,13 @@ namespace HEC.FDA.ViewModel.Watershed
                 StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, studyPath, id);
 
-                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
                 manager.SaveNew(TerrainPath, newElement);
+                _PreviousName = Name;
+                IsCreatingNewElement = false;
+                HasChanges = false;
+                HasSaved = true;
+                OriginalElement = newElement;
+
             }
             else
             {

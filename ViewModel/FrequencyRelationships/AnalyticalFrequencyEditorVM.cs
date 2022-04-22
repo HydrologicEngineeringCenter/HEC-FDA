@@ -25,9 +25,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
 
-        private double _Mean = 2;
-        private double _StDev = 2;
-        private double _Skew = 2;
+        private double _Mean;
+        private double _StDev;
+        private double _Skew;
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
         private string _FitToFlowMean = MEAN + "N/A";
@@ -126,6 +126,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
+            _Mean = DefaultCurveData.LP3Mean;
+            _StDev = DefaultCurveData.LP3StDev;
+            _Skew = DefaultCurveData.LP3Skew;
+            _POR = DefaultCurveData.LP3POR;
+
             LoadDefaultFlows();
             InitializePlotModel();
         }

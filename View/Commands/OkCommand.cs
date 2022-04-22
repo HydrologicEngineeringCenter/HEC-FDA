@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -61,9 +62,18 @@ namespace HEC.FDA.View.Commands
             {
                 return;
             }
-            if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
+            if (vm.GetType().IsSubclassOf(typeof(BaseEditorVM)))
             {
-                ((ViewModel.Editors.BaseEditorVM)vm).Save();
+                FdaValidationResult vr = ((BaseEditorVM)vm).IsValid();
+                if (vr.IsValid)
+                {
+                    ((BaseEditorVM)vm).Save();
+                }
+                else
+                {
+                    MessageBox.Show(vr.ErrorMessage, "Could Not Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
             vm.WasCanceled = false;
             TabController.Instance.CloseTabOrWindow(window);

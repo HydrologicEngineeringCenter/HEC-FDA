@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using paireddata;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private ComputeComponentVM CreateDefaultCurve()
         {
-            return new ComputeComponentVM("Stage Damage", "Stage", "Damage");
+            ComputeComponentVM curve = new ComputeComponentVM("Stage Damage", "Stage", "Damage");
+            curve.SetPairedData(DefaultCurveData.StageDamageDefaultCurve());
+            return curve;
         }
 
         private void loadImpactAreas()

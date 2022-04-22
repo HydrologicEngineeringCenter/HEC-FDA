@@ -66,6 +66,8 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
             ComputeComponentVM computeComponentVM = new ComputeComponentVM("regulated unregulated", "unregulated", "regulated");
+            computeComponentVM.SetPairedData(DefaultCurveData.RegulatedUnregulatedDefaultCurve());
+
             Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(computeComponentVM, actionManager);
 
             string title = "Create Inflow Outflow";

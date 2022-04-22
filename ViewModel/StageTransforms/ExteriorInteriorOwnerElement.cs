@@ -64,7 +64,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public void CreateNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
             ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior - Interior Stage", "Exterior Stage", "Interior Stage");
-           
+            computeComponentVM.SetPairedData(DefaultCurveData.ExteriorInteriorDefaultCurve());
+
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);

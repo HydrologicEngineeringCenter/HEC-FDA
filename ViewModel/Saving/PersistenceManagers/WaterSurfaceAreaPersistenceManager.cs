@@ -135,7 +135,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public void Remove(ChildElement element)
+        public override void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
             RemoveTable(PATH_AND_PROB_TABLE + element.Name);

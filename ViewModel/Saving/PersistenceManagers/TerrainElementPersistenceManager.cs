@@ -183,7 +183,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
             CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
-        public void Remove(ChildElement element)
+        public override void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
             element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);

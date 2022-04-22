@@ -362,7 +362,7 @@ namespace HEC.FDA.ViewModel.Saving
             return retval;
         }
 
-        public void Remove(ChildElement element)
+        public virtual void Remove(ChildElement element)
         {
             StudyCacheForSaving.RemoveElement(element);
             RemoveFromParentTable(element, TableName);
