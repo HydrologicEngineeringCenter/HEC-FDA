@@ -54,7 +54,7 @@ namespace metrics
         
         public XElement WriteToXML()
         {
-            XElement masterElem = new XElement("EAD_Histograms");
+            XElement masterElem = new XElement("EAD_Results");
             foreach (string key in HistogramsOfEADs.Keys)
             {
                 XElement rowElement = new XElement($"{key}");

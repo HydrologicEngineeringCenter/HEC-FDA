@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Utilities;
+using System.Xml.Linq;
 
 namespace Statistics
 {
@@ -18,6 +19,25 @@ namespace Statistics
             MaxIterations = maxIterations;
             ZAlpha = zAlpha;
             Tolerance = tolerance;
-        }        
+        }
+        
+        public XElement WriteToXML()
+        {
+            XElement masterElement = new XElement("Convergence Criteria");
+            masterElement.SetAttributeValue("Minimum_Iterations", MinIterations);
+            masterElement.SetAttributeValue("Maximum_Iterations", MaxIterations);
+            masterElement.SetAttributeValue("ZAlpha", ZAlpha);
+            masterElement.SetAttributeValue("Tolerance", Tolerance);
+            return masterElement;
+        }
+
+        public static ConvergenceCriteria ReadFromXML(XElement xElement)
+        {
+            int minIterations = Convert.ToInt32(xElement.Attribute("Minimum_Iterations").Value);
+            int maxIterations = Convert.ToInt32(xElement.Attribute("Maximum_Iterations").Value);
+            double zAlpha = Convert.ToDouble(xElement.Attribute("ZAlpha").Value);
+            double tolerance = Convert.ToDouble(xElement.Attribute("Tolerance").Value);
+            return new ConvergenceCriteria(minIterations, maxIterations, zAlpha, tolerance);
+        }
     }
 }
