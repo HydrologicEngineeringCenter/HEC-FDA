@@ -567,12 +567,13 @@ namespace Statistics.Histograms
             XElement masterElem = new XElement("Histogram");
             masterElem.SetAttributeValue("Min", Min);
             masterElem.SetAttributeValue("Max", Max);
-            masterElem.SetAttributeValue("Bin Width", _BinWidth);
+            masterElem.SetAttributeValue("Bin_Width", _BinWidth);
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
+            //masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
             for (int i = 0; i < SampleSize; i++)
             {
                 XElement rowElement = new XElement("Coordinate");
-                rowElement.SetAttributeValue("Bin Counts", _BinCounts[i]);
+                rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
                 masterElem.Add(rowElement);
             }
             return masterElem;
@@ -583,7 +584,7 @@ namespace Statistics.Histograms
             double min = Convert.ToDouble(minString);
             string maxString = element.Attribute("Max").Value;
             double max = Convert.ToDouble(maxString);
-            string binWidthString = element.Attribute("Bin Width").Value;
+            string binWidthString = element.Attribute("Bin_Width").Value;
             double binWidth = Convert.ToDouble(binWidthString);
             string sampleSizeString = element.Attribute("Ordinate_Count").Value;
             int sampleSize = Convert.ToInt32(sampleSizeString);
@@ -591,7 +592,7 @@ namespace Statistics.Histograms
             int i = 0;
             foreach (XElement binCountElement in element.Elements())
             {
-                binCounts[i] = Convert.ToInt32(binCountElement.Value);
+                binCounts[i] = Convert.ToInt32(binCountElement.Attribute($"Bin_Counts_{i}").Value);
                 i++;
             }
             return new ThreadsafeInlineHistogram(min, max, binWidth, binCounts);

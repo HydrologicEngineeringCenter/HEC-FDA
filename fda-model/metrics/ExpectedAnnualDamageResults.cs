@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using Statistics;
 using Statistics.Histograms;
+using System.Xml.Linq;
+
+
 namespace metrics
 {
     public class ExpectedAnnualDamageResults
@@ -24,7 +27,6 @@ namespace metrics
         {
             if (!_ead.ContainsKey(category))
             {
-                //double[] nullData = null;
                 var histogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, convergenceCriteria);
                 histogram.SetIterationSize(convergenceCriteria.MaxIterations);
                 _ead.Add(category, histogram);
@@ -46,6 +48,27 @@ namespace metrics
             return quartile;
         }
         
+        public XElement WriteToXML()
+        {
+            XElement masterElem = new XElement("EAD_Histograms");
+            foreach (string key in HistogramsOfEADs.Keys)
+            {
+                XElement rowElement = new XElement($"{key}");
+                rowElement = _ead[key].WriteToXML();
+                masterElem.Add(rowElement);
+            }
+            return masterElem;
+        }
+
+        public static Dictionary<string, ThreadsafeInlineHistogram> ReadFromXML(XElement xElement)
+        {
+            Dictionary<string, ThreadsafeInlineHistogram> eadHistogramDictionary = new Dictionary<string, ThreadsafeInlineHistogram>();
+            foreach (XElement histogramElement in xElement.Elements())
+            {
+                eadHistogramDictionary.Add(Convert.ToString(histogramElement.Name),ThreadsafeInlineHistogram.ReadFromXML(histogramElement));
+            }
+            return eadHistogramDictionary;
+        }
 
 
     }
