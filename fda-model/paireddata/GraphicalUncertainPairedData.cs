@@ -16,6 +16,7 @@ namespace paireddata
         #region Fields
         private int _EquivalentRecordLength;
         private double[] _ExceedanceProbabilities;
+        private double[] _NonExceedanceProbabilities;
         private Statistics.ContinuousDistribution[] _NonMontonicDistributions;
         private Statistics.ContinuousDistribution[] _DistributionsMonotonicFromAbove;
         private Statistics.ContinuousDistribution[] _DistributionsMonotonicFromBelow;
@@ -80,6 +81,7 @@ namespace paireddata
             graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
             _ExceedanceProbabilities = graphical.ExceedanceProbabilities;
+            _NonExceedanceProbabilities = ExceedanceToNonExceedance(graphical.ExceedanceProbabilities);
             _NonMontonicDistributions = graphical.StageOrLogFlowDistributions;
             _DistributionsMonotonicFromAbove = MakeMeMonotonicFromAbove(_NonMontonicDistributions, usingStagesNotFlows);
             _DistributionsMonotonicFromBelow = MakeMeMonotonicFromBelow(_NonMontonicDistributions, usingStagesNotFlows);
@@ -100,11 +102,8 @@ namespace paireddata
         {
             switch (_metaData.CurveType)
             {
-                case CurveTypesEnum.StrictlyMonotonicallyDecreasing:
-                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a >= b)), "X must be strictly monotonically decreasing"));
-                    break;
-                case CurveTypesEnum.MonotonicallyDecreasing:
-                    AddSinglePropertyRule(nameof(ExceedanceProbabilities), new Rule(() => IsArrayValid(ExceedanceProbabilities, (a, b) => (a > b)), "X must be monotonically decreasing"));
+                case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a < b)), "X must be strictly monotonically increasing"));
                     break;
                 default:
                     break;
@@ -122,6 +121,15 @@ namespace paireddata
                 }
             }
             return true;
+        }
+        private double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
+        {
+            double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
+            for (int i = 0; i < nonExceedanceProbabilities.Length; i++)
+            {
+                nonExceedanceProbabilities[i] = 1 - exceedanceProbabilities[i];
+            }
+            return nonExceedanceProbabilities;
         }
 
         public IPairedData SamplePairedData(double probability)
@@ -151,7 +159,7 @@ namespace paireddata
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    Array.Sort(pairedData.Xvals);//bad news.
+                    throw new Exception("");
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
