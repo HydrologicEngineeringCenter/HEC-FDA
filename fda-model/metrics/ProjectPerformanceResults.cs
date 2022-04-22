@@ -284,11 +284,11 @@ namespace metrics
 
             if (calculatePerformanceForLevee)
             {
-                return new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary)
+                return new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
             }
             else
             {
-                return new ProjectPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary)
+                return new ProjectPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
             }
         }
         #endregion
