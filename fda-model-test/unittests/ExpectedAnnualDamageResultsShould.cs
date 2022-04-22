@@ -62,6 +62,10 @@ namespace fda_model_test.unittests
             int[] actualBinCounts = expectedAnnualDamageResults[category].BinCounts;
             Assert.Equal(expectedBinCounts, actualBinCounts);
 
+            double expectedMin = r.ExpectedAnnualDamageResults.HistogramsOfEADs[category].Min;
+            double actualMin = expectedAnnualDamageResults[category].Min;
+            Assert.Equal(expectedMin, actualMin);
+
         }
     }
 }
