@@ -57,13 +57,13 @@ namespace fda_model_test.unittests
             metrics.Results r = simulation.Compute(randomProvider, convergenceCriteria);
             double actual = r.ExpectedAnnualDamageResults.MeanEAD(category);
             XElement xElement = r.ExpectedAnnualDamageResults.WriteToXML();
-            Dictionary<string, ThreadsafeInlineHistogram> expectedAnnualDamageResults = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
+            metrics.ExpectedAnnualDamageResults expectedAnnualDamageResults = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
             int[] expectedBinCounts = r.ExpectedAnnualDamageResults.HistogramsOfEADs[category].BinCounts;
-            int[] actualBinCounts = expectedAnnualDamageResults[category].BinCounts;
+            int[] actualBinCounts = expectedAnnualDamageResults.HistogramsOfEADs[category].BinCounts;
             Assert.Equal(expectedBinCounts, actualBinCounts);
 
             double expectedMin = r.ExpectedAnnualDamageResults.HistogramsOfEADs[category].Min;
-            double actualMin = expectedAnnualDamageResults[category].Min;
+            double actualMin = expectedAnnualDamageResults.HistogramsOfEADs[category].Min;
             Assert.Equal(expectedMin, actualMin);
 
         }

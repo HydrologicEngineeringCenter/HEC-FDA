@@ -23,6 +23,10 @@ namespace metrics
         public ExpectedAnnualDamageResults(){
             _ead = new Dictionary<string, ThreadsafeInlineHistogram>();
         }
+        public ExpectedAnnualDamageResults(Dictionary<string, ThreadsafeInlineHistogram> eadDictionary)
+        {
+            _ead = eadDictionary;
+        }
         public void AddEADKey(string category, ConvergenceCriteria convergenceCriteria)
         {
             if (!_ead.ContainsKey(category))
@@ -61,14 +65,14 @@ namespace metrics
             return masterElem;
         }
 
-        public static Dictionary<string, ThreadsafeInlineHistogram> ReadFromXML(XElement xElement)
+        public static ExpectedAnnualDamageResults ReadFromXML(XElement xElement)
         {
             Dictionary<string, ThreadsafeInlineHistogram> eadHistogramDictionary = new Dictionary<string, ThreadsafeInlineHistogram>();
             foreach (XElement histogramElement in xElement.Elements())
             {
                 eadHistogramDictionary.Add(Convert.ToString(histogramElement.Name),ThreadsafeInlineHistogram.ReadFromXML(histogramElement));
             }
-            return eadHistogramDictionary;
+            return new ExpectedAnnualDamageResults(eadHistogramDictionary);
         }
 
 
