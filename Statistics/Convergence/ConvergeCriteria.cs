@@ -22,11 +22,27 @@ namespace Statistics
         }
         public bool Equals(ConvergenceCriteria convergenceCriteria)
         {
-            if(MinIterations != convergenceCriteria.MinIterations) { return false; }
-            else if(MaxIterations != convergenceCriteria.MaxIterations) { return false; }
-            else if (ZAlpha != convergenceCriteria.ZAlpha) { return false; }
-            else if(Tolerance != convergenceCriteria.Tolerance) { return false; }
-            else { return true; }
+            bool minIterationsAreEqual = MinIterations.Equals(convergenceCriteria.MinIterations);
+            if(!minIterationsAreEqual)
+            { 
+                return false; 
+            }
+            bool maxIterationsAreEqual = MaxIterations.Equals(convergenceCriteria.MaxIterations);
+            if(!maxIterationsAreEqual)
+            { 
+                return false; 
+            }
+            bool zAlphaAreEqual = ZAlpha.Equals(convergenceCriteria.ZAlpha);
+            if (!zAlphaAreEqual)
+            { 
+                return false; 
+            }
+            bool toleranceAreEqual = Tolerance.Equals(convergenceCriteria.Tolerance);
+            if(!toleranceAreEqual)
+            { 
+                return false;
+            }
+           return true; 
         }
         public XElement WriteToXML()
         {

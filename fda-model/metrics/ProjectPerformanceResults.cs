@@ -233,10 +233,18 @@ namespace metrics
         }
         public bool Equals(ProjectPerformanceResults projectPerformanceResults)
         {
-            if(!_aep.Equals(projectPerformanceResults.HistogramOfAEPs)) { return false; }
+            bool aepHistogramsAreEqual = _aep.Equals(projectPerformanceResults.HistogramOfAEPs);
+            if (!aepHistogramsAreEqual)
+            { 
+                return false; 
+            }
             foreach (double key in _cnep.Keys) 
             {
-                if(!_cnep[key].Equals(projectPerformanceResults.CNEPHistogramOfStages[key])) { return false; }
+                bool cnepHistogramsAreEqual = _cnep[key].Equals(projectPerformanceResults.CNEPHistogramOfStages[key]);
+                if (!cnepHistogramsAreEqual)
+                {
+                    return false; 
+                }
             }
             return true;
         }

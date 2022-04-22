@@ -671,10 +671,22 @@ namespace Statistics.Histograms
         }
         public bool Equals(ThreadsafeInlineHistogram threadsafeInlineHistogram)
         {
-            if (!_ConvergenceCriteria.Equals(threadsafeInlineHistogram.ConvergenceCriteria)) { return false; }
-            else if (_BinCounts != threadsafeInlineHistogram.BinCounts) { return false; }
-            else if (_Min != threadsafeInlineHistogram.Min) { return false; }
-            else { return true; }
+            bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(threadsafeInlineHistogram.ConvergenceCriteria);
+            if (!convergenceCriteriaAreEqual)
+            { 
+                return false; 
+            }
+            bool binCountsAreEqual = _BinCounts.Equals(threadsafeInlineHistogram.BinCounts);
+            if (!binCountsAreEqual)
+            { 
+                return false; 
+            }
+            bool minAreEqual = _Min.Equals(threadsafeInlineHistogram.Min);
+            if (!minAreEqual)
+            { 
+                return false; 
+            }
+            return true; 
 
         }
         #endregion
