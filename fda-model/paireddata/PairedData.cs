@@ -17,14 +17,10 @@ namespace paireddata
         {
             get { return _metadata.Category; }
         }
-        //sorting Array.Sort(yarr,System.Collections.Comparer.);//make sure that this is ascending 
-        //or array.reverse
-        //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys)
         {
             Xvals = xs;
             Yvals = ys;
-            //Category = "Default";
             _metadata = new CurveMetaData("default");
             AddRules();
         }
@@ -33,7 +29,6 @@ namespace paireddata
             _metadata = metadata;
             Xvals = xs;
             Yvals = ys;
-            //Category = Category;
             AddRules();
         }
         private void AddRules()
