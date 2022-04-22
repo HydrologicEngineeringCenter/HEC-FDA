@@ -238,8 +238,8 @@ namespace fda_model_test.unittests
         }
 
         [Theory]
-        [InlineData(9102, 10001, 16000, .998, .801603)]
-        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
+        [InlineData(9102, 10001, 16000)]
+        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -275,7 +275,7 @@ namespace fda_model_test.unittests
             metrics.Results results = simulation.Compute(randomProvider, cc, false);
             XElement xElement = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.WriteToXML();
             ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement);
-            bool success = xElement.Equals(projectPerformanceResults);
+            bool success = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);
         }
 

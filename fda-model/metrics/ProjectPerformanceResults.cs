@@ -254,30 +254,33 @@ namespace metrics
             }
             XElement aepElement = _aep.WriteToXML();
             aepElement.Name = "AEP_Histogram";
-            List<int> listOfKeys = new List<int>();
-            foreach (int key in _cnep.Keys)
+            masterElement.Add(aepElement);
+            int keyCount = _cnep.Keys.ToArray().Length;
+            masterElement.SetAttributeValue("Key_Count", keyCount);
+            for (int i = 0; i <_cnep.Keys.ToArray().Length; i++)
             {
-                XElement cnepElement = new XElement($"{key}");
+                double key = _cnep.Keys.ToArray()[i];
+                XElement cnepElement = new XElement($"prob{key}");
                 cnepElement = _cnep[key].WriteToXML();
-                cnepElement.Name = $"prob={key}";
+                cnepElement.Name = $"prob{key}";
                 masterElement.Add(cnepElement);
-                listOfKeys.Add(key);
+                masterElement.SetAttributeValue($"key{i}", key);
             }
-            masterElement.SetAttributeValue("CNEP_Keys", listOfKeys.ToString());
             XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
             convergenceCriteriaElement.Name = "Convergence_Criteria";
+            masterElement.Add(convergenceCriteriaElement);
             return masterElement;
         }
 
         public static ProjectPerformanceResults ReadFromXML(XElement xElement)
         {
             Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary = new Dictionary<double, ThreadsafeInlineHistogram>();
-            string stringListOfKeys = xElement.Attribute("CNEP_Keys").Value;
-            foreach (char key in stringListOfKeys)
+            int keyCount = Convert.ToInt32(xElement.Attribute("Key_Count").Value);
+            for (int i = 0; i < keyCount; i++)
             {
-                double keyDouble = Convert.ToDouble(key);
-                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"prob={key}"));
-                cnepHistogramDictionary.Add(keyDouble, threadsafeInlineHistogram);
+                double key = Convert.ToDouble(xElement.Attribute($"key{i}").Value);
+                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"prob{key}"));
+                cnepHistogramDictionary.Add(key, threadsafeInlineHistogram);
             }
             ThreadsafeInlineHistogram aepHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("AEP_Histogram"));
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(xElement.Element("Convergence_Criteria"));
