@@ -20,6 +20,10 @@ namespace paireddata
         private double[] _NonExceedanceProbabilities;
         private Statistics.ContinuousDistribution[] _StageOrLogFlowDistributions;
         private CurveMetaData _metaData;
+        private bool _UsingStagesNotFlows;
+        private double _MaximumProbability;
+        private double _MinimumProbability;
+
         #endregion
 
         #region Properties
@@ -78,6 +82,9 @@ namespace paireddata
         [Obsolete("This constructor is deprecated. Please use the constructor that accepts Curve Meta Data as an argument")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _UsingStagesNotFlows = usingStagesNotFlows;
+            _MaximumProbability = maximumProbability;
+            _MinimumProbability = minimumProbability;
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
             graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
@@ -91,6 +98,9 @@ namespace paireddata
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _UsingStagesNotFlows = usingStagesNotFlows;
+            _MaximumProbability = maximumProbability;
+            _MinimumProbability = minimumProbability;
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows, maximumProbability, minimumProbability);
             graphical.Validate();
             graphical.ComputeGraphicalConfidenceLimits();
@@ -101,6 +111,18 @@ namespace paireddata
             _metaData = curveMetaData;
             AddRules();
 
+        }
+        private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        {
+            _UsingStagesNotFlows = usingStagesNotFlows;
+            _MaximumProbability = maximumProbability;
+            _MinimumProbability = minimumProbability;
+            _ExceedanceProbabilities = exceedanceProbabilities;
+            _NonExceedanceProbabilities = ExceedanceToNonExceedance(exceedanceProbabilities);
+            _StageOrLogFlowDistributions = flowOrStageDistributions;
+            _EquivalentRecordLength = equivalentRecordLength;
+            _metaData = curveMetaData;
+            AddRules();
         }
         #endregion
 
@@ -176,7 +198,82 @@ namespace paireddata
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
+        {
+            bool nameIsTheSame = Name.Equals(incomingGraphicalUncertainPairedData.Name);
+            bool erlIsTheSame = EquivalentRecordLength.Equals(incomingGraphicalUncertainPairedData.EquivalentRecordLength);
+            if (!nameIsTheSame || !erlIsTheSame)
+            {
+                return false;
+            }
+            for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+            {
+                bool probabilityIsTheSame = _ExceedanceProbabilities[i].Equals(incomingGraphicalUncertainPairedData.ExceedanceProbabilities[i]);
+                bool distributionIsTheSame = _StageOrLogFlowDistributions[i].Equals(incomingGraphicalUncertainPairedData.StageOrLogFlowDistributions[i]);
+                if(!probabilityIsTheSame || !distributionIsTheSame)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public XElement WriteToXML()
+        {
+            XElement masterElement = new XElement("Graphical_Uncertain_Paired_Data");
+            masterElement.SetAttributeValue("XLabel", XLabel);
+            masterElement.SetAttributeValue("YLabel", YLabel);
+            masterElement.SetAttributeValue("Name", Name);
+            masterElement.SetAttributeValue("Ordinate_Count", _ExceedanceProbabilities.Length);
+            masterElement.SetAttributeValue("ERL", EquivalentRecordLength);
+            masterElement.SetAttributeValue("Using_Stages_Not_Flows", _UsingStagesNotFlows);
+            masterElement.SetAttributeValue("Maximum_Probability", _MaximumProbability);
+            masterElement.SetAttributeValue("Minimum_Probability", _MinimumProbability);
+            for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+            {
+                XElement rowElement = new XElement("Coordinate");
+                XElement xElement = new XElement("X");
+                xElement.SetAttributeValue("Value", _ExceedanceProbabilities[i]);
+                XElement yElement = StageOrLogFlowDistributions[i].ToXML();
+                rowElement.Add(xElement);
+                rowElement.Add(yElement);
+                masterElement.Add(rowElement);
+            }
+            return masterElement;
+        }
 
+        public static GraphicalUncertainPairedData ReadFromXML(XElement xElement)
+        {
+            string xLabel = xElement.Attribute("XLabel").Value;
+            string yLabel = xElement.Attribute("YLabel").Value;
+            string name = xElement.Attribute("Name").Value;
+            CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
+            int equivalentRecordLength = Convert.ToInt32(xElement.Attribute("ERL").Value);
+            bool usingStagesNotFlows = Convert.ToBoolean(xElement.Attribute("Using_Stages_Not_Flows").Value);
+            double minimumProbability = Convert.ToDouble(xElement.Attribute("Minimum_Probability").Value);
+            double maximumProbability = Convert.ToDouble(xElement.Attribute("Maximum_Probability").Value);
+            int size = Convert.ToInt32(xElement.Attribute("Ordinate_Count").Value);
+            double[] exceedanceProbabilities = new double[size];
+            Normal[] stageOrFlowDistributions = new Normal[size];
+            int i = 0;
+            foreach (XElement coordinateElement in xElement.Elements())
+            {
+                foreach (XElement ordinateElements in coordinateElement.Elements())
+                {
+                    if (ordinateElements.Name.ToString().Equals("X"))
+                    {
+                        exceedanceProbabilities[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
+                    }
+                    else
+                    {
+                        stageOrFlowDistributions[i] = (Normal)Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                    }
+                }
+                i++;
+            }
+            return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability );
+        }
         #endregion
     }
-}
+    }
+
+
