@@ -63,7 +63,7 @@ namespace metrics
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
@@ -73,7 +73,7 @@ namespace metrics
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
         {
             _systemResponseFunction = systemResponseFunction;
             _calculatePerformanceForLevee = true;

@@ -1,4 +1,6 @@
 using System;
+using System.Xml.Linq;
+
 namespace metrics
 {
     public interface IContainResults

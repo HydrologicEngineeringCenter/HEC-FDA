@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using paireddata;
+﻿using paireddata;
 using Statistics;
+using System;
+using System.Xml.Linq;
 
 namespace metrics
 {
@@ -35,6 +32,33 @@ namespace metrics
             ThresholdID = thresholdID;
         }
 
+        private Threshold(int thresholdID, ThresholdEnum thresholdType, double thresholdValue, ProjectPerformanceResults projectPerformanceResults)
+        {
+            ThresholdType = thresholdType;
+            ThresholdValue = thresholdValue;
+            ThresholdID = thresholdID;
+            ProjectPerformanceResults = projectPerformanceResults;
+        }
 
+        public XElement WriteToXML()
+        {
+            XElement masterElement = new XElement("Threshold");
+            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(ThresholdType));
+            masterElement.SetAttributeValue("Threshold_Value", ThresholdValue);
+            masterElement.SetAttributeValue("Threshold_ID", ThresholdID);
+            XElement projectPerformanceElement = ProjectPerformanceResults.WriteToXML();
+            projectPerformanceElement.Name= "Project_Performance_Results";
+            masterElement.Add(projectPerformanceElement);
+            return masterElement;
+        }
+
+        public static Threshold ReadFromXML(XElement xElement)
+        {
+            ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
+            int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID"));
+            ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));
+            return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
+        }
     }
 }

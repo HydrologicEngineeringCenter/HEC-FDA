@@ -4,6 +4,8 @@ using Statistics;
 using Statistics.Histograms;
 using paireddata;
 using System.Linq;
+using System.Xml.Linq;
+
 namespace metrics
 {
     public class Results: IContainResults
@@ -14,6 +16,11 @@ namespace metrics
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
+        }
+        private Results(PerformanceByThresholds performanceByThresholds, ExpectedAnnualDamageResults expectedAnnualDamageResults)
+        {
+            PerformanceByThresholds = performanceByThresholds;
+            ExpectedAnnualDamageResults = expectedAnnualDamageResults;
         }
         private bool IsEADConverged()
         {
@@ -91,5 +98,23 @@ namespace metrics
             }
         }
 
+        public XElement WriteToXml()
+        {
+            XElement masterElement = new XElement("Results");
+            XElement performanceByThresholdsElement = PerformanceByThresholds.WriteToXML();
+            performanceByThresholdsElement.Name = "Performance_By_Thresholds";
+            masterElement.Add(performanceByThresholdsElement);
+            XElement expectedAnnualDamageResultsElement = ExpectedAnnualDamageResults.WriteToXML();
+            expectedAnnualDamageResultsElement.Name = "Expected_Annual_Damage_Results";
+            masterElement.Add(expectedAnnualDamageResultsElement);
+            return masterElement;
+        }
+
+        public static IContainResults ReadFromXML(XElement xElement)
+        {
+            PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
+            ExpectedAnnualDamageResults expectedAnnualDamageResults = ExpectedAnnualDamageResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            return new Results(performanceByThresholds,expectedAnnualDamageResults);
+        }
     }
 }
