@@ -52,6 +52,19 @@ namespace metrics
             return quartile;
         }
         
+        public bool Equals(ExpectedAnnualDamageResults expectedAnnualDamageResults)
+        {
+           foreach (string category in HistogramsOfEADs.Keys)
+            {
+                bool histogramsMatch = HistogramsOfEADs[category].Equals(expectedAnnualDamageResults.HistogramsOfEADs[category]);
+                if (!histogramsMatch)
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");

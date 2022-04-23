@@ -39,6 +39,18 @@ namespace metrics
             ThresholdID = thresholdID;
             ProjectPerformanceResults = projectPerformanceResults;
         }
+        public bool Equals(Threshold incomingThreshold)
+        {
+            bool thresholdTypeIsTheSame = ThresholdType.Equals(incomingThreshold.ThresholdType);
+            bool thresholdValueIsTheSame = ThresholdValue.Equals(incomingThreshold.ThresholdValue);
+            bool thresholdIDIsTheSame = ThresholdID.Equals(incomingThreshold.ThresholdID);
+            bool projectPerformanceIsTheSame = ProjectPerformanceResults.Equals(incomingThreshold.ProjectPerformanceResults);
+            if (!thresholdIDIsTheSame || !thresholdValueIsTheSame || !thresholdIDIsTheSame || !projectPerformanceIsTheSame)
+            {
+                return false;
+            }
+            return true;
+        }
 
         public XElement WriteToXML()
         {
@@ -56,7 +68,7 @@ namespace metrics
         {
             ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
             double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
-            int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID"));
+            int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID").Value);
             ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));
             return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
         }

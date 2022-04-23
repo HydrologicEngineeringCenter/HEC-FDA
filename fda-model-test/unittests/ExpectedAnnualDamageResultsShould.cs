@@ -54,20 +54,11 @@ namespace fda_model_test.unittests
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            metrics.Results r = simulation.Compute(randomProvider, convergenceCriteria);
-            double actual = r.ExpectedAnnualDamageResults.MeanEAD(category);
-            XElement xElement = r.ExpectedAnnualDamageResults.WriteToXML();
-            metrics.ExpectedAnnualDamageResults expectedAnnualDamageResults = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
-            int[] expectedBinCounts = r.ExpectedAnnualDamageResults.HistogramsOfEADs[category].BinCounts;
-            int[] actualBinCounts = expectedAnnualDamageResults.HistogramsOfEADs[category].BinCounts;
-            Assert.Equal(expectedBinCounts, actualBinCounts);
-
-            double expectedMin = r.ExpectedAnnualDamageResults.HistogramsOfEADs[category].Min;
-            double actualMin = expectedAnnualDamageResults.HistogramsOfEADs[category].Min;
-            Assert.Equal(expectedMin, actualMin);
-
-            bool success = convergenceCriteria.Equals(expectedAnnualDamageResults);
-
+            metrics.Results results = simulation.Compute(randomProvider, convergenceCriteria);
+            XElement xElement = results.ExpectedAnnualDamageResults.WriteToXML();
+            metrics.ExpectedAnnualDamageResults expectedAnnualDamageResultsFromXML = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
+            bool success = results.ExpectedAnnualDamageResults.Equals(expectedAnnualDamageResultsFromXML);
+            Assert.True(success);
         }
     }
 }

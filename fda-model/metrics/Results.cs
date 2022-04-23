@@ -97,7 +97,16 @@ namespace metrics
                 keyvaluepair.Value.ProjectPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
         }
-
+        public bool Equals(Results incomingIContainResults)
+        {
+            bool performanceMatches = PerformanceByThresholds.Equals(incomingIContainResults.PerformanceByThresholds);
+            bool damageResultsMatch = ExpectedAnnualDamageResults.Equals(incomingIContainResults.ExpectedAnnualDamageResults);
+            if (!performanceMatches || !damageResultsMatch)
+            {
+                return false;
+            }
+            return true;
+        }
         public XElement WriteToXml()
         {
             XElement masterElement = new XElement("Results");

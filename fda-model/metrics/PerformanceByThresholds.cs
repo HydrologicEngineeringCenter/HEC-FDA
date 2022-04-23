@@ -40,7 +40,18 @@ namespace metrics
         {
             _thresholds.Remove(threshold.ThresholdID);
         }
-        
+        public bool Equals(PerformanceByThresholds incomingPerformanceByThresholds)
+        {
+            foreach (int key in ThresholdsDictionary.Keys)
+            {
+                bool success = ThresholdsDictionary[key].Equals(incomingPerformanceByThresholds.ThresholdsDictionary[key]);
+                if (!success)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Performance_By_Thresholds");
@@ -71,5 +82,6 @@ namespace metrics
             return new PerformanceByThresholds(thresholdDictionary);
 
         }
+
     }
 }
