@@ -13,8 +13,8 @@ namespace metrics
     public class ProjectPerformanceResults
     {
         #region Fields
-        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
-        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
+        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
+        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
@@ -68,7 +68,6 @@ namespace metrics
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _aep = aepHistogram;
-            //_aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
             _aep.SetIterationSize(convergenceCriteria.MaxIterations);
             _cnep = cnepHistogramDictionary;
             _ConvergenceCriteria = convergenceCriteria;
@@ -95,6 +94,12 @@ namespace metrics
         {
             _aep.AddObservationToHistogram(aepEstimate, iteration);
         }
+        /// <summary>
+        /// TODO: Is it possible that injecting convergence criteria here instead of using the convergence criteria injected into the 
+        /// constructor is causing conflicts?
+        /// </summary>
+        /// <param name="standardNonExceedanceProbability"></param>
+        /// <param name="c"></param>
         public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))

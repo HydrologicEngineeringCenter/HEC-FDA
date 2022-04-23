@@ -164,7 +164,7 @@ namespace Statistics.Histograms
             _maxQueueCount = startqueueSize;
             _postQueueCount = postqueueSize;
         }
-        private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int32[] binCounts)
+        private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int32[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             Min = min;
@@ -177,7 +177,7 @@ namespace Statistics.Histograms
                 _N += count;
             }
             //sample mean, max, variance, and min dont work in this context...
-            _ConvergenceCriteria = new ConvergenceCriteria();
+            _ConvergenceCriteria = convergenceCriteria;
             _bw = new System.ComponentModel.BackgroundWorker();
             _bw.DoWork += _bw_DoWork;
         }
@@ -579,10 +579,14 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                XElement rowElement = new XElement("Coordinate");
-                rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
-                masterElem.Add(rowElement);
+                //XElement rowElement = new XElement("Coordinate");
+                //rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
+                //masterElem.Add(rowElement);
+                masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
             }
+            XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
+            convergenceCriteriaElement.Name = "Convergence_Criteria";
+            masterElem.Add(convergenceCriteriaElement);
             return masterElem;
         }
         public static ThreadsafeInlineHistogram ReadFromXML(XElement element)
@@ -598,13 +602,12 @@ namespace Statistics.Histograms
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
             Int32[] binCounts = new Int32[binQuantity];
-            int i = 0;
-            foreach (XElement binCountElement in element.Elements())
+            for (int i = 0; i < binQuantity; i++)
             {
-                binCounts[i] = Convert.ToInt32(binCountElement.Attribute($"Bin_Counts_{i}").Value);
-                i++;
+                binCounts[i] = Convert.ToInt32(element.Attribute($"Bin_Counts_{i}").Value);
             }
-            return new ThreadsafeInlineHistogram(min, max, binWidth, binCounts);
+            ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
+            return new ThreadsafeInlineHistogram(min, max, binWidth, binCounts, convergenceCriteria);
         }
         public bool TestForConvergence(double upperq, double lowerq)
         {
@@ -676,10 +679,13 @@ namespace Statistics.Histograms
             { 
                 return false; 
             }
-            bool binCountsAreEqual = _BinCounts.Equals(threadsafeInlineHistogram.BinCounts);
-            if (!binCountsAreEqual)
-            { 
-                return false; 
+            for (int i = 0; i < _BinCounts.Length; i++)
+            {
+                bool binCountsAreEqual = _BinCounts[i].Equals(threadsafeInlineHistogram.BinCounts[i]);
+                if (!binCountsAreEqual)
+                {
+                    return false;
+                }
             }
             bool minAreEqual = _Min.Equals(threadsafeInlineHistogram.Min);
             if (!minAreEqual)

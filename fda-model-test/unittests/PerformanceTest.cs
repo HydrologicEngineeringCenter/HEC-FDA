@@ -274,6 +274,7 @@ namespace fda_model_test.unittests
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, cc, false);
             XElement xElement = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.WriteToXML();
+            //TODO: At the next line, convergence criteria is being re-set to 100000
             ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement);
             bool success = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);

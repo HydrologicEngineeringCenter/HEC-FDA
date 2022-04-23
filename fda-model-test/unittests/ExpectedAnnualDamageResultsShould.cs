@@ -66,7 +66,7 @@ namespace fda_model_test.unittests
             double actualMin = expectedAnnualDamageResults.HistogramsOfEADs[category].Min;
             Assert.Equal(expectedMin, actualMin);
 
-            bool success = convergenceCriteria.Equals(expectedAnnualDamageResults)
+            bool success = convergenceCriteria.Equals(expectedAnnualDamageResults);
 
         }
     }
