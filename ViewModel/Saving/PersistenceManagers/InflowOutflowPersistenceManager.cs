@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int CURVE_COL = 4;
 
         private const string TABLE_NAME = "inflow_outflow_relationships";
-        internal override string ChangeTableConstant { get { return "Inflow Outflow - "; } }
         private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
         public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string) };
 

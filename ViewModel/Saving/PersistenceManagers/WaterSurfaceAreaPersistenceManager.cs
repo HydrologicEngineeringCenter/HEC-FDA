@@ -22,10 +22,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             get { return TableColTypes; }
         }
         private const string PATH_AND_PROB_TABLE = "hydraulic_data -";
-        internal override string ChangeTableConstant
-        {
-            get { return "???"; }
-        }
 
         public override string TableName
         {

@@ -300,6 +300,11 @@
         </DataTemplate>-->
         <DataTemplate DataType="{x:Type StudyVM:PropertiesVM }" >
             <StudyView:Properties/>
+            <DataTemplate.Resources>
+                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+                                         MinWidth="400" Width="500" 
+                                         MinHeight="400" Height="550" />
+            </DataTemplate.Resources>
         </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
             <StudyView:CreateNew/>

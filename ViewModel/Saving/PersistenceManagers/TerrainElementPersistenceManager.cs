@@ -1,10 +1,9 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Watershed;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -14,7 +13,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 2;
 
         private const string TABLE_NAME = "terrains";
-        internal override string ChangeTableConstant { get { return "?????"; } }
         private static readonly string[] TableColNames = { NAME, "path" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
 

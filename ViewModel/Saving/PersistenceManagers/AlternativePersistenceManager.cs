@@ -41,21 +41,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }   
 
-        public void Remove(ChildElement element)
-        {
-            //remove from the cache first while you can still get the element's id.
-            if (element is AlternativeElement altElem)
-            {
-                StudyCacheForSaving.RemoveElement(altElem);
-                RemoveFromParentTable(element, TableName);
-            }
-        }
-
-        public void SaveExisting(ChildElement elementToSave, int changeTableIndex)
-        {
-            base.SaveExisting( elementToSave);
-        }
-
         public void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(AlternativeElement))

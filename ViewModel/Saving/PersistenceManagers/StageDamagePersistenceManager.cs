@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const String STAGE_DAMAGE_CURVES_TAG = "StageDamageCurves";
 
         private const string TABLE_NAME = "stage_damage_relationships";
-        internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
+
         private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves" };
     
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string) };

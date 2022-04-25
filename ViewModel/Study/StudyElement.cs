@@ -10,6 +10,7 @@ using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace HEC.FDA.ViewModel.Study
@@ -54,6 +55,10 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public void OpenStudyFromRecent(object sender, EventArgs e)
         {
+            //todo: this is just for testing
+            throw new NotImplementedException();
+            //Task.Run(() => throw new NotImplementedException());
+
             if (sender is MenuItem menuItem)
             {
                 string filePath = menuItem.Tag as string;

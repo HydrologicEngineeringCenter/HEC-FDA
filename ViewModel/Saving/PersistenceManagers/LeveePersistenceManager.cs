@@ -24,10 +24,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(double), typeof(bool), typeof(string)  }; }
         }
-        internal override string ChangeTableConstant
-        {
-           get { return ""; }
-        }
 
         public override string TableName
         {

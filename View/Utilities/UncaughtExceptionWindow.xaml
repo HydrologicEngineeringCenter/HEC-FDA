@@ -1,0 +1,45 @@
+﻿<Window x:Class="HEC.FDA.View.Utilities.UncaughtExceptionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+         Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <Label Content="Post error "/>
+            <TextBlock VerticalAlignment="Center">           
+                <Hyperlink NavigateUri="https://discourse.hecdev.net/c/fda/33" RequestNavigate="Hyperlink_RequestNavigate">
+                    here
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                    <Label Content="Exception Message: " VerticalAlignment="Center"/>
+                    <TextBlock Name="ErrorMsg" Grid.Row="1" MaxWidth="650" VerticalAlignment="Center" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                    <Label Content="Call Stack: "/>
+                    <TextBlock Name="CallStack" Grid.Row="1" MaxWidth="650" TextWrapping="Wrap"/>
+                </StackPanel>
+
+            </Grid>
+        </ScrollViewer>
+
+        <Button Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Close" Click="Button_Click" Width="40" Height="22"  Margin="5"/>
+    </Grid>
+</Window>

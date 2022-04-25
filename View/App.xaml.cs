@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text;
+﻿using HEC.FDA.View.Utilities;
+using System;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -13,32 +13,31 @@ namespace HEC.FDA.View
         public App()
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);// += CurrentDomain_UnhandledException;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-           
-            MessageBox.Show(e.ExceptionObject.ToString(), "Exception",MessageBoxButton.OK, MessageBoxImage.Error);
+            //notify user that fda will close.
+            //e.IsTerminating
 
+            if(e.ExceptionObject is Exception exception)
+            {
+                DisplayErrorToUser(sender, exception);
+            }
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            DisplayErrorToUser(e.Exception);
-            //you can use this to open note pad and have it write the stack trace out.
-            //process.start(filePath)
+            DisplayErrorToUser(sender, e.Exception);
             e.Handled = true;
         }
 
-        private void DisplayErrorToUser(Exception e)
+        private void DisplayErrorToUser(object sender, Exception e)
         {
-            //todo: add email address to this error message
-            StringBuilder sb = new StringBuilder().AppendLine("It is advised that you close the " +
-                "program and then reopen.").AppendLine();
-            sb.AppendLine(e.Message).AppendLine(e.StackTrace);
-            MessageBox.Show(sb.ToString(), "Please Email Screenshot of this Unhandled Exception to the FDA Developers", MessageBoxButton.OK, MessageBoxImage.Error);
-
+            UncaughtExceptionWindow window = new UncaughtExceptionWindow(sender, e);
+            window.ShowDialog();         
         }
+        
     }
 }

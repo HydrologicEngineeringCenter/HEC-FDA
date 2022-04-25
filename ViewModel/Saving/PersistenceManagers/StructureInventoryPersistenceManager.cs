@@ -24,10 +24,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int IS_OLD_FDA = 3;
 
         private const string TABLE_NAME = "structure_inventories";
-        internal override string ChangeTableConstant
-        {
-            get { return STRUCTURE_INVENTORY_TABLE_CONSTANT; }
-        }
 
         public override string TableName
         {

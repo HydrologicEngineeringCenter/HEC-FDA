@@ -56,7 +56,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get { return new Type[] { typeof(string), typeof(bool) }; }
         }
-        internal override string ChangeTableConstant { get { return "OccType"; } }
 
         public override string TableName => ParentTableName;
 

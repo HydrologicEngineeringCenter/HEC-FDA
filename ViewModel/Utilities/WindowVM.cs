@@ -1,6 +1,9 @@
 ﻿using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Tabs;
+using System;
 using System.ComponentModel;
+using System.Text;
+using System.Windows;
 using ViewModel;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -93,5 +96,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
         #endregion
+
+
     }
 }

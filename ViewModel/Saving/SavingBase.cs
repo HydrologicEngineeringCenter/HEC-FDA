@@ -283,8 +283,6 @@ namespace HEC.FDA.ViewModel.Saving
 
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
-        internal virtual string ChangeTableConstant { get { return ""; } }
-
         public int GetNextAvailableId(int idColNumber = 0)
         {
             //make sure the table exists

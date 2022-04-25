@@ -113,9 +113,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <summary>
         /// Updates and existing row in the database.
         /// </summary>
-        /// <param name="oldElement"></param>
         /// <param name="element"></param>
-        /// <param name="changeTableIndex"></param>
         public void SaveExisting( ChildElement element)
         {
             base.SaveExisting( element);
