@@ -1,11 +1,7 @@
 ﻿using paireddata;
 using Statistics;
 using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -134,37 +130,37 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static UncertainPairedData ExteriorInteriorDefaultCurve()
         {
-            return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), "Exterior Stage", "Interior Stage", "Exterior - Interior");
+            return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
         }
 
         public static UncertainPairedData GraphicalDefaultCurve()
         {
-            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), "Frequency", "Flow", "Graphical Frequency");
+            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
         }
 
         public static UncertainPairedData GraphicalStageFreqDefaultCurve()
         {
-            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), "Frequency", "Flow", "Graphical Stage Frequency");
+            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
         }
 
         public static UncertainPairedData RegulatedUnregulatedDefaultCurve()
         {
-            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), "Regulated Flow", "Unregulated Flow", "Regulated Unregulated");
+            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), StringConstants.REGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED_UNREGULATED);
         }
 
         public static UncertainPairedData StageDamageDefaultCurve()
         {
-            return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), "Stage", "Damage", "Stage Damage");
+            return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
         }
 
         public static UncertainPairedData StageDischargeDefaultCurve()
         {
-            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), "Stage", "Discharge", "Stage Discharge");
+            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
         }
 
         public static UncertainPairedData FailureDefaultCurve()
         {
-            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), "Stage", "Frequency", "Failure Frequency");
+            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
         }
 
     }

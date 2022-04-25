@@ -33,9 +33,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private string _FitToFlowMean = MEAN + "N/A";
         private string _FitToFlowStDev = ST_DEV + "N/A";
         private string _FitToFlowSkew = SKEW + "N/A";
-        private int _POR = 200;
+        private int _POR;
         private PlotModel _plotModel;
-        private int _StandardPOR = 200;
+        private int _StandardPOR;
         #endregion
         #region Properties
         public PlotModel PlotModel

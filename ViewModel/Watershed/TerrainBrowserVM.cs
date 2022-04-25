@@ -19,7 +19,6 @@ namespace HEC.FDA.ViewModel.Watershed
         private const string FLT = ".flt";
         private const string TIF = ".tif";
 
-        private string _PreviousName;
         private string _TerrainPath;
         #endregion
         #region Properties
@@ -30,10 +29,7 @@ namespace HEC.FDA.ViewModel.Watershed
         public string TerrainPath
         {
             get { return _TerrainPath; }
-            set
-            {
-                _TerrainPath = value; NotifyPropertyChanged();
-            }
+            set { _TerrainPath = value; NotifyPropertyChanged(); }
         }
         #endregion
         #region Constructors
@@ -62,14 +58,6 @@ namespace HEC.FDA.ViewModel.Watershed
                 {
                     vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
                 }
-
-                string newDirectoryPath = Connection.Instance.TerrainDirectory + "\\" + Name;
-                //if (Directory.Exists(newDirectoryPath))
-                //{
-                //    //vr.AddErrorMessage("This ")
-                //}
-
-
             }
             else
             {
@@ -153,12 +141,10 @@ namespace HEC.FDA.ViewModel.Watershed
                 TerrainElement newElement = new TerrainElement(Name, studyPath, id);
 
                 manager.SaveNew(TerrainPath, newElement);
-                _PreviousName = Name;
                 IsCreatingNewElement = false;
                 HasChanges = false;
                 HasSaved = true;
                 OriginalElement = newElement;
-
             }
             else
             {

@@ -976,7 +976,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.FAILURE_PROBABILITY, StringConstants.STAGE);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.FAILURE_FREQUENCY, StringConstants.STAGE);
             computeComponentVM.SetPairedData(func);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
             return leveeFeatureElement;
