@@ -89,7 +89,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
-            ComputeComponentVM = new ComputeComponentVM("Frequency Element", "Frequency", "Flow");
+            ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
             AddActions();
         }

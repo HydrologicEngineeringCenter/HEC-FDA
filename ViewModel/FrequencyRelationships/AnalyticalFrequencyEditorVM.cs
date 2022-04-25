@@ -25,17 +25,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
 
-        private double _Mean = 2;
-        private double _StDev = 2;
-        private double _Skew = 2;
+        private double _Mean;
+        private double _StDev;
+        private double _Skew;
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
         private string _FitToFlowMean = MEAN + "N/A";
         private string _FitToFlowStDev = ST_DEV + "N/A";
         private string _FitToFlowSkew = SKEW + "N/A";
-        private int _POR = 200;
+        private int _POR;
         private PlotModel _plotModel;
-        private int _StandardPOR = 200;
+        private int _StandardPOR;
         #endregion
         #region Properties
         public PlotModel PlotModel
@@ -126,6 +126,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
+            _Mean = DefaultCurveData.LP3Mean;
+            _StDev = DefaultCurveData.LP3StDev;
+            _Skew = DefaultCurveData.LP3Skew;
+            _POR = DefaultCurveData.LP3POR;
+
             LoadDefaultFlows();
             InitializePlotModel();
         }
@@ -163,7 +168,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void InitializePlotModel()
         {
             _plotModel = new PlotModel();
-            _plotModel.Title = "Flow-Frequency";
+            _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
             _plotModel.LegendPosition = LegendPosition.BottomRight;
 
             LinearAxis x = new LinearAxis()
@@ -173,14 +178,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 EndPosition = .001,
                 AbsoluteMaximum = .999,
                 AbsoluteMinimum = .001,
-                Title = "Exceedance Probability"
+                Title = StringConstants.EXCEEDANCE_PROBABILITY
             };
             _plotModel.Axes.Add(x);
 
             LogarithmicAxis y = new LogarithmicAxis()
             {
                 Position = AxisPosition.Left,
-                Title = "Flow"
+                Title = StringConstants.DISCHARGE
             };
             _plotModel.Axes.Add(y);
 
@@ -279,7 +284,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     yVals.Add(lp3.InverseCDF(prob));
                 }
-                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
+                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.ANALYTICAL_FREQUENCY);
                 if (!IsStandard)
                 {
                     //if we are on "fit to flows" then update the labels.

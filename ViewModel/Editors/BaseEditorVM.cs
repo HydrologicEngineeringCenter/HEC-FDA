@@ -99,6 +99,11 @@ namespace HEC.FDA.ViewModel.Editors
             }
         }
 
+        public virtual FdaValidationResult IsValid()
+        {
+            return new FdaValidationResult();
+        }
+
         /// <summary>
         /// This will get called when the OK or save button is clicked on the editor
         /// </summary>

@@ -1,10 +1,12 @@
-﻿namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
+﻿using HEC.FDA.ViewModel.Utilities;
+
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public class StageDamageControl:ChartControlBase
     {
 
         public StageDamageControl()
-            : base("StageDamage", "Stage", "Damage", "Stage-Damage")
+            : base(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.STAGE_DAMAGE, StringConstants.STAGE_DAMAGE)
         {
 
         }

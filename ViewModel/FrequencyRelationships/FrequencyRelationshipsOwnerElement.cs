@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Flow - Frequency", "Frequency", "Flow");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
             string header = "Import Frequency";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequency");
