@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using Statistics;
 using Statistics.Histograms;
 using paireddata;
+using System.Xml.Linq;
 
 namespace metrics
 {
     public class ProjectPerformanceResults
     {
-        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
-        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
+        #region Fields
+        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
+        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
@@ -20,7 +22,9 @@ namespace metrics
         private ThreadsafeInlineHistogram _aep = null;
         private Dictionary<double, ThreadsafeInlineHistogram> _cnep;
         private UncertainPairedData _systemResponseFunction;
-
+        private ConvergenceCriteria _ConvergenceCriteria;
+        #endregion
+        #region Properties
         public ThreadsafeInlineHistogram HistogramOfAEPs
         {
             get
@@ -35,13 +39,16 @@ namespace metrics
                 return _cnep;
             }
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria c)
+        #endregion
+        #region Constructors 
+        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
-            _aep.SetIterationSize(c.MaxIterations);
+            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, convergenceCriteria);
+            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
+            _ConvergenceCriteria = convergenceCriteria;
 
         }
         public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
@@ -53,12 +60,46 @@ namespace metrics
             _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, convergenceCriteria);
             _aep.SetIterationSize(convergenceCriteria.MaxIterations);
             _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
+            _ConvergenceCriteria = convergenceCriteria;
 
         }
+        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        {
+            _thresholdType = thresholdType;
+            _thresholdValue = thresholdValue;
+            _aep = aepHistogram;
+            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
+            _cnep = cnepHistogramDictionary;
+            _ConvergenceCriteria = convergenceCriteria;
+
+        }
+        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        {
+            _systemResponseFunction = systemResponseFunction;
+            _calculatePerformanceForLevee = true;
+            _thresholdType = thresholdType;
+            _thresholdValue = thresholdValue;
+            _aep = aepHistogram;
+            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
+            _cnep = cnepHistogramDictionary;
+            _ConvergenceCriteria = convergenceCriteria;
+
+        }
+
+
+        #endregion
+        #region Methods
+
         public void AddAEPEstimate(double aepEstimate, Int64 iteration)
         {
             _aep.AddObservationToHistogram(aepEstimate, iteration);
         }
+        /// <summary>
+        /// TODO: Is it possible that injecting convergence criteria here instead of using the convergence criteria injected into the 
+        /// constructor is causing conflicts?
+        /// </summary>
+        /// <param name="standardNonExceedanceProbability"></param>
+        /// <param name="c"></param>
         public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
         {
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
@@ -195,5 +236,85 @@ namespace metrics
                 _cnep[keys[i]].TestForConvergence(upperQuantile,lowerQuantile);//this will force dequeue also.
             });
         }
+        public bool Equals(ProjectPerformanceResults projectPerformanceResults)
+        {
+            bool aepHistogramsAreEqual = _aep.Equals(projectPerformanceResults.HistogramOfAEPs);
+            if (!aepHistogramsAreEqual)
+            { 
+                return false; 
+            }
+            foreach (double key in _cnep.Keys) 
+            {
+                bool cnepHistogramsAreEqual = _cnep[key].Equals(projectPerformanceResults.CNEPHistogramOfStages[key]);
+                if (!cnepHistogramsAreEqual)
+                {
+                    return false; 
+                }
+            }
+            return true;
+        }
+        public XElement WriteToXML()
+        {
+            XElement masterElement = new XElement("Project_Performance_Results");
+            masterElement.SetAttributeValue("Calculates_Performance_For_Levee", _calculatePerformanceForLevee);
+            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(_thresholdType));
+            masterElement.SetAttributeValue("Threshold_Value", _thresholdValue);
+            if (_calculatePerformanceForLevee)
+            {
+                XElement systemResponseCurveElement = _systemResponseFunction.WriteToXML();
+                systemResponseCurveElement.Name = "System_Response_Curve";
+                masterElement.Add(systemResponseCurveElement);
+            }
+            XElement aepElement = _aep.WriteToXML();
+            aepElement.Name = "AEP_Histogram";
+            masterElement.Add(aepElement);
+            int keyCount = _cnep.Keys.ToArray().Length;
+            masterElement.SetAttributeValue("Key_Count", keyCount);
+            for (int i = 0; i <_cnep.Keys.ToArray().Length; i++)
+            {
+                double key = _cnep.Keys.ToArray()[i];
+                XElement cnepElement = new XElement($"prob{key}");
+                cnepElement = _cnep[key].WriteToXML();
+                cnepElement.Name = $"prob{key}";
+                masterElement.Add(cnepElement);
+                masterElement.SetAttributeValue($"key{i}", key);
+            }
+            XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
+            convergenceCriteriaElement.Name = "Convergence_Criteria";
+            masterElement.Add(convergenceCriteriaElement);
+            return masterElement;
+        }
+
+        public static ProjectPerformanceResults ReadFromXML(XElement xElement)
+        {
+            Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary = new Dictionary<double, ThreadsafeInlineHistogram>();
+            int keyCount = Convert.ToInt32(xElement.Attribute("Key_Count").Value);
+            for (int i = 0; i < keyCount; i++)
+            {
+                double key = Convert.ToDouble(xElement.Attribute($"key{i}").Value);
+                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"prob{key}"));
+                cnepHistogramDictionary.Add(key, threadsafeInlineHistogram);
+            }
+            ThreadsafeInlineHistogram aepHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("AEP_Histogram"));
+            ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(xElement.Element("Convergence_Criteria"));
+            bool calculatePerformanceForLevee = Convert.ToBoolean(xElement.Attribute("Calculates_Performance_For_Levee").Value);
+            UncertainPairedData systemResponseCurve = new UncertainPairedData();
+            if (calculatePerformanceForLevee)
+            {
+                systemResponseCurve = UncertainPairedData.ReadFromXML(xElement.Element("System_Response_Curve"));
+            }
+            ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
+
+            if (calculatePerformanceForLevee)
+            {
+                return new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+            }
+            else
+            {
+                return new ProjectPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+            }
+        }
+        #endregion
     }
 }

@@ -7,6 +7,8 @@ using Statistics.Histograms;
 using Xunit;
 using Utilities;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+
 
 namespace StatisticsTests.Histograms
 {
@@ -315,5 +317,25 @@ namespace StatisticsTests.Histograms
             Assert.Equal(expected, actual);
         }
 
+        [Theory]
+        [InlineData(1)]
+        public void HistogramXML(double binWidth)
+        {
+            double[] data = new double[5] { 1, 2, 3, 4, 5 };
+            ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, new ConvergenceCriteria());
+            histogram.SetIterationSize(5);
+            int i = 0;
+            foreach (double observation in data)
+            {
+                histogram.AddObservationToHistogram(observation, i);
+                i++;
+            }
+            histogram.ForceDeQueue();
+            XElement xElement = histogram.WriteToXML();
+            ThreadsafeInlineHistogram histogramFromXML = ThreadsafeInlineHistogram.ReadFromXML(xElement);
+            int[] expectedBinCounts = histogram.BinCounts;
+            int[] actualBinCounts = histogramFromXML.BinCounts;
+            Assert.Equal(expectedBinCounts, actualBinCounts);
+        }
     }
 }
