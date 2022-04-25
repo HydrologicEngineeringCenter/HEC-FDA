@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 yVals[i] = new Deterministic( lp3.InverseCDF(probs[i]));
             }
-            return new UncertainPairedData(probs, yVals, "Frequency", "Flow", "Flow-Frequency", "");
+            return new UncertainPairedData(probs, yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.FREQUENCY_RELATIONSHIP, "");
         }
 
 

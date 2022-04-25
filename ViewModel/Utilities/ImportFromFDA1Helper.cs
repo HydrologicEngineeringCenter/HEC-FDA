@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel.Utilities
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
             int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Rating Curve", "xlabel", "ylabel");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
             computeComponentVM.SetPairedData(ratingPairedData);
             RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, id);
             return elem;
@@ -278,7 +278,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     //message user if it does not.
                     if (row.Name.Equals(damageReachName))
                     {
-                        ComputeComponentVM vm = new ComputeComponentVM("Stage Damage", "xlabel", "ylabel");
+                        ComputeComponentVM vm = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
                         vm.SetPairedData(stageDamagePairedData);
                         curve = new StageDamageCurve(row, damCat, vm);
                         nameMatchedImpactArea = true;
@@ -337,7 +337,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
             List<double> graphicalFlows = new List<double>();
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Frequency Element", "Frequency", "Flow");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
             int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
@@ -437,7 +437,7 @@ namespace HEC.FDA.ViewModel.Utilities
             int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Inflow Outflow", "xlabel", "ylabel");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.REGULATED, StringConstants.UNREGULATED);
             computeComponentVM.SetPairedData(func);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, id);
         }
@@ -529,16 +529,16 @@ namespace HEC.FDA.ViewModel.Utilities
             bool CalculateVehicleDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.CAR]); ;
             bool CalculateOtherDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.OTHER]); ;
 
-            ComputeComponentVM structureComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            ComputeComponentVM structureComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             structureComponent.SetPairedData(StructureDepthDamageFunction);
 
-            ComputeComponentVM contentComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            ComputeComponentVM contentComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             contentComponent.SetPairedData(ContentDepthDamageFunction);
 
-            ComputeComponentVM vehicleComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            ComputeComponentVM vehicleComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             vehicleComponent.SetPairedData(VehicleDepthDamageFunction);
 
-            ComputeComponentVM otherComponent = new ComputeComponentVM("Depth-Damage", "Depth", "Damage");
+            ComputeComponentVM otherComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             otherComponent.SetPairedData(OtherDepthDamageFunction);
 
             List<ContinuousDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
@@ -976,7 +976,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Levee", "xlabel", "ylabel");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.FAILURE_PROBABILITY, StringConstants.STAGE);
             computeComponentVM.SetPairedData(func);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
             return leveeFeatureElement;
@@ -1011,7 +1011,7 @@ namespace HEC.FDA.ViewModel.Utilities
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
             int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
    
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM("Exterior Interior", "xlabel", "ylabel");
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             computeComponentVM.SetPairedData(func);
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, id);
             return elem;

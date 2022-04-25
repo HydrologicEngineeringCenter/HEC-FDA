@@ -420,7 +420,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             string msg = null;
             if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
             {
-                msg = "A Rating Curve is required when using a flow-frequency relationship.";
+                msg = "A Rating Curve is required when using a frequency relationship.";
             }
             return msg;
         }

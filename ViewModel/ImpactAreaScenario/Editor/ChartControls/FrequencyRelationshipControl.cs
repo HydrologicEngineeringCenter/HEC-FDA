@@ -1,4 +1,5 @@
-﻿using HEC.Plotting.Core.DataModel;
+﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.Plotting.Core.DataModel;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
@@ -7,7 +8,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 
 
         public FrequencyRelationshipControl()
-            : base("FrequencyRelationship", "Frequency", "Flow", "Flow-Frequency", useProbabilityX: true, xAxisAlignment: AxisAlignment.Top, yAxisAlignment: AxisAlignment.Right)
+            : base(StringConstants.FREQUENCY_RELATIONSHIP, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.FREQUENCY_RELATIONSHIP, useProbabilityX: true, xAxisAlignment: AxisAlignment.Top, yAxisAlignment: AxisAlignment.Right)
         {
             
         }

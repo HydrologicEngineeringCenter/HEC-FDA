@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using Statistics.Distributions;
 using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
@@ -72,14 +73,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private OccTypeItem CreateDefaultItem(OcctypeItemType itemType, bool isSelected)
         {
-            ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             ContinuousDistribution structValueUncert = new Deterministic(0);
             return new OccTypeItem(itemType,  isSelected, structureCurve, structValueUncert);
         }
 
         private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeItemType itemType, bool isSelected)
         {
-            ComputeComponentVM structureCurve = new ComputeComponentVM("Stage-Damage", "Stage", "Damage");
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             ContinuousDistribution structValueUncert = new Deterministic(0);
             ContinuousDistribution structValueUncertRatio = new Deterministic(0);
             bool isByVal = true;

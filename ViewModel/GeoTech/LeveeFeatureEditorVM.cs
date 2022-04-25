@@ -31,7 +31,8 @@ namespace HEC.FDA.ViewModel.GeoTech
         #region Constructors
         public LeveeFeatureEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
-
+            //set default elevation
+            Elevation = DefaultCurveData.DefaultLeveeElevation;
         }
         public LeveeFeatureEditorVM(CurveChildElement element, EditorActionManager actionManager) : base(element, actionManager)
         {

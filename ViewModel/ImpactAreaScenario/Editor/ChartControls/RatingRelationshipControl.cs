@@ -1,10 +1,12 @@
-﻿namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
+﻿using HEC.FDA.ViewModel.Utilities;
+
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public class RatingRelationshipControl : ChartControlBase
     {
 
         public RatingRelationshipControl()
-            : base("Rating", "Stage", "Flow", "Rating-Curve", flipXY: true, xAxisAlignment: HEC.Plotting.Core.DataModel.AxisAlignment.Top)
+            : base(StringConstants.STAGE_DISCHARGE, StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE, flipXY: true, xAxisAlignment: HEC.Plotting.Core.DataModel.AxisAlignment.Top)
         {
 
         }

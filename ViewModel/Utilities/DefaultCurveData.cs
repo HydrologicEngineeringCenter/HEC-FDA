@@ -92,6 +92,46 @@ namespace HEC.FDA.ViewModel.Utilities
             new Normal(292.52, 10.31)
         };
 
+        private static List<double> _StageDischargeXValues = new List<double>() { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482 };
+        private static List<IDistribution> _StageDischargeYValues = new List<IDistribution>()
+        {
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(.04, .16),
+            new Normal(.66,1.02),
+            new Normal(2.83,2.47),
+            new Normal(7.48,3.55),
+            new Normal(17.82,7.38),
+            new Normal(39.87, 12.35),
+            new Normal(76.91, 13.53),
+            new Normal(124.82, 13.87),
+            new Normal(173.73, 13.12),
+            new Normal(218.32, 12.03),
+            new Normal(257.83, 11.1),
+            new Normal(292.52, 10.31)
+        };
+
+        private static List<double> _FailureXValues = new List<double>() { 458,468,470,471,472,474,475,478 };
+        private static List<IDistribution> _FailureYValues = new List<IDistribution>()
+        {
+            new Deterministic(0),
+            new Deterministic(.01),
+            new Deterministic(.05),
+            new Deterministic(.07),
+            new Deterministic(.1),
+            new Deterministic(.8),
+            new Deterministic(.9),
+            new Deterministic(1),
+        };
+
+        public static double DefaultLeveeElevation = 478;
+
         public static UncertainPairedData ExteriorInteriorDefaultCurve()
         {
             return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), "Exterior Stage", "Interior Stage", "Exterior - Interior");
@@ -115,6 +155,16 @@ namespace HEC.FDA.ViewModel.Utilities
         public static UncertainPairedData StageDamageDefaultCurve()
         {
             return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), "Stage", "Damage", "Stage Damage");
+        }
+
+        public static UncertainPairedData StageDischargeDefaultCurve()
+        {
+            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), "Stage", "Discharge", "Stage Discharge");
+        }
+
+        public static UncertainPairedData FailureDefaultCurve()
+        {
+            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), "Stage", "Frequency", "Failure Frequency");
         }
 
     }

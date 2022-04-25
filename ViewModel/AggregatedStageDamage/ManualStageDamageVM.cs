@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private ComputeComponentVM CreateDefaultCurve()
         {
-            ComputeComponentVM curve = new ComputeComponentVM("Stage Damage", "Stage", "Damage");
+            ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             curve.SetPairedData(DefaultCurveData.StageDamageDefaultCurve());
             return curve;
         }

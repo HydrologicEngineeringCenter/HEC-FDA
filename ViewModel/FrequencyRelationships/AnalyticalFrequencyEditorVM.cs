@@ -168,7 +168,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void InitializePlotModel()
         {
             _plotModel = new PlotModel();
-            _plotModel.Title = "Flow-Frequency";
+            _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
             _plotModel.LegendPosition = LegendPosition.BottomRight;
 
             LinearAxis x = new LinearAxis()
@@ -178,14 +178,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 EndPosition = .001,
                 AbsoluteMaximum = .999,
                 AbsoluteMinimum = .001,
-                Title = "Exceedance Probability"
+                Title = StringConstants.EXCEEDANCE_PROBABILITY
             };
             _plotModel.Axes.Add(x);
 
             LogarithmicAxis y = new LogarithmicAxis()
             {
                 Position = AxisPosition.Left,
-                Title = "Flow"
+                Title = StringConstants.DISCHARGE
             };
             _plotModel.Axes.Add(y);
 
@@ -284,7 +284,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     yVals.Add(lp3.InverseCDF(prob));
                 }
-                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, "Frequency", "Flow", "Flow-Frequency");
+                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.ANALYTICAL_FREQUENCY);
                 if (!IsStandard)
                 {
                     //if we are on "fit to flows" then update the labels.
