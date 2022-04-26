@@ -8,13 +8,14 @@ namespace HEC.FDA.ViewModel.Utilities
     public static class DefaultCurveData
     {
 
-        private static List<double> _ExteriorInteriorXValues = new List<double>() {478, 479, 480, 481};
+        private static List<double> _ExteriorInteriorXValues = new List<double>() {474, 474.1, 474.3, 474.5, 478};
         private static List<IDistribution> _ExteriorInteriorYValues = new List<IDistribution>() 
         { 
-            new Deterministic(460),
-            new Deterministic(478),
-            new Deterministic(479.5),
-            new Deterministic(481)
+            new Deterministic(472),
+            new Deterministic(473),
+            new Deterministic(474),
+            new Deterministic(474.1),
+            new Deterministic(478)
         };
 
         private static List<double> _GraphicalXValues = new List<double>() { .5, .2, .1, .04, .02, .01, .004, .002 };
@@ -102,7 +103,7 @@ namespace HEC.FDA.ViewModel.Utilities
             new Normal(481.44, 0.5),
         };
 
-        private static List<double> _FailureXValues = new List<double>() { 458,468,470,471,472,474,475,478 };
+        private static List<double> _FailureXValues = new List<double>() { 458,468,470,471,472,472,473,474 };
         private static List<IDistribution> _FailureYValues = new List<IDistribution>()
         {
             new Deterministic(0),
@@ -115,7 +116,7 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(1),
         };
 
-        public static double DefaultLeveeElevation = 478;
+        public static double DefaultLeveeElevation = 476;
 
         public static UncertainPairedData ExteriorInteriorDefaultCurve()
         {
