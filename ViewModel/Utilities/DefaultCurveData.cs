@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(477.4)
         };
 
-        public static double LP3Mean = 3.1718;
+        public static double LP3Mean = 3.3;
         public static double LP3StDev = .254;
         public static double LP3Skew = -.1021;
         public static int LP3POR = 48;
@@ -69,11 +69,6 @@ namespace HEC.FDA.ViewModel.Utilities
             new Normal(0,0),
             new Normal(0,0),
             new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
             new Normal(.04, .16),
             new Normal(.66,1.02),
             new Normal(2.83,2.47),
@@ -85,32 +80,26 @@ namespace HEC.FDA.ViewModel.Utilities
             new Normal(173.73, 13.12),
             new Normal(218.32, 12.03),
             new Normal(257.83, 11.1),
-            new Normal(292.52, 10.31)
+            new Normal(292.52, 10.31),
+            new Normal(370.12,12.3),
+            new Normal(480.94,20.45),
+            new Normal(890.76,45.67),
+            new Normal(1287.45,62.34),
+            new Normal(2376.23,134.896),
         };
 
-        private static List<double> _StageDischargeXValues = new List<double>() { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482 };
+        private static List<double> _StageDischargeXValues = new List<double>() { 0,1500,2120,3140,4210,5070,6240,7050,9680 };
         private static List<IDistribution> _StageDischargeYValues = new List<IDistribution>()
         {
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(.04, .16),
-            new Normal(.66,1.02),
-            new Normal(2.83,2.47),
-            new Normal(7.48,3.55),
-            new Normal(17.82,7.38),
-            new Normal(39.87, 12.35),
-            new Normal(76.91, 13.53),
-            new Normal(124.82, 13.87),
-            new Normal(173.73, 13.12),
-            new Normal(218.32, 12.03),
-            new Normal(257.83, 11.1),
-            new Normal(292.52, 10.31)
+            new Normal(458,0),
+            new Normal(468.33,.312),
+            new Normal(469.97,.362),
+            new Normal(471.95,.422),
+            new Normal(473.06,.456),
+            new Normal(475.66,.474),
+            new Normal(477.53,0.5),
+            new Normal(479.11,0.5),
+            new Normal(481.44, 0.5),
         };
 
         private static List<double> _FailureXValues = new List<double>() { 458,468,470,471,472,474,475,478 };
