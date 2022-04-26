@@ -10,6 +10,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
+using interfaces;
 
 namespace compute
 {
@@ -95,6 +96,10 @@ namespace compute
                 }
                 masterseed = randomProvider.Seed;
             }
+            if(_damage_category_stage_damage.First().IsNull)
+            {
+                //computeFromStageFrequency
+            }
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
                 _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
@@ -106,6 +111,16 @@ namespace compute
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria));
             }
             SetStageForNonExceedanceProbability(convergenceCriteria);
+
+            ComputeIterations(convergenceCriteria, randomProvider, masterseed, giveMeADamageFrequency);
+
+
+            _results.ParalellTestForConvergence(.95, .05);
+            return _results;
+        }
+
+        private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool giveMeADamageFrequency)
+        {
             Int64 progressChunks = 1;
             Int64 _completedIterations = 0;
             Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
@@ -211,9 +226,8 @@ namespace compute
                 }
 
             }
-            _results.ParalellTestForConvergence(.95, .05);
-            return _results;
         }
+
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
         {
 
