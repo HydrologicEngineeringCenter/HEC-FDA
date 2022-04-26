@@ -63,18 +63,9 @@ namespace compute
         public Results Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
-            if (HasErrors)
+            if (!CanCompute())
             {
-                if (ErrorLevel >= ErrorLevel.Fatal)
-                {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
-                    return _results;
-                }
-                else
-                {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
-                }
-                //enumerate what the errors and warnings are 
+                return _results;
             }
             _leveeIsValid = true;
             int masterseed = 0;
@@ -117,6 +108,24 @@ namespace compute
 
             _results.ParalellTestForConvergence(.95, .05);
             return _results;
+        }
+
+        private bool CanCompute()
+        {
+            if (HasErrors)
+            {
+                if (ErrorLevel >= ErrorLevel.Fatal)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
+                    return false;
+                }
+                else
+                {
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
+                }
+                //enumerate what the errors and warnings are 
+            }
+            return true;
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool giveMeADamageFrequency)
