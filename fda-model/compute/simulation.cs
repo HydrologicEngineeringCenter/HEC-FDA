@@ -63,39 +63,19 @@ namespace compute
         public Results Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
-            if (!CanCompute())
+            if (!CanCompute(randomProvider,convergenceCriteria))
             {
                 return _results;
             }
-            _leveeIsValid = true;
-            int masterseed = 0;
-            if (randomProvider is MeanRandomProvider)
-            {
-                if (convergenceCriteria.MaxIterations != 1)
-                {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
-                    return _results;
-                }
-
-            }
-            else
-            {
-                if (convergenceCriteria.MinIterations < 100)
-                {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
-                    return _results;
-                }
-                masterseed = randomProvider.Seed;
-            }
+            //TODO: why do we have this?
+            //_leveeIsValid = true;
+            
             if(_damage_category_stage_damage.First().IsNull)
             {
                 //computeFromStageFrequency
             }
-            foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
-            {
-                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
-            }
-            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
+            AddEADKeys(convergenceCriteria);
+
 
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
@@ -103,14 +83,23 @@ namespace compute
             }
             SetStageForNonExceedanceProbability(convergenceCriteria);
 
-            ComputeIterations(convergenceCriteria, randomProvider, masterseed, giveMeADamageFrequency);
+            ComputeIterations(convergenceCriteria, randomProvider, randomProvider.Seed, giveMeADamageFrequency);
 
 
             _results.ParalellTestForConvergence(.95, .05);
             return _results;
         }
 
-        private bool CanCompute()
+        private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
+        {
+            foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
+            {
+                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
+            }
+            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
+        }
+
+        private bool CanCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             if (HasErrors)
             {
@@ -124,6 +113,20 @@ namespace compute
                     ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
                 }
                 //enumerate what the errors and warnings are 
+            }
+            if (randomProvider is MeanRandomProvider)
+            {
+                if (convergenceCriteria.MaxIterations != 1)
+                {
+                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
+                    return false;
+                }
+
+            }
+            if (convergenceCriteria.MinIterations < 100)
+            {
+                ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
+                return false;
             }
             return true;
         }
