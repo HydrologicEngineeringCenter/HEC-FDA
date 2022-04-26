@@ -75,7 +75,7 @@ namespace compute
             //TODO: levee is valid is not used
             _leveeIsValid = true;
             bool computeWithDamage = true;
-            if(_damage_category_stage_damage.First().IsNull)
+            if(_damage_category_stage_damage.Count==0)
             {
                 computeWithDamage = false;
             }
@@ -154,7 +154,7 @@ namespace compute
             Int64 iterations = convergenceCriteria.MinIterations;
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
-            while (!_results.IsConverged())
+            while (!_results.IsConverged(computeWithDamage))
             {
                 Parallel.For(0, iterations, i =>
                 {
@@ -230,9 +230,9 @@ namespace compute
                     }
 
                 });
-                if (!_results.TestResultsForConvergence(.95, .05))
+                if (!_results.TestResultsForConvergence(.95, .05, computeWithDamage))
                 {
-                    iterations = _results.RemainingIterations(.95, .05);
+                    iterations = _results.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
                     progressChunks = _ExpectedIterations / 100;
                 }
@@ -467,7 +467,7 @@ namespace compute
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.IsNull)
             {
-                if(_damage_category_stage_damage.First().IsNull)
+                if(_damage_category_stage_damage.Count == 0)
                 {
                     double badThresholdStage = 0;
                     ReportMessage(this, new MessageEventArgs(new Message("A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics")));

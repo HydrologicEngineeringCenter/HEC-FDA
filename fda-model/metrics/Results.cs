@@ -22,9 +22,13 @@ namespace metrics
             PerformanceByThresholds = performanceByThresholds;
             ExpectedAnnualDamageResults = expectedAnnualDamageResults;
         }
-        private bool IsEADConverged()
+        private bool IsEADConverged(bool computeWithDamage)
         {
-            return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
+            if (computeWithDamage == true)
+            {
+                return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
+            }
+            return true;
         }
         public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
         {
@@ -48,13 +52,17 @@ namespace metrics
             }
             return true;
         }
-        public bool IsConverged()
+        public bool IsConverged(bool computeWithDamage)
         {
-            return IsEADConverged() && IsPerformanceConverged();
+            return IsEADConverged(computeWithDamage) && IsPerformanceConverged();
         }
-        public bool TestResultsForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public bool TestResultsForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            bool eadIsConverged = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            bool eadIsConverged = true;
+            if (computeWithDamage)
+            {
+                eadIsConverged = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
 
@@ -77,10 +85,14 @@ namespace metrics
             }
             return eadIsConverged && cnepIsConverged;
         }
-        public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            Int64 eadIterationsRemaining = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            Int64 eadIterationsRemaining = 0;
+            if (computeWithDamage)
+            {
+                eadIterationsRemaining = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
+            }
             List<Int64> performanceIterationsRemaining = new List<Int64>();
 
             //i do not like this, but the keys are frustrating.
