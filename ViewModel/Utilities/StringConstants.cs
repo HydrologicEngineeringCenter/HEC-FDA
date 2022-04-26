@@ -58,6 +58,7 @@
 
         #endregion
 
+        public const string FDA_VERSION = "FDA 2.0";
 
         public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";
 

@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.Study
         public void OpenStudyFromRecent(object sender, EventArgs e)
         {
             //todo: this is just for testing
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //Task.Run(() => throw new NotImplementedException());
 
             if (sender is MenuItem menuItem)
