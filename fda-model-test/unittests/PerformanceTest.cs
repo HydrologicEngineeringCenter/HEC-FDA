@@ -100,15 +100,6 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
-            {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
-
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
-            List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
-            uncertainPairedDataList.Add(stage_damage);
             IDistribution[] failureProbs = new IDistribution[StageForNonLeveeFailureProbs.Length];
             for (int i = 0; i < StageForNonLeveeFailureProbs.Length; i++)
             {
@@ -123,7 +114,6 @@ namespace fda_model_test.unittests
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
-                .withStageDamages(uncertainPairedDataList)
                 .withAdditionalThreshold(threshold)
                 .withLevee(leveeCurve,thresholdValue)
                 .build();

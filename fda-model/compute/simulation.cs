@@ -10,6 +10,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
+using interfaces;
 
 namespace compute
 {
@@ -62,12 +63,53 @@ namespace compute
         public Results Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
+            if (!CanCompute(convergenceCriteria,randomProvider))
+            {
+                return _results;
+            }
+            int masterseed = 0;
+            if (randomProvider is RandomProvider)
+            {
+                masterseed = randomProvider.Seed;
+            }
+            //TODO: levee is valid is not used
+            _leveeIsValid = true;
+            bool computeWithDamage = true;
+            if(_damage_category_stage_damage.Count==0)
+            {
+                computeWithDamage = false;
+            }
+            else
+            {
+                AddEADKeys(convergenceCriteria);
+            }
+            if (computeDefaultThreshold == true)
+            {//I am not sure if there is a better way to add the default threshold
+                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
+            }
+            SetStageForNonExceedanceProbability(convergenceCriteria);
+            ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
+            _results.ParalellTestForConvergence(.95, .05);
+            return _results;
+        }
+
+        private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
+        {
+            foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
+            {
+                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
+            }
+            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
+        }
+
+        private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
+        {
             if (HasErrors)
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
-                    return _results;
+                    return false;
                 }
                 else
                 {
@@ -75,37 +117,27 @@ namespace compute
                 }
                 //enumerate what the errors and warnings are 
             }
-            _leveeIsValid = true;
-            int masterseed = 0;
             if (randomProvider is MeanRandomProvider)
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
-                    return _results;
+                    return false;
                 }
-
             }
             else
             {
                 if (convergenceCriteria.MinIterations < 100)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
-                    return _results;
+                    return false;
                 }
-                masterseed = randomProvider.Seed;
             }
-            foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
-            {
-                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
-            }
-            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
+            return true;
+        }
 
-            if (computeDefaultThreshold == true)
-            {//I am not sure if there is a better way to add the default threshold
-                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria));
-            }
-            SetStageForNonExceedanceProbability(convergenceCriteria);
+        private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency)
+        {
             Int64 progressChunks = 1;
             Int64 _completedIterations = 0;
             Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
@@ -122,7 +154,7 @@ namespace compute
             Int64 iterations = convergenceCriteria.MinIterations;
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
-            while (!_results.IsConverged())
+            while (!_results.IsConverged(computeWithDamage))
             {
                 Parallel.For(0, iterations, i =>
                 {
@@ -162,7 +194,7 @@ namespace compute
                             {
                                 IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
                                 IPairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                             }
 
                         }
@@ -180,7 +212,7 @@ namespace compute
                             {
                                 IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
                                 IPairedData frequency_stage = discharge_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i);
+                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                             }
                         }
 
@@ -188,7 +220,7 @@ namespace compute
                     else
                     {
                         IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                        ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i);
+                        ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i, computeWithDamage);
                     }
                     Interlocked.Increment(ref _completedIterations);
                     if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
@@ -198,9 +230,9 @@ namespace compute
                     }
 
                 });
-                if (!_results.TestResultsForConvergence(.95, .05))
+                if (!_results.TestResultsForConvergence(.95, .05, computeWithDamage))
                 {
-                    iterations = _results.RemainingIterations(.95, .05);
+                    iterations = _results.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
                     progressChunks = _ExpectedIterations / 100;
                 }
@@ -211,10 +243,9 @@ namespace compute
                 }
 
             }
-            _results.ParalellTestForConvergence(.95, .05);
-            return _results;
         }
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
+
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration, bool computeWithDamage)
         {
 
             //interior exterior
@@ -223,7 +254,10 @@ namespace compute
                 //levees
                 if (_systemResponseFunction_stage_failureProbability.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(randomProvider, frequency_stage, giveMeADamageFrequency, iteration);
+                    if (computeWithDamage)
+                    {
+                        ComputeDamagesFromStageFrequency(randomProvider, frequency_stage, giveMeADamageFrequency, iteration);
+                    }
                     ComputePerformance(frequency_stage, iteration);
                 }
                 else
@@ -232,7 +266,10 @@ namespace compute
                     {
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                        if(computeWithDamage)
+                        {
+                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                        }
                         ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
                     }
 
@@ -246,7 +283,10 @@ namespace compute
                 //levees
                 if (_systemResponseFunction_stage_failureProbability.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, giveMeADamageFrequency, iteration);
+                    if(computeWithDamage)
+                    {
+                        ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, giveMeADamageFrequency, iteration);
+                    }
                     ComputePerformance(frequency_floodplainstage, iteration);
                 }
                 else
@@ -255,7 +295,10 @@ namespace compute
                     {
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                        ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_floodplainstage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                        if (computeWithDamage)
+                        {
+                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_floodplainstage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                        }
                         ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
                     }
 
@@ -415,7 +458,7 @@ namespace compute
 
 
 
-        private Threshold ComputeDefaultThreshold(ConvergenceCriteria convergenceCriteria)
+        private Threshold ComputeDefaultThreshold(ConvergenceCriteria convergenceCriteria, bool computeWithDamage)
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
@@ -424,6 +467,12 @@ namespace compute
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.IsNull)
             {
+                if(_damage_category_stage_damage.Count == 0)
+                {
+                    double badThresholdStage = 0;
+                    ReportMessage(this, new MessageEventArgs(new Message("A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics")));
+                    return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+                }
 
                 if (_frequency_stage.IsNull)
                 {

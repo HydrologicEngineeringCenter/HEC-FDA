@@ -18,6 +18,7 @@ string xLabel = "x label";
  string yLabel = "y label";
  string name = "name";
 int id = 1;
+bool computeWithDamage = true;
 
 
  IDistribution[] StageDistributions =
@@ -113,7 +114,7 @@ Console.WriteLine("CNEP(.996) was " + cnp996);
 double cnp998 = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.998);
 Console.WriteLine("CNEP(.998) was " + cnp998);
 
-if (results.IsConverged())
+if (results.IsConverged(computeWithDamage))
 {
     Console.WriteLine("Converged");
     Console.WriteLine(results.ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
