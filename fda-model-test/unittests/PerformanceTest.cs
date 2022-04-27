@@ -123,7 +123,6 @@ namespace fda_model_test.unittests
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
-                //.withStageDamages(uncertainPairedDataList)
                 .withAdditionalThreshold(threshold)
                 .withLevee(leveeCurve,thresholdValue)
                 .build();
