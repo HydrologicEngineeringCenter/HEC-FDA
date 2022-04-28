@@ -1,4 +1,6 @@
 ﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
@@ -55,10 +57,6 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public void OpenStudyFromRecent(object sender, EventArgs e)
         {
-            //todo: this is just for testing
-            //throw new NotImplementedException();
-            //Task.Run(() => throw new NotImplementedException());
-
             if (sender is MenuItem menuItem)
             {
                 string filePath = menuItem.Tag as string;
@@ -129,6 +127,7 @@ namespace HEC.FDA.ViewModel.Study
                 idx += 1;
             }
             if (registrystudies.Count == 0)
+
             {
                 registrystudies.Add(filepath);
             }
@@ -155,6 +154,10 @@ namespace HEC.FDA.ViewModel.Study
 
         public void CreateNewStudyMenuItemClicked()
         {
+            //todo: this is just for testing
+            throw new NotImplementedException();
+            //Task.Run(() => throw new NotImplementedException());
+
             NewStudyVM vm = new NewStudyVM(this);
             string header = "Create New Study";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "StudyElement");
@@ -245,28 +248,35 @@ namespace HEC.FDA.ViewModel.Study
                 AddElement(t);
                 cache.TerrainParent = t;
 
-                ImpactAreaOwnerElement i = new ImpactAreaOwnerElement();
+                ImpactAreasOwnerElement i = new ImpactAreasOwnerElement();
+                i.AddBaseElements(cache);
                 AddElement(i);
-                cache.ImpactAreaParent = i;
+                //cache.ImpactAreaParent = i;
 
-                WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevationOwnerElement();
-
+                HydraulicsOwnerElement wse = new HydraulicsOwnerElement();
+                wse.AddBaseElements(cache);
                 AddElement(wse);
 
                 FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement();
                 AddElement(f);
 
-                FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement();
-                ft.AddBaseElements(cache);
-                AddElement(ft);
+                //FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement();
+                //ft.AddBaseElements(cache);
+                //AddElement(ft);
+
+                InflowOutflowOwnerElement io = new InflowOutflowOwnerElement();
+                AddElement(io);
 
                 StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement();
                 s.AddBaseElements(cache);
                 AddElement(s);
 
-                GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
-                ls.AddBaseElements(cache);
-                AddElement(ls);
+                //GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
+                //ls.AddBaseElements(cache);
+                //AddElement(ls);
+                LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement();
+                AddElement(lf);
+                cache.LeveeFeatureParent = lf;
 
                 Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement();
                 inv.AddBaseElements(cache);

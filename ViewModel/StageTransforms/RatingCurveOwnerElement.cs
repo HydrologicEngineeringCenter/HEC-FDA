@@ -17,16 +17,16 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #region Constructors
         public RatingCurveOwnerElement( ) : base()
         {
-            Name = "Rating Curves";
+            Name = StringConstants.STAGE_DISCHARGE_FUNCTIONS;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addRatingCurve = new NamedAction();
-            addRatingCurve.Header = "Create New Rating Curve";
+            addRatingCurve.Header = StringConstants.CREATE_STAGE_DISCHARGE_MENU;
             addRatingCurve.Action = AddNewRatingCurve;
 
             NamedAction ImportRatingCurve = new NamedAction();
-            ImportRatingCurve.Header = StringConstants.ImportFromOldFda("Rating Curve");
+            ImportRatingCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_NAME);
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -57,8 +57,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM();
-            string header = "Import Rating Curve";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
+            string header = StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_HEADER);
             Navigate(tab, false, true);
         }
 
@@ -71,8 +71,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
             computeComponentVM.SetPairedData(DefaultCurveData.StageDischargeDefaultCurve());
 
             RatingCurveEditorVM vm = new RatingCurveEditorVM(computeComponentVM, actionManager);
-            string header = "Create Rating Curve " + vm.Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
+            string header = StringConstants.CREATE_STAGE_DISCHARGE_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_STAGE_DISCHARGE_HEADER);
             Navigate(tab, false, true);          
         }
   

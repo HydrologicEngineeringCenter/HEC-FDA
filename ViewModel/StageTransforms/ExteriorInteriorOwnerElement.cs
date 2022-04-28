@@ -17,16 +17,16 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #region Constructors
         public ExteriorInteriorOwnerElement( ) : base()
         {
-            Name = "Exterior Interior Relationships";
+            Name = StringConstants.EXTERIOR_INTERIOR_FUNCTIONS;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
            NamedAction addExteriorInterior = new NamedAction();
-            addExteriorInterior.Header = "Create New Exterior Interior Relationship";
+            addExteriorInterior.Header = StringConstants.CREATE_EXT_INT_MENU;
             addExteriorInterior.Action = CreateNewExteriorInteriorCurve;
 
            NamedAction ImportFromAscii = new NamedAction();
-            ImportFromAscii.Header = StringConstants.ImportFromOldFda("Exterior Interior Relationship");
+            ImportFromAscii.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_EXT_INT_FROM_OLD_NAME);
             ImportFromAscii.Action = ImportFromASCII;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -56,8 +56,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportExteriorInteriorFromFDA1VM();
-            string header = "Import Exterior Interior Curve";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportExteriorInteriorCurve");
+            string header = StringConstants.IMPORT_EXT_INT_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_EXT_INT_FROM_OLD_HEADER);
             Navigate(tab, false, true);
         }
 
@@ -71,8 +71,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
                 .WithSiblingRules(this);
 
             ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(computeComponentVM, actionManager);
-            string header = "Create Exterior Interior";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateExteriorInterior");
+            string header = StringConstants.CREATE_EXT_INT_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_EXT_INT_HEADER);
             Navigate(tab, false, true);
         }
 

@@ -123,15 +123,16 @@ namespace HEC.FDA.ViewModel.Alternatives
                         return;
                     }
                 }
-
-                int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
-                AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets(), id);
+          
                 if (_IsInEditMode)
                 {
+                    AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), OriginalElement.ID);
                     PersistenceFactory.GetAlternativeManager().SaveExisting(elemToSave);
                 }
                 else
                 {
+                    int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
+                    AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), id);
                     PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
                     _IsInEditMode = true;
                 }

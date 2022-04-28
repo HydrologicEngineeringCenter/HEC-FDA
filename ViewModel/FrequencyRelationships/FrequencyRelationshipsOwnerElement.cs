@@ -11,14 +11,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         public FrequencyRelationshipsOwnerElement( ) : base()
         {
-            Name = "Frequency Relationships";
+            Name = StringConstants.FREQUENCY_FUNCTIONS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             NamedAction createNew = new NamedAction();
-            createNew.Header = "Create New Analyitical Flow Frequency Curve...";
+            createNew.Header = StringConstants.CREATE_FREQUENCY_FUNCTIONS_MENU;
             createNew.Action = AddNewFlowFrequencyCurve;
 
             NamedAction importFlowFreq = new NamedAction();
-            importFlowFreq.Header = StringConstants.ImportFromOldFda("Analyitical Flow Frequency");
+            importFlowFreq.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_FREQUENCY_FROM_OLD_NAME);
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -49,8 +49,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportFrequencyFromFDA1VM();
-            string header = "Import Frequency Curve";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequencyCurve");
+            string header = StringConstants.IMPORT_FREQUENCY_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_FREQUENCY_FROM_OLD_HEADER);
             Navigate(tab, false, true);
         }
 
@@ -61,8 +61,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
-            string header = "Import Frequency";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequency");
+            string header = StringConstants.CREATE_FREQUENCY_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);
         }
         #endregion

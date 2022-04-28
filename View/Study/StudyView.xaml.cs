@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -94,5 +95,18 @@ namespace HEC.FDA.View.Study
         {
             AddRecentStudiesMenuItems();
         }
+
+        private void QuickStartGuide_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.hec.usace.army.mil/confluence/display/FDAQSG/HEC-FDA+Quick+Start+Guide"));
+            e.Handled = true;
+        }
+
+        private void Discourse_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://discourse.hecdev.net/c/fda/33"));
+            e.Handled = true;
+        }
+
     }
 }

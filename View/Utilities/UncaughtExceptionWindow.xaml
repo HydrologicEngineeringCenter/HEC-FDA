@@ -10,36 +10,43 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <Label Content="Post error "/>
-            <TextBlock VerticalAlignment="Center">           
-                <Hyperlink NavigateUri="https://discourse.hecdev.net/c/fda/33" RequestNavigate="Hyperlink_RequestNavigate">
-                    here
-                </Hyperlink>
-            </TextBlock>
+                
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
+            <Label Content="An unexpected exception has been thrown. It is advised that you close the program and reopen. "/>
+            <StackPanel Orientation="Horizontal">
+            <Label Content="You can create a report for the HEC-FDA developers"/>
+                <TextBlock VerticalAlignment="Center" >           
+                    <Hyperlink NavigateUri="https://discourse.hecdev.net/c/fda/33" RequestNavigate="Hyperlink_RequestNavigate">
+                      here
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" >
+        <ScrollViewer Grid.Row="2" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5">
                     <Label Content="Exception Message: " VerticalAlignment="Center"/>
-                    <TextBlock Name="ErrorMsg" Grid.Row="1" MaxWidth="650" VerticalAlignment="Center" TextWrapping="Wrap" />
+                    <TextBox Name="ErrorMsg" MaxWidth="650" Background="Transparent" TextAlignment="Left" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" />
+                    <!--<TextBlock Name="ErrorMsg" Grid.Row="1" MaxWidth="650" VerticalAlignment="Center" TextWrapping="Wrap" />-->
                 </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
                     <Label Content="Call Stack: "/>
-                    <TextBlock Name="CallStack" Grid.Row="1" MaxWidth="650" TextWrapping="Wrap"/>
+                    <TextBox Name="CallStack" MaxWidth="650" Background="Transparent" TextAlignment="Left" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" />
+                    <!--<TextBlock Name="CallStack" Grid.Row="1" MaxWidth="650" TextWrapping="Wrap"/>-->
                 </StackPanel>
 
             </Grid>
         </ScrollViewer>
 
-        <Button Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Close" Click="Button_Click" Width="40" Height="22"  Margin="5"/>
+        <Button Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Close" Click="Button_Click" Width="40" Height="22"  Margin="5"/>
     </Grid>
 </Window>

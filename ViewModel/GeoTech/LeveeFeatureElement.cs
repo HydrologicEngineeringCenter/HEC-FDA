@@ -36,13 +36,22 @@ namespace HEC.FDA.ViewModel.GeoTech
             LastEditDate = creationDate;
 
             IsDefaultCurveUsed = isDefault;
+
             if (isDefault)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
+                CustomTreeViewHeader = new CustomHeaderVM(Name)
+                {
+                    ImageSource = "pack://application:,,,/View;component/Resources/LeveeFeature.png",
+                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                };    
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
+                CustomTreeViewHeader = new CustomHeaderVM(Name)
+                {
+                    ImageSource = "pack://application:,,,/View;component/Resources/FailureFunction.png",
+                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                };
             }
 
             ComputeComponentVM = failureFunction;

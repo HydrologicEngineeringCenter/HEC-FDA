@@ -19,6 +19,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string NAME = "Name";
         public const string DESCRIPTION = "Description";
         public const string YEAR = "Year";
+        public const string LAST_EDIT_DATE = "LastEditDate";
 
         private string _Description = "";
         private int _AnalysisYear;
@@ -47,14 +48,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, int year, List<SpecificIAS> elems, int id) : base(id)
+        public IASElementSet(string name, string description, string creationDate, int year, List<SpecificIAS> elems, int id) : base(id)
         {
             SpecificIASElements.AddRange( elems);
             Name = name;
             Description = description;
             AnalysisYear = year;
+            //LastEditDate = DateTime.Now.ToString("G");
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+            };
 
             AddActions();
         }
@@ -70,6 +76,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Name = setElem.Attribute(NAME).Value;
             Description = setElem.Attribute(DESCRIPTION).Value;
             AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
+            LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             foreach(XElement elem in iasElements)
@@ -77,7 +84,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
             AddActions();
         }
 
@@ -198,7 +209,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             HasComputed = true;
             foreach(SpecificIAS ias in SpecificIASElements)
             {
-                _Results.Add( ias.ComputeScenario(arg1, arg2));
+                //_Results.Add( ias.ComputeScenario(arg1, arg2));
             }
             //todo: i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
             PersistenceFactory.GetIASManager().SaveExisting(this);
@@ -209,7 +220,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, elem.SpecificIASElements, elem.ID);
+            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
 
@@ -221,6 +232,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             setElement.SetAttributeValue(NAME, Name);
             setElement.SetAttributeValue(DESCRIPTION, Description);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
+            setElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
 
             foreach(SpecificIAS elem in SpecificIASElements)
             {

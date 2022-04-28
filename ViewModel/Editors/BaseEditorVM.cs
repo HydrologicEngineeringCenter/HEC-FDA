@@ -112,8 +112,8 @@ namespace HEC.FDA.ViewModel.Editors
         public void Save(ChildElement elementToSave)
         {
             InTheProcessOfSaving = true;
-            LastEditDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = LastEditDate;
+            string lastEditDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = lastEditDate;
             //elementToSave.Curve = Curve;
             IElementManager elementManager = PersistenceFactory.GetElementManager(elementToSave);
 

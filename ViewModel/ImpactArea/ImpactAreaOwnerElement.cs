@@ -18,10 +18,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Constructors
         public ImpactAreaOwnerElement( ) : base()
         {
-            Name = "Impact Area Set";
+            Name = StringConstants.IMPACT_AREA_SET;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
+            IsBold = false;
             NamedAction add = new NamedAction();
-            add.Header = "Import Impact Area Set";
+            add.Header = StringConstants.IMPORT_IMPACT_AREA_SET_MENU;
             add.Action = AddNew;
 
             List<NamedAction> localactions = new List<NamedAction>();
@@ -58,8 +59,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
                     .WithSiblingRules(this);
 
                 ImpactAreaImporterVM vm = new ImpactAreaImporterVM(actionManager);
-                string header = "Import Impact Area Set";
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportImpactAreas");
+                string header = StringConstants.IMPORT_IMPACT_AREA_SET_HEADER;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_IMPACT_AREA_SET_HEADER);
                 Navigate(tab, false, false);
             }
             else

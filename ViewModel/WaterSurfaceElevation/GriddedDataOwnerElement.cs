@@ -1,29 +1,22 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Utilities;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
-    //[Author(q0heccdm, 9 / 1 / 2017 8:46:34 AM)]
-    public class WaterSurfaceElevationOwnerElement : ParentElement
+    public class GriddedDataOwnerElement : ParentElement
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 9/1/2017 8:46:34 AM
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties   
-        #endregion
-        #region Constructors
-        public WaterSurfaceElevationOwnerElement( ):base()
+        public GriddedDataOwnerElement():base()
         {
-            Name = "Hydraulics";
-            IsBold = true;
+            Name = StringConstants.GRIDDED_DATA;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
+            IsBold = false;
 
             NamedAction import = new NamedAction();
-            import.Header = "Import Hydraulics";
+            import.Header = StringConstants.IMPORT_HYDRAULICS_MENU;
             import.Action = ImportWaterSurfaceElevations;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -34,12 +27,13 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationUpdated += UpdateWaterSurfaceElevationElement;
+
+
         }
-        #endregion
-        #region Voids
+
         private void UpdateWaterSurfaceElevationElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            UpdateElement( e.NewElement);
+            UpdateElement(e.NewElement);
         }
         private void RemoveWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -57,10 +51,12 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
 
-            string header = "Import Hydraulics";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
-            Navigate(tab, false,false);
+            string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
+            Navigate(tab, false, false);
         }
-        #endregion     
+
+
+
     }
 }

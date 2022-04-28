@@ -13,7 +13,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
        
-        <GroupBox Header="Stage-Damage Curves" Grid.Row="0" Margin="5" HorizontalAlignment="Left">
+        <GroupBox Header="Stage-Damage Curves" Grid.Row="0" Margin="5" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Add" Margin="5" Click="add_btn_Click" Width="80"/>
@@ -21,23 +21,36 @@
                     <Button Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
                 </StackPanel>
 
-                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  HorizontalAlignment="Stretch" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.Resources>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Curve" Width="50" DisplayMemberBinding="{Binding ID}" />
-                            <GridViewColumn Header="Impact Area" Width="412">
+                            <GridViewColumn Header="Curve" Width="40" DisplayMemberBinding="{Binding ID}" />
+                            <GridViewColumn Header="Impact Area" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="400" SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
-                                            ItemsSource="{Binding ImpactAreas}"     HorizontalAlignment="Center"     />
+                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
+                                            ItemsSource="{Binding ImpactAreas}"     HorizontalAlignment="Stretch"     />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Damage Category" Width="412">
+                            <GridViewColumn Header="Damage Category" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="400" SelectedItem="{Binding SelectedDamCat}"                  
-                                            ItemsSource="{Binding DamageCategories}"      HorizontalAlignment="Center"   />
+                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedDamCat}"                  
+                                            ItemsSource="{Binding DamageCategories}"      HorizontalAlignment="Stretch"   />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Asset Category" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedAssetCategory}"                  
+                                            ItemsSource="{Binding AssetCategories}"      HorizontalAlignment="Stretch"   />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

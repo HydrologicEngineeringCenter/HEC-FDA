@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
-                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.ComputeComponent);
+                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.ComputeComponent, curve.AssetCategory);
                 SelectItemsInRow(curve, newRow);
                 Rows.Add(newRow);
                 i++;
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private ManualStageDamageRowItem CreateNewRow(int id)
         {
-            return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve());
+            return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve(), "Structure");
         }
 
         private void SelectItemsInRow(StageDamageCurve curve, ManualStageDamageRowItem row)
@@ -192,7 +192,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
             foreach (ManualStageDamageRowItem r in Rows)
             {
-                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent);
+                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent, r.SelectedAssetCategory);
                 curves.Add(curve);
             }
             return curves;
@@ -257,7 +257,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (row1 != row2)
             {
                 //check imp area and dam cat
-                if(row1.SelectedImpArea.ToString().Equals(row2.SelectedImpArea.ToString()) &&
+                if(row1.SelectedImpArea.Name.Equals(row2.SelectedImpArea.Name) &&
                     row1.SelectedDamCat.Equals(row2.SelectedDamCat))
                 {
                     areEqual = true;

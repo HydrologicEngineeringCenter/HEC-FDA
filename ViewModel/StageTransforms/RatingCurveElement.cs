@@ -21,7 +21,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             LastEditDate = creationDate;
             Name = userprovidedname;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/RatingCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/RatingCurve.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
+
 
             ComputeComponentVM = ratingCurve;
             Description = desc;

@@ -213,7 +213,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent); 
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.SelectedAssetCategory); 
                 curves.Add(curve);
             }
             return curves;

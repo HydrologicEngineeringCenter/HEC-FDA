@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.TableWithPlot;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -38,7 +39,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedDamCat = value; NotifyPropertyChanged(); }
         }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function)
+        public List<string> AssetCategories { get; } = new List<string>() { "Structure", "Content", "Vehicle", "Other", "Total" };
+        
+        public string SelectedAssetCategory { get; set; }
+
+        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function, string assetCategory)
         {
             ID = id;
             ImpactAreas = impAreas;
@@ -49,17 +54,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 SelectedDamCat = damCats[0];
             }
             ComputeComponent = function;
+            SelectedAssetCategory = assetCategory;
         }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, StageDamageCurve curve)
-        {
-            ID = id;
-            ImpactAreas = impAreas;
-            SelectedImpArea = curve.ImpArea;
-            DamageCategories = damCats;
-            SelectedDamCat = curve.DamCat;
-            ComputeComponent = curve.ComputeComponent;
-        }
+        //public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, StageDamageCurve curve)
+        //{
+        //    ID = id;
+        //    ImpactAreas = impAreas;
+        //    SelectedImpArea = curve.ImpArea;
+        //    DamageCategories = damCats;
+        //    SelectedDamCat = curve.DamCat;
+        //    ComputeComponent = curve.ComputeComponent;
+        //}
 
         /// <summary>
         /// Copy constructor
@@ -73,6 +79,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             DamageCategories = rowItem.DamageCategories;
             SelectedDamCat = rowItem.SelectedDamCat;
             ComputeComponent = rowItem.ComputeComponent.Clone();
+            SelectedAssetCategory = rowItem.SelectedAssetCategory;
         }
         
     }

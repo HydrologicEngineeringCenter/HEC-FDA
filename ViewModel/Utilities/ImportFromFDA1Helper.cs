@@ -204,7 +204,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 foreach (AggregateDamageFunction func in funcs)
                 {
                     SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
+                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc,"Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
                     if (stageDamageCurve != null)
                     {
                         curves.Add(stageDamageCurve);
@@ -256,7 +256,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "");
         }
 
-        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
+        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf,string assetCategory, string damageReachName, string damCat, 
             List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
             damageReachName = damageReachName.Trim();
@@ -280,7 +280,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     {
                         ComputeComponentVM vm = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
                         vm.SetPairedData(stageDamagePairedData);
-                        curve = new StageDamageCurve(row, damCat, vm);
+                        curve = new StageDamageCurve(row, damCat, vm, assetCategory);
                         nameMatchedImpactArea = true;
                         break;
                     }

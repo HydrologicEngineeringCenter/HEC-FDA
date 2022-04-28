@@ -21,8 +21,12 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/InflowOutflowCircle.png");
-            
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/InflowOutflowCircle.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+
             Description = description;
             if (Description == null) Description = "";
             ComputeComponentVM = inflowOutflowCurve;

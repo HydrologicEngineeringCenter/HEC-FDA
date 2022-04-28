@@ -16,10 +16,10 @@ namespace HEC.FDA.ViewModel.Watershed
         #region Constructors
         public TerrainOwnerElement( ) : base()
         {
-            Name = "Terrains";
+            Name = StringConstants.TERRAIN;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             NamedAction add = new NamedAction();
-            add.Header = "Import Terrain";
+            add.Header = StringConstants.IMPORT_TERRAIN_MENU;
             add.Action = AddNew;
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(add);
@@ -50,8 +50,8 @@ namespace HEC.FDA.ViewModel.Watershed
                 .WithSiblingRules(this);
 
             TerrainBrowserVM vm = new TerrainBrowserVM( actionManager);
-            string header = "Import Terrain";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportTerrain");
+            string header = StringConstants.IMPORT_TERRAIN_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
             Navigate( tab, false,true);
         }
     }

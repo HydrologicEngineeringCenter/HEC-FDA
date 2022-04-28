@@ -9,11 +9,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
     {
         public AlternativeComparisonReportOwnerElement():base()
         {
-            Name = "Alternative Comparison Report";
+            Name = StringConstants.ALTERNATIVE_COMP_REPORTS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addAlternativeAction = new NamedAction();
-            addAlternativeAction.Header = "Create New Alternative Comparison Report...";
+            addAlternativeAction.Header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU;
             addAlternativeAction.Action = AddNewAlternative;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -45,8 +45,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 .WithSiblingRules(this);
           
             CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM( actionManager);
-            string header = "Create Alternative Comparison Report";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternativeCompReport");
+            string header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

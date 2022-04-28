@@ -26,16 +26,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region Constructors
         public OccupancyTypesOwnerElement( ):base()
         {
-            Name = "Occupancy Types";
+            Name = StringConstants.OCCUPANCY_TYPES;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction editOccupancyTypes = new NamedAction();
-            editOccupancyTypes.Header = "Edit Occupancy Types";
+            editOccupancyTypes.Header = StringConstants.EDIT_OCCTYPE_MENU;
             editOccupancyTypes.Action = EditOccupancyTypes;
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = StringConstants.ImportFromOldFda("Occupancy Types");
+            importFromFile.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_OCCTYPE_FROM_OLD_NAME);
             importFromFile.Action = ImportFromFile;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -92,8 +92,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _OccTypeEditor = new OccupancyTypesEditorVM( actionManager);
             _OccTypeEditor.RequestNavigation += Navigate;
             _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
-            string header = "Edit Occupancy Types";
-            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
+            string header = StringConstants.EDIT_OCCTYPE_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, StringConstants.EDIT_OCCTYPE_HEADER);
             tab.RemoveTabEvent += Tab_RemoveTabEvent;
             tab.RemoveWindowEvent += Tab_RemoveTabEvent;
             Navigate(tab, false, false);
@@ -108,8 +108,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportOcctypesFromFDA1VM();
-            string header = "Import Occupancy Types";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportOccupancyTypes");
+            string header = StringConstants.IMPORT_OCCTYPE_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_OCCTYPE_FROM_OLD_HEADER);
             Navigate(tab, false, true);
         }
        

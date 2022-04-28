@@ -71,6 +71,10 @@
                 <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click" IsEnabled="{Binding CurrentStudyElement.StudyLoaded}"/>
                 <Separator />
             </MenuItem>
+            <MenuItem Header="_Help" >
+                <MenuItem Header="Quick Start Guide" Click="QuickStartGuide_Click"/>
+                <MenuItem Header="Discourse" Click="Discourse_Click" />
+            </MenuItem>
         </Menu>
 
 

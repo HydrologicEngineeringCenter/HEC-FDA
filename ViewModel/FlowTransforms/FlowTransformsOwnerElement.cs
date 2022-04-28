@@ -1,7 +1,9 @@
-﻿namespace HEC.FDA.ViewModel.FlowTransforms
+﻿using HEC.FDA.ViewModel.Utilities;
+
+namespace HEC.FDA.ViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
-    class FlowTransformsOwnerElement : Utilities.ParentElement
+    class FlowTransformsOwnerElement : ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -10,26 +12,14 @@
         #region Fields
         #endregion
         #region Properties
-       
         #endregion
         #region Constructors
         public FlowTransformsOwnerElement( ) : base()
         {
             Name = "Flow Transforms";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
         }
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Flow Transforms";
-        //    }
-        //}
 
         public  void AddBaseElements(Study.FDACache cache)
         {
@@ -37,36 +27,6 @@
             AddElement(io);
             cache.InflowOutflowParent = io;
         }
-        //public override void Save()
-        //{
-        //    foreach (Utilities.ChildElement ele in _Elements)
-        //    {
-        //        ele.Save();
-        //    }
-        //}
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
 
-
-        //public override string[] TableColumnNames()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public override Type[] TableColumnTypes()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return false;
-        //}
-
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    //throw new NotImplementedException();
-        //}
     }
 }

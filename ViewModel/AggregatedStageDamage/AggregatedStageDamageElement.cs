@@ -31,7 +31,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual, int id) : base(id)
         {
             LastEditDate = lastEditDate;
-            CustomTreeViewHeader = new CustomHeaderVM(name, "pack://application:,,,/View;component/Resources/StageDamage.png");
+            CustomTreeViewHeader = new CustomHeaderVM(name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/StageDamage.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
 
             Description = description;
             if (Description == null)

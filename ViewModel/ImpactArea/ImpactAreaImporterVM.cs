@@ -132,15 +132,15 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             base.AddValidationRules();
 
-            AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
-            {
-                return SelectedUniqueName == null;
-            }, "A unique name has not been selected.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+            //AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
+            //{
+            //    return SelectedUniqueName == null;
+            //}, "A unique name has not been selected.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
 
-            AddSinglePropertyRule(nameof(ListOfRows), new Rule(() =>
-            {
-                return ListOfRows == null;
-            }, "There are no impact area rows.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+            //AddSinglePropertyRule(nameof(ListOfRows), new Rule(() =>
+            //{
+            //    return ListOfRows == null;
+            //}, "There are no impact area rows.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
         }
 
         public override void Save()

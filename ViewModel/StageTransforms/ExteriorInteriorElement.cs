@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png", LastEditDate);
 
             Description = desc;
             if (Description == null)

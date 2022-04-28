@@ -1,6 +1,8 @@
-﻿namespace HEC.FDA.ViewModel.StageTransforms
+﻿using HEC.FDA.ViewModel.Utilities;
+
+namespace HEC.FDA.ViewModel.StageTransforms
 {
-    class StageTransformsOwnerElement: Utilities.ParentElement
+    class StageTransformsOwnerElement: ParentElement
     {
         #region Notes
         #endregion
@@ -12,16 +14,8 @@
         #region Constructors
         public StageTransformsOwnerElement( ) : base()
         {
-            Name = "Stage Transforms";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
-            //Utilities.NamedAction add = new Utilities.NamedAction();
-            //add.Header = "Create New Levee Feature";
-            //add.Action = AddNewLeveeFeature;
-
-            //List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
-            //localActions.Add(add);
-
-            //Actions = localActions;
+            Name = StringConstants.STAGE_TRANSFORM_FUNCTIONS;
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
         }
         #endregion
         #region Voids
@@ -35,12 +29,7 @@
             ExteriorInteriorOwnerElement i = new ExteriorInteriorOwnerElement();
             AddElement(i);
             cache.ExteriorInteriorParent = i;
-        }
-      
-        #endregion
-        #region Functions
- 
-     
+        }     
         #endregion
     }
 }

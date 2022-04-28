@@ -48,7 +48,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Description = desc;
             if (Description == null) Description = "";
             ComputeComponentVM = function;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/FrequencyCurve.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+
             AddActions();
         }
 
@@ -90,7 +95,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/FrequencyCurve.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
+
             AddActions();
         }
 

@@ -9,11 +9,11 @@ namespace HEC.FDA.ViewModel.Alternatives
     {
         public AlternativeOwnerElement():base()
         {
-            Name = "Alternatives";
+            Name = StringConstants.ALTERNATIVES;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addAlternative = new NamedAction();
-            addAlternative.Header = "Add Alternative...";
+            addAlternative.Header = StringConstants.CREATE_NEW_ALTERNATIVE_MENU;
             addAlternative.Action = AddNewAlternative;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -32,8 +32,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                 .WithSiblingRules(this);
 
             CreateNewAlternativeVM vm = new CreateNewAlternativeVM( actionManager);
-            string header = "Create Alternative";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternative");
+            string header = StringConstants.CREATE_NEW_ALTERNATIVE_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

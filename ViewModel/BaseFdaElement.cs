@@ -59,11 +59,11 @@ namespace HEC.FDA.ViewModel
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public String ToolTip
-        {
-            get { return _Tooltip; }
-            set { _Tooltip = value; NotifyPropertyChanged(); }
-        }
+        //public String ToolTip
+        //{
+        //    get { return _Tooltip; }
+        //    set { _Tooltip = value; NotifyPropertyChanged(); }
+        //}
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -99,13 +99,27 @@ namespace HEC.FDA.ViewModel
         #endregion
         #region Voids
 
-        public void UpdateTreeViewHeader(string newName)
+        public void UpdateTreeViewHeader(string newName, string newTooltip = null)
         {
-            if (_CustomTreeViewHeader == null) { return; }
-            string image = _CustomTreeViewHeader.ImageSource;
-            string decoration = _CustomTreeViewHeader.Decoration;
-            bool gifVisible = _CustomTreeViewHeader.GifVisible;
-            CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
+            if (_CustomTreeViewHeader != null)
+            {
+                string image = _CustomTreeViewHeader.ImageSource;
+                string decoration = _CustomTreeViewHeader.Decoration;
+                bool gifVisible = _CustomTreeViewHeader.GifVisible;
+                string tooltip = _CustomTreeViewHeader.Tooltip;
+                if(newTooltip != null)
+                {
+                    tooltip += newTooltip;
+                }
+
+                CustomTreeViewHeader = new CustomHeaderVM(newName)
+                {
+                    ImageSource = image,
+                    Decoration = decoration,
+                    GifVisible = gifVisible,
+                    Tooltip = tooltip
+                };
+            }
         }
 
         #endregion

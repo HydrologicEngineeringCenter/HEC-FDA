@@ -80,9 +80,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 int wseID = CalculatedVM.SelectedWaterSurfaceElevation.ID;
                 int structID = CalculatedVM.SelectedStructures.ID;
-                LastEditDate = DateTime.Now.ToString("G");
+                string lastEditDate = DateTime.Now.ToString("G");
                 int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
-                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);              
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);              
                 base.Save(elemToSave);
             }
             else
@@ -96,9 +96,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             bool valid = ManualVM.ValidateForm();
             if (valid)
             {
-                LastEditDate = DateTime.Now.ToString("G");
+                string lastEditDate = DateTime.Now.ToString("G");
                 int id = GetElementID();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
                 base.Save(elem);
             }
         }

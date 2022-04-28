@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel
         //    set { _Name = value; NotifyPropertyChanged(); }
         //}
 
-        public string LastEditDate { get; set; }
+    
 
         /// <summary>
         /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.

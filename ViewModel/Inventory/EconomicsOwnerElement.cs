@@ -1,13 +1,12 @@
-﻿namespace HEC.FDA.ViewModel.Inventory
+﻿using HEC.FDA.ViewModel.Utilities;
+
+namespace HEC.FDA.ViewModel.Inventory
 {
     class InventoryOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
-        #region Fields
-        private const string _TableName = "Economics";
-
-     
+        #region Fields    
         #endregion
         #region Properties
        
@@ -15,9 +14,8 @@
         #region Constructors
         public InventoryOwnerElement( ) : base()
         {
-            Name = _TableName;
-            
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            Name = StringConstants.ECONOMICS;            
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
         }
 
         #endregion
@@ -44,25 +42,6 @@
         }
        
         #endregion
-        #region Functions
-        //public override bool SavesToTable()
-        //{
-        //    return false;
-        //}
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Name" };
-        //}
 
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string) };
-        //}
-
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    //throw new NotImplementedException();
-        //}
-        #endregion
     }
 }

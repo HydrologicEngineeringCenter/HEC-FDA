@@ -136,14 +136,26 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                         actions.Add(act);
                     }
                     newElement.Actions.Clear();
-                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png",  " -Renaming File", true);
+                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
+                    {
+                        ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                        Tooltip = StringConstants.CreateChildNodeTooltip(newElement.LastEditDate),
+                        Decoration = " -Renaming File",
+                        GifVisible = true
+                    };
+
                     try
                     {
                         await Task.Run(() =>
                         {
                             FileInfo currentFile = new FileInfo(oldFilePath);
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
-                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
+                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
+                            {
+                                ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                                Tooltip = StringConstants.CreateChildNodeTooltip(newElement.LastEditDate),
+                            };
+
                             newElement.Actions = actions;
                         });
                     }
@@ -178,7 +190,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
+            element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(element.LastEditDate),
+                Decoration = " -Deleting",
+                GifVisible = true
+            };
+
             element.Actions.Clear();
             RemoveTerrainFileOnBackgroundThread((TerrainElement)element);
         }

@@ -11,12 +11,18 @@
         // Created Date: 6/30/2017 11:51:38 AM
         #endregion
         #region Fields
-        private string _Name;
         private string _Decoration;
         private string _ImageSource;
         private bool _GifVisible = false;
+        private string _Tooltip;
         #endregion
         #region Properties
+        public string Tooltip
+        {
+            get { return _Tooltip; }
+            set { _Tooltip = value; NotifyPropertyChanged(); }
+        }
+
         public string Name { get; set; }
         /// <summary>
         /// A wait gif can be shown at the end of the element name that indicates that it is doing an operation ie: saving, loading

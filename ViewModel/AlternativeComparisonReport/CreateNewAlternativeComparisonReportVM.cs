@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
@@ -35,7 +36,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             ListenToAlternativeEvents();
         }
 
-        public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base(actionManager)
+        public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base((ChildElement)elem, actionManager)
         {
             _IsInEditMode = true;
             FillForm(elem);
@@ -182,15 +183,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 selectedIds.Add(row.SelectedAlternative.Alternative.ID);
             }
 
-            int id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
-            AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
-
             if (_IsInEditMode)
             {
+                AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, OriginalElement.ID);
                 PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(elemToSave);
             }
             else
             {
+                int id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
+                AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
+
                 PersistenceFactory.GetAlternativeCompReportManager().SaveNew(elemToSave);
                 _IsInEditMode = true;
             }

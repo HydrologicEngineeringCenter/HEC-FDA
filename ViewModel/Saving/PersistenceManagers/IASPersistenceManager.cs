@@ -208,8 +208,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
             if (msg != null)
             {
-                iasSet.ToolTip = msg;
-                iasSet.UpdateTreeViewHeader(iasSet.Name + "*");
+                //iasSet.ToolTip = msg;
+                iasSet.UpdateTreeViewHeader(iasSet.Name + "*", Environment.NewLine + msg);
             }
         }
 

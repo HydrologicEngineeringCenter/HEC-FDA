@@ -27,7 +27,6 @@ namespace HEC.FDA.View.Utilities
         {
             InitializeComponent();
             Title = ViewModel.Utilities.StringConstants.FDA_VERSION + " - Uncaught Exception";
-
             ErrorMsg.Text = e.Message;
             CallStack.Text = e.StackTrace;
         }

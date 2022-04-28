@@ -16,16 +16,15 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         #region Constructors
         public InflowOutflowOwnerElement( ) : base()
         {
-            Name = "Inflow Outflow Relationships";
-            IsBold = false;
+            Name = StringConstants.REG_UNREG_TRANSFORM_FUNCTIONS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addInflowOutflow = new NamedAction();
-            addInflowOutflow.Header = "Create New Inflow Outflow Relationship...";
+            addInflowOutflow.Header = StringConstants.CREATE_REG_UNREG_MENU;
             addInflowOutflow.Action = AddInflowOutflow;
 
             NamedAction importInflowOutflow = new NamedAction();
-            importInflowOutflow.Header = StringConstants.ImportFromOldFda("Inflow-Outflow");
+            importInflowOutflow.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_REG_UNREG_FROM_OLD_NAME);
             importInflowOutflow.Action = ImportInflowOutflow;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -56,8 +55,8 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         public void ImportInflowOutflow(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportInflowOutflowFromFDA1VM();
-            string header = "Import Inflow Outflow Curves";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportInflowOutflowCurve");
+            string header = StringConstants.IMPORT_REG_UNREG_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_REG_UNREG_FROM_OLD_HEADER);
             Navigate(tab, false, true);
         }
 
@@ -70,8 +69,8 @@ namespace HEC.FDA.ViewModel.FlowTransforms
 
             Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(computeComponentVM, actionManager);
 
-            string title = "Create Inflow Outflow";
-            DynamicTabVM tab = new DynamicTabVM(title, vm, "NewInflowOutflow" + Name);
+            string title = StringConstants.CREATE_REG_UNREG_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(title, vm, StringConstants.CREATE_REG_UNREG_HEADER);
             Navigate( tab, false, false);
         }
       

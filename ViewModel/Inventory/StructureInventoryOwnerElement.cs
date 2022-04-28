@@ -20,12 +20,12 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Constructors
         public StructureInventoryOwnerElement( ) : base()
         {
-            Name = "Structure Inventories";
+            Name = StringConstants.STRUCTURE_INVENTORIES;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addStructureInventory = new NamedAction();
-            addStructureInventory.Header = "Import From Shapefile...";
+            addStructureInventory.Header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_MENU;
             addStructureInventory.Action = AddStructureInventory;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -68,8 +68,8 @@ namespace HEC.FDA.ViewModel.Inventory
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(actionManager);
             vm.RequestNavigation += Navigate;
             
-            string header = "Import Structure Inventory";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
+            string header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER);
             Navigate(tab, false, false);
         }
 
