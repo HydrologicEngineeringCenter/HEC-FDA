@@ -55,7 +55,6 @@
 
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"  />
             <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

@@ -22,8 +22,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png", LastEditDate);
-
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png",
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+                
             Description = desc;
             if (Description == null)
             {
@@ -32,7 +36,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             ComputeComponentVM = exteriorInteriorCurve;
 
             NamedAction editExteriorInteriorCurve = new NamedAction();
-            editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve...";
+            editExteriorInteriorCurve.Header = StringConstants.EDIT_EXT_INT_MENU;
             editExteriorInteriorCurve.Action = EditExteriorInteriorCurve;
 
             NamedAction removeExteriorInteriorCurve = new NamedAction();

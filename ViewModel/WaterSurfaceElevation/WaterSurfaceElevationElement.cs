@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
             NamedAction editElement = new NamedAction(this);
-            editElement.Header = "Edit Hydraulics...";
+            editElement.Header = StringConstants.EDIT_HYDRAULICS_MENU;
             editElement.Action = EditElement;
 
             NamedAction remove = new NamedAction();

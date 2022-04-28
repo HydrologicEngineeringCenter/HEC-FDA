@@ -100,7 +100,6 @@
         <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" DataContext="{Binding SelectedOccType}" Margin="5,5,5,0"  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
    
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Utils:SaveControl />
             <Utils:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

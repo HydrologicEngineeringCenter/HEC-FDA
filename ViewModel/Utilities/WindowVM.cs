@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 StudyVM = new FdaStudyVM();
                 StudyVM.PropertyChanged += StudyVM_PropertyChanged;
                 CurrentView = StudyVM;
-                Title = "FDA 2.0";
+                Title = StringConstants.FDA_VERSION;
             }
         }
         public WindowVM(IDynamicTab tab)
@@ -74,7 +74,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             if (e.PropertyName.Equals("Name"))
             {
-                Title = "FDA 2.0 - " + StudyVM.CurrentStudyElement.Name; ;
+                Title = StringConstants.FDA_VERSION + " - " + StudyVM.CurrentStudyElement.Name; ;
             }
         }
 

@@ -46,8 +46,9 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding ID}" />
-                        <GridViewColumn Header="Impact Area" Width="250"  DisplayMemberBinding="{Binding ImpactArea.Name}" />
-                        <GridViewColumn Header="Damage Category" Width="250" DisplayMemberBinding="{Binding DamageCategory}" />
+                        <GridViewColumn Header="Impact Area" Width="150"  DisplayMemberBinding="{Binding ImpactArea.Name}" />
+                        <GridViewColumn Header="Damage Category" Width="150" DisplayMemberBinding="{Binding DamageCategory}" />
+                        <GridViewColumn Header="Asset Category" Width="150" DisplayMemberBinding="{Binding AssetCategory}" />
                     </GridView>
                 </ListView.View>
             </ListView>

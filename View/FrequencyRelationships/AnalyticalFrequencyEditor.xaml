@@ -147,7 +147,6 @@
         </GroupBox>
 
         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"  />
             <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

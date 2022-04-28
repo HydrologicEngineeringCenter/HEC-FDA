@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             ComputeComponentVM = inflowOutflowCurve;
 
             NamedAction editInflowOutflowCurve = new NamedAction();
-            editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve...";
+            editInflowOutflowCurve.Header = StringConstants.EDIT_REG_UNREG_MENU;
             editInflowOutflowCurve.Action = EditInflowOutflowCurve;
 
             NamedAction removeInflowOutflowCurve = new NamedAction();

@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             SelectedPath = selectedPath;
 
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Impact Area Set...";
+            edit.Header = StringConstants.EDIT_IMPACT_AREA_SET_MENU;
             edit.Action = Edit;
 
             NamedAction removeImpactArea = new NamedAction();
@@ -102,8 +102,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 .WithSiblingRules(this);
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
-            string header = "Edit Impact Area Set";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditImpactArea");
+            string header = StringConstants.EDIT_IMPACT_AREA_SET_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false,false);
         }
 

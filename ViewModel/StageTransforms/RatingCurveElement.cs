@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             Description = desc;
             if (Description == null) Description = "";
             NamedAction editRatingCurve = new NamedAction();
-            editRatingCurve.Header = "Edit Rating Curve...";
+            editRatingCurve.Header = StringConstants.EDIT_STAGE_DISCHARGE_MENU;
             editRatingCurve.Action = EditRatingCurve;
 
             NamedAction removeRatingCurve = new NamedAction();

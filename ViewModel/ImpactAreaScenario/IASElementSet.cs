@@ -95,15 +95,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Impact Area Scenario...";
+            edit.Header = StringConstants.EDIT_SCENARIO_MENU;
             edit.Action = EditIASSet;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Compute Impact Area Scenario...";
+            compute.Header = StringConstants.COMPUTE_SCENARIO_MENU;
             compute.Action = ComputeScenario;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results...";
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();

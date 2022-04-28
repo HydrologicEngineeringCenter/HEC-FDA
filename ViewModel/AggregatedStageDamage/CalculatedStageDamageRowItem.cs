@@ -9,6 +9,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private ImpactAreaRowItem _ImpactArea;
         private String _DamCat;
 
+        public string AssetCategory { get; set; }
         public int ID { get; set; }
         public ImpactAreaRowItem ImpactArea
         {
@@ -23,8 +24,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ComputeComponentVM ComputeComponent { get; set; }
         public string SelectedAssetCategory { get; set; }
 
-        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function)
+        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, string assetCategory)
         {
+            AssetCategory = assetCategory;
             ID = id;
             ImpactArea = impArea;
             DamageCategory = damCat;

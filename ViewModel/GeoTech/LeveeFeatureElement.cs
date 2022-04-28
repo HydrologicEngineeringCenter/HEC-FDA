@@ -60,7 +60,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             Elevation = elevation;
 
             NamedAction editLeveeFeature = new NamedAction();
-            editLeveeFeature.Header = "Edit Levee Feature...";
+            editLeveeFeature.Header = StringConstants.EDIT_LATERAL_STRUCTURES_MENU;
             editLeveeFeature.Action = EditLeveeFeature;
 
             NamedAction removeLeveeFeature = new NamedAction();

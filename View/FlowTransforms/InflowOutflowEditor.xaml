@@ -30,7 +30,7 @@
                 <RowDefinition Height="35" />
                 <RowDefinition Height="35" />
             </Grid.RowDefinitions>
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2" />
+            <!--<Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2" />-->
             <Label Grid.Row="1" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
         </Grid>

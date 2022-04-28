@@ -75,15 +75,15 @@ namespace HEC.FDA.ViewModel.Alternatives
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Alternative...";
+            edit.Header = StringConstants.EDIT_ALTERNATIVE_MENU;
             edit.Action = EditAlternative;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Calculate Average Annual Equivalent Damage...";
+            compute.Header = StringConstants.CALCULATE_AED_MENU;
             compute.Action = ComputeAlternative;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results...";
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();

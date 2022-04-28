@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void AddActions()
         {
             NamedAction editflowfreq = new NamedAction();
-            editflowfreq.Header = "Edit Analytical Flow Frequency Relationship...";
+            editflowfreq.Header = StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU;
             editflowfreq.Action = EditFlowFreq;
 
             NamedAction removeflowfreq = new NamedAction();

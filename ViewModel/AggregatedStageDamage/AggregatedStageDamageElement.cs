@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
 
             NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
+            editDamageCurve.Header = StringConstants.EDIT_STAGE_DAMAGE_MENU;
             editDamageCurve.Action = EditDamageCurve;
 
             NamedAction removeDamageCurve = new NamedAction();
@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             renameDamageCurve.Action = Rename;
 
             NamedAction exportDetails = new NamedAction(this);
-            exportDetails.Header = "Export Structure Detail";
+            exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
             exportDetails.Action = ExportDetails;
 
             List<NamedAction> localActions = new List<NamedAction>();
