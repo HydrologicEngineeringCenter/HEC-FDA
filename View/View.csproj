@@ -15,10 +15,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Inventory\DepthDamageCurves\**" />
     <Compile Remove="Plans\**" />
+    <EmbeddedResource Remove="Inventory\DepthDamageCurves\**" />
     <EmbeddedResource Remove="Plans\**" />
+    <EntityDeploy Remove="Inventory\DepthDamageCurves\**" />
     <EntityDeploy Remove="Plans\**" />
+    <None Remove="Inventory\DepthDamageCurves\**" />
     <None Remove="Plans\**" />
+    <Page Remove="Inventory\DepthDamageCurves\**" />
     <Page Remove="Plans\**" />
   </ItemGroup>
 
@@ -26,7 +31,9 @@
     <Compile Remove="GeoTech\FailureFunctionEditor.xaml.cs" />
     <Compile Remove="Inventory\AttributeLinkingListRowItem.xaml.cs" />
     <Compile Remove="Inventory\OccupancyTypesFromFile.xaml.cs" />
+    <Compile Remove="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs" />
     <Compile Remove="Study\AnalysisYears.xaml.cs" />
+    <Compile Remove="Utilities\DepthDamageEnumToStringConverter.cs" />
     <Compile Remove="Utilities\DynamicTab.cs" />
     <Compile Remove="Utilities\MapWindowControl.xaml.cs" />
     <Compile Remove="Utilities\MapWindowWrapper.xaml.cs" />
@@ -46,6 +53,7 @@
     <Page Remove="GeoTech\FailureFunctionEditor.xaml" />
     <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
     <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
+    <Page Remove="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml" />
     <Page Remove="Study\AnalysisYears.xaml" />
     <Page Remove="Utilities\MapWindowControl.xaml" />
     <Page Remove="Utilities\MapWindowWrapper.xaml" />

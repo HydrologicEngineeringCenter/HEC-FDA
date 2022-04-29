@@ -45,11 +45,6 @@ namespace HEC.FDA.ViewModel.Inventory
             set { _SelectedPath = value; SelectedPathChanged(); }
         }
 
-        //public ObservableCollection<string> AvailablePaths
-        //{
-        //    get { return _AvailablePaths; }
-        //    set { _AvailablePaths = value; NotifyPropertyChanged(); }
-        //}
         #endregion
         #region Constructors
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
@@ -207,13 +202,6 @@ namespace HEC.FDA.ViewModel.Inventory
                 }
             }
             return isValid;
-        }
-
-
-        public void SwitchVMs()
-        {
-            OccupancyTypesGroupRowItemVM vm = new OccupancyTypesGroupRowItemVM();
-            CurrentView = vm;
         }
 
         /// <summary>

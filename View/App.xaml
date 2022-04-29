@@ -1,7 +1,6 @@
 ﻿<Application x:Class="HEC.FDA.View.App"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             
-             
+                     
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              
@@ -41,9 +40,6 @@
              
              xmlns:InventoryView="clr-namespace:HEC.FDA.View.Inventory"
              xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory;assembly=HEC.FDA.ViewModel"
-             
-              xmlns:DepthDamageView="clr-namespace:HEC.FDA.View.Inventory.DepthDamageCurves"
-             xmlns:DepthDamageVM="clr-namespace:HEC.FDA.ViewModel.Inventory.DepthDamage;assembly=HEC.FDA.ViewModel"
                           
              xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel.FlowTransforms;assembly=HEC.FDA.ViewModel"
              
@@ -159,9 +155,7 @@
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
             <OccupancyTypesView:OccupancyTypesEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
-            <OccupancyTypesView:OccTypeGroupRowItem/>
-        </DataTemplate>
+ 
         <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
@@ -197,12 +191,6 @@
         </DataTemplate>
         
         <!--Inventory Region-->      
-        <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorVM }" >
-            <DepthDamageView:DepthDamageCurveEditor/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorControlVM }" >
-            <DepthDamageView:DepthDamageEditorControl/>
-        </DataTemplate>
         
         <DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
             <InventoryView:AttributeLinkingList/>
@@ -294,9 +282,6 @@
         </DataTemplate>
 
         <!--Study Region-->
-        <!--<DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >
-            <StudyView:AnalysisYears/>
-        </DataTemplate>-->
         <DataTemplate DataType="{x:Type StudyVM:PropertiesVM }" >
             <StudyView:Properties/>
             <DataTemplate.Resources>
@@ -364,9 +349,7 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomHeaderVM }" >
             <UtilitiesView:CustomHeader/>
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type TransactionsVM:TransactionVM }" >
-            <UtilitiesView:TransactionView/>
-        </DataTemplate>-->
+
         <!--Water Surface Elevations region-->
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>

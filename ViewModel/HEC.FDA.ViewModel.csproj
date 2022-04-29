@@ -11,11 +11,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Inventory\DepthDamage\**" />
+    <EmbeddedResource Remove="Inventory\DepthDamage\**" />
+    <EntityDeploy Remove="Inventory\DepthDamage\**" />
+    <None Remove="Inventory\DepthDamage\**" />
+    <Page Remove="Inventory\DepthDamage\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
     <Compile Remove="FlowTransforms\InflowOutflowEditorVM.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
     <Compile Remove="Inventory\DamageCategories\DamageCategory.cs" />
     <Compile Remove="Inventory\DamageCategories\DamageCategoryFactory.cs" />
+    <Compile Remove="Inventory\OccupancyTypes\OccupancyTypesGroupRowItemVM.cs" />
     <Compile Remove="Inventory\OccupancyTypes\OtherNormalControlVM.cs" />
     <Compile Remove="Output\CreateEconImportFileVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
