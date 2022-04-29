@@ -179,7 +179,7 @@ namespace HEC.FDA.ViewModel.Editors
             {
                 AddSinglePropertyRule(nameof(Name), new Rule(() => 
                 {
-                    return Name == existingName; 
+                    return Name != existingName; 
                 }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
             }
 

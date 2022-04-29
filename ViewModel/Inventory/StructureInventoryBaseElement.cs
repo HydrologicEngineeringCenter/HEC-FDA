@@ -27,8 +27,8 @@ namespace HEC.FDA.ViewModel.Inventory
         public string Name { get; set; }
         #endregion
         #region Constructors
-        public StructureInventoryBaseElement(string name,string description):
-            base(Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT + name)
+        public StructureInventoryBaseElement(string name,string description, int id):
+            base(Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT + id)
         {
             Name = name;
             Description = description;

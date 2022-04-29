@@ -51,9 +51,6 @@ namespace HEC.FDA.ViewModel.Storage
                     }                    
                     _SqliteReader = new DatabaseManager.SQLiteManager(value);
                 }
-                //add a logging target for the sqlite db.
-                FdaLogging.Initializer.Initialize(_SqliteReader);
-                //NLogDataBaseHelper.CreateDBTargets(value);
             }
         }
 

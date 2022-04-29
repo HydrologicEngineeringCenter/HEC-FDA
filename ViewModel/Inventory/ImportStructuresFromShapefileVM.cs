@@ -141,6 +141,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private void SaveStructureInventory()
         {
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
+            int id = manager.GetNextAvailableId();
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
 
@@ -148,7 +149,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
             //this line will create the child table in the database.
-            manager.Save(newStructureTable, Name, myReader.ToFeatures());
+            manager.Save(newStructureTable, id, myReader.ToFeatures());
             //this line will add it to the parent table.
             Save();
         }
@@ -210,8 +211,8 @@ namespace HEC.FDA.ViewModel.Inventory
         /// </summary>
         public override void Save()
         {
-            StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
             int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
+            StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description, id);
             InventoryElement elementToSave = new InventoryElement(SIBase, false, id);
 
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();

@@ -86,7 +86,7 @@ namespace HEC.FDA.ViewModel.Inventory
             OpenStructureAttributeTableEventArgs args = new OpenStructureAttributeTableEventArgs(Name, features, dtv, ogldi);
             args.MapFeatureHash = _featureHashCode;
         }
-       
+
         #endregion
         #region Functions
         public override ChildElement CloneElement(ChildElement elementToClone)

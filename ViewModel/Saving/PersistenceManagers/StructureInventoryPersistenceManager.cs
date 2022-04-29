@@ -126,10 +126,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="structureDataTable">The data. Each row is a structure.</param>
         /// <param name="name">The name of the table in the db.</param>
         /// <param name="features">Geometry data for the structures.</param>
-        public void Save(DataTable structureDataTable, string name, LifeSimGIS.VectorFeatures features)
+        public void Save(DataTable structureDataTable, int id, LifeSimGIS.VectorFeatures features)
         {
             InMemoryReader myInMemoryReader = new InMemoryReader(structureDataTable);
-            DataTableView myDTView = myInMemoryReader.GetTableManager(name);
+            DataTableView myDTView = myInMemoryReader.GetTableManager(id.ToString());
 
             //create the geo package writer that will write the data out
             LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
@@ -137,7 +137,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
             string tableConst = STRUCTURE_INVENTORY_TABLE_CONSTANT;
-            myGeoPackWriter.AddFeatures(tableConst + name, features, myDTView);
+            myGeoPackWriter.AddFeatures(STRUCTURE_INVENTORY_TABLE_CONSTANT + id, features, myDTView);
         }
 
         /// <summary>
@@ -169,6 +169,15 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
+        /// <summary>
+        /// The name in the parent inventory table gets renamed from the renameVM. This method renames the specific
+        /// inventory table and the value in the geo table.
+        /// </summary>
+        public void RenameInventory()
+        {
+
+        }
+
         private object[] GetRowDataFromElement(InventoryElement element)
         {
             return new object[] { element.Name, element.Description, element.IsImportedFromOldFDA };
@@ -180,10 +189,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
             }
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
             bool isImportedFromOldFDA = Convert.ToBoolean( rowData[IS_OLD_FDA]);
 
-            int id = Convert.ToInt32(rowData[ID_COL]);
             InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA, id);
             return invEle;
         }
@@ -192,24 +201,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.Name;
+            string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.ID;
             RemoveTable(inventoryTable);
             RemoveFromGeopackageTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
-
-        }
-
-        /// <summary>
-        /// This is to be used when importing a structure inventory from an old fda study
-        /// </summary>
-        /// <param name="name"></param>
-        public void SaveNewInventoryToParentTable(string name, string description = "")
-        {
-            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
-            StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, description);
-            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
-            InventoryElement elem = new InventoryElement(baseElem, true, id);
-            SaveNew(elem);
         }
 
         public void SaveNew(ChildElement element)
@@ -231,13 +226,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }
-
-        //TODO: should this be getting used?
-        private void RenameInventoryInGeoPackageTable(string oldName, string newName)
-        {
-            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
-            myGeoPackWriter.RenameFeatures(oldName, newName);
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

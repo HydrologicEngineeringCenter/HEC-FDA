@@ -47,14 +47,6 @@
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
       <Private>true</Private>
     </Reference>
-    <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\FdaLogger.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaLogging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\FdaLogging.dll</HintPath>
-    </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\GDALAssist.dll</HintPath>
