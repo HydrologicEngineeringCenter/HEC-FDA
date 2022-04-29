@@ -45,7 +45,6 @@
               xmlns:DepthDamageView="clr-namespace:HEC.FDA.View.Inventory.DepthDamageCurves"
              xmlns:DepthDamageVM="clr-namespace:HEC.FDA.ViewModel.Inventory.DepthDamage;assembly=HEC.FDA.ViewModel"
                           
-             xmlns:FlowTransformsView="clr-namespace:HEC.FDA.View.FlowTransforms"
              xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel.FlowTransforms;assembly=HEC.FDA.ViewModel"
              
              xmlns:DamageCategoryView="clr-namespace:HEC.FDA.View.Inventory.DamageCategory"
