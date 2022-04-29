@@ -164,7 +164,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
         }
 
-        private void InitializePlotModel()
+        public void InitializePlotModel()
         {
             _plotModel = new PlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;

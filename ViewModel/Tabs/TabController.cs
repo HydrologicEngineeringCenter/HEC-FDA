@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -219,9 +220,13 @@ namespace HEC.FDA.ViewModel.Tabs
             if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)
             {
                 //only one plot model can be linked to one plot view. An exception was getting thrown when trying
-                //to open this vm in a tab. It seems as thought the window was still holding onto a connection even
+                //to open this vm in a tab. It seems as though the window was still holding onto a connection even
                 //though the window has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
+            }
+            if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.InitializePlotModel();
             }
         }
 
@@ -248,6 +253,10 @@ namespace HEC.FDA.ViewModel.Tabs
                 //to open this vm in a window. It seems as thought the tab was still holding onto a connection even
                 //though the tab has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
+            }
+            if(tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.InitializePlotModel();
             }
             Navigate(tabToPopOut, true, false);
         }
