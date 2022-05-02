@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Storage;
-using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -135,10 +134,10 @@ namespace HEC.FDA.ViewModel.Watershed
 
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
-                string studyPath = CreateNewPathName();
-                TerrainElement t = new TerrainElement(Name, studyPath, id, true); // file extention?
+                string fileName = Path.GetFileName(TerrainPath);
+                TerrainElement t = new TerrainElement(Name, fileName, id, true);
                 StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
-                TerrainElement newElement = new TerrainElement(Name, studyPath, id);
+                TerrainElement newElement = new TerrainElement(Name, fileName, id);
 
                 manager.SaveNew(TerrainPath, newElement);
                 IsCreatingNewElement = false;
@@ -159,11 +158,6 @@ namespace HEC.FDA.ViewModel.Watershed
             TerrainPath = filePath;
         }
 
-        private string CreateNewPathName()
-        {
-            string fileName = Path.GetFileName(TerrainPath);
-            return Storage.Connection.Instance.TerrainDirectory + "\\" + Name + "\\" + fileName;
-        }
         #endregion
     }
 }

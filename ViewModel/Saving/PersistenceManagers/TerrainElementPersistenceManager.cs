@@ -56,15 +56,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
         {
-            string terrainPath = element.FileName;
-            Directory.CreateDirectory(Path.GetDirectoryName(terrainPath));
-
-            bool isVRT = Path.GetExtension(terrainPath).Equals(".vrt");
+            string newPath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
+            string newDirectory = Path.GetDirectoryName(newPath);
+            Directory.CreateDirectory(newDirectory);
+            bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
 
             if(isVRT)
             {
                 //then copy all the vrt and tif files
-                string newDirName = Path.GetDirectoryName(terrainPath);
                 string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
 
                 string[] paths = Directory.GetFiles(originalDirName);
@@ -73,14 +72,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     string extension = Path.GetExtension(path);
                     if(extension.Equals(".vrt") || extension.Equals(".tif"))
                     {
-                        await Task.Run(() => File.Copy(path, newDirName + "\\"+ Path.GetFileName(path)));
+                        await Task.Run(() => File.Copy(path, newDirectory + "\\"+ Path.GetFileName(path)));
                     }
                 }
             }
             else
             {
                 //.tifs and .flts i just copy the file.
-                await Task.Run(() => File.Copy(OriginalTerrainPath, element.FileName)); 
+                await Task.Run(() => File.Copy(OriginalTerrainPath, newPath)); 
             }
 
             string name = element.Name;
