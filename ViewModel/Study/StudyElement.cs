@@ -12,7 +12,6 @@ using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace HEC.FDA.ViewModel.Study
@@ -154,10 +153,6 @@ namespace HEC.FDA.ViewModel.Study
 
         public void CreateNewStudyMenuItemClicked()
         {
-            //todo: this is just for testing
-            throw new NotImplementedException();
-            //Task.Run(() => throw new NotImplementedException());
-
             NewStudyVM vm = new NewStudyVM(this);
             string header = "Create New Study";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "StudyElement");
@@ -227,7 +222,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public void OpenStudyMenuItemClicked()
         {
-            Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
+            ExistingStudyVM ESVM = new ExistingStudyVM(this);
             string header = "Open Study";
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
             Navigate( tab, false, false);
@@ -251,7 +246,6 @@ namespace HEC.FDA.ViewModel.Study
                 ImpactAreasOwnerElement i = new ImpactAreasOwnerElement();
                 i.AddBaseElements(cache);
                 AddElement(i);
-                //cache.ImpactAreaParent = i;
 
                 HydraulicsOwnerElement wse = new HydraulicsOwnerElement();
                 wse.AddBaseElements(cache);
@@ -260,10 +254,6 @@ namespace HEC.FDA.ViewModel.Study
                 FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement();
                 AddElement(f);
 
-                //FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement();
-                //ft.AddBaseElements(cache);
-                //AddElement(ft);
-
                 InflowOutflowOwnerElement io = new InflowOutflowOwnerElement();
                 AddElement(io);
 
@@ -271,9 +261,6 @@ namespace HEC.FDA.ViewModel.Study
                 s.AddBaseElements(cache);
                 AddElement(s);
 
-                //GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
-                //ls.AddBaseElements(cache);
-                //AddElement(ls);
                 LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement();
                 AddElement(lf);
                 cache.LeveeFeatureParent = lf;
@@ -294,10 +281,8 @@ namespace HEC.FDA.ViewModel.Study
                 cache.IASParent = c;
                 LoadElementsFromDB();
                 StudyLoaded = true;
-
             }
         }
-
 
         private void LoadElementsFromDB()
         {

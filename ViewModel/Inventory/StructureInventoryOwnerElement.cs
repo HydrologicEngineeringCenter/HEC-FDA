@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -13,10 +12,7 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created By: q0heccdm
         // Created Date: 6/14/2017 3:38:41 PM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties       
-        #endregion
+
         #region Constructors
         public StructureInventoryOwnerElement( ) : base()
         {

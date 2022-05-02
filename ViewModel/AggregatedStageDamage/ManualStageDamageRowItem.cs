@@ -57,16 +57,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedAssetCategory = assetCategory;
         }
 
-        //public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, StageDamageCurve curve)
-        //{
-        //    ID = id;
-        //    ImpactAreas = impAreas;
-        //    SelectedImpArea = curve.ImpArea;
-        //    DamageCategories = damCats;
-        //    SelectedDamCat = curve.DamCat;
-        //    ComputeComponent = curve.ComputeComponent;
-        //}
-
         /// <summary>
         /// Copy constructor
         /// </summary>

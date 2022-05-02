@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Inventory.DamageCategory;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -14,6 +13,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         List<IOccupancyType> GetOccypesByName(string name);
         void LoadFromFile(string inputFile);
         string WriteToXml(string outputPath);
-
     }
 }

@@ -21,7 +21,6 @@ namespace HEC.FDA.ViewModel.Tabs
         private ObservableCollection<IDynamicTab> _Tabs = new ObservableCollection<IDynamicTab>();
         private List<IDynamicTab> _Windows = new List<IDynamicTab>();
 
-
         #region Properties
         /// <summary>
         /// The list of tabs in the main UI
@@ -260,7 +259,6 @@ namespace HEC.FDA.ViewModel.Tabs
             }
             Navigate(tabToPopOut, true, false);
         }
-
 
         public void CloseTabsAndWindowsOpeningNewStudy()
         {

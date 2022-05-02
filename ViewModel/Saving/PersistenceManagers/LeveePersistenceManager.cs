@@ -1,10 +1,8 @@
-﻿
-using HEC.FDA.ViewModel.GeoTech;
+﻿using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
@@ -48,9 +46,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override object[] GetRowDataFromElement(ChildElement element)
         {
-            //todo bad casting
             CurveChildElement curveChildElement = element as CurveChildElement; 
-
             return new object[] { element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed, curveChildElement.ComputeComponentVM.ToXML().ToString() };
         }
 
@@ -63,7 +59,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             bool isDefault = Convert.ToBoolean(rowData[IS_DEFAULT_COL]);
             string curveXML = (string)rowData[CURVE_COL];
-            //UncertainPairedData upd = UncertainPairedData.ReadFromXML(XElement.Parse(curveXML));
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(XElement.Parse(curveXML));
 
             int id = Convert.ToInt32(rowData[ID_COL]);

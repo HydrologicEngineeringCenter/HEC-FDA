@@ -9,10 +9,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
         #region Constructors
         public InflowOutflowOwnerElement( ) : base()
         {

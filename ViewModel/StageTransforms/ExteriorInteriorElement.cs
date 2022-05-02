@@ -13,10 +13,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
         // Created By: q0heccdm
         // Created Date: 6/8/2017 11:31:34 AM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties   
-        #endregion
         #region Constructors
         public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id):base(id)
         {
@@ -64,7 +60,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
-            //create action manager
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 

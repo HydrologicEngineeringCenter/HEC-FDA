@@ -52,7 +52,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Voids
-
         private void OccTypeElementWasAdded(object sender, ElementAddedEventArgs e)
         {
             OccupancyTypesElement elem = (OccupancyTypesElement)e.Element;

@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using HEC.FDA.ViewModel.Editors;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Editors;
-using System.Windows;
 using System.IO;
-using HEC.MVVMFramework.ViewModel.Validation;
+using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -17,7 +16,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #endregion
         #region Fields
         private string _Path;
-        private ObservableCollection<string> _Paths;
         private List<string> _UniqueFields;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
         private bool _IsInEditMode = false;
@@ -30,11 +28,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             get { return _IsInEditMode; }
             set { _IsInEditMode = value; NotifyPropertyChanged(); }
         }
-        //public ObservableCollection<string> AvailablePaths
-        //{
-        //    get { return _Paths; }
-        //    set { _Paths = value; NotifyPropertyChanged(); }
-        //}
         public string SelectedPath
         {
             get { return _Path; }
@@ -49,8 +42,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             get { return _UniqueFields; }
             set { _UniqueFields = value; NotifyPropertyChanged(); }
-        }
-  
+        } 
         public string SelectedUniqueName
         {
             get { return _SelectedUniqueName; }
@@ -83,7 +75,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            SelectedPath = path; //isnt this bound??
+            SelectedPath = path; //todo: isnt this bound??
             DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
@@ -132,6 +124,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             base.AddValidationRules();
 
+            //todo: leaving commented out for now 5/2/22
             //AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
             //{
             //    return SelectedUniqueName == null;

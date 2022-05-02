@@ -10,10 +10,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
         #region Constructors
         public ExteriorInteriorOwnerElement( ) : base()
         {

@@ -36,12 +36,10 @@
                 <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5">
                     <Label Content="Exception Message: " VerticalAlignment="Center"/>
                     <TextBox Name="ErrorMsg" MaxWidth="650" Background="Transparent" TextAlignment="Left" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" />
-                    <!--<TextBlock Name="ErrorMsg" Grid.Row="1" MaxWidth="650" VerticalAlignment="Center" TextWrapping="Wrap" />-->
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
                     <Label Content="Call Stack: "/>
                     <TextBox Name="CallStack" MaxWidth="650" Background="Transparent" TextAlignment="Left" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" />
-                    <!--<TextBlock Name="CallStack" Grid.Row="1" MaxWidth="650" TextWrapping="Wrap"/>-->
                 </StackPanel>
 
             </Grid>

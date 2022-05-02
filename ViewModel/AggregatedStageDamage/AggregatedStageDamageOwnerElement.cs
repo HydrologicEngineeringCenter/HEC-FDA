@@ -10,12 +10,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageOwnerElement : ParentElement
     {
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties  
-        #endregion
+
         #region Constructors
         public AggregatedStageDamageOwnerElement() : base()
         {

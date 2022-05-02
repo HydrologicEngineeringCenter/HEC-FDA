@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.ViewModel.Validation;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -185,6 +184,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //check for blank name and name conflicts
             if(HasErrors)
             {
+                //todo: leaving commented out for now 5/2/22
                 //vr.AddErrorMessage(Error);
             }
 

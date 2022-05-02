@@ -9,9 +9,6 @@
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
              Loaded="UserControl_Loaded"
-             MinWidth="800"
-             MinHeight="600"
-   
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
 
     <UserControl.Resources>
@@ -56,8 +53,8 @@
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" MinHeight="27"/>
-
         </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" MinWidth="100" />
             <ColumnDefinition Width="*"  />
@@ -76,8 +73,6 @@
                 <MenuItem Header="Discourse" Click="Discourse_Click" />
             </MenuItem>
         </Menu>
-
-
 
         <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
                         <TreeView.ItemContainerStyle>

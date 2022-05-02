@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
         }
         #endregion
         #region Voids
-        //add
+
         public void AddDamageCategory(int insertAt = 0)
         {
             DamageCategoryRowItem dci =new DamageCategoryRowItem("New Damage Category", 1.0d, _DamageCategoryItems);
@@ -74,13 +74,11 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
                 System.Diagnostics.Debug.Print("Damage Category Renamed!!!");
             }
         }
-        //remove
         public void RemoveDamageCategory(object item)
         {
             _DamageCategoryItems.Remove(item);
             DamageCategories = _DamageCategoryItems;
         }
-        //rename
         #endregion
         #region Functions
         #endregion

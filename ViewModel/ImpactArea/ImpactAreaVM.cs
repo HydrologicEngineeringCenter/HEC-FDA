@@ -43,11 +43,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             AddSinglePropertyRule(nameof(IndexPoint), new Rule(() => { return IndexPoint >= 0; }, "Index Point must be greater than or equal to zero.", ErrorLevel.Severe));
         }
 
+        #endregion
 
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
     }
 }

@@ -209,7 +209,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             HasComputed = true;
             foreach(SpecificIAS ias in SpecificIASElements)
             {
-                //_Results.Add( ias.ComputeScenario(arg1, arg2));
+                _Results.Add( ias.ComputeScenario(arg1, arg2));
             }
             //todo: i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
             PersistenceFactory.GetIASManager().SaveExisting(this);

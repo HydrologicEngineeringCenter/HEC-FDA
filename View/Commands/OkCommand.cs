@@ -11,21 +11,10 @@ namespace HEC.FDA.View.Commands
 {
     class OkCommand : ICommand
     {
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Events
         /// <summary>
         /// This is required by ICommand
         /// </summary>
         public event EventHandler CanExecuteChanged;
-        #endregion
-        #region Properties     
-        #endregion
-        #region Constructors
-        #endregion
-        #region Voids
 
         public void Execute(object parameter)
         {
@@ -55,12 +44,10 @@ namespace HEC.FDA.View.Commands
             vm.WasCanceled = false;
             TabController.Instance.CloseTabOrWindow(window);
         }
-        #endregion
-        #region Functions
+
         public bool CanExecute(object parameter)
         {
             return true;
         }
-        #endregion
     }
 }

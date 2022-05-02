@@ -15,8 +15,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
+
         #region Properties
         public bool CanEdit { get; }
         public int SelectedWSE { get; set; }

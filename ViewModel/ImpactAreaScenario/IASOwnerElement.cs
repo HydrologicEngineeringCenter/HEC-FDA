@@ -11,11 +11,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
 
-        #endregion
         #region Constructors
         public IASOwnerElement( ) : base()
         {
@@ -43,7 +39,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.ExteriorInteriorRemoved += ChildElementRemoved;
             StudyCache.StageDamageRemoved += ChildElementRemoved;
 
-
             StudyCache.ImpactAreaUpdated += ChildElementUpdated;
             StudyCache.FlowFrequencyUpdated += ChildElementUpdated;
             StudyCache.InflowOutflowUpdated += ChildElementUpdated;
@@ -51,8 +46,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.LeveeUpdated += ChildElementUpdated;
             StudyCache.ExteriorInteriorUpdated += ChildElementUpdated;
             StudyCache.StageDamageUpdated += ChildElementUpdated;
-
-
         }
 
         /// <summary>

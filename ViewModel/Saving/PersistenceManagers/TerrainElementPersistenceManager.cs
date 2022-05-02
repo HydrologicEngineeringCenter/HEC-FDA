@@ -205,7 +205,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             RenameTheTerrainFileOnBackgroundThread(oldElement, element);
             //the path needs to get updated with the new name and set on the new element.
             TerrainElement elem = (TerrainElement)oldElement;
-            string originalExtension = System.IO.Path.GetExtension(elem.FileName);
+            string originalExtension = Path.GetExtension(elem.FileName);
             string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
             base.SaveExisting( element);

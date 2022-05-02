@@ -21,12 +21,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
             localActions.Add(createNewIndexPoints);
 
             Actions = localActions;
-
         }
 
         public void CreateNewIndexPoints(object arg1, EventArgs arg2)
         {
-            //do something.
+            //todo: do something.
         }
 
     }

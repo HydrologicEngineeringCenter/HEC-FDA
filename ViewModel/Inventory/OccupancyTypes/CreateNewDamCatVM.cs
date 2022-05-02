@@ -11,10 +11,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created By: q0heccdm
         // Created Date: 7/21/2017 1:26:32 PM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties        
-        #endregion
         #region Constructors
         public CreateNewDamCatVM(List<string> bannedNames):base(null)
         {
@@ -43,7 +39,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 {
                     return bannedName.Equals(Name);
                 }, "Name already exists.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
-
 
             }
         }

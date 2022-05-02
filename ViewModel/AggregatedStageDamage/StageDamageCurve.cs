@@ -31,12 +31,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
             AssetCategory = curveElement.Attribute(ASSET_CATEGORY).Value;
             XElement functionElem = curveElement.Element("ComputeComponentVM");
-            //UncertainPairedData uncertainPairedData = UncertainPairedData.ReadFromXML(functionElem);
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(functionElem);
-
-
-            //todo i need to create the row item from the id? i just need to grab it from the database i guess
-            ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
+            //I don't think the impact area row name matters here
+            ImpArea = new ImpactAreaRowItem(selectedImpArea, "impact area row");
             DamCat = selectedDamCat;
             ComputeComponent = computeComponentVM;
         } 

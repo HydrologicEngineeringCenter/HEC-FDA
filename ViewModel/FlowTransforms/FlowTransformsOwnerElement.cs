@@ -5,14 +5,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
     //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
     class FlowTransformsOwnerElement : ParentElement
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 6/8/2017 9:23:47 AM
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
+
         #region Constructors
         public FlowTransformsOwnerElement( ) : base()
         {

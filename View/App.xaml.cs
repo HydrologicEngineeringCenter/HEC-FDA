@@ -18,8 +18,10 @@ namespace HEC.FDA.View
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            //notify user that fda will close.
-            //e.IsTerminating
+            if(e.IsTerminating)
+            {
+                //todo: notify user that fda will close?
+            }
 
             if(e.ExceptionObject is Exception exception)
             {

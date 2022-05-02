@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private BaseViewModel _CurrentView;
         private DefineSIAttributesVM _DefineSIAttributes;
         private AttributeLinkingListVM _AttributeLinkingList;
-        private ObservableCollection<string> _AvailablePaths;
         private bool _CurrentViewIsEnabled;
         #endregion
         #region Properties
@@ -78,6 +77,7 @@ namespace HEC.FDA.ViewModel.Inventory
             Validate();
             if (HasErrors)
             {
+                //todo: leaving commented out 5/2/22
                 //vr.AddErrorMessage( Error);
             }
             return vr;
@@ -153,7 +153,6 @@ namespace HEC.FDA.ViewModel.Inventory
             //this line will add it to the parent table.
             Save();
         }
-
 
         private void SwitchToAttributeLinkingList()
         {

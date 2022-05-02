@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Xml.Linq;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {

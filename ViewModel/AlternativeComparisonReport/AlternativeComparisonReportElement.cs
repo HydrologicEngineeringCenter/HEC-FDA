@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {

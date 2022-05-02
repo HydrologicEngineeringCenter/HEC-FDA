@@ -16,8 +16,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
+
         #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }

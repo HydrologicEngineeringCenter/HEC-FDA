@@ -12,9 +12,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         // Created By: q0heccdm
         // Created Date: 6/8/2017 10:33:22 AM
         #endregion
-        #region Fields
-        private const string _TableConstant = "Inflow Outflow - ";
-        #endregion
 
         #region Constructors
         public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id):base(id)

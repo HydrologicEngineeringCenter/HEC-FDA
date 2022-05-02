@@ -1,14 +1,13 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.Alternatives.Results;
-using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {

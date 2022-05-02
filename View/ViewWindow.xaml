@@ -9,9 +9,7 @@
         Closing="Window_Closing"
         ResizeMode="CanResize"
         Title="{Binding Title}" 
-        Loaded="Window_Loaded"
-        
-        >
+        Loaded="Window_Loaded" >
 
     <Window.DataContext>
         <Utils:WindowVM/>

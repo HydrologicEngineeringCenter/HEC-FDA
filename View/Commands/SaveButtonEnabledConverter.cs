@@ -20,25 +20,6 @@ namespace HEC.FDA.View.Commands
         /// <returns></returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            //this is to answer the question Is Enabled. If HasFatalError is true or HasChanges is False,
-            //then we want to return false.
-            //ErrorLevel errorLevel = (ErrorLevel)values[0];
-            //bool hasChanges = (bool)values[1];
-            //bool hasErrors = (bool)values[2];
-
-
-            //if (errorLevel >= ErrorLevel.Fatal)
-            //{
-            //    //This used to be false if has changes == false but it wasn't always enabling after changing things in the the UI. 
-            //    //I decided that it would be best to have the save button always enabled for now. -Cody 2/25/22
-            //    return false;
-            //}
-            //else
-            //{
-            //    return true;
-            //}
-
-
             bool hasErrors = (bool)values[0];
             object dataContext = ((System.Windows.Controls.Button)values[1]).DataContext;
 
@@ -54,8 +35,6 @@ namespace HEC.FDA.View.Commands
                 }
             }
             return true;
-
-
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +12,7 @@ namespace HEC.FDA.View.Utilities
     /// see: https://stackoverflow.com/questions/9794151/stop-tabcontrol-from-recreating-its-children/9802346#9802346
     /// </summary>
     [TemplatePart(Name = "PART_ItemsHolder", Type = typeof(Panel))]
-    public class TabControlNoReload : System.Windows.Controls.TabControl
+    public class TabControlNoReload : TabControl
     {
         private Panel ItemsHolderPanel = null;
 
@@ -94,8 +93,6 @@ namespace HEC.FDA.View.Utilities
         {
             base.OnSelectionChanged(e);
             UpdateSelectedItem();
-          
-
         }
 
         private void UpdateSelectedItem()

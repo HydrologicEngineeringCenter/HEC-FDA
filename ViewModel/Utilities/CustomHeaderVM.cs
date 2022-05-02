@@ -32,11 +32,7 @@
             get { return _GifVisible; }
             set { _GifVisible = value; NotifyPropertyChanged(); }
         }
-        //public string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; NotifyPropertyChanged(); }
-        //}
+
         /// <summary>
         /// The decoration can be any string added to the end of the element name.
         /// A '*' can be used to indicate that the element has unsaved changes.
@@ -71,11 +67,6 @@
             GifVisible = gifVisible;
         }
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
-
       
     }
 }

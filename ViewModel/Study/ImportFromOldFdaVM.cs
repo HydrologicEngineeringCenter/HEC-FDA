@@ -104,7 +104,6 @@ namespace HEC.FDA.ViewModel.Study
 
         }
 
-
         public override ImportOptions GetImportOptions()
         {
             return ImportOptions.ImportEverything;

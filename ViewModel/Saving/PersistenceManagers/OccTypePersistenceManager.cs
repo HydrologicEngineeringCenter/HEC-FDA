@@ -1,10 +1,10 @@
 ﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
@@ -21,7 +21,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
-        private const int PARENT_IS_SELECTED_COL = 2;
 
         //These are the columns for the child table
         private const int GROUP_ID_COL = 0;
@@ -37,8 +36,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int VEH_ITEM_COL = 8;
         private const int OTHER_ITEM_COL = 9;
 
-        private const int OTHER_PARAMS_COL = 10;
-
         private const string ParentTableName = "occupancy_type_groups";
 
         private const string PARENT_NAME_FIELD = "Name";
@@ -47,7 +44,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const string VALUE_UNCERT = "ValueUncertainty";
 
         private const string IS_ITEM_CHECKED = "IsItemChecked";
-        private const string OTHER_PARAMS = "OtherParams";
 
         /// <summary>
         /// The types of the columns in the parent table
@@ -88,7 +84,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-
         //This method is not used, but it needs to be hear for the abstract
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
@@ -98,16 +93,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<DataRow> GetParentTableRows()
         {
             List<DataRow> retval = new List<DataRow>();
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            if (!Connection.Instance.IsConnectionNull)
             {
-                if (!Storage.Connection.Instance.IsOpen)
+                if (!Connection.Instance.IsOpen)
                 {
-                    Storage.Connection.Instance.Open();
+                    Connection.Instance.Open();
                 }
-                if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
+                if (Connection.Instance.TableNames().Contains(ParentTableName))
                 {
 
-                    System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+                    DataTable table = Connection.Instance.GetDataTable(ParentTableName);
                     foreach (DataRow row in table.Rows)
                     {
                         retval.Add(row);
@@ -116,7 +111,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
             return retval;
         }
-
         
         public override void Load()
         {
@@ -305,14 +299,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveNewOccType(IOccupancyType ot)
         {
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             if (tbl == null)
             {
-                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
             }
 
             object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
-            Storage.Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
+            Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
 
             AddNewOccTypeToCache(ot);
         }
@@ -370,11 +364,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             //we should have already saved the element to the parent table so that we can grab the id from that table
             int elemId = GetElementId(TableName, element.Name);
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             if (tbl == null)
             {
-                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-                tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             }
 
             List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
@@ -395,9 +389,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<IOccupancyType> LoadOcctypesFromOccTypeTable(int groupId)
         {
             List<IOccupancyType> occtypes = new List<IOccupancyType>();
-            if (Storage.Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
+            if (Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
             {
-                DataTable table = Storage.Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
+                DataTable table = Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
 
                 foreach (DataRow row in table.Rows)
                 {
@@ -469,7 +463,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
             rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
 
-            //rowsList[OTHER_PARAMS_COL] = WriteOtherParamsToXML(ot);
             return rowsList.ToList();
         }
 

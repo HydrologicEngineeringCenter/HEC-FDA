@@ -11,9 +11,7 @@ namespace HEC.FDA.ViewModel.Study
     {
         #region Notes
         #endregion
-        #region Fields
 
-        #endregion
         #region Properties
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }

@@ -4,7 +4,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreasOwnerElement : ParentElement
     {
-
         public ImpactAreasOwnerElement() : base()
         {
             Name = StringConstants.IMPACT_AREAS;

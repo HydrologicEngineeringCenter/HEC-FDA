@@ -1,8 +1,7 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using HEC.FDA.ViewModel;
 
 namespace HEC.FDA.View.Commands
 {
@@ -14,28 +13,6 @@ namespace HEC.FDA.View.Commands
         public event EventHandler CanExecuteChanged;
         #region Voids
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>True if OK was clicked indicating user wants to continue with the close and save even though there are errors.</returns>
-        //private bool DisplayErrors(BaseViewModel vm, Window window)
-        //{
-        //    MessageVM messagevm = new MessageVM(vm.Error);
-        //    string header = "Error";
-        //    DynamicTabVM tab = new DynamicTabVM(header, messagevm, "ErrorMessage");
-        //    WindowVM newvm = new WindowVM(tab);
-        //    newvm.Title = "Non-Fatal Errors";
-
-        //    string headerMessage = "The following non-fatal errors were discovered:";
-        //    string footerMessage = "Saving data in an error state can cause issues later on. \nDo you want to continue?";
-        //    CustomMessageBoxVM customVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, headerMessage + Environment.NewLine + Environment.NewLine + messagevm.Message + Environment.NewLine + footerMessage);
-        //    header = "Error";
-        //    tab = new DynamicTabVM(header, customVM, "ErrorMessage");
-        //    ViewWindow newWindow = new ViewWindow(new WindowVM(tab));
-        //    newWindow.Owner = window;
-        //    newWindow.ShowDialog();
-        //    return customVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes;
-        //}
         public void Execute(object parameter)
         {
             //if we bind the "isenabled" of the ok button to the "hasFatalError" property of the vm, then the ok button will be disabled if there is any fatal errors

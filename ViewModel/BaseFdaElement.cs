@@ -1,6 +1,4 @@
-﻿using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.ViewModel.Validation;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +16,6 @@ namespace HEC.FDA.ViewModel
         private List<NamedAction> _Actions;
         private CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
-        private string _Tooltip = null;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
@@ -59,11 +56,7 @@ namespace HEC.FDA.ViewModel
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        //public String ToolTip
-        //{
-        //    get { return _Tooltip; }
-        //    set { _Tooltip = value; NotifyPropertyChanged(); }
-        //}
+
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -89,9 +82,7 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Constructors
-            /// <summary>
-            /// Constructor
-            /// </summary>
+
         public BaseFdaElement()
         {
         }

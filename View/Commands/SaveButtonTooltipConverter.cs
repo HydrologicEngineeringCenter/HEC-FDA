@@ -1,5 +1,4 @@
 ﻿using HEC.FDA.ViewModel;
-using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,24 +21,11 @@ namespace HEC.FDA.View.Commands
                 {
                     if(dataContext is BaseViewModel baseVM)
                     {
-                        //ErrorLevel errorLevel = baseVM.ErrorLevel;
                         List<string> errors = (List<string>)baseVM.GetErrors();
                         string errorMsg = string.Join(Environment.NewLine, errors);
                         return errorMsg;
                     }
                 }
-                //else if (errorLevel >= ErrorLevel.Fatal)
-                //{
-                //    return errorMsg;
-                //}
-                //else if (HasChanges == false)
-                //{
-                //    return "No changes to save";
-                //}
-                //else
-                //{
-                //    return null;
-                //}
             }
             catch(Exception e)
             {

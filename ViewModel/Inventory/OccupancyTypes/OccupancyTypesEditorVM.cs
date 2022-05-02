@@ -182,12 +182,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public void LaunchNewOccTypeWindow()
         {
-                    //we want a new occtype. If there is an occtype and occtype group then we can use
-                    //some of that data. We don't want to just copy the other occtype, however, that is
-                    //another option. It seems to me that if there is no occtype group, a user shouldn't be
-                    //allowed to create an occtype. The user is able to delete all groups and/or all occtypes.
+            //we want a new occtype. If there is an occtype and occtype group then we can use
+            //some of that data. We don't want to just copy the other occtype, however, that is
+            //another option. It seems to me that if there is no occtype group, a user shouldn't be
+            //allowed to create an occtype. The user is able to delete all groups and/or all occtypes.
 
-            if(SelectedOccTypeGroup == null)
+            if (SelectedOccTypeGroup == null)
             {
                 MessageBox.Show("An occupancy type group must first be imported in order to create a new occupancy type.", "No Occupancy Type Group", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -203,15 +203,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 {
                     ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
                     string damCatName = "";
-                    if(SelectedOccType != null)
+                    if (SelectedOccType != null)
                     {
                         damCatName = SelectedOccType.DamageCategory;
                         damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
-                    
+
                     //create the new occupancy type
                     IOccupancyType newOT = new OccupancyType(vm.Name, damCatName, SelectedOccTypeGroup.ID);
-                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT,ref damCatOptions, false);
+                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
                     otEditable.RequestNavigation += this.Navigate;
 
                     //add the occtype to the list and select it

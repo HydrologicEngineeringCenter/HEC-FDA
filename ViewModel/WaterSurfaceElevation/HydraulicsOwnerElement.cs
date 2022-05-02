@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
@@ -11,10 +9,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         // Created By: q0heccdm
         // Created Date: 9/1/2017 8:46:34 AM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties   
-        #endregion
+
         #region Constructors
         public HydraulicsOwnerElement( ):base()
         {
@@ -23,10 +18,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             CustomTreeViewHeader = new CustomHeaderVM(Name);
         }
         #endregion
-        #region Voids
-        
-        #endregion
-
 
         public void AddBaseElements(Study.FDACache cache)
         {
@@ -36,7 +27,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             AddElement(steady);
             GriddedDataOwnerElement gridded = new GriddedDataOwnerElement();
             AddElement(gridded);
-            //cache.ImpactAreaParent = impactAreaOwnerElem;
         }
     }
 }

@@ -8,8 +8,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         // Created By: q0heccdm
         // Created Date: 10/27/2016 9:27:23 AM
         #endregion
-        #region Fields
-        #endregion
+
         #region Properties
         public int ID { get; set; }
 
@@ -21,11 +20,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             ID = id;
             Name = dispName;
         }
-        #endregion
-        #region Voids
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.Study;
 using System.Diagnostics;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using HEC.FDA.ViewModel.Study;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.View.Study
 {

@@ -28,16 +28,6 @@ namespace HEC.FDA.ViewModel.Study
                     {
                         StudyName = System.IO.Path.GetFileNameWithoutExtension(Path);
                         Storage.Connection.Instance.ProjectFile = _Path;
-                        //todo: what on earth is all this stuff in this setter? -cody 11/18/21
-                        //DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
-                        //if (dtv != null)
-                        //{
-                        //    PropertiesVM pvm = new PropertiesVM(dtv);
-                        //    Description = pvm.StudyDescription;
-                        //}
-                    }else
-                    {
-                        //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("You did not select a sqlite file", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
                     }
                 }
             }

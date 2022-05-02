@@ -9,10 +9,7 @@ namespace HEC.FDA.ViewModel.Watershed
 
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties      
-        #endregion
+
         #region Constructors
         public TerrainOwnerElement( ) : base()
         {

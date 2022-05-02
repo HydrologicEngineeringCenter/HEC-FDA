@@ -144,9 +144,6 @@ namespace HEC.FDA.ViewModel.Editors
             return "Last Saved: " + elem.LastEditDate;
         }
 
-       
-
-
         /// <summary>
         /// This is used to add rules that the name cannot be the same as a sibling. 
         /// This method is to be called for editors. It will exclude the original name
@@ -306,7 +303,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public int GetElementID(SavingBase persistenceManager)
         {
-            int id = -1;
+            int id;
             if (IsCreatingNewElement)
             {
                 id = persistenceManager.GetNextAvailableId();

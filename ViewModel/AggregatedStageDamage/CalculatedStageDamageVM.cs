@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
 
-
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
         public TableWithPlotVM TableWithPlot

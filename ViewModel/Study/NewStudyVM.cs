@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using HEC.MVVMFramework.Base.Enumerations;
 
-
 namespace HEC.FDA.ViewModel.Study
 {
     public class NewStudyVM : Editors.BaseEditorVM

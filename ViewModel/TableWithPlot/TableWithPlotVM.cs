@@ -69,7 +69,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             _computeComponentVM = computeComponentVM;
             Initialize();
         }
-
         #endregion
 
         #region Methods

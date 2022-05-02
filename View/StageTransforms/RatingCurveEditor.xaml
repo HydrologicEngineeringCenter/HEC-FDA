@@ -35,18 +35,9 @@
             <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <Grid x:Name="editorGrid" Grid.Row="2">
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
-            </Grid.ColumnDefinitions>-->
-            <!--If you are looking for where the plot is, it is added in the code behind. -->
-            <!--<Utilities:CoordinatesFunctionEditor  Grid.Column="0" Margin="5"  />-->
             <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
         </Grid>
-        
+
         <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-        <!--<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            --><!--<Utilities:SaveControl />--><!--
-        </StackPanel>-->
     </Grid>
 </UserControl>

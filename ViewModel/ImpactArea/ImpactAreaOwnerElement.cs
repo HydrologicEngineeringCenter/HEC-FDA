@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -11,10 +10,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
+
         #region Constructors
         public ImpactAreaOwnerElement( ) : base()
         {

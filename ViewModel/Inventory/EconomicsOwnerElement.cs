@@ -2,15 +2,11 @@
 
 namespace HEC.FDA.ViewModel.Inventory
 {
-    class InventoryOwnerElement : Utilities.ParentElement
+    class InventoryOwnerElement : ParentElement
     {
         #region Notes
         #endregion
-        #region Fields    
-        #endregion
-        #region Properties
-       
-        #endregion
+
         #region Constructors
         public InventoryOwnerElement( ) : base()
         {
@@ -25,8 +21,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         }
         public void AddBaseElements(Study.FDACache cache)
-        {
-           
+        {          
             OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement();
             this.AddElement(o);
             cache.OccTypeParent = o;
@@ -38,7 +33,6 @@ namespace HEC.FDA.ViewModel.Inventory
             AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement();
             this.AddElement(a);
             cache.StageDamageParent = a;
-
         }
        
         #endregion
