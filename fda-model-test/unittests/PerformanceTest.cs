@@ -69,8 +69,8 @@ namespace fda_model_test.unittests
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.Results results = simulation.Compute(meanRandomProvider, cc,false);
 
-            double actualAEP = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
-            double actualLTEP = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.LongTermExceedanceProbability(years);
+            double actualAEP = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.MeanAEP();
+            double actualLTEP = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.LongTermExceedanceProbability(years);
 
             double aepDifference = Math.Abs(expectedAEP - actualAEP);
             double aepRelativeDifference = aepDifference / expectedAEP;
@@ -120,7 +120,7 @@ namespace fda_model_test.unittests
 
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.Results results = simulation.Compute(meanRandomProvider, cc, false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.MeanAEP();
+            double actual = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.MeanAEP();
             Assert.Equal(expected,actual,2);
         }
         /// <summary>
@@ -171,7 +171,7 @@ namespace fda_model_test.unittests
 
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, cc, false);
-            double actual = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(recurrenceInterval);
+            double actual = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.ConditionalNonExceedanceProbability(recurrenceInterval);
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
             double tolerance = 0.025;
@@ -193,8 +193,8 @@ namespace fda_model_test.unittests
             performanceByThresholds.AddThreshold(threshold2);
 
             double keyForCNEP = .98;
-            performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
-            performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
+            performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
+            performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
 
             int iterations = 2250;
             int seed = 1234;
@@ -207,10 +207,10 @@ namespace fda_model_test.unittests
                 double uniformObservation2 = random.NextDouble()+2;
                 double messyObservation = normal.InverseCDF(random.NextDouble())* random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
                 double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
-                performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation1, i);
-                performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation2, i);
-                performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservationLogged, i);
-                performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservation, i);
+                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation1, i);
+                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation2, i);
+                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservationLogged, i);
+                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservation, i);
             }
 
             double upperConfidenceLimitProbability = 0.975;
@@ -218,8 +218,8 @@ namespace fda_model_test.unittests
             Results results = new Results();
             results.PerformanceByThresholds = performanceByThresholds;
 
-            bool isFirstThresholdConverged = performanceByThresholds.ThresholdsDictionary[thresholdID1].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
-            bool isSecondThresholdConverged = performanceByThresholds.ThresholdsDictionary[thresholdID2].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+            bool isFirstThresholdConverged = performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
+            bool isSecondThresholdConverged = performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);
             bool isPerformanceConverged = results.IsPerformanceConverged();
 
             Assert.True(isFirstThresholdConverged);
@@ -263,10 +263,10 @@ namespace fda_model_test.unittests
 
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, cc, false);
-            XElement xElement = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.WriteToXML();
+            XElement xElement = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.WriteToXML();
             //TODO: At the next line, convergence criteria is being re-set to 100000
-            ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement);
-            bool success = results.PerformanceByThresholds.ThresholdsDictionary[thresholdID].ProjectPerformanceResults.Equals(projectPerformanceResults);
+            SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);
+            bool success = results.PerformanceByThresholds.ListOfThresholds[thresholdID].ProjectPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);
         }
 

@@ -9,7 +9,7 @@ namespace metrics
     {
         public ThresholdEnum ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
-        public ProjectPerformanceResults ProjectPerformanceResults { get; set; }
+        public SystemPerformanceResults ProjectPerformanceResults { get; set; }
         /// <summary>
         /// Threshold ID should be an integer greater than or equal to 1. 
         /// The threshold ID = 0 is reserved for the default threshold.
@@ -20,7 +20,7 @@ namespace metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, c); 
+            ProjectPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c); 
             ThresholdID = thresholdID;
         }
 
@@ -28,11 +28,11 @@ namespace metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            ProjectPerformanceResults = new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
+            ProjectPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
             ThresholdID = thresholdID;
         }
 
-        private Threshold(int thresholdID, ThresholdEnum thresholdType, double thresholdValue, ProjectPerformanceResults projectPerformanceResults)
+        private Threshold(int thresholdID, ThresholdEnum thresholdType, double thresholdValue, SystemPerformanceResults projectPerformanceResults)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
@@ -69,7 +69,7 @@ namespace metrics
             ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
             double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
             int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID").Value);
-            ProjectPerformanceResults projectPerformanceResults = ProjectPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));
+            SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));
             return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
         }
     }

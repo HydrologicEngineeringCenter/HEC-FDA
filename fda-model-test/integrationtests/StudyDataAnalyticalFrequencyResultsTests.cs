@@ -163,7 +163,7 @@ namespace fda_model_test
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
 
-            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
         /// <summary>
@@ -198,7 +198,7 @@ namespace fda_model_test
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
 
-            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
 

@@ -8,9 +8,13 @@ using System.Xml.Linq;
 namespace metrics
 {
     public class PerformanceByThresholds
-{        
-        private Dictionary<int,Threshold> _thresholds; 
-        public Dictionary<int,Threshold> ThresholdsDictionary
+{
+        #region Fields
+        private List<Threshold> _thresholds;
+        #endregion
+
+        #region Properties 
+        public List<Threshold> ListOfThresholds
         {
             get
             {
@@ -21,67 +25,66 @@ namespace metrics
                 _thresholds = value;
             }
         }
+        #endregion
+
+        #region Constructors 
 
         public PerformanceByThresholds()
         {
-            _thresholds = new Dictionary<int,Threshold>();
+            _thresholds = new List<Threshold>();
                    
         }      
-        private PerformanceByThresholds(Dictionary<int,Threshold> thresholdDictionary)
+        private PerformanceByThresholds(List<Threshold> thresholds)
         {
-            _thresholds = thresholdDictionary;
+            _thresholds = thresholds;
         }
+        #endregion
+        #region Methods 
         public void AddThreshold(Threshold threshold)
         {
-            _thresholds.Add(threshold.ThresholdID,threshold);
-        }
-
-        public void RemoveThreshold(Threshold threshold)
-        {
-            _thresholds.Remove(threshold.ThresholdID);
+            _thresholds.Add(threshold);
         }
         public bool Equals(PerformanceByThresholds incomingPerformanceByThresholds)
         {
-            foreach (int key in ThresholdsDictionary.Keys)
+            bool success = true;
+            foreach (Threshold threshold in ListOfThresholds)
             {
-                bool success = ThresholdsDictionary[key].Equals(incomingPerformanceByThresholds.ThresholdsDictionary[key]);
-                if (!success)
+                foreach (Threshold inputThreshold in incomingPerformanceByThresholds.ListOfThresholds)
                 {
-                    return false;
+                    if (threshold.ThresholdID == inputThreshold.ThresholdID)
+                    {
+                        success = threshold.Equals(inputThreshold);
+                        if (!success)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
-            return true;
+            return success;
         }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Performance_By_Thresholds");
-            int keyCount = ThresholdsDictionary.Keys.ToArray().Length;
-            masterElement.SetAttributeValue("Key_Count", keyCount);
-
-            for (int i = 0; i < keyCount; i++)
+            foreach (Threshold threshold in ListOfThresholds)
             {
-                int key = ThresholdsDictionary.Keys.ToArray()[i];
-                XElement thresholdElement = ThresholdsDictionary[key].WriteToXML();
-                thresholdElement.Name = $"Threshold_{key}";
+                XElement thresholdElement = threshold.WriteToXML();
+                thresholdElement.Name = $"{threshold.ThresholdID}";
                 masterElement.Add(thresholdElement);
-                masterElement.SetAttributeValue($"key{i}", key);
             }
             return masterElement;
         }
 
         public static PerformanceByThresholds ReadFromXML(XElement xElement)
         {
-            Dictionary<int, Threshold> thresholdDictionary = new Dictionary<int, Threshold>();
-            int keyCount = Convert.ToInt32(xElement.Attribute("Key_Count").Value);
-            for (int i = 0; i < keyCount; i++)
+            List<Threshold> thresholdList = new List<Threshold>();
+            foreach (XElement thresholdElement in xElement.Elements())
             {
-                int key = Convert.ToInt32(xElement.Attribute($"key{i}").Value);
-                Threshold threshold = Threshold.ReadFromXML(xElement.Element($"Threshold_{key}"));
-                thresholdDictionary.Add(key, threshold);
+                Threshold threshold = Threshold.ReadFromXML(thresholdElement);
+                thresholdList.Add(threshold);
             }
-            return new PerformanceByThresholds(thresholdDictionary);
-
+            return new PerformanceByThresholds(thresholdList);
         }
-
+        #endregion
     }
 }

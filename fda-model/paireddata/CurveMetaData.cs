@@ -102,7 +102,7 @@ namespace paireddata
 
         public static CurveMetaData ReadFromXML(XElement xElement)
         {
-            CurveTypesEnum curveType = (CurveTypesEnum)Enum.Parse(typeof(CurveTypesEnum, xElement.Attribute("CurveType").Value);
+            CurveTypesEnum curveType = (CurveTypesEnum)Enum.Parse(typeof(CurveTypesEnum), xElement.Attribute("CurveType").Value);
             string xLabel = xElement.Attribute("XLabel").Value;
             string yLabel = xElement.Attribute("YLabel").Value;
             string name = xElement.Attribute("Name").Value;

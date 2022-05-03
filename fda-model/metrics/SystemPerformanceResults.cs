@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace metrics
 {
-    public class ProjectPerformanceResults
+    public class SystemPerformanceResults
     {
         #region Fields
         private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
@@ -41,7 +41,7 @@ namespace metrics
         }
         #endregion
         #region Constructors 
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
+        public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
@@ -51,7 +51,7 @@ namespace metrics
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        public ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
+        public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
         {
             _systemResponseFunction = systemResponseFunction;
             _calculatePerformanceForLevee = true;
@@ -63,7 +63,7 @@ namespace metrics
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
@@ -73,7 +73,7 @@ namespace metrics
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        private ProjectPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
         {
             _systemResponseFunction = systemResponseFunction;
             _calculatePerformanceForLevee = true;
@@ -236,7 +236,7 @@ namespace metrics
                 _cnep[keys[i]].TestForConvergence(upperQuantile,lowerQuantile);//this will force dequeue also.
             });
         }
-        public bool Equals(ProjectPerformanceResults projectPerformanceResults)
+        public bool Equals(SystemPerformanceResults projectPerformanceResults)
         {
             bool aepHistogramsAreEqual = _aep.Equals(projectPerformanceResults.HistogramOfAEPs);
             if (!aepHistogramsAreEqual)
@@ -285,7 +285,7 @@ namespace metrics
             return masterElement;
         }
 
-        public static ProjectPerformanceResults ReadFromXML(XElement xElement)
+        public static SystemPerformanceResults ReadFromXML(XElement xElement)
         {
             Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary = new Dictionary<double, ThreadsafeInlineHistogram>();
             int keyCount = Convert.ToInt32(xElement.Attribute("Key_Count").Value);
@@ -308,11 +308,11 @@ namespace metrics
 
             if (calculatePerformanceForLevee)
             {
-                return new ProjectPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+                return new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
             }
             else
             {
-                return new ProjectPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+                return new SystemPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
             }
         }
         #endregion

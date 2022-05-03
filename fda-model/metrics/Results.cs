@@ -35,9 +35,9 @@ namespace metrics
             
             List<bool> convergedList = new List<bool>();
             //dont like this
-            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var key in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged());
+                convergedList.Add(PerformanceByThresholds.ListOfThresholds[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged());
             }
             foreach (var convergenceResult in convergedList)
             {
@@ -67,9 +67,9 @@ namespace metrics
             List<bool> convergedList = new List<bool>();
 
             //dont like this.
-            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var key in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                convergedList.Add(PerformanceByThresholds.ListOfThresholds[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb));
           
             }
             foreach (var convergenceResult in convergedList)
@@ -96,15 +96,15 @@ namespace metrics
             List<Int64> performanceIterationsRemaining = new List<Int64>();
 
             //i do not like this, but the keys are frustrating.
-            foreach (var key in PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var key in PerformanceByThresholds.ListOfThresholds)
             {
-                performanceIterationsRemaining.Add(PerformanceByThresholds.ThresholdsDictionary[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                performanceIterationsRemaining.Add(PerformanceByThresholds.ListOfThresholds[key.Key].ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
             }
             return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
         }
         public void ParalellTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
-            foreach (var keyvaluepair in PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var keyvaluepair in PerformanceByThresholds.ListOfThresholds)
             {
                 keyvaluepair.Value.ProjectPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }

@@ -393,7 +393,7 @@ namespace compute
         public void ComputePerformance(IPairedData frequency_stage, Int64 iteration)
         {
 
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
                 double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1 - frequency_stage.f_inverse(thresholdValue);
@@ -424,7 +424,7 @@ namespace compute
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
                 thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep, iteration);
                 GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value, iteration);
@@ -446,7 +446,7 @@ namespace compute
         {
             double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ThresholdsDictionary)
+            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
                 {
