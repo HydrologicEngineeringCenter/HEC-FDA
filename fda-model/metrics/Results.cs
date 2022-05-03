@@ -26,7 +26,7 @@ namespace metrics
         {
             if (computeWithDamage == true)
             {
-                return ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].IsConverged;
+                return ExpectedAnnualDamageResults.GetExpectedAnnualDamageResult("total", "total").EADHistogram.IsConverged;
             }
             return true;
         }
@@ -61,7 +61,7 @@ namespace metrics
             bool eadIsConverged = true;
             if (computeWithDamage)
             {
-                eadIsConverged = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIsConverged = ExpectedAnnualDamageResults.GetExpectedAnnualDamageResult("total", "total").EADHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -90,7 +90,7 @@ namespace metrics
             Int64 eadIterationsRemaining = 0;
             if (computeWithDamage)
             {
-                eadIterationsRemaining = ExpectedAnnualDamageResults.HistogramsOfEADs["Total"].EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIterationsRemaining = ExpectedAnnualDamageResults.GetExpectedAnnualDamageResult("total", "total").EADHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
             }
             List<Int64> performanceIterationsRemaining = new List<Int64>();

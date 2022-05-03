@@ -46,6 +46,13 @@ namespace metrics
         #endregion
 
         #region Constructors
+        public ExpectedAnnualDamageResult()
+        {
+            _damageCategory = "unassigned";
+            _assetCategory = "unassigned";
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            _eadHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, convergenceCriteria);
+        }
         public ExpectedAnnualDamageResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
             _damageCategory = damageCategory;

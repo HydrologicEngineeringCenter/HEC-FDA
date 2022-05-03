@@ -100,7 +100,23 @@ namespace metrics
             ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category combination could not be found. An arbitrary result of 0 is being returned.")));
             return 0;
         }
-        
+        public ExpectedAnnualDamageResult GetExpectedAnnualDamageResult(string damageCategory, string assetCategory)
+        {
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
+            {
+                if (expectedAnnualDamageResult.DamageCategory == damageCategory)
+                {
+                    if (expectedAnnualDamageResult.AssetCategory == assetCategory)
+                    {
+                        return expectedAnnualDamageResult;
+                    }
+                }
+
+            }
+            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category combination could not be found. An arbitrary result of 0 is being returned.")));
+            ExpectedAnnualDamageResult dummyResult = new ExpectedAnnualDamageResult();
+            return dummyResult;
+        }
         public bool Equals(ExpectedAnnualDamageResults expectedAnnualDamageResults)
         {
            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
