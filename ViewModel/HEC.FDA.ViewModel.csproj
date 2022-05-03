@@ -107,7 +107,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Framework\Base\Base.csproj" />
     <ProjectReference Include="..\..\Framework\ViewModel\ViewModel.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
   </ItemGroup>
