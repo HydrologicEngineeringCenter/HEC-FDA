@@ -87,7 +87,7 @@ namespace compute
             {//I am not sure if there is a better way to add the default threshold
                 _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
-            SetStageForNonExceedanceProbability(convergenceCriteria);
+            SetStageForNonExceedanceProbability();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
             _results.ParalellTestForConvergence(.95, .05);
             return _results;
@@ -395,10 +395,10 @@ namespace compute
 
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
-                double thresholdValue = thresholdEntry.Value.ThresholdValue;
+                double thresholdValue = thresholdEntry.ThresholdValue;
                 double aep = 1 - frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value, iteration);
+                thresholdEntry.ProjectPerformanceResults.AddAEPForAssurance(aep, iteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
@@ -426,8 +426,8 @@ namespace compute
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
-                thresholdEntry.Value.ProjectPerformanceResults.AddAEPEstimate(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry.Value, iteration);
+                thresholdEntry.ProjectPerformanceResults.AddAEPForAssurance(aep, iteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
             }
 
         }
@@ -442,15 +442,14 @@ namespace compute
                 threshold.ProjectPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
             }
         }
-        public void SetStageForNonExceedanceProbability(ConvergenceCriteria convergenceCriteria)
+        public void SetStageForNonExceedanceProbability()
         {
-            double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
                 {
-                    thresholdEntry.Value.ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(er101RequiredNonExceedanceProbabilities[i], convergenceCriteria);
+                    thresholdEntry.ProjectPerformanceResults.AddAssuranceHistogram(er101RequiredNonExceedanceProbabilities[i]);
                 }
             }
         }

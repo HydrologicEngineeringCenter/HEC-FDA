@@ -21,7 +21,6 @@ namespace metrics
         private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
         private const string AEP_ASSURANCE_TYPE = "AEP";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
-        private const string STRUCTURAL_ASSURANCE_TYPE = "STRUCTURAL";
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
@@ -95,6 +94,10 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+        public void AddAEPForAssurance(double aep, Int64 iteration)
+        {
+            GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
         }
         public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, Int64 iteration)
         {
