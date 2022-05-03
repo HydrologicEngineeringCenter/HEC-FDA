@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Statistics.Histograms;
 using Statistics;
+using System.Xml.Linq;
 
 namespace metrics
 {
@@ -49,6 +50,12 @@ namespace metrics
             _assetCategory = assetCategory;
             _eadHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH,convergenceCriteria);
         }
+        private ExpectedAnnualDamageResult(string damageCategory, string assetCategory, ThreadsafeInlineHistogram eadHistogram)
+        {
+            _damageCategory = damageCategory;
+            _assetCategory = assetCategory;
+            _eadHistogram = eadHistogram;
+        }
         #endregion
 
         #region Methods
@@ -77,6 +84,24 @@ namespace metrics
                     return false;
                 }
             return true;
+        }
+        public XElement WriteToXML()
+        {
+            XElement masterElement = new XElement("EAD");
+            XElement histogramElement = _eadHistogram.WriteToXML();
+            histogramElement.Name = "EADHistogram";
+            masterElement.Add(histogramElement);
+            masterElement.SetAttributeValue("DamageCategory", _damageCategory);
+            masterElement.SetAttributeValue("AssetCategory", _assetCategory);
+            return masterElement;
+        }
+
+        public static ExpectedAnnualDamageResult ReadFromXML(XElement xElement)
+        {
+            ThreadsafeInlineHistogram eadHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("EADHistogram"));
+            string damageCategory = xElement.Attribute("DamageCategory").Value;
+            string assetCategory = xElement.Attribute("AssetCategory").Value;
+            return new ExpectedAnnualDamageResult(damageCategory, assetCategory, eadHistogram);
         }
         #endregion
     }
