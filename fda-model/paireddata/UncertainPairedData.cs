@@ -164,10 +164,9 @@ namespace paireddata
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("UncertainPairedData");
-            masterElement.SetAttributeValue("Category", DamageCategory);
-            masterElement.SetAttributeValue("XLabel", XLabel);
-            masterElement.SetAttributeValue("YLabel", YLabel);
-            masterElement.SetAttributeValue("Name", Name);
+            XElement curveMetaDataElement = _metadata.WriteToXML();
+            curveMetaDataElement.Name = "CurveMetaData";
+            masterElement.Add(curveMetaDataElement);
             masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
             for (int i = 0; i < _xvals.Length; i++)
             {
@@ -184,10 +183,6 @@ namespace paireddata
 
         public static UncertainPairedData ReadFromXML(XElement element)
         {
-            string category = element.Attribute("Category").Value;
-            string xLabel = element.Attribute("XLabel").Value;
-            string yLabel = element.Attribute("YLabel").Value;
-            string name = element.Attribute("Name").Value;
             int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
             double[] xValues = new double[size];
             IDistribution[] yValues = new IDistribution[size];
@@ -200,14 +195,19 @@ namespace paireddata
                     {
                         xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
                     }
-                    else
+                    else if(!ordinateElements.Name.ToString().Equals("CurveMetaData"))
                     {
                         yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                    }
+                    else
+                    {
+                        //do nothing because the element reached is the curve metadata element 
                     }
                 }
                 i++;
             }
-            return new UncertainPairedData(xValues, yValues, xLabel, yLabel, name, category);
+            CurveMetaData curveMetaData = CurveMetaData.ReadFromXML(element.Element("CurveMetaData"));
+            return new UncertainPairedData(xValues, yValues, curveMetaData);
         }
         #endregion
     }

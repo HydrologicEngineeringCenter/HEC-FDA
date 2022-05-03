@@ -126,7 +126,7 @@ namespace paireddata
         }
         #endregion
 
-        #region Functions
+        #region Methods
         /// <summary>
         /// We have rules on monotonicity for non-exceedance probabilities. So we test for strict monotonic decreasing. 
         /// This means that the exceecance probabilities are strictly monotonically increasing
