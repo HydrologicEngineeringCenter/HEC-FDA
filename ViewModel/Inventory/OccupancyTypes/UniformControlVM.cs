@@ -29,11 +29,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
-        public string LabelString { get; set; }
+        public string MinLabelString { get; set; }
+        public string MaxLabelString { get; set; }
 
-        public UniformControlVM(double min, double max, string labelString)
+        public UniformControlVM(double min, double max, string minLabelString, string maxLabelString)
         {
-            LabelString = labelString;
+            MinLabelString = minLabelString;
+            MaxLabelString = maxLabelString;
             Min = min;
             Max = max;
         }

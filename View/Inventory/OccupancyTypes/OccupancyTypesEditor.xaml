@@ -42,7 +42,7 @@
                             <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
                         </Button>
                     </ToolBarPanel>
-                    <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
+                    <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
                 </StackPanel>
             </GroupBox>
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ViewModel.Inventory.OccupancyTypes;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -86,9 +86,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public OccTypeItem StructureItem { get; set; }
+        public OccTypeAsset StructureItem { get; set; }
         public OccTypeItemWithRatio ContentItem { get; set; }
-        public OccTypeItem VehicleItem { get; set; }
+        public OccTypeAsset VehicleItem { get; set; }
         public OccTypeItemWithRatio OtherItem { get; set; }
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //clone the occtype so that changes to it will not go into effect unless the user saves.
             IOccupancyType clonedOcctype = new OccupancyType(occtype);
 
-            StructureItem = new OccTypeItem(OcctypeItemType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
+            StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
             ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
-            VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
+            VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
             OtherItem = new OccTypeItemWithRatio(clonedOcctype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;

@@ -405,9 +405,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             string header = "Rename Occupancy Type Group";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "RenameOccupancyTypeGroup");
             Navigate(tab, true, true);
-            if (vm.WasCanceled == false)
+            if (!vm.WasCanceled)
             {
-                if (vm.HasErrors == false)
+                if (!vm.HasErrors)
                 {
                     string newName = vm.Name;
                     SelectedOccTypeGroup.Name = newName;

@@ -3,7 +3,7 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using Statistics.Distributions;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -13,9 +13,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public string Description { get; set; }
         public string DamageCategory { get; set; }
 
-        public OccTypeItem StructureItem { get; set; }
+        public OccTypeAsset StructureItem { get; set; }
         public OccTypeItemWithRatio ContentItem { get; set; }
-        public OccTypeItem VehicleItem { get; set; }
+        public OccTypeAsset VehicleItem { get; set; }
         public OccTypeItemWithRatio OtherItem { get; set; }
         public ContinuousDistribution FoundationHeightUncertainty { get; set; }
 
@@ -30,18 +30,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DamageCategory = damCatName;
             Description = "";
             GroupID = groupId;
-            StructureItem = CreateDefaultItem(OcctypeItemType.structure, true);
-            ContentItem = CreateDefaultItemWithRatio(OcctypeItemType.content, true);
-            VehicleItem = CreateDefaultItem(OcctypeItemType.vehicle, true);
-            OtherItem = CreateDefaultItemWithRatio(OcctypeItemType.other, false);
+            StructureItem = CreateDefaultAsset(OcctypeAssetType.structure, true);
+            ContentItem = CreateDefaultItemWithRatio(OcctypeAssetType.content, true);
+            VehicleItem = CreateDefaultAsset(OcctypeAssetType.vehicle, true);
+            OtherItem = CreateDefaultItemWithRatio(OcctypeAssetType.other, false);
             FoundationHeightUncertainty = new Deterministic(0);
 
             OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
             ID = manager.GetNextAvailableId();
         }
 
-        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeItem structureItem,
-            OccTypeItemWithRatio contentItem, OccTypeItem vehicleItem, OccTypeItemWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
+        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
+            OccTypeItemWithRatio contentItem, OccTypeAsset vehicleItem, OccTypeItemWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
         {
             Name = name;
             Description = description;
@@ -66,24 +66,24 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Description = ot.Description;
             DamageCategory = ot.DamageCategory;
             FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
-            StructureItem = new OccTypeItem( ot.StructureItem);
+            StructureItem = new OccTypeAsset( ot.StructureItem);
             ContentItem = new OccTypeItemWithRatio( ot.ContentItem);
-            VehicleItem = new OccTypeItem( ot.VehicleItem);
+            VehicleItem = new OccTypeAsset( ot.VehicleItem);
             OtherItem = new OccTypeItemWithRatio( ot.OtherItem);
             GroupID = ot.GroupID;
             ID = ot.ID;        
         }
 
-        private OccTypeItem CreateDefaultItem(OcctypeItemType itemType, bool isSelected)
+        private OccTypeAsset CreateDefaultAsset(OcctypeAssetType assetType, bool isSelected)
         {
-            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             ContinuousDistribution structValueUncert = new Deterministic(0);
-            return new OccTypeItem(itemType,  isSelected, structureCurve, structValueUncert);
+            return new OccTypeAsset(assetType,  isSelected, structureCurve, structValueUncert);
         }
 
-        private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeItemType itemType, bool isSelected)
+        private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeAssetType itemType, bool isSelected)
         {
-            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             ContinuousDistribution structValueUncert = new Deterministic(0);
             ContinuousDistribution structValueUncertRatio = new Deterministic(0);
             bool isByVal = true;

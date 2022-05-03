@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// This class extends OccTypeItem. The "Content" and "Other" have an extra boolean option
     /// where the curve can be by value or by a ratio of the structure curve.
     /// </summary>
-    public class OccTypeItemWithRatio : OccTypeItem
+    public class OccTypeItemWithRatio : OccTypeAsset
     {
         private bool _IsByValue;
         private bool _IsNotByValue;
@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsByValue = item.IsByValue;
         }
 
-        public OccTypeItemWithRatio(OcctypeItemType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
+        public OccTypeItemWithRatio(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
             ContinuousDistribution ratioUncertainty, bool isByValue) : base(itemType, isChecked, curve, valueUncertainty)
         {
             _ContentByRatioVM = new OtherValueUncertaintyVM(ratioUncertainty);

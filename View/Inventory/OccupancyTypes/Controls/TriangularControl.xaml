@@ -24,6 +24,7 @@
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding DisplayMostLikely, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Most Likely"/>
             <TextBox Text="{Binding MostLikely, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
+            <Label Content="{Binding MaxLabelString}"/>
         </StackPanel>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">

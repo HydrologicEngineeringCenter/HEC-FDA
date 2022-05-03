@@ -165,6 +165,11 @@
 
         #endregion
 
+        public const string OCCTYPE_PLOT_TITLE = "Depth-Percent Damage";
+        public const string OCCTYPE_DEPTH = "Depth";
+        public const string OCCTYPE_PERCENT_DAMAGE = "Percent Damage";
+
+
         public const string FDA_VERSION = "FDA 2.0";
 
         public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";

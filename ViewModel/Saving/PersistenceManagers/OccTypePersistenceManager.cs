@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -420,10 +420,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string vehicleItemXML = (string)rowData[VEH_ITEM_COL];
             string otherItemXML = (string)rowData[OTHER_ITEM_COL];
 
-            OccTypeItem structItem = ReadItemFromXML(OcctypeItemType.structure, structureItemXML);
-            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeItemType.content, contentItemXML);
-            OccTypeItem vehicleItem = ReadItemFromXML(OcctypeItemType.vehicle, vehicleItemXML);
-            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeItemType.other, otherItemXML);
+            OccTypeAsset structItem = ReadItemFromXML(OcctypeAssetType.structure, structureItemXML);
+            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeAssetType.content, contentItemXML);
+            OccTypeAsset vehicleItem = ReadItemFromXML(OcctypeAssetType.vehicle, vehicleItemXML);
+            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeAssetType.other, otherItemXML);
 
             ContinuousDistribution foundHtUncert = (ContinuousDistribution)ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
 
@@ -466,7 +466,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return rowsList.ToList();
         }
 
-        private OccTypeItem ReadItemFromXML(OcctypeItemType itemType, string xmlString)
+        private OccTypeAsset ReadItemFromXML(OcctypeAssetType itemType, string xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement itemElem = doc.Element(ITEM_DATA);
@@ -479,10 +479,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement valueUncert = valueUncertParent.Elements().First();
             ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
 
-            return new OccTypeItem(itemType, isChecked, comp, valueUncertainty);
+            return new OccTypeAsset(itemType, isChecked, comp, valueUncertainty);
         }
 
-        private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeItemType itemType, string xmlString)
+        private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeAssetType itemType, string xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement itemElem = doc.Element(ITEM_DATA);
@@ -503,7 +503,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new OccTypeItemWithRatio(itemType, isChecked, comp, valueUncertainty, valueUncertaintyRatio, isByVal);
         }
 
-        private string WriteOccTypeItemToXML(OccTypeItem item)
+        private string WriteOccTypeItemToXML(OccTypeAsset item)
         {
             XElement itemElem = new XElement(ITEM_DATA);
             itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);

@@ -172,6 +172,11 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
+            <DataTemplate.Resources>
+                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+                                         MinWidth="150" Width="500" 
+                                         MinHeight="150" Height="150" />
+            </DataTemplate.Resources>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
