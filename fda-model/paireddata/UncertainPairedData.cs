@@ -30,7 +30,7 @@ namespace paireddata
         {
             get { return _metadata.Name; }
         }
-        public string Category
+        public string DamageCategory
         {
             get { return _metadata.DamageCategory; }
         }
@@ -58,7 +58,7 @@ namespace paireddata
 
 
         }
-        
+        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
         {
             _xvals = xs;
@@ -66,6 +66,7 @@ namespace paireddata
             _metadata = new CurveMetaData(xlabel,ylabel,name);
             AddRules();
         }
+        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
         {
             _xvals = xs;
@@ -163,7 +164,7 @@ namespace paireddata
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("UncertainPairedData");
-            masterElement.SetAttributeValue("Category", Category);
+            masterElement.SetAttributeValue("Category", DamageCategory);
             masterElement.SetAttributeValue("XLabel", XLabel);
             masterElement.SetAttributeValue("YLabel", YLabel);
             masterElement.SetAttributeValue("Name", Name);

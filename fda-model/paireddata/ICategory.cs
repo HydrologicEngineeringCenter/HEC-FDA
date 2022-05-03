@@ -3,6 +3,6 @@ namespace paireddata
 {
     public interface ICategory
     {
-        string Category { get; }
+        string DamageCategory { get; }
     }
 }

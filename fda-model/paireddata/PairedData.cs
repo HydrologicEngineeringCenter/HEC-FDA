@@ -13,7 +13,7 @@ namespace paireddata
         private CurveMetaData _metadata;
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
-        public string Category
+        public string DamageCategory
         {
             get { return _metadata.DamageCategory; }
         }

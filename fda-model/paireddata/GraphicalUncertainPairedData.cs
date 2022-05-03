@@ -79,7 +79,7 @@ namespace paireddata
             _metaData = new CurveMetaData();
             AddRules();
         }
-        [Obsolete("This constructor is deprecated. Please use the constructor that accepts Curve Meta Data as an argument")]
+        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             _UsingStagesNotFlows = usingStagesNotFlows;

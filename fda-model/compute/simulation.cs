@@ -97,7 +97,7 @@ namespace compute
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.Category, convergenceCriteria);
+                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.DamageCategory, convergenceCriteria);
             }
             _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
         }
@@ -346,18 +346,18 @@ namespace compute
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.Category, iteration);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.DamageCategory, iteration);
 
                 if (giveMeADamageFrequency)
                 {
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.Category)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.DamageCategory)));
                 }
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.Category)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.DamageCategory)));
 
             }
         }
@@ -373,11 +373,11 @@ namespace compute
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category, iteration);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.DamageCategory, iteration);
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.Category)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.DamageCategory)));
                 }
 
             }
@@ -385,7 +385,7 @@ namespace compute
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.Category)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.DamageCategory)));
 
             }
         }
@@ -673,7 +673,7 @@ namespace compute
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
-                    _sim.AddSinglePropertyRule(uncertainPairedData.Category + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
+                    _sim.AddSinglePropertyRule(uncertainPairedData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
                 }
                 return new SimulationBuilder(_sim);
             }
