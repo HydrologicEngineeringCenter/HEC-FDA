@@ -193,8 +193,8 @@ namespace fda_model_test.unittests
             performanceByThresholds.AddThreshold(threshold2);
 
             double keyForCNEP = .98;
-            performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
-            performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddConditionalNonExceedenceProbabilityKey(keyForCNEP, convergenceCriteria);
+            performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddAssuranceHistogram(keyForCNEP, convergenceCriteria);
+            performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddAssuranceHistogram(keyForCNEP, convergenceCriteria);
 
             int iterations = 2250;
             int seed = 1234;
@@ -207,10 +207,10 @@ namespace fda_model_test.unittests
                 double uniformObservation2 = random.NextDouble()+2;
                 double messyObservation = normal.InverseCDF(random.NextDouble())* random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
                 double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
-                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation1, i);
-                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, uniformObservation2, i);
-                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservationLogged, i);
-                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForCNEP(keyForCNEP, messyObservation, i);
+                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1, i);
+                performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2, i);
+                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged, i);
+                performanceByThresholds.ListOfThresholds[thresholdID2].ProjectPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation, i);
             }
 
             double upperConfidenceLimitProbability = 0.975;

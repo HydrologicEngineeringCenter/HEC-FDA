@@ -7,48 +7,48 @@ using Statistics;
 using Statistics.Histograms;
 using paireddata;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace metrics
 {
-    public class SystemPerformanceResults
+    public class SystemPerformanceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
         private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
         private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
+        private const string AEP_ASSURANCE_TYPE = "AEP";
+        private const string STAGE_ASSURANCE_TYPE = "STAGE";
+        private const string STRUCTURAL_ASSURANCE_TYPE = "STRUCTURAL";
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
-        private ThreadsafeInlineHistogram _aep = null;
-        private Dictionary<double, ThreadsafeInlineHistogram> _cnep;
+        private List<AssuranceResultStorage> _assuranceList;
         private UncertainPairedData _systemResponseFunction;
         private ConvergenceCriteria _ConvergenceCriteria;
+
         #endregion
         #region Properties
-        public ThreadsafeInlineHistogram HistogramOfAEPs
+        public List<AssuranceResultStorage> Assurances
         {
             get
             {
-                return _aep;
+                return _assuranceList;
             }
         }
-        public Dictionary<double, ThreadsafeInlineHistogram> CNEPHistogramOfStages
-        {
-            get
-            {
-                return _cnep;
-            }
-        }
+        public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructors 
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, convergenceCriteria);
-            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
-            _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
             _ConvergenceCriteria = convergenceCriteria;
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            _assuranceList.Add(aepAssurance);
 
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
@@ -57,31 +57,26 @@ namespace metrics
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = new ThreadsafeInlineHistogram(AEP_HISTOGRAM_DEFAULT_BINWIDTH, convergenceCriteria);
-            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
-            _cnep = new Dictionary<double, ThreadsafeInlineHistogram>();
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            _assuranceList.Add(aepAssurance);
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = aepHistogram;
-            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
-            _cnep = cnepHistogramDictionary;
+            _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
 
         }
-        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, ThreadsafeInlineHistogram aepHistogram, Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary)
+        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
             _systemResponseFunction = systemResponseFunction;
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
-            _aep = aepHistogram;
-            _aep.SetIterationSize(convergenceCriteria.MaxIterations);
-            _cnep = cnepHistogramDictionary;
+            _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
 
         }
@@ -89,76 +84,52 @@ namespace metrics
 
         #endregion
         #region Methods
-
-        public void AddAEPEstimate(double aepEstimate, Int64 iteration)
+        public void AddAssuranceHistogram(double standardNonExceedanceProbability)
         {
-            _aep.AddObservationToHistogram(aepEstimate, iteration);
-        }
-        /// <summary>
-        /// TODO: Is it possible that injecting convergence criteria here instead of using the convergence criteria injected into the 
-        /// constructor is causing conflicts?
-        /// </summary>
-        /// <param name="standardNonExceedanceProbability"></param>
-        /// <param name="c"></param>
-        public void AddConditionalNonExceedenceProbabilityKey(double standardNonExceedanceProbability, ConvergenceCriteria c)
-        {
-            if (!_cnep.ContainsKey(standardNonExceedanceProbability))
+            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, CNEP_HISTOGRAM_DEFAULT_BINWIDTH, standardNonExceedanceProbability);
+            if (!_assuranceList.Contains(assurance))
             {
-                var histogram = new ThreadsafeInlineHistogram(CNEP_HISTOGRAM_DEFAULT_BINWIDTH, c);
-                histogram.SetIterationSize(c.MaxIterations);
-                _cnep.Add(standardNonExceedanceProbability, histogram);
+                _assuranceList.Add(assurance);
             }
         }
-
-        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP, Int64 iteration)
+        public void ReportMessage(object sender, MessageEventArgs e)
         {
-            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP, iteration);
+            MessageReport?.Invoke(sender, e);
+        }
+        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, Int64 iteration)
+        {
+            GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.AddObservationToHistogram(stage, iteration);
         }
 
         public double MeanAEP()
         {
-            return _aep.Mean;
+            return GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.Mean;
         }
 
         public double MedianAEP()
         {
-            return _aep.InverseCDF(0.5);
+            return GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.InverseCDF(0.5);
         }
 
         public double AssuranceOfAEP(double exceedanceProbability)
         {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
-            double assuranceOfAEP = _aep.CDF(exceedanceProbability);
+            double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
         public bool ConditionalNonExceedanceProbabilityIsConverged()
         {
-            double key = 0.98;
-            return _cnep[key].IsConverged;
+            double standardNonExceedanceProbability = 0.98;
+            return GetAssurance(STAGE_ASSURANCE_TYPE,standardNonExceedanceProbability).AssuranceHistogram.IsConverged;
         }
         public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
-
-            //dont like this.
-            foreach( double key in _cnep.Keys)
-            {
-                if(key == 0.98)
-                {
-                    return _cnep[key].TestForConvergence(upperConfidenceLimitProb,lowerConfidenceLimitProb);
-                }
-            }
-            return false;
+            double standardNonExceedanceProbability = 0.98;
+            return GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
         }
-        public Int64 ConditionalNonExceedanceProbabilityRemainingIterations(double upper, double lower)
+        public Int64 ConditionalNonExceedanceProbabilityRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
-            //dont like this
-            foreach (double key in _cnep.Keys)
-            {
-                if (key == 0.98)
-                {
-                    return _cnep[key].EstimateIterationsRemaining(upper, lower);
-                }
-            }
-            return 0;
+            double standardNonExceedanceProbability = 0.98;
+            return GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
         }
         public double ConditionalNonExceedanceProbability(double standardNonExceedanceProbability)
         {
@@ -168,8 +139,8 @@ namespace metrics
             }
             else
             {
-                _cnep[standardNonExceedanceProbability].ForceDeQueue();
-                double conditionalNonExceedanceProbability = _cnep[standardNonExceedanceProbability].CDF(_thresholdValue);
+                GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.ForceDeQueue();
+                double conditionalNonExceedanceProbability = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.CDF(_thresholdValue);
                 return conditionalNonExceedanceProbability;
             }
 
@@ -177,10 +148,11 @@ namespace metrics
 
         private double CalculateConditionalNonExceedanceProbabilityForLevee(double standardNonExceedanceProbability)
         {
+            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             IPairedData medianLeveeCurve = _systemResponseFunction.SamplePairedData(0.5);
-            _cnep[standardNonExceedanceProbability].ForceDeQueue();
-            double stageStep = _cnep[standardNonExceedanceProbability].BinWidth;
-            int stageStepQuantity = _cnep[standardNonExceedanceProbability].BinCounts.Length;
+            assuranceHistogram.ForceDeQueue();
+            double stageStep = assuranceHistogram.BinWidth;
+            int stageStepQuantity = assuranceHistogram.BinCounts.Length;
             double[] stages = _systemResponseFunction.Xvals;
             double firstStage = stages[0];
 
@@ -200,8 +172,8 @@ namespace metrics
             { 
                 currentStage = firstStage + i * stageStep;
                 nextStage = currentStage + stageStep;
-                currentCumulativeExceedanceProbability = 1-_cnep[standardNonExceedanceProbability].CDF(currentStage);
-                nextCumulativeExceedanceProbability = 1-_cnep[standardNonExceedanceProbability].CDF(nextStage);
+                currentCumulativeExceedanceProbability = 1- assuranceHistogram.CDF(currentStage);
+                nextCumulativeExceedanceProbability = 1- assuranceHistogram.CDF(nextStage);
                 incrementalProbability = currentCumulativeExceedanceProbability - nextCumulativeExceedanceProbability;
                 averageStage = (currentStage + nextStage) / 2;
                 geotechnicalFailureAtAverageStage = medianLeveeCurve.f(averageStage);
@@ -222,36 +194,47 @@ namespace metrics
             double ltep = 1 - Math.Pow((1 - MeanAEP()), years);
             return ltep;
         }
+        /// <summary>
+        /// The parallel test for convergence will test for convergence in the histograms of stages and in the histogram of aeps
+        /// </summary>
+        /// <param name="upperQuantile"></param>
+        /// <param name="lowerQuantile"></param>
         public void ParallelTestForConvergence(double upperQuantile, double lowerQuantile)
         {
-            double[] keys = new double[_cnep.Keys.Count];
-            int index = 0;
-            foreach (var keyvaluepair in _cnep)
+            double[] assuranceQuantity = new double[_assuranceList.Count];
+            Parallel.For(0, assuranceQuantity.Length, i =>
             {
-                keys[index] = keyvaluepair.Key;
-                index++;
-            }
-            Parallel.For(0, keys.Length, i =>
-            {
-                _cnep[keys[i]].TestForConvergence(upperQuantile,lowerQuantile);//this will force dequeue also.
+                _assuranceList.ElementAt(i).AssuranceHistogram.TestForConvergence(upperQuantile, lowerQuantile);
             });
         }
         public bool Equals(SystemPerformanceResults projectPerformanceResults)
         {
-            bool aepHistogramsAreEqual = _aep.Equals(projectPerformanceResults.HistogramOfAEPs);
-            if (!aepHistogramsAreEqual)
-            { 
-                return false; 
-            }
-            foreach (double key in _cnep.Keys) 
+            foreach (AssuranceResultStorage assuranceResultStorage in _assuranceList)
             {
-                bool cnepHistogramsAreEqual = _cnep[key].Equals(projectPerformanceResults.CNEPHistogramOfStages[key]);
-                if (!cnepHistogramsAreEqual)
+                bool areEqual = assuranceResultStorage.Equals(projectPerformanceResults.GetAssurance(assuranceResultStorage.AssuranceType, assuranceResultStorage.StandardNonExceedanceProbability));
+                if (!areEqual)
                 {
-                    return false; 
+                    return false;
                 }
             }
             return true;
+        }
+        public AssuranceResultStorage GetAssurance(string type, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
+        {
+            foreach (AssuranceResultStorage assurance in _assuranceList)
+            {
+                if (assurance.AssuranceType == type)
+                {
+                    if (assurance.StandardNonExceedanceProbability == standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee)
+                    {
+                        return assurance;
+                    }
+                }
+            }
+            ReportMessage(this, new MessageEventArgs(new Message("the requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned")));
+            AssuranceResultStorage dummyAssurance = new AssuranceResultStorage();
+            return dummyAssurance;
+
         }
         public XElement WriteToXML()
         {
@@ -265,19 +248,11 @@ namespace metrics
                 systemResponseCurveElement.Name = "System_Response_Curve";
                 masterElement.Add(systemResponseCurveElement);
             }
-            XElement aepElement = _aep.WriteToXML();
-            aepElement.Name = "AEP_Histogram";
-            masterElement.Add(aepElement);
-            int keyCount = _cnep.Keys.ToArray().Length;
-            masterElement.SetAttributeValue("Key_Count", keyCount);
-            for (int i = 0; i <_cnep.Keys.ToArray().Length; i++)
+            foreach (AssuranceResultStorage assuranceResultStorage in _assuranceList)
             {
-                double key = _cnep.Keys.ToArray()[i];
-                XElement cnepElement = new XElement($"prob{key}");
-                cnepElement = _cnep[key].WriteToXML();
-                cnepElement.Name = $"prob{key}";
-                masterElement.Add(cnepElement);
-                masterElement.SetAttributeValue($"key{i}", key);
+                XElement assuranceElement = assuranceResultStorage.WriteToXML();
+                assuranceElement.Name = "AssuranceResultStorage";
+                masterElement.Add(assuranceElement);
             }
             XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
             convergenceCriteriaElement.Name = "Convergence_Criteria";
@@ -287,15 +262,15 @@ namespace metrics
 
         public static SystemPerformanceResults ReadFromXML(XElement xElement)
         {
-            Dictionary<double, ThreadsafeInlineHistogram> cnepHistogramDictionary = new Dictionary<double, ThreadsafeInlineHistogram>();
-            int keyCount = Convert.ToInt32(xElement.Attribute("Key_Count").Value);
-            for (int i = 0; i < keyCount; i++)
+            List<AssuranceResultStorage> histogramList = new List<AssuranceResultStorage>();
+            foreach (XElement element in xElement.Elements())
             {
-                double key = Convert.ToDouble(xElement.Attribute($"key{i}").Value);
-                ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element($"prob{key}"));
-                cnepHistogramDictionary.Add(key, threadsafeInlineHistogram);
+                if (element.Name == "AssuranceResultStorage")
+                {
+                    AssuranceResultStorage assuranceResultStorage = AssuranceResultStorage.ReadFromXML(element);
+                    histogramList.Add(assuranceResultStorage);
+                }
             }
-            ThreadsafeInlineHistogram aepHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("AEP_Histogram"));
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(xElement.Element("Convergence_Criteria"));
             bool calculatePerformanceForLevee = Convert.ToBoolean(xElement.Attribute("Calculates_Performance_For_Levee").Value);
             UncertainPairedData systemResponseCurve = new UncertainPairedData();
@@ -308,11 +283,11 @@ namespace metrics
 
             if (calculatePerformanceForLevee)
             {
-                return new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+                return new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, histogramList);
             }
             else
             {
-                return new SystemPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, aepHistogram, cnepHistogramDictionary);
+                return new SystemPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, histogramList);
             }
         }
         #endregion
