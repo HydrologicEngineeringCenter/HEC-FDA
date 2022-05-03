@@ -12,7 +12,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 namespace paireddata
 {
-    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage
+    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage, IMetaData
     {
         #region Fields
         private int _EquivalentRecordLength;
@@ -27,10 +27,14 @@ namespace paireddata
         #endregion
 
         #region Properties
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string XLabel
         {
             get { return _metaData.XLabel; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string YLabel
         {
             get { return _metaData.YLabel; }
@@ -42,17 +46,30 @@ namespace paireddata
                 return _StageOrLogFlowDistributions;
             }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string Name
         {
             get { return _metaData.Name; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string Category
         {
             get { return _metaData.DamageCategory; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public bool IsNull
         {
             get { return _metaData.IsNull; }
+        }
+        public CurveMetaData CurveMetaData
+        {
+            get
+            {
+                return _metaData;
+            }
         }
         public double[] ExceedanceProbabilities
         {

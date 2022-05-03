@@ -37,7 +37,7 @@ namespace compute
         {
             get
             {
-                return !_systemResponseFunction_stage_failureProbability.IsNull;
+                return !_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull;
             }
         }
 
@@ -97,9 +97,9 @@ namespace compute
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _results.ExpectedAnnualDamageResults.AddEADResultObject(uncertainPairedData.DamageCategory, convergenceCriteria);
+                _results.ExpectedAnnualDamageResults.AddEADResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria);
             }
-            _results.ExpectedAnnualDamageResults.AddEADResultObject("Total", convergenceCriteria);
+            _results.ExpectedAnnualDamageResults.AddEADResultObject("Total", "Total", convergenceCriteria);
         }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
@@ -168,10 +168,10 @@ namespace compute
                     {
                         threadlocalRandomProvider = new RandomProvider(seeds[i]);
                     }
-                    if (_frequency_stage.IsNull)
+                    if (_frequency_stage.CurveMetaData.IsNull)
                     {
                         IPairedData frequencyDischarge;
-                        if (_frequency_discharge_graphical.IsNull)
+                        if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
                             frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
 
@@ -182,9 +182,9 @@ namespace compute
                         }
                         //if frequency_flow is not defined throw big errors.
                         //check if flow transform exists, and use it here
-                        if (_unregulated_regulated.IsNull)
+                        if (_unregulated_regulated.CurveMetaData.IsNull)
                         {
-                            if (_discharge_stage.IsNull)
+                            if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
                                 ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
@@ -202,7 +202,7 @@ namespace compute
                         {
                             IPairedData inflow_outflow_sample = _unregulated_regulated.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
                             IPairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                            if (_discharge_stage.IsNull)
+                            if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
                                 ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
@@ -249,10 +249,10 @@ namespace compute
         {
 
             //interior exterior
-            if (_channelstage_floodplainstage.IsNull)
+            if (_channelstage_floodplainstage.CurveMetaData.IsNull)
             {
                 //levees
-                if (_systemResponseFunction_stage_failureProbability.IsNull)
+                if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
                 {
                     if (computeWithDamage)
                     {
@@ -281,7 +281,7 @@ namespace compute
                 IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                 IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
-                if (_systemResponseFunction_stage_failureProbability.IsNull)
+                if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
                 {
                     if(computeWithDamage)
                     {
@@ -346,18 +346,18 @@ namespace compute
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.DamageCategory, iteration);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, iteration);
 
                 if (giveMeADamageFrequency)
                 {
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.DamageCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
                 }
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", iteration);
+            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", "Total", iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.DamageCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories" + totalDamageFrequency.CurveMetaData.DamageCategory + "and" + totalDamageFrequency.CurveMetaData.AssetCategory)));
 
             }
         }
@@ -373,19 +373,19 @@ namespace compute
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.DamageCategory, iteration);
+                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, iteration);
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.DamageCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
                 }
 
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", iteration);
+            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", "Total", iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.DamageCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories"+totalDamageFrequency.CurveMetaData.DamageCategory+"and"+totalDamageFrequency.CurveMetaData.AssetCategory)));
 
             }
         }
@@ -465,7 +465,7 @@ namespace compute
             CurveMetaData metadata = new CurveMetaData("Total");
             IPairedData frequencyDamage = new PairedData(null, null, metadata);
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
-            if (_systemResponseFunction_stage_failureProbability.IsNull)
+            if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
             {
                 if(_damage_category_stage_damage.Count == 0)
                 {
@@ -474,10 +474,10 @@ namespace compute
                     return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
                 }
 
-                if (_frequency_stage.IsNull)
+                if (_frequency_stage.CurveMetaData.IsNull)
                 {
                     IPairedData frequencyFlow;
-                    if (_frequency_discharge_graphical.IsNull)
+                    if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
                         frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 1000);
                     }
@@ -485,9 +485,9 @@ namespace compute
                     {
                         frequencyFlow = _frequency_discharge_graphical.SamplePairedData(meanRandomProvider.NextRandom());
                     }
-                    if (_unregulated_regulated.IsNull)
+                    if (_unregulated_regulated.CurveMetaData.IsNull)
                     {
-                        if (_discharge_stage.IsNull)
+                        if (_discharge_stage.CurveMetaData.IsNull)
                         {
                             throw new Exception("A rating curve must accompany a flow-frequency function");
                         }
@@ -501,7 +501,7 @@ namespace compute
                     {
                         IPairedData inflowOutflowSample = _unregulated_regulated.SamplePairedData(meanRandomProvider.NextRandom());
                         IPairedData transformFlowFrequency = inflowOutflowSample.compose(frequencyFlow);
-                        if (_discharge_stage.IsNull)
+                        if (_discharge_stage.CurveMetaData.IsNull)
                         {
                             throw new Exception("A rating curve must accompany a flow-frequency function");
                         }
@@ -563,7 +563,7 @@ namespace compute
 
         private bool LeveeIsValid()
         {
-            if (_systemResponseFunction_stage_failureProbability.IsNull) return false;
+            if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull) return false;
             if (_systemResponseFunction_stage_failureProbability.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
                 ReportMessage(this, new MessageEventArgs(new Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
@@ -673,7 +673,7 @@ namespace compute
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
-                    _sim.AddSinglePropertyRule(uncertainPairedData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
+                    _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
                 }
                 return new SimulationBuilder(_sim);
             }

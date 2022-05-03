@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace paireddata
 {
-    public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply, ICategory
+    public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply, IMetaData
     {
         double[] Xvals { get; }
         double[] Yvals { get; }

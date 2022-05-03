@@ -9,7 +9,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace paireddata
 {
-    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICategory, ICanBeNull, IReportMessage
+    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage
     {
         #region Fields 
         private double[] _xvals;
@@ -18,25 +18,41 @@ namespace paireddata
         #endregion
 
         #region Properties 
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
         public string XLabel
         {
             get { return _metadata.XLabel; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string YLabel
         {
             get { return _metadata.YLabel; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string Name
         {
             get { return _metadata.Name; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public string DamageCategory
         {
             get { return _metadata.DamageCategory; }
         }
+        [Obsolete("Let's deprecate and finally just use curve metadata")]
+
         public bool IsNull
         {
             get { return _metadata.IsNull; }
+        }
+        public CurveMetaData CurveMetaData
+        {
+            get
+            {
+                return _metadata;
+            }
         }
         public double[] Xvals
         {
