@@ -8,13 +8,13 @@ namespace scenarios
     public class Scenario
     {
         private Int64 _year;
-        private IList<ImpactAreaSimulation> _impactAreas;
+        private IList<ImpactAreaSimulation> _impactAreaSimulations;
         //probably need getters and setters
         public IList<ImpactAreaSimulation> ImpactAreaSimulations
         {
             get
             {
-                return _impactAreas;
+                return _impactAreaSimulations;
             }
         }
         public Int64 Year{
@@ -22,20 +22,20 @@ namespace scenarios
         }
         public IList<ImpactAreaSimulation> ImpactAreas
         {
-            get { return _impactAreas;  }
+            get { return _impactAreaSimulations;  }
         }
         public Scenario(Int64 year, IList<ImpactAreaSimulation> impactAreas){
             _year = year;
-            _impactAreas = impactAreas;
+            _impactAreaSimulations = impactAreas;
         }
-        public Dictionary<int, Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+        public List<Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //probably instantiate a rng to seed each impact area differently
-            Dictionary<int,Results> returnDictionary = new Dictionary<int, Results>();
+            List<Results> returnList = new List<Results>();
 
-            foreach(ImpactAreaSimulation impactArea in _impactAreas){
-                returnDictionary.Add(impactArea.ImpactArea.ID, impactArea.Compute(rp, iterations));
+            foreach(ImpactAreaSimulation impactArea in _impactAreaSimulations){
+                returnList.Add(impactArea.Compute(rp, iterations));
             }
-            return returnDictionary;
+            return returnList;
         }
     }
 }
