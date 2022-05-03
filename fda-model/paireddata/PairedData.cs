@@ -15,7 +15,7 @@ namespace paireddata
         public double[] Yvals { get; private set; }
         public string Category
         {
-            get { return _metadata.Category; }
+            get { return _metadata.DamageCategory; }
         }
         public PairedData(double[] xs, double[] ys)
         {

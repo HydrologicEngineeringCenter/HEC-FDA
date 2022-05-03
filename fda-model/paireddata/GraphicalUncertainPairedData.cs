@@ -48,7 +48,7 @@ namespace paireddata
         }
         public string Category
         {
-            get { return _metaData.Category; }
+            get { return _metaData.DamageCategory; }
         }
         public bool IsNull
         {

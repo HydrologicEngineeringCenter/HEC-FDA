@@ -11,7 +11,8 @@ namespace paireddata
         public string XLabel { get; }
         public string YLabel { get; }
         public string Name { get; }
-        public string Category { get; }
+        public string DamageCategory { get; }
+        public string AssetCategory { get; }
         public bool IsNull { get; }
         public CurveTypesEnum CurveType {get;}
         public CurveMetaData()
@@ -19,35 +20,35 @@ namespace paireddata
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             XLabel = "xlabel";
             YLabel = "ylabel";
-            Name = "made up";
-            Category = "residential";
+            Name = "unnamed";
+            DamageCategory = "unassiged";
             IsNull = true;
         }
-        public CurveMetaData(string category)
+        public CurveMetaData(string damageCategory)
         {
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             XLabel = "xlabel";
             YLabel = "ylabel";
-            Name = "made up";
-            Category = category;
+            Name = "unnamed";
+            DamageCategory = damageCategory;
             IsNull = false;
         }
-        public CurveMetaData(string category, CurveTypesEnum curvetype)
+        public CurveMetaData(string damageCategory, CurveTypesEnum curvetype)
         {
             CurveType = curvetype;
             XLabel = "xlabel";
             YLabel = "ylabel";
-            Name = "made up";
-            Category = category;
+            Name = "unnamed";
+            DamageCategory = damageCategory;
             IsNull=false;
         }
-        public CurveMetaData(string xlabel, string ylabel, string name, string category)
+        public CurveMetaData(string xlabel, string ylabel, string name, string damageCategory)
         {
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Category = category;
+            DamageCategory = damageCategory;
             IsNull = false;
         }
         public CurveMetaData(string xlabel, string ylabel, string name)
@@ -56,16 +57,16 @@ namespace paireddata
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Category = "AGAIG";
+            DamageCategory = "unassigned";
             IsNull = false;
         }
-        public CurveMetaData(string xlabel, string ylabel, string name, string category, CurveTypesEnum curveType)
+        public CurveMetaData(string xlabel, string ylabel, string name, string damageCategory, CurveTypesEnum curveType)
         {
             CurveType = curveType;
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Category = category;
+            DamageCategory = damageCategory;
             IsNull = false;
         }
         public CurveMetaData(string xlabel, string ylabel, string name, CurveTypesEnum curveType)
@@ -74,7 +75,7 @@ namespace paireddata
             XLabel = xlabel;
             YLabel = ylabel;
             Name = name;
-            Category = "AGAIG";
+            DamageCategory = "unassigned";
             IsNull = false;
         }
     }
