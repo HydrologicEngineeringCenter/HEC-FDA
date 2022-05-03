@@ -3,91 +3,151 @@ using System.Collections.Generic;
 using Statistics;
 using Statistics.Histograms;
 using System.Xml.Linq;
-
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace metrics
 {
-    public class ExpectedAnnualDamageResults
+    public class ExpectedAnnualDamageResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
-        private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private Dictionary<string, ThreadsafeInlineHistogram> _ead;
+        #region Fields
+        private List<ExpectedAnnualDamageResult> _eadResultList;
+        #endregion
 
-        public Dictionary<string, ThreadsafeInlineHistogram> HistogramsOfEADs
+        #region Properties 
+        public List<ExpectedAnnualDamageResult> EADResultList
         {
             get
             {
-                return _ead;
+                return _eadResultList;
             }
         }
-   
+        public event MessageReportedEventHandler MessageReport;
+
+        #endregion
+        #region Constructors
         public ExpectedAnnualDamageResults(){
-            _ead = new Dictionary<string, ThreadsafeInlineHistogram>();
+            _eadResultList = new List<ExpectedAnnualDamageResult>();
         }
-        public ExpectedAnnualDamageResults(Dictionary<string, ThreadsafeInlineHistogram> eadDictionary)
+        private ExpectedAnnualDamageResults(List<ExpectedAnnualDamageResult> expectedAnnualDamageResults)
         {
-            _ead = eadDictionary;
+            _eadResultList = expectedAnnualDamageResults;
         }
-        public void AddEADKey(string category, ConvergenceCriteria convergenceCriteria)
+        #endregion
+
+        #region Methods 
+        public void AddEADResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
-            if (!_ead.ContainsKey(category))
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
             {
-                var histogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, convergenceCriteria);
-                histogram.SetIterationSize(convergenceCriteria.MaxIterations);
-                _ead.Add(category, histogram);
+                if (expectedAnnualDamageResult.DamageCategory != damageCategory)
+                {
+                    if (expectedAnnualDamageResult.AssetCategory != assetCategory)
+                    {
+                        ExpectedAnnualDamageResult newExpectedAnnualDamageResult = new ExpectedAnnualDamageResult(damageCategory, assetCategory, convergenceCriteria);
+                        _eadResultList.Add(newExpectedAnnualDamageResult);
+                    }
+                }
             }
         }
-        public void AddEADEstimate(double eadEstimate, string category, Int64 iteration)
+        public void AddEADEstimate(double eadEstimate, string damageCategory, string assetCategory, Int64 iteration)
         {
-            _ead[category].AddObservationToHistogram(eadEstimate, iteration);
+
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
+            {
+                if (expectedAnnualDamageResult.DamageCategory == damageCategory)
+                {
+                    if (expectedAnnualDamageResult.AssetCategory == assetCategory)
+                    {
+                        expectedAnnualDamageResult.AddEADRealization(eadEstimate, iteration);
+                    }
+                }
+            }
         }
-        public double MeanEAD(string category)
+        public double MeanEAD(string damageCategory, string assetCategory = "unassigned")
         {
-            return _ead[category].Mean;
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
+            {
+                if (expectedAnnualDamageResult.DamageCategory == damageCategory)
+                {
+                    if (expectedAnnualDamageResult.AssetCategory == assetCategory)
+                    {
+                        return expectedAnnualDamageResult.MeanEAD();
+                    }
+                }
+ 
+            }
+            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category combination could not be found. An arbitrary result of 0 is being returned.")));
+            return 0;
         }
 
-        public double EADExceededWithProbabilityQ(string category, double exceedanceProbability)
+        public double EADExceededWithProbabilityQ(string damageCategory, double exceedanceProbability, string assetCategory = "unassigned")
         {
-            double nonExceedanceProbability = 1 - exceedanceProbability;
-            double quartile = _ead[category].InverseCDF(nonExceedanceProbability);
-            return quartile;
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
+            {
+                if (expectedAnnualDamageResult.DamageCategory == damageCategory)
+                {
+                    if (expectedAnnualDamageResult.AssetCategory == assetCategory)
+                    {
+                        double quartile = expectedAnnualDamageResult.EADExceededWithProbabilityQ(exceedanceProbability);
+                        return quartile;
+                    }
+                }
+
+            }
+            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category combination could not be found. An arbitrary result of 0 is being returned.")));
+            return 0;
         }
         
         public bool Equals(ExpectedAnnualDamageResults expectedAnnualDamageResults)
         {
-           foreach (string category in HistogramsOfEADs.Keys)
-            {
-                bool histogramsMatch = HistogramsOfEADs[category].Equals(expectedAnnualDamageResults.HistogramsOfEADs[category]);
-                if (!histogramsMatch)
+           foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
+           {
+               foreach (ExpectedAnnualDamageResult inputExpectedAnnualDamageResult in expectedAnnualDamageResults.EADResultList)
                 {
-                    return false;
+                    if (expectedAnnualDamageResult.DamageCategory == inputExpectedAnnualDamageResult.DamageCategory)
+                    {
+                        if (expectedAnnualDamageResult.AssetCategory == inputExpectedAnnualDamageResult.AssetCategory)
+                        {
+                            bool resultsMatch = expectedAnnualDamageResult.Equals(inputExpectedAnnualDamageResult);
+                            if (!resultsMatch)
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
             return true;
-
+        }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
         }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");
-            foreach (string key in HistogramsOfEADs.Keys)
+            foreach (ExpectedAnnualDamageResult expectedAnnualDamageResult in _eadResultList)
             {
-                XElement rowElement = new XElement($"{key}");
-                rowElement = _ead[key].WriteToXML();
-                rowElement.Name = $"{key}";
-                masterElem.Add(rowElement);
+                XElement expectedAnnualDamageResultElement = expectedAnnualDamageResult.WriteToXML();
+                expectedAnnualDamageResultElement.Name = $"{expectedAnnualDamageResult.DamageCategory}-{expectedAnnualDamageResult.AssetCategory}";
+                masterElem.Add(expectedAnnualDamageResultElement);
             }
             return masterElem;
         }
 
         public static ExpectedAnnualDamageResults ReadFromXML(XElement xElement)
         {
-            Dictionary<string, ThreadsafeInlineHistogram> eadHistogramDictionary = new Dictionary<string, ThreadsafeInlineHistogram>();
+            List<ExpectedAnnualDamageResult> expectedAnnualDamageResults = new List<ExpectedAnnualDamageResult>();
             foreach (XElement histogramElement in xElement.Elements())
             {
-                eadHistogramDictionary.Add(Convert.ToString(histogramElement.Name),ThreadsafeInlineHistogram.ReadFromXML(histogramElement));
+                expectedAnnualDamageResults.Add(ExpectedAnnualDamageResult.ReadFromXML(histogramElement));
             }
-            return new ExpectedAnnualDamageResults(eadHistogramDictionary);
+            return new ExpectedAnnualDamageResults(expectedAnnualDamageResults);
         }
 
-
+        #endregion
     }
 }

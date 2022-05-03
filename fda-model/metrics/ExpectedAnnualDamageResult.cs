@@ -7,10 +7,11 @@ using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
 
+
 namespace metrics
 {
  public class ExpectedAnnualDamageResult
-{
+    {
         #region Fields
 
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
@@ -41,6 +42,7 @@ namespace metrics
                 return _assetCategory;
             }
         }
+
         #endregion
 
         #region Constructors
@@ -59,7 +61,7 @@ namespace metrics
         #endregion
 
         #region Methods
-        public void AddEADRealization(double ead, int iteration)
+        public void AddEADRealization(double ead, Int64 iteration)
         {
             _eadHistogram.AddObservationToHistogram(ead, iteration);
         }

@@ -97,9 +97,9 @@ namespace compute
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _results.ExpectedAnnualDamageResults.AddEADKey(uncertainPairedData.DamageCategory, convergenceCriteria);
+                _results.ExpectedAnnualDamageResults.AddEADResultObject(uncertainPairedData.DamageCategory, convergenceCriteria);
             }
-            _results.ExpectedAnnualDamageResults.AddEADKey("Total", convergenceCriteria);
+            _results.ExpectedAnnualDamageResults.AddEADResultObject("Total", convergenceCriteria);
         }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
