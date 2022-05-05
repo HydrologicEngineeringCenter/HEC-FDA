@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -11,17 +10,15 @@ namespace HEC.FDA.ViewModel.ImpactArea
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
+
         #region Constructors
         public ImpactAreaOwnerElement( ) : base()
         {
-            Name = "Impact Area Set";
+            Name = StringConstants.IMPACT_AREA_SET;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
+            IsBold = false;
             NamedAction add = new NamedAction();
-            add.Header = "Import Impact Area Set";
+            add.Header = StringConstants.IMPORT_IMPACT_AREA_SET_MENU;
             add.Action = AddNew;
 
             List<NamedAction> localactions = new List<NamedAction>();
@@ -53,21 +50,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
             //check to see if one already exists
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impAreaElems.Count == 0)
-            {
-                List<string> paths = new List<string>();
-                ShapefilePathsOfType(ref paths, VectorFeatureType.Polygon);
-                ObservableCollection<string> observpaths = new ObservableCollection<string>();
-                foreach (string s in paths)
-                {
-                    observpaths.Add(s);
-                }
-
+            {              
                 EditorActionManager actionManager = new EditorActionManager()
                     .WithSiblingRules(this);
 
-                ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);
-                string header = "Import Impact Area Set";
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportImpactAreas");
+                ImpactAreaImporterVM vm = new ImpactAreaImporterVM(actionManager);
+                string header = StringConstants.IMPORT_IMPACT_AREA_SET_HEADER;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_IMPACT_AREA_SET_HEADER);
                 Navigate(tab, false, false);
             }
             else

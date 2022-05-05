@@ -11,12 +11,19 @@
         // Created Date: 6/30/2017 11:51:38 AM
         #endregion
         #region Fields
-        private string _Name;
         private string _Decoration;
         private string _ImageSource;
         private bool _GifVisible = false;
+        private string _Tooltip;
         #endregion
         #region Properties
+        public string Tooltip
+        {
+            get { return _Tooltip; }
+            set { _Tooltip = value; NotifyPropertyChanged(); }
+        }
+
+        public string Name { get; set; }
         /// <summary>
         /// A wait gif can be shown at the end of the element name that indicates that it is doing an operation ie: saving, loading
         /// </summary>
@@ -25,11 +32,7 @@
             get { return _GifVisible; }
             set { _GifVisible = value; NotifyPropertyChanged(); }
         }
-        //public string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; NotifyPropertyChanged(); }
-        //}
+
         /// <summary>
         /// The decoration can be any string added to the end of the element name.
         /// A '*' can be used to indicate that the element has unsaved changes.
@@ -64,11 +67,6 @@
             GifVisible = gifVisible;
         }
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
-
       
     }
 }

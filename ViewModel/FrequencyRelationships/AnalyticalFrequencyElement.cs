@@ -16,8 +16,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
+
         #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }
@@ -48,7 +47,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Description = desc;
             if (Description == null) Description = "";
             ComputeComponentVM = function;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.FREQUENCY_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+
             AddActions();
         }
 
@@ -90,7 +94,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.FREQUENCY_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
+
             AddActions();
         }
 
@@ -99,7 +108,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void AddActions()
         {
             NamedAction editflowfreq = new NamedAction();
-            editflowfreq.Header = "Edit Analytical Flow Frequency Relationship...";
+            editflowfreq.Header = StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU;
             editflowfreq.Action = EditFlowFreq;
 
             NamedAction removeflowfreq = new NamedAction();

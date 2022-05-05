@@ -13,7 +13,6 @@ namespace HEC.FDA.ViewModel.Storage
         #region Notes
         #endregion
         #region Fields
-        private static object _WriteLock = new object();
         private static DatabaseManager.SQLiteManager _SqliteReader = null; // consider a list of readers so i can create a reader pool.
         private const string _TerrainFolderName = "Terrains";
         private const string _HydraulicsFolderName = "Hydraulic Data";
@@ -27,7 +26,7 @@ namespace HEC.FDA.ViewModel.Storage
             {
                 if (_SqliteReader == null)
                 {
-                    if (!System.IO.File.Exists(value))
+                    if (!File.Exists(value))
                     {
                         SetUpForNewStudy(value);
                     }
@@ -39,7 +38,7 @@ namespace HEC.FDA.ViewModel.Storage
                 }
                 else
                 {
-                    if (!System.IO.File.Exists(value))
+                    if (!File.Exists(value))
                     {
                         SetUpForNewStudy(value);
                     
@@ -51,32 +50,23 @@ namespace HEC.FDA.ViewModel.Storage
                     }                    
                     _SqliteReader = new DatabaseManager.SQLiteManager(value);
                 }
-                //add a logging target for the sqlite db.
-                FdaLogging.Initializer.Initialize(_SqliteReader);
-                //NLogDataBaseHelper.CreateDBTargets(value);
             }
-        }
-
-        private void _SqliteReader_EditsSaved1(string tableName, List<DatabaseManager.TableEdit> editsSaved)
-        {
-            throw new NotImplementedException();
         }
 
         private void SetUpForExistingStudy(string value)
         {
-            _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
+            _ProjectDirectory = Path.GetDirectoryName(value);
             if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
             if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
             if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
         }
         private void SetUpForNewStudy(string value)
         {
-            _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
+            _ProjectDirectory = Path.GetDirectoryName(value);
             if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
             if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
             if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
-            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);
-            
+            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
         }
 
         public DatabaseManager.SQLiteManager Reader
@@ -165,16 +155,13 @@ namespace HEC.FDA.ViewModel.Storage
         #region Cody's DB queries
         public void CreateTableWithPrimaryKey(string tablename, string[] colnames, Type[] coltypes)
         {
-            // string text = "CREATE TABLE people (person_id INTEGER PRIMARY KEY AUTOINCREMENT, first_name text NOT NULL,last_name text NOT NULL);";
             if(_SqliteReader.GetTableNames().Contains(tablename))
             {
                 throw new Exception("table already exists.");
             }
             SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
             command.CommandText = GetCreateTableWithPrimaryKeyText(tablename, colnames, coltypes);
-            command.ExecuteNonQuery();
-            
-            
+            command.ExecuteNonQuery();   
         }
 
         public void AddRowToTableWithPrimaryKey(object[] rowData, string tablename,  string[] colnames)
@@ -222,26 +209,19 @@ namespace HEC.FDA.ViewModel.Storage
 
         }
 
-        public void GetRowDataFromTable(string tablename, int row)
-        {
-            //SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
-            //command.CommandText = InsertIntoTableText(rowData, tablename, colnames);
-            //command.ExecuteNonQuery();
-        }
-
         /// <summary>
         /// This is here to act in a very similar way to "GetTable" below which was not working well
         /// with tables that were using the autoincrementing id column.
         /// </summary>
         /// <param name="tablename"></param>
         /// <returns></returns>
-        public System.Data.DataTable GetDataTable(string tablename)
+        public DataTable GetDataTable(string tablename)
         {
-            if (Storage.Connection.Instance.IsOpen != true)
+            if (Connection.Instance.IsOpen != true)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
-            System.Data.DataTable tab = new System.Data.DataTable();
+            DataTable tab = new DataTable();
             if (_SqliteReader.TableNames.Contains(tablename))
             {
                 SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
@@ -282,9 +262,9 @@ namespace HEC.FDA.ViewModel.Storage
 
         public DataTable GetRowsWithIDValue(int value, string columnName, string tableName)
         {
-            if (Storage.Connection.Instance.IsOpen != true)
+            if (Connection.Instance.IsOpen != true)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
             DataTable tab = new DataTable();
             if (_SqliteReader.TableNames.Contains(tableName))
@@ -298,10 +278,6 @@ namespace HEC.FDA.ViewModel.Storage
             return tab;
         }
 
-        
-
-        
-
         public string[] TableNames()
         {
             return _SqliteReader.GetTableNames();
@@ -311,7 +287,6 @@ namespace HEC.FDA.ViewModel.Storage
 
             if (IsConnectionNull)
             {
-                //FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Table " + TableName + " requested from a null project", FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
                 return null;
             }
             if (_SqliteReader.GetTableNames().Contains(TableName))
@@ -319,7 +294,6 @@ namespace HEC.FDA.ViewModel.Storage
                 return _SqliteReader.GetTableManager(TableName);
             }else
             {
-               // FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Table " + TableName + " requested from a database that doesnt contain the table", FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
                 return null;
             }
 

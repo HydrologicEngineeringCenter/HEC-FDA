@@ -1,13 +1,11 @@
-﻿using FdaLogging;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
-using HEC.FDA.ViewModel.Storage;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving
 {
@@ -131,9 +129,6 @@ namespace HEC.FDA.ViewModel.Saving
         public virtual void RemoveFromParentTable(ChildElement element, string tableName)
         {
             OpenConnection();
-
-            element.RemoveElementFromMapWindow(this, new EventArgs());
-
             if (Connection.Instance.TableNames().Contains(tableName))
             {
                 DatabaseManager.DataTableView parentTableView = Connection.Instance.GetTable(tableName);
@@ -288,8 +283,6 @@ namespace HEC.FDA.ViewModel.Saving
 
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
-        internal virtual string ChangeTableConstant { get { return ""; } }
-
         public int GetNextAvailableId(int idColNumber = 0)
         {
             //make sure the table exists
@@ -369,21 +362,6 @@ namespace HEC.FDA.ViewModel.Saving
         }
 
         public abstract void Load();
-
-        public virtual  void Log(LoggingLevel level, string message, string elementName)
-        {
-
-        }
-
-        public virtual ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        public virtual ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
 
     }
 }

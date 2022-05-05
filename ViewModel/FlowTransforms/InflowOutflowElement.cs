@@ -12,23 +12,24 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         // Created By: q0heccdm
         // Created Date: 6/8/2017 10:33:22 AM
         #endregion
-        #region Fields
-        private const string _TableConstant = "Inflow Outflow - ";
-        #endregion
 
         #region Constructors
         public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id):base(id)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/InflowOutflowCircle.png");
-            
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.INFLOW_OUTFLOW_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+
             Description = description;
             if (Description == null) Description = "";
             ComputeComponentVM = inflowOutflowCurve;
 
             NamedAction editInflowOutflowCurve = new NamedAction();
-            editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve...";
+            editInflowOutflowCurve.Header = StringConstants.EDIT_REG_UNREG_MENU;
             editInflowOutflowCurve.Action = EditInflowOutflowCurve;
 
             NamedAction removeInflowOutflowCurve = new NamedAction();
@@ -50,9 +51,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         #region Voids
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
-            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 
-                "Openning " + Name + " for editing.",nameof(InflowOutflowElement)));
-
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
 

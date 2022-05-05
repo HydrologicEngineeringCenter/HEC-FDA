@@ -7,8 +7,7 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:ViewModel="clr-namespace:HEC.FDA.ViewModel.Study;assembly=HEC.FDA.ViewModel"
-             mc:Ignorable="d"
-         Height="450" Width="310" MinHeight="455" MaxHeight="455" MinWidth="310">
+             mc:Ignorable="d">
     <UserControl.Resources>
         <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="MonetaryUnits">
             <ObjectDataProvider.MethodParameters>

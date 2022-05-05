@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +12,7 @@ namespace HEC.FDA.View.Utilities
     /// see: https://stackoverflow.com/questions/9794151/stop-tabcontrol-from-recreating-its-children/9802346#9802346
     /// </summary>
     [TemplatePart(Name = "PART_ItemsHolder", Type = typeof(Panel))]
-    public class TabControlNoReload : System.Windows.Controls.TabControl
+    public class TabControlNoReload : TabControl
     {
         private Panel ItemsHolderPanel = null;
 
@@ -73,7 +72,9 @@ namespace HEC.FDA.View.Utilities
                         {
                             ContentPresenter cp = FindChildContentPresenter(item);
                             if (cp != null)
+                            {
                                 ItemsHolderPanel.Children.Remove(cp);
+                            }
                         }
                     }
 
@@ -92,8 +93,6 @@ namespace HEC.FDA.View.Utilities
         {
             base.OnSelectionChanged(e);
             UpdateSelectedItem();
-          
-
         }
 
         private void UpdateSelectedItem()
@@ -109,27 +108,9 @@ namespace HEC.FDA.View.Utilities
             // show the right child
             foreach (ContentPresenter child in ItemsHolderPanel.Children)
             {
-                child.IsVisibleChanged += Child_IsVisibleChanged;
                 child.Visibility = ((child.Tag as TabItem).IsSelected) ? Visibility.Visible : Visibility.Collapsed;
             }
-
-            
-   
        }
-
-        private void Child_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            TabItem item = GetSelectedTabItem();
-
-            if (item is TabItem)
-            {
-                DynamicTabVM tab = (DynamicTabVM)((TabItem)item).Header;
-                if (tab.BaseVM is MapWindowControlVM)
-                {
-                    ((MapWindowControlVM)tab.BaseVM).SetFocusToTheMapWindow();
-                }
-            }
-        }
 
         private ContentPresenter CreateChildContentPresenter(object item)
         {

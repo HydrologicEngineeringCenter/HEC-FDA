@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
@@ -18,17 +17,23 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         private const string ID_STRING = "ID";
         private const string WITHOUT_PROJ_ID = "WithoutProjID";
         private const string WITH_PROJ_ELEM = "WithProjectElement";
+        private const string LAST_EDIT_DATE = "LastEditDate";
+
 
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
-        public AlternativeComparisonReportElement(string name, string desc,int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
+        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
         {
             Name = name;
             Description = desc;
             WithoutProjAltID = withoutProjectAltId;
             WithProjAltIDs = withProjAlternativeIds;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+            };
             AddActions();
         }
 
@@ -43,6 +48,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Name = altElement.Attribute(NAME).Value;
             Description = altElement.Attribute(DESCRIPTION).Value;
             WithoutProjAltID = Int32.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
+            LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
@@ -50,22 +56,27 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
+
             AddActions();
         }
 
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Alternative Comparison Report...";
+            edit.Header = StringConstants.EDIT_ALTERNATIVE_COMP_REPORTS_MENU;
             edit.Action = EditAlternative;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Calculate Average Annual Equivalent Damage";
+            compute.Header = StringConstants.CALCULATE_AED_MENU;
             compute.Action = ComputeAlternative;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results...";
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
@@ -92,7 +103,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             if (elementToClone is AlternativeComparisonReportElement)
             {
                 AlternativeComparisonReportElement elem = (AlternativeComparisonReportElement)elementToClone;
-                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.WithoutProjAltID, elem.WithProjAltIDs, elem.ID);
+                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.LastEditDate, elem.WithoutProjAltID, elem.WithProjAltIDs, elem.ID);
             }
             return elemToReturn;
         }
@@ -103,6 +114,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             altElement.SetAttributeValue(NAME, Name);
             altElement.SetAttributeValue(DESCRIPTION, Description);
             altElement.SetAttributeValue(WITHOUT_PROJ_ID, WithoutProjAltID);
+            altElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
+
             foreach (int elemID in WithProjAltIDs)
             {
                 XElement setElement = new XElement(WITH_PROJ_ELEM);

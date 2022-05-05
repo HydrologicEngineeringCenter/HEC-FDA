@@ -1,14 +1,13 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.Alternatives.Results;
-using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
@@ -17,6 +16,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         private const string ALTERNATIVE = "Alternative";
         private const string NAME = "Name";
         private const string DESCRIPTION = "Description";
+        public const string LAST_EDIT_DATE = "LastEditDate";
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
 
@@ -30,12 +30,17 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description, List<int> IASElements, int id):base(id)
+        public AlternativeElement(string name, string description,string creationDate, List<int> IASElements, int id):base(id)
         {
             Name = name;
             Description = description;
             IASElementSets.AddRange(IASElements);
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Alternatives_20x20.png");
+            LastEditDate = creationDate;
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
             AddActions();
         }
 
@@ -49,6 +54,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             XElement altElement = doc.Element(ALTERNATIVE);
             Name = altElement.Attribute(NAME).Value;
             Description = altElement.Attribute(DESCRIPTION).Value;
+            LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
             foreach (XElement elem in iasElements)
@@ -56,7 +62,11 @@ namespace HEC.FDA.ViewModel.Alternatives
                 int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 IASElementSets.Add(iasID);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Alternatives_20x20.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };    
             AddActions();
         }
         #endregion
@@ -64,15 +74,15 @@ namespace HEC.FDA.ViewModel.Alternatives
         private void AddActions()
         {
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Alternative...";
+            edit.Header = StringConstants.EDIT_ALTERNATIVE_MENU;
             edit.Action = EditAlternative;
 
             NamedAction compute = new NamedAction();
-            compute.Header = "Calculate Average Annual Equivalent Damage...";
+            compute.Header = StringConstants.CALCULATE_AED_MENU;
             compute.Action = ComputeAlternative;
 
             NamedAction viewResults = new NamedAction();
-            viewResults.Header = "View Results...";
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
@@ -195,7 +205,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             if(elementToClone is AlternativeElement elem)
             {
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.IASElementSets, elem.ID);
+                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description,elem.LastEditDate, elem.IASElementSets, elem.ID);
                 return elemToReturn;
             }
             return null;
@@ -206,6 +216,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             XElement altElement = new XElement(ALTERNATIVE);
             altElement.SetAttributeValue(NAME, Name);
             altElement.SetAttributeValue(DESCRIPTION, Description);
+            altElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
 
             foreach (int elemID in IASElementSets)
             {

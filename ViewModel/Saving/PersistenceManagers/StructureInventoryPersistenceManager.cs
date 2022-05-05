@@ -1,11 +1,10 @@
 ﻿using DatabaseManager;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -23,17 +22,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 2;
         private const int IS_OLD_FDA = 3;
 
-        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
-        //of the element. But since they get stored as strings if a developer changes the name of the class
-        //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "structure_inventory";
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StructureInventoryPersistenceManager");
-
         private const string TABLE_NAME = "structure_inventories";
-        internal override string ChangeTableConstant
-        {
-            get { return STRUCTURE_INVENTORY_TABLE_CONSTANT; }
-        }
 
         public override string TableName
         {
@@ -101,7 +90,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         #region utilities
         public DataTable CreateEmptyStructuresTable()
         {
-            DataTable newStructureTable = new DataTable(Name);
+            DataTable newStructureTable = new DataTable("EmptyTable");
 
             newStructureTable.Columns.Add(STRUCTURE_ID, typeof(string));
 
@@ -136,10 +125,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="structureDataTable">The data. Each row is a structure.</param>
         /// <param name="name">The name of the table in the db.</param>
         /// <param name="features">Geometry data for the structures.</param>
-        public void Save(DataTable structureDataTable, string name, LifeSimGIS.VectorFeatures features)
+        public void Save(DataTable structureDataTable, int id, LifeSimGIS.VectorFeatures features)
         {
             InMemoryReader myInMemoryReader = new InMemoryReader(structureDataTable);
-            DataTableView myDTView = myInMemoryReader.GetTableManager(name);
+            DataTableView myDTView = myInMemoryReader.GetTableManager(id.ToString());
 
             //create the geo package writer that will write the data out
             LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
@@ -147,7 +136,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
             string tableConst = STRUCTURE_INVENTORY_TABLE_CONSTANT;
-            myGeoPackWriter.AddFeatures(tableConst + name, features, myDTView);
+            myGeoPackWriter.AddFeatures(STRUCTURE_INVENTORY_TABLE_CONSTANT + id, features, myDTView);
         }
 
         /// <summary>
@@ -190,10 +179,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
             }
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
             bool isImportedFromOldFDA = Convert.ToBoolean( rowData[IS_OLD_FDA]);
 
-            int id = Convert.ToInt32(rowData[ID_COL]);
             InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA, id);
             return invEle;
         }
@@ -202,24 +191,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.Name;
+            string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.ID;
             RemoveTable(inventoryTable);
             RemoveFromGeopackageTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
-
-        }
-
-        /// <summary>
-        /// This is to be used when importing a structure inventory from an old fda study
-        /// </summary>
-        /// <param name="name"></param>
-        public void SaveNewInventoryToParentTable(string name, string description = "")
-        {
-            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
-            StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, description);
-            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
-            InventoryElement elem = new InventoryElement(baseElem, true, id);
-            SaveNew(elem);
         }
 
         public void SaveNew(ChildElement element)
@@ -241,55 +216,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }
-
-        private void RenameInventoryInGeoPackageTable(string oldName, string newName)
-        {
-            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
-            myGeoPackWriter.RenameFeatures(oldName, newName);
-        }
-
-        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
-        {
-            return new ObservableCollection<FdaLogging.LogItem>();
-        }
-
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public override void Log(FdaLogging.LoggingLevel level, string message, string elementName)
-        {
-            int elementId = GetElementId(TableName, elementName);
-            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
-        }
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
-        {
-            int id = GetElementId(TableName, elementName);
-            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

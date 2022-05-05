@@ -221,7 +221,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 Saving.PersistenceManagers.IASPersistenceManager iASPersistenceManager = Saving.PersistenceFactory.GetIASManager();
                 int id = GetElementID(iASPersistenceManager);
 
-                IASElementSet elemToSave = new IASElementSet(Name, Description, Year.Value, elementsToSave, id);
+                IASElementSet elemToSave = new IASElementSet(Name, Description, DateTime.Now.ToString("G"), Year.Value, elementsToSave, id);
 
                 if (IsCreatingNewElement)
                 {

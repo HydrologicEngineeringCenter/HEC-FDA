@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using HEC.FDA.ViewModel.Editors;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using HEC.FDA.ViewModel.Editors;
-using System.Windows;
 using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #endregion
         #region Fields
         private string _Path;
-        private ObservableCollection<string> _Paths;
         private List<string> _UniqueFields;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
         private bool _IsInEditMode = false;
@@ -28,11 +27,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             get { return _IsInEditMode; }
             set { _IsInEditMode = value; NotifyPropertyChanged(); }
-        }
-        public ObservableCollection<string> AvailablePaths
-        {
-            get { return _Paths; }
-            set { _Paths = value; NotifyPropertyChanged(); }
         }
         public string SelectedPath
         {
@@ -48,8 +42,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             get { return _UniqueFields; }
             set { _UniqueFields = value; NotifyPropertyChanged(); }
-        }
-  
+        } 
         public string SelectedUniqueName
         {
             get { return _SelectedUniqueName; }
@@ -57,16 +50,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
+        public ImpactAreaImporterVM(EditorActionManager actionManager):base(actionManager)
         {
-            SetDimensions(800, 500, 400, 400);
-            AvailablePaths = PolygonPaths;
             IsInEditMode = false;
         }
 
         public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
         {
-            SetDimensions(800, 500, 400, 400);
             Name = element.Name;
             ListOfRows = impactAreaRows;
             Description = element.Description;
@@ -85,7 +75,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            SelectedPath = path; //isnt this bound??
+            SelectedPath = path; //todo: isnt this bound??
             DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
@@ -133,8 +123,17 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override void AddValidationRules()
         {
             base.AddValidationRules();
-            AddRule(nameof(SelectedUniqueName), () => Name != null, "A unique name has not been selected.");
-            AddRule(nameof(ListOfRows), () => ListOfRows != null, "There are no impact area rows.");
+
+            //todo: leaving commented out for now 5/2/22
+            //AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
+            //{
+            //    return SelectedUniqueName == null;
+            //}, "A unique name has not been selected.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+
+            //AddSinglePropertyRule(nameof(ListOfRows), new Rule(() =>
+            //{
+            //    return ListOfRows == null;
+            //}, "There are no impact area rows.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
         }
 
         public override void Save()

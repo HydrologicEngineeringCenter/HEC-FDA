@@ -21,13 +21,18 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             LastEditDate = creationDate;
             Name = userprovidedname;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/RatingCurve.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.RATING_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+            };
+
 
             ComputeComponentVM = ratingCurve;
             Description = desc;
             if (Description == null) Description = "";
             NamedAction editRatingCurve = new NamedAction();
-            editRatingCurve.Header = "Edit Rating Curve...";
+            editRatingCurve.Header = StringConstants.EDIT_STAGE_DISCHARGE_MENU;
             editRatingCurve.Action = EditRatingCurve;
 
             NamedAction removeRatingCurve = new NamedAction();
@@ -67,9 +72,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   
-        }   
-
+        }
         #endregion
-
     }
 }

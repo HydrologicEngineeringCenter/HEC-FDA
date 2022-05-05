@@ -8,7 +8,10 @@ using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Validation;
 using static Importer.AsciiImport;
+using HEC.MVVMFramework.Base.Enumerations;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -69,37 +72,38 @@ namespace HEC.FDA.ViewModel.Study
         }
         public override void AddValidationRules()
         {
-            AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
-            AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != null; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != ""; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return IsPathValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
 
-            //path must not contain invalid characters
-            AddRule(nameof(FolderPath), () =>
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(StudyName), new Rule(() =>
+            {
+                return !File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
+            }, "A study with that name already exists.", ErrorLevel.Severe));
+
+        }
+        private bool IsPathValid()
+        {
+            bool pathIsValid = true;
+            if (FolderPath != null && FolderPath != "")
             {
                 foreach (Char c in System.IO.Path.GetInvalidPathChars())
                 {
                     if (FolderPath.Contains(c))
                     {
-                        return false;
+                        pathIsValid = false;
+                        break;
                     }
                 }
-                if (FolderPath.Contains('?')) return false;
-                return true;
-            }, "Path contains invalid characters.");
-            //study name must not be null
-            AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
-            AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
-
-            //check if folder with that name already exists
-            AddRule(nameof(StudyName), () =>
-            {
-                if (System.IO.File.Exists(FolderPath + "\\" + StudyName + "\\" + StudyName + ".sqlite"))
+                if (FolderPath.Contains('?'))
                 {
-                    return false;
+                    pathIsValid = false;
                 }
-                return true;
-            }, "A study with that name already exists.");
+            }
+            return pathIsValid;
         }
-
 
         public override ImportOptions GetImportOptions()
         {
@@ -192,7 +196,7 @@ namespace HEC.FDA.ViewModel.Study
             //create the sqlite database for this study
             string studyDescription = "";
             //todo: is there a way to get the description from an old fda study?
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _FolderPath, studyDescription);
+            _StudyElement.CreateNewStudy(_StudyName, _FolderPath, studyDescription);
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
         }

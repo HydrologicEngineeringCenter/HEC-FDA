@@ -1,11 +1,13 @@
 ﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.ViewModel.Validation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ViewModel.Inventory.OccupancyTypes;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -84,9 +86,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public OccTypeItem StructureItem { get; set; }
+        public OccTypeAsset StructureItem { get; set; }
         public OccTypeItemWithRatio ContentItem { get; set; }
-        public OccTypeItem VehicleItem { get; set; }
+        public OccTypeAsset VehicleItem { get; set; }
         public OccTypeItemWithRatio OtherItem { get; set; }
 
         /// <summary>
@@ -104,9 +106,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //clone the occtype so that changes to it will not go into effect unless the user saves.
             IOccupancyType clonedOcctype = new OccupancyType(occtype);
 
-            StructureItem = new OccTypeItem(OcctypeItemType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
+            StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
             ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
-            VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
+            VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
             OtherItem = new OccTypeItemWithRatio(clonedOcctype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;
@@ -144,7 +146,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
-                if (vm.HasError == false)
+                if (!vm.HasErrors)
                 {
                     //store the new damage category
                     DamageCategory = vm.Name;
@@ -160,8 +162,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != null, "Name cannot be empty.");
-            AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != "";}, "Name cannot be blank.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
         }
 
         public FdaValidationResult HasWarnings()
@@ -180,9 +182,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             FdaValidationResult vr = new FdaValidationResult();
             //check for blank name and name conflicts
-            if(HasFatalError)
+            if(HasErrors)
             {
-                vr.AddErrorMessage(Error);
+                //todo: leaving commented out for now 5/2/22
+                //vr.AddErrorMessage(Error);
             }
 
             IEnumerable<string> duplicates = occtypeNames.GroupBy(x => x)

@@ -11,19 +11,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
 
-        #endregion
         #region Constructors
         public IASOwnerElement( ) : base()
         {
-            Name = "Impact Area Scenarios";
+            Name = StringConstants.SCENARIOS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addCondition = new NamedAction();
-            addCondition.Header = "Create New Impact Area Scenario";
+            addCondition.Header = StringConstants.CREATE_NEW_SCENARIO_MENU;
             addCondition.Action = AddNewIASSet;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -43,7 +39,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.ExteriorInteriorRemoved += ChildElementRemoved;
             StudyCache.StageDamageRemoved += ChildElementRemoved;
 
-
             StudyCache.ImpactAreaUpdated += ChildElementUpdated;
             StudyCache.FlowFrequencyUpdated += ChildElementUpdated;
             StudyCache.InflowOutflowUpdated += ChildElementUpdated;
@@ -51,8 +46,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.LeveeUpdated += ChildElementUpdated;
             StudyCache.ExteriorInteriorUpdated += ChildElementUpdated;
             StudyCache.StageDamageUpdated += ChildElementUpdated;
-
-
         }
 
         /// <summary>
@@ -120,7 +113,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                      .WithSiblingRules(this);
                 Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
                 vm.RequestNavigation += Navigate;
-                DynamicTabVM tab = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
+                DynamicTabVM tab = new DynamicTabVM(StringConstants.CREATE_NEW_SCENARIO_HEADER, vm, StringConstants.CREATE_NEW_SCENARIO_HEADER);
                 Navigate(tab, false, false);
             }
 

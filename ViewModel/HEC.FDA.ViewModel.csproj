@@ -11,14 +11,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Inventory\DepthDamage\**" />
+    <EmbeddedResource Remove="Inventory\DepthDamage\**" />
+    <EntityDeploy Remove="Inventory\DepthDamage\**" />
+    <None Remove="Inventory\DepthDamage\**" />
+    <Page Remove="Inventory\DepthDamage\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Editors\FailureFunctionCurveEditorVM.cs" />
     <Compile Remove="FlowTransforms\InflowOutflowEditorVM.cs" />
     <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
     <Compile Remove="Inventory\DamageCategories\DamageCategory.cs" />
     <Compile Remove="Inventory\DamageCategories\DamageCategoryFactory.cs" />
+    <Compile Remove="Inventory\OccupancyTypes\OccupancyTypesGroupRowItemVM.cs" />
     <Compile Remove="Inventory\OccupancyTypes\OtherNormalControlVM.cs" />
+    <Compile Remove="Output\CreateEconImportFileVM.cs" />
     <Compile Remove="Output\HistogramViewerVM.cs" />
     <Compile Remove="Output\LinkedPlotsVM.cs" />
+    <Compile Remove="Study\AnalysisYearsVM.cs" />
+    <Compile Remove="Utilities\DatabaseColumn.cs" />
+    <Compile Remove="Utilities\MapWindowMapTreeViewConnector.cs" />
+    <Compile Remove="Utilities\RowItem.cs" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -32,14 +46,6 @@
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
       <Private>true</Private>
-    </Reference>
-    <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\FdaLogger.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaLogging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\FdaLogging.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -106,16 +112,14 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="GDAL-HEC" Version="0.0.1" />
-    <PackageReference Include="HEC.MVVMFramework.Base" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.2.15.2147" />
-    <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-03-23-1921" />
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-03-23-1921" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-04-25-1317" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-04-25-1317" />
   </ItemGroup>
   
 </Project>

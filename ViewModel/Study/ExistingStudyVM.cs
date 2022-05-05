@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HEC.MVVMFramework.ViewModel.Validation;
+using System;
 using System.Linq;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -25,16 +28,6 @@ namespace HEC.FDA.ViewModel.Study
                     {
                         StudyName = System.IO.Path.GetFileNameWithoutExtension(Path);
                         Storage.Connection.Instance.ProjectFile = _Path;
-                        //todo: what on earth is all this stuff in this setter? -cody 11/18/21
-                        //DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
-                        //if (dtv != null)
-                        //{
-                        //    PropertiesVM pvm = new PropertiesVM(dtv);
-                        //    Description = pvm.StudyDescription;
-                        //}
-                    }else
-                    {
-                        //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("You did not select a sqlite file", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
                     }
                 }
             }
@@ -69,39 +62,34 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
-            AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
-            AddRule(nameof(Path), () =>
-            {
-                return System.IO.File.Exists(Path);
-            }, "File does not exist.");
-
-            AddRule(nameof(Path), () =>
-            {
-                return System.IO.Path.GetExtension(Path) == ".sqlite";
-            }, "Selected file is the wrong file type. File must be '*.sqlite'");
-
-            AddRule(nameof(Path), () =>
-            {
-                if (Path != null && Path != "")
-                {
-                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                    {
-
-                        if (Path.Contains(c))
-                        {
-
-                            return false;
-                        }
-                    }
-                    if (Path.Contains('?')) return false;
-                }
-                return true;
-            }, "Path contains invalid characters.");
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.File.Exists(Path); }, "File does not exist.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return PathIsValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
         }
   
         #endregion
-        #region Functions
-        #endregion
+
+        private bool PathIsValid()
+        {
+            bool pathIsValid = true;
+            if (Path != null && Path != "")
+            {
+                foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                {
+                    if (Path.Contains(c))
+                    {
+                        pathIsValid = false;
+                        break;
+                    }
+                }
+                if (Path.Contains('?'))
+                {
+                    pathIsValid = false;
+                }
+            }
+            return pathIsValid;
+        }
     }
 }

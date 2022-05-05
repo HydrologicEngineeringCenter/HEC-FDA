@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// The "Item" is either structure, content, or other.
     /// This class holds the value uncertainty, the "is selected", and the curve
     /// </summary>
-    public class OccTypeItem:BaseViewModel
+    public class OccTypeAsset:BaseViewModel
     {
         public event EventHandler DataModified;
 
@@ -22,14 +22,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// <summary>
         /// This enum is only being used so that i can use it as a string name in any error messages.
         /// </summary>
-        public enum OcctypeItemType
+        public enum OcctypeAssetType
         {
             structure,
             content,
             vehicle,
             other
         }
-        public OcctypeItemType ItemType
+        public OcctypeAssetType ItemType
         {
             get;
         }
@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public OccTypeItem(OccTypeItem item)
+        public OccTypeAsset(OccTypeAsset item)
         {
             ItemType = item.ItemType;
             IsChecked = item.IsChecked;
@@ -71,7 +71,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
         }
 
-        public OccTypeItem(OcctypeItemType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty)
+        public OccTypeAsset(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty)
         {
             ItemType = itemType;
             IsChecked = isChecked;

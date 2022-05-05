@@ -18,6 +18,7 @@
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding DisplayMean, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Mean: "/>
             <TextBox Text="{Binding Mean}"  Width="60" Height="22" TextAlignment="Center"/>
+            <Label Content="{Binding LabelString}" />
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">

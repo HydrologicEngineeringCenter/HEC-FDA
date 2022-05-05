@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
+             MinWidth="200"
+             MinHeight="200"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibileIfTrueConverter"/>
@@ -32,7 +34,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" Visibility="{Binding Path=PlotExtended, Converter={StaticResource VisibileIfTrueConverter}}" MinWidth="200">
-                <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel}"/>
+                <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel, Mode=OneTime}" />
             </Grid>
         </Grid>
     </Grid>

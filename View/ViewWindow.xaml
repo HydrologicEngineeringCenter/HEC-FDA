@@ -1,209 +1,29 @@
-﻿        <Window x:Class="HEC.FDA.View.ViewWindow"
+﻿<Window x:Class="HEC.FDA.View.ViewWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                xmlns:Utils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+        xmlns:Utils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
         mc:Ignorable="d"
         Icon="FDA.ico"
         Closing="Window_Closing"
-        Loaded="Window_Loaded"
-        ContentRendered="Window_ContentRendered"
-        StateChanged="Window_StateChanged"
-        WindowStyle="None"
         ResizeMode="CanResize"
-        PreviewMouseUp="Window_PreviewMouseUp"
-        MinWidth="{Binding MinWidth, Mode=TwoWay}"
-        MinHeight="{Binding MinHeight, Mode=TwoWay}"
-        Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}"
-        Title="ViewWindow" >
-    <!--SizeToContent="WidthAndHeight"-->
-    <!--="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">-->
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome 
-        CaptionHeight="0"
-        ResizeBorderThickness="5" 
-            CornerRadius="25"/>
-    </WindowChrome.WindowChrome>
+        Title="{Binding Title}" 
+        Loaded="Window_Loaded" >
 
     <Window.DataContext>
         <Utils:WindowVM/>
     </Window.DataContext>
 
+    <Grid Name="MainGrid" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-    <Border BorderThickness="1" BorderBrush="DarkBlue" >
-        <Border.Style>
-            <Style TargetType="{x:Type Border}">
-                <Style.Triggers>
-                    <!-- Add to avoid border disappearing when window is maximised -->
-                    <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                 Value="Maximized">
-                        <Setter Property="Margin" Value="7"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                 Value="Normal">
-                        <Setter Property="Margin" Value="0"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
-        <!--<Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <Style x:Key="TransparentBBStyle" TargetType="{x:Type utils:BindableButton}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type utils:BindableButton}">
-                        <Border>
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="BorderBrush" Value="AliceBlue"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid Background="Transparent">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                                </ContentPresenter>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="TransparentStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border>
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="BorderBrush" Value="AliceBlue"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid Background="Transparent">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                                </ContentPresenter>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="TransparentThumbStyle" TargetType="{x:Type Thumb}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <Border>
-                            <Grid Background="Transparent">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                                </ContentPresenter>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-       
-    </Window.Resources>-->
-
-
-
-
-
-        <Grid Name="MainGrid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="27"/>
-
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="5"/>
-                <!--<RowDefinition Height="Auto" MaxHeight="210"/>-->
-            </Grid.RowDefinitions>
-
-            <Grid.Resources>
-                <ImageBrush x:Key="Close_inact" ImageSource="UI_RES\Close_inact.png" />
-                <ImageBrush x:Key="Min_inact" ImageSource="UI_RES\Minimize_inact.png" />
-                <ImageBrush x:Key="Max_inact" ImageSource="UI_RES\Maximize_inact.png" />
-                <ImageBrush x:Key="Close_act" ImageSource="UI_RES\Close_act.png" />
-                <ImageBrush x:Key="Min_act" ImageSource="UI_RES\Minimize_act.png" />
-                <ImageBrush x:Key="Max_act" ImageSource="UI_RES\Maximize_act.png" />
-                <ImageBrush x:Key="Close_pr" ImageSource="UI_RES\Close_pr.png" />
-                <ImageBrush x:Key="Min_pr" ImageSource="UI_RES\Minimize_pr.png" />
-                <ImageBrush x:Key="Max_pr" ImageSource="UI_RES\Maximize_pr.png" />
-            </Grid.Resources>
-
-
-
-            <Rectangle Grid.Row="0" Height="30" Width="5" VerticalAlignment="Top" HorizontalAlignment="Left" MouseDown="move_window">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_left.png" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Rectangle Name="TitleBarRectangle" Height="30" Margin="5,0,5,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseLeftButtonDown="move_window" MouseLeftButtonUp="TitleBarRectangle_MouseLeftButtonUp">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_middle.png" />
-                </Rectangle.Fill>
-            </Rectangle>
-
-            <Image Source="/Resources/FDA.ico" HorizontalAlignment="Left" Width="18" Height="18" Margin="5,0,0,0"/>
-            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-
-            <Rectangle Margin="8,4,0,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                   Width="56" Height="15" Fill="Transparent"
-                   MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" />
-            <Ellipse Margin="8,4,8,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="EXIT" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Close_pressing" Name="Close_btn" 
-                 Fill="{DynamicResource Close_inact}" />
-            <Ellipse Margin="29,4,50,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="MINIMIZE" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Min_pressing" Name="Min_btn" 
-                 Fill="{StaticResource Min_inact}" />
-            <Ellipse Margin="50,4,29,0" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                 Width="14" Height="15" MouseLeftButtonUp="MAX_RESTORE" 
-                 MouseEnter="Activate_Title_Icons" MouseLeave="Deactivate_Title_Icons" 
-                 MouseLeftButtonDown="Max_pressing" Name="Max_btn" 
-                 Fill="{StaticResource Max_inact}" />
-            <Rectangle Height="30" Width="5" VerticalAlignment="Top" HorizontalAlignment="Right" MouseDown="move_window">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="UI_RES\Title_top_right.png" />
-                </Rectangle.Fill>
-            </Rectangle>
-
-
-
-            <!--<Border Grid.Column="0" Grid.RowSpan="2" BorderThickness="2,2,2,2">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="AliceBlue" />
-            </Border.BorderBrush>
-        </Border>-->
-            <!--<Button Grid.Row="0" Name="btn_PopWindowInToTabs" Background="Transparent" ToolTip="Move To Tabs" BorderThickness="0" Margin="5,0,70,0" HorizontalAlignment="Right"  Click="btn_PopWindowInToTabs_Click" >
-                <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopIn.png"/>
-            </Button>-->
-            <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
-            <!--<GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" />-->
-            <!--<utils:MessageExpanderControl Grid.Row="3"/>-->
-            <!--<Expander Name="MessagesExpander" Header="Errors" Grid.Row="3" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5" MaxHeight="200">
-            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Margin="5" Height="Auto" BorderThickness="3" BorderBrush="Red">
-                <ListView Name="MessagesListView" />
-            </ScrollViewer>
-        </Expander>-->
-            <Canvas Name="myCanvas" Grid.Row="0" Grid.RowSpan="3" />
-
-        </Grid>
-    </Border>
+        <Button Grid.Row="0" Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopOut.png"/>
+        </Button>
+        <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
+    </Grid>
 </Window>

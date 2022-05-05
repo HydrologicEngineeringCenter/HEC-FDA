@@ -1,10 +1,10 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    class OccupancyTypeGroupEditable : BaseViewModel, IOccupancyTypeGroupEditable
+    class OccupancyTypeGroupEditable : NameValidatingVM, IOccupancyTypeGroupEditable
     {
         private bool _IsModified;
         public List<IOccupancyTypeEditable> Occtypes { get; set; }
@@ -49,7 +49,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public SaveAllReportGroupVM  SaveAll()
         {
-
             List<TableErrorsReport> occtypesWithWarningsAndNoFatalErrors = new List<TableErrorsReport>();
             List<TableErrorsReport> occtypesWithFatalErrors = new List<TableErrorsReport>();
 
@@ -57,7 +56,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             foreach (IOccupancyTypeEditable otEditable in ModifiedOcctypes)
             {
-
                 Utilities.FdaValidationResult warningsResult = otEditable.HasWarnings();
                 Utilities.FdaValidationResult fatalErrorsResult = otEditable.HasFatalErrors(GetOcctypeNames());
                 

@@ -8,21 +8,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
+
         #region Constructors
         public StageFrequencyOwnerElement( ) : base()
         {
-            Name = "Stage Frequency Curves";
+            Name = StringConstants.AGGREGATED_STAGE_DAMAGE_FUNCTIONS;
 
             NamedAction addRatingCurve = new NamedAction();
-            addRatingCurve.Header = "Create New Stage Frequency Curve";
+            addRatingCurve.Header = StringConstants.CREATE_NEW_STAGE_DAMAGE_MENU;
             addRatingCurve.Action = AddNewRatingCurve;
 
             NamedAction ImportRatingCurve = new NamedAction();
-            ImportRatingCurve.Header = StringConstants.ImportFromOldFda("Stage Frequency Curve");
+            ImportRatingCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();

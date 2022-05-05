@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
              mc:Ignorable="d" 
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:Controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -38,6 +39,7 @@
             <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
             <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
+            <Controls:TextBoxDescription Grid.Row="0" Grid.Column="3" Text="{Binding Description}" />
             <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" Margin="0,0,7,0" />
             <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
@@ -58,7 +60,6 @@
         </Grid>
         <local:SpecificIASControl DataContext="{Binding SelectedEditorVM}" Grid.Row="2" />
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Utilities:SaveControl />
             <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

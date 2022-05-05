@@ -1,8 +1,11 @@
-﻿using System.ComponentModel;
+﻿using HEC.MVVMFramework.ViewModel.Validation;
+using System.ComponentModel;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.Inventory.DamageCategory
 {
-    public class DamageCategoriesVM : BaseViewModel
+    public class DamageCategoriesVM : NameValidatingVM
     {
         #region Notes
         #endregion
@@ -34,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
         }
         #endregion
         #region Voids
-        //add
+
         public void AddDamageCategory(int insertAt = 0)
         {
             DamageCategoryRowItem dci =new DamageCategoryRowItem("New Damage Category", 1.0d, _DamageCategoryItems);
@@ -71,20 +74,17 @@ namespace HEC.FDA.ViewModel.Inventory.DamageCategory
                 System.Diagnostics.Debug.Print("Damage Category Renamed!!!");
             }
         }
-        //remove
         public void RemoveDamageCategory(object item)
         {
             _DamageCategoryItems.Remove(item);
             DamageCategories = _DamageCategoryItems;
         }
-        //rename
         #endregion
         #region Functions
         #endregion
         public override void AddValidationRules()
         {
-            AddRule(nameof(DamageCategories), () => areDamageCategoriesInvalid(), "Damage Categories have validation issues.");
-            //throw new NotImplementedException();
+            AddSinglePropertyRule(nameof(Name), new Rule(() => { return areDamageCategoriesInvalid(); }, "Damage Categories have validation issues.", ErrorLevel.Severe));
         }
         private bool areDamageCategoriesInvalid()
         {

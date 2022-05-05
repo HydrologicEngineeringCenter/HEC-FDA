@@ -10,25 +10,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageOwnerElement : ParentElement
     {
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties  
-        #endregion
+
         #region Constructors
         public AggregatedStageDamageOwnerElement() : base()
         {
-            Name = "Aggregated Stage Damage Relationships";
+            Name = StringConstants.AGGREGATED_STAGE_DAMAGE_FUNCTIONS;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addDamageCurve = new NamedAction();
-            addDamageCurve.Header = "Create New Aggregated Stage Damage Relationship...";
+            addDamageCurve.Header = StringConstants.CREATE_NEW_STAGE_DAMAGE_MENU;
             addDamageCurve.Action = AddNewStageDamageCurveSet;
 
             NamedAction importDamageCurve = new NamedAction();
-            importDamageCurve.Header = StringConstants.ImportFromOldFda("Stage Damage");
+            importDamageCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
             importDamageCurve.Action = ImportNewStageDamageCurveSet;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -63,8 +58,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (impactAreaElements.Count > 0)
             {
                 ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM();
-                string header = "Import Aggregated Stage Damage Curve";
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStageDamageCurve");
+                string header = StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_HEADER;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
                 Navigate(tab, false, true);
             }
             else
@@ -93,7 +88,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                      .WithSiblingRules(this);
 
                 AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM( actionManager);
-                DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
+                string header = StringConstants.CREATE_NEW_STAGE_DAMAGE_HEADER;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
                 Navigate(tab, false, true);
             }
         }

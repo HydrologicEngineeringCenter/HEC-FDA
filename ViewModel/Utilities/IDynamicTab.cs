@@ -4,7 +4,6 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public interface IDynamicTab
     {
-
         bool CanDelete { get; set; }
 
         bool CanPopOut { get; set; }
@@ -24,24 +23,15 @@ namespace HEC.FDA.ViewModel.Utilities
         /// It is used to ensure that the same tab is not opened twice.
         /// </summary>
         string UniqueName { get; set; }
-        bool IsDragging { get; set; }
-        //bool CanEdit { get; set; }
-        //void DisableEditContextMenuItem();
-        //void EnableEditContextMenuItem();
 
         event EventHandler RemoveTabEvent;
         event EventHandler PopTabOutEvent;
         event EventHandler PopWindowIntoTabEvent;
         event EventHandler RemoveWindowEvent;
-        event EventHandler PopTabIntoWindowDraggingEvent;
-
 
         void PopTabIntoWindow();
-        void PopTabIntoWindowDragging();
-
         void PopWindowIntoTab();
         void RemoveTab();
         bool RemoveWindow();
-
     }
 }

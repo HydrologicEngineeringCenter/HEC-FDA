@@ -510,7 +510,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
-            else if (element is WaterSurfaceElevationOwnerElement)
+            else if (element is HydraulicsOwnerElement)
             {
                 retVal.AddRange(WaterSurfaceElements);
             }
@@ -570,7 +570,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 return ImpactAreaParent as T;
             }
-            if (parentType == typeof( WaterSurfaceElevationOwnerElement))
+            if (parentType == typeof( HydraulicsOwnerElement))
             {
                 //todo: is this needed? Doesn't look like it.
             }

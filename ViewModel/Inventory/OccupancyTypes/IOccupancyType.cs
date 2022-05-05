@@ -10,9 +10,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         string Description { get; set; }
         string DamageCategory { get; set; }
 
-        OccTypeItem StructureItem { get; set; }
+        OccTypeAsset StructureItem { get; set; }
         OccTypeItemWithRatio ContentItem { get; set; }
-        OccTypeItem VehicleItem { get; set; }
+        OccTypeAsset VehicleItem { get; set; }
         OccTypeItemWithRatio OtherItem { get; set; }
         ContinuousDistribution FoundationHeightUncertainty { get; set; }
         

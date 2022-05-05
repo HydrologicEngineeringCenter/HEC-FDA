@@ -1,13 +1,14 @@
-﻿namespace HEC.FDA.ViewModel.ImpactArea
+﻿using HEC.FDA.ViewModel.Editors;
+
+namespace HEC.FDA.ViewModel.ImpactArea
 {
-    public class ImpactAreaRowItem : BaseViewModel
+    public class ImpactAreaRowItem : NameValidatingVM
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 10/27/2016 9:27:23 AM
         #endregion
-        #region Fields
-        #endregion
+
         #region Properties
         public int ID { get; set; }
 
@@ -19,11 +20,6 @@
             ID = id;
             Name = dispName;
         }
-        #endregion
-        #region Voids
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

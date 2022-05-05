@@ -13,10 +13,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageElement : ChildElement
     {
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
         #region Properties
         public bool CanEdit { get; }
         public int SelectedWSE { get; set; }
@@ -31,7 +27,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual, int id) : base(id)
         {
             LastEditDate = lastEditDate;
-            CustomTreeViewHeader = new CustomHeaderVM(name, "pack://application:,,,/View;component/Resources/StageDamage.png");
+            CustomTreeViewHeader = new CustomHeaderVM(name)
+            {
+                ImageSource = ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
 
             Description = description;
             if (Description == null)
@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
 
             NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship...";
+            editDamageCurve.Header = StringConstants.EDIT_STAGE_DAMAGE_MENU;
             editDamageCurve.Action = EditDamageCurve;
 
             NamedAction removeDamageCurve = new NamedAction();
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             renameDamageCurve.Action = Rename;
 
             NamedAction exportDetails = new NamedAction(this);
-            exportDetails.Header = "Export Structure Detail";
+            exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
             exportDetails.Action = ExportDetails;
 
             List<NamedAction> localActions = new List<NamedAction>();

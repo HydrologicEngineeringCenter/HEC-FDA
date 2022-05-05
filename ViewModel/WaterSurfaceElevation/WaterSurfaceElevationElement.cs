@@ -18,7 +18,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         #endregion
         #region Fields
         private List<PathAndProbability> _RelativePathAndProbability;
-        private List<int> _featureNodeHashs;
         #endregion
         #region Properties
      
@@ -65,10 +64,10 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 Description = "";
             }
             IsDepthGrids = isDepthGrids;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.WATER_SURFACE_ELEVATION_IMAGE);
 
             NamedAction editElement = new NamedAction(this);
-            editElement.Header = "Edit Hydraulics...";
+            editElement.Header = StringConstants.EDIT_HYDRAULICS_MENU;
             editElement.Action = EditElement;
 
             NamedAction remove = new NamedAction();
@@ -79,32 +78,10 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             renameElement.Header = StringConstants.RENAME_MENU;
             renameElement.Action = Rename;
 
-            NamedAction mapWindow = new NamedAction();
-            mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-            mapWindow.Action = AddWSEToMapWindow;
-
-            //"NA" has been placed in the "path" column of the database. That means that this WSE came
-            //from old FDA and doesn't have a path associated with it and so we disable this menu item.
-            bool hasMapLayers = true;
-            if(pathAndProbs.Count>0)
-            {
-                if(pathAndProbs[0].Path.Equals("NA"))
-                {
-                    hasMapLayers = false;
-                }
-            }
-
-            if (!hasMapLayers)
-            {
-                mapWindow.IsEnabled = false;
-                mapWindow.ToolTip = "No map layers exist when imported from HEC-FDA 1.4.3";
-            }
-
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(editElement);
             localactions.Add(remove);
             localactions.Add(renameElement);
-            localactions.Add(mapWindow);
 
             Actions = localactions;
             TableContainsGeoData = true;
@@ -122,93 +99,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             string header = "Edit Hydraulics -" + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElev" + Name);
             Navigate(tab, false, false);
-        }
-
-        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
-        {
-            if (_featureNodeHashs != null)
-            {
-                foreach (int hash in _featureNodeHashs)
-                {
-                    RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(hash));
-                }
-                foreach (NamedAction a in Actions)
-                {
-                    if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
-                    {
-                        a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-                        a.Action = AddWSEToMapWindow;
-                    }
-                }
-            }
-        }
-
-        public void RemovedCallback(FeatureNodeHeader node, bool includeSelected)
-        {
-            foreach (NamedAction a in Actions)
-            {
-                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
-                {
-                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-                    a.Action = AddWSEToMapWindow;
-                }
-            }
-        }
-
-        private string GetVRTFilePath(string vrtDirectoryPath)
-        {
-            string vrtFilePath = null;
-            try
-            {
-                //get the vrt from the directory 
-                string[] fileList = Directory.GetFiles(vrtDirectoryPath);
-                foreach (string file in fileList)
-                {
-                    if (Path.GetExtension(file) == ".vrt")
-                    {
-                        vrtFilePath = file;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = "Unable to find a .vrt file in directory: " + vrtDirectoryPath +
-                    Environment.NewLine + ex.Message;
-                MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-
-            return vrtFilePath;
-        }
-
-        private void AddWSEToMapWindow(object arg1, EventArgs arg2)
-        {
-            _featureNodeHashs = new List<int>();
-            foreach (PathAndProbability directory in RelativePathAndProbability)
-            {
-                string vrtDirectoryPath = Storage.Connection.Instance.HydraulicsDirectory + "\\" + directory.Path;
-                string vrtFilePath = GetVRTFilePath(vrtDirectoryPath);
-                if (vrtFilePath != null)
-                {                 
-                    RasterFeatures r = new RasterFeatures(vrtFilePath);
-                    ColorRamp c = new ColorRamp(ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-                    AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
-                    args.FeatureName = Name + " - " + Path.GetFileName(vrtDirectoryPath);
-                    AddToMapWindow(this, args);
-
-                    _featureNodeHashs.Add(args.MapFeatureHash);
-                }
-            }
-
-            foreach (NamedAction a in Actions)
-            {
-                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
-                {
-                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
-                    a.Action = RemoveElementFromMapWindow;
-                }
-            }
-        }
+        }            
 
         public override void Rename(object sender, EventArgs e)
         {

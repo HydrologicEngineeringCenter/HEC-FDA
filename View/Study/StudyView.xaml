@@ -8,16 +8,13 @@
              xmlns:VMUtils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
-             Loaded="UserControl_Loaded"             
+             Loaded="UserControl_Loaded"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
-
 
     <UserControl.Resources>
         <utils:ContextMenuConverter x:Key="converter"/>
         <utils:BoolToBoldConverter x:Key="BoolToBoldConverter" />
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
-
 
         <Style x:Key="TabControlNoReloadStyle" TargetType="{x:Type utils:TabControlNoReload}">
             <Setter Property="Template">
@@ -48,29 +45,36 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
+    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" MinHeight="27"/>
-
         </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" MinWidth="100" />
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
 
-        <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <MenuItem Header="_File" Name="FileMenu">
+                <MenuItem Header="_New" Click="New_MenuItem_Click" />
+                <MenuItem Header="_Open" Click="Open_MenuItem_Click"/>
+                <MenuItem Header="_Import Study" Click="ImportStudy_MenuItem_Click"/>
+                <MenuItem Header="_Properties"  Click="Properties_MenuItem_Click" IsEnabled="{Binding CurrentStudyElement.StudyLoaded}"/>
+                <Separator />
+            </MenuItem>
+            <MenuItem Header="_Help" >
+                <MenuItem Header="Quick Start Guide" Click="QuickStartGuide_Click"/>
+                <MenuItem Header="Discourse" Click="Discourse_Click" />
+            </MenuItem>
+        </Menu>
 
-
-        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
-
-            <TabItem Header="Study Tree" Name="StudyTree">
-                <Grid>
-                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
+        <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
@@ -82,27 +86,12 @@
                                 <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                             </Style>
                         </TreeView.ItemContainerStyle>
-                    </TreeView>
-                </Grid>
-            </TabItem>
-
-            <TabItem Name="Maps" Header="Map Layers">
-                <Grid Name="MaptreeviewGRID">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <OpenGL:MapTreeView x:Name="MapTreeView" />
-                    </ScrollViewer>
-                </Grid>
-            </TabItem>
-        </TabControl>
-
-
-
+        </TreeView>
 
         <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
                                                    SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}"   
                                                    Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
                                                      IsSynchronizedWithCurrentItem="True"  Style="{StaticResource TabControlNoReloadStyle}">
-
 
             <utils:TabControlNoReload.ItemTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
@@ -110,8 +99,6 @@
 
                 </DataTemplate>
             </utils:TabControlNoReload.ItemTemplate>
-
-
 
             <utils:TabControlNoReload.ContentTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
@@ -121,7 +108,6 @@
 
         </utils:TabControlNoReload>
 
-
         <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
 
         <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
@@ -130,7 +116,6 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
-            <utils:MessageExpanderControl ExpandedHeight="200" HeaderText="Messages" />
             <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,0" FontSize="10" />
         </Grid>
     </Grid>

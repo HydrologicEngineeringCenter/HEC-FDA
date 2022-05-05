@@ -36,13 +36,22 @@ namespace HEC.FDA.ViewModel.GeoTech
             LastEditDate = creationDate;
 
             IsDefaultCurveUsed = isDefault;
+
             if (isDefault)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
+                CustomTreeViewHeader = new CustomHeaderVM(Name)
+                {
+                    ImageSource = ImageSources.LEVEE_FEATURE_IMAGE,
+                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                };    
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
+                CustomTreeViewHeader = new CustomHeaderVM(Name)
+                {
+                    ImageSource = ImageSources.FAILURE_IMAGE,
+                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                };
             }
 
             ComputeComponentVM = failureFunction;
@@ -51,7 +60,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             Elevation = elevation;
 
             NamedAction editLeveeFeature = new NamedAction();
-            editLeveeFeature.Header = "Edit Levee Feature...";
+            editLeveeFeature.Header = StringConstants.EDIT_LATERAL_STRUCTURES_MENU;
             editLeveeFeature.Action = EditLeveeFeature;
 
             NamedAction removeLeveeFeature = new NamedAction();

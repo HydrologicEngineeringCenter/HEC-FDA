@@ -1,5 +1,4 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
@@ -25,9 +24,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created Date: 7/14/2017 1:55:50 PM
         #endregion
         #region Fields
-        private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-        private LoggingLevel _SaveStatusLevel;
-        private bool _IsExpanded;
         private string _SavingText;
         private IOccupancyTypeGroupEditable _SelectedOccTypeGroup;
         private List<string> _DamageCategoriesList = new List<string>();
@@ -35,57 +31,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private string _Module;
         #endregion
         #region Properties
-        public List<LogItem> TempErrors
-        {
-            get;
-            set;
-        }
-        public LoggingLevel SaveStatusLevel
-        {
-            get { return _SaveStatusLevel; }
-            set
-            {
-                if (_SaveStatusLevel != value)
-                {
-                    _SaveStatusLevel = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
 
-        public bool IsExpanded
-        {
-            get { return _IsExpanded; }
-            set
-            {
-                if (_IsExpanded != value)
-                {
-                    _IsExpanded = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public ObservableCollection<LogItem> MessageRows
-        {
-            get { return _MessageRows; }
-            set
-            {
-                _MessageRows = value;
-                NotifyPropertyChanged(nameof(SaveStatusLevel));
-                NotifyPropertyChanged("MessageRows");
-                NotifyPropertyChanged("MessageCount");
-            }
-        }
         public string SavingText
         {
             get { return _SavingText; }
             set { _SavingText = value; NotifyPropertyChanged(); }
         }
 
-        public int MessageCount
-        {
-            get { return _MessageRows.Count; }
-        }
         public ObservableCollection<IOccupancyTypeGroupEditable> OccTypeGroups
         {
             get { return _OccTypeGroups; }
@@ -230,12 +182,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public void LaunchNewOccTypeWindow()
         {
-                    //we want a new occtype. If there is an occtype and occtype group then we can use
-                    //some of that data. We don't want to just copy the other occtype, however, that is
-                    //another option. It seems to me that if there is no occtype group, a user shouldn't be
-                    //allowed to create an occtype. The user is able to delete all groups and/or all occtypes.
+            //we want a new occtype. If there is an occtype and occtype group then we can use
+            //some of that data. We don't want to just copy the other occtype, however, that is
+            //another option. It seems to me that if there is no occtype group, a user shouldn't be
+            //allowed to create an occtype. The user is able to delete all groups and/or all occtypes.
 
-            if(SelectedOccTypeGroup == null)
+            if (SelectedOccTypeGroup == null)
             {
                 MessageBox.Show("An occupancy type group must first be imported in order to create a new occupancy type.", "No Occupancy Type Group", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -247,19 +199,19 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (!vm.WasCanceled)
             {
-                if (!vm.HasError)
+                if (!vm.HasErrors)
                 {
                     ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
                     string damCatName = "";
-                    if(SelectedOccType != null)
+                    if (SelectedOccType != null)
                     {
                         damCatName = SelectedOccType.DamageCategory;
                         damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
-                    
+
                     //create the new occupancy type
                     IOccupancyType newOT = new OccupancyType(vm.Name, damCatName, SelectedOccTypeGroup.ID);
-                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT,ref damCatOptions, false);
+                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
                     otEditable.RequestNavigation += this.Navigate;
 
                     //add the occtype to the list and select it
@@ -282,7 +234,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 Navigate(tab, true, true);
                 if (vm.WasCanceled == false)
                 {
-                    if (vm.HasError == false)
+                    if (vm.HasErrors == false)
                     {
                         newOT.Name = vm.Name;
                         ObservableCollection<string> damcats = _GroupsToDamcats[newOT.GroupID];
@@ -453,9 +405,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             string header = "Rename Occupancy Type Group";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "RenameOccupancyTypeGroup");
             Navigate(tab, true, true);
-            if (vm.WasCanceled == false)
+            if (!vm.WasCanceled)
             {
-                if (vm.HasError == false)
+                if (!vm.HasErrors)
                 {
                     string newName = vm.Name;
                     SelectedOccTypeGroup.Name = newName;
@@ -598,26 +550,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         #endregion
-
-        public void UpdateMessages(bool saving = false)
-        {
-            //this gets called when still constructing everything. Exit if everything is still null
-            if (SelectedOccType == null)
-            {
-                return;
-            }
-
-            //get rid of any temp logs
-            ObservableCollection<LogItem> tempList = new ObservableCollection<LogItem>();
-            foreach (LogItem li in MessageRows)
-            {
-                //exclude any temp logs
-                if (!li.IsTempLog())
-                {
-                    tempList.Add(li);
-                }
-            }
-        }
 
     }
 }

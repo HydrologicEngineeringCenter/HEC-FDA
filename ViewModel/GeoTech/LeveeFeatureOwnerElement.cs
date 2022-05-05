@@ -17,16 +17,15 @@ namespace HEC.FDA.ViewModel.GeoTech
         #region Constructors
         public LeveeFeatureOwnerElement( ) : base()
         {
-            Name = "Levee Features";
-            IsBold = false;
+            Name = StringConstants.LATERAL_STRUCTURES;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction add = new NamedAction();
-            add.Header = "Create New Levee Feature";
+            add.Header = StringConstants.CREATE_LATERAL_STRUCTURES_MENU;
             add.Action = AddNewLeveeFeature;
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = StringConstants.ImportFromOldFda("Levees");
+            importFromFile.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
             importFromFile.Action = ImportFromFile;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -58,8 +57,8 @@ namespace HEC.FDA.ViewModel.GeoTech
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportLeveeElementFromFDA1VM();
-            string header = "Import Levee";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportLevee");
+            string header = StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
             Navigate(tab, false, true);
         }
 
@@ -72,8 +71,8 @@ namespace HEC.FDA.ViewModel.GeoTech
             defaultCurve.SetPairedData(DefaultCurveData.FailureDefaultCurve());
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
-            string header = "Create Levee";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateLevee");
+            string header = StringConstants.CREATE_LATERAL_STRUCTURES_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_LATERAL_STRUCTURES_HEADER);
             Navigate(tab, false, false);       
         }
         #endregion

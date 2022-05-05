@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
 
-
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
         public TableWithPlotVM TableWithPlot
@@ -74,7 +73,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int i = 1;
             foreach (StageDamageCurve curve in curves)
             {
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent);
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory);
                 Rows.Add(newRow);
                 i++;
             }
@@ -165,9 +164,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
-                    //UncertainPairedData uncertainPairedData = UncertainPairedDataFactory.CreateDefaultNormalData("Stage", "Damage", "testName");
-                    ComputeComponentVM cc = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, cc));
+                    ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total"));
                 }
                 //end dummy rows
                 if (Rows.Count > 0)
@@ -213,7 +211,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent); 
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.SelectedAssetCategory); 
                 curves.Add(curve);
             }
             return curves;

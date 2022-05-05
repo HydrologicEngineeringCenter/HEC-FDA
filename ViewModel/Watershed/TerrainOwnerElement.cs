@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -9,17 +11,14 @@ namespace HEC.FDA.ViewModel.Watershed
 
         #region Notes
         #endregion
-        #region Fields
-        #endregion
-        #region Properties      
-        #endregion
+
         #region Constructors
         public TerrainOwnerElement( ) : base()
         {
-            Name = "Terrains";
+            Name = StringConstants.TERRAIN;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             NamedAction add = new NamedAction();
-            add.Header = "Import Terrain";
+            add.Header = StringConstants.IMPORT_TERRAIN_MENU;
             add.Action = AddNew;
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(add);
@@ -30,15 +29,15 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Voids
-        private void UpdateTerrainElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateTerrainElement(object sender, ElementUpdatedEventArgs e)
         {
             UpdateElement( e.NewElement);
         }
-        private void RemoveTerrainElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveTerrainElement(object sender, ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
         }
-        private void AddTerrainElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddTerrainElement(object sender, ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
@@ -46,14 +45,12 @@ namespace HEC.FDA.ViewModel.Watershed
        
         private void AddNew(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            List<string> availableVRTPaths = new List<string>();
-            ShapefilePaths(ref availableVRTPaths);
-            TerrainBrowserVM vm = new TerrainBrowserVM(availableVRTPaths, actionManager);
-            string header = "Import Terrain";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportTerrain");
+            TerrainBrowserVM vm = new TerrainBrowserVM( actionManager);
+            string header = StringConstants.IMPORT_TERRAIN_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
             Navigate( tab, false,true);
         }
     }

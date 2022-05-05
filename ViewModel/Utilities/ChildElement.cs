@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -17,8 +16,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Properties
+        public string LastEditDate { get; set; }
         public int ID { get; }
-        public ObservableCollection<FdaLogging.LogItem> Logs { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 
         public int FontSize
@@ -70,8 +69,6 @@ namespace HEC.FDA.ViewModel.Utilities
         /// <param name="elementToClone"></param>
         /// <returns></returns>
         public abstract ChildElement CloneElement(ChildElement elementToClone);
-
-        public virtual void RemoveElementFromMapWindow(object sender, EventArgs e) { }
 
     }
 }

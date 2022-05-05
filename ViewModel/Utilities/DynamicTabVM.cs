@@ -9,26 +9,15 @@ namespace HEC.FDA.ViewModel.Utilities
     /// </summary>
     public class DynamicTabVM:BaseViewModel, IDynamicTab
     {
-
         public event EventHandler RemoveTabEvent;
         public event EventHandler PopTabOutEvent;
         public event EventHandler PopWindowIntoTabEvent;
         public event EventHandler RemoveWindowEvent;
-        public event EventHandler PopTabIntoWindowDraggingEvent;
 
         private BaseViewModel _BaseVM;
         private string _Header;
         private string _UniqueName;
-        private bool _IsDragging;
 
-        /// <summary>
-        /// Used to know if the tab is being dragged out into a window.
-        /// </summary>
-        public bool IsDragging
-        {
-            get { return _IsDragging; }
-            set { _IsDragging = value; }
-        }
         /// <summary>
         /// The header or title of the tab or window
         /// </summary>
@@ -94,15 +83,6 @@ namespace HEC.FDA.ViewModel.Utilities
         }
 
         /// <summary>
-        /// This event is for when the user clicks on the tab header and draggs the mouse. The tab gets removed and
-        /// a window is added. Event gets attached by the TabController.
-        /// </summary>
-        public void PopTabIntoWindowDragging()
-        {
-            PopTabIntoWindowDraggingEvent?.Invoke(this, new EventArgs());
-        }
-
-        /// <summary>
         /// Removes this tab. Event gets attached by the TabController.
         /// </summary>
         public void RemoveTab()
@@ -138,8 +118,6 @@ namespace HEC.FDA.ViewModel.Utilities
                 return false;
             }
         }
-
-
 
     }
 }

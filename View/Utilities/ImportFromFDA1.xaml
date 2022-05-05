@@ -13,7 +13,6 @@
         <cmds:CloseCommand x:Key="close"/>
         <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
-        <cmds:ErrorLevelToBackgroundColorConverter x:Key="ErrorLevelConverter"/>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <DataTemplate x:Key="myTaskTemplate"/>
     </UserControl.Resources>

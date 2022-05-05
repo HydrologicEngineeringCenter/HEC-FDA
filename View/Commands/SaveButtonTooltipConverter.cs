@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -12,27 +15,21 @@ namespace HEC.FDA.View.Commands
             //seems to happen when initializing and not everything is set up in time
             try
             {
-                bool hasFatalError = (bool)values[0];
-                bool HasChanges = (bool)values[1];
-                string errorMsg = (string)values[2];
+                bool hasErrors = (bool)values[0];
+                object dataContext = (values[1] as Button)?.DataContext;
 
-                if (hasFatalError)
+                if (hasErrors && dataContext is BaseViewModel baseVM)
                 {
+                    List<string> errors = (List<string>)baseVM.GetErrors();
+                    string errorMsg = string.Join(Environment.NewLine, errors);
                     return errorMsg;
                 }
-                else if (HasChanges == false)
-                {
-                    return "No changes to save";
-                }
-                else
-                {
-                    return null;
-                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
+            return null;
 
         }
 

@@ -12,8 +12,6 @@ namespace HEC.FDA.ViewModel.Watershed
         #endregion
         #region Fields
         private string _FileName;
-        private int _featureHashCode;
-        private const string TERRAIN_ICON = "pack://application:,,,/View;component/Resources/Terrain.png";
         #endregion
         #region Properties
         public OpenGLMapping.RasterFeatureNode NodeToAddBackToMapWindow
@@ -36,11 +34,11 @@ namespace HEC.FDA.ViewModel.Watershed
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON, " -Saving", true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE, " -Saving", true);
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
 
                 NamedAction remove = new NamedAction();
                 remove.Header = StringConstants.REMOVE_MENU;
@@ -50,14 +48,9 @@ namespace HEC.FDA.ViewModel.Watershed
                 renameElement.Header = StringConstants.RENAME_MENU;
                 renameElement.Action = Rename;
 
-                NamedAction mapWindow = new NamedAction();
-                mapWindow.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-                mapWindow.Action = AddTerrainToMapWindow;
-
                 List<NamedAction> localactions = new List<NamedAction>();
                 localactions.Add(remove);
                 localactions.Add(renameElement);
-                localactions.Add(mapWindow);
 
                 Actions = localactions;
             }
@@ -67,49 +60,6 @@ namespace HEC.FDA.ViewModel.Watershed
         {
             TerrainElement elem = (TerrainElement)elementToClone;
             return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
-        }
-        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
-        {
-            RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(_featureHashCode));
-            foreach (NamedAction a in Actions)
-            {
-                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
-                {
-                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-                    a.Action = AddTerrainToMapWindow;
-                }
-            }
-        }
-        public void removedcallback(OpenGLMapping.FeatureNodeHeader node, bool includeSelected)
-        {
-            foreach (NamedAction a in Actions)
-            {
-                if (a.Header.Equals(StringConstants.REMOVE_FROM_MAP_WINDOW_MENU))
-                {
-                    a.Header = StringConstants.ADD_TO_MAP_WINDOW_MENU;
-                    a.Action = AddTerrainToMapWindow;
-                }
-            }
-        }
-        private void AddTerrainToMapWindow(object arg1, EventArgs arg2)
-        {
-            string filePath = Storage.Connection.Instance.GetTerrainFile(Name);
-            if(filePath == null) { return; }
-            LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(filePath);
-
-            OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.Terrain, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
-            AddGriddedDataEventArgs args = new AddGriddedDataEventArgs(r, c);
-            args.FeatureName = Name;
-            AddToMapWindow(this, args);
-            _featureHashCode = args.MapFeatureHash;
-            foreach (NamedAction a in Actions)
-            {
-                if (a.Header.Equals(StringConstants.ADD_TO_MAP_WINDOW_MENU))
-                {
-                    a.Header = StringConstants.REMOVE_FROM_MAP_WINDOW_MENU;
-                    a.Action = RemoveElementFromMapWindow;
-                }
-            }
         }
 
         public string GetTerrainPath()

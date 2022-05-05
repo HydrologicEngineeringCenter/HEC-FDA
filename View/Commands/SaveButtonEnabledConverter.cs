@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel;
+using HEC.MVVMFramework.Base.Enumerations;
+using System;
 using System.Globalization;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -18,21 +21,19 @@ namespace HEC.FDA.View.Commands
         /// <returns></returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            //this is to answer the question Is Enabled. If HasFatalError is true or HasChanges is False,
-            //then we want to return false.
-            bool hasFatalError = (bool)values[0];
-            bool hasChanges = (bool)values[1];
+            bool hasErrors = (bool)values[0];
+            object dataContext = (values[1] as Button)?.DataContext;
 
-            if(hasFatalError == true)
+            if (hasErrors && dataContext is BaseViewModel baseVM)
             {
-                //This used to be false if has changes == false but it wasn't always enabling after changing things in the the UI. 
-                //I decided that it would be best to have the save button always enabled for now. -Cody 2/25/22
-                return false;
+                ErrorLevel errorLevel = baseVM.ErrorLevel;
+                if (errorLevel >= ErrorLevel.Fatal)
+                {
+                    return false;
+                }
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

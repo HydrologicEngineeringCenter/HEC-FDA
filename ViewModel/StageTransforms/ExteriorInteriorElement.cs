@@ -13,17 +13,17 @@ namespace HEC.FDA.ViewModel.StageTransforms
         // Created By: q0heccdm
         // Created Date: 6/8/2017 11:31:34 AM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties   
-        #endregion
         #region Constructors
         public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id):base(id)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
-
+            CustomTreeViewHeader = new CustomHeaderVM(Name)
+            {
+                ImageSource = ImageSources.EXTERIOR_INTERIOR_IMAGE,
+                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+            };
+                
             Description = desc;
             if (Description == null)
             {
@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             ComputeComponentVM = exteriorInteriorCurve;
 
             NamedAction editExteriorInteriorCurve = new NamedAction();
-            editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve...";
+            editExteriorInteriorCurve.Header = StringConstants.EDIT_EXT_INT_MENU;
             editExteriorInteriorCurve.Action = EditExteriorInteriorCurve;
 
             NamedAction removeExteriorInteriorCurve = new NamedAction();
@@ -60,7 +60,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
-            //create action manager
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 

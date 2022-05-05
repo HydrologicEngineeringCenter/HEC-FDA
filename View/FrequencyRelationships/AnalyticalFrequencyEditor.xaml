@@ -146,9 +146,7 @@
             </Grid>
         </GroupBox>
 
-        <Utilities:MessageExpanderControl Grid.Row="6" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"  />
             <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

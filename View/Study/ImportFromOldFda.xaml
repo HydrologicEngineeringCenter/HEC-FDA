@@ -15,7 +15,6 @@
         <cmds:CloseCommand x:Key="close"/>
         <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
-        <cmds:ErrorLevelToBackgroundColorConverter x:Key="ErrorLevelConverter"/>
         <Utils:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <DataTemplate x:Key="myTaskTemplate">
         </DataTemplate>

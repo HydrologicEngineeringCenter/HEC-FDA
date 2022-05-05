@@ -52,7 +52,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 triMin = ((Triangular)ordinate).Min;
                 triMax = ((Triangular)ordinate).Max;
             }
-            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "units below most likely", "units above most likely");
+            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "units below inventory value", "units above inventory value");
             TriangularControlVM.WasModified += ControlWasModified;
 
             //create the uniform option
@@ -63,7 +63,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 uniMin = ((Uniform)ordinate).Min;
                 uniMax = ((Uniform)ordinate).Max;
             }
-            UniformControlVM = new UniformControlVM(uniMin, uniMax, "from expected value");
+            UniformControlVM = new UniformControlVM(uniMin, uniMax, "units below inventory value", "units above inventory value");
             UniformControlVM.WasModified += ControlWasModified;
 
         }

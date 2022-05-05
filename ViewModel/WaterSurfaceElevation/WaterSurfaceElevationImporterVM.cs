@@ -87,7 +87,8 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             // Copy each file into the new directory.
             foreach (FileInfo fi in source.GetFiles())
             {
-                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+                string newPath = Path.Combine(target.FullName, fi.Name);
+                fi.CopyTo(newPath, true);
             }
 
             // Copy each subdirectory using recursion.

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -13,19 +12,16 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created By: q0heccdm
         // Created Date: 6/14/2017 3:38:41 PM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties       
-        #endregion
+
         #region Constructors
         public StructureInventoryOwnerElement( ) : base()
         {
-            Name = "Structure Inventories";
+            Name = StringConstants.STRUCTURE_INVENTORIES;
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addStructureInventory = new NamedAction();
-            addStructureInventory.Header = "Import From Shapefile...";
+            addStructureInventory.Header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_MENU;
             addStructureInventory.Action = AddStructureInventory;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -62,23 +58,14 @@ namespace HEC.FDA.ViewModel.Inventory
                 return;
             }
 
-            //get the list of paths that exist in the map window
-            ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
-            List<string> pointShapePaths = new List<string>();
-            ShapefilePathsOfType(ref pointShapePaths, VectorFeatureType.Point);
-            foreach (string path in pointShapePaths)
-            {
-                collectionOfPointFiles.Add(path);
-            }
-
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
 
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager);
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(actionManager);
             vm.RequestNavigation += Navigate;
             
-            string header = "Import Structure Inventory";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
+            string header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER);
             Navigate(tab, false, false);
         }
 

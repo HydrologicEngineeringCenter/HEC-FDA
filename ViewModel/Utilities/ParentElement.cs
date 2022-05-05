@@ -9,9 +9,6 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Notes
         #endregion
         #region Fields
-        public event EventHandler RenameMapTreeViewElement;
-        public event EventHandler AddMapTreeViewElementBackIn;
-
         protected ObservableCollection<BaseFdaElement> _Elements;
 
         #endregion
@@ -69,14 +66,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public void InsertElement(int index, BaseFdaElement ele)
         {
-            ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
-            ele.AddMapTreeViewElementBackIn += AddMapTreeViewElementBackIn;
             ele.RequestNavigation += Navigate;
-            ele.RequestShapefilePaths += ShapefilePaths;
-            ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            ele.RequestAddToMapWindow += AddToMapWindow;
-            ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            ele.TransactionEvent += AddTransaction;
             Elements.Insert(index,ele);
             
             IsExpanded = true;
@@ -84,14 +74,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public void AddElement(BaseFdaElement ele)
         {
             //the name possibly changed so assign it to the element
-            ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
-            ele.AddMapTreeViewElementBackIn += AddMapTreeViewElementBackIn;
             ele.RequestNavigation += Navigate;
-            ele.RequestShapefilePaths += ShapefilePaths;
-            ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            ele.RequestAddToMapWindow += AddToMapWindow;
-            ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            ele.TransactionEvent += AddTransaction;
             Elements.Add(ele);
 
             IsExpanded = true;         

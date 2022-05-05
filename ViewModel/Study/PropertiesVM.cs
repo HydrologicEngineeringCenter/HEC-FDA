@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.ViewModel.Validation;
+using HEC.MVVMFramework.Base.Enumerations;
+
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -8,9 +11,7 @@ namespace HEC.FDA.ViewModel.Study
     {
         #region Notes
         #endregion
-        #region Fields
 
-        #endregion
         #region Properties
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
@@ -50,9 +51,9 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public override void AddValidationRules()
         {
-            AddRule(nameof(SurveyedYear), () => SurveyedYear <= DateTime.Now.Year, "The Surveyed Year must not be in the future.");
-            AddRule(nameof(UpdatedYear), () => UpdatedYear <= DateTime.Now.Year, "The Updated Year must not be in the future.");
-            AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
+            AddSinglePropertyRule(nameof(SurveyedYear), new Rule(() => { return SurveyedYear <= DateTime.Now.Year; }, "The Surveyed Year must not be in the future.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(UpdatedYear), new Rule(() => { return UpdatedYear <= DateTime.Now.Year; }, "The Updated Year must not be in the future.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(UpdatedYear), new Rule(() => { return UpdatedYear >= SurveyedYear; }, "The Updated Year must happen after the Surveyed Year.", ErrorLevel.Severe));
         }
         private FdaValidationResult Validate()
         {

@@ -29,7 +29,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 normalMean = ((Normal)ordinate).Mean;
                 normalStDev = ((Normal)ordinate).StandardDeviation;
             }
-            NormalControlVM = new NormalControlVM(normalMean, normalStDev, "");
+            NormalControlVM = new NormalControlVM(normalMean, normalStDev, "% of inventory value");
             NormalControlVM.WasModified += ControlWasModified;
 
             //create log normal option
@@ -53,7 +53,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 triMin = ((Triangular)ordinate).Min;
                 triMax = ((Triangular)ordinate).Max;
             }
-            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "% below most likely", "% above most likely");
+            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "% below inventory value", "% above inventory value");
             TriangularControlVM.WasModified += ControlWasModified;
 
             //create the uniform option
@@ -64,7 +64,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 uniMin = ((Uniform)ordinate).Min;
                 uniMax = ((Uniform)ordinate).Max;
             }
-            UniformControlVM = new UniformControlVM(uniMin, uniMax, "from expected value");
+            UniformControlVM = new UniformControlVM(uniMin, uniMax, "% below inventory value", "% above inventory value");
             UniformControlVM.WasModified += ControlWasModified;
         }
     }

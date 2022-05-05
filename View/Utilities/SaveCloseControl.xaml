@@ -13,26 +13,24 @@
         <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
         <cmds:SaveButtonEnabledConverter x:Key="SaveButtonMultiConverter"/>
-        <cmds:ErrorLevelToBackgroundColorConverter x:Key="ErrorLevelConverter"/>
         <cmds:SaveButtonTooltipConverter x:Key="SaveButtonTooltipConverter"/>
     </UserControl.Resources>
     <Grid>
-        <StackPanel Orientation="Horizontal" Width="95" HorizontalAlignment="Right" >
-                     <!--Background="{Binding Path=ErrorLevel, Converter={StaticResource ErrorLevelConverter}, UpdateSourceTrigger=PropertyChanged}"-->
-            <!--IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}"-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Label Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>
                     <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
-                        <Binding Path="HasFatalError"/>
-                        <Binding Path="HasChanges"/>
-                        <Binding Path="Error"/>
+                        <Binding Path="HasErrors"/>
+                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
                     </MultiBinding>
                 </Button.ToolTip>
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource SaveButtonMultiConverter}" UpdateSourceTrigger="PropertyChanged">
-                        <Binding Path="HasFatalError"/>
-                        <Binding Path="HasChanges"/>
+                        <Binding Path="HasErrors"/>
+                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>

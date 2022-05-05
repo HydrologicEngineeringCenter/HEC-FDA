@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private BaseViewModel _CurrentView;
         private DefineSIAttributesVM _DefineSIAttributes;
         private AttributeLinkingListVM _AttributeLinkingList;
-        private ObservableCollection<string> _AvailablePaths;
         private bool _CurrentViewIsEnabled;
         #endregion
         #region Properties
@@ -45,16 +44,10 @@ namespace HEC.FDA.ViewModel.Inventory
             set { _SelectedPath = value; SelectedPathChanged(); }
         }
 
-        public ObservableCollection<string> AvailablePaths
-        {
-            get { return _AvailablePaths; }
-            set { _AvailablePaths = value; NotifyPropertyChanged(); }
-        }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM(ObservableCollection<string> pointFiles, EditorActionManager actionManager) :base(actionManager)
+        public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
-            AvailablePaths = pointFiles;
             _DefineSIAttributes = new DefineSIAttributesVM();
             _DefineSIAttributes.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;
@@ -82,9 +75,10 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             FdaValidationResult vr = new FdaValidationResult();
             Validate();
-            if (HasFatalError)
+            if (HasErrors)
             {
-                vr.AddErrorMessage( Error);
+                //todo: leaving commented out 5/2/22
+                //vr.AddErrorMessage( Error);
             }
             return vr;
         }
@@ -147,6 +141,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private void SaveStructureInventory()
         {
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
+            int id = manager.GetNextAvailableId();
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
 
@@ -154,11 +149,10 @@ namespace HEC.FDA.ViewModel.Inventory
 
             DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
             //this line will create the child table in the database.
-            manager.Save(newStructureTable, Name, myReader.ToFeatures());
+            manager.Save(newStructureTable, id, myReader.ToFeatures());
             //this line will add it to the parent table.
             Save();
         }
-
 
         private void SwitchToAttributeLinkingList()
         {
@@ -210,21 +204,14 @@ namespace HEC.FDA.ViewModel.Inventory
             return isValid;
         }
 
-
-        public void SwitchVMs()
-        {
-            OccupancyTypesGroupRowItemVM vm = new OccupancyTypesGroupRowItemVM();
-            CurrentView = vm;
-        }
-
         /// <summary>
         /// This method saves a new occtype group for this structure.
         /// It also creates the SI element and saves it to the parent table.
         /// </summary>
         public override void Save()
         {
-            StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
             int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
+            StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description, id);
             InventoryElement elementToSave = new InventoryElement(SIBase, false, id);
 
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();

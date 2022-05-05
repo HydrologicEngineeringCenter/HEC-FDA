@@ -81,11 +81,9 @@
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>
-
         </DataGrid>
 
         <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" >
-            <Util:SaveControl />
             <Util:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

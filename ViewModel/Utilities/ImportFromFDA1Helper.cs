@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 using static Importer.ProbabilityFunction;
 
 namespace HEC.FDA.ViewModel.Utilities
@@ -204,7 +204,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 foreach (AggregateDamageFunction func in funcs)
                 {
                     SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
+                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc,"Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
                     if (stageDamageCurve != null)
                     {
                         curves.Add(stageDamageCurve);
@@ -256,7 +256,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "");
         }
 
-        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string damageReachName, string damCat, 
+        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf,string assetCategory, string damageReachName, string damCat, 
             List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
             damageReachName = damageReachName.Trim();
@@ -280,7 +280,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     {
                         ComputeComponentVM vm = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
                         vm.SetPairedData(stageDamagePairedData);
-                        curve = new StageDamageCurve(row, damCat, vm);
+                        curve = new StageDamageCurve(row, damCat, vm, assetCategory);
                         nameMatchedImpactArea = true;
                         break;
                     }
@@ -566,10 +566,10 @@ namespace HEC.FDA.ViewModel.Utilities
             ContinuousDistribution contentValueUncertaintyByValue = new Deterministic();
             ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();          
 
-            OccTypeItem StructureItem = new OccTypeItem(OcctypeItemType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);           
-            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeItemType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
-            OccTypeItem VehicleItem = new OccTypeItem(OcctypeItemType.vehicle, CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
-            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(OcctypeItemType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
+            OccTypeAsset StructureItem = new OccTypeAsset(OcctypeAssetType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);           
+            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeAssetType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
+            OccTypeAsset VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
+            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(OcctypeAssetType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
 
             ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;      
 

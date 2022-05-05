@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,20 +15,13 @@ namespace HEC.FDA.ViewModel.Tabs
     /// </summary>
     public sealed class TabController : BaseViewModel
     {
-        private static readonly FdaLogging.FdaLogger logger = new FdaLogging.FdaLogger("TabController");
-
-
         private static readonly TabController _Instance = new TabController();
         
         private int _SelectedTabIndex;
         private ObservableCollection<IDynamicTab> _Tabs = new ObservableCollection<IDynamicTab>();
         private List<IDynamicTab> _Windows = new List<IDynamicTab>();
 
-
         #region Properties
-
-        public MapWindowMapTreeViewConnector MWMTVConnector { get; set; }
-
         /// <summary>
         /// The list of tabs in the main UI
         /// </summary>
@@ -41,20 +36,7 @@ namespace HEC.FDA.ViewModel.Tabs
         public int SelectedDynamicTabIndex
         {
             get { return _SelectedTabIndex; }
-            set
-            {
-                _SelectedTabIndex = value; NotifyPropertyChanged();
-                //I don't like this one bit. It would be nice if we could pop the map window out etc
-                //Now i have to have access to the connector in this class which i don't want to do.
-                //I don't think this is even working, so probably get rid of it once i know how to update
-                //the map window when it is selected.
-                if (_SelectedTabIndex == 0 && MWMTVConnector != null)
-                {
-
-                    MWMTVConnector.UpdateMapWindow();
-                    //UpdateMapWindow();
-                }
-            }
+            set { _SelectedTabIndex = value; NotifyPropertyChanged();}
         }
         #endregion
 
@@ -120,10 +102,13 @@ namespace HEC.FDA.ViewModel.Tabs
                 if (winVM.Tab == null)
                 {
                     //remove the selected tab
-                    IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
-                    if (selectedTab.BaseVM.IsOkToClose())
+                    if (SelectedDynamicTabIndex != -1)
                     {
-                        Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                        IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
+                        if (selectedTab.BaseVM.IsOkToClose())
+                        {
+                            Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                        }
                     }
                 }
                 else
@@ -145,14 +130,6 @@ namespace HEC.FDA.ViewModel.Tabs
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
-            //logger.LogInfo("testing the new fda logger.", typeof(CurveEditorVM), tab.BaseVM.Name);
-
-            //Logger.Fatal("Adding tab: {0}. Fatal message", tab.Header);
-            //Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
-            //Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
-            //Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);
-            //Logger.Debug("Adding tab: {0}. From ViewModel", tab.Header );
-
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
             {
@@ -166,11 +143,11 @@ namespace HEC.FDA.ViewModel.Tabs
             }
             else
             {
+                //this is a new tab
                 tab.PopTabOutEvent += PopTabIntoWindow;
                 tab.RemoveTabEvent += RemoveTab;
                 tab.PopWindowIntoTabEvent += PopWindowIntoTab;
                 tab.RemoveWindowEvent += RemoveWindow;
-                tab.PopTabIntoWindowDraggingEvent += PopTabIntoWindowDragging;
 
                 _Tabs.Add(tab);
                 SelectedDynamicTabIndex = Tabs.Count - 1;
@@ -232,7 +209,6 @@ namespace HEC.FDA.ViewModel.Tabs
             return retval;
         }
         
-
         private void PopWindowIntoTab(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopIn = (DynamicTabVM)sender;
@@ -240,7 +216,17 @@ namespace HEC.FDA.ViewModel.Tabs
             //when the window closes it will call RemoveWindow()
             _Tabs.Add(tabToPopIn);
             SelectedDynamicTabIndex = Tabs.Count - 1;
-
+            if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)
+            {
+                //only one plot model can be linked to one plot view. An exception was getting thrown when trying
+                //to open this vm in a tab. It seems as though the window was still holding onto a connection even
+                //though the window has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
+                curveEditorVM.TableWithPlot.InitModel();
+            }
+            if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.InitializePlotModel();
+            }
         }
 
         private void RemoveWindow(object sender, EventArgs e)
@@ -259,20 +245,35 @@ namespace HEC.FDA.ViewModel.Tabs
             DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
             _Tabs.Remove(tabToPopOut);
             _Windows.Add(tabToPopOut);
+
+            if(tabToPopOut.BaseVM is CurveEditorVM curveEditorVM)
+            {
+                //only one plot model can be linked to one plot view. An exception was getting thrown when trying
+                //to open this vm in a window. It seems as thought the tab was still holding onto a connection even
+                //though the tab has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
+                curveEditorVM.TableWithPlot.InitModel();
+            }
+            if(tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.InitializePlotModel();
+            }
             Navigate(tabToPopOut, true, false);
         }
 
-        private void PopTabIntoWindowDragging(object sender, EventArgs e)
+        public void CloseTabsAndWindowsOpeningNewStudy()
         {
-            DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
-            tabToPopOut.IsDragging = true;
-            _Tabs.Remove(tabToPopOut);
-            _Windows.Add(tabToPopOut);
-            Navigate(tabToPopOut, true, false);
+            _Windows.Clear();
+            _Tabs.Clear();
+            foreach (Window win in Application.Current.Windows)
+            {
+                //the main window doesn't have a tab. Everything else does.
+                if (win.DataContext is WindowVM windowVM && windowVM.Tab != null)
+                {
+                    win.Close();
+                }
+            }
         }
+
         #endregion
-
-       
-
     }
 }

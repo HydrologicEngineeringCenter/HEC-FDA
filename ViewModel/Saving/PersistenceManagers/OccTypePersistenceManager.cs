@@ -1,15 +1,14 @@
-﻿using FdaLogging;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
-using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeItem;
+using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -22,7 +21,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
-        private const int PARENT_IS_SELECTED_COL = 2;
 
         //These are the columns for the child table
         private const int GROUP_ID_COL = 0;
@@ -38,14 +36,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int VEH_ITEM_COL = 8;
         private const int OTHER_ITEM_COL = 9;
 
-        private const int OTHER_PARAMS_COL = 10;
-
-        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
-        //of the element. But since they get stored as strings if a developer changes the name of the class
-        //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "OccType";
-        private static readonly FdaLogger.FdaLogger LOGGER = new FdaLogger.FdaLogger("OccTypePersistenceManager");
-
         private const string ParentTableName = "occupancy_type_groups";
 
         private const string PARENT_NAME_FIELD = "Name";
@@ -54,7 +44,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const string VALUE_UNCERT = "ValueUncertainty";
 
         private const string IS_ITEM_CHECKED = "IsItemChecked";
-        private const string OTHER_PARAMS = "OtherParams";
 
         /// <summary>
         /// The types of the columns in the parent table
@@ -63,7 +52,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get { return new Type[] { typeof(string), typeof(bool) }; }
         }
-        internal override string ChangeTableConstant { get { return "OccType"; } }
 
         public override string TableName => ParentTableName;
 
@@ -96,7 +84,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-
         //This method is not used, but it needs to be hear for the abstract
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
@@ -106,16 +93,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<DataRow> GetParentTableRows()
         {
             List<DataRow> retval = new List<DataRow>();
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            if (!Connection.Instance.IsConnectionNull)
             {
-                if (!Storage.Connection.Instance.IsOpen)
+                if (!Connection.Instance.IsOpen)
                 {
-                    Storage.Connection.Instance.Open();
+                    Connection.Instance.Open();
                 }
-                if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
+                if (Connection.Instance.TableNames().Contains(ParentTableName))
                 {
 
-                    System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+                    DataTable table = Connection.Instance.GetDataTable(ParentTableName);
                     foreach (DataRow row in table.Rows)
                     {
                         retval.Add(row);
@@ -124,7 +111,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
             return retval;
         }
-
         
         public override void Load()
         {
@@ -313,14 +299,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveNewOccType(IOccupancyType ot)
         {
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             if (tbl == null)
             {
-                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
             }
 
             object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
-            Storage.Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
+            Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
 
             AddNewOccTypeToCache(ot);
         }
@@ -378,11 +364,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             //we should have already saved the element to the parent table so that we can grab the id from that table
             int elemId = GetElementId(TableName, element.Name);
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             if (tbl == null)
             {
-                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-                tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
             }
 
             List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
@@ -403,9 +389,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<IOccupancyType> LoadOcctypesFromOccTypeTable(int groupId)
         {
             List<IOccupancyType> occtypes = new List<IOccupancyType>();
-            if (Storage.Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
+            if (Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
             {
-                DataTable table = Storage.Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
+                DataTable table = Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
 
                 foreach (DataRow row in table.Rows)
                 {
@@ -434,10 +420,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string vehicleItemXML = (string)rowData[VEH_ITEM_COL];
             string otherItemXML = (string)rowData[OTHER_ITEM_COL];
 
-            OccTypeItem structItem = ReadItemFromXML(OcctypeItemType.structure, structureItemXML);
-            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeItemType.content, contentItemXML);
-            OccTypeItem vehicleItem = ReadItemFromXML(OcctypeItemType.vehicle, vehicleItemXML);
-            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeItemType.other, otherItemXML);
+            OccTypeAsset structItem = ReadItemFromXML(OcctypeAssetType.structure, structureItemXML);
+            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeAssetType.content, contentItemXML);
+            OccTypeAsset vehicleItem = ReadItemFromXML(OcctypeAssetType.vehicle, vehicleItemXML);
+            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeAssetType.other, otherItemXML);
 
             ContinuousDistribution foundHtUncert = (ContinuousDistribution)ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
 
@@ -477,11 +463,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
             rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
 
-            //rowsList[OTHER_PARAMS_COL] = WriteOtherParamsToXML(ot);
             return rowsList.ToList();
         }
 
-        private OccTypeItem ReadItemFromXML(OcctypeItemType itemType, string xmlString)
+        private OccTypeAsset ReadItemFromXML(OcctypeAssetType itemType, string xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement itemElem = doc.Element(ITEM_DATA);
@@ -494,10 +479,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement valueUncert = valueUncertParent.Elements().First();
             ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
 
-            return new OccTypeItem(itemType, isChecked, comp, valueUncertainty);
+            return new OccTypeAsset(itemType, isChecked, comp, valueUncertainty);
         }
 
-        private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeItemType itemType, string xmlString)
+        private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeAssetType itemType, string xmlString)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement itemElem = doc.Element(ITEM_DATA);
@@ -518,7 +503,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new OccTypeItemWithRatio(itemType, isChecked, comp, valueUncertainty, valueUncertaintyRatio, isByVal);
         }
 
-        private string WriteOccTypeItemToXML(OccTypeItem item)
+        private string WriteOccTypeItemToXML(OccTypeAsset item)
         {
             XElement itemElem = new XElement(ITEM_DATA);
             itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
@@ -558,46 +543,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement valueUncertElem = cd.ToXML();
             valueUncertParentElem.Add(valueUncertElem);
             return valueUncertParentElem;
-        }
-
-        public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        /// <summary>
-        /// This will put a log into the log tables. Logs are only unique by element id and
-        /// element type. ie. Rating Curve id=3.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="elementName"></param>
-        public override void Log(LoggingLevel level, string message, string elementName)
-        {
-        }
-
-        /// <summary>
-        /// This will look in the parent table for the element id using the element name. 
-        /// Then it will sweep through the log tables pulling out any logs with that id
-        /// and element type. 
-        /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessages(string elementName)
-        {
-            return new ObservableCollection<LogItem>();
-        }
-
-        /// <summary>
-        /// Gets all the log messages for this element from the specified log level table.
-        /// This is used by the MessageExpander to filter by log level
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
-        public override ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
-        {
-            return new ObservableCollection<LogItem>();
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

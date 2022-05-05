@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel
 {
-    public delegate void TransactionEventHandler(object sender, Utilities.Transactions.TransactionEventArgs args);
     /// <summary>
     /// Base class for all "elements" in FDA. Elements are broken into two categories- parents and children. This
     /// class contains all the shared functionality among all elements.
@@ -17,10 +16,10 @@ namespace HEC.FDA.ViewModel
         private List<NamedAction> _Actions;
         private CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
-        private string _Tooltip = null;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
+        private string _Name;
         #endregion
         #region Events
         public event EventHandler RenameMapTreeViewElement;
@@ -36,6 +35,12 @@ namespace HEC.FDA.ViewModel
         }
         #endregion
         #region Properties
+
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(nameof(Name)); }
+        }
         public bool IsExpanded
         {
             get { return _IsExpanded; }
@@ -51,11 +56,7 @@ namespace HEC.FDA.ViewModel
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public String ToolTip
-        {
-            get { return _Tooltip; }
-            set { _Tooltip = value; NotifyPropertyChanged(); }
-        }
+
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -81,9 +82,7 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Constructors
-            /// <summary>
-            /// Constructor
-            /// </summary>
+
         public BaseFdaElement()
         {
         }
@@ -91,19 +90,27 @@ namespace HEC.FDA.ViewModel
         #endregion
         #region Voids
 
-        public override void AddValidationRules()
+        public void UpdateTreeViewHeader(string newName, string newTooltip = null)
         {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-        }
+            if (_CustomTreeViewHeader != null)
+            {
+                string image = _CustomTreeViewHeader.ImageSource;
+                string decoration = _CustomTreeViewHeader.Decoration;
+                bool gifVisible = _CustomTreeViewHeader.GifVisible;
+                string tooltip = _CustomTreeViewHeader.Tooltip;
+                if(newTooltip != null)
+                {
+                    tooltip += newTooltip;
+                }
 
-        public void UpdateTreeViewHeader(string newName)
-        {
-            if (_CustomTreeViewHeader == null) { return; }
-            string image = _CustomTreeViewHeader.ImageSource;
-            string decoration = _CustomTreeViewHeader.Decoration;
-            bool gifVisible = _CustomTreeViewHeader.GifVisible;
-            CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
+                CustomTreeViewHeader = new CustomHeaderVM(newName)
+                {
+                    ImageSource = image,
+                    Decoration = decoration,
+                    GifVisible = gifVisible,
+                    Tooltip = tooltip
+                };
+            }
         }
 
         #endregion

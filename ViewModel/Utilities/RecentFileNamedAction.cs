@@ -1,7 +1,7 @@
 ﻿namespace HEC.FDA.ViewModel.Utilities
 {
     //[Author(q0heccdm, 10 / 6 / 2017 4:00:37 PM)]
-    class RecentFileNamedAction:NamedAction
+    public class RecentFileNamedAction:NamedAction
     {
         #region Notes
         // Created By: q0heccdm
