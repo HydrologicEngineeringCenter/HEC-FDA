@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.View.TableWithPlot.CustomEventArgs;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.TableWithPlot
@@ -16,7 +17,11 @@ namespace HEC.FDA.View.TableWithPlot
 
         public void MyDataGrid_PreviewDeleteRows(object sender, PreviewDeleteRowsEventArgs e)
         {
-            if ((e.TotalRows - e.RowIndices.Count) < 2) { e.Cancel = true; }
+            if ((e.TotalRows - e.RowIndices.Count) < 2) 
+            { 
+                e.Cancel = true;
+                MessageBox.Show("Cannot delete the requested rows. Two coordinates are required in the table.", "Two Coordinates Required", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         public void MyDataGrid_RowsDeleted(object sender, RowsDeletedEventArgs e)

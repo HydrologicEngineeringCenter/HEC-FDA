@@ -128,33 +128,34 @@ namespace Importer
         public void Print(AsyncLogger logger)
         {
             //Basic Information
-            logger.Log($"\n\nStage-Discharge Function Name: {Name}");
-            logger.Log($"\tDescription: {Description}");
-            logger.Log($"\tPlan: {PlanName}");
-            logger.Log($"\tYear: {YearName}");
-            logger.Log($"\tStream: {StreamName}");
-            logger.Log($"\tReach: {DamageReachName}");
-            logger.Log($"\tError Type: {ErrorTypesId}");
-            logger.Log($"\tUses Global Error: {UsesGlobalError}");
+            logger.Log($"\n\nStage-Discharge Function Name: ", Name);
+            logger.Log($"\tDescription: ", Description);
+            logger.Log($"\tPlan: ", PlanName);
+            logger.Log($"\tYear: ", YearName);
+            logger.Log($"\tStream: ", StreamName);
+            logger.Log($"\tReach: ", DamageReachName);
+            logger.Log($"\tError Type: ", ErrorTypesId.ToString());
+            logger.Log($"\tUses Global Error: ", UsesGlobalError.ToString());
 
             if (UsesGlobalError)
             {
-                logger.Log($"\tBase Stage: {BaseStage}");
+                logger.Log($"\tBase Stage: ", BaseStage.ToString());
                 if (ErrorTypesId == ErrorType.NORMAL)
                 {
-                    logger.Log($"\tStd Dev: {GlobalStdDev}");
+                    logger.Log($"\tStd Dev: ", GlobalStdDev.ToString());
                 }
                 else if (ErrorTypesId == ErrorType.LOGNORMAL)
                 {
-                    logger.Log($"\tLog Std Dev: {GlobalStdDevLog}");
+                    logger.Log($"\tLog Std Dev: ", GlobalStdDevLog.ToString());
                 }
                 else if (ErrorTypesId == ErrorType.TRIANGULAR)
                 {
-                    logger.Log($"\tUpper Error: {GlobalStdDevHigh}\n\tLower Error: {GlobalStdDevLow}");
+                    logger.Log($"\tUpper Error: ", GlobalStdDevHigh.ToString());
+                    logger.Log("\tLower Error: ", GlobalStdDevLow.ToString());
                 }
             }
             //Points
-            logger.Log($"\n\tRating Curve, Number of Points {NumberOfPoints}");
+            logger.Log($"\n\tRating Curve, Number of Points ", NumberOfPoints.ToString());
             logger.Log("\t\tDischarge: ");
             for (int i = 0; i < NumberOfPoints; i++)
             {

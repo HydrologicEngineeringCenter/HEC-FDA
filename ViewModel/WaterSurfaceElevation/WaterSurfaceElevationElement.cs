@@ -117,9 +117,10 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                     string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
                     string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
                     Directory.Move(sourceFilePath, destinationFilePath);
+
+                    //rename the child table in the DB
+                    Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
                 }
-                //rename the child table in the DB
-                Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
             }
         }
 

@@ -29,7 +29,7 @@
         //failure function
         public static readonly string SYSTEM_RESPONSE_CURVE = "System Response Curve";
         //x-axis
-        public static readonly string FAILURE_FREQUENCY = "Failure Frequency";
+        public static readonly string FAILURE_FREQUENCY = "Probability of Failure";
         //y-axis is stage
 
         //analytical frequency curve

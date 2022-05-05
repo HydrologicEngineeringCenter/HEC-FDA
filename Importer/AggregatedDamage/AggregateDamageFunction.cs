@@ -54,9 +54,9 @@ namespace Importer
         }
         public void Print(AsyncLogger logger)
         {
-            logger.Log($"\nAggregated Damage Function Name: {this.Name}");
-            logger.Log($"\tDescription: {this.Description}");
-            logger.Log($"\tCategory Name: {this.CategoryName}");
+            logger.Log($"\nAggregated Damage Function Name: ", this.Name);
+            logger.Log($"\tDescription: ", this.Description);
+            logger.Log($"\tCategory Name: ", this.CategoryName);
         }
         public void PrintToFile()
         {

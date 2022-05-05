@@ -45,7 +45,7 @@ namespace Importer
         public void Print(AsyncLogger logger)
         {
             Levee aLevee;
-            logger.Log($"Number of Levees {_LeveeListSort.Count}");
+            logger.Log($"Number of Levees ", _LeveeListSort.Count.ToString());
             for (int i = 0; i < _LeveeListSort.Count; i++)
             {
                 aLevee = _LeveeListSort.ElementAt(i).Value;

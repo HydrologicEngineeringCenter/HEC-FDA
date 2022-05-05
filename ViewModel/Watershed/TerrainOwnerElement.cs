@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -45,13 +46,22 @@ namespace HEC.FDA.ViewModel.Watershed
        
         private void AddNew(object arg1, EventArgs arg2)
         {
-            EditorActionManager actionManager = new EditorActionManager()
-                .WithSiblingRules(this);
+            List<TerrainElement> terrainElems = StudyCache.GetChildElementsOfType<TerrainElement>();
+            if (terrainElems.Count == 0)
+            {
 
-            TerrainBrowserVM vm = new TerrainBrowserVM( actionManager);
-            string header = StringConstants.IMPORT_TERRAIN_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
-            Navigate( tab, false,true);
+                Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                    .WithSiblingRules(this);
+
+                TerrainBrowserVM vm = new TerrainBrowserVM(actionManager);
+                string header = StringConstants.IMPORT_TERRAIN_HEADER;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show("Only one terrain is allowed.", "Terrain Already Exists", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

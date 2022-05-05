@@ -176,18 +176,18 @@ namespace Importer
         public void Print(AsyncLogger logger, ImportOptions importOptions = ImportOptions.ImportEverything)
         {
             //Basic Information
-            logger.Log($"\n\nLevee Name: {Name}");
-            logger.Log($"\tDescription: {Description}");
-            logger.Log($"\tPlan: {PlanName}");
-            logger.Log($"\tYear: {YearName}");
-            logger.Log($"\tStream: {StreamName}");
-            logger.Log($"\tReach: {DamageReachName}");
-            logger.Log($"\tTop of Levee: {ElevationTopOfLevee}");
+            logger.Log("\n\nLevee Name: ", Name);
+            logger.Log("\tDescription: ",Description);
+            logger.Log("\tPlan: ", PlanName);
+            logger.Log("\tYear: ",YearName);
+            logger.Log("\tStream: ", StreamName);
+            logger.Log("\tReach: ", DamageReachName);
+            logger.Log("\tTop of Levee: ", ElevationTopOfLevee.ToString());
 
             //Interior-Exterior Function
             if (_IntExt.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportExteriorInterior))
             {
-                logger.Log($"\n\tInterior-Exterior Function, Number of Points {_IntExt.Count}");
+                logger.Log("\n\tInterior-Exterior Function, Number of Points ", _IntExt.Count.ToString());
                 logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _IntExt.Count; i++)
                     logger.Append($"\t{_IntExt.ElementAt(i).GetX()}");
@@ -200,7 +200,7 @@ namespace Importer
             //Geotechnical Function
             if (_GeoTech.Count > 0 && (importOptions == ImportOptions.ImportEverything || importOptions == ImportOptions.ImportLevees))
             {
-                logger.Log($"\n\tGeotechnical Function, Number of Points {_GeoTech.Count}");
+                logger.Log("\n\tGeotechnical Function, Number of Points ", _GeoTech.Count.ToString());
                 logger.Append("\t\tExterior Elev: ");
                 for (int i = 0; i < _GeoTech.Count; i++)
                     logger.Append($"\t{_GeoTech.ElementAt(i).GetX()}");

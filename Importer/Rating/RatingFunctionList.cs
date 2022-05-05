@@ -50,7 +50,7 @@ namespace Importer
             RatingFunction aFunc;
             Write("\n\n\n\n");
             //for (int j = 0; j < 100; j++) Write("-");
-            logger.Log($"\nNumber of Rating Functions {_RatingFunctionListSort.Count}");
+            logger.Log($"\nNumber of Rating Functions ", _RatingFunctionListSort.Count.ToString());
             for (int i = 0; i < _RatingFunctionListSort.Count; i++)
             {
                 aFunc = _RatingFunctionListSort.ElementAt(i).Value;

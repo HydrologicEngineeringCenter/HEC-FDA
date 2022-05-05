@@ -44,7 +44,7 @@ namespace Importer
         public void Print(AsyncLogger logger)
         {
             ProbabilityFunction aProbFunc;
-            logger.Log($"Number of Probability Functions {_ProbabilityFunctionListSort.Count}");
+            logger.Log($"Number of Probability Functions ", _ProbabilityFunctionListSort.Count.ToString());
             for (int i = 0; i < _ProbabilityFunctionListSort.Count; i++)
             {
                 aProbFunc = _ProbabilityFunctionListSort.ElementAt(i).Value;
