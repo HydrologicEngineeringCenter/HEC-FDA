@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -27,15 +29,15 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Voids
-        private void UpdateTerrainElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateTerrainElement(object sender, ElementUpdatedEventArgs e)
         {
             UpdateElement( e.NewElement);
         }
-        private void RemoveTerrainElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveTerrainElement(object sender, ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
         }
-        private void AddTerrainElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddTerrainElement(object sender, ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
@@ -43,7 +45,7 @@ namespace HEC.FDA.ViewModel.Watershed
        
         private void AddNew(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
             TerrainBrowserVM vm = new TerrainBrowserVM( actionManager);

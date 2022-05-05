@@ -2,6 +2,7 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Globalization;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -21,19 +22,17 @@ namespace HEC.FDA.View.Commands
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             bool hasErrors = (bool)values[0];
-            object dataContext = ((System.Windows.Controls.Button)values[1]).DataContext;
+            object dataContext = (values[1] as Button)?.DataContext;
 
-            if (hasErrors)
+            if (hasErrors && dataContext is BaseViewModel baseVM)
             {
-                if (dataContext is BaseViewModel baseVM)
+                ErrorLevel errorLevel = baseVM.ErrorLevel;
+                if (errorLevel >= ErrorLevel.Fatal)
                 {
-                    ErrorLevel errorLevel = baseVM.ErrorLevel;
-                    if (errorLevel >= ErrorLevel.Fatal)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
+
             return true;
         }
 

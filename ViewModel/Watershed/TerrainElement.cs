@@ -12,7 +12,6 @@ namespace HEC.FDA.ViewModel.Watershed
         #endregion
         #region Fields
         private string _FileName;
-        private const string TERRAIN_ICON = "pack://application:,,,/View;component/Resources/Terrain.png";
         #endregion
         #region Properties
         public OpenGLMapping.RasterFeatureNode NodeToAddBackToMapWindow
@@ -35,11 +34,11 @@ namespace HEC.FDA.ViewModel.Watershed
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON, " -Saving", true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE, " -Saving", true);
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, TERRAIN_ICON);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
 
                 NamedAction remove = new NamedAction();
                 remove.Header = StringConstants.REMOVE_MENU;

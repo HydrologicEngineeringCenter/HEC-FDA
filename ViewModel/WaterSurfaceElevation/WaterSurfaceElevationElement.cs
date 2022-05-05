@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 Description = "";
             }
             IsDepthGrids = isDepthGrids;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.WATER_SURFACE_ELEVATION_IMAGE);
 
             NamedAction editElement = new NamedAction(this);
             editElement.Header = StringConstants.EDIT_HYDRAULICS_MENU;

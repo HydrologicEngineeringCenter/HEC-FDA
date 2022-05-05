@@ -1,11 +1,10 @@
 ﻿using DatabaseManager;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -167,15 +166,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
                 tbl.ApplyEdits();
             }
-        }
-
-        /// <summary>
-        /// The name in the parent inventory table gets renamed from the renameVM. This method renames the specific
-        /// inventory table and the value in the geo table.
-        /// </summary>
-        public void RenameInventory()
-        {
-
         }
 
         private object[] GetRowDataFromElement(InventoryElement element)

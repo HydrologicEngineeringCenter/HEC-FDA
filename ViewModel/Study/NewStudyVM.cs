@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using HEC.MVVMFramework.Base.Enumerations;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -54,36 +55,37 @@ namespace HEC.FDA.ViewModel.Study
         {
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() =>
-            {
-                bool pathIsValid = true;
-                if (Path != null && Path != "")
-                {
-                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                    {
-                        if (Path.Contains(c))
-                        {
-                            pathIsValid = false;
-                            break;
-                        }
-                    }
-                    if (Path.Contains('?'))
-                    {
-                        pathIsValid = false;
-                    }
-                }
-                return pathIsValid;
-            }, "Path contains invalid characters.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return IsPathValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
 
             AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StudyName), new Rule(() => 
             {
-                return !System.IO.File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
+                return !File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
             }, "A study with that name already exists.", ErrorLevel.Severe));
 
         }
 
+        private bool IsPathValid()
+        {
+            bool pathIsValid = true;
+            if (Path != null && Path != "")
+            {
+                foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                {
+                    if (Path.Contains(c))
+                    {
+                        pathIsValid = false;
+                        break;
+                    }
+                }
+                if (Path.Contains('?'))
+                {
+                    pathIsValid = false;
+                }
+            }
+            return pathIsValid;
+        }
         public override void Save()
         {
             _StudyElement.CreateNewStudy(_StudyName, _Path, _Description);

@@ -18,7 +18,7 @@
         <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
             <Label Content="An unexpected exception has been thrown. It is advised that you close the program and reopen. "/>
             <StackPanel Orientation="Horizontal">
-            <Label Content="You can create a report for the HEC-FDA developers"/>
+                <Label Content="You can create a report for the HEC-FDA developers"/>
                 <TextBlock VerticalAlignment="Center" >           
                     <Hyperlink NavigateUri="https://discourse.hecdev.net/c/fda/33" RequestNavigate="Hyperlink_RequestNavigate">
                       here

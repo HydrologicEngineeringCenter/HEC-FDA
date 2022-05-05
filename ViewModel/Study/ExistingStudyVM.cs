@@ -66,29 +66,30 @@ namespace HEC.FDA.ViewModel.Study
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.File.Exists(Path); }, "File does not exist.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => 
-            {
-                bool pathIsValid = true;
-                if (Path != null && Path != "")
-                {
-                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                    {
-                        if (Path.Contains(c))
-                        {
-                            pathIsValid = false;
-                            break;
-                        }
-                    }
-                    if (Path.Contains('?'))
-                    {
-                        pathIsValid = false;
-                    }
-                }
-                return pathIsValid;
-            }, "Path contains invalid characters.", ErrorLevel.Severe));
-
+            AddSinglePropertyRule(nameof(Path), new Rule(() => { return PathIsValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
         }
   
         #endregion
+
+        private bool PathIsValid()
+        {
+            bool pathIsValid = true;
+            if (Path != null && Path != "")
+            {
+                foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                {
+                    if (Path.Contains(c))
+                    {
+                        pathIsValid = false;
+                        break;
+                    }
+                }
+                if (Path.Contains('?'))
+                {
+                    pathIsValid = false;
+                }
+            }
+            return pathIsValid;
+        }
     }
 }

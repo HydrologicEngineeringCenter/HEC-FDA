@@ -1,17 +1,12 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    class OccupancyTypeGroupEditable : BaseViewModel, IOccupancyTypeGroupEditable
+    class OccupancyTypeGroupEditable : NameValidatingVM, IOccupancyTypeGroupEditable
     {
         private bool _IsModified;
-        private string _Name;
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
         public List<IOccupancyTypeEditable> Occtypes { get; set; }
         public List<IOccupancyTypeEditable> ModifiedOcctypes
         {

@@ -21,11 +21,7 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Fields
-  
         private bool _HasChanges;
-
-        //private string _Name;
-
         #endregion
         #region Properties
 
@@ -43,16 +39,6 @@ namespace HEC.FDA.ViewModel
         /// </summary>
         public static IStudyCache StudyCache { get; set; }
         public static Saving.PersistenceFactory PersistenceFactory { get; set; }
-        ///// <summary>
-        ///// The name of the object
-        ///// </summary>
-        //public virtual string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; NotifyPropertyChanged(); }
-        //}
-
-    
 
         /// <summary>
         /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
@@ -136,20 +122,9 @@ namespace HEC.FDA.ViewModel
             }     
         }
 
-
-        //public virtual void OnClosing(object sender, EventArgs e)
-        //{
-
-        //}
-        //public virtual void Dispose()
-        //{
-
-        //}
-
-
         #endregion
 
-        virtual public void AddValidationRules() { }
+        public virtual void AddValidationRules() { }
 
         /// <summary>
         /// When a tab or a window is closing it will first check to see if it is ok to close

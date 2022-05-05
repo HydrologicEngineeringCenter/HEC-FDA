@@ -54,11 +54,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Name = name;
             Description = description;
             AnalysisYear = year;
-            //LastEditDate = DateTime.Now.ToString("G");
 
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png",
+                ImageSource = ImageSources.SCENARIO_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
             };
 
@@ -86,7 +85,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png",
+                ImageSource = ImageSources.SCENARIO_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
             };
             AddActions();

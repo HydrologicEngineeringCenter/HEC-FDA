@@ -266,16 +266,12 @@ namespace HEC.FDA.ViewModel.Tabs
             _Tabs.Clear();
             foreach (Window win in Application.Current.Windows)
             {
-                if (win.DataContext is WindowVM windowVM)
+                //the main window doesn't have a tab. Everything else does.
+                if (win.DataContext is WindowVM windowVM && windowVM.Tab != null)
                 {
-                    //the main window doesn't have a tab. Everything else does.
-                    if (windowVM.Tab != null)
-                    {
-                        win.Close();
-                    }
+                    win.Close();
                 }
             }
-
         }
 
         #endregion

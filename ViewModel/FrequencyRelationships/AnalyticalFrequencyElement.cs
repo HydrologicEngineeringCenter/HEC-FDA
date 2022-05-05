@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             ComputeComponentVM = function;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/FrequencyCurve.png",
+                ImageSource = ImageSources.FREQUENCY_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
             };
 
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/FrequencyCurve.png",
+                ImageSource = ImageSources.FREQUENCY_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
             };
 

@@ -12,6 +12,9 @@ using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Windows.Controls;
 
 namespace HEC.FDA.ViewModel.Study
@@ -48,7 +51,7 @@ namespace HEC.FDA.ViewModel.Study
             PopulateRecentStudies();
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
             _Elements = new ObservableCollection<BaseFdaElement>();
         }
 
@@ -59,7 +62,7 @@ namespace HEC.FDA.ViewModel.Study
             if (sender is MenuItem menuItem)
             {
                 string filePath = menuItem.Tag as string;
-                OpenStudyFromFilePath(System.IO.Path.GetFileNameWithoutExtension(filePath), filePath);
+                OpenStudyFromFilePath(Path.GetFileNameWithoutExtension(filePath), filePath);
             }
         }
 
@@ -68,9 +71,9 @@ namespace HEC.FDA.ViewModel.Study
         /// </summary>
         private void PopulateRecentStudies()
         {
-            string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().ToString();
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            string appName = Assembly.GetExecutingAssembly().GetName().ToString();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             var companyName = fvi.CompanyName;
 
             string subKey = companyName + "\\" + appName;
@@ -84,7 +87,7 @@ namespace HEC.FDA.ViewModel.Study
             while (idx < registryKey.ValueCount && _RegistryStudies.Count < 5)
             {
                 string registryNextLine = registryKey.GetValue(idx.ToString()).ToString();
-                if (System.IO.File.Exists(registryNextLine))
+                if (File.Exists(registryNextLine))
                 {
                     _RegistryStudies.Add(registryNextLine);
                 }
@@ -99,10 +102,10 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="filepath"></param>
         private void UpdateRecentStudiesFile(string filepath)
         {
-            string appname = System.Reflection.Assembly.GetExecutingAssembly().GetName().ToString();
+            string appname = Assembly.GetExecutingAssembly().GetName().ToString();
 
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             var companyname = fvi.CompanyName;
 
             string subkey = companyname + "\\" + appname;
@@ -119,7 +122,7 @@ namespace HEC.FDA.ViewModel.Study
                 object regKey = registrykey.GetValue(idx.ToString());
                 if(regKey != null) { registrynextline = regKey.ToString(); }
                  
-                if (System.IO.File.Exists(registrynextline))
+                if (File.Exists(registrynextline))
                 {
                     registrystudies.Add(registrynextline);
                 }
@@ -166,7 +169,7 @@ namespace HEC.FDA.ViewModel.Study
             UpdateTreeViewHeader(Name);
             //check if file exists.
             string newStudyPath = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
-            if (!System.IO.File.Exists(newStudyPath))
+            if (!File.Exists(newStudyPath))
             {
                 Connection.Instance.ProjectFile = newStudyPath;
                 UpdateRecentStudiesFile(newStudyPath);

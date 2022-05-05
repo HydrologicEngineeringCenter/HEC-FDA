@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             WithProjAltIDs = withProjAlternativeIds;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png",
+                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
             };
             AddActions();
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png",
+                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
             };
 

@@ -13,9 +13,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageElement : ChildElement
     {
-        #region Notes
-        #endregion
-
         #region Properties
         public bool CanEdit { get; }
         public int SelectedWSE { get; set; }
@@ -32,7 +29,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             LastEditDate = lastEditDate;
             CustomTreeViewHeader = new CustomHeaderVM(name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/StageDamage.png",
+                ImageSource = ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
             };
 

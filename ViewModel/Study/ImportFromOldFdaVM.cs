@@ -11,7 +11,7 @@ using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Validation;
 using static Importer.AsciiImport;
 using HEC.MVVMFramework.Base.Enumerations;
-
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -74,34 +74,35 @@ namespace HEC.FDA.ViewModel.Study
         {
             AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != null; }, "Path cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return FolderPath != ""; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(FolderPath), new Rule(() =>
-            {
-                bool pathIsValid = true;
-                if (FolderPath != null && FolderPath != "")
-                {
-                    foreach (Char c in System.IO.Path.GetInvalidPathChars())
-                    {
-                        if (FolderPath.Contains(c))
-                        {
-                            pathIsValid = false;
-                            break;
-                        }
-                    }
-                    if (FolderPath.Contains('?'))
-                    {
-                        pathIsValid = false;
-                    }
-                }
-                return pathIsValid;
-            }, "Path contains invalid characters.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(FolderPath), new Rule(() => { return IsPathValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
 
             AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StudyName), new Rule(() =>
             {
-                return !System.IO.File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
+                return !File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
             }, "A study with that name already exists.", ErrorLevel.Severe));
 
+        }
+        private bool IsPathValid()
+        {
+            bool pathIsValid = true;
+            if (FolderPath != null && FolderPath != "")
+            {
+                foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                {
+                    if (FolderPath.Contains(c))
+                    {
+                        pathIsValid = false;
+                        break;
+                    }
+                }
+                if (FolderPath.Contains('?'))
+                {
+                    pathIsValid = false;
+                }
+            }
+            return pathIsValid;
         }
 
         public override ImportOptions GetImportOptions()

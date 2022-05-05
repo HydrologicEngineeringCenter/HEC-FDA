@@ -15,7 +15,7 @@ namespace HEC.FDA.View
             InitializeComponent();
             //remove the row that has the pop-in button.
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
-            WindowVM vm = (WindowVM)this.DataContext;
+            WindowVM vm = DataContext as WindowVM;
             vm.LaunchNewWindow += WindowSpawner;
         }
 
@@ -23,13 +23,12 @@ namespace HEC.FDA.View
         {
             InitializeComponent();
             DataContext = newvm;
-            //Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
         }
 
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
         {
-            WindowVM vm = (WindowVM)this.DataContext;
+            WindowVM vm = DataContext as WindowVM;
             IDynamicTab tab = vm.Tab;
             tab.PopWindowIntoTab();
             Close();
@@ -59,7 +58,7 @@ namespace HEC.FDA.View
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            WindowVM vm = (WindowVM)this.DataContext;
+            WindowVM vm = DataContext as WindowVM;
             if (vm.Tab != null)
             {
                 IDynamicTab tab = vm.Tab;
@@ -69,7 +68,7 @@ namespace HEC.FDA.View
 
         private void btn_PopOut_Click(object sender, RoutedEventArgs e)
         {
-            WindowVM winVM = (WindowVM)DataContext;
+            WindowVM winVM = DataContext as WindowVM;
             if(winVM.Tab != null)
             {
                 winVM.Tab.PopWindowIntoTab();
@@ -85,7 +84,7 @@ namespace HEC.FDA.View
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WindowVM winVM = (WindowVM)DataContext;          
+            WindowVM winVM = DataContext as WindowVM;          
             Type editorType = winVM.CurrentView.GetType();            
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
             if(dimensions != null)

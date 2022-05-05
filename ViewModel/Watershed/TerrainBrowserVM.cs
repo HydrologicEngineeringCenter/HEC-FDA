@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using System.Windows;
 namespace HEC.FDA.ViewModel.Watershed
 {
     //[Author("q0heccdm", "10 / 11 / 2016 11:13:25 AM")]
-    public class TerrainBrowserVM:Editors.BaseEditorVM
+    public class TerrainBrowserVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -32,7 +33,7 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainBrowserVM( Editors.EditorActionManager actionManager) : base(actionManager)
+        public TerrainBrowserVM( EditorActionManager actionManager) : base(actionManager)
         {
         }
 

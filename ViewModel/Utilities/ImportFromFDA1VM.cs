@@ -23,8 +23,6 @@ namespace HEC.FDA.ViewModel.Utilities
         public string Path { get; set; }
         public ImportFromFDA1VM() 
         {
-            //TODO: I don't think this is true anymore? ->i have to set the name to something to get past the default validation
-            //Name = "myName";
         }
 
         public abstract void SaveElements();

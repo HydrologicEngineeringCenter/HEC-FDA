@@ -17,7 +17,7 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-            <Label Name="lbl_Saving" Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+            <Label Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
 
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">

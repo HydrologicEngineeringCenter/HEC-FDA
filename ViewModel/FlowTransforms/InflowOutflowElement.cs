@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             Name = userProvidedName;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/InflowOutflowCircle.png",
+                ImageSource = ImageSources.INFLOW_OUTFLOW_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
             };
 

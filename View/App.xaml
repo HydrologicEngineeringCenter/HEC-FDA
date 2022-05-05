@@ -95,11 +95,6 @@
         <!--alternatives region-->
         <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:CreateNewAlternativeComparisonReportVM }" >
             <AlternativeView:CreateNewAlternative/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
-                                         MinWidth="111" Width="222" MaxWidth="333"
-                                         MinHeight="111" Height="222" MaxHeight="333"/>
-            </DataTemplate.Resources>
         </DataTemplate>
         
         <!--Plans Region-->

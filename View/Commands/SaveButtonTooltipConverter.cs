@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -15,19 +16,16 @@ namespace HEC.FDA.View.Commands
             try
             {
                 bool hasErrors = (bool)values[0];
-                object dataContext = ((System.Windows.Controls.Button)values[1]).DataContext;
+                object dataContext = (values[1] as Button)?.DataContext;
 
-                if (hasErrors)
+                if (hasErrors && dataContext is BaseViewModel baseVM)
                 {
-                    if(dataContext is BaseViewModel baseVM)
-                    {
-                        List<string> errors = (List<string>)baseVM.GetErrors();
-                        string errorMsg = string.Join(Environment.NewLine, errors);
-                        return errorMsg;
-                    }
+                    List<string> errors = (List<string>)baseVM.GetErrors();
+                    string errorMsg = string.Join(Environment.NewLine, errors);
+                    return errorMsg;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }

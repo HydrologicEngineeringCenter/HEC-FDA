@@ -17,12 +17,12 @@ namespace HEC.FDA.View.Utilities
         public static Dimension GetWindowDimensions(Type editorType)
         {
             Dimension dimension = DEFAULT_DIMENSION;
-            DataTemplateKey key = GetDataTemplateKey(editorType);
+            DataTemplateKey templateKey = GetDataTemplateKey(editorType);
 
-            if (key != null)
+            if (templateKey != null)
             {
-                DataTemplate dataTemplate = Application.Current.Resources[key] as DataTemplate;
-                if (dataTemplate.Resources.Contains(KEY))
+                DataTemplate dataTemplate = Application.Current.Resources[templateKey] as DataTemplate;
+                if (dataTemplate != null && dataTemplate.Resources != null && dataTemplate.Resources.Contains(KEY))
                 {
                     dimension = (Dimension)dataTemplate.Resources[KEY];
                 }

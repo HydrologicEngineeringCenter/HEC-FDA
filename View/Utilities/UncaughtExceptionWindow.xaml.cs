@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Navigation;
@@ -10,12 +11,11 @@ namespace HEC.FDA.View.Utilities
     /// </summary>
     public partial class UncaughtExceptionWindow : Window
     {
-
         public string ErrorMessage { get; }
         public UncaughtExceptionWindow(object sender, Exception e)
         {
             InitializeComponent();
-            Title = ViewModel.Utilities.StringConstants.FDA_VERSION + " - Uncaught Exception";
+            Title = StringConstants.FDA_VERSION + " - Uncaught Exception";
             ErrorMsg.Text = e.Message;
             CallStack.Text = e.StackTrace;
         }

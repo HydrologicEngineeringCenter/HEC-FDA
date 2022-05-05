@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private ManualStageDamageRowItem CreateNewRow(int id)
         {
-            return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve(), "Structure");
+            return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve());
         }
 
         private void SelectItemsInRow(StageDamageCurve curve, ManualStageDamageRowItem row)

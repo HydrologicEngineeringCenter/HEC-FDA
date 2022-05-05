@@ -8,6 +8,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class ManualStageDamageRowItem : BaseViewModel
     {
+        private const string STRUCTURE = "Structure";
+        private const string CONTENT = "Content";
+        private const string VEHICLE = "Vehicle";
+        private const string OTHER = "Other";
+        private const string TOTAL = "Total";
+
+
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private String _SelectedDamCat;
         private ObservableCollection<String> _DamageCategories;
@@ -39,11 +46,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedDamCat = value; NotifyPropertyChanged(); }
         }
 
-        public List<string> AssetCategories { get; } = new List<string>() { "Structure", "Content", "Vehicle", "Other", "Total" };
+        public List<string> AssetCategories { get; } = new List<string>() { STRUCTURE, CONTENT, VEHICLE, OTHER, TOTAL };
         
         public string SelectedAssetCategory { get; set; }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function, string assetCategory)
+        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function, string assetCategory = STRUCTURE)
         {
             ID = id;
             ImpactAreas = impAreas;

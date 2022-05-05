@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
         {
             Name = userdefinedname;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             Description = description;
             ImpactAreaRows = collectionOfRows;
 

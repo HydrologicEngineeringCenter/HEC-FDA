@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 {
@@ -19,7 +20,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         }
         #endregion
 
-        public void AddBaseElements(Study.FDACache cache)
+        public void AddBaseElements(FDACache cache)
         {
             UnsteadyHDFOwnerElement impactAreaOwnerElem = new UnsteadyHDFOwnerElement();
             AddElement(impactAreaOwnerElem);

@@ -69,20 +69,17 @@ namespace HEC.FDA.View.Study
 
         public void AddRecentStudiesMenuItems()
         {
-            if (DataContext is FdaStudyVM study)
+            if (DataContext is FdaStudyVM study && study.CurrentStudyElement != null)
             {
-                if (study.CurrentStudyElement != null)
+                int i = 1;
+                foreach (string path in study.CurrentStudyElement.RegistryStudyPaths)
                 {
-                    int i = 1;
-                    foreach (string path in study.CurrentStudyElement.RegistryStudyPaths)
-                    {
-                        MenuItem menuItem = new MenuItem();
-                        menuItem.Header = i + ": " + System.IO.Path.GetFileNameWithoutExtension(path);
-                        menuItem.Click += study.CurrentStudyElement.OpenStudyFromRecent;
-                        menuItem.Tag = path;
-                        FileMenu.Items.Add(menuItem);
-                        i++;
-                    }
+                    MenuItem menuItem = new MenuItem();
+                    menuItem.Header = i + ": " + System.IO.Path.GetFileNameWithoutExtension(path);
+                    menuItem.Click += study.CurrentStudyElement.OpenStudyFromRecent;
+                    menuItem.Tag = path;
+                    FileMenu.Items.Add(menuItem);
+                    i++;
                 }
             }
         }

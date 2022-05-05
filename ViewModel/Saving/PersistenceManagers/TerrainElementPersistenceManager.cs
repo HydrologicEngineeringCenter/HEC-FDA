@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
         {
-            string newPath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
+            string newPath = Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
             string newDirectory = Path.GetDirectoryName(newPath);
             Directory.CreateDirectory(newDirectory);
             bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
@@ -115,7 +116,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 string header = "Error";
                 DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
                 Navigate(tab);
-                element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
+                element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, ImageSources.TERRAIN_IMAGE);
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
@@ -137,7 +138,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     newElement.Actions.Clear();
                     newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                     {
-                        ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                        ImageSource = ImageSources.TERRAIN_IMAGE,
                         Tooltip = StringConstants.CreateChildNodeTooltip(newElement.LastEditDate),
                         Decoration = " -Renaming File",
                         GifVisible = true
@@ -151,7 +152,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                             {
-                                ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                                ImageSource = ImageSources.TERRAIN_IMAGE,
                                 Tooltip = StringConstants.CreateChildNodeTooltip(newElement.LastEditDate),
                             };
 
@@ -191,7 +192,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             RemoveFromParentTable(element, TableName);
             element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/Terrain.png",
+                ImageSource = ImageSources.TERRAIN_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(element.LastEditDate),
                 Decoration = " -Deleting",
                 GifVisible = true

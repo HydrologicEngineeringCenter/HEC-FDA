@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             Name = userprovidedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = "pack://application:,,,/View;component/Resources/RatingCurve.png",
+                ImageSource = ImageSources.RATING_IMAGE,
                 Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
             };
 

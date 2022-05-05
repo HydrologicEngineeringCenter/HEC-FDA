@@ -1,13 +1,13 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    public class SaveAllReportGroupVM:BaseViewModel
+    public class SaveAllReportGroupVM:NameValidatingVM
     {
-        public string Name { get; set; }
         public bool HasFatalErrors { get { return OcctypesWithFatalErrors.Any(); } }
 
         public List<TableErrorsReport> OcctypesWithFatalErrors { get; } = new List<TableErrorsReport>();

@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             IsImportedFromOldFDA = isImportedFromOldFDA;
             Name = structInventoryBaseElement.Name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StructureInventory.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.INVENTORY_ELEMENT_IMAGE);
 
             Description = structInventoryBaseElement.Description;
             if(Description == null) { Description = ""; }
