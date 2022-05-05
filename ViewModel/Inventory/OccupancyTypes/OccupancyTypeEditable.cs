@@ -146,7 +146,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
-                if (!vm.HasErrors)
+                if (!vm.HasError)
                 {
                     //store the new damage category
                     DamageCategory = vm.Name;
@@ -162,8 +162,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != "";}, "Name cannot be blank.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Name), new Rule(() => { return Name != null; }, "Name cannot be blank.", ErrorLevel.Severe));
+            AddRule(nameof(Name), () => !string.IsNullOrWhiteSpace(Name), "Name cannot be blank or whitespace.");
         }
 
         public FdaValidationResult HasWarnings()
@@ -182,10 +181,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             FdaValidationResult vr = new FdaValidationResult();
             //check for blank name and name conflicts
-            if(HasErrors)
+            if (HasFatalError)
             {
-                //todo: leaving commented out for now 5/2/22
-                //vr.AddErrorMessage(Error);
+                vr.AddErrorMessage(Error);
             }
 
             IEnumerable<string> duplicates = occtypeNames.GroupBy(x => x)

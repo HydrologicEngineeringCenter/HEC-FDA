@@ -174,10 +174,10 @@ namespace HEC.FDA.ViewModel.Editors
 
             foreach (string existingName in existingElements)
             {
-                AddSinglePropertyRule(nameof(Name), new Rule(() => 
+                AddRule(nameof(Name), () =>
                 {
-                    return Name != existingName; 
-                }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
+                    return Name != existingName;
+                }, "This name is already used. Names must be unique.");
             }
 
             AddSiblingUpdatedEvents(element);         
@@ -254,10 +254,10 @@ namespace HEC.FDA.ViewModel.Editors
                 return;
             }
 
-            AddSinglePropertyRule(nameof(Name), new Rule(() =>
+            AddRule(nameof(Name), () =>
             {
-                return Name == newName;
-            }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
+                return Name != newName;
+            }, "This name is already used. Names must be unique.");
 
         }
 
@@ -271,10 +271,10 @@ namespace HEC.FDA.ViewModel.Editors
                 InTheProcessOfSaving = false;
                 return;
             }
-            AddSinglePropertyRule(nameof(Name), new Rule(() =>
+            AddRule(nameof(Name), () =>
             {
-                return Name == newName;
-            }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
+                return Name != newName;
+            }, "This name is already used. Names must be unique.");
         }
 
         /// <summary>
@@ -293,10 +293,10 @@ namespace HEC.FDA.ViewModel.Editors
 
             foreach (string existingName in existingElements)
             {
-                AddSinglePropertyRule(nameof(Name), new Rule(() =>
+                AddRule(nameof(Name), () =>
                 {
                     return Name != existingName;
-                }, "This name is already used. Names must be unique.", ErrorLevel.Severe));
+                }, "This name is already used. Names must be unique.");
             }
 
         }
