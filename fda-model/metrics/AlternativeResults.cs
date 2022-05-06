@@ -21,6 +21,13 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
+        public List<DamageResults> DamageResultsList
+        {
+            get
+            {
+                return _damageResultsList;
+            }
+        }
         public event MessageReportedEventHandler MessageReport;
 
         #endregion
