@@ -20,6 +20,7 @@ namespace fda_model_test.unittests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
+        static int id = 0;
 
         /// <summary>
         /// The calculations for the results in the test below can be found at https://docs.google.com/spreadsheets/d/1UUNgHYq1_zV4ifnu0iVmiPOzL2szyBCX/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
@@ -215,7 +216,7 @@ namespace fda_model_test.unittests
 
             double upperConfidenceLimitProbability = 0.975;
             double lowerConfidenceLimitProbability = 0.025;
-            Results results = new Results();
+            Results results = new Results(id);
             results.PerformanceByThresholds = performanceByThresholds;
 
             bool isFirstThresholdConverged = performanceByThresholds.ListOfThresholds[thresholdID1].ProjectPerformanceResults.CNEPHistogramOfStages[keyForCNEP].TestForConvergence(upperConfidenceLimitProbability, lowerConfidenceLimitProbability);

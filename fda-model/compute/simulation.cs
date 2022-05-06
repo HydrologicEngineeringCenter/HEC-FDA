@@ -99,9 +99,9 @@ namespace compute
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _results.ExpectedAnnualDamageResults.AddEADResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria);
+                _results.DamageResults.AddDamageResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
             }
-            _results.ExpectedAnnualDamageResults.AddEADResultObject("Total", "Total", convergenceCriteria);
+            _results.DamageResults.AddDamageResultObject("Total", "Total", convergenceCriteria, _impactAreaID);
         }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
@@ -348,14 +348,14 @@ namespace compute
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, iteration);
+                _results.DamageResults.AddDamageRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
 
                 if (giveMeADamageFrequency)
                 {
                     ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
                 }
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", "Total", iteration);
+            _results.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
@@ -375,7 +375,7 @@ namespace compute
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, iteration);
+                _results.DamageResults.AddDamageRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
@@ -383,7 +383,7 @@ namespace compute
                 }
 
             }
-            _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total", "Total", iteration);
+            _results.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {

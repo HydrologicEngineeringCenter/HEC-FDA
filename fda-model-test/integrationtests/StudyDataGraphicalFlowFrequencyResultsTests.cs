@@ -84,7 +84,7 @@ namespace fda_model_test.integrationtests
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             metrics.Results results = simulation.Compute(randomProvider,convergenceCriteria);
-            double difference = Math.Abs(expected - results.ExpectedAnnualDamageResults.MeanEAD("residential"));
+            double difference = Math.Abs(expected - results.DamageResults.MeanDamage("residential"));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;
             Assert.True(relativeDifference < tolerance);

@@ -136,15 +136,15 @@ namespace alternativeComparisonReport
                 foreach (int impactAreaID in withoutProjectEAD.Keys)
                 {
                     Dictionary<string, Histogram> damageReducedDamageCategories = new Dictionary<string, Histogram>();
-                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs.Keys)
                     {
                         double min = 0;
                         double binWidth = 1;
                         Histogram damageReduced = new Histogram(min, binWidth);
                         for (int i = 0; i < iterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithProject = withProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReduced.AddObservationToHistogram(eadDamageReduced);
                         }
@@ -172,15 +172,15 @@ namespace alternativeComparisonReport
                 foreach (int impactAreaID in withoutProjectEAD.Keys)
                 {
                     Dictionary<string, Histogram> damageReducedDamageCategories = new Dictionary<string, Histogram>();
-                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs.Keys)
                     {
                         double min = 0;
                         double binWidth = 1;
                         Histogram damageReduced = new Histogram(min, binWidth);
                         for (int i = 0; i < iterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithProject = withProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].DamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReduced.AddObservationToHistogram(eadDamageReduced);
                         }

@@ -88,7 +88,7 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .build();
             metrics.Results results = simulation.PreviewCompute();
-            double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double difference = expected - results.DamageResults.MeanDamage("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
         }
@@ -117,7 +117,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
-            double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double difference = expected - results.DamageResults.MeanDamage("residential");
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
         }
@@ -159,7 +159,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double differenceEAD = expectedEAD - results.DamageResults.MeanDamage("residential");
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
 
@@ -194,7 +194,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double differenceEAD = expectedEAD - results.DamageResults.MeanDamage("residential");
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
 

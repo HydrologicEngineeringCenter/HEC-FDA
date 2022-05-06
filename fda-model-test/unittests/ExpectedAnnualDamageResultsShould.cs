@@ -55,9 +55,9 @@ namespace fda_model_test.unittests
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             metrics.Results results = simulation.Compute(randomProvider, convergenceCriteria);
-            XElement xElement = results.ExpectedAnnualDamageResults.WriteToXML();
-            metrics.ExpectedAnnualDamageResults expectedAnnualDamageResultsFromXML = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
-            bool success = results.ExpectedAnnualDamageResults.Equals(expectedAnnualDamageResultsFromXML);
+            XElement xElement = results.DamageResults.WriteToXML();
+            metrics.DamageResults expectedAnnualDamageResultsFromXML = metrics.DamageResults.ReadFromXML(xElement);
+            bool success = results.DamageResults.Equals(expectedAnnualDamageResultsFromXML);
             Assert.True(success);
         }
     }

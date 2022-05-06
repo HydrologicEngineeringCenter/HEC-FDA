@@ -51,7 +51,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.Results r = s.Compute(mrp,cc); //here we test compute, below we test preview compute 
-            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double difference = expected - r.DamageResults.MeanDamage("residential");
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
@@ -87,7 +87,7 @@ namespace fda_model_test.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
             metrics.Results results = s.PreviewCompute(); //here we test preview compute 
-            double difference = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double difference = expectedEAD - results.DamageResults.MeanDamage("residential");
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
         }
@@ -126,7 +126,7 @@ namespace fda_model_test.unittests
             RandomProvider rp = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             metrics.Results r = s.Compute(rp, cc);
-            double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double actual = r.DamageResults.MeanDamage("residential");
 
             Assert.Equal(expected, actual, 2);
         }
@@ -172,7 +172,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.Results r = s.Compute(mrp, cc);
-            double actual = r.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double actual = r.DamageResults.MeanDamage("residential");
             if (actual == 0) //handle assertion differently if EAD is zero
             {
                 Assert.Equal(expected, actual, 0);
