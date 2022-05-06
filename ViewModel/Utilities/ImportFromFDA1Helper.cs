@@ -37,20 +37,8 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static RatingCurveElement CreateRatingElement(RatingFunction rat)
         {
-            //string pysr = "(" + rat.PlanName.Trim() + " " + rat.YearName.Trim() + " " + rat.StreamName.Trim() + " " + rat.DamageReachName.Trim() + ") ";
-            //string description = pysr + rat.Description;
-
             string description = CreatePYSRDescription(rat);
-            //double[] stages = rat.GetStage();
-            //double[] flows = rat.GetDischarge();
-            //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-            //List<double> stagesList = new List<double>();
-            //List<double> flowsList = new List<double>();
-            //for (int i = 0; i < rat.NumberOfPoints; i++)
-            //{
-            //    stagesList.Add(stages[i]);
-            //    flowsList.Add(flows[i]);
-            //}
+
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
             int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
 
@@ -93,37 +81,109 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
         {
-            List<IDistribution> ys = new List<IDistribution>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
+            if (rat.UsesGlobalError)
             {
-                if (rat.UsesGlobalError)
-                {
-                    ys.Add(new LogNormal(rat.GetStage()[i], rat.GlobalStdDevLog));
-                }
-                else
+                return CreateInterpolatedLogNormalStDevs(rat);
+            }
+            else
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
                 {
                     ys.Add(new LogNormal(rat.GetStage()[i], rat.IndividualLogStDevs[i]));
+                }
+                return ys;
+            }
+        }
+
+        private static List<IDistribution> CreateNormalDistributions(RatingFunction rat)
+        {
+            if (rat.UsesGlobalError)
+            {
+                return CreateInterpolatedNormalStDevs(rat);
+            }
+            else
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
+                {
+                    ys.Add(new Normal(rat.GetStage()[i], rat.IndividualStDevs[i]));
+                }
+                return ys;
+            }
+        }
+
+        private static List<IDistribution> CreateInterpolatedNormalStDevs(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            double globalStdDev = rat.GlobalStdDev;
+            double baseStage = rat.BaseStage;
+            double firstStage = rat.GetStage()[0];
+            double ratio = globalStdDev/(baseStage-firstStage);
+            double firstStDev = 0;
+            int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
+            if (baseStageIndex != -1)
+            {
+                //add the first dist
+                ys.Add(new Normal(firstStage, firstStDev));
+                //add interpolated points
+                for (int i = 1; i < baseStageIndex; i++)
+                {
+                    double stage = rat.GetStage()[i];
+                    double stDev = ratio * (stage - firstStage);
+                    ys.Add(new Normal(rat.GetStage()[i], stDev));
+                }
+                //add the constant st dev for base stage and up
+                for(int i = baseStageIndex; i<rat.NumberOfPoints;i++)
+                {
+                    ys.Add(new Normal(rat.GetStage()[i], globalStdDev));
                 }
             }
             return ys;
         }
 
-        private static List<IDistribution> CreateNormalDistributions(RatingFunction rat)
+        private static List<IDistribution> CreateInterpolatedLogNormalStDevs(RatingFunction rat)
         {
             List<IDistribution> ys = new List<IDistribution>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
+            double globalStdDev = rat.GlobalStdDev;
+            double baseStage = rat.BaseStage;
+            double firstStage = rat.GetStage()[0];
+            double ratio = globalStdDev / (baseStage - firstStage);
+            double firstStDev = 0;
+            int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
+            if (baseStageIndex != -1)
             {
-                if (rat.UsesGlobalError)
+                //add the first dist
+                ys.Add(new LogNormal(firstStage, firstStDev));
+                //add interpolated points
+                for (int i = 1; i < baseStageIndex; i++)
                 {
-                    ys.Add(new Normal(rat.GetStage()[i], rat.GlobalStdDev));
+                    double stage = rat.GetStage()[i];
+                    double stDev = ratio * (stage - firstStage);
+                    ys.Add(new LogNormal(rat.GetStage()[i], stDev));
                 }
-                else
+                //add the constant st dev for base stage and up
+                for (int i = baseStageIndex; i < rat.NumberOfPoints; i++)
                 {
-                    ys.Add(new Normal(rat.GetStage()[i], rat.IndividualStDevs[i]));
+                    ys.Add(new LogNormal(rat.GetStage()[i], globalStdDev));
                 }
             }
             return ys;
         }
+
+        private static int FindBaseStageIndex(double baseStage, double[] stages)
+        {
+            double epsilon = .1;
+            for (int i = 0; i < stages.Length; i++)
+            {
+                if(Math.Abs( stages[i]-baseStage) <= epsilon)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
         {
             List<IDistribution> ys = new List<IDistribution>();
