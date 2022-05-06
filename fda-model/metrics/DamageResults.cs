@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Statistics;
-using Statistics.Histograms;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
 
 namespace metrics
 {
@@ -15,6 +13,7 @@ namespace metrics
         #region Fields
         private List<DamageResult> _damageResultList;
         private int _impactAreaID;
+        private bool _isNull;
         #endregion
 
         #region Properties 
@@ -32,39 +31,55 @@ namespace metrics
                 return _impactAreaID;
             }
         }
+        //this needs to be an error report
         public event MessageReportedEventHandler MessageReport;
-
+        public bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
         #endregion
         #region Constructors
+        public DamageResults()
+        {
+            _damageResultList = new List<DamageResult>();
+            _impactAreaID = 0;
+            _isNull = true;
+        }
         public DamageResults(int impactAreaID){
             _damageResultList = new List<DamageResult>();
             _impactAreaID = impactAreaID;
+            _isNull = false;
         }
         private DamageResults(List<DamageResult> expectedAnnualDamageResults, int impactAreaID)
         {
             _damageResultList = expectedAnnualDamageResults;
             _impactAreaID = impactAreaID;
+            _isNull = false;
+
         }
         #endregion
 
         #region Methods 
         public void AddDamageResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
-            foreach (DamageResult damageResult in _damageResultList)
+            DamageResult damageResult = GetDamageResult(damageCategory, assetCategory, impactAreaID);
+            if (damageResult.IsNull)
             {
-                if (!damageResult.ImpactAreaID.Equals(impactAreaID))
-                {
-                    if (!damageResult.DamageCategory.Equals(damageCategory))
-                    {
-                        if (!damageResult.AssetCategory.Equals(assetCategory))
-                        {
-                            DamageResult newDamageResult = new DamageResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
-                            _damageResultList.Add(newDamageResult);
-                        }
-                    }
-                }
-
+                DamageResult newDamageResult = new DamageResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
+                _damageResultList.Add(newDamageResult);
             }
+        }
+        public void AddDamageResultObject(DamageResult damageResultToAdd)
+        {
+            DamageResult damageResult = GetDamageResult(damageResultToAdd.DamageCategory, damageResultToAdd.AssetCategory, damageResultToAdd.ImpactAreaID);
+            if (damageResult.IsNull)
+            {
+                _damageResultList.Add(damageResultToAdd);
+            }
+
         }
         public void AddDamageRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
         {
@@ -100,7 +115,7 @@ namespace metrics
                     }
                 }
             }
-            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category combination could not be found. An arbitrary object is being returned.")));
+            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned.")));
             DamageResult dummyResult = new DamageResult();
             return dummyResult;
         }

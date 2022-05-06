@@ -19,6 +19,8 @@ namespace metrics
         private string _damageCategory;
         private string _assetCategory;
         private int _impactAreaID;
+        private ConvergenceCriteria _convergenceCriteria;
+        private bool _isNull;
         #endregion
 
         #region Properties
@@ -50,6 +52,20 @@ namespace metrics
                 return _impactAreaID;
             }
         }
+        public bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
+        public ConvergenceCriteria ConvergenceCriteria
+        {
+            get
+            {
+                return _convergenceCriteria;
+            }
+        }
         #endregion
 
         #region Constructors
@@ -58,22 +74,37 @@ namespace metrics
             _damageCategory = "unassigned";
             _assetCategory = "unassigned";
             _impactAreaID = 0;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, convergenceCriteria);
+            _convergenceCriteria = new ConvergenceCriteria();
+            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _isNull = true;
         }
         public DamageResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _impactAreaID = impactAreaID;
-            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH,convergenceCriteria);
+            _convergenceCriteria = convergenceCriteria;
+            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _isNull = false;
+        }
+        public DamageResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double binWidth)
+        {
+            _damageCategory = damageCategory;
+            _assetCategory = assetCategory;
+            _impactAreaID = impactAreaID;
+            _convergenceCriteria = convergenceCriteria;
+            _damageHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
+            _isNull = false;
         }
         private DamageResult(string damageCategory, string assetCategory, ThreadsafeInlineHistogram eadHistogram, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _damageHistogram = eadHistogram;
+            _convergenceCriteria = _damageHistogram.ConvergenceCriteria;
             _impactAreaID = impactAreaID;
+            _isNull = false;
+
         }
         #endregion
 

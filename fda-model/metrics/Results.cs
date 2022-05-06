@@ -10,21 +10,47 @@ namespace metrics
 {
     public class Results: IContainResults
     {
+        #region Fields
+        bool _isNull;
+        #endregion
+
+        #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
         public DamageResults DamageResults { get; }
         public int ImpactAreaID { get; }
+        #endregion
+        public bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
+        #region Constructors 
+        public Results()
+        {
+            PerformanceByThresholds = new PerformanceByThresholds();
+            DamageResults = new DamageResults();
+            ImpactAreaID = 0;
+            _isNull = true;
+        }
         public Results(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             DamageResults = new DamageResults(impactAreaID);
             ImpactAreaID = impactAreaID;
+            _isNull = false;
         }
         private Results(PerformanceByThresholds performanceByThresholds, DamageResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             DamageResults = expectedAnnualDamageResults;
             ImpactAreaID = impactAreaID;
+            _isNull = false;
         }
+        #endregion
+
+        #region Methods
         private bool IsEADConverged(bool computeWithDamage)
         {
             if (computeWithDamage == true)
@@ -142,5 +168,6 @@ namespace metrics
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new Results(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }
+        #endregion
     }
 }

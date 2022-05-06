@@ -28,14 +28,13 @@ namespace scenarios
             _year = year;
             _impactAreaSimulations = impactAreas;
         }
-        public List<Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+        public ScenarioResults Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //probably instantiate a rng to seed each impact area differently
-            List<Results> returnList = new List<Results>();
-
+            ScenarioResults scenarioResults = new ScenarioResults();
             foreach(ImpactAreaSimulation impactArea in _impactAreaSimulations){
-                returnList.Add(impactArea.Compute(rp, iterations));
+                scenarioResults.AddResults(impactArea.Compute(rp, iterations));
             }
-            return returnList;
+            return scenarioResults;
         }
     }
 }
