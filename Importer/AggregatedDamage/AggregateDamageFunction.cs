@@ -145,8 +145,6 @@ namespace Importer
 
                 sdf = ObjectCopier.Clone(_SingleDamageFunction[ixType]);
 
-                //getSingleDamageFunction((StructureValueType)ixType, sdf);//Doesn't work
-
                 if (sdf == null)
                 {
                     continue;
