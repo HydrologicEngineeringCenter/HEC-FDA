@@ -15,21 +15,27 @@ namespace HEC.FDA.View.Commands
             //seems to happen when initializing and not everything is set up in time
             try
             {
-                bool hasErrors = (bool)values[0];
-                object dataContext = (values[1] as Button)?.DataContext;
+                bool hasFatalError = (bool)values[0];
+                bool HasChanges = (bool)values[1];
+                string errorMsg = (string)values[2];
 
-                if (hasErrors && dataContext is BaseViewModel baseVM)
+                if (hasFatalError)
                 {
-                    List<string> errors = (List<string>)baseVM.GetErrors();
-                    string errorMsg = string.Join(Environment.NewLine, errors);
                     return errorMsg;
+                }
+                else if (HasChanges == false)
+                {
+                    return "No changes to save";
+                }
+                else
+                {
+                    return null;
                 }
             }
             catch (Exception e)
             {
                 return null;
             }
-            return null;
 
         }
 

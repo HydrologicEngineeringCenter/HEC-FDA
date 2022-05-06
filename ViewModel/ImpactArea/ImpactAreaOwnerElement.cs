@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             RemoveElement(e.Element);
         }
         #endregion
-        public void AddNew(object arg1, EventArgs arg2)
+        private void AddNew(object arg1, EventArgs arg2)
         {
             //check to see if one already exists
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();

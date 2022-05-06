@@ -41,7 +41,7 @@ namespace Importer
         public void Print(AsyncLogger logger)
         {
             AggregateDamageFunction aAggDamgFunc;
-            logger.Log($"Number of Aggregate Damage Functions {_AggDamgFuncListSort.Count}");
+            logger.Log("Number of Aggregate Damage Functions",_AggDamgFuncListSort.Count.ToString());
             for (int i = 0; i < _AggDamgFuncListSort.Count; i++)
             {
                 aAggDamgFunc = _AggDamgFuncListSort.ElementAt(i).Value;

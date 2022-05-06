@@ -1,8 +1,5 @@
-﻿using HEC.FDA.ViewModel;
-using HEC.MVVMFramework.Base.Enumerations;
-using System;
+﻿using System;
 using System.Globalization;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -21,19 +18,13 @@ namespace HEC.FDA.View.Commands
         /// <returns></returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool hasErrors = (bool)values[0];
-            object dataContext = (values[1] as Button)?.DataContext;
+            //this is to answer the question Is Enabled. If HasFatalError is true or HasChanges is False,
+            //then we want to return false.
+            bool hasFatalError = (bool)values[0];
+            bool hasChanges = (bool)values[1];
 
-            if (hasErrors && dataContext is BaseViewModel baseVM)
-            {
-                ErrorLevel errorLevel = baseVM.ErrorLevel;
-                if (errorLevel >= ErrorLevel.Fatal)
-                {
-                    return false;
-                }
-            }
+            return !hasFatalError;
 
-            return true;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

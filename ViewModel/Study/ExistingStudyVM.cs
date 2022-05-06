@@ -62,11 +62,11 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.File.Exists(Path); }, "File does not exist.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return PathIsValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
+            AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
+            AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
+            AddRule(nameof(Path), () => { return System.IO.File.Exists(Path); }, "File does not exist.");
+            AddRule(nameof(Path), () => { return System.IO.Path.GetExtension(Path) == ".sqlite"; }, "Selected file is the wrong file type. File must be '*.sqlite'");
+            AddRule(nameof(Path), () => PathIsValid(), "Path contains invalid characters.");
         }
   
         #endregion

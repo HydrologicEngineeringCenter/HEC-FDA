@@ -65,38 +65,38 @@ namespace Importer
 
         public void Print(AsyncLogger logger)
         {
-            logger.Log($"\nOccupancy Name: {this.Name}");
-            logger.Log($"\tDescription: {this.Description}");
-            logger.Log($"\tCategory Name: {this.CategoryName}");
-            logger.Log($"\tUses Direct Dollar: {this.UsesDollar}");
+            logger.Log("\nOccupancy Name: ", this.Name);
+            logger.Log("\tDescription: ", this.Description);
+            logger.Log("\tCategory Name: ", this.CategoryName);
+            logger.Log("\tUses Direct Dollar: ", this.UsesDollar.ToString());
             double contToStructRatio = this._ErrorDistribution[2].GetCentralValue();
             if(contToStructRatio == -901)
             {
-                logger.Log($"\tContent-To-Structure Value Ratio:");
+                logger.Log("\tContent-To-Structure Value Ratio:", "");
             }
             else
             {
-                logger.Log($"\tContent-To-Structure Value Ratio: {contToStructRatio}");
+                logger.Log("\tContent-To-Structure Value Ratio: ", contToStructRatio.ToString());
             }
 
             double otherToStrucRatio = this._ErrorDistribution[3].GetCentralValue();
             if(otherToStrucRatio == -901)
             {
-                logger.Log($"\tOther-To-Structure Value Ratio:");
+                logger.Log($"\tOther-To-Structure Value Ratio:", "");
             }
             else
             {
-                logger.Log($"\tOther-To-Structure Value Ratio: {otherToStrucRatio}");
+                logger.Log($"\tOther-To-Structure Value Ratio: ", otherToStrucRatio.ToString());
             }
 
             double carToStrctRatio = this._ErrorDistribution[4].GetCentralValue();
             if(carToStrctRatio == -901)
             {
-                logger.Log($"\tAutomobile-To-Structure Value Ratio:");
+                logger.Log($"\tAutomobile-To-Structure Value Ratio:", "");
             }
             else
             {
-                logger.Log($"\tAutomobile-To-Structure Value Ratio: {carToStrctRatio}");
+                logger.Log($"\tAutomobile-To-Structure Value Ratio: ", carToStrctRatio.ToString());
             }
             logger.Append($"\n\tFunctions:");
 

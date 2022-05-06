@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public static class ImportFromFDA1Helper
     {
-        #region Rating
+        #region Stage-Discharge (Rating)
         public static List<RatingCurveElement> CreateRatingElements(RatingFunctionList ratings)
         {
             List<RatingCurveElement> elems = new List<RatingCurveElement>();
@@ -37,18 +37,8 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static RatingCurveElement CreateRatingElement(RatingFunction rat)
         {
-            string pysr = "(" + rat.PlanName.Trim() + " " + rat.YearName.Trim() + " " + rat.StreamName.Trim() + " " + rat.DamageReachName.Trim() + ") ";
-            string description = pysr + rat.Description;
-            double[] stages = rat.GetStage();
-            double[] flows = rat.GetDischarge();
-            //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
-            List<double> stagesList = new List<double>();
-            List<double> flowsList = new List<double>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
-            {
-                stagesList.Add(stages[i]);
-                flowsList.Add(flows[i]);
-            }
+            string description = CreatePYSRDescription(rat);
+
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
             int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
 
@@ -60,6 +50,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static UncertainPairedData CreateRatingPairedData(RatingFunction rat)
         {
+            //x-values are discharge
+            //y-values are stage
             List<IDistribution> ys = new List<IDistribution>();
             switch(rat.ErrorTypesId)
             {
@@ -79,47 +71,119 @@ namespace HEC.FDA.ViewModel.Utilities
                     ys = CreateDeterministicDistributions(rat);
                     break;
             }
-            List<double> stagesList = new List<double>();
+            List<double> discharges = new List<double>();
             for (int i = 0; i < rat.NumberOfPoints; i++)
             {
-                stagesList.Add(rat.GetStage()[i]);
+                discharges.Add(rat.GetDischarge()[i]);
             }
-            return new UncertainPairedData(stagesList.ToArray(), ys.ToArray(), "Stage", "Flow", "Rating", "");
+            return new UncertainPairedData(discharges.ToArray(), ys.ToArray(), "Stage", "Flow", "Rating", "");
         }
 
         private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
         {
-            List<IDistribution> ys = new List<IDistribution>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
+            if (rat.UsesGlobalError)
             {
-                if (rat.UsesGlobalError)
+                return CreateInterpolatedLogNormalStDevs(rat);
+            }
+            else
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
                 {
-                    ys.Add(new LogNormal(rat.GetDischarge()[i], rat.GlobalStdDevLog));
+                    ys.Add(new LogNormal(rat.GetStage()[i], rat.IndividualLogStDevs[i]));
                 }
-                else
+                return ys;
+            }
+        }
+
+        private static List<IDistribution> CreateNormalDistributions(RatingFunction rat)
+        {
+            if (rat.UsesGlobalError)
+            {
+                return CreateInterpolatedNormalStDevs(rat);
+            }
+            else
+            {
+                List<IDistribution> ys = new List<IDistribution>();
+                for (int i = 0; i < rat.NumberOfPoints; i++)
                 {
-                    ys.Add(new LogNormal(rat.GetDischarge()[i], rat.IndividualLogStDevs[i]));
+                    ys.Add(new Normal(rat.GetStage()[i], rat.IndividualStDevs[i]));
+                }
+                return ys;
+            }
+        }
+
+        private static List<IDistribution> CreateInterpolatedNormalStDevs(RatingFunction rat)
+        {
+            List<IDistribution> ys = new List<IDistribution>();
+            double globalStdDev = rat.GlobalStdDev;
+            double baseStage = rat.BaseStage;
+            double firstStage = rat.GetStage()[0];
+            double ratio = globalStdDev/(baseStage-firstStage);
+            double firstStDev = 0;
+            int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
+            if (baseStageIndex != -1)
+            {
+                //add the first dist
+                ys.Add(new Normal(firstStage, firstStDev));
+                //add interpolated points
+                for (int i = 1; i < baseStageIndex; i++)
+                {
+                    double stage = rat.GetStage()[i];
+                    double stDev = ratio * (stage - firstStage);
+                    ys.Add(new Normal(rat.GetStage()[i], stDev));
+                }
+                //add the constant st dev for base stage and up
+                for(int i = baseStageIndex; i<rat.NumberOfPoints;i++)
+                {
+                    ys.Add(new Normal(rat.GetStage()[i], globalStdDev));
                 }
             }
             return ys;
         }
 
-        private static List<IDistribution> CreateNormalDistributions(RatingFunction rat)
+        private static List<IDistribution> CreateInterpolatedLogNormalStDevs(RatingFunction rat)
         {
             List<IDistribution> ys = new List<IDistribution>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
+            double globalStdDev = rat.GlobalStdDev;
+            double baseStage = rat.BaseStage;
+            double firstStage = rat.GetStage()[0];
+            double ratio = globalStdDev / (baseStage - firstStage);
+            double firstStDev = 0;
+            int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
+            if (baseStageIndex != -1)
             {
-                if (rat.UsesGlobalError)
+                //add the first dist
+                ys.Add(new LogNormal(firstStage, firstStDev));
+                //add interpolated points
+                for (int i = 1; i < baseStageIndex; i++)
                 {
-                    ys.Add(new Normal(rat.GetDischarge()[i], rat.GlobalStdDev));
+                    double stage = rat.GetStage()[i];
+                    double stDev = ratio * (stage - firstStage);
+                    ys.Add(new LogNormal(rat.GetStage()[i], stDev));
                 }
-                else
+                //add the constant st dev for base stage and up
+                for (int i = baseStageIndex; i < rat.NumberOfPoints; i++)
                 {
-                    ys.Add(new Normal(rat.GetDischarge()[i], rat.IndividualStDevs[i]));
+                    ys.Add(new LogNormal(rat.GetStage()[i], globalStdDev));
                 }
             }
             return ys;
         }
+
+        private static int FindBaseStageIndex(double baseStage, double[] stages)
+        {
+            double epsilon = .1;
+            for (int i = 0; i < stages.Length; i++)
+            {
+                if(Math.Abs( stages[i]-baseStage) <= epsilon)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
         {
             List<IDistribution> ys = new List<IDistribution>();
@@ -127,11 +191,11 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 if (rat.UsesGlobalError)
                 {
-                    ys.Add(new Triangular(rat.GlobalStdDevLow, rat.GetDischarge()[i], rat.GlobalStdDevHigh));
+                    ys.Add(new Triangular(rat.GlobalStdDevLow, rat.GetStage()[i], rat.GlobalStdDevHigh));
                 }
                 else
                 {
-                    ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetDischarge()[i], rat.IndividualHighStDevs[i]));
+                    ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetStage()[i], rat.IndividualHighStDevs[i]));
                 }
             }
             return ys;
@@ -158,7 +222,7 @@ namespace HEC.FDA.ViewModel.Utilities
             List<IDistribution> ys = new List<IDistribution>();
             for (int i = 0; i < rat.NumberOfPoints; i++)
             {
-                ys.Add(new Deterministic(rat.GetDischarge()[i]));
+                ys.Add(new Deterministic(rat.GetStage()[i]));
             }
             return ys;
         }
@@ -316,11 +380,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return elems;
         }
 
-        private static string CreatePYSRDescription(ProbabilityFunction pf)
-        {
-            string pysr = "(" + pf.PlanName.Trim() + " " + pf.YearName.Trim() + " " + pf.StreamName.Trim() + " " + pf.DamageReachName.Trim() + ") ";
-            return pysr + pf.Description;
-        }
+       
 
         private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
         {
@@ -463,7 +523,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    ords.Add(new Triangular(probFunction.TransFlowOutflow[i], probFunction.TransFlowLower[i], probFunction.TransFlowUpper[i]));
+                    ords.Add(new Triangular(probFunction.TransFlowLower[i], probFunction.TransFlowOutflow[i],  probFunction.TransFlowUpper[i]));
                 }
             }
             else if (probFunction.ErrorTypeTransformFlow == ErrorType.UNIFORM)
@@ -936,11 +996,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             return elems;
         }
-        private static string CreatePYSRDescription(Levee lev)
-        {
-            string pysr = "(" + lev.PlanName.Trim() + " " + lev.YearName.Trim() + " " + lev.StreamName.Trim() + " " + lev.DamageReachName.Trim() + ") ";
-            return pysr + lev.Description;
-        }
+       
 
         private static ChildElement CreateLeveeElement(Levee lev, ref string message)
         {
@@ -976,7 +1032,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.FAILURE_FREQUENCY, StringConstants.STAGE);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
             computeComponentVM.SetPairedData(func);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
             return leveeFeatureElement;
@@ -1016,6 +1072,30 @@ namespace HEC.FDA.ViewModel.Utilities
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, id);
             return elem;
         }
+        #endregion
+
+        #region PYSR Description
+        private static string CreatePYSRDescription(ProbabilityFunction pf)
+        {
+            return CreatePYSRDescription(pf.PlanName, pf.YearName, pf.StreamName, pf.DamageReachName, pf.Description);
+        }
+
+        private static string CreatePYSRDescription(Levee lev)
+        {
+            return CreatePYSRDescription(lev.PlanName, lev.YearName, lev.StreamName, lev.DamageReachName, lev.Description);
+        }
+
+        private static string CreatePYSRDescription(RatingFunction rat)
+        {
+            return CreatePYSRDescription(rat.PlanName, rat.YearName, rat.StreamName, rat.DamageReachName, rat.Description);
+        }
+
+        private static string CreatePYSRDescription(string plan, string year, string stream, string reach, string description)
+        {
+            string pysr = description + " (Retrieved from: " + plan.Trim() + ", " + year.Trim() + ", " + stream.Trim() + ", " + reach.Trim() + ")";
+            return pysr;
+        }
+
         #endregion
     }
 }

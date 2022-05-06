@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(IndexPoint), new Rule(() => { return IndexPoint >= 0; }, "Index Point must be greater than or equal to zero.", ErrorLevel.Severe));
+            AddRule(nameof(IndexPoint), () => IndexPoint >= 0, "Index Point must be greater than or equal to zero.");
         }
 
         #endregion

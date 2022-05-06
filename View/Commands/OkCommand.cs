@@ -22,10 +22,9 @@ namespace HEC.FDA.View.Commands
             BaseViewModel vm = (BaseViewModel)values[0];
             Window window = (Window)values[1];
             vm.Validate();
-            if (vm.HasErrors)
+            if (vm.HasFatalError)
             {
-                List<string> errors = vm.Errors;
-                MessageBox.Show(String.Join(Environment.NewLine, errors), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(vm.Error, "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (vm.GetType().IsSubclassOf(typeof(BaseEditorVM)))

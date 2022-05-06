@@ -17,20 +17,19 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-            <Label Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
-
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>
                     <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
-                        <Binding Path="HasErrors"/>
-                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
+                        <Binding Path="HasFatalError"/>
+                        <Binding Path="HasChanges"/>
+                        <Binding Path="Error"/>
                     </MultiBinding>
                 </Button.ToolTip>
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource SaveButtonMultiConverter}" UpdateSourceTrigger="PropertyChanged">
-                        <Binding Path="HasErrors"/>
-                        <Binding RelativeSource="{x:Static RelativeSource.Self}"/>
+                        <Binding Path="HasFatalError"/>
+                        <Binding Path="HasChanges"/>
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>

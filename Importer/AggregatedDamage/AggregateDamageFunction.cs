@@ -54,17 +54,17 @@ namespace Importer
         }
         public void Print(AsyncLogger logger)
         {
-            logger.Log($"\nAggregated Damage Function Name: {this.Name}");
-            logger.Log($"\tDescription: {this.Description}");
-            logger.Log($"\tCategory Name: {this.CategoryName}");
+            logger.Log($"\nAggregated Damage Function Name: {Name}");
+            logger.Log($"\tDescription: {Description}");
+            logger.Log($"\tCategory Name: {CategoryName}");
         }
         public void PrintToFile()
         {
             StreamWriter wr = Study._StreamWriter;
 
-            wr.WriteLine($"\nAggregated Damage Function Name: {this.Name}");
-            wr.WriteLine($"\tDescription: {this.Description}");
-            wr.WriteLine($"\tCategory Name: {this.CategoryName}");
+            wr.WriteLine($"\nAggregated Damage Function Name: {Name}");
+            wr.WriteLine($"\tDescription: {Description}");
+            wr.WriteLine($"\tCategory Name: {CategoryName}");
 
             //Depth-Damage Functions
             for (int itype = (int)StructureValueType.STRUCTURE; itype <= (int)StructureValueType.TOTAL; itype++)
@@ -115,13 +115,13 @@ namespace Importer
         }
         protected void ExportName(StreamWriter wr, char delimt)
         {
-            wr.Write($"{this.Name}{delimt}{delimt}");
-            wr.Write($"{this.PlanName}{delimt}{delimt}");
-            wr.Write($"{this.YearName}{delimt}{delimt}");
-            wr.Write($"{this.StreamName}{delimt}{delimt}");
-            wr.Write($"{this.DamageReachName}{delimt}{delimt}");
-            wr.Write($"{this.CategoryName}{delimt}{delimt}");
-            wr.WriteLine($"{this.Description}");
+            wr.Write($"{Name}{delimt}{delimt}");
+            wr.Write($"{PlanName}{delimt}{delimt}");
+            wr.Write($"{YearName}{delimt}{delimt}");
+            wr.Write($"{StreamName}{delimt}{delimt}");
+            wr.Write($"{DamageReachName}{delimt}{delimt}");
+            wr.Write($"{CategoryName}{delimt}{delimt}");
+            wr.WriteLine($"{Description}");
             return;
         }
         public void ExportData(StreamWriter wr, char delimt)
@@ -144,8 +144,6 @@ namespace Importer
                 SingleDamageFunction sdf = new SingleDamageFunction();
 
                 sdf = ObjectCopier.Clone(_SingleDamageFunction[ixType]);
-
-                //this.getSingleDamageFunction((StructureValueType)ixType, sdf);//Doesn't work
 
                 if (sdf == null)
                 {
@@ -225,12 +223,12 @@ namespace Importer
             if (funcType < StructureValueType.STRUCTURE || funcType > StructureValueType.TOTAL)
             {
                 //error
-                return this._ErrorDistribution[1];
+                return _ErrorDistribution[1];
             }
             else
             {
-                this._ErrorDistribution[(int)funcType] = ObjectCopier.Clone(errorDistribution);
-                return this._ErrorDistribution[(int)funcType];
+                _ErrorDistribution[(int)funcType] = ObjectCopier.Clone(errorDistribution);
+                return _ErrorDistribution[(int)funcType];
             }
         }
         public SingleDamageFunction GetSingleDamageFunction(StructureValueType typeValue, SingleDamageFunction singleDamageFunction)
@@ -242,7 +240,7 @@ namespace Importer
         public SingleDamageFunction GetSingleDamageFunction(StructureValueType typeValue)
         {
             int itype = (int)typeValue;
-            return this._SingleDamageFunction[itype];
+            return _SingleDamageFunction[itype];
         }
         protected string ExportGetParamCode(StructureValueType typeVal, ErrorType typeError, int iparam)
         {

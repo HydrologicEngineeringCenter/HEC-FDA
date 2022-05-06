@@ -51,9 +51,9 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(SurveyedYear), new Rule(() => { return SurveyedYear <= DateTime.Now.Year; }, "The Surveyed Year must not be in the future.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(UpdatedYear), new Rule(() => { return UpdatedYear <= DateTime.Now.Year; }, "The Updated Year must not be in the future.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(UpdatedYear), new Rule(() => { return UpdatedYear >= SurveyedYear; }, "The Updated Year must happen after the Surveyed Year.", ErrorLevel.Severe));
+            AddRule(nameof(SurveyedYear), () => SurveyedYear <= DateTime.Now.Year, "The Surveyed Year must not be in the future.");
+            AddRule(nameof(UpdatedYear), () => UpdatedYear <= DateTime.Now.Year, "The Updated Year must not be in the future.");
+            AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
         }
         private FdaValidationResult Validate()
         {

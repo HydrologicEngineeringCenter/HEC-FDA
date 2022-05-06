@@ -35,11 +35,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             foreach (string bannedName in bannedNames)
             {
-                AddSinglePropertyRule(nameof(Name), new Rule(() =>
-                {
-                    return bannedName.Equals(Name);
-                }, "Name already exists.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                AddRule(nameof(Name), () => {
+                    if (bannedName.Equals(Name))
+                    {
+                        return false;
+                    }
+                    else { return true; }
 
+                }, "Name already exists.");
             }
         }
   

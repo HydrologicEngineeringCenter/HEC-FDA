@@ -51,7 +51,7 @@ namespace Importer
         public void Print(AsyncLogger logger)
         {
             OccupancyType aOcctype;
-            logger.Log($"Number of Occupancy Types {_OcctypeListSort.Count}");
+            logger.Log($"Number of Occupancy Types ", _OcctypeListSort.Count.ToString());
             for (int i = 0; i < _OcctypeListSort.Count; i++)
             {
                 aOcctype = _OcctypeListSort.ElementAt(i).Value;

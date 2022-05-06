@@ -53,17 +53,16 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != null; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return Path != ""; }, "Path cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Path), new Rule(() => { return IsPathValid();}, "Path contains invalid characters.", ErrorLevel.Severe));
+            AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
+            AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
+            AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
+            AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
 
-            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != null; }, "Study Name cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(StudyName), new Rule(() => { return StudyName != ""; }, "Study Name cannot be null.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(StudyName), new Rule(() => 
-            {
-                return !File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite");
-            }, "A study with that name already exists.", ErrorLevel.Severe));
+            //path must not contain invalid characters
+            AddRule(nameof(Path), () => IsPathValid(), "Path contains invalid characters.");
 
+            //check if folder with that name already exists
+            AddRule(nameof(StudyName), () => !File.Exists(Path + "\\" + StudyName + "\\" + StudyName + ".sqlite"), "A study with that name already exists.");
         }
 
         private bool IsPathValid()

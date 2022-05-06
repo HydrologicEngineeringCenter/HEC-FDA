@@ -16,7 +16,18 @@ namespace Importer
         /// Appends a message to the log buffer and appends a line separator after.  This method is synchronized
         /// internally to support asynchronous logging.
         /// </summary>
-        /// <param name="message">Message to append</param>
+        public void Log(string label, string value)
+        {
+            lock (_mutex)
+            {
+                if(value == null || value == "")
+                {
+                    value = " Not found";
+                }
+                _buffer += label + value + Environment.NewLine;
+            }
+        }
+
         public void Log(string message)
         {
             lock (_mutex)
@@ -24,6 +35,7 @@ namespace Importer
                 _buffer += message + Environment.NewLine;
             }
         }
+
         public void Append(string message)
         {
             lock (_mutex)

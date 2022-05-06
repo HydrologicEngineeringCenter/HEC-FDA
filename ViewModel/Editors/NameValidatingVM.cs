@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void AddValidationRules()
         {
-            AddSinglePropertyRule(nameof(Name), new Rule(() =>{return !string.IsNullOrWhiteSpace(Name);}, "Name cannot be blank or whitespace.", ErrorLevel.Severe));
+            AddRule(nameof(Name), () => !string.IsNullOrWhiteSpace(Name), "Name cannot be blank or whitespace.");
         }
 
     }
