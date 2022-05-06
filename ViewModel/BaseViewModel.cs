@@ -1,6 +1,6 @@
-﻿using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel
         /// as well as listen for events where elements are added, removed, or updated
         /// </summary>
         public static IStudyCache StudyCache { get; set; }
-        public static Saving.PersistenceFactory PersistenceFactory { get; set; }
+        public static PersistenceFactory PersistenceFactory { get; set; }
 
         public string LastEditDate { get; set; }
 

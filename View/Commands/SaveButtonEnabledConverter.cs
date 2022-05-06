@@ -1,8 +1,5 @@
-﻿using HEC.FDA.ViewModel;
-using HEC.MVVMFramework.Base.Enumerations;
-using System;
+﻿using System;
 using System.Globalization;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace HEC.FDA.View.Commands
@@ -26,16 +23,8 @@ namespace HEC.FDA.View.Commands
             bool hasFatalError = (bool)values[0];
             bool hasChanges = (bool)values[1];
 
-            if (hasFatalError == true)
-            {
-                //This used to be false if has changes == false but it wasn't always enabling after changing things in the the UI. 
-                //I decided that it would be best to have the save button always enabled for now. -Cody 2/25/22
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !hasFatalError;
+
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
