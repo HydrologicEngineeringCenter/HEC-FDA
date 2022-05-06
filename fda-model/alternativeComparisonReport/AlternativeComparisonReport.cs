@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using alternatives;
 using Statistics.Histograms;
 using metrics;
@@ -51,10 +48,10 @@ namespace alternativeComparisonReport
         /// <param name="iterations"></param> number of times to sample the aaeq damage histograms
         /// <param name="discountRate"></param> the discount rate at which to calculate the present value of damages, in decimal form
         /// <returns></returns>
-        public List<AlternativeResults> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
+        public AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
         {
             AlternativeResults withoutProjectAlternativeResults = _withoutProjectAlternative.AnnualizationCompute(randomProvider, iterations, discountRate);
-            List<AlternativeResults> damagesReducedAllAlternatives = new List<AlternativeResults>();
+            AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
@@ -96,7 +93,7 @@ namespace alternativeComparisonReport
                     }
                     damageReducedOneAlternative.AddDamageResults(damageReducedInImpactArea); 
                 }
-                damagesReducedAllAlternatives.Add(damageReducedOneAlternative);
+                damagesReducedAllAlternatives.AddAlternativeResults(damageReducedOneAlternative);
             }
             return damagesReducedAllAlternatives;
         }

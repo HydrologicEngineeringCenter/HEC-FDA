@@ -17,6 +17,9 @@ namespace fda_model_test.unittests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
+        static string damCat = "residential";
+        static string assetCat = "Structure";
+        CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
         static int id = 1;
         [Theory]
         [InlineData(150000)]
@@ -30,19 +33,19 @@ namespace fda_model_test.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000*i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel,yLabel,name);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000*i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             
             metrics.Threshold threshold = new metrics.Threshold(1, new ConvergenceCriteria(), metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
-            Simulation s = Simulation.builder()
+            Simulation s = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
@@ -51,7 +54,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.Results r = s.Compute(mrp,cc); //here we test compute, below we test preview compute 
-            double difference = expected - r.DamageResults.MeanDamage("residential");
+            double difference = expected - r.DamageResults.MeanDamage(damCat,assetCat,id);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
@@ -68,26 +71,26 @@ namespace fda_model_test.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
             metrics.Threshold threshold = new metrics.Threshold(1, new ConvergenceCriteria(), metrics.ThresholdEnum.ExteriorStage, 150000);
-            Simulation s = Simulation.builder()
+            Simulation s = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
             metrics.Results results = s.PreviewCompute(); //here we test preview compute 
-            double difference = expectedEAD - results.DamageResults.MeanDamage("residential");
+            double difference = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,id);
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
         }
@@ -108,17 +111,17 @@ namespace fda_model_test.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = Simulation.builder()
+            Simulation s = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
@@ -126,7 +129,7 @@ namespace fda_model_test.unittests
             RandomProvider rp = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             metrics.Results r = s.Compute(rp, cc);
-            double actual = r.DamageResults.MeanDamage("residential");
+            double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
 
             Assert.Equal(expected, actual, 2);
         }
@@ -144,7 +147,7 @@ namespace fda_model_test.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages,metaData);
             double epsilon = 0.0001;
             double[] leveestages = new double[] { 0.0d, topOfLeveeElevation - epsilon, topOfLeveeElevation };
             IDistribution[] leveefailprobs = new IDistribution[3];
@@ -153,17 +156,17 @@ namespace fda_model_test.unittests
                 leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
             }
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, xLabel, yLabel, name);
+            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name,  "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = Simulation.builder()
+            Simulation s = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, 100000.0d)
@@ -172,7 +175,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.Results r = s.Compute(mrp, cc);
-            double actual = r.DamageResults.MeanDamage("residential");
+            double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
             if (actual == 0) //handle assertion differently if EAD is zero
             {
                 Assert.Equal(expected, actual, 0);

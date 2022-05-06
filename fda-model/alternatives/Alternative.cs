@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using scenarios;
-using System.Linq;
-using Statistics.Histograms;
 using metrics;
 
 namespace alternatives

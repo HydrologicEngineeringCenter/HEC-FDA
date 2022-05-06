@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
@@ -109,17 +105,17 @@ namespace metrics
         #endregion
 
         #region Methods
-        public void AddDamageRealization(double damageRealization, Int64 iteration)
+        internal void AddDamageRealization(double damageRealization, Int64 iteration)
         {
             _damageHistogram.AddObservationToHistogram(damageRealization, iteration);
         }
 
-        public double MeanDamage()
+        internal double MeanDamage()
         {
             return _damageHistogram.Mean;
         }
 
-        public double DamageExceededWithProbabilityQ(double exceedanceProbability)
+        internal double DamageExceededWithProbabilityQ(double exceedanceProbability)
         {
             double nonExceedanceProbability = 1 - exceedanceProbability;
             double quartile = _damageHistogram.InverseCDF(nonExceedanceProbability);

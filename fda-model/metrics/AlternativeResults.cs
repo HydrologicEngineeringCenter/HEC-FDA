@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
@@ -14,6 +10,7 @@ namespace metrics
         #region Fields
         private int _alternativeID;
         private List<DamageResults> _damageResultsList;
+        private bool _isNull;
         #endregion
 
         #region Properties
@@ -29,14 +26,28 @@ namespace metrics
             }
         }
         public event MessageReportedEventHandler MessageReport;
+        public bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
 
         #endregion
 
         #region Constructor
+        public AlternativeResults()
+        {
+            _isNull = true;
+            _alternativeID = 0;
+            _damageResultsList = new List<DamageResults>();
+        }
         public AlternativeResults(int id)
         {
             _alternativeID = id;
             _damageResultsList = new List<DamageResults>();
+            _isNull = false;
         }
         #endregion
         #region Methods

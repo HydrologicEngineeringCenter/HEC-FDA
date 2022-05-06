@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using compute;
 using paireddata;
 using Statistics;
-using Statistics.Histograms;
-
+using metrics;
 namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
@@ -19,6 +15,9 @@ namespace fda_model_test.unittests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
+        static string damCat = "residential";
+        static string assetCat = "content";
+        CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
         static int id = 1;
         /// <summary>
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
@@ -42,7 +41,7 @@ namespace fda_model_test.unittests
             {
                 stages[i] = new Statistics.Distributions.Uniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, xLabel, yLabel, name);
+            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
             IDistribution[] baseDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -54,28 +53,26 @@ namespace fda_model_test.unittests
             {
                 futureDamages[i] = new Statistics.Distributions.Uniform(0, 1200000 * i, 10);
             }
-            string damageCategory = "residential";
-            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, xLabel, yLabel, name, damageCategory);
-            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, xLabel, yLabel, name, damageCategory);
+            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
+            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
             updFuture.Add(future_stage_damage);
 
-            Simulation sBase = Simulation.builder()
+            Simulation sBase = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            Simulation sFuture = Simulation.builder()
+            Simulation sFuture = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
 
-            int impactAreaID = 17;
-            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", impactAreaID);
+            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", id);
             impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaBase);
@@ -85,13 +82,11 @@ namespace fda_model_test.unittests
 
             scenarios.Scenario baseScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
             scenarios.Scenario futureScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
-            int alternativeID = 23;
-            alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, alternativeID);
+            alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, id);
 
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            Dictionary<int, Dictionary<string, Histogram>> alternativeResults = new Dictionary<int, Dictionary<string, Histogram>>();
-            alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
-            double actual = (alternativeResults[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
+            AlternativeResults alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
+            double actual = alternativeResults.GetDamageResults(id).GetDamageResult(damCat,assetCat,id).DamageHistogram.InverseCDF(mrp.NextRandom());
             double err = Math.Abs((actual - expected) / actual);
             Assert.True(err<.01);
 

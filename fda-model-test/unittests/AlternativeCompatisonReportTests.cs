@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using compute;
 using paireddata;
 using Statistics;
-using Statistics.Histograms;
+using metrics;
 using alternativeComparisonReport;
 
 namespace fda_model_test.unittests
@@ -20,6 +17,9 @@ namespace fda_model_test.unittests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
+        static string damCat = "residential";
+        static string assetCat = "structure";
+        static CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
         static int id = 1;
 
         [Theory]
@@ -35,7 +35,7 @@ namespace fda_model_test.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, xLabel, yLabel, name);
+            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
             IDistribution[] baseDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -47,9 +47,8 @@ namespace fda_model_test.unittests
             {
                 futureDamages[i] = new Statistics.Distributions.Uniform(0, 1200000 * i, 10);
             }
-            string damageCategory = "residential";
-            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, xLabel, yLabel, name, damageCategory);
-            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, xLabel, yLabel, name, damageCategory);
+            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
+            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
@@ -64,22 +63,21 @@ namespace fda_model_test.unittests
                 leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
             }
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, xLabel, yLabel, name);
+            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            Simulation withoutProjectSimulationBase = Simulation.builder()
+            Simulation withoutProjectSimulationBase = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            Simulation withoutProjectSimulationFuture = Simulation.builder()
+            Simulation withoutProjectSimulationFuture = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
-            int impactAreaID = 17;
 
-            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", impactAreaID);
+            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", id);
             impactarea.ImpactAreaSimulation impactAreaWithoutBase = new impactarea.ImpactAreaSimulation("BaseYear Without", withoutProjectSimulationBase, id, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaWithoutBase);
@@ -92,14 +90,14 @@ namespace fda_model_test.unittests
             int withoutProjectalternativeID = 23;
             alternatives.Alternative withoutProjectAlternative = new alternatives.Alternative(baseWithoutProjectScenario, futureWothoutProjectScenario, poa, withoutProjectalternativeID);
 
-            Simulation withProjectSimulationBase = Simulation.builder()
+            Simulation withProjectSimulationBase = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
                 .withStageDamages(updBase)
                 .build();
 
-            Simulation withProjectSimulationFuture = Simulation.builder()
+            Simulation withProjectSimulationFuture = Simulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
@@ -125,13 +123,9 @@ namespace fda_model_test.unittests
             AlternativeComparisonReport alternativeComparisonReport = new AlternativeComparisonReport(withoutProjectAlternative, withProjectAlternativeList);
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
 
-
-            Dictionary<int, Dictionary<string, Histogram>> alternativeResults = new Dictionary<int, Dictionary<string, Histogram>>();
-
-            Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> alternativeComparisonReportResults = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
-
-            alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
-            double actual = ((alternativeComparisonReportResults[withProjectAlternativeID])[impactAreaID])[damageCategory].InverseCDF(mrp.NextRandom());
+            AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
+            //WE NEED AN ALTERNATIVECOMPARISONREPORTRESULTS object
+            double actual = alternativeComparisonReportResults.GetAlternativeResults(id).GetDamageResults(id).DamageExceededWithProbabilityQ(damCat, mrp.NextRandom()), assetCat, id);
             double err = Math.Abs((actual - expected) / expected);
             Assert.True(err<.01);
 
