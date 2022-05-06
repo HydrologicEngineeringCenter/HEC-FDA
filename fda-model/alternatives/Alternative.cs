@@ -50,25 +50,25 @@ namespace alternatives
         public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
         {
             _discountRate = discountRate;
-            Dictionary<int,Results> baseYearResults = _currentYear.Compute(randomProvider, iterations);//this is a list of impact area-specific ead
-            Dictionary<int, Results> mlfYearResults = _futureYear.Compute(randomProvider, iterations);
+            List<Results> baseYearResults = _currentYear.Compute(randomProvider, iterations);//this is a list of impact area-specific ead
+            List<Results> mlfYearResults = _futureYear.Compute(randomProvider, iterations);
 
             Dictionary<int, Dictionary<string, Histogram>> damageByImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
 
-            foreach (int impactAreaID in baseYearResults.Keys)
+            foreach (int result in baseYearResults.Keys)
             {
                 Dictionary<string, Histogram> damageByDamageCategories = new Dictionary<string, Histogram>();
-                foreach (string damageCategory in baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                foreach (string damageCategory in baseYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
                 {
                     //Sturges rule 
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
-                    baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
-                    double eadSampledBaseYearLowerBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
-                    mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
-                    double eadSampledFutureYearLowerBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
-                    double eadSampledBaseYearUpperBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
-                    double eadSampledFutureYearUpperBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
+                    baseYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
+                    double eadSampledBaseYearLowerBound = baseYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
+                    mlfYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
+                    double eadSampledFutureYearLowerBound = mlfYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
+                    double eadSampledBaseYearUpperBound = baseYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
+                    double eadSampledFutureYearUpperBound = mlfYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
                     double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
                     double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
                     double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
@@ -78,14 +78,14 @@ namespace alternatives
 
                     for (int i = 0; i < iterations; i++)
                     {
-                        double eadSampledBaseYear = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                        double eadSampledFutureYear = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                        double eadSampledBaseYear = baseYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                        double eadSampledFutureYear = mlfYearResults[result].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         histogram.AddObservationToHistogram(aaeqDamage);
                     }
                     damageByDamageCategories.Add(damageCategory, histogram);
                 }
-                damageByImpactAreas.Add(impactAreaID, damageByDamageCategories);
+                damageByImpactAreas.Add(result, damageByDamageCategories);
             }
             return damageByImpactAreas;
         }

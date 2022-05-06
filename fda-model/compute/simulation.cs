@@ -28,7 +28,8 @@ namespace compute
         private UncertainPairedData _systemResponseFunction_stage_failureProbability;
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
-        private Results _results = new Results();
+        private int _impactAreaID;
+        private Results _results;// = new Results(_impactAreaID);
         private bool _leveeIsValid = false;
 
         public event MessageReportedEventHandler MessageReport;
@@ -41,7 +42,7 @@ namespace compute
             }
         }
 
-        internal Simulation()
+        internal Simulation(int impactAreaID)
         {
             _frequency_discharge = null;
             _frequency_discharge_graphical = new GraphicalUncertainPairedData(); //can we have both of these?
@@ -51,7 +52,8 @@ namespace compute
             _channelstage_floodplainstage = new UncertainPairedData();//defaults to null
             _systemResponseFunction_stage_failureProbability = new UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
-            _results = new Results();
+            _impactAreaID = impactAreaID;
+            _results = new Results(_impactAreaID);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
@@ -555,9 +557,9 @@ namespace compute
             Results results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
             return results;
         }
-        public static SimulationBuilder builder()
+        public static SimulationBuilder builder(int impactAreaID)
         {
-            return new SimulationBuilder(new Simulation());
+            return new SimulationBuilder(new Simulation(impactAreaID));
         }
 
         private bool LeveeIsValid()
@@ -684,6 +686,12 @@ namespace compute
             public SimulationBuilder withAdditionalThreshold(Threshold threshold)
             {
                 _sim._results.PerformanceByThresholds.AddThreshold(threshold);
+                return new SimulationBuilder(_sim);
+            }
+
+            public SimulationBuilder forImpactArea(int impactAreaID)
+            {
+                _sim._impactAreaID = impactAreaID;
                 return new SimulationBuilder(_sim);
             }
         }

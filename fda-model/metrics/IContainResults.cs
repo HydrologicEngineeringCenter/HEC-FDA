@@ -7,6 +7,7 @@ namespace metrics
     {
         PerformanceByThresholds PerformanceByThresholds { get; }
         ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; }
+        int ImpactAreaID { get; }
 
     }
 }

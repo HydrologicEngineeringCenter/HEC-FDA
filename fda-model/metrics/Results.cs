@@ -12,15 +12,18 @@ namespace metrics
     {
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
         public ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; }
-        public Results()
+        public int ImpactAreaID { get; }
+        public Results(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
+            ImpactAreaID = impactAreaID;
         }
-        private Results(PerformanceByThresholds performanceByThresholds, ExpectedAnnualDamageResults expectedAnnualDamageResults)
+        private Results(PerformanceByThresholds performanceByThresholds, ExpectedAnnualDamageResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             ExpectedAnnualDamageResults = expectedAnnualDamageResults;
+            ImpactAreaID = impactAreaID;
         }
         private bool IsEADConverged(bool computeWithDamage)
         {
@@ -128,6 +131,7 @@ namespace metrics
             XElement expectedAnnualDamageResultsElement = ExpectedAnnualDamageResults.WriteToXML();
             expectedAnnualDamageResultsElement.Name = "Expected_Annual_Damage_Results";
             masterElement.Add(expectedAnnualDamageResultsElement);
+            masterElement.SetAttributeValue("ImpactAreaID", ImpactAreaID);
             return masterElement;
         }
 
@@ -135,7 +139,8 @@ namespace metrics
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             ExpectedAnnualDamageResults expectedAnnualDamageResults = ExpectedAnnualDamageResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
-            return new Results(performanceByThresholds,expectedAnnualDamageResults);
+            int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
+            return new Results(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }
     }
 }
