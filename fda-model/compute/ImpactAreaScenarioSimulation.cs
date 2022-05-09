@@ -14,7 +14,7 @@ using interfaces;
 
 namespace compute
 {
-    public class Simulation : Validation, IReportMessage, IProgressReport
+    public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
@@ -29,7 +29,7 @@ namespace compute
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private int _impactAreaID;
-        private Results _results;// = new Results(_impactAreaID);
+        private ImpactAreaScenarioResults _impactAreaScenarioResults;// = new Results(_impactAreaID);
         private bool _leveeIsValid = false;
 
         public event MessageReportedEventHandler MessageReport;
@@ -42,7 +42,7 @@ namespace compute
             }
         }
 
-        internal Simulation(int impactAreaID)
+        internal ImpactAreaScenarioSimulation(int impactAreaID)
         {
             _frequency_discharge = null;
             _frequency_discharge_graphical = new GraphicalUncertainPairedData(); //can we have both of these?
@@ -53,7 +53,7 @@ namespace compute
             _systemResponseFunction_stage_failureProbability = new UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
             _impactAreaID = impactAreaID;
-            _results = new Results(_impactAreaID);
+            _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
@@ -62,12 +62,12 @@ namespace compute
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public Results Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ImpactAreaScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
             if (!CanCompute(convergenceCriteria,randomProvider))
             {
-                return _results;
+                return _impactAreaScenarioResults;
             }
             int masterseed = 0;
             if (randomProvider is RandomProvider)
@@ -87,21 +87,21 @@ namespace compute
             }
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
-                _results.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
+                _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
             SetStageForNonExceedanceProbability();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
-            _results.ParalellTestForConvergence(.95, .05);
-            return _results;
+            _impactAreaScenarioResults.ParalellTestForConvergence(.95, .05);
+            return _impactAreaScenarioResults;
         }
 
         private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _results.DamageResults.AddDamageResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
+                _impactAreaScenarioResults.DamageResults.AddDamageResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
             }
-            _results.DamageResults.AddDamageResultObject("Total", "Total", convergenceCriteria, _impactAreaID);
+            _impactAreaScenarioResults.DamageResults.AddDamageResultObject("Total", "Total", convergenceCriteria, _impactAreaID);
         }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
@@ -156,7 +156,7 @@ namespace compute
             Int64 iterations = convergenceCriteria.MinIterations;
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
-            while (!_results.IsConverged(computeWithDamage))
+            while (!_impactAreaScenarioResults.IsConverged(computeWithDamage))
             {
                 Parallel.For(0, iterations, i =>
                 {
@@ -232,9 +232,9 @@ namespace compute
                     }
 
                 });
-                if (!_results.TestResultsForConvergence(.95, .05, computeWithDamage))
-                {
-                    iterations = _results.RemainingIterations(.95, .05, computeWithDamage);
+                if (!_impactAreaScenarioResults.TestResultsForConvergence(.95, .05, computeWithDamage))
+                {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
+                    iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
                     progressChunks = _ExpectedIterations / 100;
                 }
@@ -348,14 +348,14 @@ namespace compute
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.DamageResults.AddDamageRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                _impactAreaScenarioResults.DamageResults.AddDamageRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
 
                 if (giveMeADamageFrequency)
                 {
                     ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
                 }
             }
-            _results.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
+            _impactAreaScenarioResults.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
@@ -375,7 +375,7 @@ namespace compute
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
-                _results.DamageResults.AddDamageRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                _impactAreaScenarioResults.DamageResults.AddDamageRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
@@ -383,7 +383,7 @@ namespace compute
                 }
 
             }
-            _results.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
+            _impactAreaScenarioResults.DamageResults.AddDamageRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
@@ -395,11 +395,11 @@ namespace compute
         public void ComputePerformance(IPairedData frequency_stage, Int64 iteration)
         {
 
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
+            foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 double thresholdValue = thresholdEntry.ThresholdValue;
                 double aep = 1 - frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.ProjectPerformanceResults.AddAEPForAssurance(aep, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
                 GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
             }
         }
@@ -426,9 +426,9 @@ namespace compute
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
+            foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
-                thresholdEntry.ProjectPerformanceResults.AddAEPForAssurance(aep, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
                 GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
             }
 
@@ -441,17 +441,17 @@ namespace compute
             for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.ProjectPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
+                threshold.SystemPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
             }
         }
         public void SetStageForNonExceedanceProbability()
         {
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
-            foreach (var thresholdEntry in _results.PerformanceByThresholds.ListOfThresholds)
+            foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
                 {
-                    thresholdEntry.ProjectPerformanceResults.AddAssuranceHistogram(er101RequiredNonExceedanceProbabilities[i]);
+                    thresholdEntry.SystemPerformanceResults.AddAssuranceHistogram(er101RequiredNonExceedanceProbabilities[i]);
                 }
             }
         }
@@ -549,17 +549,17 @@ namespace compute
             return pairedDataTotal;
         }
 
-        public Results PreviewCompute()
+        public ImpactAreaScenarioResults PreviewCompute()
         {
 
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            Results results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
+            ImpactAreaScenarioResults results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
             return results;
         }
         public static SimulationBuilder builder(int impactAreaID)
         {
-            return new SimulationBuilder(new Simulation(impactAreaID));
+            return new SimulationBuilder(new ImpactAreaScenarioSimulation(impactAreaID));
         }
 
         private bool LeveeIsValid()
@@ -613,12 +613,12 @@ namespace compute
 
         public class SimulationBuilder
         {
-            private Simulation _sim;
-            internal SimulationBuilder(Simulation sim)
+            private ImpactAreaScenarioSimulation _sim;
+            internal SimulationBuilder(ImpactAreaScenarioSimulation sim)
             {
                 _sim = sim;
             }
-            public Simulation build()
+            public ImpactAreaScenarioSimulation build()
             {
                 _sim.Validate();
 
@@ -678,14 +678,14 @@ namespace compute
                 }
                 return new SimulationBuilder(_sim);
             }
-            public SimulationBuilder withPerformanceMetrics(Results results)
+            public SimulationBuilder withPerformanceMetrics(ImpactAreaScenarioResults results)
             {
-                _sim._results = results;
+                _sim._impactAreaScenarioResults = results;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withAdditionalThreshold(Threshold threshold)
             {
-                _sim._results.PerformanceByThresholds.AddThreshold(threshold);
+                _sim._impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(threshold);
                 return new SimulationBuilder(_sim);
             }
 

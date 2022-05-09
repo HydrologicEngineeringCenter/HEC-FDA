@@ -51,10 +51,10 @@ namespace alternatives
             ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, iterations);
 
             AlternativeResults alternativeResults = new AlternativeResults(_id);
-            foreach (Results baseYearResults in baseYearScenarioResults.ResultsList)
+            foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
             {
                 DamageResults aaeqResults = new DamageResults(baseYearResults.ImpactAreaID);
-                Results mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
+                ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
                 foreach (DamageResult baseYearDamageResult in baseYearResults.DamageResults.DamageResultList)
                 {

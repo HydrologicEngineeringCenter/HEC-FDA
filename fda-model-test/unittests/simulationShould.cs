@@ -25,7 +25,7 @@ namespace fda_model_test.unittests
         [InlineData(150000)]
         public void ComputeEAD(double expected)
         {
-            
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -44,17 +44,16 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             
-            metrics.Threshold threshold = new metrics.Threshold(1, new ConvergenceCriteria(), metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
-            Simulation s = Simulation.builder(id)
+            metrics.Threshold threshold = new metrics.Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            metrics.Results r = s.Compute(mrp,cc); //here we test compute, below we test preview compute 
-            double difference = expected - r.DamageResults.MeanDamage(damCat,assetCat,id);
+            metrics.ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
+            double difference = expected - impactAreaScenarioResult.DamageResults.MeanDamage(damCat,assetCat,id);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
@@ -63,7 +62,7 @@ namespace fda_model_test.unittests
         [InlineData(150000)]
         public void PreviewCompute_Test(double expectedEAD)
         {
-
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -82,14 +81,17 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            metrics.Threshold threshold = new metrics.Threshold(1, new ConvergenceCriteria(), metrics.ThresholdEnum.ExteriorStage, 150000);
-            Simulation s = Simulation.builder(id)
+            metrics.Threshold threshold = new metrics.Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);
+            //TODO: I think that we need to take convergence criteria out of the threshold constructor. convergence criteria should come in through one place only. 
+            //otherwise we have different convergence criterias for one compute and that is causing problems 
+            
+            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            metrics.Results results = s.PreviewCompute(); //here we test preview compute 
+            metrics.ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
             double difference = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,id);
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
@@ -121,14 +123,14 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = Simulation.builder(id)
+            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .build();
             RandomProvider rp = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            metrics.Results r = s.Compute(rp, cc);
+            metrics.ImpactAreaScenarioResults r = s.Compute(rp, cc);
             double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
 
             Assert.Equal(expected, actual, 2);
@@ -166,7 +168,7 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = Simulation.builder(id)
+            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, 100000.0d)
@@ -174,7 +176,7 @@ namespace fda_model_test.unittests
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            metrics.Results r = s.Compute(mrp, cc);
+            metrics.ImpactAreaScenarioResults r = s.Compute(mrp, cc);
             double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
             if (actual == 0) //handle assertion differently if EAD is zero
             {

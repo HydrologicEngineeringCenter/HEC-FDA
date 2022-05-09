@@ -46,6 +46,7 @@ namespace metrics
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
+            _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
             _assuranceList.Add(aepAssurance);
 
@@ -56,6 +57,7 @@ namespace metrics
             _calculatePerformanceForLevee = true;
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
+            _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
             _assuranceList.Add(aepAssurance);
             _ConvergenceCriteria = convergenceCriteria;
@@ -119,37 +121,43 @@ namespace metrics
             double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
-        public bool ConditionalNonExceedanceProbabilityIsConverged()
+        public bool AssuranceIsConverged()
         {
             double standardNonExceedanceProbability = 0.98;
-            return GetAssurance(STAGE_ASSURANCE_TYPE,standardNonExceedanceProbability).AssuranceHistogram.IsConverged;
+            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            return assuranceHistogram.IsConverged;
         }
-        public bool ConditionalNonExceedanceProbabilityTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public bool AssuranceTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            return GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            bool assuranceIsConverged = assuranceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            return assuranceIsConverged;
         }
-        public Int64 ConditionalNonExceedanceProbabilityRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public Int64 AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            return GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            long iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            return iterationsRemaining;
         }
-        public double ConditionalNonExceedanceProbability(double standardNonExceedanceProbability)
+        public double AssuranceOfEvent(double standardNonExceedanceProbability)
         {
             if (_calculatePerformanceForLevee)
             {
-                return CalculateConditionalNonExceedanceProbabilityForLevee(standardNonExceedanceProbability);
+                return CalculateAssuranceForLevee(standardNonExceedanceProbability);
             }
             else
             {
                 GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.ForceDeQueue();
-                double conditionalNonExceedanceProbability = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.CDF(_thresholdValue);
-                return conditionalNonExceedanceProbability;
+                ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+                double assurance = assuranceHistogram.CDF(_thresholdValue);
+                return assurance;
             }
 
         }
 
-        private double CalculateConditionalNonExceedanceProbabilityForLevee(double standardNonExceedanceProbability)
+        private double CalculateAssuranceForLevee(double standardNonExceedanceProbability)
         {
             ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             IPairedData medianLeveeCurve = _systemResponseFunction.SamplePairedData(0.5);

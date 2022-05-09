@@ -184,16 +184,18 @@ namespace paireddata
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
             masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
+            XElement coordinatesElement = new XElement("Coordinates");
             for (int i = 0; i < _xvals.Length; i++)
             {
-                XElement rowElement = new XElement("Coordinate");
+                XElement coordinateElement = new XElement("Coordinate");
                 XElement xElement = new XElement("X");
                 xElement.SetAttributeValue("Value", _xvals[i]);
                 XElement yElement = _yvals[i].ToXML();
-                rowElement.Add(xElement);
-                rowElement.Add(yElement);
-                masterElement.Add(rowElement);
+                coordinateElement.Add(xElement);
+                coordinateElement.Add(yElement);
+                coordinatesElement.Add(coordinateElement);
             }
+            masterElement.Add(coordinatesElement);
             return masterElement;
         }
 
@@ -203,7 +205,7 @@ namespace paireddata
             double[] xValues = new double[size];
             IDistribution[] yValues = new IDistribution[size];
             int i = 0;
-            foreach (XElement coordinateElement in element.Elements())
+            foreach (XElement coordinateElement in element.Element("Coordinates").Elements())
             {
                 foreach (XElement ordinateElements in coordinateElement.Elements())
                 {
@@ -211,13 +213,9 @@ namespace paireddata
                     {
                         xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
                     }
-                    else if(!ordinateElements.Name.ToString().Equals("CurveMetaData"))
+                    else 
                     {
                         yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
-                    }
-                    else
-                    {
-                        //do nothing because the element reached is the curve metadata element 
                     }
                 }
                 i++;

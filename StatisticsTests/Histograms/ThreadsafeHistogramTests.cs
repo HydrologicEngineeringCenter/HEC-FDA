@@ -303,7 +303,7 @@ namespace StatisticsTests.Histograms
             }
             double actual = histogram.CDF(value);
             double err = Math.Abs((expected - actual) / expected);
-            Assert.Equal(expected, actual, 2);
+            Assert.Equal(expected, actual, 1);
         }
         [Theory]
         [InlineData(.1, 1)]

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace metrics
 {
-    public class Results: IContainResults
+    public class ImpactAreaScenarioResults: IContainResults
     {
         #region Fields
         bool _isNull;
@@ -27,21 +27,21 @@ namespace metrics
             }
         }
         #region Constructors 
-        public Results()
+        public ImpactAreaScenarioResults()
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             DamageResults = new DamageResults();
             ImpactAreaID = 0;
             _isNull = true;
         }
-        public Results(int impactAreaID)
+        public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             DamageResults = new DamageResults(impactAreaID);
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
-        private Results(PerformanceByThresholds performanceByThresholds, DamageResults expectedAnnualDamageResults, int impactAreaID)
+        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, DamageResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             DamageResults = expectedAnnualDamageResults;
@@ -54,8 +54,8 @@ namespace metrics
         private bool IsEADConverged(bool computeWithDamage)
         {
             if (computeWithDamage == true)
-            {
-                return DamageResults.GetDamageResult("total", "total", ImpactAreaID).DamageHistogram.IsConverged;
+            {   //TODO: these hard-coded strings are TROUBLE
+                return DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.IsConverged;
             }
             return true;
         }
@@ -66,7 +66,7 @@ namespace metrics
             //dont like this
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(threshold.ProjectPerformanceResults.ConditionalNonExceedanceProbabilityIsConverged());
+                convergedList.Add(threshold.SystemPerformanceResults.AssuranceIsConverged());
             }
             foreach (var convergenceResult in convergedList)
             {
@@ -89,8 +89,8 @@ namespace metrics
         {
             bool eadIsConverged = true;
             if (computeWithDamage)
-            {
-                eadIsConverged = DamageResults.GetDamageResult("total", "total", ImpactAreaID).DamageHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            {//TODO: Hard-coded strings are TROUBLE
+                eadIsConverged = DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -98,7 +98,8 @@ namespace metrics
             //dont like this.
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(threshold.ProjectPerformanceResults.ConditionalNonExceedanceProbabilityTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                convergedList.Add(thresholdAssuranceIsConverged);
           
             }
             foreach (var convergenceResult in convergedList)
@@ -119,15 +120,15 @@ namespace metrics
             Int64 eadIterationsRemaining = 0;
             if (computeWithDamage)
             {
-                eadIterationsRemaining = DamageResults.GetDamageResult("total", "total", ImpactAreaID).DamageHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIterationsRemaining = DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
             }
             List<Int64> performanceIterationsRemaining = new List<Int64>();
 
-            //i do not like this, but the keys are frustrating.
+            //i do not like this, but the keys are frustrating 
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                performanceIterationsRemaining.Add(threshold.ProjectPerformanceResults.ConditionalNonExceedanceProbabilityRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
             }
             return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
         }
@@ -135,10 +136,10 @@ namespace metrics
         {
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                threshold.ProjectPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                threshold.SystemPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
         }
-        public bool Equals(Results incomingIContainResults)
+        public bool Equals(ImpactAreaScenarioResults incomingIContainResults)
         {
             bool performanceMatches = PerformanceByThresholds.Equals(incomingIContainResults.PerformanceByThresholds);
             bool damageResultsMatch = DamageResults.Equals(incomingIContainResults.DamageResults);
@@ -166,7 +167,7 @@ namespace metrics
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             DamageResults expectedAnnualDamageResults = DamageResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new Results(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
+            return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }
         #endregion
     }

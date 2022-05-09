@@ -78,14 +78,14 @@ namespace fda_model_test.integrationtests
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(dischargeFrequency)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            metrics.Results results = simulation.Compute(randomProvider,convergenceCriteria);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
             double difference = Math.Abs(expected - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;

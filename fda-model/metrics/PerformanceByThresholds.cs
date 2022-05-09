@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace metrics
 {
-    public class PerformanceByThresholds
-{
+    public class PerformanceByThresholds : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    {
         #region Fields
         private List<Threshold> _thresholds;
         #endregion
@@ -21,6 +24,8 @@ namespace metrics
                 _thresholds = value;
             }
         }
+        public event MessageReportedEventHandler MessageReport;
+
         #endregion
 
         #region Constructors 
@@ -59,13 +64,27 @@ namespace metrics
             }
             return success;
         }
+        public Threshold GetThreshold(int thresholdID)
+        {
+            foreach (Threshold threshold in _thresholds)
+            {
+                if (threshold.ThresholdID.Equals(thresholdID))
+                {
+                    return threshold;
+                }
+            }
+            Threshold dummyThreshold = new Threshold();
+            ReportMessage(this, new MessageEventArgs(new Message("the requested threshold could not be found so a dummy threshold is being returned")));
+            return dummyThreshold;
+
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Performance_By_Thresholds");
             foreach (Threshold threshold in ListOfThresholds)
             {
                 XElement thresholdElement = threshold.WriteToXML();
-                thresholdElement.Name = $"{threshold.ThresholdID}";
+                thresholdElement.Name = $"ID{threshold.ThresholdID}";
                 masterElement.Add(thresholdElement);
             }
             return masterElement;
@@ -80,6 +99,10 @@ namespace metrics
                 thresholdList.Add(threshold);
             }
             return new PerformanceByThresholds(thresholdList);
+        }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
         }
         #endregion
     }

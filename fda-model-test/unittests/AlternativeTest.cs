@@ -60,13 +60,13 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
             updFuture.Add(future_stage_damage);
 
-            Simulation sBase = Simulation.builder(id)
+            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            Simulation sFuture = Simulation.builder(id)
+            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)

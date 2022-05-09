@@ -27,6 +27,7 @@ namespace fda_model_test.unittests
         [Fact]
         public void ResultsShouldReadTheSameStuffItWrites()
         {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -45,18 +46,17 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
 
-            metrics.Threshold threshold = new metrics.Threshold(1, new ConvergenceCriteria(), metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
-            Simulation simulation = Simulation.builder(id)
+            metrics.Threshold threshold = new metrics.Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(stageDamageList)
                 .withAdditionalThreshold(threshold)
                 .build();
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            metrics.Results results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement resultsElement = results.WriteToXml();
-            metrics.IContainResults resultsFromXML = metrics.Results.ReadFromXML(resultsElement);
+            metrics.IContainResults resultsFromXML = metrics.ImpactAreaScenarioResults.ReadFromXML(resultsElement);
             bool success = results.Equals(resultsFromXML);
         }
     }

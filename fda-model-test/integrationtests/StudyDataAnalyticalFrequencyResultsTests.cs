@@ -82,12 +82,12 @@ namespace fda_model_test
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
-            metrics.Results results = simulation.PreviewCompute();
+            metrics.ImpactAreaScenarioResults results = simulation.PreviewCompute();
             double difference = expected - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
@@ -107,7 +107,7 @@ namespace fda_model_test
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -115,7 +115,7 @@ namespace fda_model_test
 
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
             double difference = expected - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
@@ -148,7 +148,7 @@ namespace fda_model_test
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
             UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            Simulation simulation = Simulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -156,13 +156,13 @@ namespace fda_model_test
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
-
-            double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.MeanAEP();
+            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
         /// <summary>
@@ -183,7 +183,7 @@ namespace fda_model_test
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name);
-            Simulation simulation = Simulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -191,13 +191,13 @@ namespace fda_model_test
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
-
-            double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.MeanAEP();
+            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
 

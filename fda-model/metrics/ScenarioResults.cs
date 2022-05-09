@@ -9,11 +9,11 @@ namespace metrics
     public class ScenarioResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields 
-        List<Results> _resultsList;
+        List<ImpactAreaScenarioResults> _resultsList;
         #endregion
 
         #region Properties 
-        public List<Results> ResultsList
+        public List<ImpactAreaScenarioResults> ResultsList
         {
             get
             {
@@ -27,29 +27,29 @@ namespace metrics
         #region Constructor
         public ScenarioResults()
         {
-            _resultsList = new List<Results>();
+            _resultsList = new List<ImpactAreaScenarioResults>();
         }
         #endregion
 
         #region Methods
-        public void AddResults(Results resultsToAdd)
+        public void AddResults(ImpactAreaScenarioResults resultsToAdd)
         {
-            Results results = GetResults(resultsToAdd.ImpactAreaID);
+            ImpactAreaScenarioResults results = GetResults(resultsToAdd.ImpactAreaID);
             if (results.IsNull)
             {
                 _resultsList.Add(resultsToAdd);
             }
         }
-        public Results GetResults(int impactAreaID)
+        public ImpactAreaScenarioResults GetResults(int impactAreaID)
         {
-            foreach(Results results in _resultsList)
+            foreach(ImpactAreaScenarioResults results in _resultsList)
             {
                 if (results.ImpactAreaID.Equals(impactAreaID))
                 {
                     return results;
                 }
             }
-            Results dummyResults = new Results();
+            ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults();
             ReportMessage(this, new MessageEventArgs(new Message("The requested impact area Results could not be found. An arbitrary object is being returned.")));
             return dummyResults;
         }

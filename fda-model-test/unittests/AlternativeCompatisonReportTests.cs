@@ -12,21 +12,22 @@ namespace fda_model_test.unittests
     [Trait("Category", "Unit")]
     public class AlternativeComparisonReportTest
     {
-        static double[] FlowXs = { 0, 100000 };
-        static double[] StageXs = { 0, 150000 };
-        static string xLabel = "x label";
-        static string yLabel = "y label";
-        static string name = "name";
-        static string damCat = "residential";
-        static string assetCat = "structure";
-        static CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
-        static int id = 1;
+
 
         [Theory]
         [InlineData(51442, 50, .0275, 2023, 2072, 1, 75000)]
         [InlineData(59410, 50, .0275, 2023, 2050, 1, 75000)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
+            double[] FlowXs = { 0, 100000 };
+            double[] StageXs = { 0, 150000 };
+            string xLabel = "x label";
+            string yLabel = "y label";
+            string name = "name";
+            string damCat = "residential";
+            string assetCategory = "structure";
+            CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCategory);
+            int identifier = 1;
 
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -65,57 +66,56 @@ namespace fda_model_test.unittests
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            Simulation withoutProjectSimulationBase = Simulation.builder(id)
+            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(identifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            Simulation withoutProjectSimulationFuture = Simulation.builder(id)
+            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(identifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
 
-            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", id);
-            impactarea.ImpactAreaSimulation impactAreaWithoutBase = new impactarea.ImpactAreaSimulation("BaseYear Without", withoutProjectSimulationBase, id, impactArea);
+            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", identifier);
+            impactarea.ImpactAreaSimulation impactAreaWithoutBase = new impactarea.ImpactAreaSimulation("BaseYear Without", withoutProjectSimulationBase, identifier, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaWithoutBase);
-            impactarea.ImpactAreaSimulation impactAreaWithoutFuture = new impactarea.ImpactAreaSimulation("FutureYear without", withoutProjectSimulationFuture, id, impactArea);
+            impactarea.ImpactAreaSimulation impactAreaWithoutFuture = new impactarea.ImpactAreaSimulation("FutureYear without", withoutProjectSimulationFuture, identifier, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListFutureYear.Add(impactAreaWithoutFuture);
 
             scenarios.Scenario baseWithoutProjectScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
             scenarios.Scenario futureWothoutProjectScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
-            int withoutProjectalternativeID = 23;
-            alternatives.Alternative withoutProjectAlternative = new alternatives.Alternative(baseWithoutProjectScenario, futureWothoutProjectScenario, poa, withoutProjectalternativeID);
+            alternatives.Alternative withoutProjectAlternative = new alternatives.Alternative(baseWithoutProjectScenario, futureWothoutProjectScenario, poa, identifier);
 
-            Simulation withProjectSimulationBase = Simulation.builder(id)
+            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(identifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
                 .withStageDamages(updBase)
                 .build();
 
-            Simulation withProjectSimulationFuture = Simulation.builder(id)
+            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(identifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
                 .withStageDamages(updFuture)
                 .build();
 
-            impactarea.ImpactAreaSimulation impactAreaWithBase = new impactarea.ImpactAreaSimulation("BaseYear With", withProjectSimulationBase, id, impactArea);
+            impactarea.ImpactAreaSimulation impactAreaWithBase = new impactarea.ImpactAreaSimulation("BaseYear With", withProjectSimulationBase, identifier, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListWithProjectBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListWithProjectBaseYear.Add(impactAreaWithBase);
 
 
-            impactarea.ImpactAreaSimulation impactAreaWithFUture = new impactarea.ImpactAreaSimulation("Future Year With", withProjectSimulationFuture, id, impactArea);
+            impactarea.ImpactAreaSimulation impactAreaWithFUture = new impactarea.ImpactAreaSimulation("Future Year With", withProjectSimulationFuture, identifier, impactArea);
             IList<impactarea.ImpactAreaSimulation> impactAreaListWithProjectfutureYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListWithProjectfutureYear.Add(impactAreaWithFUture);
 
             scenarios.Scenario baseWithProjectScenario = new scenarios.Scenario(baseYear, impactAreaListWithProjectBaseYear);
             scenarios.Scenario futureWithProjectScenario = new scenarios.Scenario(futureYear, impactAreaListWithProjectfutureYear);
-            int withProjectAlternativeID = 34;
+            int withProjectAlternativeID = 1;
             alternatives.Alternative withProjectAlternative = new alternatives.Alternative(baseWithProjectScenario, futureWithProjectScenario, poa, withProjectAlternativeID);
             List<alternatives.Alternative> withProjectAlternativeList = new List<alternatives.Alternative>();
             withProjectAlternativeList.Add(withProjectAlternative);
@@ -125,7 +125,7 @@ namespace fda_model_test.unittests
 
             AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
             //WE NEED AN ALTERNATIVECOMPARISONREPORTRESULTS object
-            double actual = alternativeComparisonReportResults.GetAlternativeResults(id).GetDamageResults(id).DamageExceededWithProbabilityQ(damCat, mrp.NextRandom()), assetCat, id);
+            double actual = alternativeComparisonReportResults.GetAlternativeResults(identifier).GetDamageResults(identifier).DamageExceededWithProbabilityQ(damCat, mrp.NextRandom(), assetCategory, identifier);
             double err = Math.Abs((actual - expected) / expected);
             Assert.True(err<.01);
 

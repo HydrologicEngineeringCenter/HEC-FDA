@@ -49,14 +49,14 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, curveMetaDataWithCategory);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
-            Simulation simulation = Simulation.builder(id)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(stageDamageList)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, convergenceCriteria);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             XElement xElement = results.DamageResults.WriteToXML();
             metrics.DamageResults expectedAnnualDamageResultsFromXML = metrics.DamageResults.ReadFromXML(xElement);
             bool success = results.DamageResults.Equals(expectedAnnualDamageResultsFromXML);

@@ -90,7 +90,7 @@ namespace paireddata
 
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Curve Metadata");
+            XElement masterElement = new XElement("Curve_Metadata");
             masterElement.SetAttributeValue("CurveType", Convert.ToString(CurveType));
             masterElement.SetAttributeValue("XLabel", XLabel);
             masterElement.SetAttributeValue("YLabel", YLabel);

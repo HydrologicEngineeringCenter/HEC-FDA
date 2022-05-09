@@ -133,9 +133,9 @@ namespace alternativeComparisonReport
 
                 AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.ID);
 
-                foreach (Results withProjectResults in withProjectScenario.ResultsList)
+                foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
-                    Results withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
+                    ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
                     DamageResults withprojectDamageResults = withProjectResults.DamageResults;
                     DamageResults withoutProjectDamageResults = withoutProjectResults.DamageResults;
 
@@ -177,9 +177,9 @@ namespace alternativeComparisonReport
 
                 AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.ID);
 
-                foreach (Results withProjectResults in withProjectScenario.ResultsList)
+                foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
-                    Results withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
+                    ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
                     DamageResults withprojectDamageResults = withProjectResults.DamageResults;
                     DamageResults withoutProjectDamageResults = withoutProjectResults.DamageResults;
 

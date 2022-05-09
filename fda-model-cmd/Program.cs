@@ -82,7 +82,7 @@ for (int i = 0; i < 2; i++)
 leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
 UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function");
 
-Simulation simulation = Simulation.builder()
+ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder()
     .withFlowFrequency(flowFrequency)
     .withFlowStage(flowStage)
     .withStageDamages(stageDamageList)
@@ -97,21 +97,21 @@ void WriteProgress(object sender, ProgressReportEventArgs progress)
     Console.WriteLine("compute progress: " + progress.Progress);
 }
 
-metrics.Results results = simulation.Compute(randomProvider, cc);
+metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
 double EAD = results.DamageResults.MeanDamage("residential");
 Console.WriteLine("EAD was " + EAD);
-double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.MeanAEP();
+double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.MeanAEP();
 Console.WriteLine("AEP was " + meanActualAEP);
-double cnp90 = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.9);
+double cnp90 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.9);
 Console.WriteLine("CNEP(.90) was " + cnp90);
-double cnp98 = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.98);
+double cnp98 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.98);
 Console.WriteLine("CNEP(.98) was " + cnp98);
-double cnp99 = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.99);
+double cnp99 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.99);
 Console.WriteLine("CNEP(.99) was " + cnp99);
-double cnp996 = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.996);
+double cnp996 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.996);
 Console.WriteLine("CNEP(.996) was " + cnp996);
-double cnp998 = results.PerformanceByThresholds.ListOfThresholds[0].ProjectPerformanceResults.ConditionalNonExceedanceProbability(.998);
+double cnp998 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.998);
 Console.WriteLine("CNEP(.998) was " + cnp998);
 
 if (results.IsConverged(computeWithDamage))
