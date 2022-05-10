@@ -6,12 +6,12 @@ using System.Xml.Linq;
 
 namespace metrics
 {
- public class DamageResult
+ public class ConsequenceResult
     {
         #region Fields
-
-        private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private ThreadsafeInlineHistogram _damageHistogram;
+        //TODO: hard-wiring the bin width is no good
+        private const double HISTOGRAM_BINWIDTH = 10;
+        private ThreadsafeInlineHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
         private int _impactAreaID;
@@ -24,7 +24,7 @@ namespace metrics
         {
             get
             {
-                return _damageHistogram;
+                return _consequenceHistogram;
             }
         }
         public string DamageCategory
@@ -65,39 +65,39 @@ namespace metrics
         #endregion
 
         #region Constructors
-        public DamageResult()
+        public ConsequenceResult()
         {
             _damageCategory = "unassigned";
             _assetCategory = "unassigned";
             _impactAreaID = 0;
             _convergenceCriteria = new ConvergenceCriteria();
-            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = true;
         }
-        public DamageResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        public ConsequenceResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _impactAreaID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
-            _damageHistogram = new ThreadsafeInlineHistogram(EAD_HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = false;
         }
-        public DamageResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double binWidth)
+        public ConsequenceResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double binWidth)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _impactAreaID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
-            _damageHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
             _isNull = false;
         }
-        private DamageResult(string damageCategory, string assetCategory, ThreadsafeInlineHistogram eadHistogram, int impactAreaID)
+        private ConsequenceResult(string damageCategory, string assetCategory, ThreadsafeInlineHistogram histogram, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _damageHistogram = eadHistogram;
-            _convergenceCriteria = _damageHistogram.ConvergenceCriteria;
+            _consequenceHistogram = histogram;
+            _convergenceCriteria = _consequenceHistogram.ConvergenceCriteria;
             _impactAreaID = impactAreaID;
             _isNull = false;
 
@@ -105,26 +105,26 @@ namespace metrics
         #endregion
 
         #region Methods
-        internal void AddDamageRealization(double damageRealization, Int64 iteration)
+        internal void AddConsequenceRealization(double damageRealization, Int64 iteration)
         {
-            _damageHistogram.AddObservationToHistogram(damageRealization, iteration);
+            _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
         }
 
-        internal double MeanDamage()
+        internal double MeanConsequences()
         {
-            return _damageHistogram.Mean;
+            return _consequenceHistogram.Mean;
         }
 
-        internal double DamageExceededWithProbabilityQ(double exceedanceProbability)
+        internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
         {
             double nonExceedanceProbability = 1 - exceedanceProbability;
-            double quartile = _damageHistogram.InverseCDF(nonExceedanceProbability);
+            double quartile = _consequenceHistogram.InverseCDF(nonExceedanceProbability);
             return quartile;
         }
 
-        public bool Equals(DamageResult damageResult)
+        public bool Equals(ConsequenceResult damageResult)
         {
-                bool histogramsMatch = _damageHistogram.Equals(damageResult.DamageHistogram);
+                bool histogramsMatch = _consequenceHistogram.Equals(damageResult.DamageHistogram);
                 if (!histogramsMatch)
                 {
                     return false;
@@ -133,8 +133,8 @@ namespace metrics
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Damage");
-            XElement histogramElement = _damageHistogram.WriteToXML();
+            XElement masterElement = new XElement("Consequence");
+            XElement histogramElement = _consequenceHistogram.WriteToXML();
             histogramElement.Name = "DamageHistogram";
             masterElement.Add(histogramElement);
             masterElement.SetAttributeValue("DamageCategory", _damageCategory);
@@ -143,13 +143,13 @@ namespace metrics
             return masterElement;
         }
 
-        public static DamageResult ReadFromXML(XElement xElement)
+        public static ConsequenceResult ReadFromXML(XElement xElement)
         {
             ThreadsafeInlineHistogram damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new DamageResult(damageCategory, assetCategory, damageHistogram, id);
+            return new ConsequenceResult(damageCategory, assetCategory, damageHistogram, id);
         }
         #endregion
     }

@@ -9,7 +9,7 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        private List<DamageResults> _damageResultsList;
+        private List<ConsequenceResults> _damageResultsList;
         private bool _isNull;
         #endregion
 
@@ -18,7 +18,7 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
-        public List<DamageResults> DamageResultsList
+        public List<ConsequenceResults> DamageResultsList
         {
             get
             {
@@ -41,43 +41,43 @@ namespace metrics
         {
             _isNull = true;
             _alternativeID = 0;
-            _damageResultsList = new List<DamageResults>();
+            _damageResultsList = new List<ConsequenceResults>();
         }
         public AlternativeResults(int id)
         {
             _alternativeID = id;
-            _damageResultsList = new List<DamageResults>();
+            _damageResultsList = new List<ConsequenceResults>();
             _isNull = false;
         }
         #endregion
         #region Methods
         public void AddDamageResults(int impactAreaID)
         {
-            DamageResults damageResults = GetDamageResults(impactAreaID);
+            ConsequenceResults damageResults = GetDamageResults(impactAreaID);
             if (damageResults.IsNull)
             {
-                DamageResults newDamageResults = new DamageResults(impactAreaID);
+                ConsequenceResults newDamageResults = new ConsequenceResults(impactAreaID);
                 _damageResultsList.Add(newDamageResults);
             }
         }
-        public void AddDamageResults(DamageResults damageResultsToAdd)
+        public void AddDamageResults(ConsequenceResults damageResultsToAdd)
         {
-            DamageResults damageResults = GetDamageResults(damageResultsToAdd.ImpactAreaID);
+            ConsequenceResults damageResults = GetDamageResults(damageResultsToAdd.RegionID);
             if (damageResults.IsNull)
             {
                 _damageResultsList.Add(damageResultsToAdd);
             }
         }
-        public DamageResults GetDamageResults(int impactAreaID)
+        public ConsequenceResults GetDamageResults(int impactAreaID)
         {
-            foreach (DamageResults damageResults in _damageResultsList)
+            foreach (ConsequenceResults damageResults in _damageResultsList)
             {
-                if(damageResults.ImpactAreaID.Equals(impactAreaID))
+                if(damageResults.RegionID.Equals(impactAreaID))
                 {
                     return damageResults;
                 }
             }
-            DamageResults dummyDamageResults = new DamageResults(impactAreaID);
+            ConsequenceResults dummyDamageResults = new ConsequenceResults(impactAreaID);
             ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned.")));
             return dummyDamageResults;
         }

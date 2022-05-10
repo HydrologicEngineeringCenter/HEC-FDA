@@ -16,7 +16,7 @@ namespace metrics
 
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
-        public DamageResults DamageResults { get; }
+        public ConsequenceResults DamageResults { get; }
         public int ImpactAreaID { get; }
         #endregion
         public bool IsNull
@@ -30,18 +30,18 @@ namespace metrics
         public ImpactAreaScenarioResults()
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            DamageResults = new DamageResults();
+            DamageResults = new ConsequenceResults();
             ImpactAreaID = 0;
             _isNull = true;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            DamageResults = new DamageResults(impactAreaID);
+            DamageResults = new ConsequenceResults(impactAreaID);
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
-        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, DamageResults expectedAnnualDamageResults, int impactAreaID)
+        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             DamageResults = expectedAnnualDamageResults;
@@ -55,7 +55,7 @@ namespace metrics
         {
             if (computeWithDamage == true)
             {   //TODO: these hard-coded strings are TROUBLE
-                return DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.IsConverged;
+                return DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.IsConverged;
             }
             return true;
         }
@@ -90,7 +90,7 @@ namespace metrics
             bool eadIsConverged = true;
             if (computeWithDamage)
             {//TODO: Hard-coded strings are TROUBLE
-                eadIsConverged = DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIsConverged = DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -120,7 +120,7 @@ namespace metrics
             Int64 eadIterationsRemaining = 0;
             if (computeWithDamage)
             {
-                eadIterationsRemaining = DamageResults.GetDamageResult("Total", "Total", ImpactAreaID).DamageHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIterationsRemaining = DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
             }
             List<Int64> performanceIterationsRemaining = new List<Int64>();
@@ -165,7 +165,7 @@ namespace metrics
         public static IContainResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
-            DamageResults expectedAnnualDamageResults = DamageResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            ConsequenceResults expectedAnnualDamageResults = ConsequenceResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }

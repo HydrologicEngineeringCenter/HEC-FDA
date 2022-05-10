@@ -53,12 +53,12 @@ namespace alternatives
             AlternativeResults alternativeResults = new AlternativeResults(_id);
             foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
             {
-                DamageResults aaeqResults = new DamageResults(baseYearResults.ImpactAreaID);
+                ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
                 ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
-                foreach (DamageResult baseYearDamageResult in baseYearResults.DamageResults.DamageResultList)
+                foreach (ConsequenceResult baseYearDamageResult in baseYearResults.DamageResults.ConsequenceResultList)
                 {
-                    DamageResult mlfYearDamageResult = mlfYearResults.DamageResults.GetDamageResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ImpactAreaID);
+                    ConsequenceResult mlfYearDamageResult = mlfYearResults.DamageResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ImpactAreaID);
                     //Sturges rule 
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
@@ -76,16 +76,16 @@ namespace alternatives
                     double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
                     double binQuantity = 1 + 3.322 * Math.Log(iterations);
                     double binWidth = Math.Ceiling(range / binQuantity);
-                    DamageResult aaeqResult = new DamageResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.ImpactAreaID, binWidth);
+                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.ImpactAreaID, binWidth);
 
                     for (int i = 0; i < iterations; i++)
                     {
                         double eadSampledBaseYear = baseYearDamageResult.DamageHistogram.InverseCDF(randomProvider.NextRandom());
                         double eadSampledFutureYear = mlfYearDamageResult.DamageHistogram.InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
-                        aaeqResult.AddDamageRealization(aaeqDamage,i);
+                        aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
-                    aaeqResults.AddDamageResultObject(aaeqResult);
+                    aaeqResults.AddConsequenceResultObject(aaeqResult);
                 }
                 alternativeResults.AddDamageResults(aaeqResults);
             }
