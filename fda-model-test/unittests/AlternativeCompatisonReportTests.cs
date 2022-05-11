@@ -125,7 +125,7 @@ namespace fda_model_test.unittests
 
             AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
             //WE NEED AN ALTERNATIVECOMPARISONREPORTRESULTS object
-            double actual = alternativeComparisonReportResults.GetAlternativeResults(identifier).GetDamageResults(identifier).ConsequenceExceededWithProbabilityQ(damCat, mrp.NextRandom(), assetCategory, identifier);
+            double actual = alternativeComparisonReportResults.GetAlternativeResults(identifier).GetConsequenceResults(identifier).ConsequenceExceededWithProbabilityQ(damCat, mrp.NextRandom(), assetCategory, identifier);
             double err = Math.Abs((actual - expected) / expected);
             Assert.True(err<.01);
 

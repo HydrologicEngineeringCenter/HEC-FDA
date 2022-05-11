@@ -73,14 +73,13 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        public void AddConsequenceResultObject(ConsequenceResult damageResultToAdd)
+        public void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
         {
-            ConsequenceResult damageResult = GetConsequenceResult(damageResultToAdd.DamageCategory, damageResultToAdd.AssetCategory, damageResultToAdd.ImpactAreaID);
-            if (damageResult.IsNull)
+            ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.ImpactAreaID);
+            if (consequenceResult.IsNull)
             {
-                _consequenceResultList.Add(damageResultToAdd);
+                _consequenceResultList.Add(consequenceResultToAdd);
             }
-
         }
         public void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
         {

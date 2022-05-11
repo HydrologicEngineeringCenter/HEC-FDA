@@ -85,9 +85,9 @@ namespace alternatives
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
-                    aaeqResults.AddConsequenceResultObject(aaeqResult);
+                    aaeqResults.AddConsequenceResult(aaeqResult);
                 }
-                alternativeResults.AddDamageResults(aaeqResults);
+                alternativeResults.AddConsequenceResults(aaeqResults);
             }
             return alternativeResults;
         }

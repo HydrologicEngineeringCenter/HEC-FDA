@@ -86,7 +86,7 @@ namespace fda_model_test.unittests
 
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             AlternativeResults alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
-            double actual = alternativeResults.GetDamageResults(id).GetConsequenceResult(damCat,assetCat,id).DamageHistogram.InverseCDF(mrp.NextRandom());
+            double actual = alternativeResults.GetConsequenceResults(id).GetConsequenceResult(damCat,assetCat,id).DamageHistogram.InverseCDF(mrp.NextRandom());
             double err = Math.Abs((actual - expected) / actual);
             Assert.True(err<.01);
 
