@@ -1,6 +1,7 @@
 using System;
 using scenarios;
 using metrics;
+using Statistics;
 
 namespace alternatives
 {
@@ -44,11 +45,11 @@ namespace alternatives
         /// <param name="iterations"></param> number of iterations to sample distributions
         /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
         /// <returns></returns>
-        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate)
         {
             _discountRate = discountRate;
-            ScenarioResults baseYearScenarioResults = _currentYear.Compute(randomProvider, iterations);//this is a list of impact area-specific ead
-            ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, iterations);
+            ScenarioResults baseYearScenarioResults = _currentYear.Compute(randomProvider, convergenceCriteria);//this is a list of impact area-specific ead
+            ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, convergenceCriteria);
 
             AlternativeResults alternativeResults = new AlternativeResults(_id);
             foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
@@ -74,11 +75,12 @@ namespace alternatives
                     double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
                     double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
                     double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
-                    double binQuantity = 1 + 3.322 * Math.Log(iterations);
+                    //TODO: if this depends on convergence criteria, what do we do?
+                    double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
                     double binWidth = Math.Ceiling(range / binQuantity);
                     ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.RegionID, binWidth);
-
-                    for (int i = 0; i < iterations; i++)
+                    //TODO: run this loop until convergence 
+                    for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                     {
                         double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                         double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());

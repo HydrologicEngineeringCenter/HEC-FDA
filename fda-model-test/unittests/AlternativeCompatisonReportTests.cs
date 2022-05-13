@@ -6,7 +6,6 @@ using paireddata;
 using Statistics;
 using metrics;
 using alternativeComparisonReport;
-using impactarea;
 
 namespace fda_model_test.unittests
 {
@@ -29,7 +28,7 @@ namespace fda_model_test.unittests
             string assetCategory = "structure";
             CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCategory);
             int identifier = 1;
-
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -79,7 +78,6 @@ namespace fda_model_test.unittests
                 .withStageDamages(updFuture)
                 .build();
 
-            ImpactArea impactArea = new ImpactArea("Quahog", identifier);
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(withoutProjectSimulationBase);
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
@@ -120,7 +118,7 @@ namespace fda_model_test.unittests
             AlternativeComparisonReport alternativeComparisonReport = new AlternativeComparisonReport(withoutProjectAlternative, withProjectAlternativeList);
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, convergenceCriteria, discountRate);
             double actual = alternativeComparisonReportResults.ConsequencesReducedExceededWithProbabilityQ(mrp.NextRandom(), identifier, identifier, damCat, assetCategory);
             double difference = actual - expected;
             double err = Math.Abs(difference / expected);

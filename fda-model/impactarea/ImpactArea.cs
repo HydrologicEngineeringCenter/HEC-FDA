@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace impactarea
 {
+    //TODO
     public class ImpactArea
 {
         public string Name { get; set; }

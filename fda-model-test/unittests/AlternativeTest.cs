@@ -34,7 +34,7 @@ namespace fda_model_test.unittests
         [InlineData(239260.1814, 50, .0275, 2023, 2050, 1)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
-
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -83,7 +83,7 @@ namespace fda_model_test.unittests
             alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, id);
 
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            AlternativeResults alternativeResults = alternative.AnnualizationCompute(meanRandomProvider, iterations, discountRate);
+            AlternativeResults alternativeResults = alternative.AnnualizationCompute(meanRandomProvider, convergenceCriteria, discountRate);
             double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(meanRandomProvider.NextRandom(), id, damCat, assetCat);
             double difference = actual - expected;
             double err = Math.Abs(difference / actual);
