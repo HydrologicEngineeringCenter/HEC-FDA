@@ -14,13 +14,13 @@ namespace metrics
         private ThreadsafeInlineHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
-        private int _impactAreaID;
+        private int _regionID;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
         #endregion
 
         #region Properties
-        public ThreadsafeInlineHistogram DamageHistogram
+        public ThreadsafeInlineHistogram ConsequenceHistogram
         {
             get
             {
@@ -41,11 +41,11 @@ namespace metrics
                 return _assetCategory;
             }
         }
-        public int ImpactAreaID
+        public int RegionID
         {
             get
             {
-                return _impactAreaID;
+                return _regionID;
             }
         }
         public bool IsNull
@@ -69,7 +69,7 @@ namespace metrics
         {
             _damageCategory = "unassigned";
             _assetCategory = "unassigned";
-            _impactAreaID = 0;
+            _regionID = 0;
             _convergenceCriteria = new ConvergenceCriteria();
             _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = true;
@@ -78,7 +78,7 @@ namespace metrics
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _impactAreaID = impactAreaID;
+            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = false;
@@ -87,7 +87,7 @@ namespace metrics
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _impactAreaID = impactAreaID;
+            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
             _isNull = false;
@@ -98,7 +98,7 @@ namespace metrics
             _assetCategory = assetCategory;
             _consequenceHistogram = histogram;
             _convergenceCriteria = _consequenceHistogram.ConvergenceCriteria;
-            _impactAreaID = impactAreaID;
+            _regionID = impactAreaID;
             _isNull = false;
 
         }
@@ -110,7 +110,7 @@ namespace metrics
             _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
         }
 
-        internal double MeanConsequences()
+        internal double MeanExpectedAnnualConsequences()
         {
             return _consequenceHistogram.Mean;
         }
@@ -124,7 +124,7 @@ namespace metrics
 
         public bool Equals(ConsequenceResult damageResult)
         {
-                bool histogramsMatch = _consequenceHistogram.Equals(damageResult.DamageHistogram);
+                bool histogramsMatch = _consequenceHistogram.Equals(damageResult.ConsequenceHistogram);
                 if (!histogramsMatch)
                 {
                     return false;
@@ -139,7 +139,7 @@ namespace metrics
             masterElement.Add(histogramElement);
             masterElement.SetAttributeValue("DamageCategory", _damageCategory);
             masterElement.SetAttributeValue("AssetCategory", _assetCategory);
-            masterElement.SetAttributeValue("ImpactAreaID", _impactAreaID);
+            masterElement.SetAttributeValue("ImpactAreaID", _regionID);
             return masterElement;
         }
 

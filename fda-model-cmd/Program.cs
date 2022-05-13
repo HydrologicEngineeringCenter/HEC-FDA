@@ -99,7 +99,7 @@ void WriteProgress(object sender, ProgressReportEventArgs progress)
 
 metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-double EAD = results.DamageResults.MeanDamage("residential");
+double EAD = results.ConsequenceResults.MeanDamage("residential");
 Console.WriteLine("EAD was " + EAD);
 double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.MeanAEP();
 Console.WriteLine("AEP was " + meanActualAEP);
@@ -117,12 +117,12 @@ Console.WriteLine("CNEP(.998) was " + cnp998);
 if (results.IsConverged(computeWithDamage))
 {
     Console.WriteLine("Converged");
-    Console.WriteLine(results.DamageResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
+    Console.WriteLine(results.ConsequenceResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
 }
 else
 {
     Console.WriteLine("Not Converged");
-    Console.WriteLine(results.DamageResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
+    Console.WriteLine(results.ConsequenceResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
 }
 sw.Stop();
 TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);

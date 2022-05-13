@@ -52,13 +52,13 @@ namespace metrics
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
-        public double MeanEAD(int impactAreaID, string damageCategory, string assetCategory)
+        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory, string assetCategory)
         {
-            return GetResults(impactAreaID).MeanEAD(impactAreaID, damageCategory, assetCategory);
+            return GetResults(impactAreaID).MeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
         }
-        public double DamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
         {
-            return GetResults(impactAreaID).DamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+            return GetResults(impactAreaID).ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
         }
         public void AddResults(ImpactAreaScenarioResults resultsToAdd)
         {

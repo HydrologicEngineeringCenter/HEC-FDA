@@ -12,7 +12,7 @@ namespace metrics
         #endregion
 
         #region Properties 
-        public List<AlternativeResults> DamageReducedResultsList
+        public List<AlternativeResults> ConsequencesReducedResultsList
         {
             get
             {

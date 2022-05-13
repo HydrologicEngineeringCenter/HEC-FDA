@@ -65,9 +65,9 @@ namespace alternativeComparisonReport
 
                     foreach (ConsequenceResult damageResult in withProjectDamageResults.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram;
+                        ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
                         withProjectHistogram.ForceDeQueue();
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram;
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
                         withoutProjectHistogram.ForceDeQueue();
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
@@ -82,7 +82,7 @@ namespace alternativeComparisonReport
                         double binQuantity = 1 + 3.322 * Math.Log(iterations);
                         double binWidth = Math.Ceiling(range / binQuantity);
 
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ConvergenceCriteria, damageResult.ImpactAreaID, binWidth);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ConvergenceCriteria, damageResult.RegionID, binWidth);
 
                         for (int i = 0; i < iterations; i++)
                         {
@@ -91,7 +91,7 @@ namespace alternativeComparisonReport
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
                             damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
-                        damageReducedResult.DamageHistogram.ForceDeQueue();
+                        damageReducedResult.ConsequenceHistogram.ForceDeQueue();
                         damageReducedInImpactArea.AddConsequenceResult(damageReducedResult);
                     }
                     damageReducedOneAlternative.AddConsequenceResults(damageReducedInImpactArea); 
@@ -139,17 +139,17 @@ namespace alternativeComparisonReport
                 foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
-                    ConsequenceResults withprojectDamageResults = withProjectResults.DamageResults;
-                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.DamageResults;
+                    ConsequenceResults withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
 
                     ConsequenceResults damageReducedResults = new ConsequenceResults(withProjectResults.ImpactAreaID);
 
                     foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ImpactAreaID).DamageHistogram;
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.DamageHistogram;
+                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
 
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.ImpactAreaID);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
                         for (int i = 0; i < iterations; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
@@ -183,17 +183,17 @@ namespace alternativeComparisonReport
                 foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
-                    ConsequenceResults withprojectDamageResults = withProjectResults.DamageResults;
-                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.DamageResults;
+                    ConsequenceResults withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
 
                     ConsequenceResults damageReducedResults = new ConsequenceResults(withProjectResults.ImpactAreaID);
 
                     foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ImpactAreaID).DamageHistogram;
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.DamageHistogram;
+                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
 
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.ImpactAreaID);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
                         for (int i = 0; i < iterations; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());

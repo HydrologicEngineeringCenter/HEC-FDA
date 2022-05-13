@@ -75,7 +75,7 @@ namespace metrics
         }
         public void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
         {
-            ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.ImpactAreaID);
+            ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
             {
                 _consequenceResultList.Add(consequenceResultToAdd);
@@ -90,7 +90,7 @@ namespace metrics
         public double MeanDamage(string damageCategory, string assetCategory, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            return damageResult.MeanConsequences();
+            return damageResult.MeanExpectedAnnualConsequences();
         }
 
         public double ConsequenceExceededWithProbabilityQ(string damageCategory, double exceedanceProbability, string assetCategory, int impactAreaID)
@@ -105,7 +105,7 @@ namespace metrics
             foreach (ConsequenceResult damageResult in _consequenceResultList)
             {
                 //The impact area should always be equal because a consequence result reflects 1 impact area and a consequence resultS reflects 1 impact area   
-                if (damageResult.ImpactAreaID.Equals(impactAreaID))
+                if (damageResult.RegionID.Equals(impactAreaID))
                 {
                     if (damageResult.DamageCategory.Equals(damageCategory))
                     {
@@ -124,7 +124,7 @@ namespace metrics
         {
            foreach (ConsequenceResult damageResult in _consequenceResultList)
            {
-               ConsequenceResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID);
+               ConsequenceResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
                bool resultsMatch = damageResult.Equals(inputDamageResult);
                if (!resultsMatch)
                {

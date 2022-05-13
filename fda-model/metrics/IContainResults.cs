@@ -6,7 +6,7 @@ namespace metrics
     public interface IContainResults
     {
         PerformanceByThresholds PerformanceByThresholds { get; }
-        ConsequenceResults DamageResults { get; }
+        ConsequenceResults ConsequenceResults { get; }
         int ImpactAreaID { get; }
 
     }

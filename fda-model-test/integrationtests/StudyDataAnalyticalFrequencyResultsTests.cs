@@ -88,7 +88,7 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .build();
             metrics.ImpactAreaScenarioResults results = simulation.PreviewCompute();
-            double difference = expected - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
         }
@@ -116,7 +116,7 @@ namespace fda_model_test
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
-            double difference = expected - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
         }
@@ -158,7 +158,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
             metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
@@ -193,7 +193,7 @@ namespace fda_model_test
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
             metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;

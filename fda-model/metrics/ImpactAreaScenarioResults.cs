@@ -16,7 +16,7 @@ namespace metrics
 
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
-        public ConsequenceResults DamageResults { get; }
+        public ConsequenceResults ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         #endregion
         public bool IsNull
@@ -30,21 +30,21 @@ namespace metrics
         public ImpactAreaScenarioResults()
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            DamageResults = new ConsequenceResults();
+            ConsequenceResults = new ConsequenceResults();
             ImpactAreaID = 0;
             _isNull = true;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            DamageResults = new ConsequenceResults(impactAreaID);
+            ConsequenceResults = new ConsequenceResults(impactAreaID);
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
         private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
-            DamageResults = expectedAnnualDamageResults;
+            ConsequenceResults = expectedAnnualDamageResults;
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
@@ -71,19 +71,19 @@ namespace metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability);
         }
-        public double MeanEAD(int impactAreaID, string damageCategory, string assetCategory)
+        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory, string assetCategory)
         {
-            return DamageResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+            return ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
-        public double DamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
         {
-            return DamageResults.ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
+            return ConsequenceResults.ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
         {
             if (computeWithDamage == true)
             {   //TODO: these hard-coded strings are TROUBLE
-                return DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.IsConverged;
+                return ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.IsConverged;
             }
             return true;
         }
@@ -118,7 +118,7 @@ namespace metrics
             bool eadIsConverged = true;
             if (computeWithDamage)
             {//TODO: Hard-coded strings are TROUBLE
-                eadIsConverged = DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -148,7 +148,7 @@ namespace metrics
             Int64 eadIterationsRemaining = 0;
             if (computeWithDamage)
             {
-                eadIterationsRemaining = DamageResults.GetConsequenceResult("Total", "Total", ImpactAreaID).DamageHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIterationsRemaining = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
             }
             List<Int64> performanceIterationsRemaining = new List<Int64>();
@@ -170,7 +170,7 @@ namespace metrics
         public bool Equals(ImpactAreaScenarioResults incomingIContainResults)
         {
             bool performanceMatches = PerformanceByThresholds.Equals(incomingIContainResults.PerformanceByThresholds);
-            bool damageResultsMatch = DamageResults.Equals(incomingIContainResults.DamageResults);
+            bool damageResultsMatch = ConsequenceResults.Equals(incomingIContainResults.ConsequenceResults);
             if (!performanceMatches || !damageResultsMatch)
             {
                 return false;
@@ -183,7 +183,7 @@ namespace metrics
             XElement performanceByThresholdsElement = PerformanceByThresholds.WriteToXML();
             performanceByThresholdsElement.Name = "Performance_By_Thresholds";
             masterElement.Add(performanceByThresholdsElement);
-            XElement expectedAnnualDamageResultsElement = DamageResults.WriteToXML();
+            XElement expectedAnnualDamageResultsElement = ConsequenceResults.WriteToXML();
             expectedAnnualDamageResultsElement.Name = "Expected_Annual_Damage_Results";
             masterElement.Add(expectedAnnualDamageResultsElement);
             masterElement.SetAttributeValue("ImpactAreaID", ImpactAreaID);

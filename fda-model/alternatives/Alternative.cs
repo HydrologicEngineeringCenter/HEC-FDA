@@ -56,36 +56,36 @@ namespace alternatives
                 ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
                 ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
-                foreach (ConsequenceResult baseYearDamageResult in baseYearResults.DamageResults.ConsequenceResultList)
+                foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
                 {
-                    ConsequenceResult mlfYearDamageResult = mlfYearResults.DamageResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ImpactAreaID);
+                    ConsequenceResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
                     //Sturges rule 
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
 
-                    baseYearDamageResult.DamageHistogram.ForceDeQueue();
-                    mlfYearDamageResult.DamageHistogram.ForceDeQueue();
+                    baseYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+                    mlfYearDamageResult.ConsequenceHistogram.ForceDeQueue();
 
-                    double eadSampledBaseYearLowerBound = baseYearDamageResult.DamageHistogram.InverseCDF(lowerBoundProbability);
-                    double eadSampledFutureYearLowerBound = mlfYearDamageResult.DamageHistogram.InverseCDF(lowerBoundProbability);
-                    double eadSampledBaseYearUpperBound = baseYearDamageResult.DamageHistogram.InverseCDF(upperBoundProbability);
-                    double eadSampledFutureYearUpperBound = mlfYearDamageResult.DamageHistogram.InverseCDF(upperBoundProbability);
+                    double eadSampledBaseYearLowerBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledFutureYearLowerBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledBaseYearUpperBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
+                    double eadSampledFutureYearUpperBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
 
                     double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
                     double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
                     double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
                     double binQuantity = 1 + 3.322 * Math.Log(iterations);
                     double binWidth = Math.Ceiling(range / binQuantity);
-                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.ImpactAreaID, binWidth);
+                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.RegionID, binWidth);
 
                     for (int i = 0; i < iterations; i++)
                     {
-                        double eadSampledBaseYear = baseYearDamageResult.DamageHistogram.InverseCDF(randomProvider.NextRandom());
-                        double eadSampledFutureYear = mlfYearDamageResult.DamageHistogram.InverseCDF(randomProvider.NextRandom());
+                        double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
+                        double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
-                    aaeqResult.DamageHistogram.ForceDeQueue();
+                    aaeqResult.ConsequenceHistogram.ForceDeQueue();
                     aaeqResults.AddConsequenceResult(aaeqResult);
                 }
                 alternativeResults.AddConsequenceResults(aaeqResults);

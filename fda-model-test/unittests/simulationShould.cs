@@ -53,7 +53,7 @@ namespace fda_model_test.unittests
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
-            double actual = impactAreaScenarioResult.MeanEAD(id, damCat, assetCat);
+            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expected - actual;
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
@@ -93,7 +93,7 @@ namespace fda_model_test.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
             metrics.ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
-            double actual = results.MeanEAD(id, damCat, assetCat);
+            double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expectedEAD - actual;
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
@@ -133,7 +133,7 @@ namespace fda_model_test.unittests
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
-            double actual = results.MeanEAD(id,damCat,assetCat);
+            double actual = results.MeanExpectedAnnualConsequences(id,damCat,assetCat);
             Assert.Equal(expected, actual, 2);
         }
 
@@ -178,7 +178,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
-            double actual = results.MeanEAD(id, damCat, assetCat);
+            double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             if (actual == 0) //handle assertion differently if EAD is zero
             {
                 Assert.Equal(expected, actual, 0);
