@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace impactarea
 {
-    //TODO
     public class ImpactArea
 {
         public string Name { get; set; }
-        public int ID { get; set; }
-
-        //we will need to add an index location
-        
+        public int ID { get; set; }        
         public ImpactArea(string name, int id)
         {
             Name = name;
