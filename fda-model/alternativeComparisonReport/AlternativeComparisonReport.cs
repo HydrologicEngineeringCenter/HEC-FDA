@@ -66,14 +66,16 @@ namespace alternativeComparisonReport
                     foreach (ConsequenceResult damageResult in withProjectDamageResults.ConsequenceResultList)
                     {
                         ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram;
-                        ThreadsafeInlineHistogram withoutProjectHistoram = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram;
+                        withProjectHistogram.ForceDeQueue();
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram;
+                        withoutProjectHistogram.ForceDeQueue();
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
-                        double withoutProjectDamageAAEQLowerBound = withoutProjectHistoram.Min;  //InverseCDF(lowerBoundProbability);
+                        double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min;  //InverseCDF(lowerBoundProbability);
                         double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQLowerBound;
 
                         double withProjectDamageAAEQUpperBound = withProjectHistogram.Max; //InverseCDF(upperBoundProbability);
-                        double withoutProjectDamageAAEQUpperBound = withoutProjectHistoram.Max; //InverseCDF(upperBoundProbability);
+                        double withoutProjectDamageAAEQUpperBound = withoutProjectHistogram.Max; //InverseCDF(upperBoundProbability);
                         double damagesReducedUpperBound = withoutProjectDamageAAEQUpperBound - withProjectDamageAAEQUpperBound;
 
                         double range = damagesReducedUpperBound - damagesReducedLowerBound;
@@ -85,10 +87,11 @@ namespace alternativeComparisonReport
                         for (int i = 0; i < iterations; i++)
                         {
                             double withProjectDamageAAEQ = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
-                            double withoutProjectDamageAAEQ = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ImpactAreaID).DamageHistogram.InverseCDF(randomProvider.NextRandom());
+                            double withoutProjectDamageAAEQ = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
                             damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
+                        damageReducedResult.DamageHistogram.ForceDeQueue();
                         damageReducedInImpactArea.AddConsequenceResult(damageReducedResult);
                     }
                     damageReducedOneAlternative.AddConsequenceResults(damageReducedInImpactArea); 

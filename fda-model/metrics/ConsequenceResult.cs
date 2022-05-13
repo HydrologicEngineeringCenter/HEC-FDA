@@ -5,8 +5,8 @@ using System.Xml.Linq;
 
 
 namespace metrics
-{
- public class ConsequenceResult
+{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
+    public class ConsequenceResult
     {
         #region Fields
         //TODO: hard-wiring the bin width is no good

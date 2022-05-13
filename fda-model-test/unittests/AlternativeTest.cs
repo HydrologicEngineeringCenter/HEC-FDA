@@ -4,6 +4,7 @@ using Xunit;
 using compute;
 using paireddata;
 using Statistics;
+using Statistics.Histograms;
 using metrics;
 namespace fda_model_test.unittests
 {
@@ -84,11 +85,13 @@ namespace fda_model_test.unittests
             scenarios.Scenario futureScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
             alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, id);
 
-            compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            AlternativeResults alternativeResults = alternative.AnnualizationCompute(mrp, iterations, discountRate);
-            double actual = alternativeResults.GetConsequenceResults(id).GetConsequenceResult(damCat,assetCat,id).DamageHistogram.InverseCDF(mrp.NextRandom());
-            double err = Math.Abs((actual - expected) / actual);
-            Assert.True(err<.01);
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            AlternativeResults alternativeResults = alternative.AnnualizationCompute(meanRandomProvider, iterations, discountRate);
+            double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(meanRandomProvider.NextRandom(), id, damCat, assetCat);
+            double difference = actual - expected;
+            double err = Math.Abs(difference / actual);
+            double tol = 0.01;
+            Assert.True(err<tol);
 
         }
     }

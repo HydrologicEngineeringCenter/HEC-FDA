@@ -7,7 +7,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 
 namespace metrics
-{
+{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
     public class ConsequenceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
@@ -104,6 +104,7 @@ namespace metrics
         {
             foreach (ConsequenceResult damageResult in _consequenceResultList)
             {
+                //The impact area should always be equal because a consequence result reflects 1 impact area and a consequence resultS reflects 1 impact area   
                 if (damageResult.ImpactAreaID.Equals(impactAreaID))
                 {
                     if (damageResult.DamageCategory.Equals(damageCategory))

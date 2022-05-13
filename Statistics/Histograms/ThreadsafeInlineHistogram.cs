@@ -24,13 +24,13 @@ namespace Statistics.Histograms
         private long _ConvergedIterations = Int64.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
-        private int _maxQueueCount = 1000;
-        private int _postQueueCount = 100;
+        private int _maxQueueCount = 1000; //TODO: what does this represent?
+        private int _postQueueCount = 100; //TODO: what does this represent?
         private object _lock = new object();
-        private object _bwListLock = new object();
-        private static int _enqueue;
-        private static int _dequeue;
-        private System.ComponentModel.BackgroundWorker _bw;
+        private object _bwListLock = new object(); //TODO: what does this represent?
+        private static int _enqueue; //TODO: what does this represent?
+        private static int _dequeue; //TODO: what does this represent?
+        private System.ComponentModel.BackgroundWorker _backgroundWorker;
         private System.Collections.Concurrent.ConcurrentQueue<double> _observations;
         #endregion
         #region Properties
@@ -38,7 +38,7 @@ namespace Statistics.Histograms
         public bool IsConverged
         {
             get
-            {
+            {   //TODO: why did we want to force dequeue but we don't want to anymore?
                 //ForceDeQueue();//would need to test for convergence if anything is dequeued...
                 return _Converged;
             }
@@ -151,16 +151,16 @@ namespace Statistics.Histograms
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _ConvergenceCriteria = c;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
         }
         public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 1000, int postqueueSize = 100)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _BinWidth = binWidth;
             _ConvergenceCriteria = c;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
             _maxQueueCount = startqueueSize;
             _postQueueCount = postqueueSize;
         }
@@ -178,8 +178,8 @@ namespace Statistics.Histograms
             }
             //sample mean, max, variance, and min dont work in this context...
             _ConvergenceCriteria = convergenceCriteria;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
         }
         #endregion
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -291,7 +291,7 @@ namespace Statistics.Histograms
                 //}
                 lock (_bwListLock)
                 {
-                    if (!_bw.IsBusy) _bw.RunWorkerAsync();
+                    if (!_backgroundWorker.IsBusy) _backgroundWorker.RunWorkerAsync();
                 }
             }
         }
@@ -301,13 +301,13 @@ namespace Statistics.Histograms
             {
                 lock (_bwListLock)
                 {
-                    if (!_bw.IsBusy)
+                    if (!_backgroundWorker.IsBusy)
                     {
                         DeQueue();
                     }
                     else
                     {
-                        while (_bw.IsBusy)
+                        while (_backgroundWorker.IsBusy)
                         {
                             Thread.Sleep(1);
                             if (_observations.Count == 0)

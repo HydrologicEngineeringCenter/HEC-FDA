@@ -53,7 +53,8 @@ namespace fda_model_test.unittests
                 .build();
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
-            double difference = expected - impactAreaScenarioResult.DamageResults.MeanDamage(damCat,assetCat,id);
+            double actual = impactAreaScenarioResult.MeanEAD(id, damCat, assetCat);
+            double difference = expected - actual;
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
         }
@@ -92,7 +93,8 @@ namespace fda_model_test.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
             metrics.ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
-            double difference = expectedEAD - results.DamageResults.MeanDamage(damCat,assetCat,id);
+            double actual = results.MeanEAD(id, damCat, assetCat);
+            double difference = expectedEAD - actual;
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
         }
@@ -123,16 +125,15 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .build();
-            RandomProvider rp = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            metrics.ImpactAreaScenarioResults r = s.Compute(rp, cc);
-            double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
-
+            RandomProvider randomProvider = new RandomProvider(seed);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            double actual = results.MeanEAD(id,damCat,assetCat);
             Assert.Equal(expected, actual, 2);
         }
 
@@ -166,18 +167,18 @@ namespace fda_model_test.unittests
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
-            List<UncertainPairedData> upd = new List<UncertainPairedData>();
-            upd.Add(stage_damage);
-            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(stage_damage);
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, 100000.0d)
-                .withStageDamages(upd)
+                .withStageDamages(stageDamageList)
                 .build();
-            compute.MeanRandomProvider mrp = new MeanRandomProvider();
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            metrics.ImpactAreaScenarioResults r = s.Compute(mrp, cc);
-            double actual = r.DamageResults.MeanDamage(damCat,assetCat,id);
+            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
+            double actual = results.MeanEAD(id, damCat, assetCat);
             if (actual == 0) //handle assertion differently if EAD is zero
             {
                 Assert.Equal(expected, actual, 0);

@@ -124,12 +124,11 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider mrp = new MeanRandomProvider();
 
             AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, iterations, discountRate);
-            //WE NEED AN ALTERNATIVECOMPARISONREPORTRESULTS object
-            AlternativeResults alternativeResults = alternativeComparisonReportResults.GetAlternativeResults(identifier);
-            ConsequenceResults consequenceResults = alternativeResults.GetConsequenceResults(identifier);
-            double actual = consequenceResults.ConsequenceExceededWithProbabilityQ(damCat, mrp.NextRandom(), assetCategory, identifier);
-            double err = Math.Abs((actual - expected) / expected);
-            Assert.True(err<.01);
+            double actual = alternativeComparisonReportResults.ConsequencesReducedExceededWithProbabilityQ(mrp.NextRandom(), identifier, identifier, damCat, assetCategory);
+            double difference = actual - expected;
+            double err = Math.Abs(difference / expected);
+            double tol = 0.01;
+            Assert.True(err<tol);
 
         }
     }

@@ -51,6 +51,34 @@ namespace metrics
         #endregion
 
         #region Methods
+        public double MeanAEP(int thresholdID)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
+        }
+        public double MedianAEP(int thresholdID)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MedianAEP();
+        }
+        public double AssuranceOfAEP(int thresholdID, double exceedanceProbability)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);
+        }
+        public double LongTermExceedanceProbability(int thresholdID, int years)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.LongTermExceedanceProbability(years);
+        }
+        public double AssuranceOfEvent(int thresholdID, double standardNonExceedanceProbability)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability);
+        }
+        public double MeanEAD(int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return DamageResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+        }
+        public double DamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return DamageResults.ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
+        }
         private bool IsEADConverged(bool computeWithDamage)
         {
             if (computeWithDamage == true)

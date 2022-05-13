@@ -73,8 +73,9 @@ namespace fda_model_test.unittests
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
 
-            double actualAEP = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
-            double actualLTEP = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.LongTermExceedanceProbability(years);
+            // PLEASE LEAVE THE COMMENTS TO THE RIGHT OF THESE LINES AS AN EXAMPLE FOR LATER REFERENCE 
+            double actualAEP = results.MeanAEP(thresholdID); // results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
+            double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years); //results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.LongTermExceedanceProbability(years);
 
             double aepDifference = Math.Abs(expectedAEP - actualAEP);
             double aepRelativeDifference = aepDifference / expectedAEP;
@@ -124,7 +125,7 @@ namespace fda_model_test.unittests
 
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
-            double actual = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
+            double actual = results.MeanAEP(thresholdID);
             Assert.Equal(expected,actual,2);
         }
         /// <summary>
@@ -175,8 +176,7 @@ namespace fda_model_test.unittests
 
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
-            SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults;
-            double actual = systemPerformanceResults.AssuranceOfEvent(recurrenceInterval);
+            double actual = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
             double tolerance = 0.025;

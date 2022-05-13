@@ -200,7 +200,7 @@ namespace metrics
             return conditionalNonExceedanceProbability;
         }
 
-        public double LongTermExceedanceProbability(double years)
+        public double LongTermExceedanceProbability(int years)
         {
             double ltep = 1 - Math.Pow((1 - MeanAEP()), years);
             return ltep;

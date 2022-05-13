@@ -51,6 +51,14 @@ namespace metrics
         }
         #endregion
         #region Methods
+        public double MeanConsequence(int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return GetConsequenceResults(impactAreaID).MeanDamage(damageCategory, assetCategory, impactAreaID);
+        }
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return GetConsequenceResults(impactAreaID).ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
+        }
         public void AddConsequenceResults(int impactAreaID)
         {
             ConsequenceResults consequenceResults = GetConsequenceResults(impactAreaID);

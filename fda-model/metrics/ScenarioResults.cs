@@ -32,6 +32,34 @@ namespace metrics
         #endregion
 
         #region Methods
+        public double MeanAEP(int impactAreaID, int thresholdID)
+        {
+            return GetResults(impactAreaID).MeanAEP(thresholdID);
+        }
+        public double MedianAEP(int impactAreaID, int thresholdID)
+        {
+            return GetResults(impactAreaID).MedianAEP(thresholdID);
+        }
+        public double AssuranceOfAEP(int impactAreaID, int thresholdID, double exceedanceProbability)
+        {
+            return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
+        }
+        public double LongTermExceedanceProbability(int impactAreaID, int thresholdID, int years)
+        {
+            return GetResults(impactAreaID).LongTermExceedanceProbability(thresholdID, years);
+        }
+        public double AssuranceOfEvent(int impactAreaID, int thresholdID, double standardNonExceedanceProbability)
+        {
+            return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
+        }
+        public double MeanEAD(int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return GetResults(impactAreaID).MeanEAD(impactAreaID, damageCategory, assetCategory);
+        }
+        public double DamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return GetResults(impactAreaID).DamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+        }
         public void AddResults(ImpactAreaScenarioResults resultsToAdd)
         {
             ImpactAreaScenarioResults results = GetResults(resultsToAdd.ImpactAreaID);
