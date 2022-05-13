@@ -11,6 +11,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
+using System.Xml.Linq;
 
 namespace compute
 {
@@ -29,7 +30,7 @@ namespace compute
         private double _topOfLeveeElevation;
         private List<UncertainPairedData> _damage_category_stage_damage;
         private int _impactAreaID;
-        private ImpactAreaScenarioResults _impactAreaScenarioResults;// = new Results(_impactAreaID);
+        private ImpactAreaScenarioResults _impactAreaScenarioResults;
         private bool _leveeIsValid = false;
 
         public event MessageReportedEventHandler MessageReport;
@@ -693,6 +694,50 @@ namespace compute
             {
                 _sim._impactAreaID = impactAreaID;
                 return new SimulationBuilder(_sim);
+            }
+
+            public XElement WriteToXML()
+            {
+                XElement mainElement = new XElement("ImpactAreaScenarioSimulation");
+
+                mainElement.SetAttributeValue("LeveeIsValid", _sim._leveeIsValid);
+                mainElement.SetAttributeValue("TopOfLeveeElevation", _sim._topOfLeveeElevation);
+                mainElement.SetAttributeValue("ImpactAreaID", _sim._impactAreaID);
+
+                XElement frequenceDischarge = _sim._frequency_discharge.ToXML();
+                frequenceDischarge.Name = "FrequencyDischarge";
+                XElement frequencyDischargeGraphical = _sim._frequency_discharge_graphical.WriteToXML();
+                frequencyDischargeGraphical.Name = "FrequencyDischargeGraphical";
+                XElement regulatedUnregulated = _sim._unregulated_regulated.WriteToXML();
+                regulatedUnregulated.Name = "UnregulatedRegulated";
+                XElement dischargeStage = _sim._discharge_stage.WriteToXML();
+                dischargeStage.Name = "DischargeStage";
+                XElement frequencyStage = _sim._frequency_stage.WriteToXML();
+                frequencyStage.Name = "FrequencyStage";
+                XElement interiorExterior = _sim._channelstage_floodplainstage.WriteToXML();
+                interiorExterior.Name = "InteriorExterior";
+                XElement systemResponse = _sim._systemResponseFunction_stage_failureProbability.WriteToXML();
+                systemResponse.Name = "SystemResponse";
+                XElement impactAreaScenarioResults = _sim._impactAreaScenarioResults.WriteToXml();
+                impactAreaScenarioResults.Name = "ImpactAreaScenarioResults";
+                XElement stageDamageList = new XElement("stageDamageList");
+                foreach(UncertainPairedData stageDamage in _sim._damage_category_stage_damage)
+                {
+                    XElement stageDamageElement = stageDamage.WriteToXML();
+                    stageDamageList.Add(stageDamageElement);
+                }
+
+                mainElement.Add(frequenceDischarge);
+                mainElement.Add(frequencyDischargeGraphical);
+                mainElement.Add(regulatedUnregulated);
+                mainElement.Add(dischargeStage);
+                mainElement.Add(frequencyStage);
+                mainElement.Add(interiorExterior);
+                mainElement.Add(systemResponse);
+                mainElement.Add(impactAreaScenarioResults);
+                mainElement.Add(stageDamageList);
+
+                return mainElement;
             }
         }
     }
