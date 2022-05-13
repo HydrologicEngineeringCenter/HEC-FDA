@@ -73,13 +73,10 @@ namespace fda_model_test.unittests
                 .withStageDamages(updFuture)
                 .build();
 
-            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", id);
-            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListBaseYear.Add(impactAreaBase);
-            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture, id, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListFutureYear.Add(impactAreaFuture);
+            IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListBaseYear.Add(sBase);
+            IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListFutureYear.Add(sFuture);
 
             scenarios.Scenario baseScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
             scenarios.Scenario futureScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);

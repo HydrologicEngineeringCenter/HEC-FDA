@@ -6,6 +6,7 @@ using paireddata;
 using Statistics;
 using metrics;
 using alternativeComparisonReport;
+using impactarea;
 
 namespace fda_model_test.unittests
 {
@@ -78,13 +79,11 @@ namespace fda_model_test.unittests
                 .withStageDamages(updFuture)
                 .build();
 
-            impactarea.ImpactArea impactArea = new impactarea.ImpactArea("Quahog", identifier);
-            impactarea.ImpactAreaSimulation impactAreaWithoutBase = new impactarea.ImpactAreaSimulation("BaseYear Without", withoutProjectSimulationBase, identifier, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListBaseYear.Add(impactAreaWithoutBase);
-            impactarea.ImpactAreaSimulation impactAreaWithoutFuture = new impactarea.ImpactAreaSimulation("FutureYear without", withoutProjectSimulationFuture, identifier, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListFutureYear.Add(impactAreaWithoutFuture);
+            ImpactArea impactArea = new ImpactArea("Quahog", identifier);
+            IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListBaseYear.Add(withoutProjectSimulationBase);
+            IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
             scenarios.Scenario baseWithoutProjectScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
             scenarios.Scenario futureWothoutProjectScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
@@ -104,14 +103,12 @@ namespace fda_model_test.unittests
                 .withStageDamages(updFuture)
                 .build();
 
-            impactarea.ImpactAreaSimulation impactAreaWithBase = new impactarea.ImpactAreaSimulation("BaseYear With", withProjectSimulationBase, identifier, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListWithProjectBaseYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListWithProjectBaseYear.Add(impactAreaWithBase);
+            IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectBaseYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListWithProjectBaseYear.Add(withProjectSimulationBase);
 
 
-            impactarea.ImpactAreaSimulation impactAreaWithFUture = new impactarea.ImpactAreaSimulation("Future Year With", withProjectSimulationFuture, identifier, impactArea);
-            IList<impactarea.ImpactAreaSimulation> impactAreaListWithProjectfutureYear = new List<impactarea.ImpactAreaSimulation>();
-            impactAreaListWithProjectfutureYear.Add(impactAreaWithFUture);
+            IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectfutureYear = new List<ImpactAreaScenarioSimulation>();
+            impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
             scenarios.Scenario baseWithProjectScenario = new scenarios.Scenario(baseYear, impactAreaListWithProjectBaseYear);
             scenarios.Scenario futureWithProjectScenario = new scenarios.Scenario(futureYear, impactAreaListWithProjectfutureYear);

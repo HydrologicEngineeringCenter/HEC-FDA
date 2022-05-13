@@ -2,15 +2,17 @@ using System;
 using System.Collections.Generic;
 using impactarea;
 using metrics;
-
+using System.Xml.Linq;
+using compute;
+using Statistics;
 namespace scenarios
 {
     public class Scenario
     {
         private Int64 _year;
-        private IList<ImpactAreaSimulation> _impactAreaSimulations;
+        private IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
         //probably need getters and setters
-        public IList<ImpactAreaSimulation> ImpactAreaSimulations
+        public IList<ImpactAreaScenarioSimulation> ImpactAreaSimulations
         {
             get
             {
@@ -20,21 +22,31 @@ namespace scenarios
         public Int64 Year{
             get{return _year;}
         }
-        public IList<ImpactAreaSimulation> ImpactAreas
+        public IList<ImpactAreaScenarioSimulation> ImpactAreas
         {
             get { return _impactAreaSimulations;  }
         }
-        public Scenario(Int64 year, IList<ImpactAreaSimulation> impactAreas){
+        public Scenario(Int64 year, IList<ImpactAreaScenarioSimulation> impactAreaSimulations){
             _year = year;
-            _impactAreaSimulations = impactAreas;
+            _impactAreaSimulations = impactAreaSimulations;
         }
-        public ScenarioResults Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+        public ScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        {
             //probably instantiate a rng to seed each impact area differently
             ScenarioResults scenarioResults = new ScenarioResults();
-            foreach(ImpactAreaSimulation impactArea in _impactAreaSimulations){
-                scenarioResults.AddResults(impactArea.Compute(rp, iterations));
+            foreach(ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations){
+                scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria));
             }
             return scenarioResults;
         }
+
+        //public XElement WriteToXML()
+        //{
+        //    XElement masterElement = new XElement("Scenario");
+        //    foreach (ImpactAreaScenarioSimulation impactAreaSimulation in ImpactAreaSimulations)
+        //    {
+        //        XElement impactAreaSimulationElement = impactAreaSimulation.write
+        //    }
+        //}
     }
 }
