@@ -11,13 +11,19 @@ System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 sw.Start();
 int iterations = 1000000;
 int seed = 2345;
+int impactAreaID = 1;
 IDistribution LP3Distribution = new LogPearson3(3.537, .438, .075, 125);
  double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
 
 string xLabel = "x label";
  string yLabel = "y label";
  string name = "name";
+string damageCategory = "residential";
+string assetCategory = "structure";
+string categoryTotal = "Total";
 int id = 1;
+CurveMetaData curveMetaDataWithoutCategories = new CurveMetaData(xLabel, yLabel, name);
+CurveMetaData curveMetaDataWithCategories = new CurveMetaData(xLabel, yLabel, name, damageCategory, assetCategory);
 bool computeWithDamage = true;
 
 
@@ -67,8 +73,8 @@ bool computeWithDamage = true;
 
 double topOfLeveeElevation = 475;
 Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name);
-UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, "residential");
+UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, curveMetaDataWithoutCategories);
+UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, curveMetaDataWithCategories);
 List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
 stageDamageList.Add(stageDamage);
 
@@ -82,7 +88,7 @@ for (int i = 0; i < 2; i++)
 leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
 UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function");
 
-ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder()
+ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
     .withFlowFrequency(flowFrequency)
     .withFlowStage(flowStage)
     .withStageDamages(stageDamageList)
@@ -99,30 +105,30 @@ void WriteProgress(object sender, ProgressReportEventArgs progress)
 
 metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-double EAD = results.ConsequenceResults.MeanDamage("residential");
+double EAD = results.ConsequenceResults.MeanDamage(damageCategory,assetCategory,impactAreaID);
 Console.WriteLine("EAD was " + EAD);
-double meanActualAEP = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.MeanAEP();
+double meanActualAEP = results.MeanAEP(impactAreaID);
 Console.WriteLine("AEP was " + meanActualAEP);
-double cnp90 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.9);
+double cnp90 = results.AssuranceOfEvent(impactAreaID, .9);
 Console.WriteLine("CNEP(.90) was " + cnp90);
-double cnp98 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.98);
+double cnp98 = results.AssuranceOfEvent(impactAreaID, .98);
 Console.WriteLine("CNEP(.98) was " + cnp98);
-double cnp99 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.99);
+double cnp99 = results.AssuranceOfEvent(impactAreaID, .99);
 Console.WriteLine("CNEP(.99) was " + cnp99);
-double cnp996 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.996);
+double cnp996 = results.AssuranceOfEvent(impactAreaID, .996);
 Console.WriteLine("CNEP(.996) was " + cnp996);
-double cnp998 = results.PerformanceByThresholds.ListOfThresholds[0].SystemPerformanceResults.AssuranceOfEvent(.998);
+double cnp998 = results.AssuranceOfEvent(impactAreaID, .998);
 Console.WriteLine("CNEP(.998) was " + cnp998);
 
 if (results.IsConverged(computeWithDamage))
 {
     Console.WriteLine("Converged");
-    Console.WriteLine(results.ConsequenceResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
+    Console.WriteLine(results.ConsequenceResults.GetConsequenceResult(categoryTotal,categoryTotal,impactAreaID).ConsequenceHistogram.SampleSize + " iterations completed");
 }
 else
 {
     Console.WriteLine("Not Converged");
-    Console.WriteLine(results.ConsequenceResults.HistogramsOfEADs["Total"].SampleSize + " iterations completed");
+    Console.WriteLine(results.ConsequenceResults.GetConsequenceResult(categoryTotal, categoryTotal, impactAreaID).ConsequenceHistogram.SampleSize + " iterations completed");
 }
 sw.Stop();
 TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
