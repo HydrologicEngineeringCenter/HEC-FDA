@@ -237,57 +237,72 @@ namespace paireddata
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Graphical_Uncertain_Paired_Data");
-            masterElement.SetAttributeValue("XLabel", XLabel);
-            masterElement.SetAttributeValue("YLabel", YLabel);
-            masterElement.SetAttributeValue("Name", Name);
-            masterElement.SetAttributeValue("Ordinate_Count", _ExceedanceProbabilities.Length);
-            masterElement.SetAttributeValue("ERL", EquivalentRecordLength);
-            masterElement.SetAttributeValue("Using_Stages_Not_Flows", _UsingStagesNotFlows);
-            masterElement.SetAttributeValue("Maximum_Probability", _MaximumProbability);
-            masterElement.SetAttributeValue("Minimum_Probability", _MinimumProbability);
-            for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+            XElement curveMetaDataElement = CurveMetaData.WriteToXML();
+            curveMetaDataElement.Name = "CurveMetaData";
+            masterElement.Add(curveMetaDataElement);
+            if(CurveMetaData.IsNull)
             {
-                XElement rowElement = new XElement("Coordinate");
-                XElement xElement = new XElement("X");
-                xElement.SetAttributeValue("Value", _ExceedanceProbabilities[i]);
-                XElement yElement = StageOrLogFlowDistributions[i].ToXML();
-                rowElement.Add(xElement);
-                rowElement.Add(yElement);
-                masterElement.Add(rowElement);
+                return masterElement;
             }
-            return masterElement;
+            else
+            {
+                masterElement.SetAttributeValue("Ordinate_Count", _ExceedanceProbabilities.Length);
+                masterElement.SetAttributeValue("ERL", EquivalentRecordLength);
+                masterElement.SetAttributeValue("Using_Stages_Not_Flows", _UsingStagesNotFlows);
+                masterElement.SetAttributeValue("Maximum_Probability", _MaximumProbability);
+                masterElement.SetAttributeValue("Minimum_Probability", _MinimumProbability);
+                XElement pairedDataElement = new XElement("Coordinates");
+                for (int i = 0; i < _ExceedanceProbabilities.Length; i++)
+                {
+                    XElement rowElement = new XElement("Coordinate");
+                    XElement xElement = new XElement("X");
+                    xElement.SetAttributeValue("Value", _ExceedanceProbabilities[i]);
+                    XElement yElement = StageOrLogFlowDistributions[i].ToXML();
+                    rowElement.Add(xElement);
+                    rowElement.Add(yElement);
+                    pairedDataElement.Add(rowElement);
+                }
+                masterElement.Add(pairedDataElement);
+                return masterElement;
+            }
+
         }
 
         public static GraphicalUncertainPairedData ReadFromXML(XElement xElement)
         {
-            string xLabel = xElement.Attribute("XLabel").Value;
-            string yLabel = xElement.Attribute("YLabel").Value;
-            string name = xElement.Attribute("Name").Value;
-            CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
-            int equivalentRecordLength = Convert.ToInt32(xElement.Attribute("ERL").Value);
-            bool usingStagesNotFlows = Convert.ToBoolean(xElement.Attribute("Using_Stages_Not_Flows").Value);
-            double minimumProbability = Convert.ToDouble(xElement.Attribute("Minimum_Probability").Value);
-            double maximumProbability = Convert.ToDouble(xElement.Attribute("Maximum_Probability").Value);
-            int size = Convert.ToInt32(xElement.Attribute("Ordinate_Count").Value);
-            double[] exceedanceProbabilities = new double[size];
-            Normal[] stageOrFlowDistributions = new Normal[size];
-            int i = 0;
-            foreach (XElement coordinateElement in xElement.Elements())
+            CurveMetaData metaData = CurveMetaData.ReadFromXML(xElement.Element("CurveMetaData"));
+            if (metaData.IsNull)
             {
-                foreach (XElement ordinateElements in coordinateElement.Elements())
-                {
-                    if (ordinateElements.Name.ToString().Equals("X"))
-                    {
-                        exceedanceProbabilities[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
-                    }
-                    else
-                    {
-                        stageOrFlowDistributions[i] = (Normal)Statistics.ContinuousDistribution.FromXML(ordinateElements);
-                    }
-                }
-                i++;
+                return new GraphicalUncertainPairedData();
             }
-            return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability );
+            else
+            {
+                int equivalentRecordLength = Convert.ToInt32(xElement.Attribute("ERL").Value);
+                bool usingStagesNotFlows = Convert.ToBoolean(xElement.Attribute("Using_Stages_Not_Flows").Value);
+                double minimumProbability = Convert.ToDouble(xElement.Attribute("Minimum_Probability").Value);
+                double maximumProbability = Convert.ToDouble(xElement.Attribute("Maximum_Probability").Value);
+                int size = Convert.ToInt32(xElement.Attribute("Ordinate_Count").Value);
+                double[] exceedanceProbabilities = new double[size];
+                Normal[] stageOrFlowDistributions = new Normal[size];
+                int i = 0;
+                foreach (XElement coordinateElement in xElement.Element("Coordinates").Elements())
+                {
+                    foreach (XElement ordinateElements in coordinateElement.Elements())
+                    {
+                        if (ordinateElements.Name.ToString().Equals("X"))
+                        {
+                            exceedanceProbabilities[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
+                        }
+                        else
+                        {
+                            stageOrFlowDistributions[i] = (Normal)Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                        }
+                    }
+                    i++;
+                }
+                return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability);
+            }
+
         }
         #endregion
     }

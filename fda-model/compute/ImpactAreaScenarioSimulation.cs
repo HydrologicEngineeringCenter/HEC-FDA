@@ -611,7 +611,171 @@ namespace compute
         {
             ProgressReport?.Invoke(sender, e);
         }
+        public bool Equals(ImpactAreaScenarioSimulation incomingImpactAreaScenarioSimulation)
+        {
+            bool sameLeveeElevation = _topOfLeveeElevation.Equals(incomingImpactAreaScenarioSimulation._topOfLeveeElevation);
+            if (!sameLeveeElevation)
+            {
+                return false;
+            }
+            bool sameImpactArea = _impactAreaID.Equals(incomingImpactAreaScenarioSimulation._impactAreaID);
+            if (!sameImpactArea)
+            {
+                return false;
+            }
+            bool leveeValidityMatches = _leveeIsValid.Equals(incomingImpactAreaScenarioSimulation._leveeIsValid);
+            if (!leveeValidityMatches)
+            {
+                return false;
+            }
+            bool frequenceDischargeMatches = _frequency_discharge.Equals(incomingImpactAreaScenarioSimulation._frequency_discharge);
+            if (!frequenceDischargeMatches)
+            {
+                return false;
+            }
+            bool frequencyDischargeGraphicalMatches = _frequency_discharge_graphical.Equals(incomingImpactAreaScenarioSimulation._frequency_discharge_graphical);
+            if (!frequencyDischargeGraphicalMatches)
+            {
+                return false;
+            }
+            bool regulatedUnregulatedMatches = _unregulated_regulated.Equals(incomingImpactAreaScenarioSimulation._unregulated_regulated);
+            if (!regulatedUnregulatedMatches)
+            {
+                return false;
+            }
+            bool dischargeStageMatches = _discharge_stage.Equals(incomingImpactAreaScenarioSimulation._discharge_stage);
+            if (!dischargeStageMatches)
+            {
+                return false;
+            }
+            bool frequencyStageMatches = _frequency_stage.Equals(incomingImpactAreaScenarioSimulation._frequency_stage);
+            if (!frequencyStageMatches)
+            {
+                return false;
+            }
+            bool interiorExteriorMatches = _channelstage_floodplainstage.Equals(incomingImpactAreaScenarioSimulation._channelstage_floodplainstage);
+            if (!interiorExteriorMatches)
+            {
+                return false;
+            }
+            bool systemResponseMatches = _systemResponseFunction_stage_failureProbability.Equals(incomingImpactAreaScenarioSimulation._systemResponseFunction_stage_failureProbability);
+            if (!systemResponseMatches)
+            {
+                return false;
+            }
+            bool resultsMatch = _impactAreaScenarioResults.Equals(incomingImpactAreaScenarioSimulation._impactAreaScenarioResults);
+            if (!resultsMatch)
+            {
+                return false;
+            }
+            foreach (UncertainPairedData stageDamage in _damage_category_stage_damage)
+            {
+                foreach (UncertainPairedData incomingStageDamage in incomingImpactAreaScenarioSimulation._damage_category_stage_damage)
+                {
+                    if ((stageDamage.CurveMetaData.DamageCategory.Equals(incomingStageDamage.CurveMetaData.DamageCategory)) && (stageDamage.CurveMetaData.AssetCategory.Equals(incomingStageDamage.CurveMetaData.AssetCategory)))
+                    {
+                        bool stageDamagesMatch = stageDamage.Equals(incomingStageDamage);
+                        if(!stageDamagesMatch)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        public XElement WriteToXML()
+        {
+            XElement mainElement = new XElement("ImpactAreaScenarioSimulation");
 
+            mainElement.SetAttributeValue("LeveeIsValid", _leveeIsValid);
+            mainElement.SetAttributeValue("TopOfLeveeElevation", _topOfLeveeElevation);
+            mainElement.SetAttributeValue("ImpactAreaID", _impactAreaID);
+            bool frequencyDischargeIsNull = ((Statistics.Distributions.LogPearson3)_frequency_discharge).IsNull;
+            mainElement.SetAttributeValue("FrequencyDischargeIsNull", frequencyDischargeIsNull);
+            if (!frequencyDischargeIsNull)
+            {
+                XElement frequenceDischarge = _frequency_discharge.ToXML();
+                frequenceDischarge.Name = "FrequencyDischarge";
+                mainElement.Add(frequenceDischarge);
+            }
+
+            XElement frequencyDischargeGraphical = _frequency_discharge_graphical.WriteToXML();
+            frequencyDischargeGraphical.Name = "FrequencyDischargeGraphical";
+            XElement regulatedUnregulated = _unregulated_regulated.WriteToXML();
+            regulatedUnregulated.Name = "UnregulatedRegulated";
+            XElement dischargeStage = _discharge_stage.WriteToXML();
+            dischargeStage.Name = "DischargeStage";
+            XElement frequencyStage = _frequency_stage.WriteToXML();
+            frequencyStage.Name = "FrequencyStage";
+            XElement interiorExterior = _channelstage_floodplainstage.WriteToXML();
+            interiorExterior.Name = "InteriorExterior";
+            XElement systemResponse = _systemResponseFunction_stage_failureProbability.WriteToXML();
+            systemResponse.Name = "SystemResponse";
+            XElement impactAreaScenarioResults = _impactAreaScenarioResults.WriteToXml();
+            impactAreaScenarioResults.Name = "ImpactAreaScenarioResults";
+            XElement stageDamageList = new XElement("stageDamageList");
+
+            foreach (UncertainPairedData stageDamage in _damage_category_stage_damage)
+            {
+                XElement stageDamageElement = stageDamage.WriteToXML();
+                stageDamageList.Add(stageDamageElement);
+            }
+
+            mainElement.Add(frequencyDischargeGraphical);
+            mainElement.Add(regulatedUnregulated);
+            mainElement.Add(dischargeStage);
+            mainElement.Add(frequencyStage);
+            mainElement.Add(interiorExterior);
+            mainElement.Add(systemResponse);
+            mainElement.Add(impactAreaScenarioResults);
+            mainElement.Add(stageDamageList);
+
+            return mainElement;
+        }
+        public static ImpactAreaScenarioSimulation ReadFromXML(XElement xElement)
+        {
+            bool frequencyDischargeIsNull = Convert.ToBoolean(xElement.Attribute("FrequencyDischargeIsNull").Value);
+            ContinuousDistribution frequencyDischarge;
+            if (!frequencyDischargeIsNull)
+            {
+                frequencyDischarge = (ContinuousDistribution)ContinuousDistribution.FromXML(xElement.Element("FrequencyDischarge"));
+            }
+            else
+            {
+                frequencyDischarge = new Statistics.Distributions.LogPearson3();
+            }
+            GraphicalUncertainPairedData frequencyDischargeGraphical = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyDischargeGraphical"));
+            UncertainPairedData regulatedUnregulated = UncertainPairedData.ReadFromXML(xElement.Element("DischargeStage"));
+            UncertainPairedData stageDischarge = UncertainPairedData.ReadFromXML(xElement.Element("DischargeStage"));
+            GraphicalUncertainPairedData frequencyStage = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyStage"));
+            UncertainPairedData interiorExterior = UncertainPairedData.ReadFromXML(xElement.Element("InteriorExterior"));
+            UncertainPairedData systemResponse = UncertainPairedData.ReadFromXML(xElement.Element("SystemResponse"));
+            IContainResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(xElement.Element("ImpactAreaScenarioResults"));
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            foreach (XElement stageDamageElement in xElement.Element("stageDamageList").Elements())
+            {
+                UncertainPairedData stageDamage = UncertainPairedData.ReadFromXML(stageDamageElement);
+                stageDamageList.Add(stageDamage);
+            }
+
+            bool leveeIsValid = Convert.ToBoolean(xElement.Attribute("LeveeIsValid").Value);
+            double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
+            int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
+
+            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(frequencyDischarge)
+                .withFlowFrequency(frequencyDischargeGraphical)
+                .withInflowOutflow(regulatedUnregulated)
+                .withFlowStage(stageDischarge)
+                .withLevee(systemResponse, topOfLeveeElevation)
+                .withStageDamages(stageDamageList)
+                .build();
+            impactAreaScenarioSimulation._leveeIsValid = leveeIsValid;
+
+            return impactAreaScenarioSimulation;
+
+        }
         public class SimulationBuilder
         {
             private ImpactAreaScenarioSimulation _sim;
@@ -695,51 +859,8 @@ namespace compute
                 _sim._impactAreaID = impactAreaID;
                 return new SimulationBuilder(_sim);
             }
-
-            public XElement WriteToXML()
-            {
-                XElement mainElement = new XElement("ImpactAreaScenarioSimulation");
-
-                mainElement.SetAttributeValue("LeveeIsValid", _sim._leveeIsValid);
-                mainElement.SetAttributeValue("TopOfLeveeElevation", _sim._topOfLeveeElevation);
-                mainElement.SetAttributeValue("ImpactAreaID", _sim._impactAreaID);
-
-                XElement frequenceDischarge = _sim._frequency_discharge.ToXML();
-                frequenceDischarge.Name = "FrequencyDischarge";
-                XElement frequencyDischargeGraphical = _sim._frequency_discharge_graphical.WriteToXML();
-                frequencyDischargeGraphical.Name = "FrequencyDischargeGraphical";
-                XElement regulatedUnregulated = _sim._unregulated_regulated.WriteToXML();
-                regulatedUnregulated.Name = "UnregulatedRegulated";
-                XElement dischargeStage = _sim._discharge_stage.WriteToXML();
-                dischargeStage.Name = "DischargeStage";
-                XElement frequencyStage = _sim._frequency_stage.WriteToXML();
-                frequencyStage.Name = "FrequencyStage";
-                XElement interiorExterior = _sim._channelstage_floodplainstage.WriteToXML();
-                interiorExterior.Name = "InteriorExterior";
-                XElement systemResponse = _sim._systemResponseFunction_stage_failureProbability.WriteToXML();
-                systemResponse.Name = "SystemResponse";
-                XElement impactAreaScenarioResults = _sim._impactAreaScenarioResults.WriteToXml();
-                impactAreaScenarioResults.Name = "ImpactAreaScenarioResults";
-                XElement stageDamageList = new XElement("stageDamageList");
-                foreach(UncertainPairedData stageDamage in _sim._damage_category_stage_damage)
-                {
-                    XElement stageDamageElement = stageDamage.WriteToXML();
-                    stageDamageList.Add(stageDamageElement);
-                }
-
-                mainElement.Add(frequenceDischarge);
-                mainElement.Add(frequencyDischargeGraphical);
-                mainElement.Add(regulatedUnregulated);
-                mainElement.Add(dischargeStage);
-                mainElement.Add(frequencyStage);
-                mainElement.Add(interiorExterior);
-                mainElement.Add(systemResponse);
-                mainElement.Add(impactAreaScenarioResults);
-                mainElement.Add(stageDamageList);
-
-                return mainElement;
-            }
         }
+
     }
 
 }

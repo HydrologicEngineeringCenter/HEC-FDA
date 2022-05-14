@@ -6,6 +6,7 @@ using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System;
+using System.Xml.Linq;
 
 namespace fda_model_test.unittests
 {
@@ -190,8 +191,44 @@ namespace fda_model_test.unittests
                 double tolerance = 0.01;
                 Assert.True(relativeDifference < tolerance);
             }
-
             
+        }
+
+        [Fact]
+        public void SimulationReadsTheSameThingItWrites()
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.LogPearson3(1,1,1,200);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
+            }
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+
+            metrics.Threshold threshold = new metrics.Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .withAdditionalThreshold(threshold)
+                .build();
+            compute.MeanRandomProvider mrp = new MeanRandomProvider();
+            metrics.ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
+            XElement simulationElement = simulation.WriteToXML();
+            ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
+            bool simulationMatches = simulation.Equals(simulationFromXML);
+            Assert.True(simulationMatches);
         }
 
     }

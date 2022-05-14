@@ -183,45 +183,61 @@ namespace paireddata
             XElement curveMetaDataElement = _metadata.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
-            masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
-            XElement coordinatesElement = new XElement("Coordinates");
-            for (int i = 0; i < _xvals.Length; i++)
+            if(_metadata.IsNull)
             {
-                XElement coordinateElement = new XElement("Coordinate");
-                XElement xElement = new XElement("X");
-                xElement.SetAttributeValue("Value", _xvals[i]);
-                XElement yElement = _yvals[i].ToXML();
-                coordinateElement.Add(xElement);
-                coordinateElement.Add(yElement);
-                coordinatesElement.Add(coordinateElement);
+                return masterElement;
             }
-            masterElement.Add(coordinatesElement);
-            return masterElement;
+            else
+            {
+                masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
+                XElement coordinatesElement = new XElement("Coordinates");
+                for (int i = 0; i < _xvals.Length; i++)
+                {
+                    XElement coordinateElement = new XElement("Coordinate");
+                    XElement xElement = new XElement("X");
+                    xElement.SetAttributeValue("Value", _xvals[i]);
+                    XElement yElement = _yvals[i].ToXML();
+                    coordinateElement.Add(xElement);
+                    coordinateElement.Add(yElement);
+                    coordinatesElement.Add(coordinateElement);
+                }
+                masterElement.Add(coordinatesElement);
+                return masterElement;
+            }
+
         }
 
         public static UncertainPairedData ReadFromXML(XElement element)
         {
-            int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
-            double[] xValues = new double[size];
-            IDistribution[] yValues = new IDistribution[size];
-            int i = 0;
-            foreach (XElement coordinateElement in element.Element("Coordinates").Elements())
-            {
-                foreach (XElement ordinateElements in coordinateElement.Elements())
-                {
-                    if (ordinateElements.Name.ToString().Equals("X"))
-                    {
-                        xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
-                    }
-                    else 
-                    {
-                        yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
-                    }
-                }
-                i++;
-            }
             CurveMetaData curveMetaData = CurveMetaData.ReadFromXML(element.Element("CurveMetaData"));
-            return new UncertainPairedData(xValues, yValues, curveMetaData);
+            if (curveMetaData.IsNull)
+            {
+                return new UncertainPairedData();
+            }
+            else
+            {
+                int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
+                double[] xValues = new double[size];
+                IDistribution[] yValues = new IDistribution[size];
+                int i = 0;
+                foreach (XElement coordinateElement in element.Element("Coordinates").Elements())
+                {
+                    foreach (XElement ordinateElements in coordinateElement.Elements())
+                    {
+                        if (ordinateElements.Name.ToString().Equals("X"))
+                        {
+                            xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
+                        }
+                        else
+                        {
+                            yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                        }
+                    }
+                    i++;
+                }
+                return new UncertainPairedData(xValues, yValues, curveMetaData);
+            }
+
         }
         #endregion
     }

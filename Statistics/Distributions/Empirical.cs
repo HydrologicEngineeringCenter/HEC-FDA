@@ -7,7 +7,9 @@ using System.Xml.Linq;
 using Utilities;
 
 namespace Statistics.Distributions
-{
+{/// <summary>
+/// TODO: we're not using this class. do we need to keep it??
+/// </summary>
     public class Empirical : ContinuousDistribution
     {
         #region Fields 
