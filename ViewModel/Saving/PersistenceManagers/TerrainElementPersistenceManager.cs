@@ -59,7 +59,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             string newPath = Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
             string newDirectory = Path.GetDirectoryName(newPath);
-            Directory.CreateDirectory(newDirectory);
+            DirectoryInfo directoryInfo = Directory.CreateDirectory(newDirectory);
+            
             bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
 
             if(isVRT)
@@ -103,7 +104,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    string directoryName = Path.GetDirectoryName(element.FileName);
+                    string directoryName = Connection.Instance.TerrainDirectory + "\\" + element.Name;
                     if(Directory.Exists(directoryName))
                     {
                         Directory.Delete(directoryName,true);
@@ -126,7 +127,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             if (!newElement.Name.Equals(oldElement.Name))
             {
-                string oldFilePath = Storage.Connection.Instance.GetTerrainFile(oldElement.Name);
+                string oldFilePath = Connection.Instance.GetTerrainFile(oldElement.Name);
                 if(oldFilePath != null)
                 {
                     // at least one matching file exists
@@ -150,6 +151,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                         {
                             FileInfo currentFile = new FileInfo(oldFilePath);
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
+                            
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                             {
                                 ImageSource = ImageSources.TERRAIN_IMAGE,

@@ -589,16 +589,16 @@ namespace HEC.FDA.ViewModel.Utilities
             bool CalculateVehicleDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.CAR]); ;
             bool CalculateOtherDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.OTHER]); ;
 
-            ComputeComponentVM structureComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM structureComponent = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             structureComponent.SetPairedData(StructureDepthDamageFunction);
 
-            ComputeComponentVM contentComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM contentComponent = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             contentComponent.SetPairedData(ContentDepthDamageFunction);
 
-            ComputeComponentVM vehicleComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM vehicleComponent = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             vehicleComponent.SetPairedData(VehicleDepthDamageFunction);
 
-            ComputeComponentVM otherComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            ComputeComponentVM otherComponent = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
             otherComponent.SetPairedData(OtherDepthDamageFunction);
 
             List<ContinuousDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);
