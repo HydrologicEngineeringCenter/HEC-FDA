@@ -18,31 +18,29 @@ namespace paireddata
         #endregion
 
         #region Properties 
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
         public string XLabel
         {
             get { return _metadata.XLabel; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string YLabel
         {
             get { return _metadata.YLabel; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string Name
         {
             get { return _metadata.Name; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string DamageCategory
         {
             get { return _metadata.DamageCategory; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
-
+        public string AssetCategory
+        {
+            get { return _metadata.AssetCategory; }
+        }
         public bool IsNull
         {
             get { return _metadata.IsNull; }

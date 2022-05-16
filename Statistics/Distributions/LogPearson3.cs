@@ -39,7 +39,7 @@ namespace Statistics.Distributions
             }
         }
         [Stored(Name = "IsNull", type = typeof(bool))]
-        public bool IsNull { get; }
+        public bool IsNull { get; set;  }
         #endregion
 
         #region Constructor

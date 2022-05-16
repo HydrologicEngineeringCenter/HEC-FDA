@@ -27,13 +27,11 @@ namespace paireddata
         #endregion
 
         #region Properties
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string XLabel
         {
             get { return _metaData.XLabel; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string YLabel
         {
@@ -46,20 +44,20 @@ namespace paireddata
                 return _StageOrLogFlowDistributions;
             }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
         public string Name
         {
             get { return _metaData.Name; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
 
-        public string Category
+        public string DamageCategory
         {
             get { return _metaData.DamageCategory; }
         }
-        [Obsolete("Let's deprecate and finally just use curve metadata")]
-
+        public string AssetCategory
+        {
+            get { return _metaData.AssetCategory; }
+        }
         public bool IsNull
         {
             get { return _metaData.IsNull; }
@@ -217,6 +215,11 @@ namespace paireddata
         }
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
         {
+            bool nullMatches = CurveMetaData.IsNull.Equals(incomingGraphicalUncertainPairedData.CurveMetaData.IsNull);
+            if(nullMatches && IsNull)
+            {
+                return true;
+            }
             bool nameIsTheSame = Name.Equals(incomingGraphicalUncertainPairedData.Name);
             bool erlIsTheSame = EquivalentRecordLength.Equals(incomingGraphicalUncertainPairedData.EquivalentRecordLength);
             if (!nameIsTheSame || !erlIsTheSame)

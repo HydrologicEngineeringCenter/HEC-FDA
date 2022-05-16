@@ -696,7 +696,7 @@ namespace compute
             if (!frequencyDischargeIsNull)
             {
                 XElement frequenceDischarge = _frequency_discharge.ToXML();
-                frequenceDischarge.Name = "FrequencyDischarge";
+                frequenceDischarge.Name = "LogPearson3";
                 mainElement.Add(frequenceDischarge);
             }
 
@@ -739,7 +739,7 @@ namespace compute
             ContinuousDistribution frequencyDischarge;
             if (!frequencyDischargeIsNull)
             {
-                frequencyDischarge = (ContinuousDistribution)ContinuousDistribution.FromXML(xElement.Element("FrequencyDischarge"));
+                frequencyDischarge = (ContinuousDistribution)ContinuousDistribution.FromXML(xElement.Element("LogPearson3"));
             }
             else
             {

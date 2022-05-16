@@ -14,7 +14,7 @@ namespace paireddata
         public string Name { get; }
         public string DamageCategory { get; }
         public string AssetCategory { get; }
-        public bool IsNull { get; }
+        public bool IsNull { get; set; }
         public CurveTypesEnum CurveType {get;}
         public CurveMetaData()
         {
@@ -97,6 +97,7 @@ namespace paireddata
             masterElement.SetAttributeValue("Name", Name);
             masterElement.SetAttributeValue("DamageCategory", DamageCategory);
             masterElement.SetAttributeValue("AssetCategory", AssetCategory);
+            masterElement.SetAttributeValue("IsNull", IsNull);
             return masterElement;
         }
 
@@ -109,6 +110,8 @@ namespace paireddata
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damageCategory, curveType, assetCategory);
+            bool isNull = Convert.ToBoolean(xElement.Attribute("IsNull").Value);
+            curveMetaData.IsNull = isNull;
             return curveMetaData;
         }
     }
