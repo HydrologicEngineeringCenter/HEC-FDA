@@ -212,7 +212,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
             base.SaveExisting( element);
-            oldElement.AddMapTreeViewItemBackIn(((TerrainElement)oldElement).NodeToAddBackToMapWindow, new EventArgs());
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

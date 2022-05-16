@@ -17,7 +17,7 @@ namespace HEC.FDA.View.Study
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         {
-            if(DataContext is ImportFromOldFdaVM vm)
+            if(DataContext is ImportStudyFromFda1VM vm)
             {
                 vm.FolderPath = fullpath;
             }
@@ -25,7 +25,7 @@ namespace HEC.FDA.View.Study
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
-            if (DataContext is ImportFromOldFdaVM vm)
+            if (DataContext is ImportStudyFromFda1VM vm)
             {
                 vm.Path = fullpath;
                 txtbox.Text = fullpath;
