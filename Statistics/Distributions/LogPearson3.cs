@@ -64,7 +64,7 @@ namespace Statistics.Distributions
         /// <param name="standardDeviation"></param>
         /// <param name="skew"></param>
         /// <param name="sampleSize"></param>
-        public LogPearson3(double mean, double standardDeviation, double skew, int sampleSize = 1000)
+        public LogPearson3(double mean, double standardDeviation, double skew, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = standardDeviation;
