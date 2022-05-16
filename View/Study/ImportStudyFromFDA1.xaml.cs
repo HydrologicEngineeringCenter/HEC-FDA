@@ -8,16 +8,16 @@ namespace HEC.FDA.View.Study
     /// <summary>
     /// Interaction logic for ImportFromOldFda.xaml
     /// </summary>
-    public partial class ImportFromOldFda : UserControl
+    public partial class ImportStudyFromFDA1 : UserControl
     {
-        public ImportFromOldFda()
+        public ImportStudyFromFDA1()
         {
             InitializeComponent();        
         }
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         {
-            if(DataContext is ImportStudyFromFda1VM vm)
+            if(DataContext is ImportStudyFromFDA1VM vm)
             {
                 vm.FolderPath = fullpath;
             }
@@ -25,7 +25,7 @@ namespace HEC.FDA.View.Study
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
-            if (DataContext is ImportStudyFromFda1VM vm)
+            if (DataContext is ImportStudyFromFDA1VM vm)
             {
                 vm.Path = fullpath;
                 txtbox.Text = fullpath;

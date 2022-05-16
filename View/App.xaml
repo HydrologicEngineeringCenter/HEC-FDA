@@ -293,8 +293,8 @@
         <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
             <StudyView:CreateNew/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:ImportFromOldFdaVM }" >
-            <StudyView:ImportFromOldFda/>
+        <DataTemplate DataType="{x:Type StudyVM:ImportStudyFromFDA1VM }" >
+            <StudyView:ImportStudyFromFDA1/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
             <StudyView:SciChartTest/>

@@ -13,7 +13,7 @@ using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModel.Study
 {
-    public class ImportStudyFromFda1VM: ImportFromFDA1VM
+    public class ImportStudyFromFDA1VM: ImportFromFDA1VM
     {
         #region Fields
         private StudyElement _StudyElement;
@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.Study
         #endregion
         #region Constructors
 
-        public ImportStudyFromFda1VM(StudyElement studyElement) : base()
+        public ImportStudyFromFDA1VM(StudyElement studyElement) : base()
         {
             _StudyElement = studyElement;
             _FolderPath = "C:\\temp\\FDA\\";

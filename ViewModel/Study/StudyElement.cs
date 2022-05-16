@@ -217,7 +217,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public void ImportStudyFromOldFda()
         {
-            ImportStudyFromFda1VM vm = new ImportStudyFromFda1VM(this);
+            ImportStudyFromFDA1VM vm = new ImportStudyFromFDA1VM(this);
             string header = StringConstants.IMPORT_FROM_OLD_FDA;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStudy");
             Navigate(tab, false, false);
