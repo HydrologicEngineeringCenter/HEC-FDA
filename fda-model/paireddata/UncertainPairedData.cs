@@ -175,6 +175,29 @@ namespace paireddata
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(UncertainPairedData incomingUncertainPairedData)
+        {
+            bool nullMatches = CurveMetaData.IsNull.Equals(incomingUncertainPairedData.CurveMetaData.IsNull);
+            if (nullMatches && IsNull)
+            {
+                return true;
+            }
+            bool nameIsTheSame = Name.Equals(incomingUncertainPairedData.Name);
+            if (!nameIsTheSame)
+            {
+                return false;
+            }
+            for (int i = 0; i < _xvals.Length; i++)
+            {
+                bool probabilityIsTheSame = _xvals[i].Equals(incomingUncertainPairedData._xvals[i]);
+                bool distributionIsTheSame = _yvals[i].Equals(incomingUncertainPairedData._yvals[i]);
+                if (!probabilityIsTheSame || !distributionIsTheSame)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("UncertainPairedData");

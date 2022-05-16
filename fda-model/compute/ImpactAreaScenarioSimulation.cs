@@ -746,7 +746,7 @@ namespace compute
                 frequencyDischarge = new Statistics.Distributions.LogPearson3();
             }
             GraphicalUncertainPairedData frequencyDischargeGraphical = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyDischargeGraphical"));
-            UncertainPairedData regulatedUnregulated = UncertainPairedData.ReadFromXML(xElement.Element("DischargeStage"));
+            UncertainPairedData regulatedUnregulated = UncertainPairedData.ReadFromXML(xElement.Element("UnregulatedRegulated"));
             UncertainPairedData stageDischarge = UncertainPairedData.ReadFromXML(xElement.Element("DischargeStage"));
             GraphicalUncertainPairedData frequencyStage = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyStage"));
             UncertainPairedData interiorExterior = UncertainPairedData.ReadFromXML(xElement.Element("InteriorExterior"));
@@ -770,9 +770,11 @@ namespace compute
                 .withFlowStage(stageDischarge)
                 .withLevee(systemResponse, topOfLeveeElevation)
                 .withStageDamages(stageDamageList)
+                .withFrequencyStage(frequencyStage)
+                .withInteriorExterior(interiorExterior)
                 .build();
             impactAreaScenarioSimulation._leveeIsValid = leveeIsValid;
-
+            impactAreaScenarioSimulation._impactAreaScenarioResults = (ImpactAreaScenarioResults)impactAreaScenarioResults;
             return impactAreaScenarioSimulation;
 
         }
