@@ -28,18 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="GeoTech\FailureFunctionEditor.xaml.cs" />
-    <Compile Remove="Inventory\AttributeLinkingListRowItem.xaml.cs" />
-    <Compile Remove="Inventory\OccupancyTypesFromFile.xaml.cs" />
-    <Compile Remove="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs" />
-    <Compile Remove="Study\AnalysisYears.xaml.cs" />
-    <Compile Remove="Utilities\DepthDamageEnumToStringConverter.cs" />
-    <Compile Remove="Utilities\DynamicTab.cs" />
-    <Compile Remove="Utilities\MapWindowControl.xaml.cs" />
-    <Compile Remove="Utilities\MapWindowWrapper.xaml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Resources\AlternativeComparisonReport_20x20.png" />
     <None Remove="Resources\Alternatives_20x20.png" />
     <None Remove="Resources\ImpactAreaScenario_20x20.png" />
