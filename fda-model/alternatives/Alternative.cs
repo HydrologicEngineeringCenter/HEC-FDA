@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using scenarios;
-using System.Linq;
-using Statistics.Histograms;
 using metrics;
+using Statistics;
 
 namespace alternatives
 {
@@ -47,47 +45,54 @@ namespace alternatives
         /// <param name="iterations"></param> number of iterations to sample distributions
         /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
         /// <returns></returns>
-        public Dictionary<int,Dictionary<string,Histogram>> AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate)
         {
             _discountRate = discountRate;
-            Dictionary<int,Results> baseYearResults = _currentYear.Compute(randomProvider, iterations);//this is a list of impact area-specific ead
-            Dictionary<int, Results> mlfYearResults = _futureYear.Compute(randomProvider, iterations);
+            ScenarioResults baseYearScenarioResults = _currentYear.Compute(randomProvider, convergenceCriteria);//this is a list of impact area-specific ead
+            ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, convergenceCriteria);
 
-            Dictionary<int, Dictionary<string, Histogram>> damageByImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
-
-            foreach (int impactAreaID in baseYearResults.Keys)
+            AlternativeResults alternativeResults = new AlternativeResults(_id);
+            foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
             {
-                Dictionary<string, Histogram> damageByDamageCategories = new Dictionary<string, Histogram>();
-                foreach (string damageCategory in baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
+                ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
+
+                foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
                 {
+                    ConsequenceResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
                     //Sturges rule 
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
-                    baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
-                    double eadSampledBaseYearLowerBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
-                    mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].ForceDeQueue();
-                    double eadSampledFutureYearLowerBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(lowerBoundProbability);
-                    double eadSampledBaseYearUpperBound = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
-                    double eadSampledFutureYearUpperBound = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(upperBoundProbability);
+
+                    baseYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+                    mlfYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+
+                    double eadSampledBaseYearLowerBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledFutureYearLowerBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledBaseYearUpperBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
+                    double eadSampledFutureYearUpperBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
+
                     double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
                     double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
                     double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
-                    double binQuantity = 1 + 3.322 * Math.Log(iterations);
+                    //TODO: if this depends on convergence criteria, what do we do?
+                    double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
                     double binWidth = Math.Ceiling(range / binQuantity);
-                    Histogram histogram = new Histogram(aaeqDamageLowerBound, binWidth);
-
-                    for (int i = 0; i < iterations; i++)
+                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.RegionID, binWidth);
+                    //TODO: run this loop until convergence 
+                    for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                     {
-                        double eadSampledBaseYear = baseYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                        double eadSampledFutureYear = mlfYearResults[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                        double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
+                        double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
-                        histogram.AddObservationToHistogram(aaeqDamage);
+                        aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
-                    damageByDamageCategories.Add(damageCategory, histogram);
+                    aaeqResult.ConsequenceHistogram.ForceDeQueue();
+                    aaeqResults.AddConsequenceResult(aaeqResult);
                 }
-                damageByImpactAreas.Add(impactAreaID, damageByDamageCategories);
+                alternativeResults.AddConsequenceResults(aaeqResults);
             }
-            return damageByImpactAreas;
+            return alternativeResults;
         }
         //TODO: these functions should be private, but currently have unit tests 
         //so these will remain public until the unit tests are re-written on the above public method

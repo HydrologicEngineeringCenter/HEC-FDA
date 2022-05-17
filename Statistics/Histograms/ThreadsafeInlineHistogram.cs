@@ -18,19 +18,19 @@ namespace Statistics.Histograms
         private double _Max;
         private double _SampleMin;
         private double _SampleMax;
-        private Int64 _N;
+        private Int64 _SampleSize;
         private double _BinWidth;
         private bool _Converged = false;
         private long _ConvergedIterations = Int64.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
-        private int _maxQueueCount = 1000;
-        private int _postQueueCount = 100;
+        private int _maxQueueCount = 1000; //TODO: what does this represent?
+        private int _postQueueCount = 100; //TODO: what does this represent?
         private object _lock = new object();
-        private object _bwListLock = new object();
-        private static int _enqueue;
-        private static int _dequeue;
-        private System.ComponentModel.BackgroundWorker _bw;
+        private object _bwListLock = new object(); //TODO: what does this represent?
+        private static int _enqueue; //TODO: what does this represent?
+        private static int _dequeue; //TODO: what does this represent?
+        private System.ComponentModel.BackgroundWorker _backgroundWorker;
         private System.Collections.Concurrent.ConcurrentQueue<double> _observations;
         #endregion
         #region Properties
@@ -38,7 +38,7 @@ namespace Statistics.Histograms
         public bool IsConverged
         {
             get
-            {
+            {   //TODO: why did we want to force dequeue but we don't want to anymore?
                 //ForceDeQueue();//would need to test for convergence if anything is dequeued...
                 return _Converged;
             }
@@ -122,7 +122,7 @@ namespace Statistics.Histograms
             get
             {
                 ForceDeQueue();
-                return _SampleVariance * (double)((double)(_N - 1) / (double)_N);
+                return _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             }
         }
         public double StandardDeviation
@@ -138,11 +138,11 @@ namespace Statistics.Histograms
             get
             {
                 ForceDeQueue();
-                return _N;
+                return _SampleSize;
             }
             private set
             {
-                _N = value;
+                _SampleSize = value;
             }
         }
         #endregion
@@ -151,16 +151,16 @@ namespace Statistics.Histograms
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _ConvergenceCriteria = c;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
         }
         public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 1000, int postqueueSize = 100)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _BinWidth = binWidth;
             _ConvergenceCriteria = c;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
             _maxQueueCount = startqueueSize;
             _postQueueCount = postqueueSize;
         }
@@ -174,12 +174,12 @@ namespace Statistics.Histograms
             //need to sum up the bincounts to get to _N.
             foreach (int count in _BinCounts)
             {
-                _N += count;
+                _SampleSize += count;
             }
             //sample mean, max, variance, and min dont work in this context...
             _ConvergenceCriteria = convergenceCriteria;
-            _bw = new System.ComponentModel.BackgroundWorker();
-            _bw.DoWork += _bw_DoWork;
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
         }
         #endregion
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -189,11 +189,11 @@ namespace Statistics.Histograms
         public double Skewness()
         {
             ForceDeQueue();
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
-            if (_N <= 2)
+            if (_SampleSize <= 2)
             {
                 return 0;
             }
@@ -212,14 +212,14 @@ namespace Statistics.Histograms
                 deviation3 += deviation2 * deviation;
 
             }
-            double variance = _SampleVariance * (double)((double)(_N - 1) / (double)_N);
-            return deviation3 / _N / Math.Pow(variance, 3 / 2);
+            double variance = _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
+            return deviation3 / _SampleSize / Math.Pow(variance, 3 / 2);
         }
         #region Functions
         public double HistogramMean()
         {
             ForceDeQueue();
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -232,16 +232,16 @@ namespace Statistics.Histograms
             {
                 sum += (_Min + (i * _BinWidth) + (0.5 * _BinWidth)) * _BinCounts[i];
             }
-            return sum / _N;
+            return sum / _SampleSize;
         }
         public double HistogramVariance()
         {
             ForceDeQueue();
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
-            if (_N <= 1)
+            if (_SampleSize <= 1)
             {
                 return 0;
             }
@@ -259,7 +259,7 @@ namespace Statistics.Histograms
                 deviation2 += deviation * deviation;
 
             }
-            return deviation2 / (_N - 1);
+            return deviation2 / (_SampleSize - 1);
         }
         public double HistogramStandardDeviation()
         {
@@ -291,7 +291,7 @@ namespace Statistics.Histograms
                 //}
                 lock (_bwListLock)
                 {
-                    if (!_bw.IsBusy) _bw.RunWorkerAsync();
+                    if (!_backgroundWorker.IsBusy) _backgroundWorker.RunWorkerAsync();
                 }
             }
         }
@@ -301,13 +301,13 @@ namespace Statistics.Histograms
             {
                 lock (_bwListLock)
                 {
-                    if (!_bw.IsBusy)
+                    if (!_backgroundWorker.IsBusy)
                     {
                         DeQueue();
                     }
                     else
                     {
-                        while (_bw.IsBusy)
+                        while (_backgroundWorker.IsBusy)
                         {
                             Thread.Sleep(1);
                             if (_observations.Count == 0)
@@ -319,13 +319,14 @@ namespace Statistics.Histograms
                 }
             }
         }
+        //TODO: WHat does this mean??
         private void DeQueue()
-        {
+        {   
             //do NOT reference any properties of this class in this method!
             //it will trigger unsafe operations across threads.
 
             //apply sturges rule if _n = 0.
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 Min = _observations.Min();
                 double max = _observations.Max();
@@ -353,21 +354,21 @@ namespace Statistics.Histograms
             {
                 if (double.IsNaN(observation)) continue;
                 if (double.IsInfinity(observation)) continue;
-                if (_N == 0)
+                if (_SampleSize == 0)
                 {
                     _SampleMax = observation;
                     _SampleMin = observation;
                     _SampleMean = observation;
                     _SampleVariance = 0;
-                    _N = 1;
+                    _SampleSize = 1;
                 }
                 else
                 {
                     if (observation > _SampleMax) _SampleMax = observation;
                     if (observation < _SampleMin) _SampleMin = observation;
-                    _N += 1;
-                    double tmpMean = _SampleMean + ((observation - _SampleMean) / (double)_N);
-                    _SampleVariance = ((((double)(_N - 2) / (double)(_N - 1)) * _SampleVariance) + (Math.Pow(observation - _SampleMean, 2)) / (double)_N);
+                    _SampleSize += 1;
+                    double tmpMean = _SampleMean + ((observation - _SampleMean) / (double)_SampleSize);
+                    _SampleVariance = ((((double)(_SampleSize - 2) / (double)(_SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - _SampleMean, 2)) / (double)_SampleSize);
                     _SampleMean = tmpMean;
                 }
                 Int64 quantityAdditionalBins = 0;
@@ -454,7 +455,7 @@ namespace Statistics.Histograms
         public double PDF(double x)
         {
             //ForceDeQueue();
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -470,14 +471,14 @@ namespace Statistics.Histograms
                 return 0.0;
             }
             double nAtX = Convert.ToDouble(FindBinCount(x, false));
-            double n = Convert.ToDouble(_N);
+            double n = Convert.ToDouble(_SampleSize);
             n = n * _BinWidth;
             return nAtX / n;
         }
         public double CDF(double x)
         {
             //ForceDeQueue();
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -497,7 +498,7 @@ namespace Statistics.Histograms
                 return 0.0;
             }
             double nAtX = Convert.ToDouble(FindBinCount(x));
-            double n = Convert.ToDouble(_N);
+            double n = Convert.ToDouble(_SampleSize);
             return nAtX / n;
         }
         public double InverseCDF(double p)
@@ -507,7 +508,7 @@ namespace Statistics.Histograms
             if (p >= 1) return _Max;
             else
             {
-                if (_N == 0)
+                if (_SampleSize == 0)
                 {
                     return double.NaN;
                 }
@@ -515,7 +516,7 @@ namespace Statistics.Histograms
                 {
                     return _Min + (_BinWidth * p);
                 }
-                Int64 numobs = Convert.ToInt64(_N * p);
+                Int64 numobs = Convert.ToInt64(_SampleSize * p);
                 if (p <= 0.5)
                 {
                     Int64 index = 0;
@@ -545,7 +546,7 @@ namespace Statistics.Histograms
                 {
                     Int64 index = _BinCounts.Length - 1;
                     double obs = _BinCounts[index];
-                    double cobs = _N - obs;
+                    double cobs = _SampleSize - obs;
                     while (cobs > numobs)
                     {
                         index--;
@@ -613,40 +614,42 @@ namespace Statistics.Histograms
         {
             ForceDeQueue();
             if (_Converged) { return true; }
-            if (_N < _ConvergenceCriteria.MinIterations) { return false; }
-            if (_N >= _ConvergenceCriteria.MaxIterations)
+            if (_SampleSize < _ConvergenceCriteria.MinIterations) { return false; }
+            if (_SampleSize >= _ConvergenceCriteria.MaxIterations)
             {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
                 _ConvergedOnMax = true;
                 return true;
             }
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
-            double variance = (lowerq * (1 - lowerq)) / (((double)_N) * qslope * qslope);
+            double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
             bool lower = false;
             double lower_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
             if (lower_comparison <= (_ConvergenceCriteria.Tolerance * .5)) { lower = true; }
             qval = InverseCDF(upperq);
             qslope = PDF(qval);
-            variance = (upperq * (1 - upperq)) / (((double)_N) * qslope * qslope);
+            variance = (upperq * (1 - upperq)) / (((double)_SampleSize) * qslope * qslope);
             bool upper = false;
             double upper_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
             if (upper_comparison <= (_ConvergenceCriteria.Tolerance * .5)) { upper = true; }
             if (lower)
             {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
             }
             if (upper)
             {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
             }
             return _Converged;
         }
         public Int64 EstimateIterationsRemaining(double upperq, double lowerq)
         {
+            //TODO: WHAT DO THE BELOW VARIABLES EVEN MEAN??????????
+            //PLEASE PROVIDE VARIABLE NAMES IN ENGLISH thank you so much 
             if (_Converged) return 0;
             double up = upperq;
             double val = up * (1 - up);
@@ -669,7 +672,7 @@ namespace Statistics.Histograms
                 lowerestimate = Math.Abs((Int64)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
             }
             Int64 biggestGuess = Math.Max(upperestimate, lowerestimate);
-            Int64 remainingIters = _ConvergenceCriteria.MaxIterations - _N;
+            Int64 remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
             return Math.Min(remainingIters, biggestGuess);
         }
         public bool Equals(ThreadsafeInlineHistogram threadsafeInlineHistogram)

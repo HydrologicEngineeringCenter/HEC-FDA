@@ -41,10 +41,6 @@ namespace Statistics
         /// Deterministic Distribution
         /// </summary>
         Deterministic = 8,
-        /// <summary> 
-        /// Empirical Distribution
-        /// </summary>
-        Empirical = 9,
         /// <summary>
         /// Graphical Distribution where uncertainty is defined using the Less Simple Method.
         /// </summary>

@@ -18,7 +18,7 @@ namespace compute
                 return _frequencyDamage;
             }
         }
-    public FrequencyDamageMessage(PairedData frequencyDamage, string damageCategory): base(damageCategory)
+    public FrequencyDamageMessage(PairedData frequencyDamage, string message): base(message)
     {
             _frequencyDamage = frequencyDamage;
     }

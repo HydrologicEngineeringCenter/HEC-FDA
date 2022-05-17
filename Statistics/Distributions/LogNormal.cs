@@ -13,7 +13,7 @@ namespace Statistics.Distributions
 
 
         #region IDistribution Properties
-        public override IDistributionEnum Type => IDistributionEnum.Normal;
+        public override IDistributionEnum Type => IDistributionEnum.LogNormal;
         [Stored(Name = "Mean", type = typeof(double))]
          public double Mean { get{return _mean;} set{_mean = value;} }
         [Stored(Name = "Standard_Deviation", type = typeof(double))]

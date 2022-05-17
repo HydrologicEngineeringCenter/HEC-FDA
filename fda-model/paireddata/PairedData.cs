@@ -13,9 +13,17 @@ namespace paireddata
         private CurveMetaData _metadata;
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
-        public string Category
+        [Obsolete("Lets deprecate this and just access info through the metadata object")]
+        public string DamageCategory
         {
-            get { return _metadata.Category; }
+            get { return _metadata.DamageCategory; }
+        }
+        public CurveMetaData CurveMetaData
+        {
+            get
+            {
+                return _metadata;
+            }
         }
         public PairedData(double[] xs, double[] ys)
         {

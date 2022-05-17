@@ -20,9 +20,11 @@ namespace fda_model_test.unittests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static string category = "Residential";
+        static string damCat = "Residential";
+        static string assetCat = "content";
+        static int id = 0;
         static CurveTypesEnum curveTypesEnum = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaDataWithCategory = new CurveMetaData(xLabel, yLabel, name, category, curveTypesEnum);
+        static CurveMetaData curveMetaDataWithCategory = new CurveMetaData(xLabel, yLabel, name, damCat, curveTypesEnum,assetCat);
         static CurveMetaData curveMetaDataWithoutCategory = new CurveMetaData(xLabel, yLabel, name, curveTypesEnum);
 
         [Theory]
@@ -47,17 +49,17 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, curveMetaDataWithCategory);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(stageDamageList)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, convergenceCriteria);
-            XElement xElement = results.ExpectedAnnualDamageResults.WriteToXML();
-            metrics.ExpectedAnnualDamageResults expectedAnnualDamageResultsFromXML = metrics.ExpectedAnnualDamageResults.ReadFromXML(xElement);
-            bool success = results.ExpectedAnnualDamageResults.Equals(expectedAnnualDamageResultsFromXML);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            XElement xElement = results.ConsequenceResults.WriteToXML();
+            metrics.ConsequenceResults expectedAnnualDamageResultsFromXML = metrics.ConsequenceResults.ReadFromXML(xElement);
+            bool success = results.ConsequenceResults.Equals(expectedAnnualDamageResultsFromXML);
             Assert.True(success);
         }
     }

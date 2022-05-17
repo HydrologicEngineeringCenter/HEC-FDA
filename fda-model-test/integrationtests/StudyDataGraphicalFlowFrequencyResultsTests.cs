@@ -63,28 +63,30 @@ namespace fda_model_test.integrationtests
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static string category = "residential";
+        static string damCat = "residential";
+        static string assetCat = "content";
+        static int impactAreaID = 0;
         static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType);
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, curveType,assetCat);
         
         [Theory]
         [InlineData(1234, 0.96)]
         public void ComputeMeanEADWithIterations_Test(int seed, double expected)
         {
             GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, xLabel, yLabel, name);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(dischargeFrequency)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            metrics.Results results = simulation.Compute(randomProvider,convergenceCriteria);
-            double difference = Math.Abs(expected - results.ExpectedAnnualDamageResults.MeanEAD("residential"));
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
+            double difference = Math.Abs(expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;
             Assert.True(relativeDifference < tolerance);

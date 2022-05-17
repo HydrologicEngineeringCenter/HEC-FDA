@@ -36,79 +36,81 @@ namespace Statistics
         }
         public XElement ToXML()
         {
-            XElement ele = new XElement(this.GetType().Name);
-            PropertyInfo[] pilist = this.GetType().GetProperties();
-            foreach (PropertyInfo pi in pilist)
+            XElement element = new XElement(this.GetType().Name);
+            PropertyInfo[] propertyList = this.GetType().GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyList)
             {
-                Distributions.StoredAttribute sa = (Distributions.StoredAttribute)pi.GetCustomAttribute(typeof(Distributions.StoredAttribute));
-                if (sa != null)
+                Distributions.StoredAttribute storedAttribute = (Distributions.StoredAttribute)propertyInfo.GetCustomAttribute(typeof(Distributions.StoredAttribute));
+                if (storedAttribute != null)
                 {
-                    ele.SetAttributeValue(sa.Name, pi.GetValue(this));
+                    element.SetAttributeValue(storedAttribute.Name, propertyInfo.GetValue(this));
                 }
             }
-            return ele;
+            return element;
         }
-        public static IDistribution FromXML(XElement ele)
-        {
-            string n = ele.Name.ToString();
-            string ns = "Statistics";//this libraries name and the appropriate namespace.
-            ObjectHandle oh = System.Activator.CreateInstance(ns, ns + ".Distributions." + n);//requires empty constructor
-            IDistribution dist = oh.Unwrap() as IDistribution;
-            PropertyInfo[] pilist = dist.GetType().GetProperties();
-            foreach (PropertyInfo pi in pilist)
-            {
-                Distributions.StoredAttribute sa = (Distributions.StoredAttribute)pi.GetCustomAttribute(typeof(Distributions.StoredAttribute));
-                if (sa != null)
+        public static IDistribution FromXML(XElement xElement)
+        {           
+            string name = xElement.Name.ToString();
+            string libraryName = "Statistics";//this libraries name and the appropriate namespace.
+            ObjectHandle objectHandle = System.Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
+            IDistribution iDistribution = objectHandle.Unwrap() as IDistribution;
+  
+                PropertyInfo[] propertyList = iDistribution.GetType().GetProperties();
+                foreach (PropertyInfo propertyInfo in propertyList)
                 {
-                    switch (sa.type.Name)
+                    Distributions.StoredAttribute storedAttribute = (Distributions.StoredAttribute)propertyInfo.GetCustomAttribute(typeof(Distributions.StoredAttribute));
+                    if (storedAttribute != null)
                     {
-                        case "double":
-                            double vald = 0.0;
-                            if (ele.Attribute(sa.Name).Value == "Infinity")
-                            {
-                                vald = double.PositiveInfinity;
-                            }
-                            else if (ele.Attribute(sa.Name).Value == "-Infinity")
-                            {
-                                vald = double.NegativeInfinity;
-                            }
-                            else
-                            {
-                                vald = Convert.ToDouble(ele.Attribute(sa.Name).Value);
-                            }
-                            pi.SetValue(dist, vald);
-                            break;
-                        case "Double":
-                            double valD = 0.0;
-                            if (ele.Attribute(sa.Name).Value == "Infinity")
-                            {
-                                valD = double.PositiveInfinity;
-                            }
-                            else if (ele.Attribute(sa.Name).Value == "-Infinity")
-                            {
-                                valD = double.NegativeInfinity;
-                            }
-                            else
-                            {
-                                valD = Convert.ToDouble(ele.Attribute(sa.Name).Value);
-                            }
-                            pi.SetValue(dist, valD);
-                            break;
-                        case "Boolean":
-                            bool valB = Convert.ToBoolean(ele.Attribute(sa.Name).Value);
-                            pi.SetValue(dist, valB);
-                            break;
-                        case "Int32":
-                            int vali = Convert.ToInt32(ele.Attribute(sa.Name).Value);
-                            pi.SetValue(dist, vali);
-                            break;
-                        default:
-                            throw new ArgumentException("unrecognized type in serialization " + sa.type.Name);
-                    }
+                        switch (storedAttribute.type.Name)
+                        {
+                            case "double":
+                                double vald = 0.0; //TODO: WHAT DOES VALD MEAN? 
+                                if (xElement.Attribute(storedAttribute.Name).Value == "Infinity")
+                                {
+                                    vald = double.PositiveInfinity;
+                                }
+                                else if (xElement.Attribute(storedAttribute.Name).Value == "-Infinity")
+                                {
+                                    vald = double.NegativeInfinity;
+                                }
+                                else
+                                {
+                                    vald = Convert.ToDouble(xElement.Attribute(storedAttribute.Name).Value);
+                                }
+                                propertyInfo.SetValue(iDistribution, vald);
+                                break;
+                            case "Double":
+                                double valD = 0.0;
+                                if (xElement.Attribute(storedAttribute.Name).Value == "Infinity")
+                                {
+                                    valD = double.PositiveInfinity;
+                                }
+                                else if (xElement.Attribute(storedAttribute.Name).Value == "-Infinity")
+                                {
+                                    valD = double.NegativeInfinity;
+                                }
+                                else
+                                {
+                                    valD = Convert.ToDouble(xElement.Attribute(storedAttribute.Name).Value);
+                                }//TODO: WHAT ARE THE VAL D VAL B VAL I IT IS NOT CLEAR 
+                                propertyInfo.SetValue(iDistribution, valD);
+                                break;
+                            case "Boolean":
+                                bool valB = Convert.ToBoolean(xElement.Attribute(storedAttribute.Name).Value);
+                                propertyInfo.SetValue(iDistribution, valB);
+                                break;
+                            case "Int32":
+                                int vali = Convert.ToInt32(xElement.Attribute(storedAttribute.Name).Value);
+                                propertyInfo.SetValue(iDistribution, vali);
+                                break;
+                            default:
+                                throw new ArgumentException("unrecognized type in serialization " + storedAttribute.type.Name);
+                        }
 
+                    }
                 }
-            }
-            return dist;
+            return iDistribution;
+  
         }
     }
 }

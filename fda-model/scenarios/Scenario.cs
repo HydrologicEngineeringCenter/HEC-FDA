@@ -2,40 +2,51 @@ using System;
 using System.Collections.Generic;
 using impactarea;
 using metrics;
-
+using System.Xml.Linq;
+using compute;
+using Statistics;
 namespace scenarios
 {
     public class Scenario
     {
         private Int64 _year;
-        private IList<ImpactAreaSimulation> _impactAreas;
+        private IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
         //probably need getters and setters
-        public IList<ImpactAreaSimulation> ImpactAreaSimulations
+        public IList<ImpactAreaScenarioSimulation> ImpactAreaSimulations
         {
             get
             {
-                return _impactAreas;
+                return _impactAreaSimulations;
             }
         }
         public Int64 Year{
             get{return _year;}
         }
-        public IList<ImpactAreaSimulation> ImpactAreas
+        public IList<ImpactAreaScenarioSimulation> ImpactAreas
         {
-            get { return _impactAreas;  }
+            get { return _impactAreaSimulations;  }
         }
-        public Scenario(Int64 year, IList<ImpactAreaSimulation> impactAreas){
+        public Scenario(Int64 year, IList<ImpactAreaScenarioSimulation> impactAreaSimulations){
             _year = year;
-            _impactAreas = impactAreas;
+            _impactAreaSimulations = impactAreaSimulations;
         }
-        public Dictionary<int, Results> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+        public ScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        {
             //probably instantiate a rng to seed each impact area differently
-            Dictionary<int,Results> returnDictionary = new Dictionary<int, Results>();
-
-            foreach(ImpactAreaSimulation impactArea in _impactAreas){
-                returnDictionary.Add(impactArea.ImpactArea.ID, impactArea.Compute(rp, iterations));
+            ScenarioResults scenarioResults = new ScenarioResults();
+            foreach(ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations){
+                scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria));
             }
-            return returnDictionary;
+            return scenarioResults;
         }
+
+        //public XElement WriteToXML()
+        //{
+        //    XElement masterElement = new XElement("Scenario");
+        //    foreach (ImpactAreaScenarioSimulation impactAreaSimulation in ImpactAreaSimulations)
+        //    {
+        //        XElement impactAreaSimulationElement = impactAreaSimulation.write
+        //    }
+        //}
     }
 }

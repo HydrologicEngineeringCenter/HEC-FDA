@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using alternatives;
 using Statistics.Histograms;
 using metrics;
+using Statistics;
 
 namespace alternativeComparisonReport
 {
@@ -48,54 +46,59 @@ namespace alternativeComparisonReport
         /// damage reduced for a given damage category in a given impact area and for a given alternative comparison. 
         /// </summary>
         /// <param name="randomProvider"></param> random number provider
-        /// <param name="iterations"></param> number of times to sample the aaeq damage histograms
+        /// <param name="convergenceCriteria"></param> the study convergence criteria 
         /// <param name="discountRate"></param> the discount rate at which to calculate the present value of damages, in decimal form
         /// <returns></returns>
-        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, double discountRate)
+        public AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate)
         {
-            Dictionary<int, Dictionary<string, Histogram>> withoutProjectResults = _withoutProjectAlternative.AnnualizationCompute(randomProvider, iterations, discountRate);
+            AlternativeResults withoutProjectAlternativeResults = _withoutProjectAlternative.AnnualizationCompute(randomProvider, convergenceCriteria, discountRate);
+            AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
 
-            Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damagesReducedAllAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Dictionary<string, Histogram>> withProjectResults = alternative.AnnualizationCompute(randomProvider, iterations, discountRate);
+                AlternativeResults withProjectAlternativeResults = alternative.AnnualizationCompute(randomProvider, convergenceCriteria, discountRate);
+                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withoutProjectAlternativeResults.AlternativeID);
 
-                Dictionary<int, Dictionary<string, Histogram>> damageReducedOneAlternative = new Dictionary<int, Dictionary<string, Histogram>>();
-                foreach (int impactAreaID in withProjectResults.Keys)
+                foreach (ConsequenceResults withProjectDamageResults in withProjectAlternativeResults.ConsequenceResultsList)
                 {
-                    Dictionary<string, Histogram> damageReducedInImpactArea = new Dictionary<string, Histogram>();
-                    foreach (string damageCategory in withProjectResults[impactAreaID].Keys)
+                    ConsequenceResults withoutProjectDamageResults = withoutProjectAlternativeResults.GetConsequenceResults(withProjectDamageResults.RegionID);
+                    ConsequenceResults damageReducedInImpactArea = new ConsequenceResults(withProjectDamageResults.RegionID);
+
+                    foreach (ConsequenceResult damageResult in withProjectDamageResults.ConsequenceResultList)
                     {
+                        ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
+                        withProjectHistogram.ForceDeQueue();
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
+                        withoutProjectHistogram.ForceDeQueue();
 
-                        //Sturges rule 
-                        //double lowerBoundProbability = 0.0001;
-                        //double upperBoundProbability = 0.9999;
-
-                        double withProjectDamageAAEQLowerBound = (withProjectResults[impactAreaID])[damageCategory].Min; //InverseCDF(lowerBoundProbability);
-                        double withoutProjectDamageAAEQLowerBound = (withoutProjectResults[impactAreaID])[damageCategory].Min; //InverseCDF(lowerBoundProbability);
+                        double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
+                        double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min;  //InverseCDF(lowerBoundProbability);
                         double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQLowerBound;
 
-                        double withProjectDamageAAEQUpperBound = (withProjectResults[impactAreaID])[damageCategory].Max; //InverseCDF(upperBoundProbability);
-                        double withoutProjectDamageAAEQUpperBound = (withoutProjectResults[impactAreaID])[damageCategory].Max; //InverseCDF(upperBoundProbability);
+                        double withProjectDamageAAEQUpperBound = withProjectHistogram.Max; //InverseCDF(upperBoundProbability);
+                        double withoutProjectDamageAAEQUpperBound = withoutProjectHistogram.Max; //InverseCDF(upperBoundProbability);
                         double damagesReducedUpperBound = withoutProjectDamageAAEQUpperBound - withProjectDamageAAEQUpperBound;
 
                         double range = damagesReducedUpperBound - damagesReducedLowerBound;
-                        double binQuantity = 1 + 3.322 * Math.Log(iterations);
+                        //TODO: how does this work if based on convergence criteria?
+                        double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
                         double binWidth = Math.Ceiling(range / binQuantity);
-                        Histogram damageReducedDamageCategory = new Histogram(damagesReducedLowerBound, binWidth);
 
-                        for (int i = 0; i < iterations; i++)
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.ConvergenceCriteria, damageResult.RegionID, binWidth);
+                        //TODO: run this loop until convergence
+                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                         {
-                            double withProjectDamageAAEQ = (withProjectResults[impactAreaID])[damageCategory].InverseCDF(randomProvider.NextRandom());
-                            double withoutProjectDamageAAEQ = (withoutProjectResults[impactAreaID])[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double withProjectDamageAAEQ = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                            double withoutProjectDamageAAEQ = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
-                            damageReducedDamageCategory.AddObservationToHistogram(damagesReduced);
+                            damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
-                        damageReducedInImpactArea.Add(damageCategory, damageReducedDamageCategory);
+                        damageReducedResult.ConsequenceHistogram.ForceDeQueue();
+                        damageReducedInImpactArea.AddConsequenceResult(damageReducedResult);
                     }
-                    damageReducedOneAlternative.Add(impactAreaID, damageReducedInImpactArea);
+                    damageReducedOneAlternative.AddConsequenceResults(damageReducedInImpactArea); 
                 }
-                damagesReducedAllAlternatives.Add(alternative.ID, damageReducedOneAlternative);
+                damagesReducedAllAlternatives.AddAlternativeResults(damageReducedOneAlternative);
             }
             return damagesReducedAllAlternatives;
         }
@@ -109,88 +112,106 @@ namespace alternativeComparisonReport
         /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
         /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
         /// <returns></returns>
-        public Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations, bool iWantBaseYearResults)
+        public List<AlternativeResults> ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool iWantBaseYearResults)
         {
-            Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> eadReducedAllAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
+            List<AlternativeResults> eadReducedAllAlternatives;
             if (iWantBaseYearResults)
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider,iterations);
+                eadReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria);
             }
             else
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, iterations);
+                eadReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria);
             }
             return eadReducedAllAlternatives;
         } 
 
-        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations)
+        private List<AlternativeResults> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
-            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.CurrentYearScenario.Compute(randomProvider, iterations);
-            Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damageReducedAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
+            ScenarioResults withoutProjectScenario = _withoutProjectAlternative.CurrentYearScenario.Compute(randomProvider, convergenceCriteria);
+
+            List<AlternativeResults> damageReducedAlternatives = new List<AlternativeResults>();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Results> withProjectEAD = alternative.CurrentYearScenario.Compute(randomProvider, iterations);
+                ScenarioResults withProjectScenario = alternative.CurrentYearScenario.Compute(randomProvider, convergenceCriteria);
 
-                Dictionary<int, Dictionary<string, Histogram>> damageReducedImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
-                foreach (int impactAreaID in withoutProjectEAD.Keys)
+                AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.ID);
+
+                foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
-                    Dictionary<string, Histogram> damageReducedDamageCategories = new Dictionary<string, Histogram>();
-                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                    ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
+                    ConsequenceResults withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
+
+                    ConsequenceResults damageReducedResults = new ConsequenceResults(withProjectResults.ImpactAreaID);
+
+                    foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        double min = 0;
-                        double binWidth = 1;
-                        Histogram damageReduced = new Histogram(min, binWidth);
-                        for (int i = 0; i < iterations; i++)
+                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
+
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
+                        //TODO: run this loop until convergence 
+                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
-                            damageReduced.AddObservationToHistogram(eadDamageReduced);
+                            damageReducedResult.AddConsequenceRealization(eadDamageReduced,i);
                         }
-                        damageReducedDamageCategories.Add(damageCategory, damageReduced);
+                        damageReducedResults.AddConsequenceResult(damageReducedResult);
                     }
-                    damageReducedImpactAreas.Add(impactAreaID, damageReducedDamageCategories);
+                    damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
-                damageReducedAlternatives.Add(alternative.ID, damageReducedImpactAreas);
+                damageReducedAlternatives.Add(damageReducedAlternative);
             }
             return damageReducedAlternatives;
 
         }
 
 
-        private Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, Int64 iterations)
+        private List<AlternativeResults> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
-            Dictionary<int, Results> withoutProjectEAD = _withoutProjectAlternative.FutureYearScenario.Compute(randomProvider, iterations);
-            Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>> damagesReducedAlternatives = new Dictionary<int, Dictionary<int, Dictionary<string, Histogram>>>();
+            ScenarioResults withoutProjectScenario = _withoutProjectAlternative.FutureYearScenario.Compute(randomProvider, convergenceCriteria);
+
+            List<AlternativeResults> damageReducedAlternatives = new List<AlternativeResults>();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
-                Dictionary<int, Results> withProjectEAD = alternative.FutureYearScenario.Compute(randomProvider, iterations);
+                ScenarioResults withProjectScenario = alternative.FutureYearScenario.Compute(randomProvider, convergenceCriteria);
 
-                Dictionary<int, Dictionary<string, Histogram>> damageReducedImpactAreas = new Dictionary<int, Dictionary<string, Histogram>>();
-                foreach (int impactAreaID in withoutProjectEAD.Keys)
+                AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.ID);
+
+                foreach (ImpactAreaScenarioResults withProjectResults in withProjectScenario.ResultsList)
                 {
-                    Dictionary<string, Histogram> damageReducedDamageCategories = new Dictionary<string, Histogram>();
-                    foreach (string damageCategory in withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs.Keys)
+                    ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenario.GetResults(withProjectResults.ImpactAreaID);
+                    ConsequenceResults withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
+
+                    ConsequenceResults damageReducedResults = new ConsequenceResults(withProjectResults.ImpactAreaID);
+
+                    foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        double min = 0;
-                        double binWidth = 1;
-                        Histogram damageReduced = new Histogram(min, binWidth);
-                        for (int i = 0; i < iterations; i++)
+                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
+
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
+                        //TODO: run this loop until convergence 
+                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                         {
-                            double eadSampledWithProject = withProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
-                            double eadSampledWithoutProject = withoutProjectEAD[impactAreaID].ExpectedAnnualDamageResults.HistogramsOfEADs[damageCategory].InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                            double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
-                            damageReduced.AddObservationToHistogram(eadDamageReduced);
+                            damageReducedResult.AddConsequenceRealization(eadDamageReduced, i);
                         }
-                        damageReducedDamageCategories.Add(damageCategory, damageReduced);
+                        damageReducedResults.AddConsequenceResult(damageReducedResult);
                     }
-                    damageReducedImpactAreas.Add(impactAreaID, damageReducedDamageCategories);
+                    damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
-                damagesReducedAlternatives.Add(alternative.ID, damageReducedImpactAreas);
+                damageReducedAlternatives.Add(damageReducedAlternative);
             }
-            return damagesReducedAlternatives;
+            return damageReducedAlternatives;
 
         }
 

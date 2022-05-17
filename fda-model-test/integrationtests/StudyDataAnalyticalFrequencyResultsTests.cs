@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using metrics;
 using compute;
 using paireddata;
 using Statistics;
@@ -28,6 +24,10 @@ namespace fda_model_test
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
+        static int impactAreaID = 0;
+        static string damCat = "residential";
+        static string assetCat = "structure";
+        static CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
 
 
         static IDistribution[] StageDistributions =
@@ -78,17 +78,17 @@ namespace fda_model_test
         public void ComputeMeanEAD_Test(double expected)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
-            metrics.Results results = simulation.PreviewCompute();
-            double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            metrics.ImpactAreaScenarioResults results = simulation.PreviewCompute();
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
         }
@@ -103,11 +103,11 @@ namespace fda_model_test
         public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -115,9 +115,8 @@ namespace fda_model_test
 
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
-
-            double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
         }
@@ -134,8 +133,8 @@ namespace fda_model_test
         public void ComputeMeanEADAndPerformanceWithIterationsAndLevee_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
 
@@ -147,9 +146,9 @@ namespace fda_model_test
                 leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
             }
             leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-            UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function", "internally configured default function");
+            UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -157,13 +156,13 @@ namespace fda_model_test
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
-
-            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
         /// <summary>
@@ -179,12 +178,12 @@ namespace fda_model_test
         public void ComputeMeanEADAndPerformanceWithIterationsAndLeveeAndFragility_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
             Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions,metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name);
-            Simulation simulation = Simulation.builder()
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
@@ -192,13 +191,13 @@ namespace fda_model_test
                 .build();
             compute.RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.Results results = simulation.Compute(randomProvider, cc);
+            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
-
-            double meanActualAEP = results.PerformanceByThresholds.ThresholdsDictionary[0].ProjectPerformanceResults.MeanAEP();
+            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
 

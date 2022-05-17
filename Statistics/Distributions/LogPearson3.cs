@@ -38,6 +38,8 @@ namespace Statistics.Distributions
                 }
             }
         }
+        [Stored(Name = "IsNull", type = typeof(bool))]
+        public bool IsNull { get; set;  }
         #endregion
 
         #region Constructor
@@ -49,15 +51,27 @@ namespace Statistics.Distributions
             Skewness = .01;
             SampleSize = 1;
             addRules();
+            IsNull = true;
             
         }
-        public LogPearson3(double mean, double standardDeviation, double skew, int sampleSize = int.MaxValue)
+        /// <summary>
+        /// LP# Dist
+        /// TODO: we need a good default sample size. int.max will result in a system.OutOfMemoryException.
+        /// The default value of 1000 is a placeholder
+        /// Still seems larger than any typical sample size ... I don't think anyone has been taking records of river flows for 1000 years 
+        /// </summary>
+        /// <param name="mean"></param>
+        /// <param name="standardDeviation"></param>
+        /// <param name="skew"></param>
+        /// <param name="sampleSize"></param>
+        public LogPearson3(double mean, double standardDeviation, double skew, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = standardDeviation;
             Skewness = skew;
             SampleSize = sampleSize;
             addRules();
+            IsNull = false;
             
         }
         private void addRules()
