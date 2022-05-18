@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             LinkList();
             xMax = .999999999999999999999;
             xMin = .000000000000000000001;
-            setGlobalMaxAndMin();
+            SetGlobalMaxAndMin();
             AddHandlers();
         }
         override public void AddUnlinkedRow(int i)

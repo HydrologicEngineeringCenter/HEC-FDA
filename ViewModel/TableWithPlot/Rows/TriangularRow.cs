@@ -4,7 +4,7 @@ using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.MVVMFramework.ViewModel.Validation;
 using HEC.MVVMFramework.Base.Enumerations;
-
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -83,15 +83,162 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        public TriangularRow(double x, IDistribution y) : base(x, y)
+        public TriangularRow(double x, IDistribution y, bool isStrictMonotonic) : base(x, y)
         {
-            AddSinglePropertyRule(nameof(Min), new Rule(() => { if (PreviousRow == null) return true; return Min > ((Triangular)PreviousRow.Y).Min; }, "Min values are not increasing.",ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Min), new Rule(() => { if (NextRow == null) return true; return Min < ((Triangular)NextRow.Y).Min; }, "Min values are not increasing.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(MostLikely), new Rule(() => { if (PreviousRow == null) return true; return MostLikely > ((Triangular)PreviousRow.Y).MostLikely; }, "Most likely values are not increasing.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(MostLikely), new Rule(() => { if (NextRow == null) return true; return MostLikely < ((Triangular)NextRow.Y).MostLikely; }, "Most likely values are not increasing.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Max), new Rule(() => { if (PreviousRow == null) return true; return Max > ((Triangular)PreviousRow.Y).Max; }, "Max values are not increasing.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Max), new Rule(() => { if (NextRow == null) return true; return Max < ((Triangular)NextRow.Y).Max; }, "Max values are not increasing.", ErrorLevel.Severe));
-            AddMultiPropertyRule(new List<string> { "Min", "MostLikely", "Max" }, new Rule(() => { return ((Min < MostLikely) && (MostLikely < Max)); }, "Min must be less than most likely, which must be less than Max", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Min), CreateMinValuesIncreasingPreviousRowRule( isStrictMonotonic));
+            AddSinglePropertyRule(nameof(Min), CreateMinValuesIncreasingNextRowRule( isStrictMonotonic));
+
+            AddSinglePropertyRule(nameof(MostLikely), CreateMostLikelyValuesIncreasingPreviousRowRule(isStrictMonotonic));
+            AddSinglePropertyRule(nameof(MostLikely), CreateMostLikelyValuesIncreasingNextRowRule(isStrictMonotonic));
+                       
+            AddSinglePropertyRule(nameof(Max),CreateMaxValuesIncreasingPreviousRowRule(isStrictMonotonic));
+            AddSinglePropertyRule(nameof(Max), CreateMaxValuesIncreasingNextRowRule(isStrictMonotonic));
+            
+            AddMultiPropertyRule(new List<string> { "Min", "MostLikely", "Max" }, new Rule(() => { return ((Min <= MostLikely) && (MostLikely <= Max)); }, "Min must be less than most likely, which must be less than Max", ErrorLevel.Severe));
+        }
+
+        private IRule CreateMinValuesIncreasingPreviousRowRule( bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (PreviousRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double prevMin = ((Triangular)PreviousRow.Y).Min;
+                    if (isStrictMonotonic)
+                    {
+                        return Min > prevMin;
+                    }
+                    else
+                    {
+                        return Min >= prevMin;
+                    }
+                }
+            },
+                "Min values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMinValuesIncreasingNextRowRule( bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (NextRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double nextMin = ((Triangular)NextRow.Y).Min;
+                    if (isStrictMonotonic)
+                    {
+                        return Min < nextMin;
+                    }
+                    else
+                    {
+                        return Min <= nextMin;
+                    }
+                }
+            },
+                "Min values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMostLikelyValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (PreviousRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double prevMostLikely = ((Triangular)PreviousRow.Y).MostLikely;
+                    if (isStrictMonotonic)
+                    {
+                        return MostLikely > prevMostLikely;
+                    }
+                    else
+                    {
+                        return MostLikely >= prevMostLikely;
+                    }
+                }
+            },
+                "Most likely values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMostLikelyValuesIncreasingNextRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (NextRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double nextMostLikely = ((Triangular)NextRow.Y).MostLikely;
+                    if (isStrictMonotonic)
+                    {
+                        return MostLikely < nextMostLikely;
+                    }
+                    else
+                    {
+                        return MostLikely <= nextMostLikely;
+                    }
+                }
+            },
+                "Most likely values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMaxValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (PreviousRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double prevMax = ((Triangular)PreviousRow.Y).Max;
+                    if (isStrictMonotonic)
+                    {
+                        return Max > prevMax;
+                    }
+                    else
+                    {
+                        return Max >= prevMax;
+                    }
+                }
+            },
+                "Max values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMaxValuesIncreasingNextRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (NextRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double nextMax = ((Triangular)NextRow.Y).Max;
+                    if (isStrictMonotonic)
+                    {
+                        return Max < nextMax;
+                    }
+                    else
+                    {
+                        return Max <= nextMax;
+                    }
+                }
+            },
+                "Max values are not increasing.", ErrorLevel.Severe);
         }
 
         public override void UpdateRow(int col, double value)

@@ -67,8 +67,9 @@ namespace HEC.FDA.ViewModel.GeoTech
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
            
-            ComputeComponentVM defaultCurve = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY);
+            ComputeComponentVM defaultCurve = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY, true);
             defaultCurve.SetPairedData(DefaultCurveData.FailureDefaultCurve());
+            defaultCurve.SetMinMaxValues(0, 1);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             string header = StringConstants.CREATE_LATERAL_STRUCTURES_HEADER;

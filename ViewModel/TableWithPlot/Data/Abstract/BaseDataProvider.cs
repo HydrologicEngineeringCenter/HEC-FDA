@@ -10,6 +10,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
 {
     public abstract class BaseDataProvider:IDataProvider
     {
+        public bool IsStrictMonotonic { get; set; }
         public string Name { get; set; } 
         public ObservableCollection<object> Data { get; } = new ObservableCollection<object>();
         public double xMax { get; set; } = double.MaxValue;
@@ -90,10 +91,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
         {
             AddUnlinkedRow(i);
             LinkList();
-            setGlobalMaxAndMin(i);
+            SetGlobalMaxAndMin(i);
         }
 
-        public void setGlobalMaxAndMin()
+        public void SetGlobalMaxAndMin()
         {
             foreach(SequentialRow sr in Data)
             {
@@ -101,7 +102,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
                 sr.Validate();
             }
         }
-        public void setGlobalMaxAndMin( int i)
+        public void SetGlobalMaxAndMin( int i)
         {
             ((SequentialRow)Data[i]).SetGlobalMaxRules(xMax, yMax, xMin, yMin);
         }

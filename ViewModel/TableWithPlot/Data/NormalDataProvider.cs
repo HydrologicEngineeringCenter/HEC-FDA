@@ -10,17 +10,27 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public NormalDataProvider()
         {
+            IsStrictMonotonic = false;
             Name = "Normal";
-            Data.Add(new NormalRow(0.0d, new Normal(0,0)));
-            Data.Add(new NormalRow(2.0d, new Normal(0, 2)));
+            Data.Add(new NormalRow(0.0d, new Normal(0,0), IsStrictMonotonic));
+            Data.Add(new NormalRow(2.0d, new Normal(0, 2), IsStrictMonotonic));
             LinkList();
         }
-        public NormalDataProvider(UncertainPairedData upd)
+
+        public NormalDataProvider(bool isStrictMonotonic)
+        {
+            IsStrictMonotonic = false;
+            Name = "Normal";
+            Data.Add(new NormalRow(0.0d, new Normal(0, 0), IsStrictMonotonic));
+            Data.Add(new NormalRow(2.0d, new Normal(0, 2), IsStrictMonotonic));
+            LinkList();
+        }
+        public NormalDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
             Name = "Normal";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new NormalRow(upd.Xvals[i], (Normal)upd.Yvals[i]));
+                Data.Add(new NormalRow(upd.Xvals[i], (Normal)upd.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }
@@ -37,7 +47,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                     mean0 = ((Normal)((NormalRow)Data[i]).Y).Mean;
                     stdev0 = ((Normal)((NormalRow)Data[i]).Y).StandardDeviation;
                 }
-                DataProviderExtensions.AddRow(this, i, new NormalRow(x0, new Normal(mean0, stdev0)));
+                DataProviderExtensions.AddRow(this, i, new NormalRow(x0, new Normal(mean0, stdev0), IsStrictMonotonic));
                 return;
             }
             if (Data.Count > i)
@@ -54,14 +64,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 double x = x0 + ((x1 - x0) / 2.0);
                 double mean = mean0 + ((mean1 - mean0) / 2.0);
                 double stdev = stdev0 + ((stdev1 - stdev0) / 2.0);
-                DataProviderExtensions.AddRow(this, i, new NormalRow(x, new Normal(mean, stdev)));
+                DataProviderExtensions.AddRow(this, i, new NormalRow(x, new Normal(mean, stdev), IsStrictMonotonic));
             }
             else
             {
                 x0 = ((NormalRow)Data[Data.Count - 1]).X;
                 mean0 = ((Normal)((NormalRow)Data[Data.Count - 1]).Y).Mean;
                 stdev0 = ((Normal)((NormalRow)Data[Data.Count - 1]).Y).StandardDeviation;
-                DataProviderExtensions.AddRow(this, i, new NormalRow(x0, new Normal(mean0, stdev0)));
+                DataProviderExtensions.AddRow(this, i, new NormalRow(x0, new Normal(mean0, stdev0), IsStrictMonotonic));
                 return;
             }
         }

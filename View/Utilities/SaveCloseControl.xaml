@@ -17,6 +17,7 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Label Content="{Binding SavingText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>

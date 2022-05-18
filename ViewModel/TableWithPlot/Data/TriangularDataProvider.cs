@@ -10,17 +10,28 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public TriangularDataProvider()
         {
+            IsStrictMonotonic = false;
             Name = "Triangular";
-            Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1)));
-            Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3)));
+            Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1), IsStrictMonotonic));
+            Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3), IsStrictMonotonic));
             LinkList();
         }
-        public TriangularDataProvider(UncertainPairedData upd)
+
+        public TriangularDataProvider(bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
+            Name = "Triangular";
+            Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1), IsStrictMonotonic));
+            Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3), IsStrictMonotonic));
+            LinkList();
+        }
+        public TriangularDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Triangular";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new TriangularRow(upd.Xvals[i], (Triangular)upd.Yvals[i]));
+                Data.Add(new TriangularRow(upd.Xvals[i], (Triangular)upd.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }
@@ -39,7 +50,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                     ml0 = ((Triangular)((TriangularRow)Data[i]).Y).MostLikely;
                     max0 = ((Triangular)((TriangularRow)Data[i]).Y).Max;
                 }
-                DataProviderExtensions.AddRow(this, i, new TriangularRow(x0, new Triangular(min0,ml0,max0)));
+                DataProviderExtensions.AddRow(this, i, new TriangularRow(x0, new Triangular(min0,ml0,max0), IsStrictMonotonic));
                 return;
             }
             if (Data.Count > i)
@@ -60,7 +71,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 double min = min0 + ((min1 - min0) / 2.0);
                 double ml = ml0 + ((ml1 - ml0) / 2.0);
                 double max = max0 + ((max1 - max0) / 2.0);
-                DataProviderExtensions.AddRow(this, i, new TriangularRow(x, new Triangular(min, ml, max)));
+                DataProviderExtensions.AddRow(this, i, new TriangularRow(x, new Triangular(min, ml, max), IsStrictMonotonic));
             }
             else
             {
@@ -68,7 +79,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 min0 = ((Triangular)((TriangularRow)Data[Data.Count - 1]).Y).Min;
                 ml0 = ((Triangular)((TriangularRow)Data[Data.Count - 1]).Y).MostLikely;
                 max0 = ((Triangular)((TriangularRow)Data[Data.Count - 1]).Y).Max;
-                DataProviderExtensions.AddRow(this, i, new TriangularRow(x0, new Triangular(min0, ml0, max0)));
+                DataProviderExtensions.AddRow(this, i, new TriangularRow(x0, new Triangular(min0, ml0, max0), IsStrictMonotonic));
                 return;
             }
 
