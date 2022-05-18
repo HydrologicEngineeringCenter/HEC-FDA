@@ -59,7 +59,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             string newPath = Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
             string newDirectory = Path.GetDirectoryName(newPath);
-            DirectoryInfo directoryInfo = Directory.CreateDirectory(newDirectory);
             
             bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
 
