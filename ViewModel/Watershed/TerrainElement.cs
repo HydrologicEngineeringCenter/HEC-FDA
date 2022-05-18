@@ -14,10 +14,6 @@ namespace HEC.FDA.ViewModel.Watershed
         private string _FileName;
         #endregion
         #region Properties
-        public OpenGLMapping.RasterFeatureNode NodeToAddBackToMapWindow
-        {
-            get;set;
-        }
 
         public string FileName
         {
@@ -60,11 +56,6 @@ namespace HEC.FDA.ViewModel.Watershed
         {
             TerrainElement elem = (TerrainElement)elementToClone;
             return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
-        }
-
-        public string GetTerrainPath()
-        {
-            return Connection.Instance.TerrainDirectory + "\\" + Name + ".tif";
         }
 
         public override void Rename(object sender, EventArgs e)

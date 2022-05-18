@@ -279,7 +279,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFolderNames[i] = newName;
                 }
-                newPathProbs.Add(new PathAndProbability(Name + "\\" + newName, ListOfRows[i].Probability));
+                newPathProbs.Add(new PathAndProbability( newName, ListOfRows[i].Probability));
             }
 
             WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
@@ -301,7 +301,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 {
                     _OriginalFolderNames.Add(row.Name);
                     string directoryName = Path.GetFileName(row.Name);
-                    pathProbs.Add(new PathAndProbability(Name + "\\" + directoryName, row.Probability));
+                    pathProbs.Add(new PathAndProbability( directoryName, row.Probability));
 
                     CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 }

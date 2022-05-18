@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using HEC.FDA.ViewModel.FlowTransforms;
+﻿using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.ViewModel.Validation;
-using static Importer.AsciiImport;
-using HEC.MVVMFramework.Base.Enumerations;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModel.Study
 {
-    public class ImportFromOldFdaVM: ImportFromFDA1VM
+    public class ImportStudyFromFDA1VM: ImportFromFDA1VM
     {
         #region Fields
         private StudyElement _StudyElement;
@@ -57,7 +55,7 @@ namespace HEC.FDA.ViewModel.Study
         #endregion
         #region Constructors
 
-        public ImportFromOldFdaVM(StudyElement studyElement) : base()
+        public ImportStudyFromFDA1VM(StudyElement studyElement) : base()
         {
             _StudyElement = studyElement;
             _FolderPath = "C:\\temp\\FDA\\";
