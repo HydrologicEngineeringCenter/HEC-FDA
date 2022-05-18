@@ -475,14 +475,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if(configurationValidationResult.IsValid)
             {
-                Simulation simulation = sc.BuildSimulation();
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
                 MeanRandomProvider randomProvider = new MeanRandomProvider();
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 try
                 {
-                    metrics.Results result = simulation.PreviewCompute();
-                    EAD = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                    metrics.ImpactAreaScenarioResults result = simulation.PreviewCompute();
+                    EAD = result.ConsequenceResults.MeanDamage("Total", "Total", CurrentImpactArea.ID);
                 }
                 catch (Exception ex)
                 {

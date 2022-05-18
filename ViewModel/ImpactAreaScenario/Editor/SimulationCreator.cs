@@ -10,7 +10,7 @@ using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System.Linq;
-using static compute.Simulation;
+using static compute.ImpactAreaScenarioSimulation;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -70,7 +70,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
-            _SimulationBuilder = Simulation.builder()
+            _SimulationBuilder = ImpactAreaScenarioSimulation.builder(_ImpactAreaID)
                 .withFlowFrequency(GetFrequencyDistribution())
                 .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData())
                 .withStageDamages(GetStageDamagesAsPairedData());
@@ -112,7 +112,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return stageDamages;
         }
 
-        public Simulation BuildSimulation()
+        public ImpactAreaScenarioSimulation BuildSimulation()
         {
             return _SimulationBuilder.build();
         }

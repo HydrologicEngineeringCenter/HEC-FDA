@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
 
         private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_RISK, ASSURANCE_OF_THRESHOLD };
-        private readonly metrics.Results _IASResult;
+        private readonly metrics.ImpactAreaScenarioResults _IASResult;
         private string _selectedOutcome;
         private string _selectedReport;
         private ThresholdComboItem _selectedThreshold;
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #endregion
 
-        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.Results iasResult)
+        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.ImpactAreaScenarioResults iasResult)
         {
             _IASResult = iasResult;
             LoadThresholdData(iasResult);
@@ -103,12 +103,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         }
 
-        private void LoadThresholdData(metrics.Results iasResult)
+        private void LoadThresholdData(metrics.ImpactAreaScenarioResults iasResult)
         {
-            Dictionary<int, Threshold> thresholdsDictionary = iasResult.PerformanceByThresholds.ThresholdsDictionary;
-            foreach(KeyValuePair<int, Threshold> threshold in thresholdsDictionary)
+ 
+            foreach(Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
             {
-                 ThresholdRowItem row = new ThresholdRowItem(threshold.Key, threshold.Value.ThresholdType, threshold.Value.ThresholdValue);
+                 ThresholdRowItem row = new ThresholdRowItem(threshold.ThresholdID, threshold.ThresholdType, threshold.ThresholdValue);
                 Thresholds.Add(new ThresholdComboItem(row.GetMetric()));
             }
 
@@ -122,7 +122,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private void loadVMs()
         {
             //todo: do i pass the results into all of these?
-            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
+            //todo: i don't need to pass both in here.
+            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult, _IASResult.ImpactAreaID);
             _damageByDamageCategoryVM = new DamageByDamageCategoryVM(_IASResult);
             _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
             _performanceAEPVM.updateSelectedMetric(SelectedThreshold);

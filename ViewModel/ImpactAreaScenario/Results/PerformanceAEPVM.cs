@@ -12,18 +12,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
-        public PerformanceAEPVM(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
+        public PerformanceAEPVM(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             LoadData(iasResult, thresholdComboItems);
         }
 
-        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
+        private void LoadData(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             for (int i = 0; i < thresholdComboItems.Count; i++)
             {
                 Threshold threshold = thresholdComboItems[i].Metric;
                 ThresholdEnum thresholdType = threshold.ThresholdType;
-                ProjectPerformanceResults performanceResults = GetResultsOfType(iasResult, thresholdType);
+                SystemPerformanceResults performanceResults = GetResultsOfType(iasResult, thresholdType);
 
                 if (performanceResults != null)
                 {
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     MetricsToRows.Add(threshold, rows);
 
                     //get the histogram data
-                    Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.HistogramOfAEPs;
+                    Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
                     int[] binCounts = histogramOfAEPs.BinCounts;
                     double binWidth = histogramOfAEPs.BinWidth;
                     double min = histogramOfAEPs.Min;
@@ -55,14 +55,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private ProjectPerformanceResults GetResultsOfType(metrics.Results iasResult, ThresholdEnum thresholdType)
+        private SystemPerformanceResults GetResultsOfType(ImpactAreaScenarioResults iasResult, ThresholdEnum thresholdType)
         {
-            ProjectPerformanceResults retval = null;
-            foreach (KeyValuePair<int, Threshold> result in iasResult.PerformanceByThresholds.ThresholdsDictionary)
+            SystemPerformanceResults retval = null;
+            foreach (Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
             {
-                if(result.Value.ThresholdType == thresholdType)
+                if(threshold.ThresholdType == thresholdType)
                 {
-                    retval = result.Value.ProjectPerformanceResults;
+                    retval = threshold.SystemPerformanceResults;
                     break;
                 }
             }

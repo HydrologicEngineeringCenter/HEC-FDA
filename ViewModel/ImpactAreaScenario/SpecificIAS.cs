@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public metrics.Results ComputeResults { get; set; }
+        public metrics.ImpactAreaScenarioResults ComputeResults { get; set; }
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
@@ -123,9 +123,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public metrics.Results ComputeScenario(object arg1, EventArgs arg2)
+        public metrics.ImpactAreaScenarioResults ComputeScenario(object arg1, EventArgs arg2)
         {
-            metrics.Results results = null;
+            metrics.ImpactAreaScenarioResults results = null;
 
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
@@ -148,7 +148,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
-                Simulation simulation = sc.BuildSimulation();
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 int seed = 999;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();

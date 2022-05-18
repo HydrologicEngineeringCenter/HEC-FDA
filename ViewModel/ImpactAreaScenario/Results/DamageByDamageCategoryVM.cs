@@ -9,22 +9,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
     {
         public List<DamageCategoryRowItem> Rows { get; set; }
 
-        public DamageByDamageCategoryVM(metrics.Results iasResult)
+        public DamageByDamageCategoryVM(metrics.ImpactAreaScenarioResults iasResult)
         {
-            ExpectedAnnualDamageResults eadResults = iasResult.ExpectedAnnualDamageResults;
+            ConsequenceResults eadResults = iasResult.ConsequenceResults;
             LoadDamCatTable(eadResults);
         }
 
-        private void LoadDamCatTable(ExpectedAnnualDamageResults eadResults)
+        private void LoadDamCatTable(ConsequenceResults eadResults)
         {
             List<string> xVals = new List<string>();
             List<double> yVals = new List<double>();
 
-            foreach(KeyValuePair<string, ThreadsafeInlineHistogram> entry in eadResults.HistogramsOfEADs)
-            {
-                xVals.Add(entry.Key);
-                yVals.Add(entry.Value.Mean);
-            }
+            //todo: richard is updating this 
+            //foreach(KeyValuePair<string, ThreadsafeInlineHistogram> entry in eadResults.MeanDamage("test", "test", 1)
+            //{
+            //    xVals.Add(entry.Key);
+            //    yVals.Add(entry.Value.Mean);
+            //}
 
             List<DamageCategoryRowItem> rows = new List<DamageCategoryRowItem>();
             for (int i = 0; i < xVals.Count; i++)

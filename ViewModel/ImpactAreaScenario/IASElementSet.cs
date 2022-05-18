@@ -24,7 +24,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private string _Description = "";
         private int _AnalysisYear;
 
-        private List<metrics.Results> _Results = new List<metrics.Results>();
+        private List<metrics.ImpactAreaScenarioResults> _Results = new List<metrics.ImpactAreaScenarioResults>();
 
         #endregion
 
