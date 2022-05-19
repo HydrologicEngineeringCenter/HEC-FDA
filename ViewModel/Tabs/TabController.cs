@@ -1,10 +1,12 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Linq;
 
 namespace HEC.FDA.ViewModel.Tabs
 {
@@ -263,11 +265,20 @@ namespace HEC.FDA.ViewModel.Tabs
         public void CloseTabsAndWindowsOpeningNewStudy()
         {
             _Windows.Clear();
-            _Tabs.Clear();
+
+            //remove all the tabs except for the importing tab
+            List<IDynamicTab> dynamicTabsToRemove = _Tabs.Where(tab => !tab.UniqueName.Equals(StudyElement.IMPORT_STUDY_UNIQUE_STRING)).ToList();
+
+            foreach (IDynamicTab itemToRemove in dynamicTabsToRemove)
+            {
+                _Tabs.Remove(itemToRemove);
+            }
+
+            //remove all the windows except for the importing tab window and the main window.
             foreach (Window win in Application.Current.Windows)
             {
                 //the main window doesn't have a tab. Everything else does.
-                if (win.DataContext is WindowVM windowVM && windowVM.Tab != null)
+                if (win.DataContext is WindowVM windowVM && windowVM.Tab != null && !windowVM.Tab.UniqueName.Equals(StudyElement.IMPORT_STUDY_UNIQUE_STRING))
                 {
                     win.Close();
                 }

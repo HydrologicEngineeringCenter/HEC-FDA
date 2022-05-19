@@ -22,6 +22,11 @@ namespace HEC.FDA.ViewModel.Study
     public class StudyElement : ParentElement
     {
         /// <summary>
+        /// Used to identify the import study tab so that i don't removing it when creating a new study.
+        /// This allows the user to read the log messages from the import process.
+        /// </summary>
+        public static readonly string IMPORT_STUDY_UNIQUE_STRING = "ImportStudy";
+        /// <summary>
         /// Every study that gets created gets regestered on the local computer. We display the most recent 5 studies
         /// to the user in the File menu.
         /// </summary>
@@ -219,7 +224,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             ImportStudyFromFDA1VM vm = new ImportStudyFromFDA1VM(this);
             string header = StringConstants.IMPORT_FROM_OLD_FDA;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStudy");
+            DynamicTabVM tab = new DynamicTabVM(header, vm, IMPORT_STUDY_UNIQUE_STRING);
             Navigate(tab, false, false);
         }
 
