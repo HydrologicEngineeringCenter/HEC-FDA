@@ -267,7 +267,6 @@ namespace HEC.FDA.View.TableWithPlot
                     DataGridCellInfo cellinfo = SelectedCells[0];
                     RowIndex = Items.IndexOf(cellinfo.Item);
                     ColumnIndex = cellinfo.Column.DisplayIndex;
-                    //so this is tricky, because when we sift through the properties on the row objects, it's always going to be X last, but in our clipboards, it'll always be the unique properties first, then X. so I need to skip the first 
                     for (Int32 i = 0; i <= clipboardData.Count() - 1; i++)
                     {
                         if ((RowIndex + i) > Items.Count - 1)
@@ -293,13 +292,15 @@ namespace HEC.FDA.View.TableWithPlot
                             Binding binding = (Columns[ColumnIndex + j] as DataGridBoundColumn).Binding as Binding;
                             Type RowType = Items[RowIndex + i].GetType();
                             PropertyInfo y = RowType.GetProperty(binding.Path.Path);
-                            if(ColumnIndex+j == Columns.Count-1)
+
+                            try
                             {
-                                y.SetValue(Items[RowIndex + i], Convert.ChangeType(clipboardData[i][0], y.PropertyType));
+                                var newVal = Convert.ChangeType(clipboardData[i][j], y.PropertyType);
+                                ((SequentialRow)Items[RowIndex + i]).UpdateRow(ColumnIndex + j, (double)newVal);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                y.SetValue(Items[RowIndex + i], Convert.ChangeType(clipboardData[i][j + 1], y.PropertyType));
+                                //ignore
                             }
                         }
                     }
@@ -348,7 +349,7 @@ namespace HEC.FDA.View.TableWithPlot
                         {
                             if ((ColumnIndex + j) > ColumnMax)
                                 continue;
-                           if (this.Columns[ColumnIndex + j].IsReadOnly)
+                            if (this.Columns[ColumnIndex + j].IsReadOnly)
                                 continue;
                             Binding binding = (this.Columns[ColumnIndex + j] as DataGridBoundColumn).Binding as Binding;
                             Type RowType = Items[RowIndex + i].GetType();
@@ -448,10 +449,6 @@ namespace HEC.FDA.View.TableWithPlot
                             if (dna != null)
                             {
                                 Console.WriteLine(dna.DisplayName);
-                                if(dna.DisplayIndex >= 0)
-                                {
-                                    dgtc.DisplayIndex = dna.DisplayIndex;
-                                }
                                 dgtc.Header = dna.DisplayName;
                                 cancel = false;
                             }

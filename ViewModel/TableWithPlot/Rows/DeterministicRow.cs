@@ -8,6 +8,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public class DeterministicRow : SequentialRow
     {
+        private double _x;
+        [DisplayAsColumn("X Value")]
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged();
+                ((DeterministicRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((DeterministicRow)NextRow)?.NotifyPropertyChanged(nameof(X));
+            }
+
+        }
+
         [DisplayAsColumn("Y Value")]
         [DisplayAsLine("Y Value", Enumerables.ColorEnum.Red)]
         public double Value

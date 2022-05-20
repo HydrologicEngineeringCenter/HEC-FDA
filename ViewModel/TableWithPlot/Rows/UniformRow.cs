@@ -8,6 +8,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class UniformRow : SequentialRow
     {
+        private double _x;
+        [DisplayAsColumn("X Value")]
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged();
+                ((UniformRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((UniformRow)NextRow)?.NotifyPropertyChanged(nameof(X));
+            }
+
+        }
+
         [DisplayAsColumn("Min")]
         [DisplayAsLine("Min", Enumerables.ColorEnum.Blue, true)]
         public double Min
