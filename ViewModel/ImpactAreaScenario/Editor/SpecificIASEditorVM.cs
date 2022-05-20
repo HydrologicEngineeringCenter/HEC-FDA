@@ -519,9 +519,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             UncertainPairedData retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                //todo: do i cast to curveChildElem or do i change the row item to hold a curve child elem, or do i make a new row item
-                CurveChildElement elem =(CurveChildElement) SelectedFrequencyElement.ChildElement;
-                retval = elem.ComputeComponentVM.SelectedItemToPairedData();
+                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
+                {
+                    retval = elem.CreatePairedData();
+                }
             }
 
             return retval;

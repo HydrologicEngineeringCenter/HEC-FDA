@@ -18,7 +18,7 @@ namespace HEC.FDA.View.Commands
         #region Functions
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-                HEC.FDA.ViewModel.BaseViewModel vm = (HEC.FDA.ViewModel.BaseViewModel)values[0];
+            ViewModel.BaseViewModel vm = (ViewModel.BaseViewModel)values[0];
             if (vm != null)
             {
                 //todo: Cody commented out on 1/2/20. I am not sure if it was needed.

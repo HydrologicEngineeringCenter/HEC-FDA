@@ -92,7 +92,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private ContinuousDistribution GetFrequencyDistribution()
         {
-            return _FreqElem.GetDistribution();
+            return _FreqElem.CreateLP3Distribution();
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()

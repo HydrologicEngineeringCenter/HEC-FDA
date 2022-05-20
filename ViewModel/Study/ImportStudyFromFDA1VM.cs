@@ -65,8 +65,12 @@ namespace HEC.FDA.ViewModel.Study
         #region Voids
         public override void Import()
         {
-            RunSetupLogic();
-            base.Import();
+            FdaValidationResult validationResult = ValidateEditor();
+            if(validationResult.IsValid)
+            {
+                RunSetupLogic();
+                base.Import();
+            }
         }
         public override void AddValidationRules()
         {
@@ -198,5 +202,13 @@ namespace HEC.FDA.ViewModel.Study
         }
 
         #endregion
+
+        private FdaValidationResult ValidateEditor()
+        {
+            FdaValidationResult result = new FdaValidationResult();
+
+            return result;
+        }
+
     }
 }
