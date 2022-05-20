@@ -103,7 +103,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         }
 
-        private void LoadThresholdData(metrics.ImpactAreaScenarioResults iasResult)
+        private void LoadThresholdData(ImpactAreaScenarioResults iasResult)
         {
  
             foreach(Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)

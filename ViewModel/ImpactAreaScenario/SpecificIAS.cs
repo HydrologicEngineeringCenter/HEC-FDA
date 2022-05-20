@@ -123,9 +123,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public metrics.ImpactAreaScenarioResults ComputeScenario(object arg1, EventArgs arg2)
+        public ImpactAreaScenarioResults ComputeScenario(object arg1, EventArgs arg2)
         {
-            metrics.ImpactAreaScenarioResults results = null;
+            ImpactAreaScenarioResults results = null;
 
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);

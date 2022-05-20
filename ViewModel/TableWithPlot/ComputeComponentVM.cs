@@ -232,18 +232,18 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             string selectedItemName = element.Attribute("selectedItem")?.Value;
             foreach (XElement updEl in element.Elements())
             {
-                Name = updEl.Attribute("Name")?.Value;
-                XLabel = updEl.Attribute("XLabel")?.Value;
-                YLabel = updEl.Attribute("YLabel")?.Value;
                 Description = updEl.Attribute("Description")?.Value;
                 _DeterministicOnly = Convert.ToBoolean(updEl.Attribute("DeterministicOnly")?.Value);
 
                 string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
                 string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
-                ObjectHandle oh = System.Activator.CreateInstance(null, typeName);//requires empty constructor
+                ObjectHandle oh = Activator.CreateInstance(null, typeName);//requires empty constructor
                 BaseDataProvider dist = oh.Unwrap() as BaseDataProvider;
 
                 UncertainPairedData upd = UncertainPairedData.ReadFromXML(updEl);
+                XLabel = upd.XLabel;
+                YLabel = upd.YLabel;
+                Name = upd.Name;
                 dist.UpdateFromUncertainPairedData(upd);
                 Options.Add(dist);
             }
