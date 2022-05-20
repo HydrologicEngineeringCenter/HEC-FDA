@@ -9,6 +9,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class NormalRow : SequentialRow
     {
+        private double _x;
+        [DisplayAsColumn("X Value")]
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged();
+                ((NormalRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((NormalRow)NextRow)?.NotifyPropertyChanged(nameof(X));
+            }
+
+        }
+
         [DisplayAsColumn("Mean")]
         [DisplayAsLine("Mean", Enumerables.ColorEnum.Red)]
         public double Mean

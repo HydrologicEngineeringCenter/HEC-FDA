@@ -10,7 +10,37 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
     {
         private double _Confidence95 = 0;
         private double _Confidence05 = 0;
+        private double _x;
 
+        [DisplayAsColumn("X Value")]
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged();
+                ((GraphicalRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((GraphicalRow)NextRow)?.NotifyPropertyChanged(nameof(X));
+            }
+
+        }
+        [DisplayAsColumn("Y Value")]
+        [DisplayAsLine("Y Value")]
+        public double Value
+        {
+            get
+            {
+                return ((Deterministic)Y).Value;
+            }
+            set
+            {
+                Y = new Deterministic(value);
+                Confidence05 = 0;
+                Confidence95 = 0;
+                NotifyPropertyChanged();
+            }
+        }
         [DisplayAsColumn("5% Confidence")]
         [DisplayAsLine("5% Confidence")]
         public double Confidence05
@@ -42,22 +72,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        [DisplayAsColumn("Y Value", 1)]
-        [DisplayAsLine("Y Value")]
-        public double Value
-        {
-            get
-            {
-                return ((Deterministic)Y).Value;
-            }
-            set
-            {
-                Y = new Deterministic(value);
-                Confidence05 = 0;
-                Confidence95 = 0;
-                NotifyPropertyChanged();
-            }
-        }
+
         protected override List<string> YMinProperties
         {
             get

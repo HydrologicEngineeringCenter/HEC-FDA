@@ -10,6 +10,20 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     internal class TriangularRow : SequentialRow
     {
+        private double _x;
+        [DisplayAsColumn("X Value")]
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged();
+                ((TriangularRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((TriangularRow)NextRow)?.NotifyPropertyChanged(nameof(X));
+            }
+
+        }
         [DisplayAsColumn("Min")]
         [DisplayAsLine("Min", Enumerables.ColorEnum.Blue, true)]
         public double Min

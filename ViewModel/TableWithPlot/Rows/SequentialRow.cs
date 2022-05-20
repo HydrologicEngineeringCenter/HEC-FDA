@@ -8,24 +8,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public abstract class SequentialRow : MVVMFramework.ViewModel.Implementations.ValidatingBaseViewModel
     {
-        private double _x;
-        [DisplayAsColumn("X Value",0)]
-        public double X
-        {
-            get { return _x; }
-            set
-            {
-                _x = value;
-                NotifyPropertyChanged();
-                PreviousRow?.NotifyPropertyChanged(nameof(X));
-                NextRow?.NotifyPropertyChanged(nameof(X));
-            }
-
-        }
         public abstract void UpdateRow(int col, double x);
         protected abstract List<string> YMinProperties { get; }
         protected abstract List<string> YMaxProperties { get; }
-
+        public abstract double X { get; set; }
         public IDistribution Y { get; set; }
         public SequentialRow PreviousRow { get; set; }
         public SequentialRow NextRow { get; set; }
