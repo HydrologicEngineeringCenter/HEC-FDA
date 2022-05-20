@@ -449,10 +449,6 @@ namespace HEC.FDA.View.TableWithPlot
                             if (dna != null)
                             {
                                 Console.WriteLine(dna.DisplayName);
-                                //if(dna.DisplayIndex >= 0)
-                                //{
-                                //    dgtc.DisplayIndex = dna.DisplayIndex;
-                                //}
                                 dgtc.Header = dna.DisplayName;
                                 cancel = false;
                             }
