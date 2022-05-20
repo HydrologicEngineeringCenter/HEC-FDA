@@ -32,18 +32,18 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label  Grid.Column="0" Content="Frequency Relationship:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label  Grid.Column="0" Content="{Binding FrequencyRelationshipLabel}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
                     <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
 
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding FrequencyElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFrequencyElement}" />
 
-                    <Label  Grid.Column="2" Content="Inflow-Outflow:" HorizontalAlignment="Right" />
+                    <Label  Grid.Column="2" Content="{Binding RegulatedUnregulatedLabel}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding InflowOutflowElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedInflowOutflowElement}" />
 
-                    <Label  Grid.Column="4" Content="Rating Curve:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label  Grid.Column="4" Content="{Binding StageDischargeLabel}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
                     <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" Visibility="{Binding RatingRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
                     <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
 
@@ -55,16 +55,16 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label  Grid.Column="0" Content="Lateral Structure:" HorizontalAlignment="Right" />
+                    <Label  Grid.Column="0" Content="{Binding LateralStructureLabel}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding LeveeFeatureElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedLeveeFeatureElement}"/>
 
-                    <Label  Grid.Column="2" Content="Ext-Int Stage:" HorizontalAlignment="Right" />
+                    <Label  Grid.Column="2" Content="{Binding ExteriorInteriorLabel}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
 
-                    <Label  Grid.Column="4" Content="Stage Damage:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label  Grid.Column="4" Content="{Binding StageDamageLabel}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
                     <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
 

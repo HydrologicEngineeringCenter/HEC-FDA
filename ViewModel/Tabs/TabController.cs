@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Linq;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
 
 namespace HEC.FDA.ViewModel.Tabs
 {
@@ -225,9 +226,20 @@ namespace HEC.FDA.ViewModel.Tabs
                 //though the window has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
             }
-            if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
+            else if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
             {
                 vm.InitializePlotModel();
+            }
+            else if (tabToPopIn.BaseVM is AggregatedStageDamageEditorVM stageDamageVM)
+            {
+                if (stageDamageVM.ManualVM.TableWithPlot != null)
+                {
+                    stageDamageVM.ManualVM.TableWithPlot.InitModel();
+                }
+                else if (stageDamageVM.CalculatedVM.TableWithPlot != null)
+                {
+                    stageDamageVM.CalculatedVM.TableWithPlot.InitModel();
+                }
             }
         }
 
@@ -251,13 +263,24 @@ namespace HEC.FDA.ViewModel.Tabs
             if(tabToPopOut.BaseVM is CurveEditorVM curveEditorVM)
             {
                 //only one plot model can be linked to one plot view. An exception was getting thrown when trying
-                //to open this vm in a window. It seems as thought the tab was still holding onto a connection even
+                //to open this vm in a window. It seems as though the tab was still holding onto a connection even
                 //though the tab has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
             }
-            if(tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM vm)
+            else if(tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM frequencyVM)
             {
-                vm.InitializePlotModel();
+                frequencyVM.InitializePlotModel();
+            }
+            else if(tabToPopOut.BaseVM is AggregatedStageDamageEditorVM stageDamageVM)
+            {
+                if (stageDamageVM.ManualVM.TableWithPlot != null)
+                {
+                    stageDamageVM.ManualVM.TableWithPlot.InitModel();
+                }
+                else if (stageDamageVM.CalculatedVM.TableWithPlot != null)
+                {
+                    stageDamageVM.CalculatedVM.TableWithPlot.InitModel();
+                }
             }
             Navigate(tabToPopOut, true, false);
         }

@@ -13,11 +13,8 @@
     <UserControl.Resources>
         <cmds:OkCommand x:Key="ok"/>
         <cmds:CloseCommand x:Key="close"/>
-        <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
         <Utils:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <DataTemplate x:Key="myTaskTemplate">
-        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -53,10 +50,7 @@
             <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,2,5" Width="100" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
                 <Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource OkConverter}">
-                        <Binding/>
                         <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
-                    </MultiBinding>
                 </Button.CommandParameter>
             </Button>
         </StackPanel>

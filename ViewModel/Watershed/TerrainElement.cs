@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -71,9 +72,16 @@ namespace HEC.FDA.ViewModel.Watershed
                 //rename the folders in the study.
                 if (!originalName.Equals(newName))
                 {
-                    string sourceFilePath = Connection.Instance.TerrainDirectory + "\\" + originalName;
-                    string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + newName;
-                    Directory.Move(sourceFilePath, destinationFilePath);
+                    try
+                    {
+                        string sourceFilePath = Connection.Instance.TerrainDirectory + "\\" + originalName;
+                        string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + newName;
+                        Directory.Move(sourceFilePath, destinationFilePath);
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show("Renaming the terrain directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
             }
         }
