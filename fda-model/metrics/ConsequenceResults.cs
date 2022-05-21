@@ -136,7 +136,12 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
-        }
+        }/// <summary>
+        /// This method returns the sum of mean EAD over damage categories for a given asset category. 
+        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure. 
+        /// </summary>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
         public double MeanExpectedAnnualConsequencesAllDamageCategories(string assetCategory)
         {
             double meanEAD = 0;
@@ -149,6 +154,11 @@ namespace metrics
             }
             return meanEAD;
         }
+        /// <summary>
+        /// This method returns the sum of mean EAD over damage categories for a given asset category. 
+        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <returns></returns>
         public double MeanExpectedAnnualConsequencesAllAssetCategories(string damageCategory)
         {
             double meanEAD = 0;
