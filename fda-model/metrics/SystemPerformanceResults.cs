@@ -130,6 +130,17 @@ namespace metrics
             double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
+        /// <summary>
+        /// This method returns assurance of stage or levee, previously known as conditional non exceedance probaility 
+        /// </summary>
+        /// <param name="standardExceedanceProbability"></param>
+        /// <returns></returns>
+        public double AssuranceOfStageOrLevee(double standardExceedanceProbability)
+        {
+            AssuranceResultStorage assuranceResultStorage = GetAssurance(STAGE_ASSURANCE_TYPE, standardExceedanceProbability);
+            double assurance = assuranceResultStorage.AssuranceHistogram.CDF(standardExceedanceProbability);
+            return assurance;
+        }
         public bool AssuranceIsConverged()
         {
             double standardNonExceedanceProbability = 0.98;
