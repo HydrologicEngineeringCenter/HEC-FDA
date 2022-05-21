@@ -93,6 +93,15 @@ namespace metrics
                 _assuranceList.Add(assurance);
             }
         }
+        /// <summary>
+        /// This method returns the thread safe inline histogram of AEPs
+        /// </summary>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetAEPHistogram()
+        {
+            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
+            return aepHistogram;
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
