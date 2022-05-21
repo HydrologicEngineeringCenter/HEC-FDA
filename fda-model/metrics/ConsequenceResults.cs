@@ -137,6 +137,30 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
+        public double MeanExpectedAnnualConsequencesAllDamageCategories(string assetCategory)
+        {
+            double meanEAD = 0;
+            foreach (ConsequenceResult consequenceResult in ConsequenceResultList)
+            {
+                if (consequenceResult.AssetCategory.Equals(assetCategory))
+                {
+                    meanEAD += consequenceResult.MeanExpectedAnnualConsequences();
+                }
+            }
+            return meanEAD;
+        }
+        public double MeanExpectedAnnualConsequencesAllAssetCategories(string damageCategory)
+        {
+            double meanEAD = 0;
+            foreach (ConsequenceResult consequenceResult in ConsequenceResultList)
+            {
+                if(consequenceResult.DamageCategory.Equals(damageCategory))
+                {
+                    meanEAD += consequenceResult.MeanExpectedAnnualConsequences();
+                }
+            }
+            return meanEAD;
+        }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");
