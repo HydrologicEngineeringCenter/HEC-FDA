@@ -86,7 +86,9 @@ namespace metrics
                 }
             }
             ConsequenceResults dummyConsequenceResults = new ConsequenceResults();
-            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned.")));
+            string message = $"The requested damage cetegory - asset category - impact area combination could not be found. an arbitrary object is being returned";
+            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyConsequenceResults;
         }
         public void ReportMessage(object sender, MessageEventArgs e)

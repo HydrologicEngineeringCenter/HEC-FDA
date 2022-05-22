@@ -251,7 +251,9 @@ namespace metrics
                     }
                 }
             }
-            ReportMessage(this, new MessageEventArgs(new Message("the requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned")));
+            string message = $"The requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned";
+            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             AssuranceResultStorage dummyAssurance = new AssuranceResultStorage();
             return dummyAssurance;
 

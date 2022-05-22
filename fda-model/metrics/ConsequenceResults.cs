@@ -5,9 +5,11 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
+
     public class ConsequenceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
@@ -64,7 +66,7 @@ namespace metrics
         #endregion
 
         #region Methods 
-        public void AddConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        internal void AddConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
@@ -73,7 +75,7 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        public void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
+        internal void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
         {
             ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
@@ -81,7 +83,7 @@ namespace metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        public void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
@@ -116,7 +118,9 @@ namespace metrics
                     }
                 }
             }
-            ReportMessage(this, new MessageEventArgs(new Message("The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned.")));
+        string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+        ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+        ReportMessage(this, new MessageEventArgs(errorMessage));
             ConsequenceResult dummyResult = new ConsequenceResult();
             return dummyResult;
         }

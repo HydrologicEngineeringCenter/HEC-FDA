@@ -74,7 +74,9 @@ namespace metrics
                 }
             }
             Threshold dummyThreshold = new Threshold();
-            ReportMessage(this, new MessageEventArgs(new Message("the requested threshold could not be found so a dummy threshold is being returned")));
+            string message = "The requested threshold could not be found so a dummy threshold is being returned";
+            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyThreshold;
 
         }

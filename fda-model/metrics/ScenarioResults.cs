@@ -78,7 +78,9 @@ namespace metrics
                 }
             }
             ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults();
-            ReportMessage(this, new MessageEventArgs(new Message("The requested impact area Results could not be found. An arbitrary object is being returned.")));
+            string message = $"The IMPACT AREA SCENARIO RESULTS could not be found. an arbitrary object is being returned";
+            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyResults;
         }
         public void ReportMessage(object sender, MessageEventArgs e)
