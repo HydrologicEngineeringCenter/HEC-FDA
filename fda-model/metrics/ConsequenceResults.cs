@@ -190,6 +190,17 @@ namespace metrics
             }
             return meanEAD;
         }
+        /// <summary>
+        /// This method gets the histogram (distribution) of consequences 
+        /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <param name="impactAreaID"></param>
+        /// <returns></returns>
+        public Statistics.Histograms.ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory, string assetCategory, int impactAreaID)
+        {
+            return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
+        }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");

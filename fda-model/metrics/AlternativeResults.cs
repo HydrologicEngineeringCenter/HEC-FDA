@@ -74,7 +74,7 @@ namespace metrics
         {
             return GetConsequenceResults(impactAreaID).ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
         }
-        public void AddConsequenceResults(int impactAreaID)
+        internal void AddConsequenceResults(int impactAreaID)
         {
             ConsequenceResults consequenceResults = GetConsequenceResults(impactAreaID);
             if (consequenceResults.IsNull)
@@ -83,13 +83,18 @@ namespace metrics
                 _consequenceResultsList.Add(newConsequenceResults);
             }
         }
-        public void AddConsequenceResults(ConsequenceResults consequenceResultsToAdd)
+        internal void AddConsequenceResults(ConsequenceResults consequenceResultsToAdd)
         {
             ConsequenceResults consequenceResults = GetConsequenceResults(consequenceResultsToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
                 _consequenceResultsList.Add(consequenceResultsToAdd);
             }
+        }
+        public Statistics.Histograms.ThreadsafeInlineHistogram GetConsequencesHistogram(string damageCategory, string assetCategory, int impactAreaID)
+        {
+            ConsequenceResults consequenceResults = GetConsequenceResults(impactAreaID);
+            return consequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         public ConsequenceResults GetConsequenceResults(int regionID)
         {

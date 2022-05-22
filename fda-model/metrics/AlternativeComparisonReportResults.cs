@@ -65,7 +65,11 @@ namespace metrics
                 _resultsList.Add(alternativeResultsToAdd);
             }
         }
-
+        public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID, string damageCategory, string assetCategory)
+        {
+            AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
+            return alternativeResults.GetConsequencesHistogram(damageCategory, assetCategory, impactAreaID);
+        }
         public AlternativeResults GetAlternativeResults(int alternativeID)
         {
             foreach (AlternativeResults alternativeResults in _resultsList)
