@@ -89,12 +89,27 @@ namespace metrics
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
+        /// <summary>
+        /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
+        /// Damage measures could be EAD or other measures of consequences 
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <param name="impactAreaID"></param>
+        /// <returns></returns>
         public double MeanDamage(string damageCategory, string assetCategory, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             return damageResult.MeanExpectedAnnualConsequences();
         }
-
+        /// <summary>
+        /// This method calls the inverse CDF of thedamage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <param name="impactAreaID"></param>
+        /// <returns></returns>
         public double ConsequenceExceededWithProbabilityQ(string damageCategory, double exceedanceProbability, string assetCategory, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
