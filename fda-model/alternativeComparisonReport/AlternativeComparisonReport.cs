@@ -41,9 +41,7 @@ namespace alternativeComparisonReport
         }
         /// <summary>
         /// This method computes the distribution of average annual equivalent damage reduced between the without-project alternative and each of the with-project alternatives
-        /// The function returns a nested dictionary of results. The first dictionary has a key of type int for the alternative ID, the second has a key of type 
-        /// int for the impact area ID, and the third has a key of type string for the damage category. The value of the third dictionary is the histogram of 
-        /// damage reduced for a given damage category in a given impact area and for a given alternative comparison. 
+        /// The function returns an AlternativeComparisonReportResults object which stores a list of AlternativeResults for each with-project condition. 
         /// </summary>
         /// <param name="randomProvider"></param> random number provider
         /// <param name="convergenceCriteria"></param> the study convergence criteria 
@@ -104,33 +102,31 @@ namespace alternativeComparisonReport
         }
         /// <summary>
         /// This method computes the distribution of expected annual damage reduced between the without-project alternative and each of the with-project alternatives
-        /// The function returns a nested dictionary of results. The first dictionary has a key of type int for the alternative ID, the second has a key of type 
-        /// int for the impact area ID, and the third has a key of type string for the damage category. The value of the third dictionary is the histogram of 
-        /// damage reduced for a given damage category in a given impact area and for a given alternative comparison. 
+        /// This method returns an AlternativeComparisonReportResults object, which contains a list of AlternativeResults for each with-project condition. 
         /// </summary>
         /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
         /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
         /// <returns></returns>
-        public List<AlternativeResults> ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool iWantBaseYearResults)
+        public AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool iWantBaseYearResults)
         {
-            List<AlternativeResults> eadReducedAllAlternatives;
+            AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
             if (iWantBaseYearResults)
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria);
+                damagesReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria);
             }
             else
             {
-                eadReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria);
+                damagesReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria);
             }
-            return eadReducedAllAlternatives;
+            return damagesReducedAllAlternatives;
         } 
 
-        private List<AlternativeResults> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        private AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             ScenarioResults withoutProjectScenario = _withoutProjectAlternative.CurrentYearScenario.Compute(randomProvider, convergenceCriteria);
+            AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
 
-            List<AlternativeResults> damageReducedAlternatives = new List<AlternativeResults>();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
@@ -164,18 +160,17 @@ namespace alternativeComparisonReport
                     }
                     damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
-                damageReducedAlternatives.Add(damageReducedAlternative);
+                damageReducedAlternatives.AddAlternativeResults(damageReducedAlternative);
             }
             return damageReducedAlternatives;
 
         }
 
 
-        private List<AlternativeResults> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        private AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             ScenarioResults withoutProjectScenario = _withoutProjectAlternative.FutureYearScenario.Compute(randomProvider, convergenceCriteria);
-
-            List<AlternativeResults> damageReducedAlternatives = new List<AlternativeResults>();
+            AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
 
             foreach (Alternative alternative in _withProjectAlternatives)
             {
@@ -209,7 +204,7 @@ namespace alternativeComparisonReport
                     }
                     damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
-                damageReducedAlternatives.Add(damageReducedAlternative);
+                damageReducedAlternatives.AddAlternativeResults(damageReducedAlternative);
             }
             return damageReducedAlternatives;
 

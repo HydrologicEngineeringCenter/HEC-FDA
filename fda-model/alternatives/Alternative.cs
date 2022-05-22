@@ -37,9 +37,7 @@ namespace alternatives
         }
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
-        /// nested dictionary. The first dictionary consists of a key of type int which is an impact area ID and a value which is itself a 
-        /// dictionary of damage results. This internal dictionary consists of a key of type string which is a damage category
-        /// and a value which is a histogram of damage in average annual equivalent terms.
+        /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
         /// </summary>
         /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> number of iterations to sample distributions
