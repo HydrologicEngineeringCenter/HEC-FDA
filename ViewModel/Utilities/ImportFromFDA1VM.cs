@@ -12,7 +12,10 @@ namespace HEC.FDA.ViewModel.Utilities
     public abstract class ImportFromFDA1VM : BaseViewModel
     {
         private string _ImportLog = "";
+        private string _Path;
+        
         public AsciiImport _Importer;
+
         public List<ChildElement> ElementsToImport { get; } = new List<ChildElement>();
 
         public string ImportLog
@@ -20,14 +23,20 @@ namespace HEC.FDA.ViewModel.Utilities
             get { return _ImportLog; }
             set { _ImportLog = value; NotifyPropertyChanged(); }
         }
-        public string Path { get; set; }
-        public ImportFromFDA1VM() 
+        public string Path
         {
+            get { return _Path; }
+            set { _Path = value; NotifyPropertyChanged(); }
+        }
+        public ImportFromFDA1VM()
+        {
+
+            AddRule(nameof(Path), () => !string.IsNullOrWhiteSpace(Path), "Import file path cannot be blank or whitespace.");
+            Validate();
         }
 
         public abstract void SaveElements();
 
-        //public abstract void Validate(Action<FdaValidationResult> validationResult);
         public abstract void CreateElements(bool checkForNameConflict = true);
         public abstract ImportOptions GetImportOptions();
 
@@ -39,13 +48,13 @@ namespace HEC.FDA.ViewModel.Utilities
             Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
             AsyncLogger logger = new AsyncLogger();
             _Importer = new AsciiImport(logger);//pass in the logger.
-            //put on background
+                                                //put on background
             Task task = Task.Run(() => _Importer.ImportAsciiData(Path, GetImportOptions()));
 
             Timer timer = new Timer(500, 100, true);
             timer.Tick += () => ImportLog += logger.PopLastMessages();
 
-            task.ContinueWith(t => 
+            task.ContinueWith(t =>
             {
                 timer.Stop();
                 ImportLog += logger.PopLastMessages();
@@ -56,7 +65,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 dispatcher.Invoke(new Action(() =>
                 {
                     SaveElements();
-                }));               
+                }));
             });
         }
 

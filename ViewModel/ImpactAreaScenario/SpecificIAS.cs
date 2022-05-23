@@ -11,6 +11,7 @@ using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -39,7 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public metrics.ImpactAreaScenarioResults ComputeResults { get; set; }
+        public ImpactAreaScenarioResults ComputeResults { get; set; }
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
@@ -113,17 +114,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ExtIntStageID = Int32.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
             StageDamageID = Int32.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
+            IEnumerable<XElement> results = iasElem.Elements("Results");
+            if (results.Any())
+            {
+                ComputeResults = (ImpactAreaScenarioResults)ImpactAreaScenarioResults.ReadFromXML(results.First());
+            }
+
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
        
         #endregion
         
         /// <summary>
-        /// Intentionally leaving commented out for now. - Cody 10/26/21
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public ImpactAreaScenarioResults ComputeScenario(object arg1, EventArgs arg2)
+        public void ComputeScenario(object arg1, EventArgs arg2)
         {
             ImpactAreaScenarioResults results = null;
 
@@ -149,12 +155,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             if (configurationValidationResult.IsValid)
             {
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
+                simulation.MessageReport += MyMessageHandler;
                 int seed = 999;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 try
                 {
-                    results = simulation.Compute(randomProvider, cc); 
+                    results = simulation.Compute(randomProvider, cc);
+                    ComputeResults = results;
                     MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 }
@@ -167,11 +175,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-            return results;
 
         }
 
- 
+        public void MyMessageHandler(object sender, MessageEventArgs e)
+        {
+            //The following 3 messages are coming into here.
+            //default
+            //Ead message
+            //total
+
+            //if (e.Message is FrequencyDamageMessage damageMessage)
+            //{
+            //    //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
+            //    if (e.Message.Message.Equals("Damage-frequency function for damage and asset categoriesdefaultandunassigned"))
+            //    {
+            //        _DamageFrequencyCurve = damageMessage.FrequencyDamage;
+            //    }
+            //}
+        }
 
         private XElement WriteThresholdsToXML()
         {
@@ -218,6 +240,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             iasElement.Add(stageDamageElem);
 
             iasElement.Add(WriteThresholdsToXML());
+
+            if(ComputeResults != null)
+            {
+                XElement resultsXElement = ComputeResults.WriteToXml();
+                iasElement.Add(resultsXElement);
+            }
 
             return iasElement;
         }

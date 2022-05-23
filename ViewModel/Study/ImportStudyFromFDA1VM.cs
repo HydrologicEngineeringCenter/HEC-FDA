@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModel.Study
@@ -25,31 +26,25 @@ namespace HEC.FDA.ViewModel.Study
         private List<ChildElement> _ExteriorInteriorElements = new List<ChildElement>();
         private List<ChildElement> _LeveeElements = new List<ChildElement>();
         private List<ChildElement> _OcctypesElements = new List<ChildElement>();
+        private bool _HaventImported = true;
         #endregion
-        #region Properties       
+        #region Properties
+
+        public bool HaventImported
+        {
+            get { return _HaventImported; }
+            set { _HaventImported = value; NotifyPropertyChanged(); }
+        }
+
         public string FolderPath
         {
             get { return _FolderPath; }
-            set
-            {
-                if (!_FolderPath.Equals(value))
-                {
-                    _FolderPath = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { _FolderPath = value; NotifyPropertyChanged();}
         }
         public string StudyName
         {
             get { return _StudyName; }
-            set
-            {
-                if (!_StudyName.Equals(value))
-                {
-                    _StudyName = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { _StudyName = value;NotifyPropertyChanged();}
         }
 
         #endregion
@@ -58,8 +53,7 @@ namespace HEC.FDA.ViewModel.Study
         public ImportStudyFromFDA1VM(StudyElement studyElement) : base()
         {
             _StudyElement = studyElement;
-            _FolderPath = "C:\\temp\\FDA\\";
-            _StudyName = "Example";
+            Validate();
         }
         #endregion
         #region Voids
@@ -70,14 +64,18 @@ namespace HEC.FDA.ViewModel.Study
             {
                 RunSetupLogic();
                 base.Import();
+                HaventImported = false;
+            }
+            else
+            {
+                MessageBox.Show(validationResult.ErrorMessage, "Invalid Entries", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
         public override void AddValidationRules()
         {
-            AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
-            AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
-            AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
-            AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
+            AddRule(nameof(StudyName), () => !string.IsNullOrWhiteSpace(StudyName), "Name cannot be blank or whitespace.");
+            AddRule(nameof(FolderPath), () => !string.IsNullOrWhiteSpace(FolderPath), "Study path cannot be blank or whitespace.");
+            AddRule(nameof(Path), () => !string.IsNullOrWhiteSpace(Path), "Import file path cannot be blank or whitespace.");
 
             //path must not contain invalid characters
             AddRule(nameof(FolderPath), () => IsPathValid(), "Path contains invalid characters.");
@@ -206,7 +204,11 @@ namespace HEC.FDA.ViewModel.Study
         private FdaValidationResult ValidateEditor()
         {
             FdaValidationResult result = new FdaValidationResult();
-
+            Validate();
+            if(HasFatalError)
+            {
+                result.AddErrorMessage(Error);
+            }
             return result;
         }
 

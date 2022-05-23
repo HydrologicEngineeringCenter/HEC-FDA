@@ -14,6 +14,8 @@
         <cmds:OkCommand x:Key="ok"/>
         <cmds:CloseCommand x:Key="close"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
+        <cmds:SaveButtonTooltipConverter x:Key="SaveButtonTooltipConverter"/>
+        <cmds:SaveButtonEnabledConverter x:Key="SaveButtonMultiConverter"/>
         <Utils:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     </UserControl.Resources>
     <Grid>
@@ -46,7 +48,18 @@
         </GroupBox>
 
         <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="5" HorizontalAlignment="Right">
-            <Button Name="ImportBtn" Content="Import" Width="100" Click="ImportButton_Click" Height="22"/>
+
+            <Button Name="ImportBtn" Content="Import" Width="100" Click="ImportButton_Click" Height="22" IsEnabled="{Binding HaventImported}" >
+                <Button.ToolTip>
+                    <MultiBinding Converter="{StaticResource SaveButtonTooltipConverter}" >
+                        <Binding Path="HasFatalError"/>
+                        <Binding Path="HasChanges"/>
+                        <Binding Path="Error"/>
+                    </MultiBinding>
+                </Button.ToolTip>
+            </Button>
+
+
             <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,2,5" Width="100" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
                 <Button.CommandParameter>
