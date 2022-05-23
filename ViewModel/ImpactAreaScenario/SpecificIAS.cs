@@ -180,18 +180,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
                 ComputeResults = simulation.Compute(randomProvider, cc);
-                MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information); //Suspicous. 
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); //Suspicous. This is UI code, but the BW is not running on the UI thread. Maybe that's ok? maybe not. 
+                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
             }
 
         }
         private void Bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-        {
-            MessageBox.Show("Compute Finished", "Done", MessageBoxButton.OK, MessageBoxImage.Error);
+        {   //TODO: This message shows up once for each impact area. Not really ideal. 
+            MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         public void MyMessageHandler(object sender, MessageEventArgs e)
         {
