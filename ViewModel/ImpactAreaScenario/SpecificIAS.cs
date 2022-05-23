@@ -154,22 +154,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
+                System.ComponentModel.BackgroundWorker bw = new System.ComponentModel.BackgroundWorker();
+                bw.DoWork += Bw_DoWork;
+                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
-                int seed = 999;
-                RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
-                try
-                {
-                    results = simulation.Compute(randomProvider, cc);
-                    ComputeResults = results;
-                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                bw.RunWorkerAsync(simulation);
+
             }
             else
             {
@@ -177,7 +171,28 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
         }
+        private void Bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            try
+            {
+                int seed = 999;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
+                ComputeResults = simulation.Compute(randomProvider, cc);
+                MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information); //Suspicous. 
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); //Suspicous. This is UI code, but the BW is not running on the UI thread. Maybe that's ok? maybe not. 
+            }
+
+        }
+        private void Bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            MessageBox.Show("Compute Finished", "Done", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
         public void MyMessageHandler(object sender, MessageEventArgs e)
         {
             //The following 3 messages are coming into here.
