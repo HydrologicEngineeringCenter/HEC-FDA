@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
-                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.ComputeComponent, curve.AssetCategory);
+                ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.ComputeComponent.Clone(), curve.AssetCategory);
                 SelectItemsInRow(curve, newRow);
                 Rows.Add(newRow);
                 i++;
@@ -53,6 +53,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(Rows.Count > 0)
             {
                 SelectedRow = Rows[0];
+            }
+        }
+
+        public void RefreshPlotModels()
+        {
+            foreach(ManualStageDamageRowItem row in Rows)
+            {
+                //row.ComputeComponent
             }
         }
 
