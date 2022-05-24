@@ -86,7 +86,7 @@ namespace fda_model_test.integrationtests
         static string name = "name";
         static string category = "residential";
         static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType);
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType, assetcategory);
         
         [Theory]
         [InlineData(1234, 5.88)]
