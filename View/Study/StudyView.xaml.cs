@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.View.Utilities;
+using HEC.FDA.ViewModel.Study;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -100,6 +101,8 @@ namespace HEC.FDA.View.Study
             Process.Start(new ProcessStartInfo("https://discourse.hecdev.net/c/fda/33"));
             e.Handled = true;
         }
+
+ 
 
     }
 }

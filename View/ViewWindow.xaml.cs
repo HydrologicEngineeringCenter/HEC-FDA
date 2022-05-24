@@ -17,6 +17,7 @@ namespace HEC.FDA.View
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
             WindowVM vm = DataContext as WindowVM;
             vm.LaunchNewWindow += WindowSpawner;
+
         }
 
         public ViewWindow(WindowVM newvm)
@@ -24,6 +25,7 @@ namespace HEC.FDA.View
             InitializeComponent();
             DataContext = newvm;
             newvm.LaunchNewWindow += WindowSpawner;
+
         }
 
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
@@ -84,6 +86,7 @@ namespace HEC.FDA.View
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             WindowVM winVM = DataContext as WindowVM;          
             Type editorType = winVM.CurrentView.GetType();            
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);

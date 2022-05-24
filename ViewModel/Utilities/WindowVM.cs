@@ -56,6 +56,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 StudyVM.PropertyChanged += StudyVM_PropertyChanged;
                 CurrentView = StudyVM;
                 Title = StringConstants.FDA_VERSION;
+            
             }
         }
         public WindowVM(IDynamicTab tab)

@@ -7,6 +7,8 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
 using metrics;
 using Statistics;
 using System;
@@ -21,6 +23,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
     {
         #region Notes
         #endregion
+        public event MessageReportedEventHandler MessageReport;
         #region Fields
         private const string ID = "ID";
         private const string IAS = "IAS";
@@ -32,6 +35,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
+
 
         #endregion
         #region Properties
@@ -155,7 +159,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             if (configurationValidationResult.IsValid)
             {
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-                simulation.MessageReport += MyMessageHandler;
+                MessageHub.Register(simulation);
                 int seed = 999;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
@@ -176,23 +180,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
-        }
-
-        public void MyMessageHandler(object sender, MessageEventArgs e)
-        {
-            //The following 3 messages are coming into here.
-            //default
-            //Ead message
-            //total
-
-            //if (e.Message is FrequencyDamageMessage damageMessage)
-            //{
-            //    //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
-            //    if (e.Message.Message.Equals("Damage-frequency function for damage and asset categoriesdefaultandunassigned"))
-            //    {
-            //        _DamageFrequencyCurve = damageMessage.FrequencyDamage;
-            //    }
-            //}
         }
 
         private XElement WriteThresholdsToXML()
@@ -303,5 +290,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
         }
 
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            
+        }
     }
 }
