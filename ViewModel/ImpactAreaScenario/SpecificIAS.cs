@@ -158,28 +158,59 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
-                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-                MessageHub.Register(simulation);
-                int seed = 999;
-                RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
-                try
-                {
-                    results = simulation.Compute(randomProvider, cc);
-                    ComputeResults = results;
-                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                System.ComponentModel.BackgroundWorker bw = new System.ComponentModel.BackgroundWorker();
+                bw.DoWork += Bw_DoWork;
+                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
+                simulation.MessageReport += MyMessageHandler;
+                
+
+                bw.RunWorkerAsync(simulation);
+
             }
             else
             {
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
+        }
+        private void Bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            try
+            {
+                int seed = 999;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
+                ComputeResults = simulation.Compute(randomProvider, cc);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
+            }
+
+        }
+        private void Bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {   //TODO: This message shows up once for each impact area. Not really ideal. 
+            MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        public void MyMessageHandler(object sender, MessageEventArgs e)
+        {
+            //The following 3 messages are coming into here.
+            //default
+            //Ead message
+            //total
+
+            //if (e.Message is FrequencyDamageMessage damageMessage)
+            //{
+            //    //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
+            //    if (e.Message.Message.Equals("Damage-frequency function for damage and asset categoriesdefaultandunassigned"))
+            //    {
+            //        _DamageFrequencyCurve = damageMessage.FrequencyDamage;
+            //    }
+            //}
         }
 
         private XElement WriteThresholdsToXML()
