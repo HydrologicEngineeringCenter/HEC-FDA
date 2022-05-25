@@ -15,13 +15,11 @@ namespace HEC.FDA.ViewModel.Utilities
         private Type _messageTypeFilter = null;
         private Type _senderTypeFilter = null;
         private int _maxMessageCount = 100;
-        private object _lock = new object();
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
         private string _filePath = Path.GetTempFileName();
         StreamWriter sw;
-        //private System.Collections.Generic.List<System.ComponentModel.BackgroundWorker> _bwList;
         private System.ComponentModel.BackgroundWorker _bw;
         private System.Collections.Concurrent.ConcurrentQueue<IMessage> _messages;
         public static TextFileMessageSubscriber Instance = new TextFileMessageSubscriber();
@@ -127,14 +125,6 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public void Dispose()
         {
-            //int busyCount = 0;
-            //for (int i = 0; i < _bwList.Count(); i++)
-            //{
-            //    if (!_bwList[i].IsBusy)
-            //    {
-            //        busyCount++;
-            //    }
-            //}
             sw.Dispose();
             sw.Close();
         }
