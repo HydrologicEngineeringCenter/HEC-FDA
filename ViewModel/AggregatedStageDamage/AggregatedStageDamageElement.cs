@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             CustomTreeViewHeader = new CustomHeaderVM(name)
             {
                 ImageSource = ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
 
             Description = description;
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, actionManager);
 
             string title = "Edit " + vm.Name;
-            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
+            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name,true, false);
             Navigate(tab, false, true);
         }
 

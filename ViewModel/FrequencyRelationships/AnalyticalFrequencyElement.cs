@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
 
             AddActions();
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
 
             AddActions();

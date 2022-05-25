@@ -75,7 +75,6 @@ namespace HEC.FDA.ViewModel.Study
         {
             AddRule(nameof(StudyName), () => !string.IsNullOrWhiteSpace(StudyName), "Name cannot be blank or whitespace.");
             AddRule(nameof(FolderPath), () => !string.IsNullOrWhiteSpace(FolderPath), "Study path cannot be blank or whitespace.");
-            AddRule(nameof(Path), () => !string.IsNullOrWhiteSpace(Path), "Import file path cannot be blank or whitespace.");
 
             //path must not contain invalid characters
             AddRule(nameof(FolderPath), () => IsPathValid(), "Path contains invalid characters.");

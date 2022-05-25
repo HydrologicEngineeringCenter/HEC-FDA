@@ -9,15 +9,11 @@ namespace HEC.FDA.View.Commands
     {
         #region Notes
         #endregion
-        #region Fields
-        #endregion
+
         #region Events
         public event EventHandler CanExecuteChanged;
         #endregion
-        #region Properties
-        #endregion
-        #region Constructors
-        #endregion
+
         #region Voids
         public void Execute(object parameter)
         {

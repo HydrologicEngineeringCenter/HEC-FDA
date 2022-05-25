@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
             };
             AddActions();
         }
@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
 
             AddActions();

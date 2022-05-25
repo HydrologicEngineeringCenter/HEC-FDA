@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
             AddActions();
         }
@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };    
             AddActions();
         }

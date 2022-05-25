@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
             };
 
             AddActions();
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
             AddActions();
             HasComputed = HaveAllIASComputed();
@@ -221,12 +221,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            HasComputed = true;
-            foreach(SpecificIAS ias in SpecificIASElements)
-            {
-                ias.ComputeScenario(arg1, arg2);
-            }
-            PersistenceFactory.GetIASManager().SaveExisting(this);
+            
+            Editor.ComputeScenarioVM vm = new Editor.ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
+            string header = "Compute Scenario";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
+            Navigate(tab, false, false);
+            //HasComputed = true;
+            //foreach(SpecificIAS ias in SpecificIASElements)
+            //{
+            //    ias.ComputeScenario(arg1, arg2);
+            //}
+            //PersistenceFactory.GetIASManager().SaveExisting(this);
+        }
+        private void ComputeCompleted()
+        {
+            Application.Current.Dispatcher.Invoke(
+            (Action)(() => 
+            { 
+                PersistenceFactory.GetIASManager().SaveExisting(this);
+            }));
         }
         #endregion
 

@@ -240,7 +240,11 @@
         <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
             <IASEditorView:IASEditor/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type IASEditorVM:ComputeScenarioVM }" >
+            <IASEditorView:ComputeScenarioEditor/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
             <IASEditorView:Thresholds/>
         </DataTemplate>

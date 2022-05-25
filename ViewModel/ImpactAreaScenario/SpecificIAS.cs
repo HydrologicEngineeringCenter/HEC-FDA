@@ -14,6 +14,7 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -133,7 +134,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public void ComputeScenario(object arg1, EventArgs arg2)
+        public Task ComputeScenario(object arg1, EventArgs arg2)
         {
             ImpactAreaScenarioResults results = null;
 
@@ -156,23 +157,34 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            Task output = Task.CompletedTask;
             if (configurationValidationResult.IsValid)
             {
-                System.ComponentModel.BackgroundWorker bw = new System.ComponentModel.BackgroundWorker();
-                bw.DoWork += Bw_DoWork;
-                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+                
 
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
-                
 
-                bw.RunWorkerAsync(simulation);
-
+                output = Task.Run(() =>
+                {
+                    try
+                    {
+                        MessageHub.Register(simulation);
+                        Bw_DoWork(this, new System.ComponentModel.DoWorkEventArgs(this));
+                        Bw_RunWorkerCompleted(this, new System.ComponentModel.RunWorkerCompletedEventArgs(null, null, false));
+                    }
+                    finally
+                    {
+                        MessageHub.Unregister(simulation);
+                    }
+                });
             }
             else
             {
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+
+            return output;
 
         }
         private void Bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -185,6 +197,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
                 ComputeResults = simulation.Compute(randomProvider, cc);
 
+
             }
             catch (Exception ex)
             {
@@ -193,8 +206,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         }
         private void Bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-        {   //TODO: This message shows up once for each impact area. Not really ideal. 
-            MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+        {
+            ImpactAreaScenarioSimulation simulation = e.Result as ImpactAreaScenarioSimulation;
+
+            
+            //TODO: This message shows up once for each impact area. Not really ideal. 
+            //MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         public void MyMessageHandler(object sender, MessageEventArgs e)
         {

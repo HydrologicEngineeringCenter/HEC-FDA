@@ -188,7 +188,7 @@
             return "Import " + elementName + " From HEC-FDA Version 1.4.3...";
         }
 
-        public static string CreateChildNodeTooltip(string lastEditDate)
+        public static string CreateLastEditTooltip(string lastEditDate)
         {
             return "Last edited " + lastEditDate;
         }

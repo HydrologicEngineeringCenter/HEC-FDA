@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.GeoTech
                 CustomTreeViewHeader = new CustomHeaderVM(Name)
                 {
                     ImageSource = ImageSources.LEVEE_FEATURE_IMAGE,
-                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                    Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
                 };    
             }
             else
@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.GeoTech
                 CustomTreeViewHeader = new CustomHeaderVM(Name)
                 {
                     ImageSource = ImageSources.FAILURE_IMAGE,
-                    Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                    Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
                 };
             }
 

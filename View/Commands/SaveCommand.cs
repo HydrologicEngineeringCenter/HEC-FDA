@@ -1,6 +1,6 @@
 ﻿using HEC.FDA.ViewModel;
+using HEC.FDA.ViewModel.Editors;
 using System;
-using System.Windows;
 using System.Windows.Input;
 
 namespace HEC.FDA.View.Commands
@@ -22,14 +22,11 @@ namespace HEC.FDA.View.Commands
 
             if (parameter is BaseViewModel vm)
             {
-                //BaseViewModel vm = (BaseViewModel)parameter;
                 vm.Validate();
 
-
-
-                if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
+                if (vm.GetType().IsSubclassOf(typeof(BaseEditorVM)))
                 {
-                    ((ViewModel.Editors.BaseEditorVM)vm).Save();
+                    ((BaseEditorVM)vm).Save();
                 }
             }
         }
