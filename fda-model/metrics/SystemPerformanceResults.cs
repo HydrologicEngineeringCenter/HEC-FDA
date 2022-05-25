@@ -93,6 +93,15 @@ namespace metrics
                 _assuranceList.Add(assurance);
             }
         }
+        /// <summary>
+        /// This method returns the thread safe inline histogram of AEPs
+        /// </summary>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetAEPHistogram()
+        {
+            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
+            return aepHistogram;
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
@@ -230,7 +239,7 @@ namespace metrics
             }
             return true;
         }
-        public AssuranceResultStorage GetAssurance(string type, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
+        internal AssuranceResultStorage GetAssurance(string type, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
             foreach (AssuranceResultStorage assurance in _assuranceList)
             {
@@ -242,7 +251,9 @@ namespace metrics
                     }
                 }
             }
-            ReportMessage(this, new MessageEventArgs(new Message("the requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned")));
+            string message = $"The requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned";
+            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             AssuranceResultStorage dummyAssurance = new AssuranceResultStorage();
             return dummyAssurance;
 

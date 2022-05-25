@@ -12,6 +12,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace compute
 {
@@ -388,7 +389,7 @@ namespace compute
             ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories"+totalDamageFrequency.CurveMetaData.DamageCategory+"and"+totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories "+totalDamageFrequency.CurveMetaData.DamageCategory+" and "+totalDamageFrequency.CurveMetaData.AssetCategory)));
 
             }
         }
@@ -472,7 +473,9 @@ namespace compute
                 if(_damage_category_stage_damage.Count == 0)
                 {
                     double badThresholdStage = 0;
-                    ReportMessage(this, new MessageEventArgs(new Message("A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics")));
+                    string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics";
+                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage));
                     return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
                 }
 
@@ -568,15 +571,18 @@ namespace compute
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull) return false;
             if (_systemResponseFunction_stage_failureProbability.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
-                ReportMessage(this, new MessageEventArgs(new Message("There must exist a stage in the fragilty curve with a certain probability of failure specified as a deterministic distribution")));
+                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
                 return false;
             }
             else if (_systemResponseFunction_stage_failureProbability.Yvals.Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                ReportMessage(this, new MessageEventArgs(new Message("The fragility curve must have stage at which the probability of failure of the levee is 1")));
-                return false;
+                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
             }
             else
             {   //right here or somewhere we need to do validation to handle a top of levee elevation above all stages 
@@ -594,12 +600,16 @@ namespace compute
             {
                 if (_systemResponseFunction_stage_failureProbability.Yvals[index].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
-                    ReportMessage(this, new MessageEventArgs(new Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
+                    string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
+                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                    ReportMessage(this, new MessageEventArgs(errorMessage));
                 }
             }
             else
             {   //top of levee elevation is not included in the fragility curve
-                ReportMessage(this, new MessageEventArgs(new Message($"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure")));
+                string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
         public void ReportMessage(object sender, MessageEventArgs e)
