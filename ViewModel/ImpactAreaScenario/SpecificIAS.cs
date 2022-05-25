@@ -170,7 +170,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     try
                     {
                         MessageHub.Register(simulation);
-                        Bw_DoWork(this, new System.ComponentModel.DoWorkEventArgs(this));
+                        ComputeSimulation(simulation);
                         Bw_RunWorkerCompleted(this, new System.ComponentModel.RunWorkerCompletedEventArgs(null, null, false));
                     }
                     finally
@@ -187,17 +187,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return output;
 
         }
-        private void Bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void ComputeSimulation(ImpactAreaScenarioSimulation simulation)
         {
             try
             {
                 int seed = 999;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
-                ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
+                //ImpactAreaScenarioSimulation simulation = e.Argument as ImpactAreaScenarioSimulation;
                 ComputeResults = simulation.Compute(randomProvider, cc);
-
-
             }
             catch (Exception ex)
             {

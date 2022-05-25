@@ -11,14 +11,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class ComputeScenarioVM:BaseViewModel
     {
-        public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
+        //public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
 
 
 
         public ComputeScenarioVM(List<SpecificIAS> iasElems, Action callback)
         {
             List<Task> tasks = new List<Task>();
-            foreach (SpecificIAS ias in SpecificIASElements)
+            foreach (SpecificIAS ias in iasElems)
             {
                 tasks.Add( ias.ComputeScenario(this, new EventArgs()));
             }

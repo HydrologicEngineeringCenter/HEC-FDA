@@ -27,8 +27,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
-        public bool HasComputed { get; set; }
-
         public string Description
         {
             get { return _Description; }
@@ -87,7 +85,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
             AddActions();
-            HasComputed = HaveAllIASComputed();
         }
 
         private bool HaveAllIASComputed()
@@ -205,9 +202,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ViewResults(object arg1, EventArgs arg2)
         {
-            if (HasComputed)
+            List<SpecificIASResultVM> results = GetResults();
+            if (results.Count>0)
             {
-                List<SpecificIASResultVM> results = GetResults();
                 IASResultsVM resultViewer = new IASResultsVM(results);
                 string header = "Results for " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
@@ -239,6 +236,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             (Action)(() => 
             { 
                 PersistenceFactory.GetIASManager().SaveExisting(this);
+                MessageBox.Show("Compute Completed");
             }));
         }
         #endregion

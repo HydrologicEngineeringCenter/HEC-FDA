@@ -250,6 +250,13 @@ namespace HEC.FDA.ViewModel.Utilities
                 double maxYIntercept = globalStdDevHigh - (maxSlope * baseStageFlow);
                 double minYIntercept = globalStdDevLow - (minSlope * baseStageFlow);
 
+                double minMostLikelyStageDelta = baseStage - globalStdDevLow;
+                double maxMostLikelyStageDelta = globalStdDevHigh - baseStage;
+
+                double minStageDelta = globalStdDevLow - firstMostLikelyStage;
+                double maxStageDelta = globalStdDevHigh - firstMostLikelyStage;
+
+                double previousMinStage = firstMostLikelyStage;
 
                 for (int i = 1; i < rat.NumberOfPoints; i++)
                 {
@@ -258,9 +265,13 @@ namespace HEC.FDA.ViewModel.Utilities
                         double mostLikely = rat.GetStage()[i];
                         if (mostLikely < baseStage)
                         {
-                            double minVal = minRatio * (mostLikely - firstMostLikelyStage) ;
+                            double currentFlow = rat.GetDischarge()[i];
+                            double minDifference = (minMostLikelyStageDelta / minStageDelta) * (currentFlow - firstMostLikelyFlow);
+                            double minVal = mostLikely - minDifference;
 
-                            double maxVal = maxRatio * (mostLikely - firstMostLikelyStage);
+                            double maxDifference = (maxMostLikelyStageDelta / minStageDelta) * (currentFlow - firstMostLikelyFlow);
+                            double maxVal = mostLikely - maxDifference;
+
                             ys.Add(new Triangular(minVal, mostLikely, maxVal));
                         }
                         else
