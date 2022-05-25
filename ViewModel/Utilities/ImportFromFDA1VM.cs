@@ -47,8 +47,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
             Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
             AsyncLogger logger = new AsyncLogger();
-            _Importer = new AsciiImport(logger);//pass in the logger.
-                                                //put on background
+            _Importer = new AsciiImport(logger);
+                                                
             Task task = Task.Run(() => _Importer.ImportAsciiData(Path, GetImportOptions()));
 
             Timer timer = new Timer(500, 100, true);

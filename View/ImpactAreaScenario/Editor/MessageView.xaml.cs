@@ -35,7 +35,6 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
             {
                 MessageView owner = (MessageView)d;
                 owner.tb.Inlines.Clear();
-                //System.Diagnostics.Debugger.Break();
             }
             private static void MessagesChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
             {

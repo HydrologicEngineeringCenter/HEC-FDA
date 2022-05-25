@@ -56,14 +56,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        public void RefreshPlotModels()
-        {
-            foreach(ManualStageDamageRowItem row in Rows)
-            {
-                //row.ComputeComponent
-            }
-        }
-
         private ManualStageDamageRowItem CreateNewRow(int id)
         {
             return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve());
