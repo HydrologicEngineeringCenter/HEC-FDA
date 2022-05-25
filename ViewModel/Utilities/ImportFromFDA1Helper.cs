@@ -184,79 +184,27 @@ namespace HEC.FDA.ViewModel.Utilities
             return -1;
         }
 
-        private static double GetFlowAtBaseStage(RatingFunction rat)
-        {
-            double baseStage = rat.BaseStage;
-            int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
-            return rat.GetDischarge()[baseStageIndex];
-            //int indexAboveBaseStage = -1;
-            //for (int i = 0; i < rat.NumberOfPoints; i++)
-            //{
-            //    double stage = rat.GetStage()[i];
-            //    if(stage > baseStage)
-            //    {
-            //        indexAboveBaseStage = i;
-            //        break;
-            //    }
-            //}
-
-            //double lowerFlow = rat.GetDischarge()[indexAboveBaseStage - 1];
-            //double upperFlow = rat.GetDischarge()[indexAboveBaseStage];
-
-            //double lowerStage = rat.GetStage()[indexAboveBaseStage - 1];
-            //double upperStage = rat.GetStage()[indexAboveBaseStage];
-
-            //double rise = upperStage - lowerStage;
-            //double run = upperFlow - lowerFlow;
-            //double slope = rise / run;
-
-            //double retval = rise / slope;
-            //return retval;
-        }
-
         private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
         {
             
-
             List<IDistribution> ys = new List<IDistribution>();
             if (rat.NumberOfPoints > 0)
             {
                 //add first point
-                double firstMostLikelyStage = rat.GetStage()[0];
-                double firstMostLikelyFlow = rat.GetDischarge()[0];
-                double firstMin = firstMostLikelyStage;
-                double firstMax = firstMostLikelyStage;
-                ys.Add(new Triangular(firstMin, firstMostLikelyStage, firstMax));
-
+                double firstStage = rat.GetStage()[0];
+                ys.Add(new Triangular(firstStage, firstStage, firstStage));
 
                 double baseStage = rat.BaseStage;
                 double globalStdDevLow = rat.GlobalStdDevLow;
                 double globalStdDevHigh = rat.GlobalStdDevHigh;
 
-                double minRatio = globalStdDevLow / (baseStage - firstMostLikelyStage);
-                double maxRatio = globalStdDevHigh / (baseStage - firstMostLikelyStage);
-
                 double deltaMax = globalStdDevHigh - baseStage;
                 double deltaMin = globalStdDevLow - baseStage;
                 
-                double minRise = globalStdDevLow - firstMin;
-                double baseStageFlow = GetFlowAtBaseStage(rat);
-                double run = baseStageFlow - rat.GetDischarge()[1];
-                double minSlope = minRise / run;
-
-                double maxRise = globalStdDevHigh - firstMin;
-                double maxSlope = maxRise / run;
-
-                double maxYIntercept = globalStdDevHigh - (maxSlope * baseStageFlow);
-                double minYIntercept = globalStdDevLow - (minSlope * baseStageFlow);
-
                 double minMostLikelyStageDelta = baseStage - globalStdDevLow;
                 double maxMostLikelyStageDelta = globalStdDevHigh - baseStage;
 
-                double minStageDelta = globalStdDevLow - firstMostLikelyStage;
-                double maxStageDelta = globalStdDevHigh - firstMostLikelyStage;
-
-                double previousMinStage = firstMostLikelyStage;
+                double stageDelta = baseStage - firstStage;
 
                 for (int i = 1; i < rat.NumberOfPoints; i++)
                 {
@@ -265,12 +213,11 @@ namespace HEC.FDA.ViewModel.Utilities
                         double mostLikely = rat.GetStage()[i];
                         if (mostLikely < baseStage)
                         {
-                            double currentFlow = rat.GetDischarge()[i];
-                            double minDifference = (minMostLikelyStageDelta / minStageDelta) * (currentFlow - firstMostLikelyFlow);
+                            double minDifference = (minMostLikelyStageDelta / stageDelta) * (mostLikely - firstStage);
                             double minVal = mostLikely - minDifference;
 
-                            double maxDifference = (maxMostLikelyStageDelta / minStageDelta) * (currentFlow - firstMostLikelyFlow);
-                            double maxVal = mostLikely - maxDifference;
+                            double maxDifference = (maxMostLikelyStageDelta / stageDelta) * (mostLikely - firstStage);
+                            double maxVal = mostLikely + maxDifference;
 
                             ys.Add(new Triangular(minVal, mostLikely, maxVal));
                         }
@@ -280,7 +227,6 @@ namespace HEC.FDA.ViewModel.Utilities
                             double max = mostLikely + deltaMax;
                             ys.Add(new Triangular(min, mostLikely, max));
                         }
-
                     }
                     else
                     {
@@ -289,72 +235,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
             }
             return ys;
-        }
-
-        //private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
-        //{
-
-
-        //    List<IDistribution> ys = new List<IDistribution>();
-        //    if (rat.NumberOfPoints > 0)
-        //    {
-        //        //add first point
-        //        double firstMostLikelyStage = rat.GetStage()[0];
-        //        double firstMostLikelyFlow = rat.GetDischarge()[0];
-        //        double firstMin = firstMostLikelyStage;
-        //        double firstMax = firstMostLikelyStage;
-        //        ys.Add(new Triangular(firstMin, firstMostLikelyStage, firstMax));
-
-        //        double baseStage = rat.BaseStage;
-        //        double globalStdDevLow = rat.GlobalStdDevLow;
-        //        double globalStdDevHigh = rat.GlobalStdDevHigh;
-
-        //        double deltaMax = globalStdDevHigh - baseStage;
-        //        double deltaMin = globalStdDevLow - baseStage;
-
-        //        double minRise = globalStdDevLow - firstMin;
-        //        double baseStageFlow = GetFlowAtBaseStage(rat);
-        //        double run = baseStageFlow - rat.GetDischarge()[1];
-        //        double minSlope = minRise / run;
-
-        //        double maxRise = globalStdDevHigh - firstMin;
-        //        double maxSlope = maxRise / run;
-
-        //        double maxYIntercept = globalStdDevHigh - (maxSlope * baseStageFlow);
-        //        double minYIntercept = globalStdDevLow - (minSlope * baseStageFlow);
-
-
-        //        for (int i = 1; i < rat.NumberOfPoints; i++)
-        //        {
-        //            if (rat.UsesGlobalError)
-        //            {
-        //                double mostLikely = rat.GetStage()[i];
-        //                if (mostLikely <= baseStage)
-        //                {
-        //                    //y = mx + b
-        //                    double x = rat.GetDischarge()[i];
-        //                    //double newRun = rat.GetDischarge()[i] - rat.GetDischarge()[0];
-        //                    double minVal = minSlope * x + minYIntercept;
-
-        //                    double maxVal = maxSlope * x + maxYIntercept;
-        //                    ys.Add(new Triangular(minVal, mostLikely, maxVal));
-        //                }
-        //                else
-        //                {
-        //                    double min = mostLikely + deltaMin;
-        //                    double max = mostLikely + deltaMax;
-        //                    ys.Add(new Triangular(min, mostLikely, max));
-        //                }
-
-        //            }
-        //            else
-        //            {
-        //                ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetStage()[i], rat.IndividualHighStDevs[i]));
-        //            }
-        //        }
-        //    }
-        //    return ys;
-        //}
+        }   
 
         private static List<IDistribution> CreateUniformDistributions(RatingFunction rat)
         {
