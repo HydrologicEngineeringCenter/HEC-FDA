@@ -158,7 +158,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 bool isUnique = selectedAlts.Distinct().Count() == selectedAlts.Count();
                 if (!isUnique)
                 {
-                    vr.AddErrorMessage(errorMsg);
+                    vr.AddErrorMessage("'With Project' selections must be unique. Repeat rows were found.");
                 }
             }
             return vr;

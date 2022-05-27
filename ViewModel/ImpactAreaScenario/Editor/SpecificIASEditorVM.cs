@@ -647,7 +647,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public void AddThresholds()
         {
             string header = "Annual Exceedance Probabilities Thresholds";
-            DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds");
+            DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds",false,false);
             Navigate(tab, true, true);
             Thresholds.Clear();
             Thresholds.AddRange(_additionalThresholdsVM.GetThresholds());

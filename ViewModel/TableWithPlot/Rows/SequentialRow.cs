@@ -40,11 +40,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(X), new Rule(() => { return X >= xMin; }, "X was smaller than the minimum allowed value " + xMin, ErrorLevel.Severe));
             foreach(string propName in YMinProperties)
             {
-                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(minProbability) >= yMin; }, "Y was smaller than the minimum allowed value " + yMin, ErrorLevel.Severe));
+                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(minProbability) >= yMin; }, "The .001 percentile of the Y distribution is less than the minimum allowable value of " + yMin, ErrorLevel.Severe));
             }
             foreach (string propName in YMaxProperties)
             {
-                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(maxProbability) <= yMax; }, "Y was greater than the maximum allowed value " + yMax,  ErrorLevel.Severe));
+                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(maxProbability) <= yMax; }, "The 99.999 percentile of the Y distribution is greater than the maximum allowable value of " + yMax,  ErrorLevel.Severe));
             }
 
         }

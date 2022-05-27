@@ -116,6 +116,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             VehicleItem.DataModified += OcctypeItemDataModified;
             OtherItem.DataModified += OcctypeItemDataModified;
 
+            StructureItem.Curve.SetMinMaxValues(0, 100);
+
+
             DamageCategoriesList = damageCategoriesList;
             HasBeenSaved = occtypeHasBeenSaved;
 

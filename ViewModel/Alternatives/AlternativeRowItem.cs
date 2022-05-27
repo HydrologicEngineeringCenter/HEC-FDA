@@ -37,6 +37,8 @@ namespace HEC.FDA.ViewModel.Alternatives
         }
         public AlternativeRowItem(IASElementSet elem)
         {
+            //todo: the line below is just for testing:
+            HasComputed = true;
             ID = elem.ID;
             Year = elem.AnalysisYear;
            
