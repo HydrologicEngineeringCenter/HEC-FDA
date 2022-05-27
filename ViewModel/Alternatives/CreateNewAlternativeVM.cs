@@ -85,8 +85,6 @@ namespace HEC.FDA.ViewModel.Alternatives
                     if(row.ID == id)
                     {
                         row.IsSelected = true;
-                        //i don't think it is possible for a saved IAS to not be computed so i mark it computed.
-                        row.HasComputed = true;
                     }
                 }
             }

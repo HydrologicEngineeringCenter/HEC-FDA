@@ -5,11 +5,12 @@ using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
-    public class AlternativeComparisonReportElement: ChildElement
+    public class AlternativeComparisonReportElement : ChildElement
     {
         private const string ALTERNATIVE_COMP_REPORT = "AlternativeComparisonReport";
         private const string NAME = "Name";
@@ -23,7 +24,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
-        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
+        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) : base(id)
         {
             Name = name;
             Description = desc;
@@ -41,7 +42,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         /// The ctor used to load an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeComparisonReportElement(string xml, int id):base(id)
+        public AlternativeComparisonReportElement(string xml, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
@@ -138,15 +139,50 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
-            string header = "Alternative Comparison Report Results: " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
-            Navigate(tab, false, true);
+            FdaValidationResult vr = CanViewResult();
+            if (vr.IsValid)
+            {
+                AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
+                string header = "Alternative Comparison Report Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            //waiting for HEC to get the new model plugged in. 11/16/21
+            FdaValidationResult vr = CanCompute();
+            if(vr.IsValid)
+            {
+                //todo: waiting for HEC to get the new model plugged in. 11/16/21
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        private FdaValidationResult CanCompute()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //todo: check if we have results that can be viewed.
+
+            return vr;
+        }
+
+        private FdaValidationResult CanViewResult()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //todo: check if we have results that can be viewed.
+
+            return vr;
         }
 
         /// <summary>

@@ -4,7 +4,6 @@ namespace HEC.FDA.ViewModel.Alternatives
 {
     public class AlternativeRowItem : BaseViewModel
     {
-        private bool _HasComputed;
         private bool _IsSelected;
         private string _Name;
         private int _Year;
@@ -19,11 +18,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             get { return _Name + " (" + Year + ")"; }
             set { _Name = value; NotifyPropertyChanged(); }
         }
-        public bool HasComputed
-        {
-            get { return _HasComputed; }
-            set { _HasComputed = value; UpdateTooltip(); NotifyPropertyChanged(); }
-        }
         public int Year
         {
             get { return _Year; }
@@ -37,27 +31,14 @@ namespace HEC.FDA.ViewModel.Alternatives
         }
         public AlternativeRowItem(IASElementSet elem)
         {
-            //todo: the line below is just for testing:
-            HasComputed = true;
+
             ID = elem.ID;
             Year = elem.AnalysisYear;
            
             //Name needs to be after the Year property is set to get the proper display name.
             Name = elem.Name ;
             IsSelected = false;
-            UpdateTooltip();
         }
 
-        private void UpdateTooltip()
-        {
-            if (HasComputed)
-            {
-                Tooltip = Name;
-            }
-            else
-            {
-                Tooltip = "A compute is required to include in an alternative.";
-            }
-        }
     }
 }

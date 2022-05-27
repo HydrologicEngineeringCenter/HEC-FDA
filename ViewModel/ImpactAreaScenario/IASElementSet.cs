@@ -167,12 +167,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return impactAreaRows;
         }
 
-        private List<SpecificIASResultVM> GetResults()
+        public List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
-            int i = 0;
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
@@ -182,7 +181,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, ias.ComputeResults);
                     results.Add(result);
                 }
-                i++;
             }
 
             return results;
