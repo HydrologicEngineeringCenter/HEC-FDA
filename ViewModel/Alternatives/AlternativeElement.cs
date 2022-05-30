@@ -109,8 +109,18 @@ namespace HEC.FDA.ViewModel.Alternatives
             if (vr.IsValid)
             {
                 //todo: Run calculations. waiting for hec to put the new model in.
-                IASElementSet[] elems = GetElementsFromID();
                 //grab the result objects off the ias elements and run the calculation.
+                IASElementSet[] iASElems = GetElementsFromID();
+                IASElementSet firstElem = iASElems[0];
+                IASElementSet secondElem = iASElems[1];
+
+                //scenarios.Scenario scenario1 = new scenarios.Scenario(firstElem.AnalysisYear, );
+                //scenarios.Scenario scenario2 = new scenarios.Scenario(firstElem.AnalysisYear, );
+                //long por = firstElem.AnalysisYear;
+                //int id = 99;
+                //alternatives.Alternative alt = new alternatives.Alternative(scenario1, scenario2, por, id);
+                //alt.ComputeEEAD();
+                //alt.AnnualizationCompute()
 
             }
             else

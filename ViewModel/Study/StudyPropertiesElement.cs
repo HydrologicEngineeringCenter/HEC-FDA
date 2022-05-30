@@ -30,9 +30,7 @@ namespace HEC.FDA.ViewModel.Study
         public int PeriodOfAnalysis { get; }
   
         public string StudyPath { get; }
-        
-        public string StudyDescription { get; }
-     
+             
         public string CreatedBy { get; }
 
         public string CreatedDate { get; }
@@ -64,10 +62,10 @@ namespace HEC.FDA.ViewModel.Study
         {
             Name = studyName;
             StudyPath = studyPath;
-            StudyDescription = description;
+            Description = description;
             CreatedBy = Environment.UserName;
             CreatedDate = DateTime.Now.ToShortDateString();
-            StudyNotes = "These are my notes";
+            StudyNotes = "";
             MonetaryUnit = MonetaryUnitsEnum.Millions;
             UnitSystem = UnitsSystemEnum.English;
             SurveyedYear = DateTime.Now.Year - 1;
@@ -82,7 +80,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             Name = name;
             StudyPath = path;
-            StudyDescription = description;
+            Description = description;
             CreatedBy = createdBy;
             CreatedDate = createdDate;
             StudyNotes = studyNotes;
@@ -99,7 +97,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             Name = elem.Name;
             StudyPath = elem.StudyPath;
-            StudyDescription = elem.StudyDescription;
+            Description = elem.Description;
             CreatedBy = elem.CreatedBy;
             CreatedDate = elem.CreatedDate;
             StudyNotes = elem.StudyNotes;

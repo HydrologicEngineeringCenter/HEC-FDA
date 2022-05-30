@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             StudyName = elem.Name;
             StudyPath = elem.StudyPath;
-            StudyDescription = elem.StudyDescription;
+            StudyDescription = elem.Description;
             CreatedBy = elem.CreatedBy;
             CreatedDate = elem.CreatedDate;
             StudyNotes = elem.StudyNotes;
@@ -77,7 +77,8 @@ namespace HEC.FDA.ViewModel.Study
             {
                 //the properties are unique in that it gets saved when the study is created. This editor
                 //is, therefore, always in 'edit mode'. We are always saving an existing element.
-                int id = Saving.PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
+                //there is only one row of study properties. The id will always be 1.
+                int id = 1;
                 StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
                     CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, id);
 

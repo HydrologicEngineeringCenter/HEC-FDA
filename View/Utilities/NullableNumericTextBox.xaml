@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBox x:Name="txtBox"  HorizontalAlignment="Stretch" PreviewTextInput="TextBox_PreviewTextInput"/>
+        <TextBox x:Name="txtBox" PreviewLostKeyboardFocus="txtBox_PreviewLostKeyboardFocus"  HorizontalAlignment="Stretch" PreviewTextInput="TextBox_PreviewTextInput"/>
         <!--Text="{Binding ThresholdValue, TargetNullValue=''}"-->
     </Grid>
 </UserControl>

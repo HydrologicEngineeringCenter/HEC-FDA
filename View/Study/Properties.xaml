@@ -70,7 +70,7 @@
                 </Grid.RowDefinitions>
 
                 <Label  Content="Study Notes:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <CA:TextBoxDescription Grid.Row="0" Grid.Column="1" Margin="0,3,0,3" />
+                <CA:TextBoxDescription Text="{Binding StudyNotes}" Grid.Row="0" Grid.Column="1" Margin="0,3,0,3" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Discount Rate:"  HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DiscountRate}" Margin="0,3,20,3"/>

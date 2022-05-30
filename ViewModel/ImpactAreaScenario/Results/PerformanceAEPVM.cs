@@ -39,13 +39,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     MetricsToRows.Add(threshold, rows);
 
                     //get the histogram data
-                    Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
-                    int[] binCounts = histogramOfAEPs.BinCounts;
-                    double binWidth = histogramOfAEPs.BinWidth;
-                    double min = histogramOfAEPs.Min;
-                    double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
-                    HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
-                    HistogramData.Add(threshold, _data);
+                    //Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
+                    //int[] binCounts = histogramOfAEPs.BinCounts;
+                    //double binWidth = histogramOfAEPs.BinWidth;
+                    //double min = histogramOfAEPs.Min;
+                    //double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+                    //HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+                    //HistogramData.Add(threshold, _data);
                 }
             }
 

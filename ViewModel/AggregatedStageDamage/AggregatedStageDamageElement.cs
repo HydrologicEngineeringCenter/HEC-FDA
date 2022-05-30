@@ -172,7 +172,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             sw.WriteLine(Path.GetFileName(propElem.StudyPath));
             
             sw.Write("Description: ");
-            sw.WriteLine(propElem.StudyDescription);
+            sw.WriteLine(propElem.Description);
 
             sw.Write("Created: ");
             sw.WriteLine(propElem.CreatedDate);

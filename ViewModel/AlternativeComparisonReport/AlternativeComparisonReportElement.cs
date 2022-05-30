@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+﻿using alternatives;
+using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Study;
@@ -159,12 +161,45 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             FdaValidationResult vr = CanCompute();
             if(vr.IsValid)
             {
+                AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+                List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
                 //todo: waiting for HEC to get the new model plugged in. 11/16/21
+                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport()
             }
             else
             {
                 MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+        }
+
+        private List<AlternativeElement> GetWithProjectAlternatives()
+        {
+            List<AlternativeElement> alts = new List<AlternativeElement>();
+            foreach(int id in WithProjAltIDs )
+            {
+                AlternativeElement altElement = GetAlternativeElementFromID(id);
+                if(altElement != null)
+                {
+                    alts.Add(altElement);
+                }
+            }
+            return alts;
+        }
+
+        private AlternativeElement GetAlternativeElementFromID(int id)
+        {
+            AlternativeElement alt = null;
+            //get the current ias elements in the study
+            List<AlternativeElement> currentElementSets = StudyCache.GetChildElementsOfType<AlternativeElement>();
+            foreach (AlternativeElement altElem in currentElementSets)
+            {
+                int setID = altElem.ID;
+                if (setID == id)
+                {
+                    alt = altElem;
+                }
+            }
+            return alt;
         }
 
         private FdaValidationResult CanCompute()

@@ -486,7 +486,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
-                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdRow.ThresholdValue);
+                double thresholdValue = 0;
+                if(thresholdRow.ThresholdValue != null )
+                {
+                    thresholdValue = thresholdRow.ThresholdValue.Value;
+                }
+                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdValue);
                 sc.WithAdditionalThreshold(threshold);
                 thresholdIndex++;
             }
