@@ -67,28 +67,28 @@ namespace HEC.FDA.ViewModel.Tabs
 
         #region public methods
 
-        /// <summary>
-        /// Loops over all the tabs and removes the one with the specified unique tab name string.
-        /// Currently this is only being used to remove the "Create New Study" tab after the user
-        /// has loaded a study.
-        /// </summary>
-        /// <param name="uniqueTabName"></param>
-        public void RemoveTab(String uniqueTabName)
-        {
-            int indexToRemove = -1;
-            for (int i = 0; i < Tabs.Count; i++)
-            {
-                if (Tabs[i].UniqueName.Equals(uniqueTabName))
-                {
-                    indexToRemove = i;
-                    break;
-                }
-            }
-            if( indexToRemove != -1)
-            {
-                Tabs.RemoveAt(indexToRemove);
-            }
-        }
+        ///// <summary>
+        ///// Loops over all the tabs and removes the one with the specified unique tab name string.
+        ///// Currently this is only being used to remove the "Create New Study" tab after the user
+        ///// has loaded a study.
+        ///// </summary>
+        ///// <param name="uniqueTabName"></param>
+        //public void RemoveTab(String uniqueTabName)
+        //{
+        //    int indexToRemove = -1;
+        //    for (int i = 0; i < Tabs.Count; i++)
+        //    {
+        //        if (Tabs[i].UniqueName.Equals(uniqueTabName))
+        //        {
+        //            indexToRemove = i;
+        //            break;
+        //        }
+        //    }
+        //    if( indexToRemove != -1)
+        //    {
+        //        Tabs.RemoveAt(indexToRemove);
+        //    }
+        //}
 
         /// <summary>
         /// Finds the enclosing window of the class passed in. If the window is the main window then we know we are a tab
@@ -110,7 +110,11 @@ namespace HEC.FDA.ViewModel.Tabs
                         IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
                         if (selectedTab.BaseVM.IsOkToClose())
                         {
-                            Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                            bool userWantsToClose = UserWantsToClose(selectedTab.BaseVM);
+                            if (userWantsToClose)
+                            {
+                                Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                            }
                         }
                     }
                 }
@@ -133,6 +137,11 @@ namespace HEC.FDA.ViewModel.Tabs
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
+            if(tab.BaseVM is IDetectChanges)
+            {
+                tab.BaseVM.HasChanges = false;
+            }
+
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
             {
@@ -251,7 +260,29 @@ namespace HEC.FDA.ViewModel.Tabs
 
         private void RemoveTab(object sender, EventArgs e)
         {
-            _Tabs.Remove((IDynamicTab)sender);
+            IDynamicTab tab = (IDynamicTab)sender;
+            if(tab.BaseVM is IDetectChanges)
+            {
+                bool userWantsToClose = UserWantsToClose(tab.BaseVM);
+                if (userWantsToClose)
+                {
+                    _Tabs.Remove((IDynamicTab)sender);
+                }
+            }
+        }
+
+        public static bool UserWantsToClose(BaseViewModel BaseVM)
+        {
+            bool userWantsToClose = true;
+            if(BaseVM is IDetectChanges && BaseVM.HasChanges)
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show("There are unsaved changes. Are you sure you want to close?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                if(messageBoxResult == MessageBoxResult.No)
+                {
+                    userWantsToClose = false;
+                }
+            }
+            return userWantsToClose;
         }
 
         private void PopTabIntoWindow(object sender, EventArgs e)
@@ -282,7 +313,7 @@ namespace HEC.FDA.ViewModel.Tabs
                     stageDamageVM.CalculatedVM.TableWithPlot.InitModel();
                 }
             }
-            Navigate(tabToPopOut, true, false);
+            Navigate(tabToPopOut, true, false,true);
         }
 
         public void CloseTabsAndWindowsOpeningNewStudy()

@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Editors
 {
-    public abstract class BaseEditorVM : NameValidatingVM
+    public abstract class BaseEditorVM : NameValidatingVM, IDetectChanges
     {
         private string _SavingText;
         private string _Description = "";
