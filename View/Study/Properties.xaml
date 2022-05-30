@@ -47,11 +47,11 @@
             <Label Content="Created By:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
             <Label Content="Created Date:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
-            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsReadOnly="False" Text="{Binding StudyName}"/>
+            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsEnabled="false" Text="{Binding StudyName}"/>
             <CA:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding StudyDescription}"/>
-            <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
-            <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>
-            <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedDate, Mode=OneWay}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>
+            <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding CreatedDate, Mode=OneWay}"/>
         </Grid>
         
         <GroupBox Grid.Row="2" Header="FDA Study Properties" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,0">
