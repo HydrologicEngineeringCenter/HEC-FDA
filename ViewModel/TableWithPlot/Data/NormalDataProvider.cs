@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public NormalDataProvider()
         {
-            IsStrictMonotonic = false;
             Name = "Normal";
             Data.Add(new NormalRow(0.0d, new Normal(0,0), IsStrictMonotonic));
             Data.Add(new NormalRow(2.0d, new Normal(0, 2), IsStrictMonotonic));
@@ -19,7 +18,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 
         public NormalDataProvider(bool isStrictMonotonic)
         {
-            IsStrictMonotonic = false;
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Normal";
             Data.Add(new NormalRow(0.0d, new Normal(0, 0), IsStrictMonotonic));
             Data.Add(new NormalRow(2.0d, new Normal(0, 2), IsStrictMonotonic));
@@ -27,6 +26,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         }
         public NormalDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Normal";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {

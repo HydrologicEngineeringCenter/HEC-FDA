@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public TriangularDataProvider()
         {
-            IsStrictMonotonic = false;
             Name = "Triangular";
             Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1), IsStrictMonotonic));
             Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3), IsStrictMonotonic));

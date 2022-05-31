@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public LogNormalDataProvider()
         {
-            IsStrictMonotonic = false;
             Name = "LogNormal";
             Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
             Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
@@ -18,7 +17,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         }
         public LogNormalDataProvider(bool isStrictMonotonic)
         {
-            IsStrictMonotonic = false;
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "LogNormal";
             Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
             Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
@@ -26,6 +25,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         }
         public LogNormalDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "LogNormal";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {

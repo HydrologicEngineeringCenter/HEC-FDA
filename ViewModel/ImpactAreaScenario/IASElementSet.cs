@@ -5,6 +5,7 @@ using System.Windows;
 using System.Xml.Linq;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
@@ -99,6 +100,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 if(ias.ComputeResults == null)
                 {
                     allComputed = false;
+                    break;
                 }
             }
             return allComputed;
@@ -218,7 +220,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            Editor.ComputeScenarioVM vm = new Editor.ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
             string header = "Compute Scenario";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
             Navigate(tab, false, false);

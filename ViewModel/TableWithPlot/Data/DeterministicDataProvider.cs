@@ -9,7 +9,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public DeterministicDataProvider()
         {
-            IsStrictMonotonic = false;
             Name = "Deterministic";
             Data.Add(new DeterministicRow(0.0d, 0.0d, IsStrictMonotonic));
             Data.Add(new DeterministicRow(1.0d, 1.0d, IsStrictMonotonic));

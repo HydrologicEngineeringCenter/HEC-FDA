@@ -442,8 +442,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private string IsStageDamageValid()
         {
-            string retval = SelectedStageDamageElement.ChildElement == null ? "A Stage Damage is required. " : null;
-            if(SelectedDamageCurve == null)
+            string retval = null;
+
+            if (SelectedStageDamageElement.ChildElement == null)
+            {
+                retval += "A Stage Damage is required. ";
+            }
+            if (SelectedDamageCurve == null)
             {
                 retval += "A damage category selection is required.";
             }

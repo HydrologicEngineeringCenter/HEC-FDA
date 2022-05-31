@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
     {
         #region Notes
         #endregion
-        public event MessageReportedEventHandler MessageReport;
         #region Fields
         private const string ID = "ID";
         private const string IAS = "IAS";
@@ -305,9 +304,5 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
         }
 
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            
-        }
     }
 }

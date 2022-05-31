@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
     {
         public UniformDataProvider()
         {
-            IsStrictMonotonic = false;
             Name = "Uniform";
             Data.Add(new UniformRow(0.0d, new Uniform(0, 0), IsStrictMonotonic));
             Data.Add(new UniformRow(2.0d, new Uniform(0, 2), IsStrictMonotonic));
@@ -27,7 +26,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 
         public UniformDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
-            IsStrictMonotonic = IsStrictMonotonic;
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Uniform";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
