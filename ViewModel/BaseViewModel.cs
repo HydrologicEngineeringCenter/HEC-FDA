@@ -8,7 +8,7 @@ using System.Text;
 
 namespace HEC.FDA.ViewModel
 {
-    public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog, bool poppingTabOut = false);
+    public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog);
 
     /// <summary>
     /// The base class for all view model classes. Contains methods that are common among all view model classes
@@ -176,12 +176,12 @@ namespace HEC.FDA.ViewModel
         /// <param name="newWindow">True: displays the view in a new window. False: displays the view as a new tab in the main window.</param>
         /// <param name="asDialog">If newWindow is true, this determines if it is modal or not</param>
         /// <param name="title">The title for the tab or window.</param>
-        public void Navigate( IDynamicTab tab, bool newWindow = true, bool asDialog = true, bool poppingTabOut = false)
+        public void Navigate( IDynamicTab tab, bool newWindow = true, bool asDialog = true)
         {
             if (RequestNavigation != null)
             {
                 tab.BaseVM.WasCanceled = true;
-                RequestNavigation( tab, newWindow, asDialog, poppingTabOut);
+                RequestNavigation( tab, newWindow, asDialog);
             }     
         }
 

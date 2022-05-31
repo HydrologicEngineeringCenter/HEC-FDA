@@ -108,7 +108,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                //todo: Run calculations. waiting for hec to put the new model in.
+                // Run calculations. waiting for hec to put the new model in.
                 //grab the result objects off the ias elements and run the calculation.
                 IASElementSet[] iASElems = GetElementsFromID();
                 IASElementSet firstElem = iASElems[0];

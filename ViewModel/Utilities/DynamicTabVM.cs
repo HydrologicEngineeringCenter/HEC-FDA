@@ -56,6 +56,9 @@ namespace HEC.FDA.ViewModel.Utilities
             set { _UniqueName = value; }
         }
 
+        public bool IsPoppingIn { get; set; }
+        public bool IsPoppingOut { get; set; }
+
         /// <summary>
         /// Creates the tab object that can be displayed by passing it into Navigate().
         /// </summary>

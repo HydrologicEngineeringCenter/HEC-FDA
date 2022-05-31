@@ -224,6 +224,7 @@ namespace HEC.FDA.ViewModel.Tabs
         private void PopWindowIntoTab(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopIn = (DynamicTabVM)sender;
+            tabToPopIn.IsPoppingIn = true;
             //you don't have to remove the tab from the _Windows here because 
             //when the window closes it will call RemoveWindow()
             _Tabs.Add(tabToPopIn);
@@ -288,6 +289,7 @@ namespace HEC.FDA.ViewModel.Tabs
         private void PopTabIntoWindow(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
+            tabToPopOut.IsPoppingOut = true;
             _Tabs.Remove(tabToPopOut);
             _Windows.Add(tabToPopOut);
 
@@ -313,7 +315,7 @@ namespace HEC.FDA.ViewModel.Tabs
                     stageDamageVM.CalculatedVM.TableWithPlot.InitModel();
                 }
             }
-            Navigate(tabToPopOut, true, false,true);
+            Navigate(tabToPopOut, true, false);
         }
 
         public void CloseTabsAndWindowsOpeningNewStudy()

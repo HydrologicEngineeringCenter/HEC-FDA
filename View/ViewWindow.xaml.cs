@@ -37,15 +37,17 @@ namespace HEC.FDA.View
             Close();
         }
 
-        private void WindowSpawner(WindowVM newvm, bool asDialogue, bool poppingATabOut = false)
+        private void WindowSpawner(WindowVM newvm, bool asDialogue)
         {
-            //If we are popping and existing editor out of the tab control,
+            //If we are popping an existing editor out of the tab control,
             //we don't want to clear the HasChanges bool.
-            if(newvm.Tab.BaseVM is IDetectChanges && !poppingATabOut)
+
+            if(newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
             {
                 newvm.Tab.BaseVM.HasChanges = false;
             }
 
+            newvm.Tab.IsPoppingOut = false;
             newvm.WasCanceled = true;
             ViewWindow newwindow = new ViewWindow(newvm);
             newwindow.Owner = this;
@@ -72,14 +74,22 @@ namespace HEC.FDA.View
             if (vm.Tab != null)
             {
                 IDynamicTab tab = vm.Tab;
-                bool userWantsToClose = TabController.UserWantsToClose(tab.BaseVM);
-                if (userWantsToClose)
+                if (tab.IsPoppingIn)
                 {
                     tab.RemoveWindow();
+                    tab.IsPoppingIn = false;
                 }
                 else
                 {
-                    e.Cancel = true;
+                    bool userWantsToClose = TabController.UserWantsToClose(tab.BaseVM);
+                    if (userWantsToClose)
+                    {
+                        tab.RemoveWindow();
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
                 }
             }
         }

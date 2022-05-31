@@ -5,7 +5,7 @@ using ViewModel;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
-    public delegate void LaunchNewWindowHandler(WindowVM vm, bool asDialogue, bool poppingTabOut = false);
+    public delegate void LaunchNewWindowHandler(WindowVM vm, bool asDialogue);
     public class WindowVM : BaseViewModel
     {
         #region Notes
@@ -76,7 +76,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
 
-        private void CurrentView_RequestNavigation(IDynamicTab tab, bool newWindow, bool asDialog, bool poppingTabOut = false)
+        private void CurrentView_RequestNavigation(IDynamicTab tab, bool newWindow, bool asDialog)
         {
             if (LaunchNewWindow != null)
             {
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 {
                     WindowVM window = new WindowVM(tab);
                     window.Title = tab.Header;
-                    LaunchNewWindow(window, asDialog, poppingTabOut);
+                    LaunchNewWindow(window, asDialog);
                 }
                 else
                 {
