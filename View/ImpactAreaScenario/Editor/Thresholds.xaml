@@ -50,8 +50,6 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Utilities:NullableNumericTextBox DoubleValue="{Binding ThresholdValue, Mode=TwoWay}" Width="135"/>
-
-                                <!--<local:ThresholdValueNumericTextBox  Width="135" HorizontalAlignment="Stretch" />-->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
