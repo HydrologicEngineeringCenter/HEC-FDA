@@ -35,6 +35,7 @@ namespace alternatives
             _periodOfAnalysis = periodOfAnalysis;
             _id = id;
         }
+        [Obsolete("This method is obsolete. The intention of the alternative results is to calculate results based on existing scenario results")]
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -42,12 +43,15 @@ namespace alternatives
         /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> number of iterations to sample distributions
         /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
+        /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
+        /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
         public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate)
         {
             _discountRate = discountRate;
             ScenarioResults baseYearScenarioResults = _currentYear.Compute(randomProvider, convergenceCriteria);//this is a list of impact area-specific ead
             ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, convergenceCriteria);
+            
 
             AlternativeResults alternativeResults = new AlternativeResults(_id);
             foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
@@ -84,6 +88,65 @@ namespace alternatives
                         double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
                         aaeqResult.AddConsequenceRealization(aaeqDamage,i);
+                    }
+                    aaeqResult.ConsequenceHistogram.ForceDeQueue();
+                    aaeqResults.AddConsequenceResult(aaeqResult);
+                }
+                alternativeResults.AddConsequenceResults(aaeqResults);
+            }
+            return alternativeResults;
+        }
+        /// <summary>
+        /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
+        /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
+        /// </summary>
+        /// <param name="randomProvider"></param> random number provider
+        /// <param name="iterations"></param> number of iterations to sample distributions
+        /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
+        /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
+        /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
+        /// <returns></returns>
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
+        {
+            _discountRate = discountRate;
+            AlternativeResults alternativeResults = new AlternativeResults(_id);
+            alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
+            alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
+
+            foreach (ImpactAreaScenarioResults baseYearResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+            {
+                ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
+                ImpactAreaScenarioResults mlfYearResults = alternativeResults.FutureYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
+
+                foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    ConsequenceResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
+                    //Sturges rule 
+                    double lowerBoundProbability = 0.0001;
+                    double upperBoundProbability = 0.9999;
+
+                    baseYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+                    mlfYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+
+                    double eadSampledBaseYearLowerBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledFutureYearLowerBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
+                    double eadSampledBaseYearUpperBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
+                    double eadSampledFutureYearUpperBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(upperBoundProbability);
+
+                    double aaeqDamageLowerBound = ComputeEEAD(eadSampledBaseYearLowerBound, eadSampledFutureYearLowerBound);
+                    double aaeqDamageUpperBound = ComputeEEAD(eadSampledBaseYearUpperBound, eadSampledFutureYearUpperBound);
+                    double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
+                    //TODO: if this depends on convergence criteria, what do we do?
+                    double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
+                    double binWidth = Math.Ceiling(range / binQuantity);
+                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.RegionID, binWidth);
+                    //TODO: run this loop until convergence 
+                    for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+                    {
+                        double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
+                        double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
+                        double aaeqDamage = ComputeEEAD(eadSampledBaseYear, eadSampledFutureYear);
+                        aaeqResult.AddConsequenceRealization(aaeqDamage, i);
                     }
                     aaeqResult.ConsequenceHistogram.ForceDeQueue();
                     aaeqResults.AddConsequenceResult(aaeqResult);
