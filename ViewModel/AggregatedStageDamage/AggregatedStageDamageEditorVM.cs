@@ -60,7 +60,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         #endregion
 
-        #region voids       
+        #region voids    
+        
+        
         private void UpdateVM()
         {
             if(_IsManualRadioSelected)
@@ -81,7 +83,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 int wseID = CalculatedVM.SelectedWaterSurfaceElevation.ID;
                 int structID = CalculatedVM.SelectedStructures.ID;
                 string lastEditDate = DateTime.Now.ToString("G");
-                int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                int id = 1;
+                if (OriginalElement != null)
+                {
+                    id = OriginalElement.ID;
+                }
+                else
+                {
+                    id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                }
                 AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);              
                 base.Save(elemToSave);
             }
