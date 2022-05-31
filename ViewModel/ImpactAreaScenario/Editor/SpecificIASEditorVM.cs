@@ -37,13 +37,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private double _EAD;
         private PairedData _DamageFrequencyCurve = null;
 
-        public string FrequencyRelationshipLabel { get; } = StringConstants.FREQUENCY_RELATIONSHIP_LABEL;
-        public string RegulatedUnregulatedLabel { get; } = StringConstants.REGULATED_UNREGULATED_LABEL;
-        public string StageDischargeLabel { get; } = StringConstants.STAGE_DISCHARGE_LABEL;
-        public string LateralStructureLabel { get; } = StringConstants.LATERAL_STRUCTURE_LABEL;
-        public string ExteriorInteriorLabel { get; } = StringConstants.EXT_INT_SHORT_LABEL;
-        public string StageDamageLabel { get; } = StringConstants.STAGE_DAMAGE_LABEL;
-
         public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
         {
