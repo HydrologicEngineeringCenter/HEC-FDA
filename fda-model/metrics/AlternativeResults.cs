@@ -33,7 +33,8 @@ namespace metrics
                 return _isNull;
             }
         }
-
+        internal ScenarioResults BaseYearScenarioResults { get; set; }
+        internal ScenarioResults FutureYearScenarioResults { get; set; }
         #endregion
 
         #region Constructor

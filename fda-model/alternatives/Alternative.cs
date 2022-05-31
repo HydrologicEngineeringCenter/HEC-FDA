@@ -109,14 +109,14 @@ namespace alternatives
         public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
         {
             _discountRate = discountRate;
-            ScenarioResults baseYearScenarioResults = computedResultsBaseYear;
-            ScenarioResults mlfYearScenarioResults = computedResultsFutureYear;
-
             AlternativeResults alternativeResults = new AlternativeResults(_id);
-            foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
+            alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
+            alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
+
+            foreach (ImpactAreaScenarioResults baseYearResults in alternativeResults.BaseYearScenarioResults.ResultsList)
             {
                 ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
-                ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
+                ImpactAreaScenarioResults mlfYearResults = alternativeResults.FutureYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
                 foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
                 {
