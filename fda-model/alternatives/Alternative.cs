@@ -42,13 +42,24 @@ namespace alternatives
         /// <param name="randomProvider"></param> random number provider
         /// <param name="iterations"></param> number of iterations to sample distributions
         /// <param name="discountRate"></param> Discount rate should be provided in decimal form.
+        /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
+        /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
-        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate)
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate, ScenarioResults computedResultsBaseYear = null, ScenarioResults computedResultsFutureYear = null)
         {
             _discountRate = discountRate;
-            ScenarioResults baseYearScenarioResults = _currentYear.Compute(randomProvider, convergenceCriteria);//this is a list of impact area-specific ead
-            ScenarioResults mlfYearScenarioResults = _futureYear.Compute(randomProvider, convergenceCriteria);
-
+            ScenarioResults baseYearScenarioResults;
+            ScenarioResults mlfYearScenarioResults;
+            if (computedResultsBaseYear == null)
+            {
+                baseYearScenarioResults = _currentYear.Compute(randomProvider, convergenceCriteria);//this is a list of impact area-specific ead
+                mlfYearScenarioResults = _futureYear.Compute(randomProvider, convergenceCriteria);
+            }
+            else
+            {
+                baseYearScenarioResults = computedResultsBaseYear;
+                mlfYearScenarioResults = computedResultsFutureYear;
+            }
             AlternativeResults alternativeResults = new AlternativeResults(_id);
             foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
             {
