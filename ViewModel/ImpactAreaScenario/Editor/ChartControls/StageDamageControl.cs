@@ -6,7 +6,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
     {
 
         public StageDamageControl()
-            : base(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.STAGE_DAMAGE, StringConstants.STAGE_DAMAGE)
+            : base(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE)
         {
 
         }

@@ -4,14 +4,15 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
+
     public class PerformanceLongTermRiskVM : PerformanceVMBase
     {
-        public PerformanceLongTermRiskVM(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
+        public PerformanceLongTermRiskVM(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             LoadData(iasResult, thresholdComboItems);
         }
 
-        private void LoadData(metrics.Results iasResult, List<ThresholdComboItem> thresholdComboItems)
+        private void LoadData(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             for (int i = 0; i < thresholdComboItems.Count; i++)
             {
@@ -21,7 +22,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 List<int> xVals = new List<int>() { 10,20,30 };
                 foreach (int xVal in xVals)
                 {
-                    double yVal = iasResult.PerformanceByThresholds.ThresholdsDictionary[thresholdKey].ProjectPerformanceResults.LongTermExceedanceProbability(xVal);
+                    double yVal = iasResult.PerformanceByThresholds.GetThreshold(thresholdKey).SystemPerformanceResults.LongTermExceedanceProbability(xVal);
                     rows.Add(new PerformancePeriodRowItem(xVal, yVal));
                 }
                 MetricsToRows.Add(thresholdComboItems[i].Metric, rows);

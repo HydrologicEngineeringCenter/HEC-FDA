@@ -3,7 +3,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
 using System.Collections.Generic;
 using HEC.MVVMFramework.ViewModel.Validation;
-
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -84,14 +84,65 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 return new List<string>() { nameof(Mean), nameof(Standard_Deviation) };
             }
         }
-        public NormalRow(double x, Normal y): base(x, y)
+        public NormalRow(double x, Normal y, bool isStrictMonotonic) : base(x, y)
         {   
-            AddSinglePropertyRule(nameof(Mean), new Rule(() => { if (PreviousRow == null) return true; return Mean > ((NormalRow)PreviousRow).Mean; }, "Mean values are not increasing.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Mean), CreateMeanValuesIncreasingPreviousRowRule(isStrictMonotonic));
+            AddSinglePropertyRule(nameof(Mean), CreateMeanValuesIncreasingNextRowRule(isStrictMonotonic));
+
             AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return Standard_Deviation >= 0; }, "Standard deviation is less than 0.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.01);}, "The lower confidence limit of .01 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.99); }, "The upper confidence limit of .99 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
+            
+            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.01);}, "The first percentile of this distribution (the lower confidence limit of .01) yielded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Standard_Deviation), new Rule(() => { return CheckNormalDistExtremes(.99); }, "The 99th percentile of this distribution (the upper confidence limit of .99) yielded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.99); }, "The upper confidence limit of .99 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Mean), new Rule(() => { return CheckNormalDistExtremes(.01); }, "The lower confidence limit of .01 yeilded a non monotonic extreme for the uncertainty in this relationship", ErrorLevel.Severe));
+        }
+
+        private IRule CreateMeanValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (PreviousRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double prevMin = ((NormalRow)PreviousRow).Mean;
+                    if (isStrictMonotonic)
+                    {
+                        return Mean > prevMin;
+                    }
+                    else
+                    {
+                        return Mean >= prevMin;
+                    }
+                }
+            },
+                "Mean values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateMeanValuesIncreasingNextRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (NextRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double nextMin = ((NormalRow)NextRow).Mean;
+                    if (isStrictMonotonic)
+                    {
+                        return Mean < nextMin;
+                    }
+                    else
+                    {
+                        return Mean <= nextMin;
+                    }
+                }
+            },
+                "Min values are not increasing.", ErrorLevel.Severe);
         }
 
         public override void UpdateRow(int col, double value)

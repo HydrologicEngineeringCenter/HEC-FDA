@@ -11,16 +11,25 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public LogNormalDataProvider()
         {
             Name = "LogNormal";
-            Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0)));
-            Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2)));
+            Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
+            Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
             LinkList();
         }
-        public LogNormalDataProvider(UncertainPairedData upd)
+        public LogNormalDataProvider(bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
+            Name = "LogNormal";
+            Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
+            Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
+            LinkList();
+        }
+        public LogNormalDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "LogNormal";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new LogNormalRow(upd.Xvals[i], (LogNormal)upd.Yvals[i]));
+                Data.Add(new LogNormalRow(upd.Xvals[i], (LogNormal)upd.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }
@@ -37,7 +46,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                     mean0 = ((LogNormal)((LogNormalRow)Data[i]).Y).Mean;
                     stdev0 = ((LogNormal)((LogNormalRow)Data[i]).Y).StandardDeviation;
                 }
-                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x0, new LogNormal(mean0, stdev0)));
+                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x0, new LogNormal(mean0, stdev0), IsStrictMonotonic));
                 return;
             }
             if (Data.Count > i)
@@ -54,14 +63,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 double x = x0 + ((x1 - x0) / 2.0);
                 double mean = mean0 + ((mean1 - mean0) / 2.0);
                 double stdev = stdev0 + ((stdev1 - stdev0) / 2.0);
-                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x, new LogNormal(mean, stdev)));
+                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x, new LogNormal(mean, stdev), IsStrictMonotonic));
             }
             else
             {
                 x0 = ((LogNormalRow)Data[Data.Count - 1]).X;
                 mean0 = ((LogNormal)((LogNormalRow)Data[Data.Count - 1]).Y).Mean;
                 stdev0 = ((LogNormal)((LogNormalRow)Data[Data.Count - 1]).Y).StandardDeviation;
-                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x0, new LogNormal(mean0, stdev0)));
+                DataProviderExtensions.AddRow(this, i, new LogNormalRow(x0, new LogNormal(mean0, stdev0), IsStrictMonotonic));
                 return;
             }
         }

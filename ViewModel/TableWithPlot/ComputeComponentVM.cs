@@ -5,6 +5,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using paireddata;
 using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private string _ylabel = "ylabel";
         private string _description = "description";
         private IDataProvider _selectedItem;
+        private bool _DeterministicOnly;
+        private bool _IsStrictMonotonic;
         #endregion
         #region Properties
         public string Units
@@ -98,8 +101,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             Initialize();
             SetValidation();
         }
-        public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel")
+        public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
         {
+            _DeterministicOnly = deterministicOnly;
+            _IsStrictMonotonic = isStrictMonotonic;
             Name = name;
             XLabel = xlabel;
             YLabel = ylabel;
@@ -133,23 +138,23 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 switch(distType)
                 {
                     case IDistributionEnum.Deterministic:
-                        Options[0] = new DeterministicDataProvider(upd);
+                        Options[0] = new DeterministicDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[0];
                         break;
                     case IDistributionEnum.Uniform:
-                        Options[1] = new UniformDataProvider(upd);
+                        Options[1] = new UniformDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[1];
                         break;
                     case IDistributionEnum.Normal:
-                        Options[2] = new NormalDataProvider(upd);
+                        Options[2] = new NormalDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[2];
                         break;
                     case IDistributionEnum.Triangular:
-                        Options[3] = new TriangularDataProvider(upd);
+                        Options[3] = new TriangularDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[3];
                         break;
                     case IDistributionEnum.LogNormal:
-                        Options[4] = new LogNormalDataProvider(upd);
+                        Options[4] = new LogNormalDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[4];
                         break;
                 }
@@ -159,11 +164,18 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
         private void Initialize()
         {
-            Options.Add( new DeterministicDataProvider());
-            Options.Add(new UniformDataProvider());
-            Options.Add(new NormalDataProvider());
-            Options.Add(new TriangularDataProvider());
-            Options.Add(new LogNormalDataProvider());
+            if (_DeterministicOnly)
+            {
+                Options.Add(new DeterministicDataProvider());
+            }
+            else
+            {
+                Options.Add(new DeterministicDataProvider());
+                Options.Add(new UniformDataProvider());
+                Options.Add(new NormalDataProvider());
+                Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
+                Options.Add(new LogNormalDataProvider());
+            }
 
             SelectedItem = Options.First();
             // This is just so our initial set of data we load is valid. Eventually we can crush this if condition. 
@@ -174,10 +186,22 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 ok.Value = 1;
             }
         }
+
+        public void SetMinMaxValues(double minY, double maxY)
+        {
+            foreach (BaseDataProvider opt in Options)
+            {
+                opt.yMin = minY;
+                opt.yMax = maxY;
+                opt.SetGlobalMaxAndMin();
+            }
+        }
+
         private void SetValidation()
         {
             foreach (IDataProvider opt in Options)
             {
+                
                 foreach (ValidatingBaseViewModel row in opt.Data)
                 {
                     row.Validate();
@@ -193,6 +217,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             XElement ele = new XElement(this.GetType().Name);
             ele.SetAttributeValue("selectedItem", SelectedItem.Name);
             ele.SetAttributeValue("Name", Name);
+            ele.SetAttributeValue("DeterministicOnly", _DeterministicOnly);
+
             foreach (IDataProvider idp in Options)
             {
                 XElement child = new XElement(idp.ToUncertainPairedData(XLabel, YLabel, Name, Description, "").WriteToXML());
@@ -206,17 +232,18 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             string selectedItemName = element.Attribute("selectedItem")?.Value;
             foreach (XElement updEl in element.Elements())
             {
-                Name = updEl.Attribute("Name")?.Value;
-                XLabel = updEl.Attribute("XLabel")?.Value;
-                YLabel = updEl.Attribute("YLabel")?.Value;
                 Description = updEl.Attribute("Description")?.Value;
+                _DeterministicOnly = Convert.ToBoolean(updEl.Attribute("DeterministicOnly")?.Value);
 
                 string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
                 string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
-                ObjectHandle oh = System.Activator.CreateInstance(null, typeName);//requires empty constructor
+                ObjectHandle oh = Activator.CreateInstance(null, typeName);//requires empty constructor
                 BaseDataProvider dist = oh.Unwrap() as BaseDataProvider;
 
                 UncertainPairedData upd = UncertainPairedData.ReadFromXML(updEl);
+                XLabel = upd.XLabel;
+                YLabel = upd.YLabel;
+                Name = upd.Name;
                 dist.UpdateFromUncertainPairedData(upd);
                 Options.Add(dist);
             }

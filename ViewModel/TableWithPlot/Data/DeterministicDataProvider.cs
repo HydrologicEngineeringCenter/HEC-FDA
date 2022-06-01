@@ -10,21 +10,36 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public DeterministicDataProvider()
         {
             Name = "Deterministic";
-            Data.Add(new DeterministicRow(0.0d, 0.0d));
-            Data.Add(new DeterministicRow(1.0d, 1.0d));
-            Data.Add(new DeterministicRow(2.0d, 2.0d));
-            Data.Add(new DeterministicRow(3.0d, 3.0d));
-            Data.Add(new DeterministicRow(4.0d, 4.0d));
-            Data.Add(new DeterministicRow(5.0d, 5.0d));
-            Data.Add(new DeterministicRow(10000.0d, 10000.0d));
+            Data.Add(new DeterministicRow(0.0d, 0.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(1.0d, 1.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(2.0d, 2.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(3.0d, 3.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(4.0d, 4.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(5.0d, 5.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(10000.0d, 10000.0d, IsStrictMonotonic));
             LinkList();
         }
-        public DeterministicDataProvider(UncertainPairedData upd)
+
+        public DeterministicDataProvider(bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
+            Name = "Deterministic";
+            Data.Add(new DeterministicRow(0.0d, 0.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(1.0d, 1.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(2.0d, 2.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(3.0d, 3.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(4.0d, 4.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(5.0d, 5.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(10000.0d, 10000.0d, IsStrictMonotonic));
+            LinkList();
+        }
+        public DeterministicDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Deterministic";
             for(int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new DeterministicRow(upd.Xvals[i], upd.Yvals[i].InverseCDF(.5)));
+                Data.Add(new DeterministicRow(upd.Xvals[i], upd.Yvals[i].InverseCDF(.5), isStrictMonotonic));
             }
             LinkList();
         }
@@ -39,7 +54,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                     x0 = ((DeterministicRow)Data[i]).X;
                     y0 = ((DeterministicRow)Data[i]).Y.InverseCDF(.5);
                 }
-                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x0, y0));
+                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x0, y0, IsStrictMonotonic));
                 return;
             }
             if (Data.Count > i)
@@ -52,13 +67,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 y1 = ((DeterministicRow)Data[i]).Y.InverseCDF(.5);
                 double x = x0 + ((x1 - x0) / 2.0);
                 double y = y0 + ((y1 - y0) / 2.0);
-                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x, y));
+                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x, y, IsStrictMonotonic));
             }
             else
             {
                 x0 = ((DeterministicRow)Data[Data.Count - 1]).X;
                 y0 = ((DeterministicRow)Data[Data.Count - 1]).Y.InverseCDF(.5);
-                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x0, y0));
+                DataProviderExtensions.AddRow(this, i, new DeterministicRow(x0, y0, IsStrictMonotonic));
                 return;
             }
 

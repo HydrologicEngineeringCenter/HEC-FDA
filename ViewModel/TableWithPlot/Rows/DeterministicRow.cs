@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.MVVMFramework.ViewModel.Validation;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -53,10 +54,58 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        public DeterministicRow(double x, double y): base(x, new Deterministic(y))
+        public DeterministicRow(double x, double y, bool isStrictMonotonic) : base(x, new Deterministic(y))
         {
-            AddSinglePropertyRule(nameof(Value), new Rule( () => { if (PreviousRow == null) return true; return Value > ((DeterministicRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((DeterministicRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Value), CreateValuesIncreasingPreviousRowRule(isStrictMonotonic));
+            AddSinglePropertyRule(nameof(Value), CreateValuesIncreasingNextRowRule(isStrictMonotonic));
+        }
+
+        private IRule CreateValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (PreviousRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double prevValue = ((Deterministic)PreviousRow.Y).Value;
+                    if (isStrictMonotonic)
+                    {
+                        return Value > prevValue;
+                    }
+                    else
+                    {
+                        return Value >= prevValue;
+                    }
+                }
+            },
+                "Y values are not increasing.", ErrorLevel.Severe);
+        }
+
+        private IRule CreateValuesIncreasingNextRowRule(bool isStrictMonotonic)
+        {
+            return new Rule(() =>
+            {
+                if (NextRow == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    double nextValue = ((Deterministic)NextRow.Y).Value;
+                    if (isStrictMonotonic)
+                    {
+                        return Value < nextValue;
+                    }
+                    else
+                    {
+                        return Value <= nextValue;
+                    }
+                }
+            },
+                "Y values are not increasing.", ErrorLevel.Severe);
         }
 
         public override void UpdateRow(int col, double value)

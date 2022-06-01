@@ -67,7 +67,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             AlternativeRowItem foundRow = Rows.Where(row => row.ID == idToUpdate).SingleOrDefault();
             if(foundRow != null)
             {
-                foundRow.HasComputed = newElement.HasComputed;
                 foundRow.Year = newElement.AnalysisYear;
                 //name has to be set after the year for the display name to get updated properly.
                 foundRow.Name = newElement.Name;

@@ -14,20 +14,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(metrics.Results iasResult)
+        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, int impactAreaID)
         { 
-            Mean = iasResult.ExpectedAnnualDamageResults.MeanEAD("Total");
-            Statistics.Histograms.ThreadsafeInlineHistogram totalHistogram = iasResult.ExpectedAnnualDamageResults.HistogramsOfEADs["Total"];
+            Mean = iasResult.ConsequenceResults.MeanDamage("Total", "Total", impactAreaID);
+            Statistics.Histograms.ThreadsafeInlineHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResult("Total", "Total", impactAreaID).ConsequenceHistogram;
             int[] binCounts = totalHistogram.BinCounts;
             double binWidth = totalHistogram.BinWidth;
             double min = totalHistogram.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
             _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
-            ExpectedAnnualDamageResults eadResults = iasResult.ExpectedAnnualDamageResults;
+            ConsequenceResults eadResults = iasResult.ConsequenceResults;
             loadTableValues(eadResults);
         }
 
-        private void loadTableValues(ExpectedAnnualDamageResults eadResults)
+        private void loadTableValues(ConsequenceResults eadResults)
         {
             List<double> xVals = new List<double>() { .75, .5, .25 };
             List<double> yVals = loadYData(xVals, eadResults);
@@ -41,12 +41,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             Rows.AddRange( rows);
         }
 
-        private List<double> loadYData(List<double> xVals, ExpectedAnnualDamageResults eadResults)
+        private List<double> loadYData(List<double> xVals, ConsequenceResults eadResults)
         {
             List<double> yValues = new List<double>();
             foreach(double x in xVals)
             {
-                yValues.Add( eadResults.EADExceededWithProbabilityQ("Total", x));
+                yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ("Total",x, "Total", eadResults.RegionID));
             }
             return yValues;
         }

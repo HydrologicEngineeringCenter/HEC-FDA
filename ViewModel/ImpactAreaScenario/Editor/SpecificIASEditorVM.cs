@@ -37,7 +37,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private double _EAD;
         private PairedData _DamageFrequencyCurve = null;
 
-
         public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
         {
@@ -256,6 +255,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (itemToUpdate != null)
             {
                 itemToUpdate.ChildElement = newElement;
+                if(newElement is AggregatedStageDamageElement)
+                {
+                    StageDamageSelectionChanged();
+                }
             }
         }
 
@@ -393,6 +396,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     SelectedDamageCurve = DamageCategories[0];
                 }
             }
+            else
+            {
+                //the user selected the blank row. Clear the damage category combo
+                DamageCategories.Clear();
+
+            }
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
@@ -426,7 +435,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private string IsStageDamageValid()
         {
-            return SelectedStageDamageElement.ChildElement == null ? "A Stage Damage is required." : null;
+            string retval = null;
+
+            if (SelectedStageDamageElement.ChildElement == null)
+            {
+                retval += "A Stage Damage is required. ";
+            }
+            if (SelectedDamageCurve == null)
+            {
+                retval += "A damage category selection is required.";
+            }
+            return retval;
         }
 
 
@@ -475,14 +494,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if(configurationValidationResult.IsValid)
             {
-                Simulation simulation = sc.BuildSimulation();
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
                 MeanRandomProvider randomProvider = new MeanRandomProvider();
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 try
                 {
-                    metrics.Results result = simulation.PreviewCompute();
-                    EAD = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                    metrics.ImpactAreaScenarioResults result = simulation.PreviewCompute();
+                    EAD = result.ConsequenceResults.MeanDamage("Total", "Total", CurrentImpactArea.ID);
                 }
                 catch (Exception ex)
                 {
@@ -506,7 +525,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (e.Message is FrequencyDamageMessage damageMessage)
             {
                 //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
-                if(e.Message.Message.Equals("default"))
+                if(e.Message.Message.Equals("Damage-frequency function for damage and asset categoriesdefaultandunassigned"))
                 {
                     _DamageFrequencyCurve = damageMessage.FrequencyDamage;
                 }
@@ -519,9 +538,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             UncertainPairedData retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                //todo: do i cast to curveChildElem or do i change the row item to hold a curve child elem, or do i make a new row item
-                CurveChildElement elem =(CurveChildElement) SelectedFrequencyElement.ChildElement;
-                retval = elem.ComputeComponentVM.SelectedItemToPairedData();
+                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
+                {
+                    retval = elem.CreatePairedData();
+                }
             }
 
             return retval;
@@ -583,7 +603,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
                 PlotControlVM.RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
                 PlotControlVM.StageDamageControl.UpdatePlotData(getStageDamageFunction());
-                PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+                PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());             
 
                 PlotControlVM.Plot();
                 ShowWarnings = true;

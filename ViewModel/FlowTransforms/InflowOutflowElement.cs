@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.INFLOW_OUTFLOW_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
 
             Description = description;

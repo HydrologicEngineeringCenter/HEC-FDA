@@ -7,10 +7,13 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -32,6 +35,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
 
+
         #endregion
         #region Properties
 
@@ -39,7 +43,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public metrics.Results ComputeResults { get; set; }
+        public ImpactAreaScenarioResults ComputeResults { get; set; }
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
@@ -113,19 +117,24 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ExtIntStageID = Int32.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
             StageDamageID = Int32.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
+            IEnumerable<XElement> results = iasElem.Elements("Results");
+            if (results.Any())
+            {
+                ComputeResults = (ImpactAreaScenarioResults)ImpactAreaScenarioResults.ReadFromXML(results.First());
+            }
+
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
        
         #endregion
         
         /// <summary>
-        /// Intentionally leaving commented out for now. - Cody 10/26/21
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public metrics.Results ComputeScenario(object arg1, EventArgs arg2)
+        public Task ComputeScenario(object arg1, EventArgs arg2)
         {
-            metrics.Results results = null;
+            ImpactAreaScenarioResults results = null;
 
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
@@ -146,32 +155,46 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+            Task output = Task.CompletedTask;
             if (configurationValidationResult.IsValid)
             {
-                Simulation simulation = sc.BuildSimulation();
-                int seed = 999;
-                RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
-                try
-                {
-                    results = simulation.Compute(randomProvider, cc); 
-                    MessageBox.Show("Simulation computed successfully.", "Compute Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
 
-                }
-                catch (Exception ex)
+                output = Task.Run(() =>
                 {
-                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    try
+                    {
+                        MessageHub.Register(simulation);
+                        ComputeSimulation(simulation);
+                    }
+                    finally
+                    {
+                        MessageHub.Unregister(simulation);
+                    }
+                });
             }
             else
             {
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-            return results;
+
+            return output;
 
         }
-
- 
+        private void ComputeSimulation(ImpactAreaScenarioSimulation simulation)
+        {
+            try
+            {
+                int seed = 999;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+                ComputeResults = simulation.Compute(randomProvider, cc);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
+            }
+        }
 
         private XElement WriteThresholdsToXML()
         {
@@ -218,6 +241,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             iasElement.Add(stageDamageElem);
 
             iasElement.Add(WriteThresholdsToXML());
+
+            if(ComputeResults != null)
+            {
+                XElement resultsXElement = ComputeResults.WriteToXml();
+                iasElement.Add(resultsXElement);
+            }
 
             return iasElement;
         }

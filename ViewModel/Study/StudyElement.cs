@@ -235,9 +235,19 @@ namespace HEC.FDA.ViewModel.Study
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
             Navigate( tab, false, false);
         }
-        
+
+        private void CreateLogFile()
+        {
+            string studyPath = Connection.Instance.ProjectFile;
+            string studyName = Path.GetFileNameWithoutExtension(studyPath);
+            string studyDirectoryPath = Path.GetDirectoryName(studyPath);
+            string logPath = studyDirectoryPath + "\\" + studyName + ".log";
+            TextFileMessageSubscriber.Instance.FilePath = logPath;
+        }
+
         public void AddBaseElements()
         {
+            CreateLogFile();
             Elements.Clear();
             if (Connection.Instance.IsConnectionNull) return;
 

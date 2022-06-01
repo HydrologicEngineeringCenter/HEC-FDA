@@ -43,7 +43,7 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
-            <TextBlock Grid.Row="1" Text="Failure Function:" VerticalAlignment="Bottom" Margin="5,0,0,0" />
+            <TextBlock Grid.Row="1" Text="System Response Curve:" VerticalAlignment="Bottom" Margin="5,0,0,0" />
             <RadioButton Name="rad_default" Content="Default" IsChecked="{Binding IsUsingDefault}" Margin="10,0,0,0"  Checked="rad_default_Checked"/>
             <RadioButton Name="rad_userDefined" Content="User Defined" IsChecked="{Binding IsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" Margin="10,0,0,0" Checked="rad_userDefined_Checked" />
         </StackPanel>

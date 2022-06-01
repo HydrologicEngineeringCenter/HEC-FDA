@@ -11,16 +11,26 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public UniformDataProvider()
         {
             Name = "Uniform";
-            Data.Add(new UniformRow(0.0d, new Uniform(0, 0)));
-            Data.Add(new UniformRow(2.0d, new Uniform(0, 2)));
+            Data.Add(new UniformRow(0.0d, new Uniform(0, 0), IsStrictMonotonic));
+            Data.Add(new UniformRow(2.0d, new Uniform(0, 2), IsStrictMonotonic));
             LinkList();
         }
-        public UniformDataProvider(UncertainPairedData upd)
+        public UniformDataProvider(bool isStrictMonotonic)
         {
+            IsStrictMonotonic = isStrictMonotonic;
+            Name = "Uniform";
+            Data.Add(new UniformRow(0.0d, new Uniform(0, 0), IsStrictMonotonic));
+            Data.Add(new UniformRow(2.0d, new Uniform(0, 2), IsStrictMonotonic));
+            LinkList();
+        }
+
+        public UniformDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        {
+            IsStrictMonotonic = isStrictMonotonic;
             Name = "Uniform";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new UniformRow(upd.Xvals[i],  (Uniform)upd.Yvals[i]));
+                Data.Add(new UniformRow(upd.Xvals[i],  (Uniform)upd.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }
@@ -37,7 +47,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                     min0 = ((Uniform)((UniformRow)Data[i]).Y).Min;
                     max0 = ((Uniform)((UniformRow)Data[i]).Y).Max;
                 }
-                DataProviderExtensions.AddRow(this, i, new UniformRow(x0, new Uniform(min0, max0)));
+                DataProviderExtensions.AddRow(this, i, new UniformRow(x0, new Uniform(min0, max0), IsStrictMonotonic));
                 return;
             }
             if (Data.Count > i)
@@ -54,14 +64,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
                 double x = x0 + ((x1 - x0) / 2.0);
                 double min = min0 + ((min1 - min0) / 2.0);
                 double max = max0 + ((max1 - max0) / 2.0);
-                DataProviderExtensions.AddRow(this, i, new UniformRow(x, new Uniform(min, max)));
+                DataProviderExtensions.AddRow(this, i, new UniformRow(x, new Uniform(min, max), IsStrictMonotonic));
             }
             else
             {
                 x0 = ((UniformRow)Data[Data.Count - 1]).X;
                 min0 = ((Uniform)((UniformRow)Data[Data.Count - 1]).Y).Min;
                 max0 = ((Uniform)((UniformRow)Data[Data.Count - 1]).Y).Max;
-                DataProviderExtensions.AddRow(this, i, new UniformRow(x0, new Uniform(min0, max0)));
+                DataProviderExtensions.AddRow(this, i, new UniformRow(x0, new Uniform(min0, max0), IsStrictMonotonic));
                 return;
             }
         }
