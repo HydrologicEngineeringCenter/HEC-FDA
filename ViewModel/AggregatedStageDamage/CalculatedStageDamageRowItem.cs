@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _DamCat = value; NotifyPropertyChanged(); }
         }
         public ComputeComponentVM ComputeComponent { get; set; }
-        public string SelectedAssetCategory { get; set; }
 
         public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, string assetCategory)
         {
