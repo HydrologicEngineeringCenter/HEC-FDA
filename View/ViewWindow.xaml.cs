@@ -18,7 +18,6 @@ namespace HEC.FDA.View
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
             WindowVM vm = DataContext as WindowVM;
             vm.LaunchNewWindow += WindowSpawner;
-
         }
 
         public ViewWindow(WindowVM newvm)
@@ -26,7 +25,6 @@ namespace HEC.FDA.View
             InitializeComponent();
             DataContext = newvm;
             newvm.LaunchNewWindow += WindowSpawner;
-
         }
 
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
@@ -41,7 +39,6 @@ namespace HEC.FDA.View
         {
             //If we are popping an existing editor out of the tab control,
             //we don't want to clear the HasChanges bool.
-
             if(newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
             {
                 newvm.Tab.BaseVM.HasChanges = false;
@@ -112,7 +109,6 @@ namespace HEC.FDA.View
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             WindowVM winVM = DataContext as WindowVM;          
             Type editorType = winVM.CurrentView.GetType();            
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
@@ -149,7 +145,6 @@ namespace HEC.FDA.View
             }
 
         }
-
         
     }
 }

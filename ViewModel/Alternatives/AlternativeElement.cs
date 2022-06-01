@@ -105,6 +105,8 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
+            //TODO: I am leaving this commented out. This is a WIP.
+
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {

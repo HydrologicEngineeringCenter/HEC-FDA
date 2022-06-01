@@ -35,7 +35,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
 
-
         #endregion
         #region Properties
 

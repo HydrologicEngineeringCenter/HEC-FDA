@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HEC.FDA.ViewModel.Utilities
+﻿namespace HEC.FDA.ViewModel.Utilities
 {
     public interface IDetectChanges
     {
-
         bool HasChanges { get; set; }
-
     }
 }

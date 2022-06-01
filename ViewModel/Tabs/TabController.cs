@@ -67,29 +67,6 @@ namespace HEC.FDA.ViewModel.Tabs
 
         #region public methods
 
-        ///// <summary>
-        ///// Loops over all the tabs and removes the one with the specified unique tab name string.
-        ///// Currently this is only being used to remove the "Create New Study" tab after the user
-        ///// has loaded a study.
-        ///// </summary>
-        ///// <param name="uniqueTabName"></param>
-        //public void RemoveTab(String uniqueTabName)
-        //{
-        //    int indexToRemove = -1;
-        //    for (int i = 0; i < Tabs.Count; i++)
-        //    {
-        //        if (Tabs[i].UniqueName.Equals(uniqueTabName))
-        //        {
-        //            indexToRemove = i;
-        //            break;
-        //        }
-        //    }
-        //    if( indexToRemove != -1)
-        //    {
-        //        Tabs.RemoveAt(indexToRemove);
-        //    }
-        //}
-
         /// <summary>
         /// Finds the enclosing window of the class passed in. If the window is the main window then we know we are a tab
         /// and so we remove the selected tab. If the window is not the main window then we know we are in a popped out window
@@ -129,7 +106,6 @@ namespace HEC.FDA.ViewModel.Tabs
                 }
             }
         }
-
 
         /// <summary>
         /// Adds a new tab to the list of tabs. This will automatically add the tab to the UI

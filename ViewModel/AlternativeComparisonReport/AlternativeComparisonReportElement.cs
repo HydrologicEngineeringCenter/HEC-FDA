@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         private const string WITH_PROJ_ELEM = "WithProjectElement";
         private const string LAST_EDIT_DATE = "LastEditDate";
 
-
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
@@ -153,7 +152,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)

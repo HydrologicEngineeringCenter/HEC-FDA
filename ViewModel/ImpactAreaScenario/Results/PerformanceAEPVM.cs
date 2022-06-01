@@ -12,12 +12,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
-        public PerformanceAEPVM(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
+        public PerformanceAEPVM(ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             LoadData(iasResult, thresholdComboItems);
         }
 
-        private void LoadData(metrics.ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
+        private void LoadData(ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
         {
             for (int i = 0; i < thresholdComboItems.Count; i++)
             {
@@ -37,6 +37,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
 
                     MetricsToRows.Add(threshold, rows);
+
+                    //todo: this is left commented out on purpose. This is a WIP.
 
                     //get the histogram data
                     //Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
