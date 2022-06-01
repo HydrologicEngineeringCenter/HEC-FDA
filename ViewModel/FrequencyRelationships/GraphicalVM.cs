@@ -1,0 +1,79 @@
+﻿using paireddata;
+using Statistics.GraphicalRelationships;
+using System.Xml.Linq;
+using Statistics.Distributions;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using System;
+using HEC.MVVMFramework.ViewModel.Implementations;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
+
+namespace HEC.FDA.ViewModel.FrequencyRelationships
+{
+    public class GraphicalVM : ComputeComponentVM
+    {
+        private int _equivalentRecordLength = 5;
+        private NamedAction _confidenceLimits;
+
+        public NamedAction ConfidenceLimits { get { return _confidenceLimits; } set { _confidenceLimits = value; NotifyPropertyChanged(); } }
+
+        public Graphical MyGraphical
+        {
+            get{return new Graphical(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength, usingStagesNotFlows: true);}
+        }
+        public int EquivalentRecordLength
+        {
+            get{ return _equivalentRecordLength;}
+            set
+            {
+                _equivalentRecordLength = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public GraphicalVM(string name) : base(name)
+        {
+            Options.Clear();
+            Options.Add(new GraphicalDataProvider());
+            SelectedItem = Options[0];
+            Initialize();
+        }
+        public GraphicalVM(XElement vmEle)
+        {
+            LoadFromXML(vmEle);
+            Initialize();
+        }
+        private void Initialize()
+        {
+            ConfidenceLimits = new NamedAction();
+            ConfidenceLimits.Name = "Compute Confidence Limits";
+            ConfidenceLimits.Action = ConfidenceLimitsAction;
+        }
+        override public XElement ToXML()
+        {
+            XElement ele = base.ToXML();
+            ele.SetAttributeValue("EquivalentRecordLength", EquivalentRecordLength);
+            return ele;
+        }
+        override public void LoadFromXML(XElement element)
+        {
+            EquivalentRecordLength = int.Parse(element.Attribute("EquivalentRecordLength").Value);
+            base.LoadFromXML(element);
+        }
+        private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
+        {
+            var graffical = MyGraphical;
+            graffical.ComputeGraphicalConfidenceLimits();
+            Statistics.ContinuousDistribution[] conf = graffical.StageOrLogFlowDistributions;
+            double[] probs = graffical.ExceedanceProbabilities;
+            foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)
+            {
+                int index = Array.IndexOf(probs, row.X);
+                row.SetConfidenceLimits(conf[index].InverseCDF(.05), conf[index].InverseCDF(.95));
+            }
+        }
+        public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()
+        {
+           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, "Exceedence Probability", "Flow", "Graphical Flow Frequency");
+        }
+    }
+}
