@@ -249,8 +249,8 @@
             <IASEditorView:Thresholds/>
             <DataTemplate.Resources>
                 <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
-                                         MinWidth="150" Width="500" 
-                                         MinHeight="150" Height="400" />
+                                         MinWidth="150" Width="450" 
+                                         MinHeight="150" Height="430" />
             </DataTemplate.Resources>
         </DataTemplate>
         

@@ -19,8 +19,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Notes
         #endregion
         #region Fields     
-        private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
-        private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
+        private readonly ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
+        private readonly ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private const string MEAN = "Mean: ";
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
@@ -114,12 +114,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
             get  {return _AnalyticalFlows; }
-            set { _AnalyticalFlows = value; NotifyPropertyChanged();}
         }
         public ObservableCollection<FlowDoubleWrapper> GraphicalFlows
         {
             get { return _GraphicalFlows; }
-            set { _GraphicalFlows = value; NotifyPropertyChanged(); }
         }      
 
         #endregion

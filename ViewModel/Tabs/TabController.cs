@@ -267,8 +267,12 @@ namespace HEC.FDA.ViewModel.Tabs
                 bool userWantsToClose = UserWantsToClose(tab.BaseVM);
                 if (userWantsToClose)
                 {
-                    _Tabs.Remove((IDynamicTab)sender);
+                    _Tabs.Remove(tab);
                 }
+            }
+            else
+            {
+                _Tabs.Remove(tab);
             }
         }
 
