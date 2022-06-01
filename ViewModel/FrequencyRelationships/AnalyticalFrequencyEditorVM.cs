@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
 
-        private double? _Mean;
+        private double _Mean;
         private double _StDev;
         private double _Skew;
         private bool _IsAnalytical = true;
@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _IsAnalytical; }
             set  { _IsAnalytical = value; NotifyPropertyChanged();}
         }
-        public double? Mean
+        public double Mean
         {
             get { return _Mean; }
             set { _Mean = value; UpdateChartLineData(); NotifyPropertyChanged(); }
@@ -239,7 +239,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 if (IsStandard)
                 {
-                    lp3 = new LogPearson3(Mean.Value, StandardDeviation, Skew, PeriodOfRecord);
+                    lp3 = new LogPearson3(Mean, StandardDeviation, Skew, PeriodOfRecord);
                 }
                 else
                 {
@@ -329,12 +329,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override void Save()
         {
-            //LogPearson3 lp3 = CreateLP3();
             FdaValidationResult result = ValidateEditor();
             if (result.IsValid)
             {
                 string editDate = DateTime.Now.ToString("G");
-                double mean = Mean.Value;
+                double mean = Mean;
                 double stDev = StandardDeviation;
                 double skew = Skew;
                 int por = PeriodOfRecord;
