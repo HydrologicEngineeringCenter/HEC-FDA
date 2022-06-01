@@ -68,5 +68,10 @@ namespace HEC.FDA.View.Utilities
                 DoubleValue = null;
             }
         }
+        
+        private void MyLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateText();
+        }
     }
 }
