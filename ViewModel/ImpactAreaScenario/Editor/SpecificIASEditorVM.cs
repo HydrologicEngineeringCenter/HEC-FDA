@@ -435,12 +435,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private string IsStageDamageValid()
         {
-            string retval = null;
+            return  SelectedStageDamageElement.ChildElement == null ? "A Stage Damage is required. " : null;
+        }
 
-            if (SelectedStageDamageElement.ChildElement == null)
-            {
-                retval += "A Stage Damage is required. ";
-            }
+        private string IsDamageCurveSelected()
+        {
+            string retval = null;
             if (SelectedDamageCurve == null)
             {
                 retval += "A damage category selection is required.";
@@ -451,6 +451,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         #endregion
 
+
+        public FdaValidationResult IsValidToPlot()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            vr.AddErrorMessage(IsFrequencyRelationshipValid());
+            vr.AddErrorMessage(IsRatingCurveValid());
+            vr.AddErrorMessage(IsStageDamageValid());
+            vr.AddErrorMessage(IsDamageCurveSelected());
+
+            if (!vr.IsValid)
+            {
+                vr.InsertMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
+            }
+            return vr;
+        }
 
         /// <summary>
         /// This method checks to see if this specific IAS is valid for both saving and plotting.
@@ -594,7 +610,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
-            FdaValidationResult validationResult = IsValid();
+            FdaValidationResult validationResult = IsValidToPlot();
             if (validationResult.IsValid)
             {
                 MessageRows.Clear();
