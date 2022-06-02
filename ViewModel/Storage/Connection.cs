@@ -170,6 +170,10 @@ namespace HEC.FDA.ViewModel.Storage
             command.CommandText = InsertIntoTableText(rowData, tablename, colnames);
             command.ExecuteNonQuery();
         }
+        private string EscapeSingleQuotes(object value)
+        {
+            return value.ToString().Replace("'", "''");
+        }
 
         private string InsertIntoTableText(object[] rowData, string tablename, string[] colnames)
         {
@@ -185,7 +189,7 @@ namespace HEC.FDA.ViewModel.Storage
             sb.Append(") VALUES (");
             foreach(object obj in rowData)
             {
-                sb.Append("'").Append(obj).Append("',");
+                sb.Append("'").Append(EscapeSingleQuotes(obj)).Append("',");
             }
             sb.Remove(sb.Length - 1, 1);
             sb.Append(");");

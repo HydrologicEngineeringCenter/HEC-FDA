@@ -20,6 +20,7 @@ namespace HEC.FDA.ViewModel.Study
         private StudyElement _StudyElement;
         private string _FolderPath;
         private string _StudyName;
+        private string _Description = "";
         private List<ChildElement> _FlowFrequencyElements = new List<ChildElement>();
         private List<ChildElement> _InflowOutflowElements = new List<ChildElement>();
         private List<ChildElement> _RatingElements = new List<ChildElement>();
@@ -35,7 +36,11 @@ namespace HEC.FDA.ViewModel.Study
             get { return _HaventImported; }
             set { _HaventImported = value; NotifyPropertyChanged(); }
         }
-
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value; NotifyPropertyChanged(); }
+        }
         public string FolderPath
         {
             get { return _FolderPath; }
@@ -192,8 +197,7 @@ namespace HEC.FDA.ViewModel.Study
         public void RunSetupLogic()
         {
             //create the sqlite database for this study
-            string studyDescription = "";
-            _StudyElement.CreateNewStudy(_StudyName, _FolderPath, studyDescription);
+            _StudyElement.CreateNewStudy(_StudyName, _FolderPath, _Description);
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
         }

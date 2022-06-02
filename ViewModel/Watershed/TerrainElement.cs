@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Watershed
             string originalName = Name;
             RenameVM renameViewModel = new RenameVM(this, CloneElement);
             string header = "Rename";
-            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
+            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename",false, false);
             Navigate(tab);
             if (!renameViewModel.WasCanceled)
             {
