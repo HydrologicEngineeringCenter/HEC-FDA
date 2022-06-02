@@ -179,7 +179,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
             {
                 SpecificIASEditorVM vm = entry.Value;
-                FdaValidationResult validationResult = vm.IsValid();
+                FdaValidationResult validationResult = vm.GetEditorValidationResult();
                 if (!validationResult.IsValid)
                 {
                     vr.AddErrorMessage(validationResult.ErrorMessage + Environment.NewLine);

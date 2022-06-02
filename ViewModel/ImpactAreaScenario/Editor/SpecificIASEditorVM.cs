@@ -417,7 +417,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         #region validation
 
-        private FdaValidationResult IsFrequencyRelationshipValid()
+        private FdaValidationResult GetFrequencyRelationshipValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if(SelectedFrequencyElement.ChildElement == null)
@@ -427,7 +427,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        private FdaValidationResult IsRatingCurveValid()
+        private FdaValidationResult GetRatingCurveValidationResult()
         {
             //todo: the rating curve is required if the frequency relationship is of type
             //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
@@ -439,7 +439,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
 
         }
-        private FdaValidationResult IsStageDamageValid()
+        private FdaValidationResult GetStageDamageValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (SelectedStageDamageElement.ChildElement == null)
@@ -449,7 +449,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        private FdaValidationResult IsDamageCurveSelected()
+        private FdaValidationResult GetDamageCurveSelectedValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (SelectedDamageCurve == null)
@@ -466,10 +466,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddErrorMessage(IsFrequencyRelationshipValid().ErrorMessage);
-            vr.AddErrorMessage(IsRatingCurveValid().ErrorMessage);
-            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
-            vr.AddErrorMessage(IsDamageCurveSelected().ErrorMessage);
+            vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetStageDamageValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetDamageCurveSelectedValidationResult().ErrorMessage);
 
             if (!vr.IsValid)
             {
@@ -482,13 +482,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// This method checks to see if this specific IAS is valid for both saving and plotting.
         /// </summary>
         /// <returns></returns>
-        public FdaValidationResult IsValid()
+        public FdaValidationResult GetEditorValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddErrorMessage(IsFrequencyRelationshipValid().ErrorMessage);
-            vr.AddErrorMessage(IsRatingCurveValid().ErrorMessage);
-            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
+            vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetStageDamageValidationResult().ErrorMessage);
 
             if (!vr.IsValid)
             {

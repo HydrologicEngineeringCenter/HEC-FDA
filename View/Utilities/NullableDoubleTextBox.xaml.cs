@@ -43,11 +43,7 @@ namespace HEC.FDA.View.Utilities
             e.Handled = true;
             string value = CombineText(e.Text);
 
-            //Regex regex = new Regex("[^0-9.-]+");
-            //e.Handled = regex.IsMatch(e.Text);
-
             if (double.TryParse(value, out double result))
-            //if(regex.IsMatch(e.Text))
             {
                 e.Handled = false;
                 _updating = true;
