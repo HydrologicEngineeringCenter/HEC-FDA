@@ -417,49 +417,59 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         #region validation
 
-        private string IsFrequencyRelationshipValid()
+        private FdaValidationResult IsFrequencyRelationshipValid()
         {
-            return SelectedFrequencyElement.ChildElement == null ? "A Frequency Relationship is required." : null;      
+            FdaValidationResult vr = new FdaValidationResult();
+            if(SelectedFrequencyElement.ChildElement == null)
+            {
+                vr.AddErrorMessage("A Frequency Relationship is required.");
+            }
+            return vr;
         }
 
-        private string IsRatingCurveValid()
+        private FdaValidationResult IsRatingCurveValid()
         {
             //todo: the rating curve is required if the frequency relationship is of type
             //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
-            string msg = null;
+            FdaValidationResult vr = new FdaValidationResult();
             if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
             {
-                msg = "A Rating Curve is required when using a frequency relationship.";
+                vr.AddErrorMessage("A Rating Curve is required when using a frequency relationship.");
             }
-            return msg;
+            return vr;
+
         }
-        private string IsStageDamageValid()
+        private FdaValidationResult IsStageDamageValid()
         {
-            return  SelectedStageDamageElement.ChildElement == null ? "A Stage Damage is required. " : null;
+            FdaValidationResult vr = new FdaValidationResult();
+            if (SelectedStageDamageElement.ChildElement == null)
+            {
+                vr.AddErrorMessage("A Stage Damage is required. ");
+            }
+            return vr;
         }
 
-        private string IsDamageCurveSelected()
+        private FdaValidationResult IsDamageCurveSelected()
         {
-            string retval = null;
+            FdaValidationResult vr = new FdaValidationResult();
             if (SelectedDamageCurve == null)
             {
-                retval += "A damage category selection is required.";
+                vr.AddErrorMessage("A damage category selection is required.");
             }
-            return retval;
+            return vr;
         }
-
 
         #endregion
 
 
-        public FdaValidationResult IsValidToPlot()
+        public FdaValidationResult GetPlotValidationResults()
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddErrorMessage(IsFrequencyRelationshipValid());
-            vr.AddErrorMessage(IsRatingCurveValid());
-            vr.AddErrorMessage(IsStageDamageValid());
-            vr.AddErrorMessage(IsDamageCurveSelected());
+            vr.AddErrorMessage(IsFrequencyRelationshipValid().ErrorMessage);
+            vr.AddErrorMessage(IsRatingCurveValid().ErrorMessage);
+            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
+            vr.AddErrorMessage(IsDamageCurveSelected().ErrorMessage);
 
             if (!vr.IsValid)
             {
@@ -476,9 +486,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddErrorMessage(IsFrequencyRelationshipValid());
-            vr.AddErrorMessage(IsRatingCurveValid());
-            vr.AddErrorMessage(IsStageDamageValid());
+            vr.AddErrorMessage(IsFrequencyRelationshipValid().ErrorMessage);
+            vr.AddErrorMessage(IsRatingCurveValid().ErrorMessage);
+            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
 
             if (!vr.IsValid)
             {
@@ -610,7 +620,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
-            FdaValidationResult validationResult = IsValidToPlot();
+            FdaValidationResult validationResult = GetPlotValidationResults();
             if (validationResult.IsValid)
             {
                 MessageRows.Clear();

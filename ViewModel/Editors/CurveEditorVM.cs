@@ -30,9 +30,9 @@ namespace HEC.FDA.ViewModel.Editors
             TableWithPlot.WasModified += TableDataChanged;
         }
 
-        public void TableDataChanged(object sender, EventArgs e)
+        private void TableDataChanged(object sender, EventArgs e)
         {
-            NotifyPropertyChanged();
+            HasChanges = true;
         }
         #endregion
     }
