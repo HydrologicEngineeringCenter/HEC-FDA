@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using HEC.FDA.ViewModel.Study;
+using System.Windows.Controls;
 
 namespace HEC.FDA.View.Study
 {
@@ -14,7 +15,7 @@ namespace HEC.FDA.View.Study
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
-            ViewModel.Study.ExistingStudyVM vm = (ViewModel.Study.ExistingStudyVM)this.DataContext;
+            ExistingStudyVM vm = (ExistingStudyVM)this.DataContext;
             vm.Path = fullpath;
             txtbox.Text = fullpath;
         }
