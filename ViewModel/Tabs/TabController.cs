@@ -255,7 +255,10 @@ namespace HEC.FDA.ViewModel.Tabs
         public static bool UserWantsToClose(BaseViewModel BaseVM)
         {
             bool userWantsToClose = true;
-            if(BaseVM is IDetectChanges && BaseVM.HasChanges)
+            //BaseVM.WasCanceled is when the user clicked the close button or the red x
+            //This method gets called when the user clicks the OK button. We do not want to prompt
+            //the user when the OK button is clicked.
+            if(BaseVM is IDetectChanges && BaseVM.HasChanges && BaseVM.WasCanceled)
             {
                 MessageBoxResult messageBoxResult = MessageBox.Show("There are unsaved changes. Are you sure you want to close?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 if(messageBoxResult == MessageBoxResult.No)
