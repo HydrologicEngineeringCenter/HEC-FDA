@@ -185,59 +185,62 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public void FileSelected(string fullpath)
         {
-            if (IsCreatingNewElement)
+            if (fullpath != null && !fullpath.Equals(SelectedPath))
             {
-                FdaValidationResult importResult = new FdaValidationResult();
-                ListOfRows.Clear();
-                //clear out any already existing rows
-                if (!Directory.Exists(fullpath))
+                if (IsCreatingNewElement)
                 {
-                    return;
-                }
-
-                List<string> validDirectories = new List<string>();
-                string[] directories = Directory.GetDirectories(fullpath);
-                foreach (string directory in directories)
-                {
-                    FdaValidationResult result = ContainsVRTAndTIF(directory);
-                    if (result.IsValid)
+                    FdaValidationResult importResult = new FdaValidationResult();
+                    ListOfRows.Clear();
+                    //clear out any already existing rows
+                    if (!Directory.Exists(fullpath))
                     {
-                        validDirectories.Add(directory);
+                        return;
+                    }
+
+                    List<string> validDirectories = new List<string>();
+                    string[] directories = Directory.GetDirectories(fullpath);
+                    foreach (string directory in directories)
+                    {
+                        FdaValidationResult result = ContainsVRTAndTIF(directory);
+                        if (result.IsValid)
+                        {
+                            validDirectories.Add(directory);
+                        }
+                        else
+                        {
+                            importResult.AddErrorMessage(result.ErrorMessage);
+                        }
+                    }
+
+                    string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
+
+                    //we require 8 valid directories
+                    if (validDirectories.Count < 8)
+                    {
+                        string dirName = Path.GetFileName(fullpath);
+                        importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
+                        MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (validDirectories.Count > 8)
+                    {
+                        string dirName = Path.GetFileName(fullpath);
+                        importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
+                        MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else
                     {
-                        importResult.AddErrorMessage(result.ErrorMessage);
-                    }
-                }
-
-                string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
-
-                //we require 8 valid directories
-                if (validDirectories.Count < 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (validDirectories.Count > 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
-                    double prob = 0;
-                    foreach (string dir in validDirectories)
-                    {
-                        prob += .1;
-                        AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
-                    }
-                    //we might have some message for the user?
-                    if (!importResult.IsValid)
-                    {
-                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
-                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                        double prob = 0;
+                        foreach (string dir in validDirectories)
+                        {
+                            prob += .1;
+                            AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                        }
+                        //we might have some message for the user?
+                        if (!importResult.IsValid)
+                        {
+                            importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
+                            MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
                     }
                 }
             }

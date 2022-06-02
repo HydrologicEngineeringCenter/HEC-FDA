@@ -259,11 +259,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public FdaValidationResult IsLP3Valid(LogPearson3 lp3)
         {
             FdaValidationResult vr = new FdaValidationResult();
-            lp3.Validate();
-            if (lp3.HasErrors)
+            if (lp3 == null)
             {
-                List<string> errors = lp3.GetErrors().Cast<string>().ToList();
-                vr.AddErrorMessages(errors);
+                vr.AddErrorMessage("Invalid log pearson 3");
+            }
+            else
+            {
+                lp3.Validate();
+                if (lp3.HasErrors)
+                {
+                    List<string> errors = lp3.GetErrors().Cast<string>().ToList();
+                    vr.AddErrorMessages(errors);
+                }
             }
             return vr;
         }

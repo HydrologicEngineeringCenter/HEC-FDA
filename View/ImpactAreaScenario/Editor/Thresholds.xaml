@@ -49,7 +49,7 @@
                     <GridViewColumn Header="Threshold Value" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Utilities:NullableNumericTextBox DoubleValue="{Binding ThresholdValue, Mode=TwoWay}" Width="135"/>
+                                <Utilities:NullableDoubleTextBox DoubleValue="{Binding ThresholdValue, Mode=TwoWay}" Width="135"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

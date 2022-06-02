@@ -47,7 +47,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Source Directory:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <CA:TextBoxFolderBrowser Name="TxtDirectory" FolderPath="{Binding SelectedPath, Mode=TwoWay}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" SelectionMade="TxtDirectory_SelectionMade"/>
+            <CA:TextBoxFolderBrowser Name="TxtDirectory" FolderPath="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" SelectionMade="TxtDirectory_SelectionMade"/>
         </Grid>
         <Grid  Grid.Row="4">
             <Grid.ColumnDefinitions>

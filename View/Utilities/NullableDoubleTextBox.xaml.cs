@@ -8,9 +8,9 @@ namespace HEC.FDA.View.Utilities
     /// <summary>
     /// Interaction logic for NullableNumericTextBox.xaml
     /// </summary>
-    public partial class NullableNumericTextBox : TextBox
+    public partial class NullableDoubleTextBox : TextBox
     {
-        public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(nameof(DoubleValue), typeof(double?), typeof(NullableNumericTextBox));
+        public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(nameof(DoubleValue), typeof(double?), typeof(NullableDoubleTextBox));
 
         public double? DoubleValue
         {
@@ -27,7 +27,7 @@ namespace HEC.FDA.View.Utilities
 
         private bool _updating;
 
-        public NullableNumericTextBox()
+        public NullableDoubleTextBox()
         {
             InitializeComponent();
         }
@@ -42,7 +42,12 @@ namespace HEC.FDA.View.Utilities
         {
             e.Handled = true;
             string value = CombineText(e.Text);
+
+            //Regex regex = new Regex("[^0-9.-]+");
+            //e.Handled = regex.IsMatch(e.Text);
+
             if (double.TryParse(value, out double result))
+            //if(regex.IsMatch(e.Text))
             {
                 e.Handled = false;
                 _updating = true;

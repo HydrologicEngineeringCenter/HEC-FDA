@@ -19,6 +19,7 @@ namespace HEC.FDA.View.WaterSurfaceElevation
         {
             WaterSurfaceElevationImporterVM vm = (WaterSurfaceElevationImporterVM)this.DataContext;
             vm.FileSelected(fullpath);          
+            vm.SelectedPath = fullpath;
         }
     }
 }
