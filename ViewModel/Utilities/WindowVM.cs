@@ -76,7 +76,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
 
-        private void CurrentView_RequestNavigation( IDynamicTab tab, bool newWindow, bool asDialog)
+        private void CurrentView_RequestNavigation(IDynamicTab tab, bool newWindow, bool asDialog)
         {
             if (LaunchNewWindow != null)
             {

@@ -92,7 +92,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _OccTypeEditor.RequestNavigation += Navigate;
             _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
             string header = StringConstants.EDIT_OCCTYPE_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, StringConstants.EDIT_OCCTYPE_HEADER);
+            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, StringConstants.EDIT_OCCTYPE_HEADER,true, false);
             tab.RemoveTabEvent += Tab_RemoveTabEvent;
             tab.RemoveWindowEvent += Tab_RemoveTabEvent;
             Navigate(tab, false, false);

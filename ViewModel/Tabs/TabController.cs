@@ -68,29 +68,6 @@ namespace HEC.FDA.ViewModel.Tabs
         #region public methods
 
         /// <summary>
-        /// Loops over all the tabs and removes the one with the specified unique tab name string.
-        /// Currently this is only being used to remove the "Create New Study" tab after the user
-        /// has loaded a study.
-        /// </summary>
-        /// <param name="uniqueTabName"></param>
-        public void RemoveTab(String uniqueTabName)
-        {
-            int indexToRemove = -1;
-            for (int i = 0; i < Tabs.Count; i++)
-            {
-                if (Tabs[i].UniqueName.Equals(uniqueTabName))
-                {
-                    indexToRemove = i;
-                    break;
-                }
-            }
-            if( indexToRemove != -1)
-            {
-                Tabs.RemoveAt(indexToRemove);
-            }
-        }
-
-        /// <summary>
         /// Finds the enclosing window of the class passed in. If the window is the main window then we know we are a tab
         /// and so we remove the selected tab. If the window is not the main window then we know we are in a popped out window
         /// and so we remove that window. Use this when not using the OkCloseControl.
@@ -110,7 +87,11 @@ namespace HEC.FDA.ViewModel.Tabs
                         IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
                         if (selectedTab.BaseVM.IsOkToClose())
                         {
-                            Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                            bool userWantsToClose = UserWantsToClose(selectedTab.BaseVM);
+                            if (userWantsToClose)
+                            {
+                                Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                            }
                         }
                     }
                 }
@@ -126,13 +107,17 @@ namespace HEC.FDA.ViewModel.Tabs
             }
         }
 
-
         /// <summary>
         /// Adds a new tab to the list of tabs. This will automatically add the tab to the UI
         /// </summary>
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
+            if(tab.BaseVM is IDetectChanges)
+            {
+                tab.BaseVM.HasChanges = false;
+            }
+
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
             {
@@ -215,20 +200,21 @@ namespace HEC.FDA.ViewModel.Tabs
         private void PopWindowIntoTab(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopIn = (DynamicTabVM)sender;
+            tabToPopIn.IsPoppingIn = true;
             //you don't have to remove the tab from the _Windows here because 
             //when the window closes it will call RemoveWindow()
             _Tabs.Add(tabToPopIn);
             SelectedDynamicTabIndex = Tabs.Count - 1;
-            if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)
+            if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.InitializePlotModel();
+            }
+            else if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)
             {
                 //only one plot model can be linked to one plot view. An exception was getting thrown when trying
                 //to open this vm in a tab. It seems as though the window was still holding onto a connection even
                 //though the window has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
-            }
-            else if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
-            {
-                vm.InitializePlotModel();
             }
             else if (tabToPopIn.BaseVM is AggregatedStageDamageEditorVM stageDamageVM)
             {
@@ -251,25 +237,52 @@ namespace HEC.FDA.ViewModel.Tabs
 
         private void RemoveTab(object sender, EventArgs e)
         {
-            _Tabs.Remove((IDynamicTab)sender);
+            IDynamicTab tab = (IDynamicTab)sender;
+            if(tab.BaseVM is IDetectChanges)
+            {
+                bool userWantsToClose = UserWantsToClose(tab.BaseVM);
+                if (userWantsToClose)
+                {
+                    _Tabs.Remove(tab);
+                }
+            }
+            else
+            {
+                _Tabs.Remove(tab);
+            }
+        }
+
+        public static bool UserWantsToClose(BaseViewModel BaseVM)
+        {
+            bool userWantsToClose = true;
+            if(BaseVM is IDetectChanges && BaseVM.HasChanges)
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show("There are unsaved changes. Are you sure you want to close?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                if(messageBoxResult == MessageBoxResult.No)
+                {
+                    userWantsToClose = false;
+                }
+            }
+            return userWantsToClose;
         }
 
         private void PopTabIntoWindow(object sender, EventArgs e)
         {
             DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
+            tabToPopOut.IsPoppingOut = true;
             _Tabs.Remove(tabToPopOut);
             _Windows.Add(tabToPopOut);
 
-            if(tabToPopOut.BaseVM is CurveEditorVM curveEditorVM)
+            if (tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM frequencyVM)
+            {
+                frequencyVM.InitializePlotModel();
+            }
+            else if (tabToPopOut.BaseVM is CurveEditorVM curveEditorVM)
             {
                 //only one plot model can be linked to one plot view. An exception was getting thrown when trying
                 //to open this vm in a window. It seems as though the tab was still holding onto a connection even
                 //though the tab has been removed. "InitModel()" creates a new model for the new view that is about to be displayed.
                 curveEditorVM.TableWithPlot.InitModel();
-            }
-            else if(tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM frequencyVM)
-            {
-                frequencyVM.InitializePlotModel();
             }
             else if(tabToPopOut.BaseVM is AggregatedStageDamageEditorVM stageDamageVM)
             {

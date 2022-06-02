@@ -149,6 +149,11 @@ namespace HEC.FDA.ViewModel.Saving
 
         #region save existing
 
+        private string EscapeSingleQuotes(object value)
+        {
+            return value.ToString().Replace("'", "''");
+        }
+
         /// <summary>
         /// This sends a sql "update" command to the database.
         /// </summary>
@@ -163,7 +168,7 @@ namespace HEC.FDA.ViewModel.Saving
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
             for(int i = 0;i<columns.Length;i++)
             {
-                sb.Append(columns[i]).Append(" = '").Append(values[i]).Append("' ").Append(",");
+                sb.Append(columns[i]).Append(" = '").Append(EscapeSingleQuotes(values[i])).Append("' ").Append(",");
             }
             //get rid of last comma
             sb.Remove(sb.Length - 1, 1);
@@ -190,7 +195,7 @@ namespace HEC.FDA.ViewModel.Saving
             StringBuilder sb = new StringBuilder("update ").Append("'").Append(tableName).Append("' set ");
             for (int i = 0; i < columns.Length; i++)
             {
-                sb.Append(columns[i]).Append(" = '").Append(values[i]).Append("' ").Append(",");
+                sb.Append(columns[i]).Append(" = '").Append(EscapeSingleQuotes(values[i])).Append("' ").Append(",");
             }
             //get rid of last comma
             sb.Remove(sb.Length - 1, 1);

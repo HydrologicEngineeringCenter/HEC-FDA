@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.View.Utilities;
+using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
@@ -17,7 +18,6 @@ namespace HEC.FDA.View
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
             WindowVM vm = DataContext as WindowVM;
             vm.LaunchNewWindow += WindowSpawner;
-
         }
 
         public ViewWindow(WindowVM newvm)
@@ -25,7 +25,6 @@ namespace HEC.FDA.View
             InitializeComponent();
             DataContext = newvm;
             newvm.LaunchNewWindow += WindowSpawner;
-
         }
 
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
@@ -38,6 +37,14 @@ namespace HEC.FDA.View
 
         private void WindowSpawner(WindowVM newvm, bool asDialogue)
         {
+            //If we are popping an existing editor out of the tab control,
+            //we don't want to clear the HasChanges bool.
+            if(newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
+            {
+                newvm.Tab.BaseVM.HasChanges = false;
+            }
+
+            newvm.Tab.IsPoppingOut = false;
             newvm.WasCanceled = true;
             ViewWindow newwindow = new ViewWindow(newvm);
             newwindow.Owner = this;
@@ -64,7 +71,23 @@ namespace HEC.FDA.View
             if (vm.Tab != null)
             {
                 IDynamicTab tab = vm.Tab;
-                tab.RemoveWindow();
+                if (tab.IsPoppingIn)
+                {
+                    tab.RemoveWindow();
+                    tab.IsPoppingIn = false;
+                }
+                else
+                {
+                    bool userWantsToClose = TabController.UserWantsToClose(tab.BaseVM);
+                    if (userWantsToClose)
+                    {
+                        tab.RemoveWindow();
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
+                }
             }
         }
 
@@ -86,7 +109,6 @@ namespace HEC.FDA.View
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             WindowVM winVM = DataContext as WindowVM;          
             Type editorType = winVM.CurrentView.GetType();            
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
@@ -123,7 +145,6 @@ namespace HEC.FDA.View
             }
 
         }
-
         
     }
 }

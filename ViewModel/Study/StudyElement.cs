@@ -202,7 +202,7 @@ namespace HEC.FDA.ViewModel.Study
                 PropertiesVM prop =  new PropertiesVM(studyProps[0]);
                 string header = "Study Properties";
                 DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
-                Navigate(tab, true, true);
+                Navigate(tab,false,false);
             } 
         }
 

@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public static readonly string BEG_DAM_DEPTH = "BeginningDamageDepth";
         public static readonly string YEAR_IN_CONSTRUCTION = "YearInConstruction";
         public static readonly string NOTES = "Notes";
-        public static readonly string OTHER = "Other";
+        public static readonly string NumberOfStructures = "NumberOfStructures";
 
         private const int NAME_COL = 1;
         private const int DESC_COL = 2;
@@ -114,7 +114,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             newStructureTable.Columns.Add(BEG_DAM_DEPTH, typeof(string));
             newStructureTable.Columns.Add(YEAR_IN_CONSTRUCTION, typeof(string));
             newStructureTable.Columns.Add(NOTES, typeof(string));
-            newStructureTable.Columns.Add(OTHER, typeof(string));
+            newStructureTable.Columns.Add(NumberOfStructures, typeof(string));
 
             return newStructureTable;
         }

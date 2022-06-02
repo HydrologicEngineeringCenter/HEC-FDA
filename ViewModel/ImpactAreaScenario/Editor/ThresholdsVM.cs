@@ -98,6 +98,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     result.AddErrorMessage("Threshold rows must be unique.");
                     break;
                 }
+                if(ri.ThresholdValue == null)
+                {
+                    result.AddErrorMessage("Threshold must have a value.");
+                }
             }
             return result;
         }

@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Data.Add(new DeterministicRow(3.0d, 3.0d, IsStrictMonotonic));
             Data.Add(new DeterministicRow(4.0d, 4.0d, IsStrictMonotonic));
             Data.Add(new DeterministicRow(5.0d, 5.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(10000.0d, 10000.0d, IsStrictMonotonic));
+            Data.Add(new DeterministicRow(6.0d, 6.0d, IsStrictMonotonic));
             LinkList();
         }
 

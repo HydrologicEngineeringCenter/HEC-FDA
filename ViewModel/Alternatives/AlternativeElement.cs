@@ -105,15 +105,31 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
+            //TODO: I am leaving this commented out. This is a WIP.
+
             FdaValidationResult vr = RunPreComputeValidation();
-            if(!vr.IsValid)
+            if (vr.IsValid)
             {
-                MessageBox.Show(vr.ErrorMessage, "Invalid Setup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                // Run calculations. waiting for hec to put the new model in.
+                //grab the result objects off the ias elements and run the calculation.
+                IASElementSet[] iASElems = GetElementsFromID();
+                IASElementSet firstElem = iASElems[0];
+                IASElementSet secondElem = iASElems[1];
+
+                //scenarios.Scenario scenario1 = new scenarios.Scenario(firstElem.AnalysisYear, );
+                //scenarios.Scenario scenario2 = new scenarios.Scenario(firstElem.AnalysisYear, );
+                //long por = firstElem.AnalysisYear;
+                //int id = 99;
+                //alternatives.Alternative alt = new alternatives.Alternative(scenario1, scenario2, por, id);
+                //alt.ComputeEEAD();
+                //alt.AnnualizationCompute()
+
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
-            //todo: Run calculations. waiting for hec to put the new model in.
-            IASElementSet[] elems = GetElementsFromID();
-            //grab the result objects off the ias elements and run the calculation.
 
         }
 
@@ -142,27 +158,61 @@ namespace HEC.FDA.ViewModel.Alternatives
         private FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            //do the ias elements still exist:
             IASElementSet[] iASElems = GetElementsFromID();
             IASElementSet firstElem = iASElems[0];
             IASElementSet secondElem = iASElems[1];
 
+            vr.AddErrorMessage(DoBothScenariosExist(firstElem, secondElem).ErrorMessage);
+            vr.AddErrorMessage(AreScenarioYearsDifferent(firstElem, secondElem).ErrorMessage);
+            vr.AddErrorMessage(DoScenariosHaveResults(firstElem, secondElem).ErrorMessage);
+
+            return vr;
+        }
+        private FdaValidationResult DoScenariosHaveResults(IASElementSet firstElem, IASElementSet secondElem)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            bool firstElemHasResults = false;
+            bool secondElemHasResults = false;
+            if(firstElem != null && firstElem.GetResults().Count>0)
+            {
+                firstElemHasResults = true;
+            }
+            if (secondElem != null && secondElem.GetResults().Count > 0)
+            {
+                secondElemHasResults = true;
+            }
+
+            if(!firstElemHasResults)
+            {
+                vr.AddErrorMessage("Scenario '" + firstElem.Name + "' has no compute results.");
+            }
+            if (!secondElemHasResults)
+            {
+                vr.AddErrorMessage("Scenario '" + secondElem.Name + "' has no compute results.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult AreScenarioYearsDifferent(IASElementSet firstElem, IASElementSet secondElem)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int firstYear = firstElem.AnalysisYear;
+            int secondYear = secondElem.AnalysisYear;
+            if (firstYear == secondYear)
+            {
+                vr.AddErrorMessage("The selected impact area scenarios both have the same analysis year.");
+                vr.AddErrorMessage("Different years are required to run the calculation.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult DoBothScenariosExist(IASElementSet firstElem, IASElementSet secondElem)
+        {
+            FdaValidationResult vr = new FdaValidationResult();            
             if (firstElem == null || secondElem == null)
             {
                 vr.AddErrorMessage("There are no longer two impact area scenarios linked to this alternative.");
             }
-            else
-            {
-                //are the years still different
-                int firstYear = firstElem.AnalysisYear;
-                int secondYear = secondElem.AnalysisYear;
-                if (firstYear == secondYear)
-                {
-                    vr.AddErrorMessage("The selected impact area scenarios both have the same analysis year.");
-                    vr.AddErrorMessage("Different years are required to run the calculation.");
-                }
-            }
-
             return vr;
         }
 
@@ -182,12 +232,30 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             return altResult;
         }
+
+        private FdaValidationResult CanViewResults()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //todo: check if we have results that can be viewed.
+
+            return vr;
+        }
+
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
-            string header = "Alternative Results: " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
-            Navigate(tab, false, true);
+            FdaValidationResult vr = CanViewResults();
+            if (vr.IsValid)
+            {
+                AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
+                string header = "Alternative Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
 
         public void EditAlternative(object arg1, EventArgs arg2)

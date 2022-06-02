@@ -28,7 +28,7 @@
         </StackPanel>
 
         <ListView Grid.Row="1" x:Name="lst" Height="300" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
-                   SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Left" Width="420" >
+                   SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch"  >
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridView.ColumnHeaderContainerStyle>
@@ -49,7 +49,7 @@
                     <GridViewColumn Header="Threshold Value" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <local:ThresholdValueNumericTextBox  Width="135" HorizontalAlignment="Stretch" />
+                                <Utilities:NullableDoubleTextBox DoubleValue="{Binding ThresholdValue, Mode=TwoWay}" Width="135"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

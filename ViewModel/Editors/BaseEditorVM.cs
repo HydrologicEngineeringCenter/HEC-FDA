@@ -1,23 +1,21 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
 using System;
-using HEC.FDA.ViewModel.Saving;
-using HEC.MVVMFramework.ViewModel.Validation;
-using HEC.MVVMFramework.Base.Enumerations;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Editors
 {
-    public abstract class BaseEditorVM : NameValidatingVM
+    public abstract class BaseEditorVM : NameValidatingVM, IDetectChanges
     {
         private string _SavingText;
         private string _Description = "";

@@ -34,7 +34,7 @@
             <CA:TextBoxDescription Margin="5" Text="{Binding Path=Description}" Grid.Row="1" Grid.Column="1"/>
 
             <Label Content="Shapefile Path:" Grid.Row="2" Margin="5"/>
-            <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Polygon" Margin="5" Name="cmb_Path" Grid.Row="2" Grid.Column="1"/>
+            <CA:TextBoxFileBrowser Path="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" Margin="5" Grid.Row="2" Grid.Column="1" SelectionMade="Cmb_Path_SelectionMade" />
 
             <Label Content="Unique Name:" Grid.Row="3" Margin="5" />
             <ComboBox ItemsSource="{Binding Path=UniqueFields, Mode=TwoWay}" SelectedItem="{Binding SelectedUniqueName, Mode=TwoWay}"  Margin="5" Name="Cmb_UniqueName"  Grid.Row="3" Grid.Column="1" SelectionChanged="Cmb_UniqueName_SelectionChanged" />

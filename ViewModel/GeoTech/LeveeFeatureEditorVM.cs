@@ -38,6 +38,9 @@ namespace HEC.FDA.ViewModel.GeoTech
         {
             Elevation = ((LeveeFeatureElement)element).Elevation;
             IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
+
+            //tell the table that the y values have to be between 0 and 1
+            TableWithPlot.ComputeComponentVM.SetMinMaxValues(0, 1);
         }
         #endregion
         #region Voids

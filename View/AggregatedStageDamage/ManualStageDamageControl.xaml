@@ -29,7 +29,7 @@
                     </ListView.Resources>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Curve" Width="40" DisplayMemberBinding="{Binding ID}" />
+                            <GridViewColumn Header="Curve ID" Width="55" DisplayMemberBinding="{Binding ID}" />
                             <GridViewColumn Header="Impact Area" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>

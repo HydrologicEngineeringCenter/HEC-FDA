@@ -185,7 +185,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public void FileSelected(string fullpath)
         {
-            if (IsCreatingNewElement)
+            if (fullpath != null && !fullpath.Equals(SelectedPath) && IsCreatingNewElement)
             {
                 FdaValidationResult importResult = new FdaValidationResult();
                 ListOfRows.Clear();

@@ -8,6 +8,9 @@ namespace HEC.FDA.ViewModel.Utilities
 
         bool CanPopOut { get; set; }
 
+        bool IsPoppingIn { get; set; }
+        bool IsPoppingOut { get; set; }
+
         /// <summary>
         /// The BaseViewModel for the tab or window
         /// </summary>
