@@ -48,14 +48,6 @@
             <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="TxtInvert" Text="{Binding Path=Invert,NotifyOnTargetUpdated=True, ValidatesOnDataErrors=True}" VerticalAlignment="Center"/>
         </Grid>
 
-        <!--<CA:CopyPasteDataGrid Name="MyWPFDGV" Grid.Row="4" Grid.ColumnSpan="2" Margin="5" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="False" CanUserSortColumns="False" IsReadOnly="False" CanUserReorderColumns="False" AlternatingRowBackground="#FFF3F9F7" AlternationCount="2" RowHeight="22" VerticalContentAlignment="Center" ItemsSource="{Binding Path=IndexLocation.ItemsSoucre}">
-            <DataGrid.Columns>
-                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Probability" Binding="{Binding Path=Probability}" Width="1*"/>
-                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"  Header="Flow" Binding="{Binding Path=Flow}" Width="1*"/>
-                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Water Surface Elevation" Binding="{Binding Path=WaterSurfaceElevation}" Width="1*"/>
-            </DataGrid.Columns>
-        </CA:CopyPasteDataGrid>-->
-
         <OkClose:OKCloseControl Grid.Row="6" />
 
     </Grid>

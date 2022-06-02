@@ -363,11 +363,16 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             for(int i = 0;i<numRows;i++)
             {
-                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-                emptyFlow.FlowChanged += FlowValue_FlowChanged;
-                AnalyticalFlows.Insert(startRow, emptyFlow);
+                AnalyticalFlows.Insert(startRow, CreateDefaultRow());
             }
             UpdateChartLineData();
+        }
+
+        private FlowDoubleWrapper CreateDefaultRow()
+        {
+            FlowDoubleWrapper defaultRow = new FlowDoubleWrapper(1000);
+            defaultRow.FlowChanged += FlowValue_FlowChanged;
+            return defaultRow;
         }
 
         /// <summary>
@@ -378,9 +383,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         /// <param name="numRows"></param>
         public void AddRow()
         {          
-            FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(1000);
-            emptyFlow.FlowChanged += FlowValue_FlowChanged;
-            AnalyticalFlows.Add(emptyFlow);
+            AnalyticalFlows.Add(CreateDefaultRow());
             UpdateChartLineData();
         }
 
@@ -393,9 +396,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             //if all rows are gone then add a new default row
             if (AnalyticalFlows.Count == 0)
             {
-                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-                emptyFlow.FlowChanged += FlowValue_FlowChanged;
-                AnalyticalFlows.Add(emptyFlow);
+                AnalyticalFlows.Add(CreateDefaultRow());
             }
             UpdateChartLineData();
         }
