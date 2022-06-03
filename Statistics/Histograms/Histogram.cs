@@ -434,6 +434,7 @@ namespace Statistics.Histograms
                 
             }
         }
+
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("Histogram");

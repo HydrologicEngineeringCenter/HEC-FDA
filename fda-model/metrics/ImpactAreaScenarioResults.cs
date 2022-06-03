@@ -71,9 +71,59 @@ namespace metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability);
         }
+        /// <summary>
+        /// Returns the mean of the consequence histogram for a given impact area, damage category, and asset category 
+        /// </summary>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
         public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory, string assetCategory)
         {
             return ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// Returns the mean of the consequence histograms for the given impact area and category 
+        /// If categoryIsDamageCategory is true, then category is a damage category, and the mean is added over asset categories 
+        /// </summary>
+        /// <param name="impactArea"></param>
+        /// <param name="category"></param>
+        /// <param name="categoryIsDamageCategory"></param>
+        /// <returns></returns>
+        public double MeanExpectedAnnualConsequences(int impactArea, string category, bool categoryIsDamageCategory = true)
+        {
+            return ConsequenceResults.MeanDamage(category, impactArea, categoryIsDamageCategory);
+        } 
+        /// <summary>
+        /// Returns the mean of the consequence histograms for the given impact area 
+        /// Histograms are aggregated over all damage and asset categories 
+        /// </summary>
+        /// <param name="impactArea"></param>
+        /// <returns></returns>
+        public double MeanExpectedAnnualConsequences(int impactArea)
+        {
+            return ConsequenceResults.MeanDamage(impactArea);
+        }
+        /// <summary>
+        /// Returns the mean of the consequence histograms for the given category 
+        /// If categoryIsDamageCategory is true, then category is a damage category, and histograms are aggregated over impact areas and asset categories
+        /// If categoryIsDamageCategory is false, then category is an asset category, and histograms are aggregated over impact areas and damage categories 
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="categoryIsDamageCategory"></param>
+        /// <returns></returns>
+        public double MeanExpectedAnnualConsequences(string category, bool categoryIsDamageCategory = true)
+        {
+            return ConsequenceResults.MeanDamage(category, categoryIsDamageCategory);
+        }
+        /// <summary>
+        /// Returns the mean summed over all consequence histograms 
+        /// In other words, the mean is aggregated over all damage categories, asset categories, and impact areas
+        /// </summary>
+        /// <returns></returns>
+        public double MeanExpectedAnnualConsequences()
+        {
+            return ConsequenceResults.MeanDamage();
         }
         public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
         {

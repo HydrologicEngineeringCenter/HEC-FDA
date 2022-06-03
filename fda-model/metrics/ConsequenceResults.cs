@@ -6,6 +6,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Histograms;
 
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
@@ -412,16 +413,118 @@ namespace metrics
             return meanEAD;
         }
         /// <summary>
-        /// This method gets the histogram (distribution) of consequences 
+        /// This method gets the histogram (distribution) of consequences for the given damage category, asset category, and impact area 
         /// </summary>
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory, string assetCategory, int impactAreaID)
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory, string assetCategory, int impactAreaID)
         {
             return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
         }
+        /// <summary>
+        /// This method returns the histogram (distribution) of consequences for the give category and impact area ID
+        /// If categoryIsDamageCategory is true, then category is damage category, and histograms are aggregated over asset categories
+        /// If categoryIsDamageCategory is false, then category is asset category, and histograms are aggregated over damage categories
+        /// 
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="categoryIsDamageCategory"></param>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string category, int impactAreaID, bool categoryIsDamageCategory)
+        {
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                if (categoryIsDamageCategory)
+                {
+                    if((consequenceResult.DamageCategory.Equals(category)) && consequenceResult.RegionID.Equals(impactAreaID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                } 
+                else
+                {
+                    if ((consequenceResult.AssetCategory.Equals(category)) && consequenceResult.RegionID.Equals(impactAreaID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+            }
+            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+
+            return threadsafeInlineHistogram;
+        }
+        /// <summary>
+        /// This method returns the histogram (distribution) of consequences for the give category
+        /// If categoryIsDamageCategory is true, then category is damage category, and histograms are aggregated over asset categories and impact areas
+        /// If categoryIsDamageCategory is false, then category is asset category, and histograms are aggregated over damage categories and impact areas   
+        /// Note that when working with impact area scenario results, there is only 1 impact area    
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="categoryIsDamageCategory"></param>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string category, bool categoryIsDamageCategory)
+        {
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                if (categoryIsDamageCategory)
+                {
+                    if ((consequenceResult.DamageCategory.Equals(category)))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                     }
+                }
+                else
+                {
+                    if ((consequenceResult.AssetCategory.Equals(category)))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+            }
+            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            return threadsafeInlineHistogram;
+        }
+        /// <summary>
+        /// This method returns the histogram (distribution) of consequences for the given impact area
+        /// The histograms are aggregated over all damage and asset categories 
+        /// </summary>
+        /// <param name="impactAreaID"></param>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(int impactAreaID)
+        {
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                    if (consequenceResult.RegionID.Equals(impactAreaID))
+                    {
+                    histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+            }
+            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            return threadsafeInlineHistogram;
+        }
+        /// <summary>
+        /// This method returns the histogram (distribution) of consequences
+        /// The returned histogram has aggregated the histograms for all damage and asset categories and impact areas
+        /// </summary>
+        /// <returns></returns>
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram()
+        {
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                histograms.Add(consequenceResult.ConsequenceHistogram);
+            }
+            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            return threadsafeInlineHistogram;
+        }
+
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");
