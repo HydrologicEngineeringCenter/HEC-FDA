@@ -25,8 +25,12 @@ namespace HEC.FDA.ViewModel.Alternatives
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
 
-        public List<int> IASElementSets { get; } = new List<int>();
+        private AlternativeResults _Results;
 
+        #region properties
+        public List<int> IASElementSets { get; } = new List<int>();
+        public AlternativeResults Results { get; }
+        #endregion
         #region Constructors
 
         /// <summary>
@@ -35,7 +39,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description,string creationDate, List<int> IASElements, int id):base(id)
+        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(id)
         {
             Name = name;
             Description = description;
@@ -71,7 +75,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 ImageSource = ImageSources.ALTERNATIVE_IMAGE,
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };    
+            };
             AddActions();
         }
         #endregion
@@ -126,12 +130,13 @@ namespace HEC.FDA.ViewModel.Alternatives
                 long por = firstElem.AnalysisYear;
                 int id = 99;
                 Alternative alt = new Alternative(scenario1, scenario2, por, id);
+
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
-                //todo: discount rate from the properties? - yes
-                double discountRate = .01;
-                AlternativeResults alternativeResults = alt.AnnualizationCompute(randomProvider, cc, discountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
+                StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
+
+                _Results = alt.AnnualizationCompute(randomProvider, cc, studyProperties.DiscountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
                 //Richard is writing a ToXML() 6/3/22
 
             }
@@ -184,7 +189,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
             bool secondElemHasResults = false;
-            if(firstElem != null && firstElem.GetResults().Count>0)
+            if (firstElem != null && firstElem.GetResults().Count > 0)
             {
                 firstElemHasResults = true;
             }
@@ -193,7 +198,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 secondElemHasResults = true;
             }
 
-            if(!firstElemHasResults)
+            if (!firstElemHasResults)
             {
                 vr.AddErrorMessage("Scenario '" + firstElem.Name + "' has no compute results.");
             }
@@ -219,7 +224,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private FdaValidationResult DoBothScenariosExist(IASElementSet firstElem, IASElementSet secondElem)
         {
-            FdaValidationResult vr = new FdaValidationResult();            
+            FdaValidationResult vr = new FdaValidationResult();
             if (firstElem == null || secondElem == null)
             {
                 vr.AddErrorMessage("There are no longer two impact area scenarios linked to this alternative.");
@@ -227,13 +232,16 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private AlternativeResult CreateAlternativeResult()
+        private AlternativeResult CreateAlternativeResult(AlternativeResults altResults)
         {
             AlternativeResult altResult = null;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyPropElem.DiscountRate;
             int period = studyPropElem.PeriodOfAnalysis;
+
+            //altResults.
+
             YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(.123, 1), new DamageByImpactAreaVM(), new DamageByDamCatVM());
             YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(.456, 4), new DamageByImpactAreaVM(), new DamageByDamCatVM());
 
@@ -244,20 +252,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altResult;
         }
 
-        private FdaValidationResult CanViewResults()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            //todo: check if we have results that can be viewed.
-
-            return vr;
-        }
-
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            FdaValidationResult vr = CanViewResults();
-            if (vr.IsValid)
+            if (_Results != null)
             {
+                //todo pass in the correct thing.
                 AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
                 string header = "Alternative Results: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
@@ -265,7 +264,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage, "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("There are no results to view", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -282,9 +281,9 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            if(elementToClone is AlternativeElement elem)
+            if (elementToClone is AlternativeElement elem)
             {
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description,elem.LastEditDate, elem.IASElementSets, elem.ID);
+                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.LastEditDate, elem.IASElementSets, elem.ID);
                 return elemToReturn;
             }
             return null;

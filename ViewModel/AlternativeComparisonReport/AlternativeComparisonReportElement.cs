@@ -5,6 +5,7 @@ using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using metrics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -22,8 +23,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         private const string WITH_PROJ_ELEM = "WithProjectElement";
         private const string LAST_EDIT_DATE = "LastEditDate";
 
+        private AlternativeComparisonReportResults _Results;
+
+        #region Properties
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
+        public AlternativeComparisonReportResults Results { get; }
+
+        #endregion
 
         public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) : base(id)
         {
@@ -140,8 +147,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            FdaValidationResult vr = CanViewResult();
-            if (vr.IsValid)
+            if (_Results != null)
             {
                 AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
                 string header = "Alternative Comparison Report Results: " + Name;
@@ -150,20 +156,22 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            FdaValidationResult vr = CanCompute();
+            FdaValidationResult vr = GetCanComputeResults();
             if(vr.IsValid)
             {
                 AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
                 List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
                 //todo: waiting for HEC to get the new model plugged in. 11/16/21
-                //Alternative withoutAlternative = new Alternative()
-                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport(withoutAlt, withProjAlts);)
+                //Alternative withoutAlternative = new Alternative();
+                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport(withoutAlt, withProjAlts);
+                //metrics.AlternativeComparisonReportResults alternativeComparisonReportResults = altCompReport.ComputeDistributionOfAAEQDamageReduced();
+                //_Results = altCompReport.ComputeDistributionOfAAEQDamageReduced();
             }
             else
             {
@@ -201,20 +209,22 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return alt;
         }
 
-        private FdaValidationResult CanCompute()
+        private FdaValidationResult GetCanComputeResults()
         {
             FdaValidationResult vr = new FdaValidationResult();
+            
+            AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+            List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
-            //todo: check if we have results that can be viewed.
+            if(withoutAlt == null)
+            {
+                vr.AddErrorMessage("The without project alternative no longer exists.");
+            }
 
-            return vr;
-        }
-
-        private FdaValidationResult CanViewResult()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            //todo: check if we have results that can be viewed.
+            if(WithProjAltIDs.Count==0)
+            {
+                vr.AddErrorMessage("There are no longer any with project alternatives.");
+            }
 
             return vr;
         }
