@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Xml.Linq;
+using compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
-
+using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -148,7 +149,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
-            Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
+            IASEditorVM vm = new IASEditorVM(this, actionManager);
             vm.RequestNavigation += Navigate;
 
             string header = "Edit Impact Area Scenario";
@@ -183,6 +184,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 }
             }
 
+            return results;
+        }
+
+        public ScenarioResults GetScenarioResults()
+        {
+            ScenarioResults results = new ScenarioResults();
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                results.AddResults( ias.ComputeResults);
+            }
+            return results;
+        }
+
+        public List<ImpactAreaScenarioSimulation> GetSimulations()
+        {
+            List<ImpactAreaScenarioSimulation> results = new List<ImpactAreaScenarioSimulation>();
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                results.Add(ias.Simulation);
+            }
             return results;
         }
 

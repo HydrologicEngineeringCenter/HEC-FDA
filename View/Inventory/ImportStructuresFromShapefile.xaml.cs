@@ -45,6 +45,7 @@ namespace HEC.FDA.View.Inventory
                 stack_ShapefilePath.Visibility = Visibility.Collapsed;
                 if (NextButton.Content.ToString() == "Finish")
                 {
+                    vm.WasCanceled = false;
                     RunClosingLogic();
                 }
                 else

@@ -255,7 +255,7 @@ namespace HEC.FDA.ViewModel.Tabs
         public static bool UserWantsToClose(BaseViewModel BaseVM)
         {
             bool userWantsToClose = true;
-            //BaseVM.WasCanceled is when the user clicked the close button or the red x
+            //BaseVM.WasCanceled is true when the user clicked the close button or the red x
             //This method gets called when the user clicks the OK button. We do not want to prompt
             //the user when the OK button is clicked.
             if(BaseVM is IDetectChanges && BaseVM.HasChanges && BaseVM.WasCanceled)
