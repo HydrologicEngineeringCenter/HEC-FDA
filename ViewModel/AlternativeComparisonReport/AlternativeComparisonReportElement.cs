@@ -162,7 +162,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
                 List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
                 //todo: waiting for HEC to get the new model plugged in. 11/16/21
-                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport()
+                //Alternative withoutAlternative = new Alternative()
+                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport(withoutAlt, withProjAlts);)
             }
             else
             {
