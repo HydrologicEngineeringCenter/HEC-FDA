@@ -215,7 +215,7 @@ namespace Statistics.Histograms
             double variance = _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             return deviation3 / _SampleSize / Math.Pow(variance, 3 / 2);
         }
-        #region Functions
+        #region Methods
         public double HistogramMean()
         {
             ForceDeQueue();
@@ -568,7 +568,16 @@ namespace Statistics.Histograms
 
             }
         }
-
+        public void AddHistogramToThisHistogram(ThreadsafeInlineHistogram incomingHistogram, int iterations)
+        {
+            int seed = 1234;
+            Random random = new Random(seed);
+            for(int i = 0; i < iterations; i++)
+            {
+                double sampledValue = incomingHistogram.InverseCDF(random.NextDouble());
+                AddObservationToHistogram(sampledValue, i);
+            }
+        }
         public XElement WriteToXML()
         {
             ForceDeQueue();
