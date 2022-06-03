@@ -33,7 +33,7 @@ namespace alternativeComparisonReport
                 _withoutProjectAlternative = value;
             }
         }
-
+        [Obsolete("This constructor is obsolete. No need to construct an alternative comparison report - just use the static compute method")]
         public AlternativeComparisonReport(Alternative withoutProject, List<Alternative> withProjecs)
         {
             _withoutProjectAlternative = withoutProject;
@@ -47,7 +47,7 @@ namespace alternativeComparisonReport
         /// <param name="convergenceCriteria"></param> the study convergence criteria 
         /// <param name="discountRate"></param> the discount rate at which to calculate the present value of damages, in decimal form
         /// <returns></returns>
-        public AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        public static AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
 
@@ -168,7 +168,7 @@ namespace alternativeComparisonReport
         /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
         /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
         /// <returns></returns>
-        public AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults, bool iWantBaseYearResults)
+        public static AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults, bool iWantBaseYearResults)
         {
             AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
             if (iWantBaseYearResults)
@@ -182,7 +182,7 @@ namespace alternativeComparisonReport
             return damagesReducedAllAlternatives;
         } 
 
-        private AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private static AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
 
@@ -225,7 +225,7 @@ namespace alternativeComparisonReport
         }
 
 
-        private AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private static AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
 
