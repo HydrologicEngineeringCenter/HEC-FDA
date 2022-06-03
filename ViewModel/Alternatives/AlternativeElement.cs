@@ -1,10 +1,13 @@
-﻿using compute;
+﻿using alternatives;
+using compute;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using metrics;
+using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -118,17 +121,17 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSet firstElem = iASElems[0];
                 IASElementSet secondElem = iASElems[1];
 
-                scenarios.Scenario scenario1 = new scenarios.Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
-                scenarios.Scenario scenario2 = new scenarios.Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
+                Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
+                Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
                 long por = firstElem.AnalysisYear;
                 int id = 99;
-                alternatives.Alternative alt = new alternatives.Alternative(scenario1, scenario2, por, id);
+                Alternative alt = new Alternative(scenario1, scenario2, por, id);
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 //todo: discount rate from the properties? - yes
                 double discountRate = .01;
-                metrics.AlternativeResults alternativeResults = alt.AnnualizationCompute(randomProvider, cc, discountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
+                AlternativeResults alternativeResults = alt.AnnualizationCompute(randomProvider, cc, discountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
                 //Richard is writing a ToXML() 6/3/22
 
             }
