@@ -257,10 +257,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             if (_Results != null)
             {
                 //todo pass in the correct thing.
-                AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
-                string header = "Alternative Results: " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
-                Navigate(tab, false, true);
+                //AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
+                //string header = "Alternative Results: " + Name;
+                //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+                //Navigate(tab, false, true);
             }
             else
             {
