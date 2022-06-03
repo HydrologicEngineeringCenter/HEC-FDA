@@ -14,12 +14,11 @@ namespace HEC.FDA.View.Inventory
         public ImportStructuresFromShapefile()
         {
             InitializeComponent();
-            cmb_Path.CmbSelectionMade += Cmb_Path_CmbSelectionMade;
         }
 
         //Todo: Ideally this code wouldn't be necessary. The path selection control should be able to bind to the view model
         //correctly. That is more work than i want to deal with so i am leaving this code here for now. - cody 12/8/21
-        private void Cmb_Path_CmbSelectionMade(string path)
+        private void TextBoxFileBrowser_SelectionMade(string path, string filename)
         {
             ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
             if (vm != null)
@@ -78,5 +77,6 @@ namespace HEC.FDA.View.Inventory
         {
             RunClosingLogic();
         }
+
     }
 }
