@@ -56,7 +56,7 @@ namespace fda_model_test.unittests
             compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement resultsElement = results.WriteToXml();
-            metrics.IContainResults resultsFromXML = metrics.ImpactAreaScenarioResults.ReadFromXML(resultsElement);
+            metrics.IContainImpactAreaScenarioResults resultsFromXML = metrics.ImpactAreaScenarioResults.ReadFromXML(resultsElement);
             bool success = results.Equals(resultsFromXML);
         }
     }

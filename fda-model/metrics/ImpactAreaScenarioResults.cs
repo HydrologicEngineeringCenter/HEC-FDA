@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace metrics
 {
-    public class ImpactAreaScenarioResults: IContainResults
+    public class ImpactAreaScenarioResults: IContainImpactAreaScenarioResults
     {
         #region Fields
         bool _isNull;
@@ -190,7 +190,7 @@ namespace metrics
             return masterElement;
         }
 
-        public static IContainResults ReadFromXML(XElement xElement)
+        public static IContainImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             ConsequenceResults expectedAnnualDamageResults = ConsequenceResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
