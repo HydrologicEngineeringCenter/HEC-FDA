@@ -129,7 +129,7 @@ namespace metrics
             mainElement.SetAttributeValue("ID", _alternativeID);
             return mainElement;
         }
-        public AlternativeResults ReadFromXML(XElement xElement)
+        public static AlternativeResults ReadFromXML(XElement xElement)
         {
             int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
             AlternativeResults alternativeResults = new AlternativeResults(alternativeID);

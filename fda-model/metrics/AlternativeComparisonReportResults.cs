@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
@@ -88,6 +89,27 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        public XElement WriteToXML()
+        {
+            XElement mainElement = new XElement("AlternativeComparisonReportResults");
+            foreach (AlternativeResults alternativeResults in _resultsList)
+            {
+                XElement xElement = alternativeResults.WriteToXML();
+                mainElement.Add(xElement);
+            }
+            return mainElement;
+        }
+        public static AlternativeComparisonReportResults ReadFromXML(XElement xElement)
+        {
+            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReportResults();
+            foreach (XElement element in xElement.Elements())
+            {
+                AlternativeResults alternativeResults = AlternativeResults.ReadFromXML(element);
+                alternativeComparisonReportResults.AddAlternativeResults(alternativeResults);
+            }
+            return alternativeComparisonReportResults;
         }
         #endregion
     }
