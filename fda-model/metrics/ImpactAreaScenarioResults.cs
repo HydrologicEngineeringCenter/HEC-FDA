@@ -234,6 +234,12 @@ namespace metrics
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }
+
+        internal void ForceDeQueue()
+        {
+            PerformanceByThresholds.ForceDeQueue();
+            ConsequenceResults.ForceDeQueue();
+         }
         #endregion
     }
 }

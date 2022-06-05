@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using Statistics.Histograms;
 
 namespace metrics
 {
@@ -105,6 +107,17 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        internal void ForceDeQueue()
+        {
+            foreach (Threshold threshold in ListOfThresholds)
+            {
+                foreach(AssuranceResultStorage assuranceResultStorage in threshold.SystemPerformanceResults.Assurances)
+                {
+                    assuranceResultStorage.AssuranceHistogram.ForceDeQueue();
+                }
+            }
         }
         #endregion
     }

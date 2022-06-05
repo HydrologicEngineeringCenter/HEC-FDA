@@ -247,6 +247,7 @@ namespace compute
                 }
 
             }
+            _impactAreaScenarioResults.ForceDeQueue();
         }
 
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration, bool computeWithDamage)

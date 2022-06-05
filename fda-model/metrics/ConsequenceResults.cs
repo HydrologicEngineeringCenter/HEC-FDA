@@ -260,6 +260,15 @@ namespace metrics
             ConsequenceResult dummyResult = new ConsequenceResult();
             return dummyResult;
         }
+
+        internal void ForceDeQueue()
+        {
+            foreach (ConsequenceResult consequenceResult in ConsequenceResultList)
+            {
+                consequenceResult.ConsequenceHistogram.ForceDeQueue();
+            }
+        }
+
         public bool Equals(ConsequenceResults inputDamageResults)
         {
            foreach (ConsequenceResult damageResult in _consequenceResultList)
