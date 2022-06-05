@@ -72,62 +72,49 @@ namespace metrics
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability);
         }
         /// <summary>
-        /// Returns the mean of the consequence histogram for a given impact area, damage category, and asset category 
+        /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
+        /// Damage measures could be EAD or other measures of consequences 
+        /// Note that when working with impact area scenario results, there is only 1 impact area 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory, string assetCategory)
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of consequences
+        public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             return ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// Returns the mean of the consequence histograms for the given impact area and category 
-        /// If categoryIsDamageCategory is true, then category is a damage category, and the mean is added over asset categories 
+        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="impactArea"></param>
-        /// <param name="category"></param>
-        /// <param name="categoryIsDamageCategory"></param>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequences(int impactArea, string category, bool categoryIsDamageCategory = true)
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns> the level of consequences exceeded by the specified probability 
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return ConsequenceResults.MeanDamage(category, impactArea, categoryIsDamageCategory);
-        } 
-        /// <summary>
-        /// Returns the mean of the consequence histograms for the given impact area 
-        /// Histograms are aggregated over all damage and asset categories 
-        /// </summary>
-        /// <param name="impactArea"></param>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequences(int impactArea)
-        {
-            return ConsequenceResults.MeanDamage(impactArea);
+            return ConsequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// Returns the mean of the consequence histograms for the given category 
-        /// If categoryIsDamageCategory is true, then category is a damage category, and histograms are aggregated over impact areas and asset categories
-        /// If categoryIsDamageCategory is false, then category is an asset category, and histograms are aggregated over impact areas and damage categories 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="categoryIsDamageCategory"></param>
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// </summary> aggregated consequences histogram 
+        /// <param name="damageCategory"></param> The default is null 
+        /// <param name="assetCategory"></param> The default is null 
+        /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>
-        public double MeanExpectedAnnualConsequences(string category, bool categoryIsDamageCategory = true)
+        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return ConsequenceResults.MeanDamage(category, categoryIsDamageCategory);
-        }
-        /// <summary>
-        /// Returns the mean summed over all consequence histograms 
-        /// In other words, the mean is aggregated over all damage categories, asset categories, and impact areas
-        /// </summary>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequences()
-        {
-            return ConsequenceResults.MeanDamage();
-        }
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
-        {
-            return ConsequenceResults.ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
+            return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
         {

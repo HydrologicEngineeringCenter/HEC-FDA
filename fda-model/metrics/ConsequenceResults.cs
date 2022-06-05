@@ -103,7 +103,7 @@ namespace metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value -999
-        /// <returns></returns>
+        /// <returns></returns>The mean of consequences
         public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
@@ -172,7 +172,7 @@ namespace metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value -999
-        /// <returns></returns>
+        /// <returns></returns>the level of consequences exceeded by the specified probability 
         public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
@@ -323,7 +323,7 @@ namespace metrics
         /// <param name="damageCategory"></param> The default is null 
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
-        /// <returns></returns>
+        /// <returns></returns> Aggregated consequences histogram 
         public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
