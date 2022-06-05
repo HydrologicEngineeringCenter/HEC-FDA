@@ -9,7 +9,8 @@ using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
 namespace metrics
-{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
+{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL. the problem then is testing. there is a lot of math in this class that should
+  //have lots of testing 
 
     public class ConsequenceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
@@ -18,6 +19,7 @@ namespace metrics
         //impact area to be string?
         private int _regionID;//impact area ID or census block ID
         private bool _isNull;
+        
         #endregion
 
         #region Properties 
@@ -67,7 +69,7 @@ namespace metrics
         #endregion
 
         #region Methods 
-        internal void AddConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
@@ -76,7 +78,7 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        internal void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
+        internal void AddExistingConsequenceResultObject(ConsequenceResult consequenceResultToAdd)
         {
             ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
@@ -94,238 +96,138 @@ namespace metrics
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 
         /// Note that when working with impact area scenario results, there is only 1 impact area 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc...
-        /// <param name="assetCategory"></param> either structure, content, etc...
-        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
         /// <returns></returns>
-        public double MeanDamage(string damageCategory, string assetCategory, int impactAreaID)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            return damageResult.MeanExpectedAnnualConsequences();
-        }
-        /// <summary>
-        /// This method returns the mean of the consequences measure for the given category and impact area 
-        /// If categoryIsDamageCategory is true, then category should be a damage category and the mean is summed over asset categories 
-        /// If categoryIsDamageCategory is false, then category should be an asset category and the mean is summed over damage categories 
-        /// Damage measures could be EAD or other measures of consequences 
-        /// Note that when working with impact area scenario results, there is only 1 impact area 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="impactAreaID"></param>
-        /// <param name="categoryIsDamageCategory"></param>
-        /// <returns></returns>
-        public double MeanDamage(string category, int impactAreaID, bool categoryIsDamageCategory = true)
-        {
-            double meanConsequence = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                if (categoryIsDamageCategory)
-                {
-                    if ((consequenceResult.DamageCategory.Equals(category)) && (consequenceResult.RegionID.Equals(impactAreaID)))
-                    {
-                        meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                else
-                {
-                    if ((consequenceResult.AssetCategory.Equals(category)) && (consequenceResult.RegionID.Equals(impactAreaID))) 
-                    {
-                        meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-
-            }
-            return meanConsequence;
-        }
-        /// <summary>
-        /// This method returns the mean of the consequences measure for the given category 
-        /// If categoryIsDamageCategory is true, then category should be a damage category and the mean is summed over asset categories and impact areas
-        /// If categoryIsDamageCategory is false, then category should be an asset category and the mean is summed over damage categories and impact areas 
-        /// Damage measures could be EAD or other measures of consequences 
-        /// Note that when working with impact area scenario results, there is only 1 impact area 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="categoryIsDamageCategory"></param> 
-        /// <returns></returns>
-        public double MeanDamage(string category, bool categoryIsDamageCategory = true)
-        {
-            double meanConsequence = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                if (categoryIsDamageCategory)
-                {
-                    if ((consequenceResult.DamageCategory.Equals(category)))
-                    {
-                        meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                else
-                {
-                    if ((consequenceResult.AssetCategory.Equals(category)))
-                    {
-                        meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-
-            }
-            return meanConsequence;
-        }
-        /// <summary>
-        /// This method returns the mean of the consequences measure for the given impact area 
-        /// The mean is summed over damage categories and asset categories 
-        /// Damage measures could be EAD or other measures of consequences 
-        /// Note that when working with impact area scenario results, there is only 1 impact area 
-        /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public double MeanDamage(int impactAreaID)
-        {
-            double meanConsequence = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                    if ((consequenceResult.RegionID.Equals(impactAreaID)))
-                    {
-                        meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-            }
-            return meanConsequence;
-        }
-        /// <summary>
-        /// This method returns the mean of the consequences measure 
-        /// The mean is summed over damage categories, asset categories, and impact areas  
-        /// Damage measures could be EAD or other measures of consequences 
-        /// Note that when working with impact area scenario results, there is only 1 impact area         
-        /// </summary>
-        /// <returns></returns>
-        public double MeanDamage()
-        {
-            double meanConsequence = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                    meanConsequence += consequenceResult.MeanExpectedAnnualConsequences();
-            }
-            return meanConsequence;
-        }
-        /// <summary>
-        /// This method calls the inverse CDF of thedamage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
-        /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc....
-        /// <param name="exceedanceProbability"></param>
-        /// <param name="assetCategory"></param> either structure, content, etc...
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public double ConsequenceExceededWithProbabilityQ(string damageCategory, double exceedanceProbability, string assetCategory, int impactAreaID)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            double quantileRequested = damageResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-            return quantileRequested;
-
-        }
-        /// <summary>
-        /// This method calls the inverse CDF of the damage histograms for the given category and impact area up to the non-exceedance probability. 
-        /// The method accepts exceedance probability as an arugment, not non-exceedance probability 
-        /// If categoryIsDamageCategory is true, then the inverse CDF is summed over asset categories
-        /// Else, the inverse CDF is summed over damage categories. 
-        /// Note that when working with impact area scenario results, there is only 1 impact area 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="exceedanceProbability"></param>
-        /// <param name="impactAreaID"></param>
-        /// <param name="categoryIsDamageCategory"></param>
-        /// <returns></returns>
-        public double ConsequenceExceededWithProbabilityQ(string category, double exceedanceProbability, int impactAreaID, bool categoryIsDamageCategory = true)
+        public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
             foreach (ConsequenceResult consequenceResult in _consequenceResultList)
             {
-                if (categoryIsDamageCategory)
+                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
-                    if ((consequenceResult.DamageCategory.Equals(category)) && (consequenceResult.RegionID.Equals(impactAreaID)))
+                    consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
-                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                else
+                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
                 {
-                    if ((consequenceResult.AssetCategory.Equals(category)) && (consequenceResult.RegionID.Equals(impactAreaID)))
+                    if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
-                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-
+                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).MeanExpectedAnnualConsequences();
+                }
             }
             return consequenceValue;
         }
         /// <summary>
-        /// This method calls the inverse CDF of the damage histograms for the given category up to the non-exceedance probability. 
-        /// The method accepts exceedance probability as an arugment, not non-exceedance probability 
-        /// If categoryIsDamageCategory is true, then the inverse CDF is summed over asset categories and impact areas
-        /// Else, the inverse CDF is summed over damage categories and impact areas.   
-        /// Note that when working with impact area scenario results, there is only 1 impact area
+        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="category"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
-        /// <param name="categoryIsDamageCategory"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
         /// <returns></returns>
-        public double ConsequenceExceededWithProbabilityQ(string category, double exceedanceProbability, bool categoryIsDamageCategory = true)
+        public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
             foreach (ConsequenceResult consequenceResult in _consequenceResultList)
             {
-                if (categoryIsDamageCategory)
+                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
-                    if ((consequenceResult.DamageCategory.Equals(category)))
-                    {
-                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-                    }
-                }
-                else
-                {
-                    if ((consequenceResult.AssetCategory.Equals(category)))
-                    {
-                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-                    }
-                }
-
-            }
-            return consequenceValue;
-        }
-        /// <summary>
-        /// This method calls the inverse CDF of the damage histograms for the given impact area up to the non-exceedance probability. 
-        /// The method accepts exceedance probability as an arugment, not non-exceedance probability 
-        /// The consequence value is summed over damage categories and asset categories  
-        /// Note that when working with impact area scenario results, there is only 1 impact area        
-        /// </summary>
-        /// <param name="exceedanceProbability"></param>
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public double ConsequenceExceeededWithProbabilityQ(double exceedanceProbability, int impactAreaID)
-        {
-            double consequenceValue = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                    if ((consequenceResult.RegionID.Equals(impactAreaID)))
-                    {
-                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-                    }
-            }
-            return consequenceValue;
-        }
-        /// <summary>
-        /// This method calls the inverse CDF of the damage histograms up to the non-exceedance probability. 
-        /// The method accepts exceedance probability as an arugment, not non-exceedance probability 
-        /// The consequence value is summed over damage categories, asset categories, and impact areas  
-        /// Note that when working with impact area scenario results, there is only 1 impact area         
-        /// </summary>
-        /// <param name="exceedanceProbability"></param>
-        /// <returns></returns>
-        public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
-        {
-            double consequenceValue = 0;
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
                     consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                }
             }
             return consequenceValue;
         }
@@ -413,118 +315,75 @@ namespace metrics
             return meanEAD;
         }
         /// <summary>
-        /// This method gets the histogram (distribution) of consequences for the given damage category, asset category, and impact area 
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetConsequenceResultsHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> The default is null 
+        /// <param name="assetCategory"></param> The default is null 
+        /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory, string assetCategory, int impactAreaID)
-        {
-            return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
-        }
-        /// <summary>
-        /// This method returns the histogram (distribution) of consequences for the give category and impact area ID
-        /// If categoryIsDamageCategory is true, then category is damage category, and histograms are aggregated over asset categories
-        /// If categoryIsDamageCategory is false, then category is asset category, and histograms are aggregated over damage categories
-        /// 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="impactAreaID"></param>
-        /// <param name="categoryIsDamageCategory"></param>
-        /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string category, int impactAreaID, bool categoryIsDamageCategory)
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
             foreach (ConsequenceResult consequenceResult in _consequenceResultList)
             {
-                if (categoryIsDamageCategory)
+                if(damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
-                    if((consequenceResult.DamageCategory.Equals(category)) && consequenceResult.RegionID.Equals(impactAreaID))
-                    {
-                        histograms.Add(consequenceResult.ConsequenceHistogram);
-                    }
-                } 
-                else
-                {
-                    if ((consequenceResult.AssetCategory.Equals(category)) && consequenceResult.RegionID.Equals(impactAreaID))
-                    {
-                        histograms.Add(consequenceResult.ConsequenceHistogram);
-                    }
-                }
-            }
-            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-
-            return threadsafeInlineHistogram;
-        }
-        /// <summary>
-        /// This method returns the histogram (distribution) of consequences for the give category
-        /// If categoryIsDamageCategory is true, then category is damage category, and histograms are aggregated over asset categories and impact areas
-        /// If categoryIsDamageCategory is false, then category is asset category, and histograms are aggregated over damage categories and impact areas   
-        /// Note that when working with impact area scenario results, there is only 1 impact area    
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="categoryIsDamageCategory"></param>
-        /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string category, bool categoryIsDamageCategory)
-        {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
-
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                if (categoryIsDamageCategory)
-                {
-                    if ((consequenceResult.DamageCategory.Equals(category)))
-                    {
-                        histograms.Add(consequenceResult.ConsequenceHistogram);
-                     }
-                }
-                else
-                {
-                    if ((consequenceResult.AssetCategory.Equals(category)))
-                    {
-                        histograms.Add(consequenceResult.ConsequenceHistogram);
-                    }
-                }
-            }
-            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-            return threadsafeInlineHistogram;
-        }
-        /// <summary>
-        /// This method returns the histogram (distribution) of consequences for the given impact area
-        /// The histograms are aggregated over all damage and asset categories 
-        /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(int impactAreaID)
-        {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                    if (consequenceResult.RegionID.Equals(impactAreaID))
-                    {
                     histograms.Add(consequenceResult.ConsequenceHistogram);
+                }
+                if(damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
+                }
+                if(damageCategory == null && assetCategory != null && impactAreaID == -999)
+                {
+                    if(assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if(impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if(assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
+                }
             }
-            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-            return threadsafeInlineHistogram;
+                    ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+                    return aggregatedHistogram;
         }
-        /// <summary>
-        /// This method returns the histogram (distribution) of consequences
-        /// The returned histogram has aggregated the histograms for all damage and asset categories and impact areas
-        /// </summary>
-        /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram()
-        {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
-            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
-            {
-                histograms.Add(consequenceResult.ConsequenceHistogram);
-            }
-            ThreadsafeInlineHistogram threadsafeInlineHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-            return threadsafeInlineHistogram;
-        }
-
+      
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");

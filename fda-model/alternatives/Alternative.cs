@@ -90,7 +90,7 @@ namespace alternatives
                         aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
                     aaeqResult.ConsequenceHistogram.ForceDeQueue();
-                    aaeqResults.AddConsequenceResult(aaeqResult);
+                    aaeqResults.AddExistingConsequenceResultObject(aaeqResult);
                 }
                 alternativeResults.AddConsequenceResults(aaeqResults);
             }
@@ -147,7 +147,7 @@ namespace alternatives
                         aaeqResult.AddConsequenceRealization(aaeqDamage, i);
                     }
                     aaeqResult.ConsequenceHistogram.ForceDeQueue();
-                    aaeqResults.AddConsequenceResult(aaeqResult);
+                    aaeqResults.AddExistingConsequenceResultObject(aaeqResult);
                 }
                 alternativeResults.AddConsequenceResults(aaeqResults);
             }

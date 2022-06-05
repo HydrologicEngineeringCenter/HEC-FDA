@@ -90,7 +90,7 @@ namespace alternativeComparisonReport
                             damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
                         damageReducedResult.ConsequenceHistogram.ForceDeQueue();
-                        damageReducedInImpactArea.AddConsequenceResult(damageReducedResult);
+                        damageReducedInImpactArea.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     damageReducedOneAlternative.AddConsequenceResults(damageReducedInImpactArea); 
                 }
@@ -152,7 +152,7 @@ namespace alternativeComparisonReport
                             damageReducedResult.AddConsequenceRealization(damagesReduced, i);
                         }
                         damageReducedResult.ConsequenceHistogram.ForceDeQueue();
-                        damageReducedInImpactArea.AddConsequenceResult(damageReducedResult);
+                        damageReducedInImpactArea.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     damageReducedOneAlternative.AddConsequenceResults(damageReducedInImpactArea);
                 }
@@ -214,7 +214,7 @@ namespace alternativeComparisonReport
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReducedResult.AddConsequenceRealization(eadDamageReduced,i);
                         }
-                        damageReducedResults.AddConsequenceResult(damageReducedResult);
+                        damageReducedResults.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
@@ -255,7 +255,7 @@ namespace alternativeComparisonReport
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReducedResult.AddConsequenceRealization(eadDamageReduced, i);
                         }
-                        damageReducedResults.AddConsequenceResult(damageReducedResult);
+                        damageReducedResults.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     damageReducedAlternative.AddConsequenceResults(damageReducedResults);
                 }
