@@ -56,7 +56,6 @@ namespace alternatives
             AlternativeResults alternativeResults = new AlternativeResults(_id);
             foreach (ImpactAreaScenarioResults baseYearResults in baseYearScenarioResults.ResultsList)
             {
-                ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
                 ImpactAreaScenarioResults mlfYearResults = mlfYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
                 foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
@@ -90,9 +89,8 @@ namespace alternatives
                         aaeqResult.AddConsequenceRealization(aaeqDamage,i);
                     }
                     aaeqResult.ConsequenceHistogram.ForceDeQueue();
-                    aaeqResults.AddExistingConsequenceResultObject(aaeqResult);
+                    alternativeResults.AddConsequenceResults(aaeqResult);
                 }
-                alternativeResults.AddConsequenceResults(aaeqResults);
             }
             return alternativeResults;
         }
@@ -113,7 +111,6 @@ namespace alternatives
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
             foreach (ImpactAreaScenarioResults baseYearResults in alternativeResults.BaseYearScenarioResults.ResultsList)
             {
-                ConsequenceResults aaeqResults = new ConsequenceResults(baseYearResults.ImpactAreaID);
                 ImpactAreaScenarioResults mlfYearResults = alternativeResults.FutureYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
 
                 foreach (ConsequenceResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
@@ -147,9 +144,8 @@ namespace alternatives
                         aaeqResult.AddConsequenceRealization(aaeqDamage, i);
                     }
                     aaeqResult.ConsequenceHistogram.ForceDeQueue();
-                    aaeqResults.AddExistingConsequenceResultObject(aaeqResult);
+                    alternativeResults.AddConsequenceResults(aaeqResult);
                 }
-                alternativeResults.AddConsequenceResults(aaeqResults);
             }
             return alternativeResults;
         }

@@ -17,7 +17,6 @@ namespace metrics
         #region Fields
         private List<ConsequenceResult> _consequenceResultList;
         //impact area to be string?
-        private int _regionID;//impact area ID or census block ID
         private bool _isNull;
         
         #endregion
@@ -28,13 +27,6 @@ namespace metrics
             get
             {
                 return _consequenceResultList;
-            }
-        }
-        public int RegionID
-        {
-            get
-            {
-                return _regionID;
             }
         }
         //this needs to be an error report
@@ -51,18 +43,11 @@ namespace metrics
         public ConsequenceResults()
         {
             _consequenceResultList = new List<ConsequenceResult>();
-            _regionID = 0;
             _isNull = true;
         }
-        public ConsequenceResults(int impactAreaID){
-            _consequenceResultList = new List<ConsequenceResult>();
-            _regionID = impactAreaID;
-            _isNull = false;
-        }
-        private ConsequenceResults(List<ConsequenceResult> damageResults, int impactAreaID)
+        private ConsequenceResults(List<ConsequenceResult> damageResults)
         {
             _consequenceResultList = damageResults;
-            _regionID = impactAreaID;
             _isNull = false;
 
         }
@@ -402,7 +387,6 @@ namespace metrics
                 damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
                 masterElem.Add(damageResultElement);
             }
-            masterElem.SetAttributeValue("ImpactAreaID", _regionID);
             return masterElem;
         }
 
@@ -413,8 +397,7 @@ namespace metrics
             {
                 damageResults.Add(ConsequenceResult.ReadFromXML(histogramElement));
             }
-            int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ConsequenceResults(damageResults,impactAreaID);
+            return new ConsequenceResults(damageResults);
         }
 
         #endregion

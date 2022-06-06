@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using Statistics.Histograms;
 
 namespace metrics
 {
@@ -53,13 +54,20 @@ namespace metrics
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
-        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory, string assetCategory)
+        //TODO: Do we need to aggregate over impact area? 
+        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory = null, string assetCategory= null)
         {
             return GetResults(impactAreaID).MeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
         }
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        //TODO: Do we need to aggregate over impact area?
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory = null, string assetCategory = null)
         {
             return GetResults(impactAreaID).ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+        }
+        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID, string damageCategory = null, string assetCategory = null)
+        {
+            return GetResults(impactAreaID).GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {

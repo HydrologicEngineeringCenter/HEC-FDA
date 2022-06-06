@@ -63,6 +63,10 @@ namespace metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);
         }
+        public ThreadsafeInlineHistogram GetAEPHistogram(int thresholdID)
+        {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogram();
+        }
         public double LongTermExceedanceProbability(int thresholdID, int years)
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.LongTermExceedanceProbability(years);

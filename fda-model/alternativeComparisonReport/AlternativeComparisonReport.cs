@@ -55,7 +55,7 @@ namespace alternativeComparisonReport
             {
                 AlternativeResults damageReducedOneAlternative = new AlternativeResults(withoutProjectAlternativeResults.AlternativeID);
 
-                foreach (ConsequenceResults withProjectDamageResults in withProjectAlternativeResults.ConsequenceResultsList)
+                foreach (ConsequenceResults withProjectDamageResults in withProjectAlternativeResults.ConsequenceResults)
                 {
                     ConsequenceResults withoutProjectDamageResults = withoutProjectAlternativeResults.GetConsequenceResults(withProjectDamageResults.RegionID);
                     ConsequenceResults damageReducedInImpactArea = new ConsequenceResults(withProjectDamageResults.RegionID);
@@ -117,7 +117,7 @@ namespace alternativeComparisonReport
                 AlternativeResults withProjectAlternativeResults = alternative.AnnualizationCompute(randomProvider, convergenceCriteria, discountRate);
                 AlternativeResults damageReducedOneAlternative = new AlternativeResults(withoutProjectAlternativeResults.AlternativeID);
 
-                foreach (ConsequenceResults withProjectDamageResults in withProjectAlternativeResults.ConsequenceResultsList)
+                foreach (ConsequenceResults withProjectDamageResults in withProjectAlternativeResults.ConsequenceResults)
                 {
                     ConsequenceResults withoutProjectDamageResults = withoutProjectAlternativeResults.GetConsequenceResults(withProjectDamageResults.RegionID);
                     ConsequenceResults damageReducedInImpactArea = new ConsequenceResults(withProjectDamageResults.RegionID);

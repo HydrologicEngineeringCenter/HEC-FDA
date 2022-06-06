@@ -41,7 +41,7 @@ namespace metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double MeanConsequencesReduced(int alternativeID, int impactAreaID, string damageCategory, string assetCategory)
+        public double MeanConsequencesReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             return GetAlternativeResults(alternativeID).MeanConsequence(impactAreaID, damageCategory, assetCategory);
         }
@@ -54,7 +54,7 @@ namespace metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double ConsequencesReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID, string damageCategory, string assetCategory)
+        public double ConsequencesReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             return GetAlternativeResults(alternativeID).ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
         }
@@ -66,10 +66,10 @@ namespace metrics
                 _resultsList.Add(alternativeResultsToAdd);
             }
         }
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID, string damageCategory, string assetCategory)
+        public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-            return alternativeResults.GetConsequencesHistogram(damageCategory, assetCategory, impactAreaID);
+            return alternativeResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
         }
         public AlternativeResults GetAlternativeResults(int alternativeID)
         {
