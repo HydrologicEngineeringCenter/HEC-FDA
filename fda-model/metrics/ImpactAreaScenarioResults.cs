@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace metrics
 {
     public class ImpactAreaScenarioResults: IContainImpactAreaScenarioResults
-    {
+    {//TODO: I want to make this class internal. We should access this logic through ScenarioResults. 
         #region Fields
         bool _isNull;
         #endregion

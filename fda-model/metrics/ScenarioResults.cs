@@ -54,6 +54,17 @@ namespace metrics
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
+        /// <summary>
+        /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
+        /// Damage measures could be EAD or other measures of consequences 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of consequences
         public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory= null)
         {//TODO: This could probably be more efficient 
             double consequenceValue = 0;
@@ -119,7 +130,17 @@ namespace metrics
             }
             return consequenceValue;
         }
-        //TODO: Do we need to aggregate over impact area? YES
+        /// <summary>
+        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns> the level of consequences exceeded by the specified probability 
         public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             double consequenceValue = 0;
@@ -184,7 +205,16 @@ namespace metrics
             }
             return consequenceValue;
         } 
-        //TODO: Aggregate over impact areas 
+        /// <summary>
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// </summary> aggregated consequences histogram 
+        /// <param name="damageCategory"></param> The default is null 
+        /// <param name="assetCategory"></param> The default is null 
+        /// <param name="impactAreaID"></param> The default is a null value (-999)
+        /// <returns></returns>        
         public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();

@@ -35,7 +35,9 @@ namespace metrics
         /// <summary>
         /// This method gets the mean consequences reduced between the with- and without-project conditions for a given with-project condition, 
         /// impact area, damage category, and asset category combination. 
-        /// </summary>
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the mean EAD for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = MeanConsequencesReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
         /// <param name="alternativeID"></param>
         /// <param name="impactAreaID"></param>
         /// <param name="damageCategory"></param> either residential, commercial, etc...
@@ -47,6 +49,9 @@ namespace metrics
         }
         /// <summary>
         /// This method calls the inverse CDF of damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequencesReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="exceedanceProbability"></param>
         /// <param name="alternativeID"></param>
@@ -66,6 +71,17 @@ namespace metrics
                 _resultsList.Add(alternativeResultsToAdd);
             }
         }
+        /// <summary>
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
         public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);

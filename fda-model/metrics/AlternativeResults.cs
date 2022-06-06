@@ -13,9 +13,6 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        //TODO: this should not need to be a list of ConsequenceResults
-        //ConsequenceResults is capable of tracking impact areas, damage categories, and asset categories
-        //which means that we only need one ConsequenceResults 
         private ConsequenceResults _consequenceResults;
         private bool _isNull;
         #endregion
