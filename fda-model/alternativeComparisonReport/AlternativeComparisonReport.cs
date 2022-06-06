@@ -9,36 +9,6 @@ namespace alternativeComparisonReport
 {
     public class AlternativeComparisonReport
 {
-        private List<Alternative> _withProjectAlternatives;
-        private Alternative _withoutProjectAlternative;
-
-        public List<Alternative> WithProjectAlternatives
-        {
-            get
-            {
-                return _withProjectAlternatives;
-            } set
-            {
-                _withProjectAlternatives = value;
-            }
-        }
-        public Alternative WithoutProjectAlternative
-        {
-            get
-            {
-                return _withoutProjectAlternative;
-            }
-            set
-            {
-                _withoutProjectAlternative = value;
-            }
-        }
-        [Obsolete("This constructor is obsolete. No need to construct an alternative comparison report - just use the static compute method")]
-        public AlternativeComparisonReport(Alternative withoutProject, List<Alternative> withProjecs)
-        {
-            _withoutProjectAlternative = withoutProject;
-            _withProjectAlternatives = withProjecs;
-        }
         /// <summary>
         /// This method computes the distribution of average annual equivalent damage reduced between the without-project alternative and each of the with-project alternatives
         /// The function returns an AlternativeComparisonReportResults object which stores a list of AlternativeResults for each with-project condition. 
