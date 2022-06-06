@@ -8,6 +8,7 @@ using metrics;
 using alternativeComparisonReport;
 using alternatives;
 using Statistics.Distributions;
+using scenarios;
 
 namespace fda_model_test.unittests
 {
@@ -91,9 +92,9 @@ namespace fda_model_test.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
-            scenarios.Scenario baseWithoutProjectScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseWithoutProjectScenario = new Scenario(baseYear, impactAreaListBaseYear);
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            scenarios.Scenario futureWothoutProjectScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
             AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, convergenceCriteria, discountRate, poa, withoutAlternativeIdentifier, baseYear, baseWithoutProjectScenarioResults, futureYear, futureWithoutProjectScenarioResults);
 
@@ -120,9 +121,9 @@ namespace fda_model_test.unittests
             impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
 
-            scenarios.Scenario baseWithProjectScenario = new scenarios.Scenario(baseYear, impactAreaListWithProjectBaseYear);
+            Scenario baseWithProjectScenario = new Scenario(baseYear, impactAreaListWithProjectBaseYear);
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
-            scenarios.Scenario futureWithProjectScenario = new scenarios.Scenario(futureYear, impactAreaListWithProjectfutureYear);
+            Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
             AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, convergenceCriteria, discountRate, poa, withAlternativeIdentifier, baseYear, baseWithProjectScenarioResults, futureYear, futureWithProjectScenarioResults);
 

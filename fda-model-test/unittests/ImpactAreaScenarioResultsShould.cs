@@ -8,6 +8,7 @@ using Statistics;
 using paireddata;
 using compute;
 using System.Xml.Linq;
+using metrics;
 
 namespace fda_model_test.unittests
 {
@@ -46,17 +47,17 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
 
-            metrics.Threshold threshold = new metrics.Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(stageDamageList)
                 .withAdditionalThreshold(threshold)
                 .build();
-            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
+            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement resultsElement = results.WriteToXml();
-            metrics.IContainImpactAreaScenarioResults resultsFromXML = metrics.ImpactAreaScenarioResults.ReadFromXML(resultsElement);
+            IContainImpactAreaScenarioResults resultsFromXML = ImpactAreaScenarioResults.ReadFromXML(resultsElement);
             bool success = results.Equals(resultsFromXML);
         }
     }
