@@ -142,9 +142,9 @@ namespace compute
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency)
         {
-            Int64 progressChunks = 1;
-            Int64 _completedIterations = 0;
-            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
+            int progressChunks = 1;
+            int _completedIterations = 0;
+            int _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -155,7 +155,7 @@ namespace compute
             {
                 seeds[i] = masterSeedList.Next();
             }
-            Int64 iterations = convergenceCriteria.MinIterations;
+            int iterations = convergenceCriteria.MinIterations;
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
             while (!_impactAreaScenarioResults.IsConverged(computeWithDamage))
@@ -250,7 +250,7 @@ namespace compute
             _impactAreaScenarioResults.ForceDeQueue();
         }
 
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration, bool computeWithDamage)
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration, bool computeWithDamage)
         {
 
             //interior exterior
@@ -311,7 +311,7 @@ namespace compute
 
             }
         }
-        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, Int64 ordinates)
+        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
         {
 
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
@@ -339,7 +339,7 @@ namespace compute
             return new PairedData(x, y);
 
         }
-        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
+        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration)
         {
             double totalEAD = 0.0;
             CurveMetaData metadata = new CurveMetaData("Total");
@@ -366,7 +366,7 @@ namespace compute
 
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, Int64 iteration)
+        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
         {
             double totalEAD = 0.0;
             CurveMetaData metadata = new CurveMetaData("Total");
@@ -395,7 +395,7 @@ namespace compute
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
-        public void ComputePerformance(IPairedData frequency_stage, Int64 iteration)
+        public void ComputePerformance(IPairedData frequency_stage, int iteration)
         {
 
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
@@ -407,7 +407,7 @@ namespace compute
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, Int64 iteration)
+        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, int iteration)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
@@ -437,7 +437,7 @@ namespace compute
 
         }
 
-        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, Int64 iteration)
+        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, int iteration)
         {
             double[] stageOfEvent = new double[5];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };

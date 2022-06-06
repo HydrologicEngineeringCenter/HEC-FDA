@@ -184,15 +184,15 @@ namespace metrics
             }
             return eadIsConverged && cnepIsConverged;
         }
-        public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
+        public int RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            Int64 eadIterationsRemaining = 0;
+            int eadIterationsRemaining = 0;
             if (computeWithDamage)
             {
                 eadIterationsRemaining = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
 
             }
-            List<Int64> performanceIterationsRemaining = new List<Int64>();
+            List<int> performanceIterationsRemaining = new List<int>();
 
             //i do not like this, but the keys are frustrating 
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)

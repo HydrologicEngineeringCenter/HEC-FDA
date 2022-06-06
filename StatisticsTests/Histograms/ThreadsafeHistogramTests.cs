@@ -229,7 +229,7 @@ namespace StatisticsTests.Histograms
         }
         [Theory]
         [InlineData(10000, .1, .80, 1.96, .975)]
-        public void NormallyDistributed_Histogram_Convergence(Int64 maxiter, double binWidth, double quantile, double value, double expected)
+        public void NormallyDistributed_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
@@ -255,7 +255,7 @@ namespace StatisticsTests.Histograms
         }
         [Theory]
         [InlineData(10000, .1, .80, 1.96, .975)]
-        public void Parallel_Histogram_Convergence(Int64 maxiter, double binWidth, double quantile, double value, double expected)
+        public void Parallel_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
@@ -279,14 +279,14 @@ namespace StatisticsTests.Histograms
         }
         [Theory]
         [InlineData(10000000, .80, 1.96, .975)]
-        public void Parallel_Histogram_Convergence_automatic(Int64 maxiter, double quantile, double value, double expected)
+        public void Parallel_Histogram_Convergence_automatic(int maxiter, double quantile, double value, double expected)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: .1, zAlpha: z);
             ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(convergencecriteria);
-            Int64 iterations = convergencecriteria.MinIterations;
+            int iterations = convergencecriteria.MinIterations;
             object whilelock = new object();
             while (!histogram.IsConverged)
             {

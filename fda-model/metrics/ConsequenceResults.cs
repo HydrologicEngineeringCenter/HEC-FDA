@@ -71,7 +71,7 @@ namespace metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, int iteration)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);

@@ -9,7 +9,7 @@ namespace alternatives
     {
         private Scenario _currentYear;
         private Scenario _futureYear;
-        private Int64 _periodOfAnalysis;
+        private int _periodOfAnalysis;
         private double _discountRate;
         private int _id;
 
@@ -29,7 +29,7 @@ namespace alternatives
         }
 
         [Obsolete("This object is obsolete. There is no need to create an alternative. We only require alternative results.")]
-        public Alternative(Scenario currentYear, Scenario futureYear, Int64 periodOfAnalysis, int id){
+        public Alternative(Scenario currentYear, Scenario futureYear, int periodOfAnalysis, int id){
             _currentYear = currentYear;
             _futureYear = futureYear;
             _periodOfAnalysis = periodOfAnalysis;
@@ -160,7 +160,7 @@ namespace alternatives
             double averageAnnualEquivalentDamage = IntoAverageAnnualEquivalentTerms(sumPresentValueEAD, periodOfAnalysis, discountRate);
             return averageAnnualEquivalentDamage;
         }
-        private static double IntoAverageAnnualEquivalentTerms(double sumPresentValueEAD, Int64 periodOfAnalysis, double discountRate)
+        private static double IntoAverageAnnualEquivalentTerms(double sumPresentValueEAD, int periodOfAnalysis, double discountRate)
         {
             double presentValueInterestFactorOfAnnuity = (1 - (1 / Math.Pow(1 + discountRate, periodOfAnalysis))) / discountRate;
             double averageAnnualEquivalentDamage = sumPresentValueEAD / presentValueInterestFactorOfAnnuity;
@@ -168,7 +168,7 @@ namespace alternatives
         }
         private static double PresentValueCompute(double[] interpolatedEADs, double discountRate)
         {
-            Int64 periodOfAnalysis = interpolatedEADs.Length;
+            int periodOfAnalysis = interpolatedEADs.Length;
             double[] presentValueInterestFactor = new double[periodOfAnalysis];
             double sumPresentValueEAD = 0;
             for (int i=0; i<periodOfAnalysis; i++)
@@ -178,16 +178,15 @@ namespace alternatives
             }
             return sumPresentValueEAD;
         }
-        private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, Int64 baseYear, Int64 mostLikelyFutureYear, Int64 periodOfAnalysis)
+        private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, int baseYear, int mostLikelyFutureYear, int periodOfAnalysis)
         {
             double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear);
-            //Int64 yearsAfterMLF = periodOfAnalysis - yearsBetweenBaseAndMLFInclusive;
             double[] interpolatedEADs = new double[periodOfAnalysis];
-            for (Int64 i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
+            for (int i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
             {
                 interpolatedEADs[i] = baseYearEAD + i*(1 / yearsBetweenBaseAndMLFInclusive) * (mostLikelyFutureEAD - baseYearEAD);
             }
-            for (Int64 i = Convert.ToInt64(yearsBetweenBaseAndMLFInclusive); i<periodOfAnalysis; i++)
+            for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i<periodOfAnalysis; i++)
             {
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }

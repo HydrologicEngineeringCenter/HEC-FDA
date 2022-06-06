@@ -158,7 +158,7 @@ namespace StatisticsTests.Histograms
             Histogram histogram = new Histogram(null, binWidth);
             double[] data = new double[n];
             
-            for (Int64 i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 var randProb = rand.NextDouble();
                 data[i] = stdNormal.InverseCDF(randProb);
@@ -172,7 +172,7 @@ namespace StatisticsTests.Histograms
         */
         [Theory]
         [InlineData(10000, .1, .80, 1.96, .975)]
-        public void NormallyDistributed_Histogram_Convergence(Int64 maxiter, double binWidth, double quantile, double value, double expected)
+        public void NormallyDistributed_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
@@ -193,6 +193,8 @@ namespace StatisticsTests.Histograms
             Assert.True(err < errTol);
         }
         /*
+         * TODO this test is left commented out because it takes a long time to run. 
+         * We should move this test to integration tests
         [Theory]
         [InlineData(1000000, .1, 2d, 1d, 2d, 2d)]
         public void NormallyDistributed_Histogram_CentralTendency(int n, double binWidth, double mean, double standardDeviation, double expectedMean, double expectedMedian)
@@ -201,7 +203,7 @@ namespace StatisticsTests.Histograms
             var rand = new Random();
             Histogram histogram = new Histogram(null, binWidth);
             double[] data = new double[n];
-            for (Int64 i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 var randProb = rand.NextDouble();
                 data[i] = stdNormal.InverseCDF(randProb);
