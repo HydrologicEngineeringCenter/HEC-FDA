@@ -18,7 +18,7 @@ namespace Statistics.Histograms
         private int _N;
         private double _BinWidth;
         private bool _Converged = false;
-        private long _ConvergedIterations = int.MinValue;
+        private int _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
@@ -276,7 +276,7 @@ namespace Statistics.Histograms
         }
         private double FindBinCount(double x, bool cumulative = true)
         {
-            int obsIndex = Convert.ToInt64(Math.Floor((x - Min) / _BinWidth));
+            int obsIndex = Convert.ToInt32(Math.Floor((x - Min) / _BinWidth));
             if (cumulative)
             {
                 double sum = 0;
