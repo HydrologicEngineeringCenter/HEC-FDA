@@ -293,7 +293,8 @@ namespace metrics
         [Obsolete("This method is deprecated. An overloaded method of MeanDamage has been created to return MeanDamage in a systematic way.")]
         /// <summary>
         /// This method returns the sum of mean EAD over damage categories for a given asset category. 
-        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         /// </summary>
+        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         
+        /// /// </summary>
         /// <param name="damageCategory"></param>
         /// <returns></returns>
         public double MeanExpectedAnnualConsequencesAllAssetCategories(string damageCategory)

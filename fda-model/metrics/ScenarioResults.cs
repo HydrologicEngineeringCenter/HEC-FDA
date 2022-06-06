@@ -54,20 +54,202 @@ namespace metrics
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
-        //TODO: Do we need to aggregate over impact area? 
-        public double MeanExpectedAnnualConsequences(int impactAreaID, string damageCategory = null, string assetCategory= null)
-        {
-            return GetResults(impactAreaID).MeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+        public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory= null)
+        {//TODO: This could probably be more efficient 
+            double consequenceValue = 0;
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if(damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            return consequenceResult.MeanExpectedAnnualConsequences();
+                        }
+                        
+                    }
+                }
+            }
+            return consequenceValue;
         }
-        //TODO: Do we need to aggregate over impact area?
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory = null, string assetCategory = null)
+        //TODO: Do we need to aggregate over impact area? YES
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetResults(impactAreaID).ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
-        }
-        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID, string damageCategory = null, string assetCategory = null)
+            double consequenceValue = 0;
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            return consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                        }
+                    }
+                }
+            }
+            return consequenceValue;
+        } 
+        //TODO: Aggregate over impact areas 
+        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetResults(impactAreaID).GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
 
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                        }
+                    }
+                    if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                    {
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        {
+                            return consequenceResult.ConsequenceHistogram;
+                        }
+                    }
+                }
+            }
+            ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            return aggregatedHistogram;
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {

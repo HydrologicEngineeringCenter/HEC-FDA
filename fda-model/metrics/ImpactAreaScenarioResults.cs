@@ -37,7 +37,7 @@ namespace metrics
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceResults(impactAreaID);
+            ConsequenceResults = new ConsequenceResults();
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
