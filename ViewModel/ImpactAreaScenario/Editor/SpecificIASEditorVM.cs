@@ -229,6 +229,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             int idToUpdate = newElement.ID;
             ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ID == idToUpdate).SingleOrDefault();
+            if (itemToUpdate != null)
+            {
+                itemToUpdate.ChildElement = newElement;
+            }
         }
 
         #endregion
