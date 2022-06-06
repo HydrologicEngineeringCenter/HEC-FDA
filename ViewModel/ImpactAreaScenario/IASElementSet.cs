@@ -22,9 +22,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string DESCRIPTION = "Description";
         public const string YEAR = "Year";
         public const string LAST_EDIT_DATE = "LastEditDate";
+        public const string STAGE_DAMAGE_ID = "StageDamageID";
 
         private string _Description = "";
         private int _AnalysisYear;
+        private int _StageDamageID;
 
         #endregion
 
@@ -41,13 +43,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
         }
 
+        public int StageDamageID
+        {
+            get { return _StageDamageID; }
+            set { _StageDamageID = value; NotifyPropertyChanged(); }
+        }
+
         public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
 
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, string creationDate, int year, List<SpecificIAS> elems, int id) : base(id)
+        public IASElementSet(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) : base(id)
         {
+            StageDamageID = stageDamageElementID;
             SpecificIASElements.AddRange( elems);
             Name = name;
             Description = description;
@@ -73,6 +82,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Name = setElem.Attribute(NAME).Value;
             Description = setElem.Attribute(DESCRIPTION).Value;
             AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
+            StageDamageID = Int32.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
@@ -259,7 +269,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear, elem.SpecificIASElements, elem.ID);
+            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear,elem.StageDamageID, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
 
@@ -271,6 +281,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             setElement.SetAttributeValue(NAME, Name);
             setElement.SetAttributeValue(DESCRIPTION, Description);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
+            setElement.SetAttributeValue(STAGE_DAMAGE_ID, StageDamageID);
+
             setElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
 
             foreach(SpecificIAS elem in SpecificIASElements)

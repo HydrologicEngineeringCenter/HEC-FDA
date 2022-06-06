@@ -65,10 +65,6 @@
                     <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.EXT_INT_SHORT_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
 
-                    <Label  Grid.Column="4" Content="{x:Static utilVM:StringConstants.STAGE_DAMAGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-                    <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-                    <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
-
                 </Grid>
                 <Grid Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>

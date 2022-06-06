@@ -24,7 +24,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class SpecificIASEditorVM : BaseViewModel
     {
         private ThresholdsVM _additionalThresholdsVM;
-        private ChildElementComboItem _selectedStageDamageElement;
         private StageDamageCurve _selectedDamageCurve;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
@@ -36,6 +35,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private bool _showEAD;
         private double _EAD;
         private PairedData _DamageFrequencyCurve = null;
+
+        private Func<ChildElementComboItem> _SelectedStageDamage;
 
         public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
@@ -69,7 +70,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public CustomObservableCollection<ChildElementComboItem> RatingCurveElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> ExteriorInteriorElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
-        public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
 
         public StageDamageCurve SelectedDamageCurve
         {
@@ -101,11 +101,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             get { return _selectedExteriorInteriorElement; }
             set { _selectedExteriorInteriorElement = value; NotifyPropertyChanged(); }
         }
-        public ChildElementComboItem SelectedStageDamageElement
-        {
-            get { return _selectedStageDamageElement; }
-            set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
-        }
 
         /// <summary>
         /// The rows that show up in the "Warnings" expander after hitting the plot button.
@@ -115,17 +110,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// <summary>
         /// This is the create new ctor
         /// </summary>
-        public SpecificIASEditorVM(ImpactAreaRowItem rowItem)
+        public SpecificIASEditorVM(ImpactAreaRowItem rowItem, Func<ChildElementComboItem> getSelectedStageDamage)
         {
             Initialize();
             CurrentImpactArea = rowItem;
+            _SelectedStageDamage = getSelectedStageDamage;
         }
 
-        public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem)
+        public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem, Func<ChildElementComboItem> getSelectedStageDamage)
         {
             Initialize();
             CurrentImpactArea = rowItem;
             FillForm(elem);
+            _SelectedStageDamage = getSelectedStageDamage;
         }
 
         private void Initialize()
@@ -152,42 +149,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             StudyCache.ExteriorInteriorAdded += AddExtIntElement;
             StudyCache.ExteriorInteriorRemoved += RemoveExtIntElement;
-            StudyCache.ExteriorInteriorUpdated += UpdateExtIntElement;
-
-            StudyCache.StageDamageAdded += AddStageDamageElement;
-            StudyCache.StageDamageRemoved += RemoveStageDamageElement;
-            StudyCache.StageDamageUpdated += UpdateStageDamageElement;
+            StudyCache.ExteriorInteriorUpdated += UpdateExtIntElement;      
         }
-
 
         #region Live Update Event Methods
-
-        private void AddStageDamageElement(object sender, ElementAddedEventArgs e)
-        {
-            StageDamageElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        }
-        private void RemoveStageDamageElement(object sender, ElementAddedEventArgs e)
-        {
-            removeElement(e.Element.ID, StageDamageElements);
-            SelectedStageDamageElement = StageDamageElements[0];
-        }
-        private void UpdateStageDamageElement(object sender, ElementUpdatedEventArgs e)
-        {
-            updateElement(StageDamageElements, SelectedStageDamageElement, e.NewElement);
-        }
-
+  
         private void AddExtIntElement(object sender, ElementAddedEventArgs e)
         {
             ExteriorInteriorElements.Add(new ChildElementComboItem(e.Element));
         }
         private void RemoveExtIntElement(object sender, ElementAddedEventArgs e)
         {
-            removeElement(e.Element.ID, ExteriorInteriorElements);
+            RemoveElement(e.Element.ID, ExteriorInteriorElements);
             SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
         }
         private void UpdateExtIntElement(object sender, ElementUpdatedEventArgs e)
         {
-            updateElement(ExteriorInteriorElements, SelectedExteriorInteriorElement, e.NewElement);
+            UpdateElement(ExteriorInteriorElements, SelectedExteriorInteriorElement, e.NewElement);
         }
         private void AddLeveeElement(object sender, ElementAddedEventArgs e)
         {
@@ -195,12 +173,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveLeveeElement(object sender, ElementAddedEventArgs e)
         {
-            removeElement(e.Element.ID, LeveeFeatureElements);
+            RemoveElement(e.Element.ID, LeveeFeatureElements);
             SelectedLeveeFeatureElement = LeveeFeatureElements[0];
         }
         private void UpdateLeveeElement(object sender, ElementUpdatedEventArgs e)
         {
-            updateElement(LeveeFeatureElements, SelectedLeveeFeatureElement, e.NewElement);
+            UpdateElement(LeveeFeatureElements, SelectedLeveeFeatureElement, e.NewElement);
         }
 
         private void AddInOutElement(object sender, ElementAddedEventArgs e)
@@ -210,11 +188,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveInOutElement(object sender, ElementAddedEventArgs e)
         {
-            removeElement(e.Element.ID, InflowOutflowElements);
+            RemoveElement(e.Element.ID, InflowOutflowElements);
         }
         private void UpdateInOutElement(object sender, ElementUpdatedEventArgs e)
         {
-            updateElement(InflowOutflowElements, SelectedInflowOutflowElement, e.NewElement);
+            UpdateElement(InflowOutflowElements, SelectedInflowOutflowElement, e.NewElement);
         }
         private void AddFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
@@ -222,12 +200,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
-            removeElement(e.Element.ID, FrequencyElements);
+            RemoveElement(e.Element.ID, FrequencyElements);
             SelectedFrequencyElement = FrequencyElements[0];
         }
         private void UpdateFlowFreqElement(object sender, ElementUpdatedEventArgs e)
         {
-            updateElement(FrequencyElements, SelectedFrequencyElement, e.NewElement);
+            UpdateElement(FrequencyElements, SelectedFrequencyElement, e.NewElement);
         }
         private void AddRatingElement(object sender, ElementAddedEventArgs e)
         {
@@ -235,31 +213,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveRatingElement(object sender, ElementAddedEventArgs e)
         {
-            removeElement(e.Element.ID, RatingCurveElements);
+            RemoveElement(e.Element.ID, RatingCurveElements);
             SelectedRatingCurveElement = RatingCurveElements[0];
         }
         private void UpdateRatingElement(object sender, ElementUpdatedEventArgs e)
         {
-            updateElement(RatingCurveElements, SelectedRatingCurveElement, e.NewElement);
+            UpdateElement(RatingCurveElements, SelectedRatingCurveElement, e.NewElement);
         }
-        private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
+        public static void RemoveElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
         {
             collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ID == idToRemove).Single());
         }
-        private void updateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
+        public static void UpdateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
               ChildElement newElement)
         {
             int idToUpdate = newElement.ID;
-
             ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ID == idToUpdate).SingleOrDefault();
-            if (itemToUpdate != null)
-            {
-                itemToUpdate.ChildElement = newElement;
-                if(newElement is AggregatedStageDamageElement)
-                {
-                    StageDamageSelectionChanged();
-                }
-            }
         }
 
         #endregion
@@ -277,7 +246,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.ChildElement != null && rat.ChildElement.ID == elem.RatingID);
             SelectedLeveeFeatureElement = LeveeFeatureElements.FirstOrDefault(levee => levee.ChildElement != null && levee.ChildElement.ID == elem.LeveeFailureID);
             SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.ChildElement != null && ext.ChildElement.ID == elem.ExtIntStageID);
-            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.StageDamageID);
 
             //i don't want a selected value to ever be null. Even if there are no elements we should select the blank row option.
             //so if it is null, i will set it to the first option which is empty.
@@ -301,10 +269,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
             }
-            if (SelectedStageDamageElement == null)
-            {
-                SelectedStageDamageElement = StageDamageElements[0];
-            }
+            
         }
 
         private void FillThresholds(SpecificIAS elem)
@@ -348,13 +313,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             childElems.Clear();
             childElems.AddRange(exteriorInteriorElements);
             ExteriorInteriorElements.AddRange(CreateComboItems(childElems));
-            SelectedExteriorInteriorElement = ExteriorInteriorElements.First();
-
-            List<AggregatedStageDamageElement> aggregatedStageDamageElements = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-            childElems.Clear();
-            childElems.AddRange(aggregatedStageDamageElements);
-            StageDamageElements.AddRange(CreateComboItems(childElems));
-            SelectedStageDamageElement = StageDamageElements.First();
+            SelectedExteriorInteriorElement = ExteriorInteriorElements.First();  
         }
 
         private ObservableCollection<ChildElementComboItem> CreateComboItems(List<ChildElement> elems)
@@ -383,9 +342,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// When the stage damage selection is changed we need to update the dam cats that go into
         /// the combo next to the plot button.
         /// </summary>
-        private void StageDamageSelectionChanged()
+        public void StageDamageSelectionChanged(ChildElementComboItem selectedStageDamage)
         {
-            if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+            if (selectedStageDamage != null && selectedStageDamage.ChildElement != null)
             {
                 List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
 
@@ -400,16 +359,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 //the user selected the blank row. Clear the damage category combo
                 DamageCategories.Clear();
-
             }
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
         {
+            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             List<StageDamageCurve> stageDamageCurves = new List<StageDamageCurve>();
-            if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+            if (selectedStageDamage != null && selectedStageDamage.ChildElement != null)
             {
-                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
+                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)selectedStageDamage.ChildElement;
                 stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
             }
             return stageDamageCurves;
@@ -441,8 +400,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private FdaValidationResult GetStageDamageValidationResult()
         {
+            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             FdaValidationResult vr = new FdaValidationResult();
-            if (SelectedStageDamageElement.ChildElement == null)
+            if (selectedStageDamage.ChildElement == null)
             {
                 vr.AddErrorMessage("A Stage Damage is required. ");
             }
@@ -460,7 +420,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         #endregion
-
 
         public FdaValidationResult GetPlotValidationResults()
         {
@@ -499,12 +458,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void PreviewCompute()
         {
+            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
+
             AnalyticalFrequencyElement freqElem = SelectedFrequencyElement.ChildElement as AnalyticalFrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             RatingCurveElement ratElem = SelectedRatingCurveElement.ChildElement as RatingCurveElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
             LeveeFeatureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LeveeFeatureElement;
-            AggregatedStageDamageElement stageDamageElem = SelectedStageDamageElement.ChildElement as AggregatedStageDamageElement;
+            AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID);
@@ -625,7 +586,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 MessageRows.Clear();
                 OverlappingRangeHelper.CheckForOverlappingRanges(SelectedFrequencyElement, SelectedInflowOutflowElement, SelectedRatingCurveElement,
-                    SelectedExteriorInteriorElement, (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedDamageCurve, MessageRows);
+                    SelectedExteriorInteriorElement, (AggregatedStageDamageElement)_SelectedStageDamage.Invoke().ChildElement, SelectedDamageCurve, MessageRows);
 
                 PreviewCompute();
 
@@ -655,12 +616,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// <returns></returns>
         public SpecificIAS CreateSpecificIAS()
         {
+            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
+
             int flowFreqID = GetComboElementID(SelectedFrequencyElement);
             int inflowOutID = GetComboElementID(SelectedInflowOutflowElement);
             int ratingID = GetComboElementID(SelectedRatingCurveElement);
             int extIntID = GetComboElementID(SelectedExteriorInteriorElement);
             int latStructID = GetComboElementID(SelectedLeveeFeatureElement);
-            int stageDamID = GetComboElementID(SelectedStageDamageElement);
+            int stageDamID = GetComboElementID(selectedStageDamage);
 
             List<ThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
 
