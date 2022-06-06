@@ -6,6 +6,8 @@ using paireddata;
 using Statistics;
 using Statistics.Histograms;
 using metrics;
+using alternatives;
+
 namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
@@ -19,7 +21,9 @@ namespace fda_model_test.unittests
         static string damCat = "residential";
         static string assetCat = "content";
         CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
-        static int id = 1;
+        static int impactAreaID = 1;
+        static int alternativeID = 1;
+        static double exceedanceProbability = 0.5;
         /// <summary>
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
@@ -34,6 +38,7 @@ namespace fda_model_test.unittests
         [InlineData(239260.1814, 50, .0275, 2023, 2050, 1)]
         public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
+            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -61,13 +66,13 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
             updFuture.Add(future_stage_damage);
 
-            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(id)
+            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(id)
+            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(impactAreaID)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
@@ -79,12 +84,12 @@ namespace fda_model_test.unittests
             impactAreaListFutureYear.Add(sFuture);
 
             scenarios.Scenario baseScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
+            ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
             scenarios.Scenario futureScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
-            alternatives.Alternative alternative = new alternatives.Alternative(baseScenario, futureScenario, poa, id);
+            ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            compute.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            AlternativeResults alternativeResults = alternative.AnnualizationCompute(meanRandomProvider, convergenceCriteria, discountRate);
-            double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(meanRandomProvider.NextRandom(), id, damCat, assetCat);
+            AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, convergenceCriteria, discountRate, poa, alternativeID, baseYear, baseScenarioResults, futureYear, futureScenarioResults);
+            double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
             double difference = actual - expected;
             double err = Math.Abs(difference / actual);
             double tol = 0.01;
