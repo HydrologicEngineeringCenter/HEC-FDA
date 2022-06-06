@@ -53,7 +53,7 @@ namespace alternativeComparisonReport
 
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
-                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withoutProjectAlternativeResults.AlternativeID);
+                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withProjectAlternativeResults.AlternativeID);
 
                 foreach (ConsequenceResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
                 {
