@@ -12,7 +12,7 @@ namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class PerformanceTest
-    {
+    {//TODO: access the requisite logic through ScenarioResults 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static double[] StageForNonLeveeFailureProbs = { 5000, 8000, 9000, 9600, 9800, 9900, 9960, 9980 };
@@ -71,7 +71,7 @@ namespace fda_model_test.unittests
                 .build();
  
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
 
             // PLEASE LEAVE THE COMMENTS TO THE RIGHT OF THESE LINES AS AN EXAMPLE FOR LATER REFERENCE 
             double actualAEP = results.MeanAEP(thresholdID); // results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
@@ -124,7 +124,7 @@ namespace fda_model_test.unittests
                 .build();
 
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
             double actual = results.MeanAEP(thresholdID);
             Assert.Equal(expected,actual,2);
         }
@@ -175,7 +175,7 @@ namespace fda_model_test.unittests
                 .build();
 
             RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
             double actual = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
@@ -264,7 +264,7 @@ namespace fda_model_test.unittests
                 .build();
 
             RandomProvider randomProvider = new RandomProvider(seed);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, false);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, false);
             XElement xElement = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.WriteToXML();
             //TODO: At the next line, convergence criteria is being re-set to 100000
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);

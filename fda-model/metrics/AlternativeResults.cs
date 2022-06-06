@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using Statistics;
+using Statistics.Histograms;
 
 namespace metrics
 {
@@ -9,7 +13,7 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        private List<ConsequenceResults> _consequenceResultsList;
+        private ConsequenceResults _consequenceResults;
         private bool _isNull;
         #endregion
 
@@ -18,11 +22,11 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
-        public List<ConsequenceResults> ConsequenceResultsList
+        public ConsequenceResults ConsequenceResults
         {
             get
             {
-                return _consequenceResultsList;
+                return _consequenceResults;
             }
         }
         public event MessageReportedEventHandler MessageReport;
@@ -42,79 +46,105 @@ namespace metrics
         {
             _isNull = true;
             _alternativeID = 0;
-            _consequenceResultsList = new List<ConsequenceResults>();
+            _consequenceResults = new ConsequenceResults();
         }
         public AlternativeResults(int id)
         {
             _alternativeID = id;
-            _consequenceResultsList = new List<ConsequenceResults>();
+            _consequenceResults = new ConsequenceResults();
+            _isNull = false;
+        }
+        private AlternativeResults(int id, ConsequenceResults consequenceResults)
+        {
+            _alternativeID = id;
+            _consequenceResults = consequenceResults;
             _isNull = false;
         }
         #endregion
         #region Methods
         /// <summary>
-        /// This method returns the mean of the average annual equivalent damage for a given impact area, damage category, asset category combination 
+        /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
+        /// Damage measures could be EAD or other measures of consequences 
+        /// Note that when working with impact area scenario results, there is only 1 impact area 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param> either residential, commercial, etc...
-        /// <param name="assetCategory"></param> either structure, content, etc...
-        /// <returns></returns>
-        public double MeanConsequence(int impactAreaID, string damageCategory, string assetCategory)
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of consequences
+        public double MeanConsequence(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetConsequenceResults(impactAreaID).MeanDamage(damageCategory, assetCategory, impactAreaID);
+            return _consequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// This method calls the inverse CDF of average annual equivalent damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns>the level of consequences exceeded by the specified probability 
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return _consequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
         /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param> either residential, commerical, etc...
-        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID, string damageCategory, string assetCategory)
+        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetConsequenceResults(impactAreaID).ConsequenceExceededWithProbabilityQ(damageCategory, exceedanceProbability, assetCategory, impactAreaID);
+            return _consequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
-        internal void AddConsequenceResults(int impactAreaID)
+
+        //TODO what role will these play
+        internal void AddConsequenceResults(int impactAreaID, string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
-            ConsequenceResults consequenceResults = GetConsequenceResults(impactAreaID);
+            ConsequenceResult consequenceResult = ConsequenceResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            if (consequenceResult.IsNull)
+            {
+                ConsequenceResult newConsequenceResult = new ConsequenceResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
+                _consequenceResults.ConsequenceResultList.Add(newConsequenceResult);
+            }
+        }
+        internal void AddConsequenceResults(ConsequenceResult consequenceResultToAdd)
+        {
+            ConsequenceResult consequenceResults = ConsequenceResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                ConsequenceResults newConsequenceResults = new ConsequenceResults(impactAreaID);
-                _consequenceResultsList.Add(newConsequenceResults);
+                _consequenceResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
-        }
-        internal void AddConsequenceResults(ConsequenceResults consequenceResultsToAdd)
-        {
-            ConsequenceResults consequenceResults = GetConsequenceResults(consequenceResultsToAdd.RegionID);
-            if (consequenceResults.IsNull)
-            {
-                _consequenceResultsList.Add(consequenceResultsToAdd);
-            }
-        }
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetConsequencesHistogram(string damageCategory, string assetCategory, int impactAreaID)
-        {
-            ConsequenceResults consequenceResults = GetConsequenceResults(impactAreaID);
-            return consequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
-        }
-        public ConsequenceResults GetConsequenceResults(int regionID)
-        {
-            foreach (ConsequenceResults consequenceResults in _consequenceResultsList)
-            {
-                if(consequenceResults.RegionID.Equals(regionID))
-                {
-                    return consequenceResults;
-                }
-            }
-            ConsequenceResults dummyConsequenceResults = new ConsequenceResults();
-            string message = $"The requested damage cetegory - asset category - impact area combination could not be found. an arbitrary object is being returned";
-            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
-            ReportMessage(this, new MessageEventArgs(errorMessage));
-            return dummyConsequenceResults;
         }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+        public XElement WriteToXML()
+        {
+            XElement mainElement = new XElement("AlternativeResults");
+            XElement consequencesEvent = ConsequenceResults.WriteToXML();
+            consequencesEvent.Name = "Consequences";
+            mainElement.Add(consequencesEvent);
+            mainElement.SetAttributeValue("ID", _alternativeID);
+            return mainElement;
+        }
+        public static AlternativeResults ReadFromXML(XElement xElement)
+        {
+            int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
+            ConsequenceResults consequenceResults = ConsequenceResults.ReadFromXML(xElement.Element("Consequences"));
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults);
+            return alternativeResults;
         }
         #endregion
 

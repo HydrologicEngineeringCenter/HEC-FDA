@@ -6,17 +6,19 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Histograms;
 
 namespace metrics
-{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
+{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL. the problem then is testing. there is a lot of math in this class that should
+  //have lots of testing 
 
     public class ConsequenceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
         private List<ConsequenceResult> _consequenceResultList;
         //impact area to be string?
-        private int _regionID;//impact area ID or census block ID
         private bool _isNull;
+        
         #endregion
 
         #region Properties 
@@ -25,13 +27,6 @@ namespace metrics
             get
             {
                 return _consequenceResultList;
-            }
-        }
-        public int RegionID
-        {
-            get
-            {
-                return _regionID;
             }
         }
         //this needs to be an error report
@@ -48,25 +43,18 @@ namespace metrics
         public ConsequenceResults()
         {
             _consequenceResultList = new List<ConsequenceResult>();
-            _regionID = 0;
             _isNull = true;
         }
-        public ConsequenceResults(int impactAreaID){
-            _consequenceResultList = new List<ConsequenceResult>();
-            _regionID = impactAreaID;
-            _isNull = false;
-        }
-        private ConsequenceResults(List<ConsequenceResult> damageResults, int impactAreaID)
+        private ConsequenceResults(List<ConsequenceResult> damageResults)
         {
             _consequenceResultList = damageResults;
-            _regionID = impactAreaID;
             _isNull = false;
 
         }
         #endregion
 
         #region Methods 
-        internal void AddConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
@@ -75,7 +63,7 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        internal void AddConsequenceResult(ConsequenceResult consequenceResultToAdd)
+        internal void AddExistingConsequenceResultObject(ConsequenceResult consequenceResultToAdd)
         {
             ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
@@ -83,7 +71,7 @@ namespace metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, int iteration)
         {
             ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
@@ -92,31 +80,149 @@ namespace metrics
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 
+        /// Note that when working with impact area scenario results, there is only 1 impact area 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc...
-        /// <param name="assetCategory"></param> either structure, content, etc...
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public double MeanDamage(string damageCategory, string assetCategory, int impactAreaID)
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of consequences
+        public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            return damageResult.MeanExpectedAnnualConsequences();
+            double consequenceValue = 0;
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                {
+                    consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).MeanExpectedAnnualConsequences();
+                }
+            }
+            return consequenceValue;
         }
         /// <summary>
-        /// This method calls the inverse CDF of thedamage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc....
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
-        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns>the level of consequences exceeded by the specified probability 
+        public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        {
+            double consequenceValue = 0;
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                {
+                    consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceExceededWithProbabilityQ(exceedanceProbability);
+                }
+            }
+            return consequenceValue;
+        }
+        /// <summary>
+        /// This method returns a consequence result for the given damage category, asset category, and impact area 
+        /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public double ConsequenceExceededWithProbabilityQ(string damageCategory, double exceedanceProbability, string assetCategory, int impactAreaID)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            double quantileRequested = damageResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-            return quantileRequested;
-
-        }
         public ConsequenceResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
         {
             foreach (ConsequenceResult damageResult in _consequenceResultList)
@@ -139,6 +245,15 @@ namespace metrics
             ConsequenceResult dummyResult = new ConsequenceResult();
             return dummyResult;
         }
+
+        internal void ForceDeQueue()
+        {
+            foreach (ConsequenceResult consequenceResult in ConsequenceResultList)
+            {
+                consequenceResult.ConsequenceHistogram.ForceDeQueue();
+            }
+        }
+
         public bool Equals(ConsequenceResults inputDamageResults)
         {
            foreach (ConsequenceResult damageResult in _consequenceResultList)
@@ -155,7 +270,9 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
-        }/// <summary>
+        }
+        [Obsolete("An overloaded method of MeanDamage has been created to return MeanDamage in a systematic way. This method is now deprecated")]
+        /// <summary>
         /// This method returns the sum of mean EAD over damage categories for a given asset category. 
         /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure. 
         /// </summary>
@@ -173,9 +290,11 @@ namespace metrics
             }
             return meanEAD;
         }
+        [Obsolete("This method is deprecated. An overloaded method of MeanDamage has been created to return MeanDamage in a systematic way.")]
         /// <summary>
         /// This method returns the sum of mean EAD over damage categories for a given asset category. 
-        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         /// </summary>
+        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         
+        /// /// </summary>
         /// <param name="damageCategory"></param>
         /// <returns></returns>
         public double MeanExpectedAnnualConsequencesAllAssetCategories(string damageCategory)
@@ -191,16 +310,75 @@ namespace metrics
             return meanEAD;
         }
         /// <summary>
-        /// This method gets the histogram (distribution) of consequences 
+        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetConsequenceResultsHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <param name="impactAreaID"></param>
-        /// <returns></returns>
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory, string assetCategory, int impactAreaID)
+        /// <param name="damageCategory"></param> The default is null 
+        /// <param name="assetCategory"></param> The default is null 
+        /// <param name="impactAreaID"></param> The default is a null value (-999)
+        /// <returns></returns> Aggregated consequences histogram 
+        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
-            return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
+            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            foreach (ConsequenceResult consequenceResult in _consequenceResultList)
+            {
+                if(damageCategory == null && assetCategory == null && impactAreaID == -999)
+                {
+                    histograms.Add(consequenceResult.ConsequenceHistogram);
+                }
+                if(damageCategory != null && assetCategory == null && impactAreaID == -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory == null && assetCategory != null && impactAreaID == -999)
+                {
+                    if(assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory == null && assetCategory == null && impactAreaID != -999)
+                {
+                    if(impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory != null && assetCategory != null && impactAreaID == -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory != null && assetCategory == null && impactAreaID != -999)
+                {
+                    if(damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if(damageCategory == null && assetCategory != null && impactAreaID != -999)
+                {
+                    if(assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    {
+                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                    }
+                }
+                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                {
+                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
+                }
+            }
+                    ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+                    return aggregatedHistogram;
         }
+      
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");
@@ -210,7 +388,6 @@ namespace metrics
                 damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
                 masterElem.Add(damageResultElement);
             }
-            masterElem.SetAttributeValue("ImpactAreaID", _regionID);
             return masterElem;
         }
 
@@ -221,8 +398,7 @@ namespace metrics
             {
                 damageResults.Add(ConsequenceResult.ReadFromXML(histogramElement));
             }
-            int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ConsequenceResults(damageResults,impactAreaID);
+            return new ConsequenceResults(damageResults);
         }
 
         #endregion

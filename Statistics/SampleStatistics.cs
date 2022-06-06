@@ -15,7 +15,7 @@ namespace Statistics
         private double _median;
         private double _skew;
         private double _kurtosis;
-        private Int64 _n;
+        private int _n;
 
         public double Mean
         {

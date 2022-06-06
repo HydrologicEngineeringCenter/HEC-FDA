@@ -6,6 +6,9 @@ using paireddata;
 using Statistics;
 using metrics;
 using alternativeComparisonReport;
+using alternatives;
+using Statistics.Distributions;
+using scenarios;
 
 namespace fda_model_test.unittests
 {
@@ -27,9 +30,14 @@ namespace fda_model_test.unittests
             string damCat = "residential";
             string assetCategory = "structure";
             CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCategory);
-            int identifier = 1;
+            int impactAreaIdentifier = 1;
+            int withoutAlternativeIdentifier = 1;
+            int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
-            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
+            MeanRandomProvider mrp = new MeanRandomProvider();
+            double exceedanceProbability = 0.5;
+
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -41,12 +49,12 @@ namespace fda_model_test.unittests
             IDistribution[] baseDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                baseDamages[i] = new Statistics.Distributions.Uniform(0, 600000 * i, 10);
+                baseDamages[i] = new Uniform(0, 600000 * i, 10);
             }
             IDistribution[] futureDamages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                futureDamages[i] = new Statistics.Distributions.Uniform(0, 1200000 * i, 10);
+                futureDamages[i] = new Uniform(0, 1200000 * i, 10);
             }
             UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
             UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
@@ -61,18 +69,19 @@ namespace fda_model_test.unittests
             IDistribution[] leveefailprobs = new IDistribution[3];
             for (int i = 0; i < 2; i++)
             {
-                leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
+                leveefailprobs[i] = new Deterministic(0); //probability at the top must be 1
             }
-            leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
+            leveefailprobs[2] = new Deterministic(1);
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(identifier)
+            //Build without project alternative results 
+            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updBase)
                 .build();
  
-            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(identifier)
+            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
@@ -83,18 +92,21 @@ namespace fda_model_test.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
-            scenarios.Scenario baseWithoutProjectScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
-            scenarios.Scenario futureWothoutProjectScenario = new scenarios.Scenario(futureYear, impactAreaListFutureYear);
-            alternatives.Alternative withoutProjectAlternative = new alternatives.Alternative(baseWithoutProjectScenario, futureWothoutProjectScenario, poa, identifier);
+            Scenario baseWithoutProjectScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
+            Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
+            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, convergenceCriteria, discountRate, poa, withoutAlternativeIdentifier, baseYear, baseWithoutProjectScenarioResults, futureYear, futureWithoutProjectScenarioResults);
 
-            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(identifier)
+            //build with project alternative results 
+            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
                 .withStageDamages(updBase)
                 .build();
 
-            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(identifier)
+            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withLevee(levee, topOfLeveeElevation)
@@ -108,18 +120,18 @@ namespace fda_model_test.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectfutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
-            scenarios.Scenario baseWithProjectScenario = new scenarios.Scenario(baseYear, impactAreaListWithProjectBaseYear);
-            scenarios.Scenario futureWithProjectScenario = new scenarios.Scenario(futureYear, impactAreaListWithProjectfutureYear);
-            int withProjectAlternativeID = 1;
-            alternatives.Alternative withProjectAlternative = new alternatives.Alternative(baseWithProjectScenario, futureWithProjectScenario, poa, withProjectAlternativeID);
-            List<alternatives.Alternative> withProjectAlternativeList = new List<alternatives.Alternative>();
-            withProjectAlternativeList.Add(withProjectAlternative);
 
-            AlternativeComparisonReport alternativeComparisonReport = new AlternativeComparisonReport(withoutProjectAlternative, withProjectAlternativeList);
-            compute.MeanRandomProvider mrp = new MeanRandomProvider();
+            Scenario baseWithProjectScenario = new Scenario(baseYear, impactAreaListWithProjectBaseYear);
+            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
+            Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
+            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
+            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, convergenceCriteria, discountRate, poa, withAlternativeIdentifier, baseYear, baseWithProjectScenarioResults, futureYear, futureWithProjectScenarioResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = alternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, convergenceCriteria, discountRate);
-            double actual = alternativeComparisonReportResults.ConsequencesReducedExceededWithProbabilityQ(mrp.NextRandom(), identifier, identifier, damCat, assetCategory);
+            List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
+            withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
+
+            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            double actual = alternativeComparisonReportResults.ConsequencesReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             double difference = actual - expected;
             double err = Math.Abs(difference / expected);
             double tol = 0.01;

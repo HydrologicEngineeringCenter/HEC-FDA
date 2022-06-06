@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace metrics
 {
-    public interface IContainResults
+    public interface IContainImpactAreaScenarioResults
     {
         PerformanceByThresholds PerformanceByThresholds { get; }
         ConsequenceResults ConsequenceResults { get; }

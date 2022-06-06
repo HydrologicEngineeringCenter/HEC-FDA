@@ -8,12 +8,12 @@ namespace Statistics
 {
     public class ConvergenceCriteria
     {
-        public Int64 MinIterations { get; }
-        public Int64 MaxIterations { get; }
+        public int MinIterations { get; }
+        public int MaxIterations { get; }
         public double ZAlpha { get; }
         public double Tolerance { get; }
 
-        public ConvergenceCriteria(Int64 minIterations = 100, Int64 maxIterations = 100000, double zAlpha = 1.96039491692543, double tolerance = .01)
+        public ConvergenceCriteria(int minIterations = 100, int maxIterations = 100000, double zAlpha = 1.96039491692543, double tolerance = .01)
         {
             MinIterations = minIterations;
             MaxIterations = maxIterations;
