@@ -21,7 +21,7 @@ namespace Statistics.Histograms
         private int _SampleSize;
         private double _BinWidth;
         private bool _Converged = false;
-        private long _ConvergedIterations = int.MinValue;
+        private int _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private int _maxQueueCount = 1000; //TODO: what does this represent?

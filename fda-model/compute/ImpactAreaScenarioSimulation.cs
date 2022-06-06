@@ -311,7 +311,7 @@ namespace compute
 
             }
         }
-        private IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
+        private IPairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
         {
 
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
@@ -339,7 +339,7 @@ namespace compute
             return new PairedData(x, y);
 
         }
-        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration)
+        private void ComputeDamagesFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration)
         {
             double totalEAD = 0.0;
             CurveMetaData metadata = new CurveMetaData("Total");
@@ -366,7 +366,7 @@ namespace compute
 
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
+        private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
         {
             double totalEAD = 0.0;
             CurveMetaData metadata = new CurveMetaData("Total");
