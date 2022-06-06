@@ -571,42 +571,44 @@ namespace Statistics.Histograms
 
         public static ThreadsafeInlineHistogram AddHistograms(List<ThreadsafeInlineHistogram> histograms)
         {
-            if (histograms.Count == 0)
+            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
+            ThreadsafeInlineHistogram threadsafeInlineHistogramToReturn = new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
+
+            if (histograms.Count > 0)
             {
-                ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-                return new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
-            }
-            ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-            double min = 0;
-            double max = 0;
-            int sampleSize = 0;
-            foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
-            {
-                double newMin = Math.Min(min, threadsafeInlineHistogram.Min);
-                min = newMin;
-                double newMax = Math.Max(max, threadsafeInlineHistogram.Max);
-                max = newMax;
-                int newSampleSize = Math.Max(sampleSize, (int)threadsafeInlineHistogram.SampleSize);
-                sampleSize = newSampleSize;
-            }
-            double range = max - min;
-            double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
-            double binWidth = range / sampleSize;
-            ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
-            int seed = 1234;
-            Random random = new Random(seed);
-            for (int i = 0; i < sampleSize; i++)
-            {
-                double prob = (i + .5) / sampleSize;
-                double summedValue = 0;
+                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
+                double min = 0;
+                double max = 0;
+                int sampleSize = 0;
                 foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
                 {
-                    double value = threadsafeInlineHistogram.InverseCDF(prob);
-                    summedValue += value;
+                    double newMin = Math.Min(min, threadsafeInlineHistogram.Min);
+                    min = newMin;
+                    double newMax = Math.Max(max, threadsafeInlineHistogram.Max);
+                    max = newMax;
+                    int newSampleSize = Math.Max(sampleSize, (int)threadsafeInlineHistogram.SampleSize);
+                    sampleSize = newSampleSize;
                 }
-                histogram.AddObservationToHistogram(summedValue, i);
+                double range = max - min;
+                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
+                double binWidth = range / sampleSize;
+                ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
+                int seed = 1234;
+                Random random = new Random(seed);
+                for (int i = 0; i < sampleSize; i++)
+                {
+                    double prob = (i + .5) / sampleSize;
+                    double summedValue = 0;
+                    foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
+                    {
+                        double value = threadsafeInlineHistogram.InverseCDF(prob);
+                        summedValue += value;
+                    }
+                    histogram.AddObservationToHistogram(summedValue, i);
+                }
+                threadsafeInlineHistogramToReturn = histogram;
             }
-            return histogram;
+            return threadsafeInlineHistogramToReturn;
         }
 
         public XElement WriteToXML()
