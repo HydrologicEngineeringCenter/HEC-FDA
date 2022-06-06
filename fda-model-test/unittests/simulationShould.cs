@@ -12,7 +12,7 @@ namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class SimulationShould
-    {
+    {//TODO: Access the requisite logic through ScenarioREsults 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static string xLabel = "x label";

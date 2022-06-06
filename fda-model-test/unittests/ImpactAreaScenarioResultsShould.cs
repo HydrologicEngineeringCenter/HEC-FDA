@@ -13,8 +13,8 @@ namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
 
-    public class ResultsShould
-    {
+    public class ImpactAreaScenarioResultsShould
+    {//TODO: Access these results through ScenarioREsults 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static string xLabel = "x label";
