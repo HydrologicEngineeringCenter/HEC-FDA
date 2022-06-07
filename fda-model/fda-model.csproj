@@ -16,9 +16,9 @@
 
 	
   <ItemGroup>
-
     <PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.2.15.2147" />
-
+	<PackageReference Include="RASMapperLibDistro6.2" Version="0.0.1" />
+	  <Reference Include="System.Windows.Forms" /> <!--Comes Along Because Of RASMapper-->
   </ItemGroup>
 
 	
