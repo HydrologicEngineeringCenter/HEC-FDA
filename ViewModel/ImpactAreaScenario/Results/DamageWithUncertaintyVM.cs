@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             List<double> yValues = new List<double>();
             foreach(double x in xVals)
             {
-                yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ("Total",x, "Total", eadResults.RegionID));
+               // yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ("Total",x, "Total", eadResults.RegionID));
             }
             return yValues;
         }

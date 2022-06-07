@@ -125,20 +125,39 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSet firstElem = iASElems[0];
                 IASElementSet secondElem = iASElems[1];
 
-                Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
-                Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
-                long por = firstElem.AnalysisYear;
-                int id = 99;
-                Alternative alt = new Alternative(scenario1, scenario2, por, id);
+                int firstElemYear = firstElem.AnalysisYear;
+                int secondElemYear = secondElem.AnalysisYear;
+                ScenarioResults firstResults = firstElem.GetScenarioResults();
+                ScenarioResults secondResults = secondElem.GetScenarioResults();
+
+                bool secondElemIsFirst = firstElemYear > secondElemYear;
+
+                //Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
+                //Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
+                //long por = firstElem.AnalysisYear;
+                //int id = 99;
+                //Alternative alt = new Alternative(scenario1, scenario2, por, id);
 
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
-                _Results = alt.AnnualizationCompute(randomProvider, cc, studyProperties.DiscountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
-                //Richard is writing a ToXML() 6/3/22
+                double discountRate = studyProperties.DiscountRate;
+                int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
+                if (secondElemIsFirst)
+                {
+                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, secondElemYear,
+                    secondResults, firstElemYear, firstResults);
+                }
+                else
+                {
+                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, firstElemYear,
+                    firstResults, secondElemYear, secondResults);
+                }
+             
+                Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(this);
             }
             else
             {
@@ -189,11 +208,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
             bool secondElemHasResults = false;
-            if (firstElem != null && firstElem.GetResults().Count > 0)
+            if (firstElem != null && firstElem.GetComputeResults().Count > 0)
             {
                 firstElemHasResults = true;
             }
-            if (secondElem != null && secondElem.GetResults().Count > 0)
+            if (secondElem != null && secondElem.GetComputeResults().Count > 0)
             {
                 secondElemHasResults = true;
             }
@@ -232,7 +251,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private AlternativeResult CreateAlternativeResult(AlternativeResults altResults)
+        private AlternativeResult CreateAlternativeResult()
         {
             AlternativeResult altResult = null;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
@@ -240,10 +259,13 @@ namespace HEC.FDA.ViewModel.Alternatives
             double discountRate = studyPropElem.DiscountRate;
             int period = studyPropElem.PeriodOfAnalysis;
 
-            //altResults.
+            IASElementSet[] iASElems = GetElementsFromID();
+            IASElementSet firstElem = iASElems[0];
+            IASElementSet secondElem = iASElems[1];
 
-            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(.123, 1), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(.456, 4), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+
+            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.GetScenarioResults()), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.GetScenarioResults()), new DamageByImpactAreaVM(), new DamageByDamCatVM());
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
             AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .7, 8), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
@@ -256,11 +278,13 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             if (_Results != null)
             {
+
+
                 //todo pass in the correct thing.
-                //AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
-                //string header = "Alternative Results: " + Name;
-                //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
-                //Navigate(tab, false, true);
+                AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
+                string header = "Alternative Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+                Navigate(tab, false, true);
             }
             else
             {
@@ -302,6 +326,9 @@ namespace HEC.FDA.ViewModel.Alternatives
                 setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
+
+            XElement resultsElem = _Results.WriteToXML();
+            altElement.Add(resultsElem);
             return altElement.ToString();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using alternatives;
+using compute;
 using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
@@ -6,6 +7,7 @@ using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -149,10 +151,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         {
             if (_Results != null)
             {
-                AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
-                string header = "Alternative Comparison Report Results: " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
-                Navigate(tab, false, true);
+                //AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
+                //string header = "Alternative Comparison Report Results: " + Name;
+                //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+                //Navigate(tab, false, true);
             }
             else
             {
@@ -166,12 +168,20 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             if(vr.IsValid)
             {
                 AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+                AlternativeResults withoutAltResults = withoutAlt.Results;
                 List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
-                //todo: waiting for HEC to get the new model plugged in. 11/16/21
-                //Alternative withoutAlternative = new Alternative();
-                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport(withoutAlt, withProjAlts);
-                //metrics.AlternativeComparisonReportResults alternativeComparisonReportResults = altCompReport.ComputeDistributionOfAAEQDamageReduced();
-                //_Results = altCompReport.ComputeDistributionOfAAEQDamageReduced();
+                List<AlternativeResults> withResults = new List<AlternativeResults>();
+                foreach(AlternativeElement elem in withProjAlts)
+                {
+                    withResults.Add(elem.Results);
+                }
+
+                int seed = 99;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = new ConvergenceCriteria();
+
+                _Results = alternativeComparisonReport.AlternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(randomProvider, cc, withoutAltResults, withResults);
+               // _Results.WriteToXML();
             }
             else
             {
@@ -233,19 +243,19 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         /// This is a dummy result object that Cody created to fill the results UI with dummy data.
         /// </summary>
         /// <returns></returns>
-        private AlternativeResult CreateAlternativeResult()
+        private AlternativeResult CreateAlternativeResult(AlternativeResults alternativeResults)
         {
             AlternativeResult altResult = null;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement(); 
 
             double discountRate = studyPropElem.DiscountRate;
             int period = studyPropElem.PeriodOfAnalysis;
-            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(.123, 1), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(.456, 4), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            //YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(alternativeResults), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            //YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(alternativeResults), new DamageByImpactAreaVM(), new DamageByDamCatVM());
 
-            EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .6, 7), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
-            altResult = new AlternativeResult(eadResult, aaeqResult);
+            //EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
+            //AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .6, 7), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
+            //altResult = new AlternativeResult(eadResult, aaeqResult);
 
             return altResult;
         }

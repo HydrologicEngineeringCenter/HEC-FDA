@@ -1,4 +1,5 @@
-﻿using HEC.MVVMFramework.Base.Enumerations;
+﻿using compute;
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using System;
@@ -15,13 +16,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
 
 
-        public ComputeScenarioVM(List<SpecificIAS> iasElems, Action callback)
+        public ComputeScenarioVM(int year, List<SpecificIAS> iasElems, Action callback)
         {
             List<Task> tasks = new List<Task>();
+            List<ImpactAreaScenarioSimulation> simulations = new List<ImpactAreaScenarioSimulation>();
             foreach (SpecificIAS ias in iasElems)
             {
                 tasks.Add( ias.ComputeScenario(this, new EventArgs()));
             }
+
+            //scenarios.Scenario scenario = new scenarios.Scenario(year, simulations);
+            //scenario.Compute()
+
             Task.Run(() =>
             {
                 Task.WaitAll(tasks.ToArray());

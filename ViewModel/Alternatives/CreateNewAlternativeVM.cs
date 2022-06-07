@@ -12,7 +12,6 @@ namespace HEC.FDA.ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {
-        private bool _IsInEditMode;
         public CustomObservableCollection<AlternativeRowItem> Rows { get; } = new CustomObservableCollection<AlternativeRowItem>();
         
         #region Constructors
@@ -32,7 +31,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="elem"></param>
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            _IsInEditMode = true;
+            //_IsInEditMode = true;
             Name = elem.Name;
             Description = elem.Description;
             SelectSavedRows(elem.IASElementSets);
@@ -108,7 +107,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             List<AlternativeRowItem> selectedRows = GetSelectedRows();
             FdaValidationResult vr = IsValid(selectedRows);
-            if(vr.IsValid)
+            if (vr.IsValid)
             {
                 if (selectedRows[0].Year == selectedRows[1].Year)
                 {
@@ -120,19 +119,14 @@ namespace HEC.FDA.ViewModel.Alternatives
                         return;
                     }
                 }
-          
-                if (_IsInEditMode)
+
+                int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
+                if (!IsCreatingNewElement)
                 {
-                    AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), OriginalElement.ID);
-                    PersistenceFactory.GetAlternativeManager().SaveExisting(elemToSave);
+                    id = OriginalElement.ID;
                 }
-                else
-                {
-                    int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
-                    AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), id);
-                    PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
-                    _IsInEditMode = true;
-                }
+                AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), id);
+                Save(elemToSave);
             }
             else
             {

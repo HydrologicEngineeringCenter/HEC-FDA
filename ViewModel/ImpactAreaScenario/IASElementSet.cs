@@ -197,12 +197,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
         }
 
+        public List<ImpactAreaScenarioResults> GetComputeResults()
+        {
+            List < ImpactAreaScenarioResults > results = new List<ImpactAreaScenarioResults>();
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                if (ias.ComputeResults != null)
+                {
+                    results.Add(ias.ComputeResults);
+                }
+            }
+            return results;
+        }
+
         public ScenarioResults GetScenarioResults()
         {
             ScenarioResults results = new ScenarioResults();
             foreach (SpecificIAS ias in SpecificIASElements)
             {
-                results.AddResults( ias.ComputeResults);
+                results.AddResults(ias.ComputeResults);
             }
             return results;
         }
@@ -249,7 +262,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
             string header = "Compute Scenario";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
             Navigate(tab, false, false);
