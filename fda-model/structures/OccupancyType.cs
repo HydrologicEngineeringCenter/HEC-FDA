@@ -57,7 +57,7 @@ namespace structures
             double vehicleValueError = _vehicleValueError.InverseCDF(random.NextDouble());
             double otherValueError = _otherValueError.InverseCDF(random.NextDouble());
             
-            return new DeterministicOccupancyType(structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError);
+            return new DeterministicOccupancyType(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError);
         }
         #endregion
     }
