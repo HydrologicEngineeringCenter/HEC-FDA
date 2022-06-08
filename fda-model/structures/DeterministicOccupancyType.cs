@@ -1,30 +1,35 @@
-﻿namespace structures
+﻿using paireddata;
+
+namespace structures
 {
     public class DeterministicOccupancyType
     {
-        private string name;
-        private string damcat;
-        private paireddata.IPairedData _StructureDamageFunction;
-        private paireddata.IPairedData _ContentDamageFunction;
-        private paireddata.IPairedData _OtherDamageFunction;
-        private double _foundationHeightError;
+        public string Name { get; }
+        public string DamageCatagory { get; }
+        public IPairedData StructDamagePairedData { get; }
+        public IPairedData ContentDamagePairedData { get; }
+        public IPairedData VehicleDamagePairedData { get; }
+        public IPairedData OtherDamagePairedData { get; }
+        public double FoundationHeightError { get; }
+        public double StructureValueError { get; }
+        public double ContentValueError { get; }
+        public double VehicleValueError { get; }
+        public double OtherValueError { get; }
 
-        public DeterministicOccupancyType(paireddata.IPairedData structureDamagePairedData, paireddata.IPairedData contentDamagePairedData, paireddata.IPairedData otherDamagePairedData, double foundationHeightError)
+
+        public DeterministicOccupancyType(string name, string damcat, IPairedData structDamagePairedData, IPairedData contentDamagePairedData, IPairedData vehicleDamagePairedData, IPairedData otherDamagePairedData, double foundationHeightError, double structureValueError, double contentValueError, double vehicleValueError, double otherValueError)
         {
-            _StructureDamageFunction = structureDamagePairedData;
-            _ContentDamageFunction = contentDamagePairedData;
-            _OtherDamageFunction = otherDamagePairedData;
-            _foundationHeightError = foundationHeightError;
+            Name = name;
+            DamageCatagory = damcat;
+            StructDamagePairedData = structDamagePairedData;
+            ContentDamagePairedData = contentDamagePairedData;
+            VehicleDamagePairedData = vehicleDamagePairedData;
+            OtherDamagePairedData = otherDamagePairedData;
+            FoundationHeightError = foundationHeightError;
+            StructureValueError = structureValueError;
+            ContentValueError = contentValueError;
+            VehicleValueError = vehicleValueError;
+            OtherValueError = otherValueError;
         }
-
-        //other stuff.
-        public paireddata.IPairedData StructureDamageFunction
-        {
-            get { return _StructureDamageFunction; }
-        }
-
-        public string DamCatName { get { return damcat; } }
-        public string Name { get { return name; } }
-        public int FoundationHeightError { get; internal set; }
     }
 }
