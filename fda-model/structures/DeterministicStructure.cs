@@ -2,40 +2,51 @@
 {
     public class DeterministicStructure
     {
-        private int _fdid;
-        private double _foundationHeight;
-        private double _StructureValue;
-        private double _ContentValue;
-        private double _OtherValue;
-        private DeterministicOccupancyType _occtype;
-        public string DamageCatagory
-        {
-            get
-            {
-                return _occtype.DamCatName;
-            }
-        }
+        public int Fid { get; }
+        public int ImpactAreaID { get; }
+        public string St_damcat { get; }
+        public double FoundHeightSample { get; }
+        public double StructValueSample { get; }
+        public double ContentValueSample { get; }
+        public double VehicleValueSample { get; }
+        public double OtherValueSample { get; }
+        public string DamageCatagory { get; }
+        public DeterministicOccupancyType OccupancyType { get; }
 
-
-        public DeterministicStructure(int name, double structValueSample, double foundHeightSample)
+        public DeterministicStructure(int fid, int impactAreaID, string damageCatagory, DeterministicOccupancyType occupancyType, double foundHeightSample, double structValueSample, double contentValueSample, double vehicleValueSample, double otherValueSample)
         {
-            _fdid = name;
-            _StructureValue = structValueSample;
-            _foundationHeight = foundHeightSample;
+            Fid = fid;
+            ImpactAreaID = impactAreaID;
+            DamageCatagory = damageCatagory;
+            OccupancyType = occupancyType;
+            FoundHeightSample = foundHeightSample;
+            StructValueSample = structValueSample;
+            ContentValueSample = contentValueSample;
+            VehicleValueSample = vehicleValueSample;
+            OtherValueSample = otherValueSample;
         }
 
         public StructureDamageResult ComputeDamage(float depth)
         {
-            //TODO: fix structure damage result return
-            double depthabovefoundHeight = depth - _foundationHeight;
-            double structDamagepercent = _occtype.StructureDamageFunction.f(depthabovefoundHeight);
-            double structDamage = structDamagepercent * _StructureValue;
+            double depthabovefoundHeight = depth - FoundHeightSample;
 
-            double contentDamage = 9999;
+            //Structure
+            double structDamagepercent = OccupancyType.StructDamagePairedData.f(depthabovefoundHeight);
+            double structDamage = structDamagepercent * StructValueSample;
 
-            double otherDamage = 9999;
+            //Content
+            double contentDamagePercent = OccupancyType.ContentDamagePairedData.f(depthabovefoundHeight);
+            double contDamage = contentDamagePercent * ContentValueSample;
 
-            return new StructureDamageResult(structDamage, contentDamage, otherDamage);
+            //Vehicle
+            double vehicleDamagePercent = OccupancyType.VehicleDamagePairedData.f(depthabovefoundHeight);
+            double vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+
+            //Other
+            double otherDamagePercent = OccupancyType.OtherDamagePairedData.f(depthabovefoundHeight);
+            double otherDamage = otherDamagePercent * OtherValueSample;
+
+            return new StructureDamageResult(structDamage, contDamage, vehicleDamage, otherDamage);
         }
     }
 }
