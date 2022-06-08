@@ -37,13 +37,13 @@ namespace structures
             List<string> damageCatagories = new List<string>();
             foreach (Structure structure in Structures)
             {
-                if (damageCatagories.Contains(structure.DamCatName))
+                if (damageCatagories.Contains(structure.DamageCatagory))
                 {
                     continue;
                 }
                 else
                 {
-                    damageCatagories.Add(structure.DamCatName);
+                    damageCatagories.Add(structure.DamageCatagory);
                 }
             }
             return damageCatagories;
@@ -69,15 +69,12 @@ namespace structures
                 double val_struct = (double)row["val_struct"];
                 double val_cont = (double)row["val_cont"];
                 double val_vehic = (double)row["val_vehic"];
+                double val_other = (double)row["val_vehic"];
                 string st_damcat = (string)row["st_damcat"];
                 string occtype = (string)row["occtype"];
-                int pop2amu65 = (int)row["pop2amu65"];
-                int pop2amo65 = (int)row["pop2amo65"];
-                int pop2pmu65 = (int)row["pop2pmu65"];
-                int pop2pmo65 = (int)row["pop2pmo65"];
                 string cbfips = (string)row["cbfips"];
                 int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
-                _structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, st_damcat, occtype, pop2amu65, pop2amo65, pop2pmu65, pop2pmo65, impactAreaID, cbfips));
+                _structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
             }
         }
         // Will need a constructor/load from Database ; 
@@ -95,7 +92,7 @@ namespace structures
 
             foreach (Structure structure in _structures)
             {
-                if (impactArea.Contains(structure.XYPoint))
+                if (impactArea.Contains(structure.Point))
                 {
                     filteredStructureList.Add(structure);
                 }
@@ -108,7 +105,7 @@ namespace structures
             PointMs points = new PointMs();
             foreach (Structure structure in _structures)
             {
-                points.Add(structure.XYPoint);
+                points.Add(structure.Point);
             }
             return points;
         }
@@ -139,7 +136,7 @@ namespace structures
             {
                 foreach (DeterministicOccupancyType deterministicOccupancyType in _OcctypesSample)
                 {
-                    if (structure.DamCatName.Equals(deterministicOccupancyType.DamCatName))
+                    if (structure.DamageCatagory.Equals(deterministicOccupancyType.DamageCatagory))
                     {
                         if (structure.OccTypeName.Equals(deterministicOccupancyType.Name))
                         {
