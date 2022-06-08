@@ -1,29 +1,64 @@
-﻿using System;
+﻿using paireddata;
+using Statistics;
+using System;
 
 namespace structures
 {
     public class OccupancyType
     {
+        #region Fields
+        //fundamental traits
         private string name;
         private string damcat;
-        private Statistics.ContinuousDistribution _foundationHeightError;
-        private paireddata.UncertainPairedData _StructureDamageFunction;
-        private paireddata.UncertainPairedData _ContentDamageFunction;
-        private paireddata.UncertainPairedData _OtherDamageFunction;
-        //other stuff.
-        public paireddata.UncertainPairedData StructureDamageFunction
+
+        //damage functions
+        private UncertainPairedData _structureDamageFunction;
+        private UncertainPairedData _contentDamageFunction;
+        private UncertainPairedData _vehicleDamageFunction;
+        private UncertainPairedData _OtherDamageFunction;
+
+        //error distributions - Assuming these are all %s
+        private ContinuousDistribution _foundationHeightError;
+        private ContinuousDistribution _structureValueError;
+        private ContinuousDistribution _contentValueError;
+        private ContinuousDistribution _vehicleValueError;
+        private ContinuousDistribution _otherValueError;
+        #endregion
+        #region Constructor
+        public OccupancyType(string name, string damcat, UncertainPairedData structureDamageFunction, UncertainPairedData contentDamageFunction, UncertainPairedData vehicleDamageFunction, UncertainPairedData otherDamageFunction, ContinuousDistribution foundationHeightError, ContinuousDistribution structureValueError, ContinuousDistribution contentValueError, ContinuousDistribution vehicleValueError, ContinuousDistribution otherValueError)
         {
-            get { return _StructureDamageFunction; }
+            this.name = name;
+            this.damcat = damcat;
+            _structureDamageFunction = structureDamageFunction;
+            _contentDamageFunction = contentDamageFunction;
+            _vehicleDamageFunction = vehicleDamageFunction;
+            _OtherDamageFunction = otherDamageFunction;
+            _foundationHeightError = foundationHeightError;
+            _structureValueError = structureValueError;
+            _contentValueError = contentValueError;
+            _vehicleValueError = vehicleValueError;
+            _otherValueError = otherValueError;
         }
+        #endregion
+        #region Methods
         public DeterministicOccupancyType Sample(int seed)
         {
-            //sample parts and put them in an occtype
             Random random = new Random(seed);
-            paireddata.IPairedData structDamagePairedData = StructureDamageFunction.SamplePairedData(random.NextDouble());
-            paireddata.IPairedData contentDamagePairedData = StructureDamageFunction.SamplePairedData(random.NextDouble());
-            paireddata.IPairedData otherDamagePairedData = StructureDamageFunction.SamplePairedData(random.NextDouble());
+            //damage functions
+            IPairedData structDamagePairedData = _structureDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData contentDamagePairedData = _contentDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData vehicleDamagePairedData = _vehicleDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData otherDamagePairedData = _OtherDamageFunction.SamplePairedData(random.NextDouble());
+
+            //errors
             double foundationHeightError = _foundationHeightError.InverseCDF(random.NextDouble());
-            return new DeterministicOccupancyType(structDamagePairedData, contentDamagePairedData, otherDamagePairedData, foundationHeightError);
+            double structureValueError = _structureValueError.InverseCDF(random.NextDouble());
+            double contentValueError = _contentValueError.InverseCDF(random.NextDouble());
+            double vehicleValueError = _vehicleValueError.InverseCDF(random.NextDouble());
+            double otherValueError = _otherValueError.InverseCDF(random.NextDouble());
+            
+            return new DeterministicOccupancyType(structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError);
         }
+        #endregion
     }
 }
