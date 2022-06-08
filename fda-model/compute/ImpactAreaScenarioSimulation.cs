@@ -407,6 +407,7 @@ namespace compute
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
+        //TODO why is this here but levee CNP is in system performance results?
         public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, int iteration)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);

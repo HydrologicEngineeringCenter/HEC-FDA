@@ -2,7 +2,7 @@
 using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
-
+using System.Runtime.Remoting;
 
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
@@ -11,7 +11,7 @@ namespace metrics
         #region Fields
         //TODO: hard-wiring the bin width is no good
         private const double HISTOGRAM_BINWIDTH = 10;
-        private ThreadsafeInlineHistogram _consequenceHistogram;
+        private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
         private int _regionID;
@@ -20,7 +20,7 @@ namespace metrics
         #endregion
 
         #region Properties
-        public ThreadsafeInlineHistogram ConsequenceHistogram
+        public IHistogram ConsequenceHistogram
         {
             get
             {
@@ -65,6 +65,9 @@ namespace metrics
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// </summary>
         public ConsequenceResult()
         {
             _damageCategory = "unassigned";
@@ -74,6 +77,9 @@ namespace metrics
             _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = true;
         }
+        /// <summary>
+        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// </summary>
         public ConsequenceResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
@@ -83,6 +89,9 @@ namespace metrics
             _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
             _isNull = false;
         }
+        /// <summary>
+        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// </summary>
         public ConsequenceResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double binWidth)
         {
             _damageCategory = damageCategory;
@@ -92,7 +101,15 @@ namespace metrics
             _consequenceHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
             _isNull = false;
         }
-        private ConsequenceResult(string damageCategory, string assetCategory, ThreadsafeInlineHistogram histogram, int impactAreaID)
+        /// <summary>
+        /// This constructor can accept wither a Histogram or a ThreadsageInlineHistogram
+        /// as such can be used for both compute types
+        /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <param name="histogram"></param>
+        /// <param name="impactAreaID"></param>
+        public ConsequenceResult(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
@@ -133,7 +150,7 @@ namespace metrics
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Consequence");
+            XElement masterElement = new XElement("Consequence");// this.GetType().ToString();
             XElement histogramElement = _consequenceHistogram.WriteToXML();
             histogramElement.Name = "DamageHistogram";
             masterElement.Add(histogramElement);
@@ -145,7 +162,19 @@ namespace metrics
 
         public static ConsequenceResult ReadFromXML(XElement xElement)
         {
-            ThreadsafeInlineHistogram damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
+            string name = xElement.Name.ToString();
+            string libraryName = "Statistics";//this libraries name and the appropriate namespace.
+            ObjectHandle objectHandle = System.Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
+            IHistogram iDistribution = objectHandle.Unwrap() as IHistogram;
+
+
+
+
+
+
+
+
+            IHistogram damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);

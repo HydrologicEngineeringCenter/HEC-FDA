@@ -32,10 +32,10 @@ namespace alternativeComparisonReport
 
                     //foreach (ConsequenceResult damageResult in withProjectDamageResult.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;//(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
-                        withProjectHistogram.ForceDeQueue();
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
-                        withoutProjectHistogram.ForceDeQueue();
+                        IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;//(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
+                        //withProjectHistogram.ForceDeQueue();
+                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
+                        //withoutProjectHistogram.ForceDeQueue();
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
                         double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min;  //InverseCDF(lowerBoundProbability);

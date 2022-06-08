@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    public class Histogram
+    public class Histogram: IHistogram
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
@@ -42,6 +42,13 @@ namespace Statistics.Histograms
         public double BinWidth{
             get{
                 return _BinWidth;
+            }
+        }
+        public ConvergenceCriteria ConvergenceCriteria
+        {
+            get
+            {
+                return _ConvergenceCriteria;
             }
         }
         public Int32[] BinCounts{
@@ -93,6 +100,12 @@ namespace Statistics.Histograms
         }
         #endregion      
         #region Constructor
+        public Histogram()
+        {
+            _BinWidth = 1; //TODO this hard-coded value is a hack 
+            _minHasNotBeenSet = true;
+            _ConvergenceCriteria = new ConvergenceCriteria();
+        }
         public Histogram(double min, double binWidth)
         {
             _BinWidth = binWidth;
@@ -196,7 +209,14 @@ namespace Statistics.Histograms
         public double HistogramStandardDeviation(){
             return Math.Sqrt(HistogramVariance());
         }
-        public void AddObservationToHistogram(double observation)
+        /// <summary>
+        /// The only argument that should be used in this function is the observation value
+        /// A hacky solution was used here so that Histogram and ThreadsafeInlineHIstogram match 
+        /// and the interface would work 
+        /// </summary>
+        /// <param name="observation"></param>
+        /// <param name="index"></param>
+        public void AddObservationToHistogram(double observation, int index = 0) //TODO index is a hack
         {   
             if (_N == 0){
                 _SampleMax = observation;

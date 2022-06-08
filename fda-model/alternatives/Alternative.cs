@@ -2,6 +2,7 @@ using System;
 using scenarios;
 using metrics;
 using Statistics;
+using Statistics.Histograms;
 
 namespace alternatives
 {
@@ -33,8 +34,8 @@ namespace alternatives
                     double lowerBoundProbability = 0.0001;
                     double upperBoundProbability = 0.9999;
 
-                    baseYearDamageResult.ConsequenceHistogram.ForceDeQueue();
-                    mlfYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+                    //baseYearDamageResult.ConsequenceHistogram.ForceDeQueue();
+                    //mlfYearDamageResult.ConsequenceHistogram.ForceDeQueue();
 
                     double eadSampledBaseYearLowerBound = baseYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
                     double eadSampledFutureYearLowerBound = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(lowerBoundProbability);
@@ -47,7 +48,10 @@ namespace alternatives
                     //TODO: if this depends on convergence criteria, what do we do?
                     double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
                     double binWidth = Math.Ceiling(range / binQuantity);
-                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.ConvergenceCriteria, baseYearDamageResult.RegionID, binWidth);
+                    //aaeqResult is really the issue here. 
+                    //what if I construct the histogram and then add the histogram information to consequence result 
+                    Histogram aaeqHistogram = new Histogram(aaeqDamageLowerBound, binWidth, baseYearDamageResult.ConvergenceCriteria);
+                    ConsequenceResult aaeqResult = new ConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
                     //TODO: run this loop until convergence 
                     for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
                     {
@@ -56,7 +60,7 @@ namespace alternatives
                         double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                         aaeqResult.AddConsequenceRealization(aaeqDamage, i);
                     }
-                    aaeqResult.ConsequenceHistogram.ForceDeQueue();
+                    //aaeqResult.ConsequenceHistogram.ForceDeQueue();
                     alternativeResults.AddConsequenceResults(aaeqResult);
                 }
             }

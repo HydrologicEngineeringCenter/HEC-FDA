@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    public class ThreadsafeInlineHistogram
+    public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
@@ -147,6 +147,13 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Constructor
+        public ThreadsafeInlineHistogram()
+        {
+            _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
+            _ConvergenceCriteria = new ConvergenceCriteria();
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
+        }
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
