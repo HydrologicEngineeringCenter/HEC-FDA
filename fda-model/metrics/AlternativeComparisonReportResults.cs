@@ -7,7 +7,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 namespace metrics
 {
     public class AlternativeComparisonReportResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
-    {
+    {   //TODO: save a year 
         #region Fields
         private List<AlternativeResults> _resultsList;
         #endregion
