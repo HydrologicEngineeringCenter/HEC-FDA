@@ -22,18 +22,52 @@ namespace metrics
                 return _resultsList;
             }
         }
+        public int AnalysisYear { get; }
         public event MessageReportedEventHandler MessageReport;
 
         #endregion
 
         #region Constructor
-        public ScenarioResults()
+        public ScenarioResults(int year)
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();
+            AnalysisYear = year;
         }
         #endregion
 
         #region Methods
+        public List<string> GetAssetCategories()
+        {
+            List<string> assetCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        assetCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            return assetCats;
+        }
+        public List<string> GetDamageCategories()
+        {
+            List<string> damCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if(!damCats.Contains(consequenceResult.DamageCategory))
+                    {
+                        damCats.Add(consequenceResult.DamageCategory);
+                    }
+                }
+                
+            }
+            return damCats;
+        }
         public double MeanAEP(int impactAreaID, int thresholdID)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);

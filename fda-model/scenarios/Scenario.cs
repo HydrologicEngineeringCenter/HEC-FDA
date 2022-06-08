@@ -34,7 +34,7 @@ namespace scenarios
         public ScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //probably instantiate a rng to seed each impact area differently
-            ScenarioResults scenarioResults = new ScenarioResults();
+            ScenarioResults scenarioResults = new ScenarioResults(_year);
             foreach(ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations){
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria));
             }
