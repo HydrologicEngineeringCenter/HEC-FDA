@@ -8,26 +8,25 @@ namespace structures
 {
     public class StructureDamageResult
     {
-        private double _StructureDamage;
-        private double _ContentDamage;
-        private double _OtherDamage;
-
-        public double StructureDamage { get; set; }
-        public double ContentDamage { get; set; }
         public double OtherDamage { get; set; }
+        public double StructDamage { get; set; }
+        public double ContentDamage { get; set; }
+        public double VehicleDamage { get; set; }
 
-        public StructureDamageResult(double structuredamage, double contentdamage, double otherdamage)
+        public StructureDamageResult(double structDamage, double contentDamage, double vehicleDamage, double otherDamage)
         {
-            _StructureDamage = structuredamage;
-            _ContentDamage = contentdamage;
-            _OtherDamage = otherdamage;
+            StructDamage = structDamage;
+            ContentDamage = contentDamage;
+            VehicleDamage = vehicleDamage;
+            OtherDamage = otherDamage;
         }
 
         public void AddResult(StructureDamageResult structureDamageResult)
         {
-            _StructureDamage += structureDamageResult._StructureDamage;
-            _ContentDamage += structureDamageResult._ContentDamage;
-            _OtherDamage += structureDamageResult._OtherDamage;
+            StructDamage += structureDamageResult.StructDamage;
+            ContentDamage += structureDamageResult.ContentDamage;
+            OtherDamage += structureDamageResult.OtherDamage;
+            VehicleDamage += structureDamageResult.VehicleDamage;
 
         }
     }
