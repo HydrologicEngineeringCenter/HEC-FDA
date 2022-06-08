@@ -444,7 +444,8 @@ namespace Statistics.Histograms
                 
             }
         }
-        public static Histogram AddHistograms(List<Histogram> histograms)
+        //TODO: set the properties of aggregated histogram to THIS histogram 
+        public void AddHistograms(List<IHistogram> histograms)
         {
             Histogram histogramToReturn = new Histogram();
 
@@ -482,7 +483,19 @@ namespace Statistics.Histograms
                 }
                 histogramToReturn = histogram;
             }
-            return histogramToReturn;
+            _BinCounts = histogramToReturn._BinCounts;
+            _SampleMean = histogramToReturn._SampleMean;
+            _SampleVariance = histogramToReturn._SampleVariance;
+            _Min = histogramToReturn._Min;
+            _Max = histogramToReturn._Max;
+            _SampleMin = histogramToReturn._SampleMin;
+            _SampleMax = histogramToReturn._SampleMax;
+            _N = histogramToReturn._N;
+            _BinWidth = histogramToReturn._BinWidth;
+            _Converged = histogramToReturn._Converged;
+            _ConvergedIterations = histogramToReturn._ConvergedIterations;
+            _ConvergedOnMax = histogramToReturn._ConvergedOnMax;
+            _ConvergenceCriteria = histogramToReturn._ConvergenceCriteria;
         }
         public XElement WriteToXML()
         {

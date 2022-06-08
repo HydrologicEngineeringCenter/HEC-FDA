@@ -35,7 +35,7 @@ namespace Statistics.Histograms
         XElement WriteToXML();
         bool TestForConvergence(double upperq, double lowerq);
         int EstimateIterationsRemaining(double upperq, double lowerq);
-       //IHistogram AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
+       void AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
         #endregion
     }
 }

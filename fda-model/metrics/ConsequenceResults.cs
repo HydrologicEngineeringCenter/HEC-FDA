@@ -375,6 +375,7 @@ namespace metrics
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
                 }
             }
+            //need to get the first histogram and then add the rest 
             IHistogram aggregatedHistogram = IHistogram.AddHistograms(histograms);
                     return aggregatedHistogram;
         }

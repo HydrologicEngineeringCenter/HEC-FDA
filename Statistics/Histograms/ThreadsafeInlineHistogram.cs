@@ -582,11 +582,12 @@ namespace Statistics.Histograms
 
             }
         }
-
-        public static ThreadsafeInlineHistogram AddHistograms(List<ThreadsafeInlineHistogram> histograms)
+        //TODO: set properties of THIS histogram to equal those of the aggregate histogram 
+        //can then make this void and not static 
+        public void AddHistograms(List<IHistogram> histograms)
         {
             ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-            ThreadsafeInlineHistogram threadsafeInlineHistogramToReturn = new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
+            ThreadsafeInlineHistogram histogramToReturn = new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
 
             if (histograms.Count > 0)
             {
@@ -620,9 +621,21 @@ namespace Statistics.Histograms
                     }
                     histogram.AddObservationToHistogram(summedValue, i);
                 }
-                threadsafeInlineHistogramToReturn = histogram;
+                histogramToReturn = histogram;
             }
-            return threadsafeInlineHistogramToReturn;
+            _BinCounts = histogramToReturn._BinCounts;
+            _SampleMean = histogramToReturn._SampleMean;
+            _SampleVariance = histogramToReturn._SampleVariance;
+            _Min = histogramToReturn._Min;
+            _Max = histogramToReturn._Max;
+            _SampleMin = histogramToReturn._SampleMin;
+            _SampleMax = histogramToReturn._SampleMax;
+            _SampleSize = histogramToReturn._SampleSize;
+            _BinWidth = histogramToReturn._BinWidth;
+            _Converged = histogramToReturn._Converged;
+            _ConvergedIterations = histogramToReturn._ConvergedIterations;
+            _ConvergedOnMax = histogramToReturn._ConvergedOnMax;
+            _ConvergenceCriteria = histogramToReturn._ConvergenceCriteria;
         }
 
         public XElement WriteToXML()
