@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Statistics.Distributions
 {
     [System.AttributeUsage(AttributeTargets.Property,AllowMultiple = false, Inherited = true)]
-    public class StoredAttribute : System.Attribute
+    class StoredAttribute : System.Attribute
     {
         public string Name;
         public Type type;

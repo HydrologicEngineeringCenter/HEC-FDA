@@ -21,6 +21,7 @@ namespace Statistics.Histograms
         double StandardDeviation { get; }
         int SampleSize { get; }
         ConvergenceCriteria ConvergenceCriteria { get; }
+        string MyType { get; }
 
 
         #endregion

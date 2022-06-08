@@ -32,9 +32,16 @@ namespace Statistics.Histograms
         private static int _dequeue; //TODO: what does this represent?
         private System.ComponentModel.BackgroundWorker _backgroundWorker;
         private System.Collections.Concurrent.ConcurrentQueue<double> _observations;
+        private const string _type = "ThreadsafeInlineHistogram";
         #endregion
         #region Properties
-
+        public string MyType
+        {
+            get
+            {
+                return _type;
+            }
+        }
         public bool IsConverged
         {
             get

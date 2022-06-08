@@ -149,48 +149,33 @@ namespace metrics
                 }
             return true;
         }
-        //I am leaving this code here for now - when I prove that this other xml stuff works
-        //I will delete
-        //public XElement WriteToXML()
-        //{
-        //    XElement masterElement = new XElement("Consequence");// this.GetType().ToString();
-        //    XElement histogramElement = _consequenceHistogram.WriteToXML();
-        //    histogramElement.Name = "DamageHistogram";
-        //    masterElement.Add(histogramElement);
-        //    masterElement.SetAttributeValue("DamageCategory", _damageCategory);
-        //    masterElement.SetAttributeValue("AssetCategory", _assetCategory);
-        //    masterElement.SetAttributeValue("ImpactAreaID", _regionID);
-        //    return masterElement;
-        //}
+
         public XElement WriteToXML()
         {
-            XElement element = new XElement(this.GetType().Name);
-            PropertyInfo[] propertyList = this.GetType().GetProperties();
-            foreach (PropertyInfo propertyInfo in propertyList)
-            {
-                StoredAttribute storedAttribute = (StoredAttribute)propertyInfo.GetCustomAttribute(typeof(StoredAttribute));
-                if (storedAttribute != null)
-                {
-                    element.SetAttributeValue(storedAttribute.Name, propertyInfo.GetValue(this));
-                }
-            }
-            return element;
+            XElement masterElement = new XElement("ConsequenceResult");
+            masterElement.SetAttributeValue("Type", _consequenceHistogram.MyType);
+            XElement histogramElement = _consequenceHistogram.WriteToXML();
+            histogramElement.Name = "DamageHistogram";
+            masterElement.Add(histogramElement);
+            masterElement.SetAttributeValue("DamageCategory", _damageCategory);
+            masterElement.SetAttributeValue("AssetCategory", _assetCategory);
+            masterElement.SetAttributeValue("ImpactAreaID", _regionID);
+            return masterElement;
         }
+
         public static ConsequenceResult ReadFromXML(XElement xElement)
         {
-            string name = xElement.Name.ToString();
-            string libraryName = "Statistics";//this libraries name and the appropriate namespace.
-            ObjectHandle objectHandle = System.Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
-            IHistogram iDistribution = objectHandle.Unwrap() as IHistogram;
+            string type = xElement.Attribute("Type").Value;
+            IHistogram damageHistogram;
+            if (type.Equals("Histogram"))
+            {
+                damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
+            } 
+            else
+            {
+                damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
 
-
-
-
-
-
-
-
-            IHistogram damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
+            }
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);

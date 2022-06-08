@@ -22,9 +22,17 @@ namespace Statistics.Histograms
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
+        private const string _type = "Histogram";
         #endregion
         #region Properties
 
+        public string MyType
+        {
+            get
+            {
+                return _type;
+            }
+        }
         public bool IsConverged
         {
             get
