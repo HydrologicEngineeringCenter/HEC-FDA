@@ -3,7 +3,8 @@ using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
 using System.Runtime.Remoting;
-
+using System.Reflection;
+using Statistics.Distributions;
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
     public class ConsequenceResult
@@ -148,18 +149,33 @@ namespace metrics
                 }
             return true;
         }
+        //I am leaving this code here for now - when I prove that this other xml stuff works
+        //I will delete
+        //public XElement WriteToXML()
+        //{
+        //    XElement masterElement = new XElement("Consequence");// this.GetType().ToString();
+        //    XElement histogramElement = _consequenceHistogram.WriteToXML();
+        //    histogramElement.Name = "DamageHistogram";
+        //    masterElement.Add(histogramElement);
+        //    masterElement.SetAttributeValue("DamageCategory", _damageCategory);
+        //    masterElement.SetAttributeValue("AssetCategory", _assetCategory);
+        //    masterElement.SetAttributeValue("ImpactAreaID", _regionID);
+        //    return masterElement;
+        //}
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Consequence");// this.GetType().ToString();
-            XElement histogramElement = _consequenceHistogram.WriteToXML();
-            histogramElement.Name = "DamageHistogram";
-            masterElement.Add(histogramElement);
-            masterElement.SetAttributeValue("DamageCategory", _damageCategory);
-            masterElement.SetAttributeValue("AssetCategory", _assetCategory);
-            masterElement.SetAttributeValue("ImpactAreaID", _regionID);
-            return masterElement;
+            XElement element = new XElement(this.GetType().Name);
+            PropertyInfo[] propertyList = this.GetType().GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyList)
+            {
+                StoredAttribute storedAttribute = (StoredAttribute)propertyInfo.GetCustomAttribute(typeof(StoredAttribute));
+                if (storedAttribute != null)
+                {
+                    element.SetAttributeValue(storedAttribute.Name, propertyInfo.GetValue(this));
+                }
+            }
+            return element;
         }
-
         public static ConsequenceResult ReadFromXML(XElement xElement)
         {
             string name = xElement.Name.ToString();
