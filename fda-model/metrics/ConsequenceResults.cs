@@ -319,9 +319,9 @@ namespace metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns> Aggregated consequences histogram 
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        public IHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            List<IHistogram> histograms = new List<IHistogram>();
             foreach (ConsequenceResult consequenceResult in _consequenceResultList)
             {
                 if(damageCategory == null && assetCategory == null && impactAreaID == -999)
@@ -375,7 +375,7 @@ namespace metrics
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
                 }
             }
-                    ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            IHistogram aggregatedHistogram = IHistogram.AddHistograms(histograms);
                     return aggregatedHistogram;
         }
       

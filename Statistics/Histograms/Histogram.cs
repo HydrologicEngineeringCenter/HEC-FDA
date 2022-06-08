@@ -2,6 +2,7 @@
 using System.Linq;
 using Utilities;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace Statistics.Histograms
 {
@@ -170,7 +171,13 @@ namespace Statistics.Histograms
             double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
             return skewness;
         }
+        
         #region Functions
+        public void ForceDeQueue()
+        {
+            //do nothing
+            //HACK
+        }
         public double HistogramMean()
         {           
             if (_N == 0)
@@ -437,7 +444,46 @@ namespace Statistics.Histograms
                 
             }
         }
+        public static Histogram AddHistograms(List<Histogram> histograms)
+        {
+            Histogram histogramToReturn = new Histogram();
 
+            if (histograms.Count > 0)
+            {
+                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
+                double min = 0;
+                double max = 0;
+                int sampleSize = 0;
+                foreach (Histogram histogramToAdd in histograms)
+                {
+                    double newMin = Math.Min(min, histogramToAdd.Min);
+                    min = newMin;
+                    double newMax = Math.Max(max, histogramToAdd.Max);
+                    max = newMax;
+                    int newSampleSize = Math.Max(sampleSize, (int)histogramToAdd.SampleSize);
+                    sampleSize = newSampleSize;
+                }
+                double range = max - min;
+                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
+                double binWidth = range / sampleSize;
+                Histogram histogram = new Histogram(min, binWidth, convergenceCriteria);
+                int seed = 1234;
+                Random random = new Random(seed);
+                for (int i = 0; i < sampleSize; i++)
+                {
+                    double prob = (i + .5) / sampleSize;
+                    double summedValue = 0;
+                    foreach (Histogram histogramToSample in histograms)
+                    {
+                        double value = histogramToSample.InverseCDF(prob);
+                        summedValue += value;
+                    }
+                    histogram.AddObservationToHistogram(summedValue, i);
+                }
+                histogramToReturn = histogram;
+            }
+            return histogramToReturn;
+        }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("Histogram");
@@ -509,6 +555,12 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
+
+        int IHistogram.EstimateIterationsRemaining(double upperq, double lowerq)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

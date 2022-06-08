@@ -31,7 +31,11 @@ namespace Statistics.Histograms
         double CDF(double x);
         double InverseCDF(double p);
         void AddObservationToHistogram(double observation, int iterationIndex);
+        void ForceDeQueue();
         XElement WriteToXML();
+        bool TestForConvergence(double upperq, double lowerq);
+        int EstimateIterationsRemaining(double upperq, double lowerq);
+       //IHistogram AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
         #endregion
     }
 }

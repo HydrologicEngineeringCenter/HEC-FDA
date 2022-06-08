@@ -169,7 +169,7 @@ namespace metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Statistics.Histograms.IHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
             return alternativeResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);

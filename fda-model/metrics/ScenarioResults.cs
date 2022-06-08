@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
@@ -249,9 +250,9 @@ namespace metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>        
-        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            List<IHistogram> histograms = new List<IHistogram>();
 
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
@@ -312,7 +313,7 @@ namespace metrics
                     }
                 }
             }
-            ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
+            IHistogram aggregatedHistogram = IHistogram.AddHistograms(histograms);
             return aggregatedHistogram;
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
@@ -345,6 +346,7 @@ namespace metrics
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("ScenarioResults");
+            mainElement.SetAttributeValue("Year", AnalysisYear);
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
@@ -355,7 +357,8 @@ namespace metrics
 
         public static ScenarioResults ReadFromXML(XElement xElement)
         {
-            ScenarioResults scenarioResults = new ScenarioResults();
+            int year = Convert.ToInt32(xElement.Attribute("Year").Value);
+            ScenarioResults scenarioResults = new ScenarioResults(year);
             foreach (XElement element in xElement.Elements())
             {
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
