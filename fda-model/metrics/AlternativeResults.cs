@@ -29,6 +29,8 @@ namespace metrics
                 return _consequenceResults;
             }
         }
+        public int BaseYear { get { return BaseYearScenarioResults.AnalysisYear; } }
+        public int FutureYear { get { return FutureYearScenarioResults.AnalysisYear; } }
         public event MessageReportedEventHandler MessageReport;
         public bool IsNull
         {
@@ -62,6 +64,60 @@ namespace metrics
         }
         #endregion
         #region Methods
+        public List<string> GetAssetCategories()
+        {
+            List<string> assetCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        assetCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        assetCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            return assetCats;
+        }
+        public List<string> GetDamageCategories()
+        {
+            List<string> damageCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!damageCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        damageCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!damageCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        damageCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            return damageCats;
+        }
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 

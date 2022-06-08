@@ -41,13 +41,5 @@ namespace scenarios
             return scenarioResults;
         }
 
-        //public XElement WriteToXML()
-        //{
-        //    XElement masterElement = new XElement("Scenario");
-        //    foreach (ImpactAreaScenarioSimulation impactAreaSimulation in ImpactAreaSimulations)
-        //    {
-        //        XElement impactAreaSimulationElement = impactAreaSimulation.write
-        //    }
-        //}
     }
 }
