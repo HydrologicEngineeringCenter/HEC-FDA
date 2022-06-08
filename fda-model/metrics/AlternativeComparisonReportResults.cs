@@ -21,7 +21,34 @@ namespace metrics
             }
         }
         public event MessageReportedEventHandler MessageReport;
-
+        public int BaseYear
+        {
+            get
+            {
+                if(_resultsList.Count == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return _resultsList[0].BaseYear;
+                }
+            }
+        }
+        public int FutureYear
+        {
+            get
+            {
+                if (_resultsList.Count == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return _resultsList[0].FutureYear;
+                }
+            }
+        }
         #endregion
 
         #region Constructor
@@ -32,6 +59,66 @@ namespace metrics
         #endregion
 
         #region Methods 
+        public List<string> GetAssetCategories()
+        {
+            List<string> assetCats = new List<string>();
+            foreach(AlternativeResults alternativeResults in _resultsList)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+            }
+            return assetCats;
+        }
+        public List<string> GetDamageCategories()
+        {
+            List<string> damCats = new List<string>();
+            foreach (AlternativeResults alternativeResults in _resultsList)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            damCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            damCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+            }
+            return damCats;
+        }
         /// <summary>
         /// This method gets the mean consequences reduced between the with- and without-project conditions for a given with-project condition, 
         /// impact area, damage category, and asset category combination. 
