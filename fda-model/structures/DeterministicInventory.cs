@@ -14,7 +14,7 @@ namespace structures
         {
             //assume each structure has a corresponding index to the depth
             List<StructureDamageResult> results = new List<StructureDamageResult>();
-            StructureDamageResult nodamage = new StructureDamageResult(0, 0, 0);
+            StructureDamageResult nodamage = new StructureDamageResult(0, 0, 0, 0);
             for (int i = 0; i < Inventory.Count; i++)
             {
                 float depth = depths[i];
