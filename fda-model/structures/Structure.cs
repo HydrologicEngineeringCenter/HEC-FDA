@@ -9,62 +9,46 @@ namespace structures
 {
     public class Structure
     {
-        private int _fdid;
-        private PointM _point;
-        private double _foundationHeightMean;
-        private double _StructureValue;
-        private double _ContentValue;
-        private double _OtherValue;
-        private double _StructureValueFromInput;
-        private double _ContentValueFromInput;
-        private double _OtherValueFromInput;
-        private string _occtype_name;
-        private string _damcat_name;
-        private int _pop2amu65;
-        private int _pop2amo65;
-        private int _pop2pmu65;
-        private int _pop2pmo65;
-        private int _impactAreaID;
-        private string _cbdID;
-        private int _yearInService;
         private List<double> _computeStages;
+        public int Fid { get; }
+        public PointM Point { get; }
+        public double FoundationHeightMean { get; }
+        public double ValueStructureMean { get; }
+        public double ValueContentMean { get; }
+        public double ValueVehicleMean { get; }
+        public double ValueOtherMean { get; }
+        public string DamageCatagory { get; }
+        public string OccTypeName { get; }
+        public int ImpactAreaID { get; }
+        public string Cbfips { get; }
 
-        public PointM XYPoint
+        public Structure(int fid, PointM point, double found_ht, double val_struct, double val_cont, double val_vehic, double val_other, string st_damcat, string occtype, int impactAreaID, string cbfips)
         {
-            get { return _point; }
-        }
-        public string ImpactAreaID { get; set; }
-
-        //This parameter list lines up with columnsOfInterest in the Inventory 
-        public Structure(int name, PointM point, double foundationHeightMean, double structureValue, double contentValue, double vehicleValue, string damCat, string occtype, int pop2amu65, int pop2amo65, int pop2pmu65, int pop2pm065, int impactAreaID, string censusBlockID)
-        {
-            _fdid = name;
-            _point = point;
-            _foundationHeightMean = foundationHeightMean;
-            _StructureValueFromInput = structureValue;
-            _ContentValueFromInput = contentValue;
-            _OtherValueFromInput = vehicleValue;
-            _occtype_name = occtype;
-            _damcat_name = damCat;
-            _pop2amu65 = pop2amu65;
-            _pop2amo65 = pop2amo65;
-            _pop2pmu65 = pop2pmu65;
-            _pop2pmo65 = pop2pm065;
-            _impactAreaID = impactAreaID;
-            _cbdID = censusBlockID;
+            Fid = fid;
+            Point = point;
+            FoundationHeightMean = found_ht;
+            ValueStructureMean = val_struct;
+            ValueContentMean = val_cont;
+            ValueVehicleMean = val_vehic;
+            ValueOtherMean = val_other;
+            DamageCatagory = st_damcat;
+            OccTypeName = occtype;
+            ImpactAreaID = impactAreaID;
+            Cbfips = cbfips;
         }
 
-
-        public string DamCatName { get { return _damcat_name; } }
-        public string OccTypeName { get { return _occtype_name; } }
         public DeterministicStructure Sample(int seed, DeterministicOccupancyType occtype)
         {
             Random random = new Random(seed);
-            double foundHeightSample = _foundationHeightMean + (_foundationHeightMean * occtype.FoundationHeightError);
-            double structValueSample = _StructureValue;
-            //load up the deterministic structure
-            return new DeterministicStructure(_fdid, structValueSample, foundHeightSample);
 
+            double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightError;
+            double structValueSample = ValueStructureMean * occtype.StructureValueError;
+            double contentValueSample = ValueContentMean * occtype.ContentValueError;
+            double vehicleValueSample = ValueVehicleMean * occtype.VehicleValueError;
+            double otherValueSample = ValueOtherMean * occtype.OtherValueError;
+
+            //load up the deterministic structure
+            return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,occtype, foundHeightSample,structValueSample,contentValueSample,vehicleValueSample,otherValueSample);
         }
 
 
