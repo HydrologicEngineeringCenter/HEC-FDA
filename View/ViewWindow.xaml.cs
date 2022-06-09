@@ -68,7 +68,7 @@ namespace HEC.FDA.View
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MessageHub.UnsubscribeAll();
+            MessageHub.UnsubscribeAll(TextFileMessageSubscriber.Instance);
             TextFileMessageSubscriber.Instance.Dispose();
             WindowVM vm = DataContext as WindowVM;
             if (vm.Tab != null)
