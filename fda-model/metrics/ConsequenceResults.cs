@@ -319,9 +319,9 @@ namespace metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns> Aggregated consequences histogram 
-        public ThreadsafeInlineHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        public IHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            List<IHistogram> histograms = new List<IHistogram>();
             foreach (ConsequenceResult consequenceResult in _consequenceResultList)
             {
                 if(damageCategory == null && assetCategory == null && impactAreaID == -999)
@@ -375,8 +375,22 @@ namespace metrics
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
                 }
             }
-                    ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-                    return aggregatedHistogram;
+            IHistogram aggregateHistogram;
+            if (histograms.Count == 0)
+            {
+                string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                aggregateHistogram = new Histogram();
+            }
+            else
+            {
+                aggregateHistogram = histograms[0];
+                histograms.RemoveAt(0);
+                aggregateHistogram.AddHistograms(histograms);
+            }
+            return aggregateHistogram;
+
         }
       
         public XElement WriteToXML()

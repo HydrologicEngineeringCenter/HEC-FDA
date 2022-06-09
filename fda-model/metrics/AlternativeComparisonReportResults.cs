@@ -7,7 +7,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 namespace metrics
 {
     public class AlternativeComparisonReportResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
-    {
+    {   //TODO: save a year 
         #region Fields
         private List<AlternativeResults> _resultsList;
         #endregion
@@ -21,7 +21,34 @@ namespace metrics
             }
         }
         public event MessageReportedEventHandler MessageReport;
-
+        public int BaseYear
+        {
+            get
+            {
+                if(_resultsList.Count == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return _resultsList[0].BaseYear;
+                }
+            }
+        }
+        public int FutureYear
+        {
+            get
+            {
+                if (_resultsList.Count == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return _resultsList[0].FutureYear;
+                }
+            }
+        }
         #endregion
 
         #region Constructor
@@ -32,6 +59,66 @@ namespace metrics
         #endregion
 
         #region Methods 
+        public List<string> GetAssetCategories()
+        {
+            List<string> assetCats = new List<string>();
+            foreach(AlternativeResults alternativeResults in _resultsList)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+            }
+            return assetCats;
+        }
+        public List<string> GetDamageCategories()
+        {
+            List<string> damCats = new List<string>();
+            foreach (AlternativeResults alternativeResults in _resultsList)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            damCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                {
+                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            damCats.Add(consequenceResult.AssetCategory);
+                        }
+                    }
+
+                }
+            }
+            return damCats;
+        }
         /// <summary>
         /// This method gets the mean consequences reduced between the with- and without-project conditions for a given with-project condition, 
         /// impact area, damage category, and asset category combination. 
@@ -82,7 +169,7 @@ namespace metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public Statistics.Histograms.ThreadsafeInlineHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Statistics.Histograms.IHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
             return alternativeResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    public class ThreadsafeInlineHistogram
+    public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
@@ -32,9 +32,16 @@ namespace Statistics.Histograms
         private static int _dequeue; //TODO: what does this represent?
         private System.ComponentModel.BackgroundWorker _backgroundWorker;
         private System.Collections.Concurrent.ConcurrentQueue<double> _observations;
+        private const string _type = "ThreadsafeInlineHistogram";
         #endregion
         #region Properties
-
+        public string MyType
+        {
+            get
+            {
+                return _type;
+            }
+        }
         public bool IsConverged
         {
             get
@@ -147,6 +154,13 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Constructor
+        public ThreadsafeInlineHistogram()
+        {
+            _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
+            _ConvergenceCriteria = new ConvergenceCriteria();
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
+        }
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
@@ -569,24 +583,23 @@ namespace Statistics.Histograms
             }
         }
 
-        public static ThreadsafeInlineHistogram AddHistograms(List<ThreadsafeInlineHistogram> histograms)
+        public void AddHistograms(List<IHistogram> histograms)
         {
-            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-            ThreadsafeInlineHistogram threadsafeInlineHistogramToReturn = new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
-
+            //if histograms.count == 0, then nothing happens, as you would expect
+            //adding 0 histograms to *this* histogram changes nothing 
             if (histograms.Count > 0)
             {
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
                 double min = 0;
                 double max = 0;
                 int sampleSize = 0;
-                foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
+                foreach (ThreadsafeInlineHistogram histogramToAdd in histograms)
                 {
-                    double newMin = Math.Min(min, threadsafeInlineHistogram.Min);
+                    double newMin = Math.Min(min, histogramToAdd.Min);
                     min = newMin;
-                    double newMax = Math.Max(max, threadsafeInlineHistogram.Max);
+                    double newMax = Math.Max(max, histogramToAdd.Max);
                     max = newMax;
-                    int newSampleSize = Math.Max(sampleSize, (int)threadsafeInlineHistogram.SampleSize);
+                    int newSampleSize = Math.Max(sampleSize, (int)histogramToAdd.SampleSize);
                     sampleSize = newSampleSize;
                 }
                 double range = max - min;
@@ -597,18 +610,30 @@ namespace Statistics.Histograms
                 Random random = new Random(seed);
                 for (int i = 0; i < sampleSize; i++)
                 {
-                    double prob = (i + .5) / sampleSize;
                     double summedValue = 0;
-                    foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
+                    foreach (ThreadsafeInlineHistogram histogramToSample in histograms)
                     {
-                        double value = threadsafeInlineHistogram.InverseCDF(prob);
+                        double value = histogramToSample.InverseCDF(random.NextDouble());
                         summedValue += value;
                     }
+                    double thisValue = this.InverseCDF(random.NextDouble());
+                    summedValue += thisValue;
                     histogram.AddObservationToHistogram(summedValue, i);
                 }
-                threadsafeInlineHistogramToReturn = histogram;
+                _BinCounts = histogram._BinCounts;
+                _SampleMean = histogram._SampleMean;
+                _SampleVariance = histogram._SampleVariance;
+                _Min = histogram._Min;
+                _Max = histogram._Max;
+                _SampleMin = histogram._SampleMin;
+                _SampleMax = histogram._SampleMax;
+                _SampleSize = histogram._SampleSize;
+                _BinWidth = histogram._BinWidth;
+                _Converged = histogram._Converged;
+                _ConvergedIterations = histogram._ConvergedIterations;
+                _ConvergedOnMax = histogram._ConvergedOnMax;
+                _ConvergenceCriteria = histogram._ConvergenceCriteria;
             }
-            return threadsafeInlineHistogramToReturn;
         }
 
         public XElement WriteToXML()
@@ -717,7 +742,7 @@ namespace Statistics.Histograms
             int remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
             return Convert.ToInt32(Math.Min(remainingIters, biggestGuess));
         }
-        public bool Equals(ThreadsafeInlineHistogram threadsafeInlineHistogram)
+        public bool Equals(IHistogram threadsafeInlineHistogram)
         {
             bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(threadsafeInlineHistogram.ConvergenceCriteria);
             if (!convergenceCriteriaAreEqual)

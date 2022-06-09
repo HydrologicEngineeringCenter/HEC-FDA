@@ -2,10 +2,11 @@
 using System.Linq;
 using Utilities;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace Statistics.Histograms
 {
-    public class Histogram
+    public class Histogram: IHistogram
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
@@ -22,9 +23,17 @@ namespace Statistics.Histograms
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
+        private const string _type = "Histogram";
         #endregion
         #region Properties
 
+        public string MyType
+        {
+            get
+            {
+                return _type;
+            }
+        }
         public bool IsConverged
         {
             get
@@ -42,6 +51,13 @@ namespace Statistics.Histograms
         public double BinWidth{
             get{
                 return _BinWidth;
+            }
+        }
+        public ConvergenceCriteria ConvergenceCriteria
+        {
+            get
+            {
+                return _ConvergenceCriteria;
             }
         }
         public Int32[] BinCounts{
@@ -93,6 +109,12 @@ namespace Statistics.Histograms
         }
         #endregion      
         #region Constructor
+        public Histogram()
+        {
+            _BinWidth = 1; //TODO this hard-coded value is a hack 
+            _minHasNotBeenSet = true;
+            _ConvergenceCriteria = new ConvergenceCriteria();
+        }
         public Histogram(double min, double binWidth)
         {
             _BinWidth = binWidth;
@@ -149,7 +171,13 @@ namespace Statistics.Histograms
             double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
             return skewness;
         }
+        
         #region Functions
+        public void ForceDeQueue()
+        {
+            //do nothing
+            //HACK
+        }
         public double HistogramMean()
         {           
             if (_N == 0)
@@ -196,7 +224,14 @@ namespace Statistics.Histograms
         public double HistogramStandardDeviation(){
             return Math.Sqrt(HistogramVariance());
         }
-        public void AddObservationToHistogram(double observation)
+        /// <summary>
+        /// The only argument that should be used in this function is the observation value
+        /// A hacky solution was used here so that Histogram and ThreadsafeInlineHIstogram match 
+        /// and the interface would work 
+        /// </summary>
+        /// <param name="observation"></param>
+        /// <param name="index"></param>
+        public void AddObservationToHistogram(double observation, int index = 0) //TODO index is a hack
         {   
             if (_N == 0){
                 _SampleMax = observation;
@@ -409,7 +444,58 @@ namespace Statistics.Histograms
                 
             }
         }
-
+        public void AddHistograms(List<IHistogram> histograms)
+        {
+            //if histograms.count == 0, then nothing happens, as you would expect
+            //adding 0 histograms to *this* histogram changes nothing 
+            if (histograms.Count > 0)
+            {
+                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
+                double min = 0;
+                double max = 0;
+                int sampleSize = 0;
+                foreach (Histogram histogramToAdd in histograms)
+                {
+                    double newMin = Math.Min(min, histogramToAdd.Min);
+                    min = newMin;
+                    double newMax = Math.Max(max, histogramToAdd.Max);
+                    max = newMax;
+                    int newSampleSize = Math.Max(sampleSize, (int)histogramToAdd.SampleSize);
+                    sampleSize = newSampleSize;
+                }
+                double range = max - min;
+                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
+                double binWidth = range / sampleSize;
+                Histogram histogram = new Histogram(min, binWidth, convergenceCriteria);
+                int seed = 1234;
+                Random random = new Random(seed);
+                for (int i = 0; i < sampleSize; i++)
+                {
+                    double summedValue = 0;
+                    foreach (Histogram histogramToSample in histograms)
+                    {
+                        double value = histogramToSample.InverseCDF(random.NextDouble());
+                        summedValue += value;
+                    }
+                    double thisValue = this.InverseCDF(random.NextDouble());
+                    summedValue += thisValue;
+                    histogram.AddObservationToHistogram(summedValue, i);
+                }
+                _BinCounts = histogram._BinCounts;
+                _SampleMean = histogram._SampleMean;
+                _SampleVariance = histogram._SampleVariance;
+                _Min = histogram._Min;
+                _Max = histogram._Max;
+                _SampleMin = histogram._SampleMin;
+                _SampleMax = histogram._SampleMax;
+                _N = histogram._N;
+                _BinWidth = histogram._BinWidth;
+                _Converged = histogram._Converged;
+                _ConvergedIterations = histogram._ConvergedIterations;
+                _ConvergedOnMax = histogram._ConvergedOnMax;
+                _ConvergenceCriteria = histogram._ConvergenceCriteria;
+            }
+        }
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("Histogram");
@@ -481,6 +567,34 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
+        public bool Equals(IHistogram histogramToCompare)
+        {
+            bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(histogramToCompare.ConvergenceCriteria);
+            if (!convergenceCriteriaAreEqual)
+            {
+                return false;
+            }
+            for (int i = 0; i < _BinCounts.Length; i++)
+            {
+                bool binCountsAreEqual = _BinCounts[i].Equals(histogramToCompare.BinCounts[i]);
+                if (!binCountsAreEqual)
+                {
+                    return false;
+                }
+            }
+            bool minAreEqual = _Min.Equals(histogramToCompare.Min);
+            if (!minAreEqual)
+            {
+                return false;
+            }
+            return true;
+
+        }
+        int IHistogram.EstimateIterationsRemaining(double upperq, double lowerq)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

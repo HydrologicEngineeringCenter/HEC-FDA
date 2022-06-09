@@ -9,6 +9,7 @@ namespace alternativeComparisonReport
 {
     public class AlternativeComparisonReport
 {
+        private const int _iterations = 10000;
         /// <summary>
         /// This method computes the distribution of average annual equivalent damage reduced between the without-project alternative and each of the with-project alternatives
         /// The function returns an AlternativeComparisonReportResults object which stores a list of AlternativeResults for each with-project condition. 
@@ -32,34 +33,32 @@ namespace alternativeComparisonReport
 
                     //foreach (ConsequenceResult damageResult in withProjectDamageResult.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;//(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
-                        withProjectHistogram.ForceDeQueue();
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
-                        withoutProjectHistogram.ForceDeQueue();
+                        IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;//(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID).ConsequenceHistogram;
+                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
                         double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min;  //InverseCDF(lowerBoundProbability);
-                        double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQLowerBound;
 
                         double withProjectDamageAAEQUpperBound = withProjectHistogram.Max; //InverseCDF(upperBoundProbability);
                         double withoutProjectDamageAAEQUpperBound = withoutProjectHistogram.Max; //InverseCDF(upperBoundProbability);
-                        double damagesReducedUpperBound = withoutProjectDamageAAEQUpperBound - withProjectDamageAAEQUpperBound;
+
+                        double damagesReducedUpperBound = withoutProjectDamageAAEQUpperBound - withProjectDamageAAEQLowerBound;
+                        double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQUpperBound;
 
                         double range = damagesReducedUpperBound - damagesReducedLowerBound;
                         //TODO: how does this work if based on convergence criteria?
-                        double binQuantity = 1 + 3.322 * Math.Log(convergenceCriteria.MaxIterations);
+                        double binQuantity = 1 + 3.322 * Math.Log(_iterations);
                         double binWidth = Math.Ceiling(range / binQuantity);
-
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.ConvergenceCriteria, withProjectDamageResult.RegionID, binWidth);
-                        //TODO: run this loop until convergence
-                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+                        Histogram damageReducedHistogram = new Histogram(damagesReducedLowerBound, binWidth, withProjectDamageResult.ConvergenceCriteria);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
+                        //TODO: run this loop until convergence        
+                        for (int i = 0; i < _iterations; i++)
                         {
                             double withProjectDamageAAEQ = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double withoutProjectDamageAAEQ = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
                             damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
-                        damageReducedResult.ConsequenceHistogram.ForceDeQueue();
                         damageReducedOneAlternative.AddConsequenceResults(damageReducedResult);
 
                     }
@@ -109,12 +108,24 @@ namespace alternativeComparisonReport
 
                     foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
+                        IHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
 
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
+                        double withProjectMin = withProjectHistogram.Min;
+                        double withProjectMax = withProjectHistogram.Max;
+                        double withoutProjectMin = withoutProjectHistogram.Min;
+                        double withoutProjectMax = withoutProjectHistogram.Max;
+
+                        double maxDamageReduced = withoutProjectMax - withProjectMin;
+                        double minDamageReduced = withoutProjectMin - withProjectMax;
+                        double range = maxDamageReduced - minDamageReduced;
+                        //TODO: how does this work if based on convergence criteria?
+                        double binQuantity = 1 + 3.322 * Math.Log(_iterations);
+                        double binWidth = Math.Ceiling(range / binQuantity);
+                        Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
-                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+                        for (int i = 0; i < _iterations; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
@@ -149,12 +160,23 @@ namespace alternativeComparisonReport
 
                     foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
-                        ThreadsafeInlineHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
-                        ThreadsafeInlineHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
+                        IHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
+                        IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
 
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.ConvergenceCriteria, withoutProjectDamageResult.RegionID);
+                        double withMin = withProjectHistogram.Min;
+                        double withMax = withProjectHistogram.Max;
+                        double withoutMin = withoutProjectHistogram.Min;
+                        double withoutMax = withoutProjectHistogram.Max;
+
+                        double minDamageReduced = withoutMin - withMax;
+                        double maxDamageReduced = withoutMax - withMin;
+                        double range = maxDamageReduced - minDamageReduced;
+                        double binQuantity = 1 + 3.22 * Math.Log(_iterations);
+                        double binWidth = Math.Ceiling(binQuantity / range);
+                        Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
+                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
-                        for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+                        for (int i = 0; i < _iterations; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());

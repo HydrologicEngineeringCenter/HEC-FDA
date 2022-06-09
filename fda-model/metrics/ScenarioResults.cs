@@ -1,9 +1,11 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
 namespace metrics
@@ -22,18 +24,52 @@ namespace metrics
                 return _resultsList;
             }
         }
+        public int AnalysisYear { get; }
         public event MessageReportedEventHandler MessageReport;
 
         #endregion
 
         #region Constructor
-        public ScenarioResults()
+        public ScenarioResults(int year)
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();
+            AnalysisYear = year;
         }
         #endregion
 
         #region Methods
+        public List<string> GetAssetCategories()
+        {
+            List<string> assetCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        assetCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
+
+            }
+            return assetCats;
+        }
+        public List<string> GetDamageCategories()
+        {
+            List<string> damCats = new List<string>();
+            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            {
+                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if(!damCats.Contains(consequenceResult.DamageCategory))
+                    {
+                        damCats.Add(consequenceResult.DamageCategory);
+                    }
+                }
+                
+            }
+            return damCats;
+        }
         public double MeanAEP(int impactAreaID, int thresholdID)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);
@@ -215,9 +251,9 @@ namespace metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>        
-        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            List<ThreadsafeInlineHistogram> histograms = new List<ThreadsafeInlineHistogram>();
+            List<IHistogram> histograms = new List<IHistogram>();
 
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
@@ -278,8 +314,21 @@ namespace metrics
                     }
                 }
             }
-            ThreadsafeInlineHistogram aggregatedHistogram = ThreadsafeInlineHistogram.AddHistograms(histograms);
-            return aggregatedHistogram;
+            IHistogram aggregateHistogram;
+            if (histograms.Count == 0)
+            {
+                string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                aggregateHistogram = new Histogram();
+            }
+            else
+            {
+                aggregateHistogram = histograms[0];
+                histograms.RemoveAt(0);
+                aggregateHistogram.AddHistograms(histograms);
+            }
+            return aggregateHistogram;
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {
@@ -311,6 +360,7 @@ namespace metrics
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("ScenarioResults");
+            mainElement.SetAttributeValue("Year", AnalysisYear);
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
@@ -321,7 +371,8 @@ namespace metrics
 
         public static ScenarioResults ReadFromXML(XElement xElement)
         {
-            ScenarioResults scenarioResults = new ScenarioResults();
+            int year = Convert.ToInt32(xElement.Attribute("Year").Value);
+            ScenarioResults scenarioResults = new ScenarioResults(year);
             foreach (XElement element in xElement.Elements())
             {
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);

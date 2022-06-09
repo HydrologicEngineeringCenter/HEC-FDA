@@ -116,7 +116,7 @@ namespace metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>
-        public ThreadsafeInlineHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
