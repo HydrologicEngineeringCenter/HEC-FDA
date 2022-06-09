@@ -444,11 +444,10 @@ namespace Statistics.Histograms
                 
             }
         }
-        //TODO: set the properties of aggregated histogram to THIS histogram 
         public void AddHistograms(List<IHistogram> histograms)
         {
-            Histogram histogramToReturn = new Histogram();
-
+            //if histograms.count == 0, then nothing happens, as you would expect
+            //adding 0 histograms to *this* histogram changes nothing 
             if (histograms.Count > 0)
             {
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
@@ -472,30 +471,30 @@ namespace Statistics.Histograms
                 Random random = new Random(seed);
                 for (int i = 0; i < sampleSize; i++)
                 {
-                    double prob = (i + .5) / sampleSize;
                     double summedValue = 0;
                     foreach (Histogram histogramToSample in histograms)
                     {
-                        double value = histogramToSample.InverseCDF(prob);
+                        double value = histogramToSample.InverseCDF(random.NextDouble());
                         summedValue += value;
                     }
+                    double thisValue = this.InverseCDF(random.NextDouble());
+                    summedValue += thisValue;
                     histogram.AddObservationToHistogram(summedValue, i);
                 }
-                histogramToReturn = histogram;
+                _BinCounts = histogram._BinCounts;
+                _SampleMean = histogram._SampleMean;
+                _SampleVariance = histogram._SampleVariance;
+                _Min = histogram._Min;
+                _Max = histogram._Max;
+                _SampleMin = histogram._SampleMin;
+                _SampleMax = histogram._SampleMax;
+                _N = histogram._N;
+                _BinWidth = histogram._BinWidth;
+                _Converged = histogram._Converged;
+                _ConvergedIterations = histogram._ConvergedIterations;
+                _ConvergedOnMax = histogram._ConvergedOnMax;
+                _ConvergenceCriteria = histogram._ConvergenceCriteria;
             }
-            _BinCounts = histogramToReturn._BinCounts;
-            _SampleMean = histogramToReturn._SampleMean;
-            _SampleVariance = histogramToReturn._SampleVariance;
-            _Min = histogramToReturn._Min;
-            _Max = histogramToReturn._Max;
-            _SampleMin = histogramToReturn._SampleMin;
-            _SampleMax = histogramToReturn._SampleMax;
-            _N = histogramToReturn._N;
-            _BinWidth = histogramToReturn._BinWidth;
-            _Converged = histogramToReturn._Converged;
-            _ConvergedIterations = histogramToReturn._ConvergedIterations;
-            _ConvergedOnMax = histogramToReturn._ConvergedOnMax;
-            _ConvergenceCriteria = histogramToReturn._ConvergenceCriteria;
         }
         public XElement WriteToXML()
         {
@@ -568,7 +567,29 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
+        public bool Equals(IHistogram histogramToCompare)
+        {
+            bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(histogramToCompare.ConvergenceCriteria);
+            if (!convergenceCriteriaAreEqual)
+            {
+                return false;
+            }
+            for (int i = 0; i < _BinCounts.Length; i++)
+            {
+                bool binCountsAreEqual = _BinCounts[i].Equals(histogramToCompare.BinCounts[i]);
+                if (!binCountsAreEqual)
+                {
+                    return false;
+                }
+            }
+            bool minAreEqual = _Min.Equals(histogramToCompare.Min);
+            if (!minAreEqual)
+            {
+                return false;
+            }
+            return true;
 
+        }
         int IHistogram.EstimateIterationsRemaining(double upperq, double lowerq)
         {
             throw new NotImplementedException();

@@ -36,6 +36,7 @@ namespace Statistics.Histograms
         bool TestForConvergence(double upperq, double lowerq);
         int EstimateIterationsRemaining(double upperq, double lowerq);
        void AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
+        bool Equals(IHistogram histogramForComparison);
         #endregion
     }
 }

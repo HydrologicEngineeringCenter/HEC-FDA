@@ -375,9 +375,22 @@ namespace metrics
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
                 }
             }
-            //need to get the first histogram and then add the rest 
-            IHistogram aggregatedHistogram = IHistogram.AddHistograms(histograms);
-                    return aggregatedHistogram;
+            IHistogram aggregateHistogram;
+            if (histograms.Count == 0)
+            {
+                string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                aggregateHistogram = new Histogram();
+            }
+            else
+            {
+                aggregateHistogram = histograms[0];
+                histograms.RemoveAt(0);
+                aggregateHistogram.AddHistograms(histograms);
+            }
+            return aggregateHistogram;
+
         }
       
         public XElement WriteToXML()

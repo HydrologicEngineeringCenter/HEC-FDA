@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
 namespace metrics
@@ -313,8 +314,21 @@ namespace metrics
                     }
                 }
             }
-            IHistogram aggregatedHistogram = IHistogram.AddHistograms(histograms);
-            return aggregatedHistogram;
+            IHistogram aggregateHistogram;
+            if (histograms.Count == 0)
+            {
+                string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                aggregateHistogram = new Histogram();
+            }
+            else
+            {
+                aggregateHistogram = histograms[0];
+                histograms.RemoveAt(0);
+                aggregateHistogram.AddHistograms(histograms);
+            }
+            return aggregateHistogram;
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {
