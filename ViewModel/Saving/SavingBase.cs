@@ -151,7 +151,12 @@ namespace HEC.FDA.ViewModel.Saving
 
         private string EscapeSingleQuotes(object value)
         {
-            return value.ToString().Replace("'", "''");
+            string returnValue = null;
+            if (value != null)
+            {
+                returnValue = value.ToString().Replace("'", "''");
+            }
+            return returnValue;
         }
 
         /// <summary>
