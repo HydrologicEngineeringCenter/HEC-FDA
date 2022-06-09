@@ -163,7 +163,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             vm.RequestNavigation += Navigate;
 
             string header = "Edit Impact Area Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS");
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS" + Name);
             Navigate(tab, false, false);
         }
 

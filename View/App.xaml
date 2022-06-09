@@ -357,9 +357,6 @@
             <UtilitiesView:MessageWindow/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type UtilitiesVM:CustomMessageBoxVM }" >
-            <UtilitiesView:CustomMessageBox/>
-        </DataTemplate>
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomHeaderVM }" >
             <UtilitiesView:CustomHeader/>
         </DataTemplate>

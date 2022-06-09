@@ -7,7 +7,6 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
-using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -156,7 +155,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                     _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, firstElemYear,
                     firstResults, secondElemYear, secondResults);
                 }
-             
+
+                MessageBox.Show("compute complete");
                 Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(this);
             }
             else
@@ -167,10 +167,18 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         }
 
-
-        private IASElementSet[] GetElementsFromID()
+        /// <summary>
+        /// These elements will be returned in year order. The lower year will be the first element.
+        /// If the element cannot be found then it will be null.
+        /// </summary>
+        /// <returns></returns>
+        public IASElementSet[] GetElementsFromID()
         {
             IASElementSet[] iASElems = new IASElementSet[] { null, null };
+
+            bool firstElemFound = false;
+            bool secondElemFound = false;
+
             int firstID = IASElementSets[0];
             int secondID = IASElementSets[1];
             //get the current ias elements in the study
@@ -181,12 +189,31 @@ namespace HEC.FDA.ViewModel.Alternatives
                 if (setID == firstID)
                 {
                     iASElems[0] = set;
+                    firstElemFound = true;
                 }
                 else if (setID == secondID)
                 {
                     iASElems[1] = set;
+                    secondElemFound = true;
                 }
             }
+
+            //put them in the correct order
+            if(firstElemFound && secondElemFound)
+            {
+                IASElementSet firstElem = iASElems[0];
+                IASElementSet secondElem = iASElems[1];
+                int firstYear = firstElem.AnalysisYear;
+                int secondYear = secondElem.AnalysisYear;
+                if(firstYear > secondYear)
+                {
+                    //todo: test this
+                    //switch them 
+                    iASElems[0] = secondElem;
+                    iASElems[1] = firstElem;
+                }
+            }
+
             return iASElems;
         }
 
@@ -246,7 +273,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = new FdaValidationResult();
             if (firstElem == null || secondElem == null)
             {
-                vr.AddErrorMessage("There are no longer two impact area scenarios linked to this alternative.");
+                vr.AddErrorMessage("There are no longer two scenarios linked to this alternative.");
             }
             return vr;
         }
@@ -264,11 +291,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             IASElementSet secondElem = iASElems[1];
 
 
-            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.GetScenarioResults()), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.GetScenarioResults()), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.GetScenarioResults()), new DamageByImpactAreaVM(firstElem.GetScenarioResults()), new DamageByDamCatVM(firstElem.GetScenarioResults()));
+            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.GetScenarioResults()), new DamageByImpactAreaVM(secondElem.GetScenarioResults()), new DamageByDamCatVM(secondElem.GetScenarioResults()));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .7, 8), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _Results), new DamageByImpactAreaVM(discountRate, period, _Results), new DamageByDamCatVM(_Results));
             altResult = new AlternativeResult(eadResult, aaeqResult);
 
             return altResult;

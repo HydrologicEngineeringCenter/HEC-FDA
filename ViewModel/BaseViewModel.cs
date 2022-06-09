@@ -24,6 +24,8 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Fields
+        private List<BaseViewModel> _Children = new List<BaseViewModel>();
+
         /// <summary>
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
@@ -33,7 +35,6 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Properties
-
         /// <summary>
         /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
         /// as well as listen for events where elements are added, removed, or updated
@@ -88,7 +89,21 @@ namespace HEC.FDA.ViewModel
         public bool HasChanges
         {
             get { return _HasChanges; }
-            set { _HasChanges = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _HasChanges = value;
+                if (!_HasChanges)
+                {
+                    foreach(BaseViewModel vm in _Children)
+                    {
+                        if(vm.HasChanges)
+                        {
+                            vm.HasChanges = false;
+                        }
+                    }
+                }
+                NotifyPropertyChanged(); 
+            }
         }
         public bool WasCanceled { get; set; }
 
@@ -141,6 +156,22 @@ namespace HEC.FDA.ViewModel
             NotifyPropertyChanged(nameof(Error));
         }
 
+        protected void RegisterChildViewModel(BaseViewModel vm)
+        {
+            if (!_Children.Contains(vm))
+            {
+                vm.PropertyChanged += ChildChanged;
+                _Children.Add(vm);
+            }
+        }
+
+        private void ChildChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(nameof(HasChanges)) && sender is BaseViewModel vm)
+            {
+                HasChanges |= vm.HasChanges;
+            }
+        }
 
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

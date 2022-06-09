@@ -123,6 +123,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                    RegisterChildViewModel(specificIASEditorVM);
                 }
                 SelectedImpactArea = ImpactAreas[0];
             }
@@ -187,13 +188,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
-
+                    RegisterChildViewModel(specificIASEditorVM);
                 }
                 else
                 {
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                    RegisterChildViewModel(specificIASEditorVM);
                 }
             }
             //There should always be an impact area.

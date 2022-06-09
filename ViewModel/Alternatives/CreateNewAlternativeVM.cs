@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 if (selectedRows[0].Year == selectedRows[1].Year)
                 {
-                    var Result = MessageBox.Show("Two impact area scenarios with different analysis years must be selected to calculate average annual equivalent damage." + Environment.NewLine +
+                    var Result = MessageBox.Show("Two scenarios with different analysis years must be selected to calculate average annual equivalent damage." + Environment.NewLine +
                         Environment.NewLine + "Do you want to continue saving?", "Same Analysis Years", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (Result == MessageBoxResult.No)
                     {
