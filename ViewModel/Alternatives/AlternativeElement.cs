@@ -354,8 +354,11 @@ namespace HEC.FDA.ViewModel.Alternatives
                 altElement.Add(setElement);
             }
 
-            XElement resultsElem = _Results.WriteToXML();
-            altElement.Add(resultsElem);
+            if(_Results != null)
+            {
+                XElement resultsElem = _Results.WriteToXML();
+                altElement.Add(resultsElem);
+            }
             return altElement.ToString();
         }
     }

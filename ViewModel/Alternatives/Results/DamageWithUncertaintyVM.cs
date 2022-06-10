@@ -81,7 +81,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadHistogramData(ScenarioResults scenarioResults)
         {
-            ThreadsafeInlineHistogram histogram = scenarioResults.GetConsequencesHistogram();
+            IHistogram histogram = scenarioResults.GetConsequencesHistogram();
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
             _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
@@ -89,7 +89,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadHistogramData(AlternativeResults altResults)
         {
-            ThreadsafeInlineHistogram histogram = altResults.GetConsequencesHistogram();
+            IHistogram histogram = altResults.GetConsequencesHistogram();
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
             _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
@@ -97,7 +97,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadHistogramData(AlternativeComparisonReportResults altResults, int altID)
         {
-            ThreadsafeInlineHistogram histogram = altResults.GetAlternativeResultsHistogram(altID);
+            IHistogram histogram = altResults.GetAlternativeResultsHistogram(altID);
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
             _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);

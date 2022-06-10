@@ -212,7 +212,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public ScenarioResults GetScenarioResults()
         {
-            ScenarioResults results = new ScenarioResults();
+            ScenarioResults results = new ScenarioResults(AnalysisYear);
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 results.AddResults(ias.ComputeResults);

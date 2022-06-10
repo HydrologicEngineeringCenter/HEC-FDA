@@ -139,10 +139,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             IsStandard = elem.IsStandard;
             LoadFlows(elem);
             InitializePlotModel();
-            Mean = elem.Mean;
-            StandardDeviation = elem.StDev;
-            Skew = elem.Skew;
-            PeriodOfRecord = elem.POR;
+            _Mean = elem.Mean;
+            _StDev = elem.StDev;
+            _Skew = elem.Skew;
+            _POR = elem.POR;
         }
         #endregion
         #region Voids  
@@ -305,6 +305,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowMean = MEAN + "N/A";
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
+
+                MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return upd;
         }

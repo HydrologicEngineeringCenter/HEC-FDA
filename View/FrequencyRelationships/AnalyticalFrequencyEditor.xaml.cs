@@ -176,5 +176,12 @@ namespace HEC.FDA.View.FrequencyRelationships
             return null;
         }
 
+        private void FitToFlows_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.UpdateChartLineData();
+            }
+        }
     }
 }
