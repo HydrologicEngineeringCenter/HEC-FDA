@@ -186,20 +186,56 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
         {
+            
             List<IDistribution> ys = new List<IDistribution>();
-            for (int i = 0; i < rat.NumberOfPoints; i++)
+            if (rat.NumberOfPoints > 0)
             {
-                if (rat.UsesGlobalError)
+                //add first point
+                double firstStage = rat.GetStage()[0];
+                ys.Add(new Triangular(firstStage, firstStage, firstStage));
+
+                double baseStage = rat.BaseStage;
+                double globalStdDevLow = rat.GlobalStdDevLow;
+                double globalStdDevHigh = rat.GlobalStdDevHigh;
+
+                double deltaMax = globalStdDevHigh - baseStage;
+                double deltaMin = globalStdDevLow - baseStage;
+                
+                double minMostLikelyStageDelta = baseStage - globalStdDevLow;
+                double maxMostLikelyStageDelta = globalStdDevHigh - baseStage;
+
+                double stageDelta = baseStage - firstStage;
+
+                for (int i = 1; i < rat.NumberOfPoints; i++)
                 {
-                    ys.Add(new Triangular(rat.GlobalStdDevLow, rat.GetStage()[i], rat.GlobalStdDevHigh));
-                }
-                else
-                {
-                    ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetStage()[i], rat.IndividualHighStDevs[i]));
+                    if (rat.UsesGlobalError)
+                    {
+                        double mostLikely = rat.GetStage()[i];
+                        if (mostLikely < baseStage)
+                        {
+                            double minDifference = (minMostLikelyStageDelta / stageDelta) * (mostLikely - firstStage);
+                            double minVal = mostLikely - minDifference;
+
+                            double maxDifference = (maxMostLikelyStageDelta / stageDelta) * (mostLikely - firstStage);
+                            double maxVal = mostLikely + maxDifference;
+
+                            ys.Add(new Triangular(minVal, mostLikely, maxVal));
+                        }
+                        else
+                        {
+                            double min = mostLikely + deltaMin;
+                            double max = mostLikely + deltaMax;
+                            ys.Add(new Triangular(min, mostLikely, max));
+                        }
+                    }
+                    else
+                    {
+                        ys.Add(new Triangular(rat.IndividualLowStDevs[i], rat.GetStage()[i], rat.IndividualHighStDevs[i]));
+                    }
                 }
             }
             return ys;
-        }
+        }   
 
         private static List<IDistribution> CreateUniformDistributions(RatingFunction rat)
         {
@@ -236,6 +272,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             //get the curves from the importer
             IList<AggregateDamageFunction> curves = aggDamageList.GetAggDamageFunctions.Values;
+            
             //sort the curves by their plan and year.
             List<List<AggregateDamageFunction>> groupedCurves = curves.GroupBy(curve => new { curve.PlanName, curve.YearName })
                 .Select(group => group.ToList())
@@ -771,7 +808,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 StructureValueType type = (StructureValueType)i;
                 UncertainPairedData function;
 
-                if (IsEmptyFunction(func))
+                if (IsEmptyFunction(func) || ot.UsesDollar)
                 {
                     //create a function with just (0,0)
                     function = CreateEmptyFunction();

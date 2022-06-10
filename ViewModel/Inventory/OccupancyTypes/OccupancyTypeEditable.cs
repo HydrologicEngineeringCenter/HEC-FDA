@@ -48,6 +48,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public int ID { get; set; }
         public int GroupID { get; set; }
+
         /// <summary>
         /// This is used by the occtype editor to determine if this occtype
         /// was edited. This value should be set to false every time the editor
@@ -115,6 +116,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ContentItem.DataModified += OcctypeItemDataModified;
             VehicleItem.DataModified += OcctypeItemDataModified;
             OtherItem.DataModified += OcctypeItemDataModified;
+
+            StructureItem.Curve.SetMinMaxValues(0, 100);
 
             DamageCategoriesList = damageCategoriesList;
             HasBeenSaved = occtypeHasBeenSaved;

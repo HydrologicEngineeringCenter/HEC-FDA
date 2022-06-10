@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 using System.Globalization;
+using HEC.FDA.ViewModel.ImpactArea;
 
 namespace HEC.FDA.View.Utilities
 {
@@ -11,29 +12,39 @@ namespace HEC.FDA.View.Utilities
         // Created By: q0heccdm
         // Created Date: 10/18/2016 9:03:42 AM
         #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
-        #region Constructors
-        #endregion
-        #region Voids
-        #endregion
         #region Functions
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null) { return false; }
-            else if (value.Equals(HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
-            else { return false; }
+            if (value == null || parameter == null) 
+            { 
+                return false; 
+            }
+            else if (value.Equals(ImpactAreaVM.Bank.left)) 
+            { 
+                return true; 
+            }
+            else 
+            { 
+                return false; 
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null) { return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
+            if (value == null || parameter == null) 
+            { 
+                return ImpactAreaVM.Bank.right; 
+            }
             else
             {
-                if (bool.Parse(value.ToString()) == true) return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
-                else return HEC.FDA.ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
+                if (bool.Parse(value.ToString()) == true)
+                {
+                    return ImpactAreaVM.Bank.left;
+                }
+                else
+                {
+                    return ImpactAreaVM.Bank.right;
+                }
             }
         }
 

@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public FlowDoubleWrapper(double flow)
         {
-            Flow = flow;
+            _Flow = flow;
         }
     }
 }

@@ -313,7 +313,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HEC.MVVMFramework.Base" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.2.15.2147" />
+    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.2.15.2147" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />

@@ -88,8 +88,7 @@
                 </Grid.RowDefinitions>
 
                 <Label Grid.Row="0" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True}" Margin="5"/>
-
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True, TargetNullValue=''}" Margin="5"/>
                 <Label Grid.Row="1"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
 

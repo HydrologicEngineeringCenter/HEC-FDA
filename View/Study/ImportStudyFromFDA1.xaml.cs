@@ -37,9 +37,7 @@ namespace HEC.FDA.View.Study
             if (DataContext is ImportFromFDA1VM vm)
             {
                 vm.Import();
-                ImportBtn.IsEnabled = false;
             }
-
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

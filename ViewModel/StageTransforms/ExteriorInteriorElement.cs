@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.EXTERIOR_INTERIOR_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
                 
             Description = desc;

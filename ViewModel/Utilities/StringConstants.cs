@@ -165,6 +165,15 @@
 
         #endregion
 
+        #region ias editor labels
+        public static readonly string FREQUENCY_RELATIONSHIP_LABEL = "Frequency Relationship:";
+        public static readonly string REGULATED_UNREGULATED_LABEL = "Reg-Unreg Flow:";
+        public static readonly string STAGE_DISCHARGE_LABEL = "Stage-Discharge:";
+        public const string LATERAL_STRUCTURE_LABEL = "Lateral Structure:";
+        public static readonly string EXT_INT_SHORT_LABEL = "Ext-Int Stage:";
+        public static readonly string STAGE_DAMAGE_LABEL = "Stage-Damage:";
+        #endregion
+
         public const string OCCTYPE_PLOT_TITLE = "Depth-Percent Damage";
         public const string OCCTYPE_DEPTH = "Depth";
         public const string OCCTYPE_PERCENT_DAMAGE = "Percent Damage";
@@ -179,7 +188,7 @@
             return "Import " + elementName + " From HEC-FDA Version 1.4.3...";
         }
 
-        public static string CreateChildNodeTooltip(string lastEditDate)
+        public static string CreateLastEditTooltip(string lastEditDate)
         {
             return "Last edited " + lastEditDate;
         }

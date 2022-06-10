@@ -245,9 +245,18 @@
         <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
             <IASEditorView:IASEditor/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type IASEditorVM:ComputeScenarioVM }" >
+            <IASEditorView:ComputeScenarioEditor/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
             <IASEditorView:Thresholds/>
+            <DataTemplate.Resources>
+                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+                                         MinWidth="150" Width="450" 
+                                         MinHeight="150" Height="430" />
+            </DataTemplate.Resources>
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >

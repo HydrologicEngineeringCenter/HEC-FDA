@@ -29,10 +29,7 @@
             <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,2,5" Width="40" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
                 <Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource OkConverter}">
-                        <Binding/>
                         <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
-                    </MultiBinding>
                 </Button.CommandParameter>
             </Button>
         </StackPanel>

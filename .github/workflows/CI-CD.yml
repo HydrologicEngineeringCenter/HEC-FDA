@@ -26,10 +26,10 @@ jobs:
 
 
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Debug
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release
 
     - name: Build
-      run: msbuild $env:Solution_Name /p:Configuration=Debug
+      run: msbuild $env:Solution_Name /p:Configuration=Release
         
     # Execute all unit tests in the solution
     - name: Execute unit tests

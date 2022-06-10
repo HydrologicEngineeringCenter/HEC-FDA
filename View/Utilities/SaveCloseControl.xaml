@@ -10,13 +10,13 @@
     <UserControl.Resources>
         <cmds:SaveCommand x:Key="save"/>
         <cmds:CloseCommand x:Key="close"/>
-        <cmds:OkCommandConverter x:Key="OkConverter"/>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
         <cmds:SaveButtonEnabledConverter x:Key="SaveButtonMultiConverter"/>
         <cmds:SaveButtonTooltipConverter x:Key="SaveButtonTooltipConverter"/>
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Label Content="{Binding SavingText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <Button  Content="Save"  ToolTipService.ShowOnDisabled="True" 
                      Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource save}}">
                 <Button.ToolTip>
@@ -33,18 +33,12 @@
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource OkConverter}">
                         <Binding/>
-                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
-                    </MultiBinding>
                 </Button.CommandParameter>
             </Button>
             <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,2,5" Width="40" Height="22"  Command="{Binding Source={StaticResource close}}">
                 <Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource OkConverter}">
-                        <Binding/>
                         <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
-                    </MultiBinding>
                 </Button.CommandParameter>
             </Button>
         </StackPanel>

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Xml.Linq;
+using compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
-
+using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -24,13 +26,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private string _Description = "";
         private int _AnalysisYear;
 
-        private List<metrics.Results> _Results = new List<metrics.Results>();
-
         #endregion
 
         #region Properties
-        public bool HasComputed { get; set; }
-
         public string Description
         {
             get { return _Description; }
@@ -58,7 +56,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
             };
 
             AddActions();
@@ -86,9 +84,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
             AddActions();
+        }
+
+        private bool HaveAllIASComputed()
+        {
+            bool allComputed = true;
+            if(SpecificIASElements.Count == 0)
+            {
+                allComputed = false;
+            }
+            foreach(SpecificIAS ias in SpecificIASElements)
+            {
+                if(ias.ComputeResults == null)
+                {
+                    allComputed = false;
+                    break;
+                }
+            }
+            return allComputed;
         }
 
         private void AddActions()
@@ -133,7 +149,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
-            Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
+            IASEditorVM vm = new IASEditorVM(this, actionManager);
             vm.RequestNavigation += Navigate;
 
             string header = "Edit Impact Area Scenario";
@@ -152,24 +168,42 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return impactAreaRows;
         }
 
-        private List<SpecificIASResultVM> GetResults()
+        public List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
-            int i = 0;
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
                 string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
-                if (impactAreaName != null)
+                if (impactAreaName != null && ias.ComputeResults != null)
                 {
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, _Results[i]);
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, ias.ComputeResults);
                     results.Add(result);
                 }
-                i++;
             }
 
+            return results;
+        }
+
+        public ScenarioResults GetScenarioResults()
+        {
+            ScenarioResults results = new ScenarioResults();
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                results.AddResults( ias.ComputeResults);
+            }
+            return results;
+        }
+
+        public List<ImpactAreaScenarioSimulation> GetSimulations()
+        {
+            List<ImpactAreaScenarioSimulation> results = new List<ImpactAreaScenarioSimulation>();
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                results.Add(ias.Simulation);
+            }
             return results;
         }
 
@@ -190,7 +224,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ViewResults(object arg1, EventArgs arg2)
         {
             List<SpecificIASResultVM> results = GetResults();
-            if (results.Count > 0)
+            if (results.Count>0)
             {
                 IASResultsVM resultViewer = new IASResultsVM(results);
                 string header = "Results for " + Name;
@@ -205,13 +239,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            HasComputed = true;
-            foreach(SpecificIAS ias in SpecificIASElements)
-            {
-                _Results.Add( ias.ComputeScenario(arg1, arg2));
-            }
-            //todo: i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
-            PersistenceFactory.GetIASManager().SaveExisting(this);
+            ComputeScenarioVM vm = new ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
+            string header = "Compute Scenario";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
+            Navigate(tab, false, false);
+        }
+        private void ComputeCompleted()
+        {
+            Application.Current.Dispatcher.Invoke(
+            (Action)(() => 
+            { 
+                PersistenceFactory.GetIASManager().SaveExisting(this);
+                MessageBox.Show("Compute Completed");
+            }));
         }
         #endregion
 

@@ -56,6 +56,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 StudyVM.PropertyChanged += StudyVM_PropertyChanged;
                 CurrentView = StudyVM;
                 Title = StringConstants.FDA_VERSION;
+            
             }
         }
         public WindowVM(IDynamicTab tab)
@@ -75,7 +76,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
 
-        private void CurrentView_RequestNavigation( IDynamicTab tab, bool newWindow, bool asDialog)
+        private void CurrentView_RequestNavigation(IDynamicTab tab, bool newWindow, bool asDialog)
         {
             if (LaunchNewWindow != null)
             {

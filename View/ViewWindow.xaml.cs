@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.View.Utilities;
+using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
@@ -36,6 +37,14 @@ namespace HEC.FDA.View
 
         private void WindowSpawner(WindowVM newvm, bool asDialogue)
         {
+            //If we are popping an existing editor out of the tab control,
+            //we don't want to clear the HasChanges bool.
+            if(newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
+            {
+                newvm.Tab.BaseVM.HasChanges = false;
+            }
+
+            newvm.Tab.IsPoppingOut = false;
             newvm.WasCanceled = true;
             ViewWindow newwindow = new ViewWindow(newvm);
             newwindow.Owner = this;
@@ -62,7 +71,23 @@ namespace HEC.FDA.View
             if (vm.Tab != null)
             {
                 IDynamicTab tab = vm.Tab;
-                tab.RemoveWindow();
+                if (tab.IsPoppingIn)
+                {
+                    tab.RemoveWindow();
+                    tab.IsPoppingIn = false;
+                }
+                else
+                {
+                    bool userWantsToClose = TabController.UserWantsToClose(tab.BaseVM);
+                    if (userWantsToClose)
+                    {
+                        tab.RemoveWindow();
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
+                }
             }
         }
 
@@ -120,7 +145,6 @@ namespace HEC.FDA.View
             }
 
         }
-
         
     }
 }

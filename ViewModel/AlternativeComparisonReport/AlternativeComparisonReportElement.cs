@@ -1,15 +1,18 @@
-﻿using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+﻿using alternatives;
+using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
-    public class AlternativeComparisonReportElement: ChildElement
+    public class AlternativeComparisonReportElement : ChildElement
     {
         private const string ALTERNATIVE_COMP_REPORT = "AlternativeComparisonReport";
         private const string NAME = "Name";
@@ -19,11 +22,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         private const string WITH_PROJ_ELEM = "WithProjectElement";
         private const string LAST_EDIT_DATE = "LastEditDate";
 
-
         public int WithoutProjAltID { get; }
         public List<int> WithProjAltIDs { get; } = new List<int>();
 
-        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id):base(id)
+        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) : base(id)
         {
             Name = name;
             Description = desc;
@@ -32,7 +34,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(creationDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
             };
             AddActions();
         }
@@ -41,7 +43,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         /// The ctor used to load an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeComparisonReportElement(string xml, int id):base(id)
+        public AlternativeComparisonReportElement(string xml, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xml);
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
@@ -59,7 +61,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
 
             AddActions();
@@ -138,15 +140,83 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
-            string header = "Alternative Comparison Report Results: " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
-            Navigate(tab, false, true);
+            FdaValidationResult vr = CanViewResult();
+            if (vr.IsValid)
+            {
+                AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
+                string header = "Alternative Comparison Report Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            //waiting for HEC to get the new model plugged in. 11/16/21
+            FdaValidationResult vr = CanCompute();
+            if(vr.IsValid)
+            {
+                AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+                List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
+                //todo: waiting for HEC to get the new model plugged in. 11/16/21
+                //Alternative withoutAlternative = new Alternative()
+                //alternativeComparisonReport.AlternativeComparisonReport altCompReport = new alternativeComparisonReport.AlternativeComparisonReport(withoutAlt, withProjAlts);)
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        private List<AlternativeElement> GetWithProjectAlternatives()
+        {
+            List<AlternativeElement> alts = new List<AlternativeElement>();
+            foreach(int id in WithProjAltIDs )
+            {
+                AlternativeElement altElement = GetAlternativeElementFromID(id);
+                if(altElement != null)
+                {
+                    alts.Add(altElement);
+                }
+            }
+            return alts;
+        }
+
+        private AlternativeElement GetAlternativeElementFromID(int id)
+        {
+            AlternativeElement alt = null;
+            //get the current ias elements in the study
+            List<AlternativeElement> currentElementSets = StudyCache.GetChildElementsOfType<AlternativeElement>();
+            foreach (AlternativeElement altElem in currentElementSets)
+            {
+                int setID = altElem.ID;
+                if (setID == id)
+                {
+                    alt = altElem;
+                }
+            }
+            return alt;
+        }
+
+        private FdaValidationResult CanCompute()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //todo: check if we have results that can be viewed.
+
+            return vr;
+        }
+
+        private FdaValidationResult CanViewResult()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //todo: check if we have results that can be viewed.
+
+            return vr;
         }
 
         /// <summary>

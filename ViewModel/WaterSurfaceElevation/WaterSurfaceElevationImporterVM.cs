@@ -185,7 +185,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public void FileSelected(string fullpath)
         {
-            if (IsCreatingNewElement)
+            if (fullpath != null && !fullpath.Equals(SelectedPath) && IsCreatingNewElement)
             {
                 FdaValidationResult importResult = new FdaValidationResult();
                 ListOfRows.Clear();
@@ -257,38 +257,46 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         private void SaveExisting()
         {
-            InTheProcessOfSaving = true;
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
-            if (!Name.Equals(_OriginalFolderName))
+            FdaValidationResult validResult = ValidateImporter();
+            if (validResult.IsValid)
             {
-                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
-                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
-                Directory.Move(sourceFilePath, destinationFilePath);
-            }
-            //might have to rename the sub folders.
-            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
-            for (int i = 0; i < ListOfRows.Count; i++)
-            {
-                string newName = ListOfRows[i].Name;
-                string originalName = _OriginalFolderNames[i];
-                if (!newName.Equals(originalName))
+                InTheProcessOfSaving = true;
+                if (!Name.Equals(_OriginalFolderName))
                 {
-                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
+                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
                     Directory.Move(sourceFilePath, destinationFilePath);
-                    _OriginalFolderNames[i] = newName;
                 }
-                newPathProbs.Add(new PathAndProbability( newName, ListOfRows[i].Probability));
-            }
+                //might have to rename the sub folders.
+                List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+                for (int i = 0; i < ListOfRows.Count; i++)
+                {
+                    string newName = ListOfRows[i].Name;
+                    string originalName = _OriginalFolderNames[i];
+                    if (!newName.Equals(originalName))
+                    {
+                        string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
+                        string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                        Directory.Move(sourceFilePath, destinationFilePath);
+                        _OriginalFolderNames[i] = newName;
+                    }
+                    newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
+                }
 
-            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
-            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-            manager.SaveExisting(elementToSave, _OriginalFolderName);
-            SavingText = "Last Saved: " + elementToSave.LastEditDate;
-            HasChanges = false;
-            HasSaved = true;
-            _OriginalFolderName = Name;
+                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
+                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                manager.SaveExisting(elementToSave, _OriginalFolderName);
+                SavingText = "Last Saved: " + elementToSave.LastEditDate;
+                HasChanges = false;
+                HasSaved = true;
+                _OriginalFolderName = Name;
+            }
+            else
+            {
+                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void SaveNew()

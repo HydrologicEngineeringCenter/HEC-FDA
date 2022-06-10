@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using HEC.FDA.ViewModel.Inventory.DamageCategory;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.Inventory.DamageCategory
@@ -15,7 +16,7 @@ namespace HEC.FDA.View.Inventory.DamageCategory
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            HEC.FDA.ViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (HEC.FDA.ViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
+            DamageCategoriesVM vm = (DamageCategoriesVM)DataContext;
             if(Grid.SelectedIndex == -1)
             {
                 vm.AddDamageCategory(Grid.Items.Count);
@@ -28,7 +29,7 @@ namespace HEC.FDA.View.Inventory.DamageCategory
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            HEC.FDA.ViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (HEC.FDA.ViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
+            DamageCategoriesVM vm = (DamageCategoriesVM)DataContext;
             if (Grid.SelectedIndex == -1)
             {
                 vm.RemoveDamageCategory(Grid.Items[Grid.Items.Count-1]);

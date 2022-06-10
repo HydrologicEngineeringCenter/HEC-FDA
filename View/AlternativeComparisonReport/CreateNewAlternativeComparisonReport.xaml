@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -26,7 +27,7 @@
             <Label Grid.Row="0" Grid.Column="0" Margin="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5" HorizontalAlignment="Stretch"/>
             <Label Content="Description:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <!--<UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Description="{Binding Description}" Margin="5"/>-->
+            <UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">

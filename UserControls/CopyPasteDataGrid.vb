@@ -36,7 +36,6 @@ Namespace UserControls
         Private Sub Me_PreviewKeyDown(sender As Object, e As KeyEventArgs) Handles Me.PreviewKeyDown
             If IsLastRowSelected() Then
                 If e.Key = Key.Enter Then
-                    e.Handled = True
                     RaiseEvent PreviewLastRowEnter()
                 ElseIf e.Key = Key.Tab And CurrentColumn.DisplayIndex = Columns.Count - 3 Then
                     e.Handled = True

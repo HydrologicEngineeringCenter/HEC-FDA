@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(lastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
 
             AddActions();
@@ -81,23 +81,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
 
-            LogPearson3 lp3 = new LogPearson3();
-            if (IsStandard)
-            {
-                lp3 = new LogPearson3(Mean, StDev, Skew, POR);
-            }
-            else
-            {
-                //this is fit to flow
-                lp3 = (LogPearson3)lp3.Fit(AnalyticalFlows.ToArray());
-            }
-            PairedData = UncertainPairedDataFactory.CreateLP3Data(lp3);
+            PairedData = CreatePairedData();
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateChildNodeTooltip(LastEditDate)
+                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
 
             AddActions();
@@ -176,9 +166,25 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return flowDoubles;
             
         }
-        public ContinuousDistribution GetDistribution()
+        public LogPearson3 CreateLP3Distribution()
         {
-            return new LogPearson3(Mean, StDev, Skew, POR);
+            LogPearson3 lp3 = new LogPearson3();
+            if (IsStandard)
+            {
+                lp3 = new LogPearson3(Mean, StDev, Skew, POR);
+            }
+            else
+            {
+                //this is fit to flow
+                lp3 = (LogPearson3)lp3.Fit(AnalyticalFlows.ToArray());
+            }
+            return lp3;
+        }
+
+        public UncertainPairedData CreatePairedData()
+        {
+            LogPearson3 lp3 = CreateLP3Distribution();
+            return UncertainPairedDataFactory.CreateLP3Data(lp3);
         }
 
     }

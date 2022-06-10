@@ -127,8 +127,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
             List<double> xVals = new List<double>();
             if (Function != null)
             {
-                xVals.AddRange( Function.Xvals);
+                if (_data.FlipXAxisValues)
+                {
+                    foreach (double x in Function.Xvals)
+                    {
+                        xVals.Add(1 - x);
+                    }
+                }
+                else
+                {
+                    xVals.AddRange(Function.Xvals);
+                }
             }
+
             return xVals.ToArray();
         }
         private double[] getYValues()

@@ -33,7 +33,7 @@
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
                 <TextBlock Name="SILabel" Text="Structure Inventory Shapefile:" TextAlignment="left" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Grid Height="27" Name="SIStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                    <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Point" Name="cmb_Path" />
+                    <CA:TextBoxFileBrowser Path="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" SelectionMade="TextBoxFileBrowser_SelectionMade" />
                 </Grid>
             </StackPanel>
         </StackPanel>

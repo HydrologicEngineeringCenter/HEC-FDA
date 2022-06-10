@@ -1,6 +1,6 @@
 ﻿using HEC.FDA.ViewModel;
+using HEC.FDA.ViewModel.Editors;
 using System;
-using System.Windows;
 using System.Windows.Input;
 
 namespace HEC.FDA.View.Commands
@@ -19,15 +19,15 @@ namespace HEC.FDA.View.Commands
             // but will be enabled if there are any regular errors. By default any rule will be a fatal error. If we want the user to be able to close the form
             // and save the information in the form even if it has errors then use a "false" when declaring the rule. The ok button will be enabled and this method 
             // will be called.
-            var values = (object[])parameter;
-            BaseViewModel vm = (BaseViewModel)values[0];
-            Window window = (Window)values[1];
 
-            vm.Validate();
-
-            if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
+            if (parameter is BaseViewModel vm)
             {
-                ((ViewModel.Editors.BaseEditorVM)vm).Save();
+                vm.Validate();
+
+                if (vm.GetType().IsSubclassOf(typeof(BaseEditorVM)))
+                {
+                    ((BaseEditorVM)vm).Save();
+                }
             }
         }
         #endregion

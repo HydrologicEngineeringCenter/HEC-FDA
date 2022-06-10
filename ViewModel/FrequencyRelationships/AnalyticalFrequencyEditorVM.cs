@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -18,8 +19,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Notes
         #endregion
         #region Fields     
-        private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
-        private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
+        private readonly ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
+        private readonly ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private const string MEAN = "Mean: ";
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
@@ -112,7 +113,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
             get  {return _AnalyticalFlows; }
-            set { _AnalyticalFlows = value; NotifyPropertyChanged();}
         }
         public TableWithPlotVM MyGraphicalVM { get; set; }
 
@@ -260,11 +260,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public FdaValidationResult IsLP3Valid(LogPearson3 lp3)
         {
             FdaValidationResult vr = new FdaValidationResult();
-            lp3.Validate();
-            if (lp3.HasErrors)
+            if (lp3 == null)
             {
-                List<string> errors = lp3.GetErrors().Cast<string>().ToList();
-                vr.AddErrorMessages(errors);
+                vr.AddErrorMessage("Invalid log pearson 3");
+            }
+            else
+            {
+                lp3.Validate();
+                if (lp3.HasErrors)
+                {
+                    List<string> errors = lp3.GetErrors().Cast<string>().ToList();
+                    vr.AddErrorMessages(errors);
+                }
             }
             return vr;
         }
@@ -302,10 +309,33 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return upd;
         }
 
+        private FdaValidationResult ValidateEditor()
+        {
+            FdaValidationResult result = new FdaValidationResult();
+            //if it is "fit to flow" ie not standard then we require at least 3 points
+            if (!IsStandard)
+            {
+                if(AnalyticalFlows.Count() < 3)
+                {
+                    result.AddErrorMessage("Fit to Flows option requires at least 3 flows.");
+                }
+            }
+
+            //if we are still valid, continue with other checks
+            if (result.IsValid)
+            {
+
+                LogPearson3 lp3 = CreateLP3();
+
+                result.AddErrorMessage( IsLP3Valid(lp3).ErrorMessage);
+            }
+
+            return result;
+        }
+
         public override void Save()
         {
-            LogPearson3 lp3 = CreateLP3();
-            FdaValidationResult result = IsLP3Valid(lp3);
+            FdaValidationResult result = ValidateEditor();
             if (result.IsValid)
             {
                 string editDate = DateTime.Now.ToString("G");
@@ -327,17 +357,26 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                      analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
                 base.Save(elem);
             }
+            else
+            {
+                MessageBox.Show("Could not create a valid curve for the following reason:\n" + result.ErrorMessage, "Invalid Curve", MessageBoxButton.OK);
+            }
         }
 
         public void AddRows(int startRow, int numRows)
         {
             for(int i = 0;i<numRows;i++)
             {
-                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-                emptyFlow.FlowChanged += FlowValue_FlowChanged;
-                AnalyticalFlows.Insert(startRow, emptyFlow);
+                AnalyticalFlows.Insert(startRow, CreateDefaultRow());
             }
             UpdateChartLineData();
+        }
+
+        private FlowDoubleWrapper CreateDefaultRow()
+        {
+            FlowDoubleWrapper defaultRow = new FlowDoubleWrapper(1000);
+            defaultRow.FlowChanged += FlowValue_FlowChanged;
+            return defaultRow;
         }
 
         /// <summary>
@@ -348,9 +387,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         /// <param name="numRows"></param>
         public void AddRow()
         {          
-            FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(1000);
-            emptyFlow.FlowChanged += FlowValue_FlowChanged;
-            AnalyticalFlows.Add(emptyFlow);
+            AnalyticalFlows.Add(CreateDefaultRow());
             UpdateChartLineData();
         }
 
@@ -363,9 +400,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             //if all rows are gone then add a new default row
             if (AnalyticalFlows.Count == 0)
             {
-                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
-                emptyFlow.FlowChanged += FlowValue_FlowChanged;
-                AnalyticalFlows.Add(emptyFlow);
+                AnalyticalFlows.Add(CreateDefaultRow());
             }
             UpdateChartLineData();
         }

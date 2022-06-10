@@ -469,7 +469,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 SaveAllReportVM report = new SaveAllReportVM(warningReports);
                 string header = "Save Warnings";
-                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport");
+                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport",false,false);
                 Navigate(tab, true, true); 
             }
             if(fatalErrorReports.Count > 0)

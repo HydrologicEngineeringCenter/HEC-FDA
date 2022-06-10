@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private DefineSIAttributesRowItem _BegDamDepthRow = new DefineSIAttributesRowItem("Beginning Damage Depth:");
         private DefineSIAttributesRowItem _YearInConstructionRow = new DefineSIAttributesRowItem("Year In Construction:");
         private DefineSIAttributesRowItem _NotesRow = new DefineSIAttributesRowItem("Notes/Metadata:");
-        private DefineSIAttributesRowItem _OtherRow = new DefineSIAttributesRowItem("Other:");
+        private DefineSIAttributesRowItem _NumberOfStructuresRow = new DefineSIAttributesRowItem("Number Of Structures:");
         #endregion
         #region Properties
         public string Path
@@ -126,7 +126,7 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_BegDamDepthRow);
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
-            OptionalRows.Add(_OtherRow);
+            OptionalRows.Add(_NumberOfStructuresRow);
         }
 
         private void PathChanged()
@@ -169,8 +169,8 @@ namespace HEC.FDA.ViewModel.Inventory
             _YearInConstructionRow.Items.AddRange(allColumnNames);
             _NotesRow.Items.Clear();
             _NotesRow.Items.AddRange(allColumnNames);
-            _OtherRow.Items.Clear();
-            _OtherRow.Items.AddRange(allColumnNames);
+            _NumberOfStructuresRow.Items.Clear();
+            _NumberOfStructuresRow.Items.AddRange(allColumnNames);
         }
 
         private List<string> GetColumnNames()
@@ -521,7 +521,7 @@ namespace HEC.FDA.ViewModel.Inventory
             row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
             row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);
             row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _NotesRow);
-            row[StructureInventoryPersistenceManager.OTHER] = GetValueForRow(dataTableView, i, _OtherRow);
+            row[StructureInventoryPersistenceManager.NumberOfStructures] = GetValueForRow(dataTableView, i, _NumberOfStructuresRow);
         }
 
         /// <summary>

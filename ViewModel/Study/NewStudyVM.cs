@@ -12,11 +12,16 @@ namespace HEC.FDA.ViewModel.Study
         #endregion
         #region Fields
         private StudyElement _StudyElement;
-        private string _Path;
-        private string _StudyName;
-        private string _Description;
+        private string _Path = "";
+        private string _StudyName = "";
+        private string _Description = "";
         #endregion
         #region Properties
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value;}
+        }
         public string Path { get { return _Path; }
         set
             {
@@ -45,9 +50,6 @@ namespace HEC.FDA.ViewModel.Study
         public NewStudyVM(StudyElement studyElement) : base(null)
         {
             _StudyElement = studyElement;
-            _Path = "C:\\temp\\FDA\\";
-            _StudyName = "Example";
-            _Description = "My description";
         }
         #endregion
         #region Voids

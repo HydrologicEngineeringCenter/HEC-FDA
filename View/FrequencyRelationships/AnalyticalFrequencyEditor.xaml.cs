@@ -24,12 +24,16 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void Dg_table_PreviewLastRowEnter()
         {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            //This was added to allow the table to complete it's enter/edit complete action and then perform the add logic.
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                vm.AddRow();
-                int lastRowIndex = dg_table.Items.Count - 1;
-                SelectCellByIndex(lastRowIndex, 0);
-            }
+                if (DataContext is AnalyticalFrequencyEditorVM vm)
+                {
+                    vm.AddRow();
+                    int lastRowIndex = dg_table.Items.Count - 1;
+                    SelectCellByIndex(lastRowIndex, 0);
+                }
+            }));
         }
 
         private void Dg_table_RowsDeleted(List<int> rowindices)

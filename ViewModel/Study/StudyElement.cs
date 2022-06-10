@@ -202,7 +202,7 @@ namespace HEC.FDA.ViewModel.Study
                 PropertiesVM prop =  new PropertiesVM(studyProps[0]);
                 string header = "Study Properties";
                 DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
-                Navigate(tab, true, true);
+                Navigate(tab,false,false);
             } 
         }
 
@@ -235,9 +235,19 @@ namespace HEC.FDA.ViewModel.Study
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
             Navigate( tab, false, false);
         }
-        
+
+        private void CreateLogFile()
+        {
+            string studyPath = Connection.Instance.ProjectFile;
+            string studyName = Path.GetFileNameWithoutExtension(studyPath);
+            string studyDirectoryPath = Path.GetDirectoryName(studyPath);
+            string logPath = studyDirectoryPath + "\\" + studyName + ".log";
+            TextFileMessageSubscriber.Instance.FilePath = logPath;
+        }
+
         public void AddBaseElements()
         {
+            CreateLogFile();
             Elements.Clear();
             if (Connection.Instance.IsConnectionNull) return;
 

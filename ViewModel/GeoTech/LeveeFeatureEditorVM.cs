@@ -38,6 +38,9 @@ namespace HEC.FDA.ViewModel.GeoTech
         {
             Elevation = ((LeveeFeatureElement)element).Elevation;
             IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
+
+            //tell the table that the y values have to be between 0 and 1
+            TableWithPlot.ComputeComponentVM.SetMinMaxValues(0, 1);
         }
         #endregion
         #region Voids
@@ -67,22 +70,6 @@ namespace HEC.FDA.ViewModel.GeoTech
         #endregion
         #region Functions
         #endregion
-
-        //public override UncertainPairedData GetCoordinatesFunction()
-        //{
-        //    if(IsUsingDefault)
-        //    {
-        //        //in this case then we create a special default coordinates function
-        //        List<double> defaultXs = new List<double>() { Elevation, Elevation + .000000000000001 };
-        //        List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
-
-        //        return new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
-        //    }
-        //    else
-        //    {
-        //        return base.GetCoordinatesFunction();
-        //    }
-        //}
 
         public override void Save()
         {

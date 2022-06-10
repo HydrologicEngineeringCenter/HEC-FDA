@@ -86,24 +86,36 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void SelectInventory(int inventoryID)
         {
+            bool foundInventory = false;
             foreach(InventoryElement ie in Structures)
             {
                 if(ie.ID == inventoryID)
                 {
                     SelectedStructures = ie;
+                    foundInventory = true;
                     break;
                 }
+            }
+            if(!foundInventory)
+            {
+                MessageBox.Show("The previously selected inventory used in the compute of stage damage curves was deleted. Select a new Inventory and compute again.", "Inventory Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         private void SelectDepthGrid(int waterID)
         {
-            foreach(WaterSurfaceElevationElement wat in WaterSurfaceElevations)
+            bool foundHydro = false;
+            foreach (WaterSurfaceElevationElement wat in WaterSurfaceElevations)
             {
                 if(wat.ID == waterID)
                 {
                     SelectedWaterSurfaceElevation = wat;
+                    foundHydro = true;
                     break;
                 }
+            }
+            if (!foundHydro)
+            {
+                MessageBox.Show("The previously selected hydraulogy used in the compute of stage damage curves was deleted. Select a new hydraulogy and compute again.", "Hydraulogy Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         private void loadDepthGrids()
@@ -211,7 +223,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.SelectedAssetCategory); 
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.AssetCategory); 
                 curves.Add(curve);
             }
             return curves;

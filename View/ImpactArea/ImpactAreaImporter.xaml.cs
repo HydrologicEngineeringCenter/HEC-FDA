@@ -12,12 +12,6 @@ namespace HEC.FDA.View.ImpactArea
         public ImpactAreaImporter()
         {
             InitializeComponent();
-            cmb_Path.CmbSelectionMade += Cmb_Path_CmbSelectionMade;           
-        }
-        private void Cmb_Path_CmbSelectionMade(string path)
-        {
-            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
-            vm.LoadUniqueNames(path);
         }
 
         private void Cmb_UniqueName_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -40,6 +34,13 @@ namespace HEC.FDA.View.ImpactArea
                 row_SelectPath.Height = new GridLength(35);
                 row_SelectUniqueName.Height = new GridLength(35);
             }
+        }
+
+        private void Cmb_Path_SelectionMade(string fullpath, string filename)
+        {
+            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
+            vm.SelectedPath = fullpath;
+            vm.LoadUniqueNames(fullpath);
         }
     }
 }
