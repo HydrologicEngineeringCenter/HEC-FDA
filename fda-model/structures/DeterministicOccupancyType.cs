@@ -15,9 +15,11 @@ namespace structures
         public double ContentValueError { get; }
         public double VehicleValueError { get; }
         public double OtherValueError { get; }
+        public double ContentToStructureValueRatio { get; }
+        public double OtherToStructureValueRatio { get; }
 
 
-        public DeterministicOccupancyType(string name, string damcat, IPairedData structDamagePairedData, IPairedData contentDamagePairedData, IPairedData vehicleDamagePairedData, IPairedData otherDamagePairedData, double foundationHeightError, double structureValueError, double contentValueError, double vehicleValueError, double otherValueError)
+        public DeterministicOccupancyType(string name, string damcat, IPairedData structDamagePairedData, IPairedData contentDamagePairedData, IPairedData vehicleDamagePairedData, IPairedData otherDamagePairedData, double foundationHeightError, double structureValueError, double contentValueError, double vehicleValueError, double otherValueError, double contentToStructureValueRatio, double otherToStructureValueRatio)
         {
             Name = name;
             DamageCatagory = damcat;
@@ -30,6 +32,9 @@ namespace structures
             ContentValueError = contentValueError;
             VehicleValueError = vehicleValueError;
             OtherValueError = otherValueError;
+            ContentToStructureValueRatio = contentToStructureValueRatio;
+            OtherToStructureValueRatio = otherToStructureValueRatio;
+
         }
     }
 }

@@ -14,9 +14,9 @@ namespace structures
         public PointM Point { get; }
         public double FoundationHeightMean { get; }
         public double ValueStructureMean { get; }
-        public double ValueContentMean { get; }
+        public double ValueContentMean { get; internal set; }
         public double ValueVehicleMean { get; }
-        public double ValueOtherMean { get; }
+        public double ValueOtherMean { get; internal set; }
         public string DamageCatagory { get; }
         public string OccTypeName { get; }
         public int ImpactAreaID { get; }
@@ -40,6 +40,15 @@ namespace structures
         public DeterministicStructure Sample(int seed, DeterministicOccupancyType occtype)
         {
             Random random = new Random(seed);
+
+            if(ValueContentMean == Double.NaN)
+            {
+                ValueContentMean = ValueStructureMean * occtype.ContentToStructureValueRatio;
+            }
+            if(ValueOtherMean == Double.NaN)
+            {
+                ValueOtherMean = ValueOtherMean * occtype.OtherToStructureValueRatio;
+            }
 
             double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightError;
             double structValueSample = ValueStructureMean * occtype.StructureValueError;
