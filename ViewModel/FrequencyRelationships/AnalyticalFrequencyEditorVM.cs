@@ -317,11 +317,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     analyticalFlows.Add(d.Flow);
                 }
-                List<double> graphicalFlows = new List<double>();
-                foreach (double flow in MyGraphicalVM.GetUncertainPairedData().)
-                {
-                    graphicalFlows.Add(d.Flow);
-                }
+                List<double> graphicalFlows = MyGraphicalVM.GetUncertainPairedData().SamplePairedData(0.5).Yvals.ToList(); ;
                 int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
 
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
