@@ -118,6 +118,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         #endregion
         #region Constructors
+        //This supports a fresh editor
         public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
             _Mean = DefaultCurveData.LP3Mean;
@@ -127,9 +128,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             MyGraphicalVM = new TableWithPlotVM(new GraphicalVM("Graphical Flow Frequency","Probability","Flow"), true);
             MyGraphicalVM.ComputeComponentVM.XLabel = "Probability";
             MyGraphicalVM.ComputeComponentVM.YLabel = "Flow";
+            MyGraphicalVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
             LoadDefaultFlows();
             InitializePlotModel();
         }
+        //This supports loading from a saved state. 
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             IsAnalytical = elem.IsAnalytical;
