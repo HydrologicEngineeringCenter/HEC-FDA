@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 
         }
         [DisplayAsColumn("Y Value")]
-        [DisplayAsLine("Y Value")]
+        [DisplayAsLine("Y Value",Enumerables.ColorEnum.Black)]
         public double Value
         {
             get
@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
         [DisplayAsColumn("5% Confidence")]
-        [DisplayAsLine("5% Confidence")]
+        [DisplayAsLine("5% Confidence",Enumerables.ColorEnum.Blue,true)]
         public double Confidence05
         {
             get
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         }
 
         [DisplayAsColumn("95% Confidence")]
-        [DisplayAsLine("95% Confidence")]
+        [DisplayAsLine("95% Confidence", Enumerables.ColorEnum.Blue,true)]
         public double Confidence95 { 
             get
             {
