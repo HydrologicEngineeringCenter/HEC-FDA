@@ -153,6 +153,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         {
             if (_AAEQResults != null)
             {
+                //TODO: commented out because this is a WIP:
                 //AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeComparisonResult());
                 //string header = "Alternative Comparison Report Results: " + Name;
                 //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
@@ -243,6 +244,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return vr;
         }
 
+
+        //TODO: this is commented out because this is a work in progress:
         /// <summary>
         /// This is a dummy result object that Cody created to fill the results UI with dummy data.
         /// </summary>

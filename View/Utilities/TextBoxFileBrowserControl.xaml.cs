@@ -32,25 +32,11 @@ namespace HEC.FDA.View.Utilities
 
         private void OpenBrowser(object sender, RoutedEventArgs e)
         {
-            //if (IsOpenDialog)
-            //{
-            //    Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-            //    fileDialog.Filter = Filter;
-            //    fileDialog.Multiselect = false;
-            //    fileDialog.CheckFileExists = FileExists;
-            //    fileDialog.Title = "Open";
-            //    fileDialog.ShowDialog();
-            //    Path = fileDialog.FileName;
-
-            //}
-            //else
-            //{
-                Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-                fileDialog.Title = "Select File" ;
-                fileDialog.Filter = Filter;
-                fileDialog.ShowDialog();
-                Path = fileDialog.FileName;
-            //}
+            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            fileDialog.Title = "Select File";
+            fileDialog.Filter = Filter;
+            fileDialog.ShowDialog();
+            Path = fileDialog.FileName;
         }
     }
 }

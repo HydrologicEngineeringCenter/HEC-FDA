@@ -31,7 +31,6 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="elem"></param>
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            //_IsInEditMode = true;
             Name = elem.Name;
             Description = elem.Description;
             SelectSavedRows(elem.IASElementSets);
