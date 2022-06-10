@@ -125,7 +125,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _Skew = DefaultCurveData.LP3Skew;
             _POR = DefaultCurveData.LP3POR;
             MyGraphicalVM = new TableWithPlotVM(new GraphicalVM("Graphical Flow Frequency","Probability","Flow"), true);
-            MyGraphicalVM.PlotModel.
+            MyGraphicalVM.ComputeComponentVM.XLabel = "Probability";
+            MyGraphicalVM.ComputeComponentVM.YLabel = "Flow";
             LoadDefaultFlows();
             InitializePlotModel();
         }
@@ -300,33 +301,33 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override void Save()
         {
-            //LogPearson3 lp3 = CreateLP3();
-            //FdaValidationResult result = IsLP3Valid(lp3);
-            //if (result.IsValid)
-            //{
-            //    string editDate = DateTime.Now.ToString("G");
-            //    double mean = Mean;
-            //    double stDev = StandardDeviation;
-            //    double skew = Skew;
-            //    int por = PeriodOfRecord;
-            //    bool isAnalytical = IsAnalytical;
-            //    bool isStandard = IsStandard;
-            //    List<double> analyticalFlows = new List<double>();
-            //    foreach (FlowDoubleWrapper d in AnalyticalFlows)
-            //    {
-            //        analyticalFlows.Add(d.Flow);
-            //    }
-            //    //List<double> graphicalFlows = new List<double>();
-            //    //foreach (FlowDoubleWrapper d in GraphicalFlows)
-            //    //{
-            //    //    graphicalFlows.Add(d.Flow);
-            //    //}
-            //    int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
+            LogPearson3 lp3 = CreateLP3();
+            FdaValidationResult result = IsLP3Valid(lp3);
+            if (result.IsValid)
+            {
+                string editDate = DateTime.Now.ToString("G");
+                double mean = Mean;
+                double stDev = StandardDeviation;
+                double skew = Skew;
+                int por = PeriodOfRecord;
+                bool isAnalytical = IsAnalytical;
+                bool isStandard = IsStandard;
+                List<double> analyticalFlows = new List<double>();
+                foreach (FlowDoubleWrapper d in AnalyticalFlows)
+                {
+                    analyticalFlows.Add(d.Flow);
+                }
+                List<double> graphicalFlows = new List<double>();
+                foreach (double flow in MyGraphicalVM.GetUncertainPairedData().)
+                {
+                    graphicalFlows.Add(d.Flow);
+                }
+                int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
 
-            //    AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
-            //         analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
-            //    base.Save(elem);
-            //}
+                AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,
+                     analyticalFlows, graphicalFlows, TableWithPlot.ComputeComponentVM, id);
+                base.Save(elem);
+            }
         }
 
         public void AddRows(int startRow, int numRows)
