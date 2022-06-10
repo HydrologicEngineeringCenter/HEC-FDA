@@ -33,13 +33,13 @@
                 <StackPanel>
                     <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                         <Button Name="CreateNewOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Import New Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Add.png"/>
                         </Button>
                         <Button Name="RenameOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Rename Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="RenameOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Edit.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Edit.png"/>
                         </Button>
                         <Button Name="DeleteOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Delete.png"/>
                         </Button>
                     </ToolBarPanel>
                     <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
@@ -50,13 +50,13 @@
                 <Label Content="Occupancy Types:" Grid.ColumnSpan="2" />
                 <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                     <Button Name="CreateNewOccTypeButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Create New Occupancy Type" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Add.png"/>
                     </Button>
                     <Button Name="CopyExistingButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Copy Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="CopyExistingButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Copy.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Copy.png"/>
                     </Button>
                     <Button Name="DeleteButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Delete.png"/>
                     </Button>
                 </ToolBarPanel>
             </StackPanel>
