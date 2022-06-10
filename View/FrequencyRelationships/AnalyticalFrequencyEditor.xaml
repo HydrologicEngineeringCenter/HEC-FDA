@@ -111,7 +111,7 @@
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
                   SelectionMode="Extended" SelectionUnit="Cell" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Flows" Binding="{Binding}" Width="*" />
+                            <DataGridTextColumn Header="Flows" Binding="{Binding Flow}" Width="*" />
                         </DataGrid.Columns>
                     </controls:CopyPasteDataGrid>
 
