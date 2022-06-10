@@ -14,12 +14,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         private int _equivalentRecordLength = 5;
         private NamedAction _confidenceLimits;
-
         public NamedAction ConfidenceLimits { get { return _confidenceLimits; } set { _confidenceLimits = value; NotifyPropertyChanged(); } }
 
-        public Graphical MyGraphical
+        public GraphicalUncertainPairedData MyGraphical
         {
-            get{return new Graphical(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength, usingStagesNotFlows: true);}
+            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
+           
         }
         public int EquivalentRecordLength
         {
@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-        public GraphicalVM(string name) : base(name)
+        public GraphicalVM(string name, string xlabel, string ylabel) : base(name)
         {
             Options.Clear();
             Options.Add(new GraphicalDataProvider());
@@ -61,14 +61,24 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {
-            var graffical = MyGraphical;
-            graffical.ComputeGraphicalConfidenceLimits();
-            Statistics.ContinuousDistribution[] conf = graffical.StageOrLogFlowDistributions;
-            double[] probs = graffical.ExceedanceProbabilities;
+            GraphicalUncertainPairedData graffical = MyGraphical;
+            PairedData upperNonExceedence = graffical.SamplePairedData(.95) as PairedData;
+            PairedData lowerNonExceedence = graffical.SamplePairedData(.05) as PairedData;
+            double[] probs = lowerNonExceedence.Xvals;
+
             foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)
             {
-                int index = Array.IndexOf(probs, row.X);
-                row.SetConfidenceLimits(conf[index].InverseCDF(.05), conf[index].InverseCDF(.95));
+                int binarySearchReturn = Array.BinarySearch(probs, 1 - row.X);
+                int index;
+                if(binarySearchReturn < 0)
+                {
+                    index = ~binarySearchReturn;
+                }
+                else
+                {
+                    index =binarySearchReturn;
+                }
+                row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index])), Math.Round(upperNonExceedence.f(probs[index])));
             }
         }
         public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()

@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
-             xmlns:willView ="clr-namespace:HEC.MVVMFramework.View.Implementations;assembly=View"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
