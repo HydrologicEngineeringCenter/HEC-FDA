@@ -62,8 +62,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {
             GraphicalUncertainPairedData graffical = MyGraphical;
-            PairedData upperNonExceedence = graffical.SamplePairedData(.95) as PairedData;
-            PairedData lowerNonExceedence = graffical.SamplePairedData(.05) as PairedData;
+            PairedData upperNonExceedence = graffical.SamplePairedData(.975) as PairedData;
+            PairedData lowerNonExceedence = graffical.SamplePairedData(.025) as PairedData;
             double[] probs = lowerNonExceedence.Xvals;
 
             foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)
