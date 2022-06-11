@@ -36,14 +36,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             set
             {
                 Y = new Deterministic(value);
-                Confidence05 = 0;
-                Confidence95 = 0;
+                Confidence025 = 0;
+                Confidence975 = 0;
                 NotifyPropertyChanged();
             }
         }
-        [DisplayAsColumn("5% Confidence")]
-        [DisplayAsLine("5% Confidence",Enumerables.ColorEnum.Blue,true)]
-        public double Confidence05
+        [DisplayAsColumn("2.5% Confidence")]
+        [DisplayAsLine("2.5% Confidence",Enumerables.ColorEnum.Blue,true)]
+        public double Confidence025
         {
             get
             {
@@ -53,13 +53,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 _Confidence05 = 0;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(Confidence95));
+                NotifyPropertyChanged(nameof(Confidence975));
             }
         }
 
-        [DisplayAsColumn("95% Confidence")]
-        [DisplayAsLine("95% Confidence", Enumerables.ColorEnum.Blue,true)]
-        public double Confidence95 { 
+        [DisplayAsColumn("97.5% Confidence")]
+        [DisplayAsLine("97.5% Confidence", Enumerables.ColorEnum.Blue,true)]
+        public double Confidence975 { 
             get
             {
                 return _Confidence95;
@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             set
             {
                 _Confidence95 = 0;
-                NotifyPropertyChanged(nameof(Confidence05));
+                NotifyPropertyChanged(nameof(Confidence025));
                 NotifyPropertyChanged();
             }
         }
@@ -98,20 +98,20 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             if (e.PropertyName == nameof(Value) || e.PropertyName == nameof(X))
             {
-                Confidence05 = 0;
-                Confidence95 = 0;
+                Confidence025 = 0;
+                Confidence975 = 0;
                 if (NextRow != null)
                 {
-                    if (((GraphicalRow)NextRow).Confidence05 != 0)
+                    if (((GraphicalRow)NextRow).Confidence025 != 0)
                     {
-                        ((GraphicalRow)NextRow).Confidence05 = 0;
+                        ((GraphicalRow)NextRow).Confidence025 = 0;
                     }
                 }
                 if (PreviousRow != null)
                 {
-                    if (((GraphicalRow)(PreviousRow)).Confidence05 != 0)
+                    if (((GraphicalRow)(PreviousRow)).Confidence025 != 0)
                     {
-                        ((GraphicalRow)PreviousRow).Confidence05 = 0;
+                        ((GraphicalRow)PreviousRow).Confidence025 = 0;
                     }
                 }
             }
@@ -121,8 +121,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             _Confidence95 = conf95;
             _Confidence05 = conf05;
-            NotifyPropertyChanged(nameof(Confidence95));
-            NotifyPropertyChanged(nameof(Confidence05));
+            NotifyPropertyChanged(nameof(Confidence975));
+            NotifyPropertyChanged(nameof(Confidence025));
         }
 
         public override void UpdateRow(int col, double value)

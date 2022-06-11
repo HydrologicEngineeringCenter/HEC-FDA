@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 
         private void Row_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-           if(e.PropertyName != nameof(GraphicalRow.Confidence95) && e.PropertyName != nameof(GraphicalRow.Confidence05))
+           if(e.PropertyName != nameof(GraphicalRow.Confidence975) && e.PropertyName != nameof(GraphicalRow.Confidence025))
             {
                 InvalidateRows();
             }
@@ -77,8 +77,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         {
             foreach (var row in Data)
             {
-                ((GraphicalRow)row).Confidence95 = 0;
-                ((GraphicalRow)row).Confidence05 = 0;
+                ((GraphicalRow)row).Confidence975 = 0;
+                ((GraphicalRow)row).Confidence025 = 0;
             }
         }
 
