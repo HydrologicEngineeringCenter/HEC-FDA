@@ -8,7 +8,7 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public static class ImageSources
     {
-        private static readonly string IMAGE_PREFIX = "pack://application:,,,/View;component/Resources/";
+        private static readonly string IMAGE_PREFIX = "pack://application:,,,/HEC.FDA.View;component/Resources/";
         
         public static readonly string ALTERNATIVE_IMAGE = IMAGE_PREFIX + "Alternatives_20x20.png";
         

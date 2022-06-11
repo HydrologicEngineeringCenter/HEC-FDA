@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Click="btn_PopOut_Click" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" >
-            <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopOut.png"/>
+            <Image Width="15" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/HEC.FDA.View;component/Resources/PopOut.png"/>
         </Button>
         <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
     </Grid>

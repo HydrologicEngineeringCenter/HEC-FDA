@@ -110,28 +110,29 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged(); 
             }
         }
-
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
             get  {return _AnalyticalFlows; }
         }
-        public ObservableCollection<FlowDoubleWrapper> GraphicalFlows
-        {
-            get { return _GraphicalFlows; }
-        }      
+        public TableWithPlotVM MyGraphicalVM { get; set; }
 
         #endregion
         #region Constructors
+        //This supports a fresh editor
         public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
             _Mean = DefaultCurveData.LP3Mean;
             _StDev = DefaultCurveData.LP3StDev;
             _Skew = DefaultCurveData.LP3Skew;
             _POR = DefaultCurveData.LP3POR;
-
+            MyGraphicalVM = new TableWithPlotVM(new GraphicalVM("Graphical Flow Frequency","Probability","Flow"), true);
+            MyGraphicalVM.ComputeComponentVM.XLabel = "Probability";
+            MyGraphicalVM.ComputeComponentVM.YLabel = "Flow";
+            MyGraphicalVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
             LoadDefaultFlows();
             InitializePlotModel();
         }
+        //This supports loading from a saved state. 
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             IsAnalytical = elem.IsAnalytical;
@@ -349,11 +350,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     analyticalFlows.Add(d.Flow);
                 }
-                List<double> graphicalFlows = new List<double>();
-                foreach (FlowDoubleWrapper d in GraphicalFlows)
-                {
-                    graphicalFlows.Add(d.Flow);
-                }
+                List<double> graphicalFlows = MyGraphicalVM.GetUncertainPairedData().SamplePairedData(0.5).Yvals.ToList(); ;
                 int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
 
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, por, isAnalytical, isStandard, mean, stDev, skew,

@@ -28,20 +28,20 @@ namespace HEC.FDA.View.TableWithPlot
             _expandableToolsPanel = new StackPanel() { Orientation = Orientation.Horizontal, Name = "ExpandableToolsPanel", VerticalAlignment = System.Windows.VerticalAlignment.Top, HorizontalAlignment = System.Windows.HorizontalAlignment.Left };
             _toolsPanel = new StackPanel() { Orientation = Orientation.Vertical, Name = "ToolsPanel", VerticalAlignment = System.Windows.VerticalAlignment.Top, HorizontalAlignment = System.Windows.HorizontalAlignment.Left, Background = _bg };
 
-            Image selectIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/TrackPlot.png")) };
+            Image selectIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/HEC.FDA.View;component/Resources/TrackPlot.png")) };
 
             _selectButton = new RadioButton() { Content = selectIcon, Margin = new Thickness(0, 0, 1, 0), Height = 22, ToolTip = "Track Data", Style = (Style)FindResource(ToolBar.RadioButtonStyleKey) };
             _selectButton.Click += SelectButton_Click;
             // 
-            Image panIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/PanHand.png")) };
+            Image panIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/HEC.FDA.View;component/Resources/PanHand.png")) };
             _panButton = new RadioButton() { Content = panIcon, Margin = new Thickness(0, 1, 1, 0), Height = 22, ToolTip = "Pan", Style = (Style)FindResource(ToolBar.RadioButtonStyleKey) };
             _panButton.Click += PanButton_Click;
             // 
-            Image zoomIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/ZoomIn.png")) };
+            Image zoomIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/HEC.FDA.View;component/Resources/ZoomIn.png")) };
             _zoomButton = new RadioButton() { Content = zoomIcon, Margin = new Thickness(0, 1, 1, 0), Height = 22, ToolTip = "Zoom In", Style = (Style)FindResource(ToolBar.RadioButtonStyleKey) };
             _zoomButton.Click += ZoomButton_Click;
             // 
-            Image zoomAllIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/ZoomAll.png")) };
+            Image zoomAllIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/HEC.FDA.View;component/Resources/ZoomAll.png")) };
             _zoomAllButton = new Button() { Content = zoomAllIcon, Margin = new Thickness(0, 1, 1, 0), Height = 22, ToolTip = "Zoom To All (esc)", Style = (Style)FindResource(ToolBar.ButtonStyleKey) };
             _zoomAllButton.Click += ZoomAllButton_Click;
 

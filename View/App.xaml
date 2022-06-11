@@ -115,6 +115,7 @@
         <DataTemplate DataType="{x:Type AggregatedVM:ManualStageDamageVM }" >
             <AggregatedView:ManualStageDamageControl/>
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type AggregatedVM:CalculatedStageDamageVM }" >
             <AggregatedView:CalculatedStageDamageControl/>
         </DataTemplate>
@@ -122,6 +123,10 @@
         <!--FrequencyRelationships Region-->
         <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
             <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
+        </DataTemplate> 
+
+        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:GraphicalVM }" >
+            <FrequencyRelationshipsView:GraphicalControl/>
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >

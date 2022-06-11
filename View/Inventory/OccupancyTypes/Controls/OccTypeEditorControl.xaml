@@ -35,7 +35,7 @@
             <TextBlock Grid.Column="0" Name="NameLabel" Text="Occupancy Type Name: " HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding Name,Mode=TwoWay,ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2"  />
             <Button Name="CreateNewButton" Margin="3,0,0,0" Width="20" Height="20" Grid.Row="2" Grid.Column="2" ToolTip="Add New Damage Category" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="CreateNewDamCat_Click" >
-                <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
+                <Image Width="16" Height="16" Source="pack://application:,,,/HEC.FDA.View;component/Resources/Add.png"/>
             </Button>
 
             <TextBlock Grid.Row="1" TextAlignment="Right" Text="Description: " VerticalAlignment="Center"/>

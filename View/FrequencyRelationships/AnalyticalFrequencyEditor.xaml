@@ -7,12 +7,13 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot" xmlns:frequencyrelationships="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="650">
     <UserControl.Resources>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
         <Utilities:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,8 +46,6 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Record Length:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Text="{Binding PeriodOfRecord, ValidatesOnDataErrors=True}" IsEnabled="{Binding IsStandard}" Margin="5"/>
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,5,0,0">
@@ -54,19 +53,13 @@
             <RadioButton x:Name="rad_graphical" Content="Graphical" Checked="rad_graphical_Checked" Margin="5"/>
         </StackPanel>
 
-        <GroupBox x:Name="group_graphical" Header="Graphical" Grid.Row="4"  Visibility="Hidden">
+        <GroupBox x:Name="group_graphical" Header="Graphical" Grid.Row="4"  Visibility="Visible">
                      
         <Grid x:Name="grid_graphical" Grid.Row="4" >
-            <DataGrid ItemsSource="{Binding GraphicalFlows}"  AutoGenerateColumns="False" ColumnWidth="*" HorizontalAlignment="Left" EnableRowVirtualization="false" EnableColumnVirtualization="false" 
-           Margin="5" VerticalScrollBarVisibility="Auto" 
-          CanUserAddRows="False" CanUserReorderColumns="False" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Flows test" Binding="{Binding Flow}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+                <frequencyrelationships:GraphicalTableWithPlotControl  Grid.Row="1" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding MyGraphicalVM}"/>
+            </Grid>
         </GroupBox>
-        <GroupBox x:Name="group_analytical" Header="Analytical" Grid.Row="4">
+        <GroupBox x:Name="group_analytical" Header="Analytical" Grid.Row="4" Visibility="Hidden">
             
         <Grid x:Name="grid_analytical" Grid.Row="4">
             <Grid.ColumnDefinitions>
