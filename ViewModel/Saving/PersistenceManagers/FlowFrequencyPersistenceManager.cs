@@ -24,6 +24,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public static readonly string SKEW = "Skew";
         public static readonly string FIT_TO_FLOWS = "FitToFlows";
         public static readonly string FLOWS = "Flows";
+        public static readonly string GRAPHICAL = "GRAPHICAL";
 
         private const int DESC_COL = 2;
         private const int XML_COL = 3;
@@ -140,7 +141,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
             else //graphical
             {
-
+                XElement graphicalElem = elem.GraphicalVM.ToXML();
+                flowFreqElem.Add(graphicalElem);
             }
             return flowFreqElem.ToString();
         }
