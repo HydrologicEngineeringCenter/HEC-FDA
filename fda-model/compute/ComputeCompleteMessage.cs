@@ -6,26 +6,26 @@ using System.Threading.Tasks;
 
 namespace compute
 {
-    public class EADMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
+    public class ComputeCompleteMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
     {
-        private double _eadEstimate;
+        private double _iterations;
         public string Message
         {
             get
             {
-                return "EAD was estimated to be " + _eadEstimate;
+                return "The compute has finished after " + _iterations + " iterations";
             }
         }
         public double EADEstimate
         {
             get
             {
-                return _eadEstimate;
+                return _iterations;
             }
         }
-        public EADMessage(double eadEstimate)
+        public ComputeCompleteMessage(int iterations)
         {
-            _eadEstimate = eadEstimate;
+            _iterations = iterations;
         }
     }
 }
