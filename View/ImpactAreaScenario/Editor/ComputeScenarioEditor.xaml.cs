@@ -12,11 +12,5 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
         {
             InitializeComponent();
         }
-
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            var myWindow = Window.GetWindow(this);
-            myWindow.Close();
-        }
     }
 }
