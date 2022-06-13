@@ -8,8 +8,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public class GraphicalRow : SequentialRow
     {
-        private double _Confidence95 = 0;
-        private double _Confidence05 = 0;
+        private double _Confidence975 = 0;
+        private double _Confidence025 = 0;
         private double _x;
 
         [DisplayAsColumn("X Value")]
@@ -47,11 +47,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return _Confidence05;
+                return _Confidence025;
             }
             set
             {
-                _Confidence05 = 0;
+                _Confidence025 = 0;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Confidence975));
             }
@@ -62,11 +62,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         public double Confidence975 { 
             get
             {
-                return _Confidence95;
+                return _Confidence975;
             }
             set
             {
-                _Confidence95 = 0;
+                _Confidence975 = 0;
                 NotifyPropertyChanged(nameof(Confidence025));
                 NotifyPropertyChanged();
             }
@@ -119,8 +119,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 
         public void SetConfidenceLimits(double conf05, double conf95)
         {
-            _Confidence95 = conf95;
-            _Confidence05 = conf05;
+            _Confidence975 = conf95;
+            _Confidence025 = conf05;
             NotifyPropertyChanged(nameof(Confidence975));
             NotifyPropertyChanged(nameof(Confidence025));
         }
