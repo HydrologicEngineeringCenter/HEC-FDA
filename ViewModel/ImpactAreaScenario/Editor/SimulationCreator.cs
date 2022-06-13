@@ -8,7 +8,6 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static compute.ImpactAreaScenarioSimulation;
@@ -52,41 +51,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public FdaValidationResult IsConfigurationValid()
         {
             FdaValidationResult vr = IsStageDamageValid();
-            vr.AddErrorMessage( GetPairedDataValidationResults(_FreqElem.ComputeComponentVM.SelectedItemToPairedData()).ErrorMessage);
-            return vr;
-        }
-
-        private FdaValidationResult GetCurveValidationResults()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            vr.AddErrorMessage( GetPairedDataValidationResults(_FreqElem.ComputeComponentVM.SelectedItemToPairedData()).ErrorMessage);
-
-
-            if (_UseInOut)
-            {
-                _SimulationBuilder.withInflowOutflow(_InOutElem.ComputeComponentVM.SelectedItemToPairedData());
-            }
-            if (_UseExtInt)
-            {
-                _SimulationBuilder.withInteriorExterior(_ExtIntElem.ComputeComponentVM.SelectedItemToPairedData());
-            }
-            if (_UseLevee)
-            {
-                _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
-            }
-
-
-            return vr;
-        }
-
-        private FdaValidationResult GetPairedDataValidationResults(UncertainPairedData upd)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            upd.Validate();
-            IEnumerable updErrors = upd.GetErrors(); 
-            List<string> errors = updErrors as List<string>;
-            vr.AddErrorMessages(errors);
             return vr;
         }
 

@@ -491,7 +491,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 ConvergenceCriteria cc = new ConvergenceCriteria();
                 try
                 {
-                    metrics.ImpactAreaScenarioResults result = simulation.PreviewCompute();
+                    ImpactAreaScenarioResults result = simulation.PreviewCompute();
                     EAD = result.ConsequenceResults.MeanDamage("Total", "Total", CurrentImpactArea.ID);
                 }
                 catch (Exception ex)
@@ -594,11 +594,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
                 PlotControlVM.RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
                 PlotControlVM.StageDamageControl.UpdatePlotData(getStageDamageFunction());
-                PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());             
 
-                PlotControlVM.Plot();
-                ShowWarnings = true;
-                ShowEAD = true;
+                UncertainPairedData damageFrequencyCurve = getDamageFrequencyFunction();
+                if (damageFrequencyCurve != null)
+                {
+
+                    PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+
+                    PlotControlVM.Plot();
+                    ShowWarnings = true;
+                    ShowEAD = true;
+                }
+                else
+                {
+                    MessageBox.Show("The compute failed to create a damage frequency curve", "No Damage-Frequency", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
             }
             else
             {

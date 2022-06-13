@@ -263,8 +263,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
             ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
-            string header = "Compute Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
+            string header = "Compute Log";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog");
             Navigate(tab, false, false);
         }
         private void ComputeCompleted()

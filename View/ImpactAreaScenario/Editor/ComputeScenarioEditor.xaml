@@ -8,8 +8,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Name="myGrid">
-        <Label Content="Computing" />
-        <mvvmView:SelectableMessageView />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <mvvmView:SelectableMessageView  Grid.Row="0"/>
+        <Button Content="Close" Grid.Row="1" Width="40" HorizontalAlignment="Right" Margin="5" />
     </Grid>
     
 </UserControl>
