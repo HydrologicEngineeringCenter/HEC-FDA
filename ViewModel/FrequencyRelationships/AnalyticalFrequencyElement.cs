@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public double Skew { get; set; }
         public List<double> AnalyticalFlows { get; } = new List<double>();
         public UncertainPairedData PairedData { get; set; }
-        public GraphicalVM GraphicalVM { get; set; }
+        public GraphicalVM MyGraphicalVM { get; set; }
 
         #endregion
         #region Constructors
@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Description = desc;
             if (Description == null) Description = "";
             ComputeComponentVM = function;
-            GraphicalVM = graphicalVM;
+            MyGraphicalVM = graphicalVM;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
@@ -84,7 +84,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             PairedData = CreatePairedData();
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            GraphicalVM = new GraphicalVM(flowFreqElem.Element(GraphicalVM.GetType().Name));
+            XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
+            MyGraphicalVM = new GraphicalVM(graphiclVMele);
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
@@ -133,7 +134,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.GraphicalVM, elem.ComputeComponentVM, elem.ID);
+                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.MyGraphicalVM, elem.ComputeComponentVM, elem.ID);
         }     
         #endregion
 
