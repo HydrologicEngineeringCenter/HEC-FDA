@@ -66,7 +66,7 @@ namespace metrics
             {
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
                 {
-                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!assetCats.Contains(consequenceResult.AssetCategory))
                         {
@@ -77,7 +77,7 @@ namespace metrics
                 }
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
                 {
-                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!assetCats.Contains(consequenceResult.AssetCategory))
                         {
@@ -96,7 +96,7 @@ namespace metrics
             {
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
                 {
-                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!damCats.Contains(consequenceResult.AssetCategory))
                         {
@@ -107,7 +107,7 @@ namespace metrics
                 }
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
                 {
-                    foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!damCats.Contains(consequenceResult.AssetCategory))
                         {

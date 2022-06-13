@@ -16,7 +16,7 @@ namespace metrics
 
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
-        public ConsequenceResults ConsequenceResults { get; }
+        public ConsequenceDistributionResults ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         #endregion
         public bool IsNull
@@ -30,18 +30,18 @@ namespace metrics
         public ImpactAreaScenarioResults()
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceResults();
+            ConsequenceResults = new ConsequenceDistributionResults();
             ImpactAreaID = 0;
             _isNull = true;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceResults();
+            ConsequenceResults = new ConsequenceDistributionResults();
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
-        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceResults expectedAnnualDamageResults, int impactAreaID)
+        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceDistributionResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             ConsequenceResults = expectedAnnualDamageResults;
@@ -234,7 +234,7 @@ namespace metrics
         public static IContainImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
-            ConsequenceResults expectedAnnualDamageResults = ConsequenceResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }

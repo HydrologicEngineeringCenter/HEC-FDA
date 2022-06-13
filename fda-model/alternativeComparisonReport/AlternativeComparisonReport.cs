@@ -26,7 +26,7 @@ namespace alternativeComparisonReport
             {
                 AlternativeResults damageReducedOneAlternative = new AlternativeResults(withProjectAlternativeResults.AlternativeID);
 
-                foreach (ConsequenceResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
                 {
                     //ConsequenceResults withoutProjectDamageResults = withoutProjectAlternativeResults.GetConsequenceResults(withProjectDamageResults.RegionID);
                     //ConsequenceResults damageReducedInImpactArea = new ConsequenceResults(withProjectDamageResults.RegionID);
@@ -50,7 +50,7 @@ namespace alternativeComparisonReport
                         double binQuantity = 1 + 3.322 * Math.Log(_iterations);
                         double binWidth = Math.Ceiling(range / binQuantity);
                         Histogram damageReducedHistogram = new Histogram(damagesReducedLowerBound, binWidth, withProjectDamageResult.ConvergenceCriteria);
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
+                        ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence        
                         for (int i = 0; i < _iterations; i++)
                         {
@@ -102,11 +102,11 @@ namespace alternativeComparisonReport
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
-                    ConsequenceResults withprojectDamageResults = impactAreaScenarioResults.ConsequenceResults;
-                    ConsequenceResults withoutProjectDamageResults = impactAreaScenarioResults.ConsequenceResults;
+                    ConsequenceDistributionResults withprojectDamageResults = impactAreaScenarioResults.ConsequenceResults;
+                    ConsequenceDistributionResults withoutProjectDamageResults = impactAreaScenarioResults.ConsequenceResults;
 
 
-                    foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
                         IHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
                         IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
@@ -123,7 +123,7 @@ namespace alternativeComparisonReport
                         double binQuantity = 1 + 3.322 * Math.Log(_iterations);
                         double binWidth = Math.Ceiling(range / binQuantity);
                         Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
+                        ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
                         for (int i = 0; i < _iterations; i++)
                         {
@@ -153,12 +153,12 @@ namespace alternativeComparisonReport
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.FutureYearScenarioResults.GetResults(withProjectResults.ImpactAreaID);
-                    ConsequenceResults withprojectDamageResults = withProjectResults.ConsequenceResults;
-                    ConsequenceResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
+                    ConsequenceDistributionResults withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
 
                     //ConsequenceResults damageReducedResults = new ConsequenceResults(withProjectResults.ImpactAreaID);
 
-                    foreach (ConsequenceResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
+                    foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
                         IHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;
                         IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
@@ -174,7 +174,7 @@ namespace alternativeComparisonReport
                         double binQuantity = 1 + 3.22 * Math.Log(_iterations);
                         double binWidth = Math.Ceiling(binQuantity / range);
                         Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
-                        ConsequenceResult damageReducedResult = new ConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
+                        ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
                         for (int i = 0; i < _iterations; i++)
                         {
