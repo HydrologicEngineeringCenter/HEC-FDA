@@ -125,9 +125,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _Skew = DefaultCurveData.LP3Skew;
             _POR = DefaultCurveData.LP3POR;
             GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM("Graphical Flow Frequency","Probability","Flow"), true);
-            GraphicalTableWithPlotVM.ComputeComponentVM.XLabel = "Probability";
-            GraphicalTableWithPlotVM.ComputeComponentVM.YLabel = "Flow";
-            GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
+            GraphicalTableWithPlotVM.SetPlotForGraphicalFlowFrequency();
             LoadDefaultFlows();
             InitializePlotModel();
         }
@@ -142,6 +140,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             StandardDeviation = elem.StDev;
             Skew = elem.Skew;
             PeriodOfRecord = elem.POR;
+            GraphicalTableWithPlotVM = new TableWithPlotVM(elem.GraphicalVM, true);
+            GraphicalTableWithPlotVM.SetPlotForGraphicalFlowFrequency();
         }
         #endregion
         #region Voids  

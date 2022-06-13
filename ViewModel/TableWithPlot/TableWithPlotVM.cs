@@ -80,6 +80,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
 
         #region Methods
+        public void SetPlotForGraphicalFlowFrequency()
+        {
+            ComputeComponentVM.XLabel = "Probability";
+            ComputeComponentVM.YLabel = "Flow";
+            PlotModel.LegendPosition = LegendPosition.TopLeft;
+        }
         private void Initialize()
         {
             _computeComponentVM.PropertyChanged += _computeComponentVM_PropertyChanged;
