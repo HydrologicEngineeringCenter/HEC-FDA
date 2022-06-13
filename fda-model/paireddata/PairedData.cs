@@ -1,23 +1,22 @@
 using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace paireddata
 {
-    public class PairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedData
+    public class PairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedData, IReportMessage
     {
         private CurveMetaData _metadata;
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
-        [Obsolete("Lets deprecate this and just access info through the metadata object")]
-        public string DamageCategory
-        {
-            get { return _metadata.DamageCategory; }
-        }
         public CurveMetaData CurveMetaData
         {
             get
@@ -25,6 +24,8 @@ namespace paireddata
                 return _metadata;
             }
         }
+        public event MessageReportedEventHandler MessageReport;
+
         public PairedData(double[] xs, double[] ys)
         {
             Xvals = xs;
@@ -40,7 +41,7 @@ namespace paireddata
             AddRules();
         }
         private void AddRules()
-        {
+        {   //TODO: It appears that the logic below does not work correctly because the messages are being returned all the time 
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
@@ -74,7 +75,6 @@ namespace paireddata
         public double f(double x)
         {
             //binary search.
-            //double[] xarr = Xvals; //probably not necessary anymore.
             Int32 index = Array.BinarySearch(Xvals, x);
             if (index >= 0)
             {
@@ -328,6 +328,13 @@ namespace paireddata
                 index++;
             }
             Yvals = update;
+            string message = $"The sampled function {CurveMetaData.Name} was not monotonically increasing. Monotonicity has been forced";
+            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
+        }
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
         }
     }
 }
