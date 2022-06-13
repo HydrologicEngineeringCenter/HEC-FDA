@@ -433,12 +433,12 @@ namespace HEC.FDA.ViewModel.Utilities
 
             //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
-            List<double> graphicalFlows = new List<double>();
+            GraphicalVM graphicalVM = new GraphicalVM("Graphical Flow Frequency", "Probability", "Flow");
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
             int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalFlows, computeComponentVM, id);
+                 analyticalFlows, graphicalVM, computeComponentVM, id);
         }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
