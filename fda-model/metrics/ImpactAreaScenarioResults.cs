@@ -154,12 +154,12 @@ namespace metrics
         {
             return IsEADConverged(computeWithDamage) && IsPerformanceConverged();
         }
-        public bool TestResultsForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
+        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             bool eadIsConverged = true;
             if (computeWithDamage)
             {//TODO: Hard-coded strings are TROUBLE
-                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -201,11 +201,11 @@ namespace metrics
             }
             return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
         }
-        public void ParalellTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public void ParallelResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                threshold.SystemPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                threshold.SystemPerformanceResults.ParallelResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
         }
         public bool Equals(ImpactAreaScenarioResults incomingIContainResults)

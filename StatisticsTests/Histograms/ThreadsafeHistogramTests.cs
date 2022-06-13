@@ -244,7 +244,7 @@ namespace StatisticsTests.Histograms
                 iter++;
                 if (iter % 10000 == 0)
                 {
-                    histogram.TestForConvergence(quantile, 1 - quantile);
+                    histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
             double actual = histogram.CDF(value);
@@ -269,7 +269,7 @@ namespace StatisticsTests.Histograms
                  {
                     histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()), index);
                  });
-                histogram.TestForConvergence(quantile, 1 - quantile);
+                histogram.IsHistogramConverged(quantile, 1 - quantile);
             }
             double actual = histogram.CDF(value);
             double err = Math.Abs((expected - actual) / expected);
@@ -298,7 +298,7 @@ namespace StatisticsTests.Histograms
                         histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()), index);
                     });
                 }
-                histogram.TestForConvergence(quantile, 1 - quantile);
+                histogram.IsHistogramConverged(quantile, 1 - quantile);
                 iterations = histogram.EstimateIterationsRemaining(quantile, 1 - quantile);
             }
             double actual = histogram.CDF(value);

@@ -93,7 +93,7 @@ namespace compute
             }
             SetStageForNonExceedanceProbability();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
-            _impactAreaScenarioResults.ParalellTestForConvergence(.95, .05);
+            _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
             return _impactAreaScenarioResults;
         }
 
@@ -234,7 +234,7 @@ namespace compute
                     }
 
                 });
-                if (!_impactAreaScenarioResults.TestResultsForConvergence(.95, .05, computeWithDamage))
+                if (!_impactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
                 {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
                     iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
@@ -359,7 +359,7 @@ namespace compute
                 }
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
+            //ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
                 ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories" + totalDamageFrequency.CurveMetaData.DamageCategory + "and" + totalDamageFrequency.CurveMetaData.AssetCategory)));
@@ -387,7 +387,7 @@ namespace compute
 
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
+            //ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
                 ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories "+totalDamageFrequency.CurveMetaData.DamageCategory+" and "+totalDamageFrequency.CurveMetaData.AssetCategory)));

@@ -677,7 +677,7 @@ namespace Statistics.Histograms
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
             return new ThreadsafeInlineHistogram(min, max, binWidth, binCounts, convergenceCriteria);
         }
-        public bool TestForConvergence(double upperq, double lowerq)
+        public bool IsHistogramConverged(double upperq, double lowerq)
         {
             ForceDeQueue();
             if (_Converged) { return true; }
