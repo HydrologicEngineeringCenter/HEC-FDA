@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {
@@ -10,6 +11,12 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
         public ComputeScenarioEditor()
         {
             InitializeComponent();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            var myWindow = Window.GetWindow(this);
+            myWindow.Close();
         }
     }
 }

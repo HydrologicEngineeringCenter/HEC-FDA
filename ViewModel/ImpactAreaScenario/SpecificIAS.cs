@@ -34,7 +34,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
-        private ImpactAreaScenarioSimulation _Simulation;
         #endregion
         #region Properties
 
@@ -164,18 +163,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Task output = Task.CompletedTask;
             if (configurationValidationResult.IsValid)
             {
-                _Simulation = sc.BuildSimulation();
+                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
 
                 output = Task.Run(() =>
                 {
                     try
                     {
-                        MessageHub.Register(_Simulation);
-                        ComputeSimulation(_Simulation);
+                        MessageHub.Register(simulation);
+                        ComputeSimulation(simulation);
                     }
                     finally
                     {
-                        MessageHub.Unregister(_Simulation);
+                        MessageHub.Unregister(simulation);
                     }
                 });
             }
