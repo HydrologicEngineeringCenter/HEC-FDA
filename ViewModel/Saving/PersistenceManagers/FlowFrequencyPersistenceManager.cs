@@ -137,7 +137,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
             }
             //do Graphical
-            XElement graphicalElem = elem.GraphicalVM.ToXML();
+            XElement graphicalElem = elem.MyGraphicalVM.ToXML();
             flowFreqElem.Add(graphicalElem);
 
             return flowFreqElem.ToString();
