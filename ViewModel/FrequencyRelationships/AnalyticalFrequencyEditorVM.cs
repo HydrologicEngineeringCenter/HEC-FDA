@@ -157,7 +157,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 foreach (double flow in elem.AnalyticalFlows)
                 {
                     FlowDoubleWrapper fdw = new FlowDoubleWrapper(flow);
-                    fdw.FlowChanged += FlowValue_FlowChanged;
                     AnalyticalFlows.Add(fdw);
                 }
             }
@@ -186,8 +185,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 Title = StringConstants.DISCHARGE
             };
             _plotModel.Axes.Add(y);
-
-            UpdateChartLineData();
         }
 
         private void LoadDefaultFlows()
@@ -195,14 +192,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             for(int i = 1;i<11;i++)
             {
                 FlowDoubleWrapper fdw = new FlowDoubleWrapper(i*1000);
-                fdw.FlowChanged += FlowValue_FlowChanged;
                 AnalyticalFlows.Add(fdw);
             }
-        }
-
-        private void FlowValue_FlowChanged(object sender, EventArgs e)
-        {
-            UpdateChartLineData();
         }
 
         public void UpdateChartLineData()
@@ -304,6 +295,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowMean = MEAN + "N/A";
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
+
+                MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return upd;
         }
@@ -318,15 +311,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     result.AddErrorMessage("Fit to Flows option requires at least 3 flows.");
                 }
-            }
-
-            //if we are still valid, continue with other checks
-            if (result.IsValid)
-            {
-
-                LogPearson3 lp3 = CreateLP3();
-
-                result.AddErrorMessage( IsLP3Valid(lp3).ErrorMessage);
             }
 
             return result;
@@ -353,7 +337,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             else
             {
-                MessageBox.Show("Could not create a valid curve for the following reason:\n" + result.ErrorMessage, "Invalid Curve", MessageBoxButton.OK);
+                MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -369,7 +353,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private FlowDoubleWrapper CreateDefaultRow()
         {
             FlowDoubleWrapper defaultRow = new FlowDoubleWrapper(1000);
-            defaultRow.FlowChanged += FlowValue_FlowChanged;
             return defaultRow;
         }
 

@@ -32,10 +32,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             ThresholdTypes.Add(new ThresholdType(ThresholdEnum.Damage, "Damage"));
         }
 
-        public Threshold GetMetric()
+        public Threshold GetThreshold()
         {
             Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
             return new Threshold(ID, convergenceCriteria, ThresholdType.Metric, ThresholdValue.Value);
         }
+
     }
 }

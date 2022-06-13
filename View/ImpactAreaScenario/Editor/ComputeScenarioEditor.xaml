@@ -3,12 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:utils="clr-namespace:HEC.MVVMFramework.View;assembly=View"
-             xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"            
+             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"     
+             xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <cmds:CloseCommand x:Key="close"/>
+    </UserControl.Resources>
     <Grid Name="myGrid">
-        <Label Content="Computing" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <mvvmView:SelectableMessageView  Grid.Row="0"/>
+        <Button Content="Close" HorizontalAlignment="Right" Grid.Row="1" Margin="5,5,2,5" Width="100" Height="22" 
+                    IsCancel="True" Command="{Binding Source={StaticResource close}}">
+            <Button.CommandParameter>
+                <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
+            </Button.CommandParameter>
+        </Button>
     </Grid>
     
 </UserControl>

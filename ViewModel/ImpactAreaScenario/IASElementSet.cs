@@ -22,9 +22,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string DESCRIPTION = "Description";
         public const string YEAR = "Year";
         public const string LAST_EDIT_DATE = "LastEditDate";
+        public const string STAGE_DAMAGE_ID = "StageDamageID";
 
         private string _Description = "";
         private int _AnalysisYear;
+        private int _StageDamageID;
 
         #endregion
 
@@ -41,13 +43,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
         }
 
+        public int StageDamageID
+        {
+            get { return _StageDamageID; }
+            set { _StageDamageID = value; NotifyPropertyChanged(); }
+        }
+
         public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
 
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, string creationDate, int year, List<SpecificIAS> elems, int id) : base(id)
+        public IASElementSet(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) : base(id)
         {
+            StageDamageID = stageDamageElementID;
             SpecificIASElements.AddRange( elems);
             Name = name;
             Description = description;
@@ -72,7 +81,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             XElement setElem = doc.Element(IAS_SET);
             Name = setElem.Attribute(NAME).Value;
             Description = setElem.Attribute(DESCRIPTION).Value;
-            AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
+            AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);
+            StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
@@ -153,7 +163,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             vm.RequestNavigation += Navigate;
 
             string header = "Edit Impact Area Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS");
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS" + Name);
             Navigate(tab, false, false);
         }
 
@@ -187,12 +197,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
         }
 
-        public ScenarioResults GetScenarioResults()
+        public List<ImpactAreaScenarioResults> GetComputeResults()
         {
-            ScenarioResults results = new ScenarioResults();
+            List < ImpactAreaScenarioResults > results = new List<ImpactAreaScenarioResults>();
             foreach (SpecificIAS ias in SpecificIASElements)
             {
-                results.AddResults( ias.ComputeResults);
+                if (ias.ComputeResults != null)
+                {
+                    results.Add(ias.ComputeResults);
+                }
+            }
+            return results;
+        }
+
+        public ScenarioResults GetScenarioResults()
+        {
+            ScenarioResults results = new ScenarioResults(AnalysisYear);
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                results.AddResults(ias.ComputeResults);
             }
             return results;
         }
@@ -239,9 +262,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(SpecificIASElements, ComputeCompleted);
-            string header = "Compute Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeScenario");
+            ComputeScenarioVM vm = new ComputeScenarioVM( SpecificIASElements, ComputeCompleted);
+            string header = "Compute Log";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog");
             Navigate(tab, false, false);
         }
         private void ComputeCompleted()
@@ -259,7 +282,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear, elem.SpecificIASElements, elem.ID);
+            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear,elem.StageDamageID, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
 
@@ -271,6 +294,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             setElement.SetAttributeValue(NAME, Name);
             setElement.SetAttributeValue(DESCRIPTION, Description);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
+            setElement.SetAttributeValue(STAGE_DAMAGE_ID, StageDamageID);
+
             setElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
 
             foreach(SpecificIAS elem in SpecificIASElements)

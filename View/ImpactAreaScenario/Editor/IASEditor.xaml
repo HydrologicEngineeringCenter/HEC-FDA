@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
              mc:Ignorable="d" 
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              xmlns:Controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
@@ -32,7 +33,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
@@ -51,14 +52,19 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label  Grid.Column="0" Content="Impact Area:" HorizontalAlignment="Right" />
-
             <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreas}" DisplayMemberPath="Name"  SelectedItem="{Binding SelectedImpactArea}" IsEnabled="{Binding HasImpactArea}" />
+
+            <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.STAGE_DAMAGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+            <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
+
         </Grid>
         <local:SpecificIASControl DataContext="{Binding SelectedEditorVM}" Grid.Row="2" />
+        
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>

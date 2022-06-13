@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #endregion
 
-        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.ImpactAreaScenarioResults iasResult)
+        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, ImpactAreaScenarioResults iasResult)
         {
             _IASResult = iasResult;
             LoadThresholdData(iasResult);
@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             foreach(Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
             {
                  ThresholdRowItem row = new ThresholdRowItem(threshold.ThresholdID, threshold.ThresholdType, threshold.ThresholdValue);
-                Thresholds.Add(new ThresholdComboItem(row.GetMetric()));
+                Thresholds.Add(new ThresholdComboItem(row.GetThreshold()));
             }
 
             if(Thresholds.Count > 0)
