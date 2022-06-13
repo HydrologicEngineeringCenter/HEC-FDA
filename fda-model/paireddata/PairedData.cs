@@ -40,8 +40,11 @@ namespace paireddata
             Yvals = ys;
             AddRules();
         }
+        /// <summary>
+        /// These rules only work in the case that we're working with non-exceedance probability 
+        /// </summary>
         private void AddRules()
-        {   //TODO: It appears that the logic below does not work correctly because the messages are being returned all the time 
+        {  
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
@@ -61,7 +64,7 @@ namespace paireddata
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {
+            {   
                 if (comparison(arrayOfData[i], arrayOfData[i + 1]))
                 {
                     return false;
