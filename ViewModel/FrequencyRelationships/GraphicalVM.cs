@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-        public GraphicalVM(string name, string xlabel, string ylabel) : base(name)
+        public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();
             Options.Add(new GraphicalDataProvider());
