@@ -140,7 +140,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             StandardDeviation = elem.StDev;
             Skew = elem.Skew;
             PeriodOfRecord = elem.POR;
-            GraphicalTableWithPlotVM = new TableWithPlotVM(elem.GraphicalVM, true);
+            GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
             GraphicalTableWithPlotVM.SetPlotForGraphicalFlowFrequency();
         }
         #endregion
