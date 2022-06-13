@@ -154,22 +154,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private static UncertainPairedData GetUncertainPairedData(ChildElementComboItem elementComboItem)
         {
-            ChildElement elem1 = elementComboItem.ChildElement;
+            ChildElement elem = elementComboItem.ChildElement;
 
-            CurveChildElement curveElem1 = elem1 as CurveChildElement;
+            CurveChildElement curveElem = elem as CurveChildElement;
 
-            UncertainPairedData data1 = null;
+            UncertainPairedData data;
 
-            if (elem1 is AnalyticalFrequencyElement freqElem)
+            if (elem is AnalyticalFrequencyElement freqElem)
             {
-                data1 = freqElem.CreatePairedData();
+                data = freqElem.CreatePairedData();
             }
             else
             {
-                data1 = curveElem1.ComputeComponentVM.SelectedItemToPairedData();
+                data = curveElem.ComputeComponentVM.SelectedItemToPairedData();
             }
 
-            return data1;
+            return data;
         }
 
 

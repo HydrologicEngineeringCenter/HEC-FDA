@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using Importer;
@@ -283,7 +284,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             messages += "\nGrouping stage damage functions by plan and year: \n";
 
-            int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
             int i = 0;
             //now create elements from the groups of curves
             foreach (List<AggregateDamageFunction> funcs in groupedCurves)

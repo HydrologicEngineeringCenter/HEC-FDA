@@ -8,10 +8,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class ComputeScenarioVM:BaseViewModel
     {
 
-        public ComputeScenarioVM(int year, List<SpecificIAS> iasElems, Action callback)
+        public ComputeScenarioVM( List<SpecificIAS> iasElems, Action callback)
         {
             List<Task> tasks = new List<Task>();
-            List<ImpactAreaScenarioSimulation> simulations = new List<ImpactAreaScenarioSimulation>();
             foreach (SpecificIAS ias in iasElems)
             {
                 tasks.Add( ias.ComputeScenario(this, new EventArgs()));

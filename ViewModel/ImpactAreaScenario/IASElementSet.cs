@@ -81,8 +81,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             XElement setElem = doc.Element(IAS_SET);
             Name = setElem.Attribute(NAME).Value;
             Description = setElem.Attribute(DESCRIPTION).Value;
-            AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
-            StageDamageID = Int32.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
+            AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);
+            StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
@@ -262,7 +262,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM( SpecificIASElements, ComputeCompleted);
             string header = "Compute Log";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog");
             Navigate(tab, false, false);
