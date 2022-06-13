@@ -16,7 +16,7 @@ namespace compute
                 return "The compute has finished after " + _iterations + " iterations";
             }
         }
-        public double EADEstimate
+        public double Iterations
         {
             get
             {

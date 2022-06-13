@@ -356,13 +356,13 @@ namespace compute
 
                 if (giveMeADamageFrequency)
                 {
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.CurveMetaData.DamageCategory, frequency_damage.CurveMetaData.AssetCategory)));
                 }
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories" + totalDamageFrequency.CurveMetaData.DamageCategory + "and" + totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory)));
 
             }
         }
@@ -382,14 +382,14 @@ namespace compute
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.CurveMetaData.DamageCategory, frequency_damage.CurveMetaData.AssetCategory)));
                 }
 
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories "+totalDamageFrequency.CurveMetaData.DamageCategory+" and "+totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory)));
 
             }
         }
