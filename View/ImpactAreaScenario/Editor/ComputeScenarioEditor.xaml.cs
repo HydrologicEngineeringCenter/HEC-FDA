@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace HEC.FDA.View.ImpactAreaScenario.Editor
 {

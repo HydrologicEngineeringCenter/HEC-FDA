@@ -43,33 +43,6 @@ namespace HEC.FDA.ViewModel.GeoTech
             TableWithPlot.ComputeComponentVM.SetMinMaxValues(0, 1);
         }
         #endregion
-        #region Voids
-        private void UpdateChart(double newElevationValue)
-        {
-            //todo: leaving this here until we get the new table and plot 
-            //if (_UsingDefaultCurve)
-            //{
-            //    //if this is the first time then there will only be one coordinate
-            //    CoordinatesFunctionTableVM firstTable =  EditorVM.Tables[0];
-            //    CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(1, false)
-            //                            .WithConstantDist(newElevationValue)
-            //                            .Build();
-            //    if (firstTable.Rows.Count > 1)
-            //    {
-            //        //replace the second row
-            //        firstTable.DeleteRows(new List<int> { 1 });
-            //        firstTable.AddRow(row);
-            //    }
-            //    else
-            //    {
-            //        //add the second row
-            //        firstTable.AddRow(row);
-            //    }
-            //}
-        }
-        #endregion
-        #region Functions
-        #endregion
 
         public override void Save()
         {

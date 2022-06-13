@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -113,11 +114,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
             catch (Exception e)
             {
-                CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete terrain file: " + element.FileName);
-                string header = "Error";
-                DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
-                Navigate(tab);
-                element.CustomTreeViewHeader = new CustomHeaderVM(element.Name, ImageSources.TERRAIN_IMAGE);
+                MessageBox.Show("Could not delete terrain file: " + element.FileName + ":\n" + e.Message, "Error Deleting Terrain", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
@@ -163,10 +160,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     }
                     catch (Exception e)
                     {
-                        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not rename the terrain file at location: " + Storage.Connection.Instance.TerrainDirectory + "\\" + oldElement.Name);
-                        string header = "Error";
-                        DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
-                        Navigate(tab);
+                        MessageBox.Show("Could not rename the terrain file at location: " + Connection.Instance.TerrainDirectory + "\\" + oldElement.Name + ":\n" + e.Message, "Error Renaming Terrain", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                

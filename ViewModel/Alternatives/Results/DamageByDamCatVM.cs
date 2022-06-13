@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using metrics;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
@@ -7,36 +8,34 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     {
         public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
 
-        public DamageByDamCatVM()
+        public DamageByDamCatVM(ScenarioResults scenarioResults)
         {
-            loadDummyData();
-        }
-
-        private void loadDummyData()
-        {
-            List<string> xVals = loadXData();
-            List<double> yVals = loadYData();
-
-            for (int i = 0; i < xVals.Count; i++)
+            //todo: get the list of dam cats from the scenario results
+            List<string> damCats = new List<string>();
+            foreach(string damCat in damCats)
             {
-                Rows.Add(new DamageCategoryRowItem(xVals[i], yVals[i]));
+                Rows.Add(new DamageCategoryRowItem(damCat, scenarioResults.MeanExpectedAnnualConsequences(damageCategory: damCat)));
             }
         }
 
-        private List<string> loadXData()
+        public DamageByDamCatVM(AlternativeResults alternativeResults)
         {
-            List<string> xValues = new List<string>();
-            xValues.Add("Residential");
-            xValues.Add("Commercial");
-            return xValues;
+            //todo: get the list of dam cats from the AlternativeResults
+            List<string> damCats = new List<string>();
+            foreach (string damCat in damCats)
+            {
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequence(damageCategory: damCat)));
+            }
         }
 
-        private List<double> loadYData()
+        public DamageByDamCatVM(AlternativeComparisonReportResults alternativeResults, int altID)
         {
-            List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
-            return yValues;
+            //todo: get the list of dam cats from the AlternativeResults
+            List<string> damCats = new List<string>();
+            foreach (string damCat in damCats)
+            {
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequencesReduced(altID, damageCategory: damCat)));
+            }
         }
     }
 }

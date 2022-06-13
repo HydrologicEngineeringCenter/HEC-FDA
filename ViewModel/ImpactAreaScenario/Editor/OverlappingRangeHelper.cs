@@ -1,10 +1,12 @@
-﻿using paireddata;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Utilities;
+using paireddata;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -62,22 +64,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private static void CheckRangeWithStageDamage(AggregatedStageDamageElement stageDamElem, ChildElementComboItem otherElem, 
             StageDamageCurve selectedDamageCurve, ObservableCollection<RecommendationRowItem> messageRows)
         {
+
+            double minProb = .00001;
+            double maxProb = .99999;
+
             //this will always compare the x values of the stage-damage to the y values of the other element.
             double stageDamageMin = -1;
             double stageDamageMax = -1;
             double otherMin = -1;
             double otherMax = -1;
 
-            //todo: can i change the row item so i don't have to cast here?
-
             UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).ComputeComponentVM.SelectedItemToPairedData();
 
             stageDamageMin = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Min();
             stageDamageMax = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Last();
 
-            //todo: not sure i did this right.
-            otherMin = otherCurve.Yvals.First().CDF(.5);
-            otherMax = otherCurve.Yvals.Last().CDF(.5);
+            IDistribution firstDistribution = otherCurve.Yvals.First();
+            IDistribution lastDistribution = otherCurve.Yvals.Last();
+
+            otherMin = firstDistribution.InverseCDF(minProb);
+            otherMax = lastDistribution.InverseCDF(maxProb);
 
             AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE,
                 stageDamElem.Name, otherElem.ChildElement.Name, messageRows);
@@ -98,30 +104,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             double minProb = .00001;
             double maxProb = .99999;
 
-            ChildElement elem1 = element1.ChildElement;
-            ChildElement elem2 = element2.ChildElement;
+            UncertainPairedData data1 = GetUncertainPairedData(element1);
+            UncertainPairedData data2 = GetUncertainPairedData(element2);          
 
-            //todo: can i change the row item so i don't have to cast here?
-            CurveChildElement curveElem1 = elem1 as CurveChildElement;
-            CurveChildElement curveElem2 = elem2 as CurveChildElement;
-
-            UncertainPairedData data1 = curveElem1.ComputeComponentVM.SelectedItemToPairedData();
-            UncertainPairedData data2 = curveElem2.ComputeComponentVM.SelectedItemToPairedData();
-
-            string name1 = elem1.Name;
-            string name2 = elem2.Name;
+            string name1 = element1.Name;
+            string name2 = element2.Name;
 
             double x1Min = data1.Xvals.First();
             double x1Max = data1.Xvals.Last();
 
             double x2Min = data2.Xvals.First();
-            double x2Max = data2.Xvals.First();
+            double x2Max = data2.Xvals.Last();
 
             double y1Min = data1.Yvals.First().InverseCDF(minProb);
             double y1Max = data1.Yvals.Last().InverseCDF(maxProb);
 
             double y2Min = data2.Yvals.First().InverseCDF(minProb);
-            double y2Max = data2.Yvals.First().InverseCDF(maxProb);
+            double y2Max = data2.Yvals.Last().InverseCDF(maxProb);
 
             //these will be the min and max for the axes that we care about
             double min1;
@@ -153,6 +152,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             AddRecommendationForNonoverlappingRange(min1, max1, min2, max2, headerBase, axisLabel, name1, name2, messageRows);
         }
 
+        private static UncertainPairedData GetUncertainPairedData(ChildElementComboItem elementComboItem)
+        {
+            ChildElement elem = elementComboItem.ChildElement;
+
+            CurveChildElement curveElem = elem as CurveChildElement;
+
+            UncertainPairedData data;
+
+            if (elem is AnalyticalFrequencyElement freqElem)
+            {
+                data = freqElem.CreatePairedData();
+            }
+            else
+            {
+                data = curveElem.ComputeComponentVM.SelectedItemToPairedData();
+            }
+
+            return data;
+        }
+
+
         /// <summary>
         /// The values here should either be both mins or both maxes.
         /// </summary>
@@ -175,7 +195,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return max - min;
         }
 
-        private static void AddRecommendationForNonoverlappingRange(double min1, double max1, double min2, double max2, string headerBase, 
+        private static void AddRecommendationForNonoverlappingRange(double min1, double max1, double min2, double max2, string headerBase,
             string axisLabel, string name1, string name2, ObservableCollection<RecommendationRowItem> messageRows)
         {
             RecommendationRowItem ri = new RecommendationRowItem(headerBase + ": " + name1);
@@ -184,36 +204,43 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             string minRange = "";
             string maxRange = "";
 
-            //todo: apply some min and max rule.
-            double totalRange = getTotalRange(min1, min2, max1, max2);
-            if (!passesRangeTest(min1, min2, totalRange))
+            //if a max is less than a min then there is no overlap at all.
+            if (min1 > max2 || min2 > max1)
             {
-                nonOverlapMin = true;
-                minRange = getRangeString(min1, min2);
+                ri.Messages.Add(name1 + " has no overlapping range with " + name2);
             }
-            if (!passesRangeTest(max1, max2, totalRange))
+            else
             {
-                nonOverlapMax = true;
-                maxRange = getRangeString(max1, max2);
-            }
+                double totalRange = getTotalRange(min1, min2, max1, max2);
+                if (!passesRangeTest(min1, min2, totalRange))
+                {
+                    nonOverlapMin = true;
+                    minRange = getRangeString(min1, min2);
+                }
+                if (!passesRangeTest(max1, max2, totalRange))
+                {
+                    nonOverlapMax = true;
+                    maxRange = getRangeString(max1, max2);
+                }
 
-            if (nonOverlapMin && nonOverlapMax)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange + " and " + maxRange);
+                if (nonOverlapMin && nonOverlapMax)
+                {
+                    ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange + " and " + maxRange);
+                }
+                else if (nonOverlapMin)
+                {
+                    ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange);
+                }
+                else if (nonOverlapMax)
+                {
+                    ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + maxRange);
+                }
             }
-            else if (nonOverlapMin)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange);
-            }
-            else if (nonOverlapMax)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + maxRange);
-            }
-
             if (ri.Messages.Count > 0)
             {
                 messageRows.Add(ri);
             }
+
         }
 
         private static string getRangeString(double val1, double val2)

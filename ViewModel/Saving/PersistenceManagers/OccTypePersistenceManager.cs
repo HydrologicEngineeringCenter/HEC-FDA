@@ -360,7 +360,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return GetElementId(ParentTableName, groupName);
         }
 
-        public void SaveNewToOcctypesTable(ChildElement element)
+        private void SaveNewToOcctypesTable(ChildElement element)
         {
             //we should have already saved the element to the parent table so that we can grab the id from that table
             int elemId = GetElementId(TableName, element.Name);

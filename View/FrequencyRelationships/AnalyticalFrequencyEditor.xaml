@@ -71,8 +71,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                <RadioButton x:Name="rad_standard" Content="Fit to Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
-                <RadioButton x:Name="rad_fitToFlows" Content="Fit to Flows" IsChecked="{Binding IsStandard, Converter={StaticResource InverseBooleanConverter}}" Checked="rad_fitToFlows_Checked" Margin="5"/>
+                <RadioButton x:Name="rad_standard" Content="Enter LP3 Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
+                <RadioButton x:Name="rad_fitToFlows" Content="Fit LP3 Parameters to Flows" IsChecked="{Binding IsStandard, Converter={StaticResource InverseBooleanConverter}}" Checked="rad_fitToFlows_Checked" Margin="5"/>
             </StackPanel>
 
             <Grid x:Name="grid_analyticalLeft_standard" Grid.Row="1" Grid.Column="0" Visibility="Visible">
@@ -118,17 +118,18 @@
                     <Grid Grid.Row="1" Grid.Column="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25"/>
                             <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
                         </Grid.RowDefinitions>
-
-                        <Label Name="lbl_fitToFlow_mean" Content="{Binding FitToFlowMean}" Grid.Row="0" Margin="0"/>
-                        <Label Name="lbl_fitToFlow_stDev" Content="{Binding FitToFlowStDev}" Grid.Row="1" Margin="0"/>
-                        <Label Name="lbl_fitToFlow_skew" Content="{Binding FitToFlowSkew}" Grid.Row="2" Margin="0"/>
+                        <Button Content="Fit" Click="FitToFlows_Click" Grid.Row="0" Width="100" />
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Label Name="lbl_fitToFlow_mean" Content="{Binding FitToFlowMean}" Grid.Row="0" Margin="0,0,0,0"/>
+                            <Label Name="lbl_fitToFlow_stDev" Content="{Binding FitToFlowStDev}" Grid.Row="1" Margin="15,0,0,0"/>
+                            <Label Name="lbl_fitToFlow_skew" Content="{Binding FitToFlowSkew}" Grid.Row="2" Margin="15,0,0,0"/>
+                            
+                        </StackPanel>
 
                     </Grid>
                 </Grid>

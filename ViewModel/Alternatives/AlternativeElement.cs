@@ -7,7 +7,6 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
-using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -25,8 +24,12 @@ namespace HEC.FDA.ViewModel.Alternatives
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
 
-        public List<int> IASElementSets { get; } = new List<int>();
+        private AlternativeResults _Results;
 
+        #region properties
+        public List<int> IASElementSets { get; } = new List<int>();
+        public AlternativeResults Results { get; }
+        #endregion
         #region Constructors
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description,string creationDate, List<int> IASElements, int id):base(id)
+        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(id)
         {
             Name = name;
             Description = description;
@@ -71,7 +74,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 ImageSource = ImageSources.ALTERNATIVE_IMAGE,
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };    
+            };
             AddActions();
         }
         #endregion
@@ -121,19 +124,40 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSet firstElem = iASElems[0];
                 IASElementSet secondElem = iASElems[1];
 
-                Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
-                Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
-                long por = firstElem.AnalysisYear;
-                int id = 99;
-                Alternative alt = new Alternative(scenario1, scenario2, por, id);
+                int firstElemYear = firstElem.AnalysisYear;
+                int secondElemYear = secondElem.AnalysisYear;
+                ScenarioResults firstResults = firstElem.GetScenarioResults();
+                ScenarioResults secondResults = secondElem.GetScenarioResults();
+
+                bool secondElemIsFirst = firstElemYear > secondElemYear;
+
+                //Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
+                //Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
+                //long por = firstElem.AnalysisYear;
+                //int id = 99;
+                //Alternative alt = new Alternative(scenario1, scenario2, por, id);
+
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = new ConvergenceCriteria();
-                //todo: discount rate from the properties? - yes
-                double discountRate = .01;
-                AlternativeResults alternativeResults = alt.AnnualizationCompute(randomProvider, cc, discountRate, firstElem.GetScenarioResults(), secondElem.GetScenarioResults());
-                //Richard is writing a ToXML() 6/3/22
+                StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
+                double discountRate = studyProperties.DiscountRate;
+                int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
+
+                if (secondElemIsFirst)
+                {
+                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, secondElemYear,
+                    secondResults, firstElemYear, firstResults);
+                }
+                else
+                {
+                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, firstElemYear,
+                    firstResults, secondElemYear, secondResults);
+                }
+
+                MessageBox.Show("compute complete");
+                Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(this);
             }
             else
             {
@@ -143,10 +167,18 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         }
 
-
-        private IASElementSet[] GetElementsFromID()
+        /// <summary>
+        /// These elements will be returned in year order. The lower year will be the first element.
+        /// If the element cannot be found then it will be null.
+        /// </summary>
+        /// <returns></returns>
+        public IASElementSet[] GetElementsFromID()
         {
             IASElementSet[] iASElems = new IASElementSet[] { null, null };
+
+            bool firstElemFound = false;
+            bool secondElemFound = false;
+
             int firstID = IASElementSets[0];
             int secondID = IASElementSets[1];
             //get the current ias elements in the study
@@ -157,12 +189,31 @@ namespace HEC.FDA.ViewModel.Alternatives
                 if (setID == firstID)
                 {
                     iASElems[0] = set;
+                    firstElemFound = true;
                 }
                 else if (setID == secondID)
                 {
                     iASElems[1] = set;
+                    secondElemFound = true;
                 }
             }
+
+            //put them in the correct order
+            if(firstElemFound && secondElemFound)
+            {
+                IASElementSet firstElem = iASElems[0];
+                IASElementSet secondElem = iASElems[1];
+                int firstYear = firstElem.AnalysisYear;
+                int secondYear = secondElem.AnalysisYear;
+                if(firstYear > secondYear)
+                {
+                    //todo: test this
+                    //switch them 
+                    iASElems[0] = secondElem;
+                    iASElems[1] = firstElem;
+                }
+            }
+
             return iASElems;
         }
 
@@ -184,16 +235,16 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
             bool secondElemHasResults = false;
-            if(firstElem != null && firstElem.GetResults().Count>0)
+            if (firstElem != null && firstElem.GetComputeResults().Count > 0)
             {
                 firstElemHasResults = true;
             }
-            if (secondElem != null && secondElem.GetResults().Count > 0)
+            if (secondElem != null && secondElem.GetComputeResults().Count > 0)
             {
                 secondElemHasResults = true;
             }
 
-            if(!firstElemHasResults)
+            if (!firstElemHasResults)
             {
                 vr.AddErrorMessage("Scenario '" + firstElem.Name + "' has no compute results.");
             }
@@ -219,10 +270,10 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private FdaValidationResult DoBothScenariosExist(IASElementSet firstElem, IASElementSet secondElem)
         {
-            FdaValidationResult vr = new FdaValidationResult();            
+            FdaValidationResult vr = new FdaValidationResult();
             if (firstElem == null || secondElem == null)
             {
-                vr.AddErrorMessage("There are no longer two impact area scenarios linked to this alternative.");
+                vr.AddErrorMessage("There are no longer two scenarios linked to this alternative.");
             }
             return vr;
         }
@@ -234,30 +285,29 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             double discountRate = studyPropElem.DiscountRate;
             int period = studyPropElem.PeriodOfAnalysis;
-            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(.123, 1), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(.456, 4), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+
+            IASElementSet[] iASElems = GetElementsFromID();
+            IASElementSet firstElem = iASElems[0];
+            IASElementSet secondElem = iASElems[1];
+
+
+            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.GetScenarioResults()), new DamageByImpactAreaVM(firstElem.GetScenarioResults()), new DamageByDamCatVM(firstElem.GetScenarioResults()));
+            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.GetScenarioResults()), new DamageByImpactAreaVM(secondElem.GetScenarioResults()), new DamageByDamCatVM(secondElem.GetScenarioResults()));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .7, 8), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _Results), new DamageByImpactAreaVM(discountRate, period, _Results), new DamageByDamCatVM(_Results));
             altResult = new AlternativeResult(eadResult, aaeqResult);
 
             return altResult;
         }
 
-        private FdaValidationResult CanViewResults()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            //todo: check if we have results that can be viewed.
-
-            return vr;
-        }
-
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            FdaValidationResult vr = CanViewResults();
-            if (vr.IsValid)
+            if (_Results != null)
             {
+
+
+                //todo pass in the correct thing.
                 AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
                 string header = "Alternative Results: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
@@ -265,7 +315,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage, "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("There are no results to view", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -282,9 +332,9 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            if(elementToClone is AlternativeElement elem)
+            if (elementToClone is AlternativeElement elem)
             {
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description,elem.LastEditDate, elem.IASElementSets, elem.ID);
+                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.LastEditDate, elem.IASElementSets, elem.ID);
                 return elemToReturn;
             }
             return null;
@@ -302,6 +352,12 @@ namespace HEC.FDA.ViewModel.Alternatives
                 XElement setElement = new XElement(IAS_SET);
                 setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
+            }
+
+            if(_Results != null)
+            {
+                XElement resultsElem = _Results.WriteToXML();
+                altElement.Add(resultsElem);
             }
             return altElement.ToString();
         }

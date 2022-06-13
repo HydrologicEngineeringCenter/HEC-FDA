@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.View.Utilities;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Implementations;
 using System;
 using System.Windows;
 
@@ -67,6 +68,10 @@ namespace HEC.FDA.View
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            //TODO: I think Will is fixing the issue with this line. Leaving in for now.
+            //this get called when any window closes. I might need to move these lines.
+            //MessageHub.UnsubscribeAll(TextFileMessageSubscriber.Instance);
+            //TextFileMessageSubscriber.Instance.Dispose();
             WindowVM vm = DataContext as WindowVM;
             if (vm.Tab != null)
             {

@@ -51,9 +51,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public FdaValidationResult IsConfigurationValid()
         {
             FdaValidationResult vr = IsStageDamageValid();
-
             return vr;
         }
+
         private FdaValidationResult IsStageDamageValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
