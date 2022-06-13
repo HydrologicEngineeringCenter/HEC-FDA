@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.FDA.ViewModel.Utilities;
@@ -11,6 +12,7 @@ using paireddata;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -69,6 +71,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             _computeComponentVM = computeComponentVM;
             Initialize();
         }
+        public TableWithPlotVM(XElement ele)
+        {
+            LoadFromXML(ele);
+            Initialize();
+
+        }
         #endregion
 
         #region Methods
@@ -112,7 +120,19 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             ele.Add(ComputeComponentVM.ToXML());
             return ele;
         }
-
+        private void LoadFromXML(XElement ele)
+        {
+            _reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);
+            var elements = ele.Descendants();
+            XElement computeCompElement = elements.First();
+            string componentType = computeCompElement.Name.ToString();
+            switch (componentType)
+            {
+                case "GraphicalVM":
+                    _computeComponentVM = new GraphicalVM(computeCompElement);
+                    break;
+            }
+        }
         public UncertainPairedData GetUncertainPairedData()
         {
             return ComputeComponentVM.SelectedItem.ToUncertainPairedData(ComputeComponentVM.XLabel, ComputeComponentVM.YLabel, ComputeComponentVM.Name, ComputeComponentVM.Description, "testCategory?");
