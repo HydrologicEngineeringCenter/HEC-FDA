@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             foreach(Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
             {
                  ThresholdRowItem row = new ThresholdRowItem(threshold.ThresholdID, threshold.ThresholdType, threshold.ThresholdValue);
-                Thresholds.Add(new ThresholdComboItem(row.GetMetric()));
+                Thresholds.Add(new ThresholdComboItem(row.GetThreshold()));
             }
 
             if(Thresholds.Count > 0)

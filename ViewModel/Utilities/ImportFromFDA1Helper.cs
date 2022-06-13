@@ -25,26 +25,29 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<RatingCurveElement> CreateRatingElements(RatingFunctionList ratings)
         {
             List<RatingCurveElement> elems = new List<RatingCurveElement>();
+            int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
+            int i = 0;
             foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
             {
-                RatingCurveElement elem = CreateRatingElement(rat.Value);
+                int elemID = id + i;
+                RatingCurveElement elem = CreateRatingElement(rat.Value, elemID);
                 if (elem != null)
                 {
                     elems.Add(elem);
+                    i++;
                 }
             }
             return elems;
         }
-        private static RatingCurveElement CreateRatingElement(RatingFunction rat)
+        private static RatingCurveElement CreateRatingElement(RatingFunction rat, int elemID)
         {
             string description = CreatePYSRDescription(rat);
 
             UncertainPairedData ratingPairedData = CreateRatingPairedData(rat);
-            int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
             computeComponentVM.SetPairedData(ratingPairedData);
-            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, id);
+            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, elemID);
             return elem;
         }
 
@@ -280,20 +283,24 @@ namespace HEC.FDA.ViewModel.Utilities
 
             messages += "\nGrouping stage damage functions by plan and year: \n";
 
+            int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+            int i = 0;
             //now create elements from the groups of curves
             foreach (List<AggregateDamageFunction> funcs in groupedCurves)
             {
-                AggregatedStageDamageElement stageDamElem = CreateElement(funcs, impactAreaElements, ref messages);
+                int elemID = id + i;
+                AggregatedStageDamageElement stageDamElem = CreateElement(funcs, impactAreaElements,elemID, ref messages);
                 if (stageDamElem != null)
                 {
                     Elements.Add(stageDamElem);
+                    i++;
                 }
             }
 
             return Elements;
         }
 
-        private static AggregatedStageDamageElement CreateElement(List<AggregateDamageFunction> funcs, List<ImpactAreaElement> impactAreaElements, ref string messages)
+        private static AggregatedStageDamageElement CreateElement(List<AggregateDamageFunction> funcs, List<ImpactAreaElement> impactAreaElements, int elemID, ref string messages)
         {
             AggregatedStageDamageElement elem = null;
             if (funcs.Count > 0)
@@ -316,8 +323,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
                 if (curves.Count > 0)
                 {
-                    int id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true, id);
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true, elemID);
                 }
                 else
                 {
@@ -401,16 +407,20 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
             List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
+            int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
+            int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
+                int elemID = id + i;
                 ProbabilityFunction pf = kvp.Value;
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
-                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf);
+                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
                     if(freqElem != null)
                     {
                         elems.Add(freqElem);
+                        i++;
                     }
                 }
             }
@@ -419,7 +429,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
        
 
-        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf)
+        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             double mean = pf.MomentsLp3[0];
@@ -436,19 +446,18 @@ namespace HEC.FDA.ViewModel.Utilities
             List<double> graphicalFlows = new List<double>();
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
-            int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalFlows, computeComponentVM, id);
+                 analyticalFlows, graphicalFlows, computeComponentVM, elemID);
         }
 
-        private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf)
+        private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
         {
             AnalyticalFrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
                 {
-                    elem = CreateManualAnalyticalElement(pf);
+                    elem = CreateManualAnalyticalElement(pf, elemID);
                 }
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
@@ -513,30 +522,33 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<InflowOutflowElement> CreateInflowOutflowElements(ProbabilityFunctionList probFuncs)
         {
             List<InflowOutflowElement> elems = new List<InflowOutflowElement>();
+            int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
+            int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
                 ProbabilityFunction pf = kvp.Value;                
                 if (pf.NumberOfTransFlowPoints > 0)
                 {
-                    InflowOutflowElement elem = CreateInflowOutflow(pf);
+                    int elemID = id + i;
+                    InflowOutflowElement elem = CreateInflowOutflow(pf, elemID);
                     if (elem != null)
                     {
                         elems.Add(elem);
+                        i++;
                     }
                 }
             }
             return elems;
         }
 
-        private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction)
+        private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction, int elemID)
         {
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
-            int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.REGULATED, StringConstants.UNREGULATED);
             computeComponentVM.SetPairedData(func);
-            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, id);
+            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, elemID);
         }
 
         private static List<IDistribution> GetUncertaintyValues(ProbabilityFunction probFunction)
@@ -1026,16 +1038,20 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<ChildElement> CreateLeveeElements(LeveeList leveeList, ref string message)
         {
             List<ChildElement> elems = new List<ChildElement>();
+            int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
+            int i = 0;
             foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {
+                int elemID = id + i;
                 Levee lev = kvp.Value;
-                elems.Add(CreateLeveeElement(lev, ref message));
+                elems.Add(CreateLeveeElement(lev, elemID, ref message));
+                i++;
             }
             return elems;
         }
        
 
-        private static ChildElement CreateLeveeElement(Levee lev, ref string message)
+        private static ChildElement CreateLeveeElement(Levee lev,int elemID, ref string message)
         {
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
@@ -1067,11 +1083,10 @@ namespace HEC.FDA.ViewModel.Utilities
                 func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 isDefault = false;
             }
-            int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
             computeComponentVM.SetPairedData(func);
-            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,id);
+            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,elemID);
             return leveeFeatureElement;
         }
 
@@ -1081,18 +1096,22 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<ChildElement> CreateExteriorInteriors(LeveeList leveeList)
         {
             List<ChildElement> elems = new List<ChildElement>();
+            int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
+            int i = 0;
             foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {
+                int elemID = id + i;
                 Levee lev = kvp.Value;
                 if (lev.ExteriorInteriorPairs.Count > 0)
                 {
-                    elems.Add(CreateExteriorInterior(lev));
+                    elems.Add(CreateExteriorInterior(lev, elemID));
+                    i++;
                 }
             }
             return elems;
         }
 
-        private static ChildElement CreateExteriorInterior(Levee lev)
+        private static ChildElement CreateExteriorInterior(Levee lev, int elemID)
         {
             List<double> xs = new List<double>();
             List<Deterministic> ys = new List<Deterministic>();
@@ -1102,11 +1121,10 @@ namespace HEC.FDA.ViewModel.Utilities
                 ys.Add(new Deterministic(xy.GetY()));
             }
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
-            int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
    
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             computeComponentVM.SetPairedData(func);
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, id);
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, elemID);
             return elem;
         }
         #endregion

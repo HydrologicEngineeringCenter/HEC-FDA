@@ -460,6 +460,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
+        
+
         private void PreviewCompute()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
@@ -474,17 +476,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID);
 
-            int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
-                double thresholdValue = 0;
-                if(thresholdRow.ThresholdValue != null )
-                {
-                    thresholdValue = thresholdRow.ThresholdValue.Value;
-                }
-                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdValue);
+                Threshold threshold = thresholdRow.GetThreshold();
                 sc.WithAdditionalThreshold(threshold);
-                thresholdIndex++;
             }
 
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();

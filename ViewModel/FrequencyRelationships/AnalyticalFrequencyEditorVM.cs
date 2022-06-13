@@ -314,15 +314,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
             }
 
-            //if we are still valid, continue with other checks
-            if (result.IsValid)
-            {
-
-                LogPearson3 lp3 = CreateLP3();
-
-                result.AddErrorMessage( IsLP3Valid(lp3).ErrorMessage);
-            }
-
             return result;
         }
 
