@@ -178,13 +178,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             }
 
             SelectedItem = Options.First();
-            // This is just so our initial set of data we load is valid. Eventually we can crush this if condition. 
-            if (Name == "Fragility Curve")
-            {
-                Options.First().RemoveRows(new List<int> { 1, 2, 3, 4, 5 });
-                var ok = (DeterministicRow)(Options.First().Data[1]);
-                ok.Value = 1;
-            }
         }
 
         public void SetMinMaxValues(double minY, double maxY)
@@ -218,6 +211,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             ele.SetAttributeValue("selectedItem", SelectedItem.Name);
             ele.SetAttributeValue("Name", Name);
             ele.SetAttributeValue("DeterministicOnly", _DeterministicOnly);
+            ele.SetAttributeValue("Description", Description);
 
             foreach (IDataProvider idp in Options)
             {
@@ -230,10 +224,15 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public virtual void LoadFromXML(XElement element)
         {
             string selectedItemName = element.Attribute("selectedItem")?.Value;
+            Description = element.Attribute("Description")?.Value;
+            _DeterministicOnly = Convert.ToBoolean(element.Attribute("DeterministicOnly")?.Value);
+            Name = element.Attribute("Name")?.Value;
+
+            Options.Clear();
             foreach (XElement updEl in element.Elements())
             {
-                Description = updEl.Attribute("Description")?.Value;
-                _DeterministicOnly = Convert.ToBoolean(updEl.Attribute("DeterministicOnly")?.Value);
+                
+                
 
                 string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
                 string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
