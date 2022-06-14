@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:ViewModel="clr-namespace:HEC.FDA.ViewModel.Study;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -48,7 +48,7 @@
             <Label Content="Created Date:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
             <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsEnabled="false" Text="{Binding StudyName}"/>
-            <CA:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding StudyDescription}"/>
+            <UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding StudyDescription}"/>
             <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
             <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>
             <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsEnabled="false" Margin="3" Text="{Binding CreatedDate, Mode=OneWay}"/>
@@ -70,7 +70,7 @@
                 </Grid.RowDefinitions>
 
                 <Label  Content="Study Notes:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <CA:TextBoxDescription Text="{Binding StudyNotes}" Grid.Row="0" Grid.Column="1" Margin="0,3,0,3" />
+                <UserControls:TextBoxDescription Text="{Binding StudyNotes}" Grid.Row="0" Grid.Column="1" Margin="0,3,0,3" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Discount Rate:"  HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DiscountRate}" Margin="0,3,20,3"/>

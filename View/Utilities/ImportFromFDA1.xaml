@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
-             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
