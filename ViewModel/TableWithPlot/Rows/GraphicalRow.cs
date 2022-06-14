@@ -89,30 +89,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((GraphicalRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (PreviousRow == null) return true; return Value > ((GraphicalRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
-            PropertyChanged += GraphicalRow_PropertyChanged;
-        }
-
-        public void GraphicalRow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Value) || e.PropertyName == nameof(X))
-            {
-                Confidence025 = 0;
-                Confidence975 = 0;
-                if (NextRow != null)
-                {
-                    if (((GraphicalRow)NextRow).Confidence025 != 0)
-                    {
-                        ((GraphicalRow)NextRow).Confidence025 = 0;
-                    }
-                }
-                if (PreviousRow != null)
-                {
-                    if (((GraphicalRow)(PreviousRow)).Confidence025 != 0)
-                    {
-                        ((GraphicalRow)PreviousRow).Confidence025 = 0;
-                    }
-                }
-            }
         }
 
         private void ClearConfidenceLimits()
