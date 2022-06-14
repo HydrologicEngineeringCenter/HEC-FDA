@@ -592,9 +592,35 @@ namespace Statistics.Histograms
             return true;
 
         }
-        int IHistogram.EstimateIterationsRemaining(double upperq, double lowerq)
+        public int EstimateIterationsRemaining(double upperq, double lowerq)
         {
-            throw new NotImplementedException();
+            //TODO: WHAT DO THE BELOW VARIABLES EVEN MEAN??????????
+            //PLEASE PROVIDE VARIABLE NAMES IN ENGLISH thank you so much 
+            //until then this remains gobbledygook 
+            if (_Converged) return 0;
+            double up = upperq;
+            double val = up * (1 - up);
+            double uz2 = 2 * _ConvergenceCriteria.ZAlpha;
+            double uxp = InverseCDF(up);
+            double ufxp = PDF(uxp);
+            int upperestimate = _ConvergenceCriteria.MaxIterations;
+            if (ufxp > 0.0 & uxp != 0)
+            {
+                upperestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0))));
+            }
+            double lp = lowerq;
+            double lval = lp * (1 - lp);
+            double lz2 = 2 * _ConvergenceCriteria.ZAlpha;
+            double lxp = InverseCDF(lp);
+            double lfxp = PDF(lxp);
+            int lowerestimate = _ConvergenceCriteria.MaxIterations;
+            if (lfxp > 0.0 & uxp != 0)
+            {
+                lowerestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
+            }
+            int biggestGuess = Math.Max(upperestimate, lowerestimate);
+            int remainingIters = _ConvergenceCriteria.MaxIterations - _N;
+            return Convert.ToInt32(Math.Min(remainingIters, biggestGuess));
         }
 
         #endregion
