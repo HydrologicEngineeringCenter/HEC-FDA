@@ -122,20 +122,19 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             flowFreqElem.Add(analyticalElem);
             analyticalElem.SetAttributeValue(USES_MOMENTS, elem.IsStandard);
             analyticalElem.SetAttributeValue(POR, elem.POR);
-            //if (elem.IsStandard)
-            {
-                XElement momentsElem = new XElement(MOMENTS);
-                analyticalElem.Add(momentsElem);
-                momentsElem.SetAttributeValue(MEAN, elem.Mean);
-                momentsElem.SetAttributeValue(ST_DEV, elem.StDev);
-                momentsElem.SetAttributeValue(SKEW, elem.Skew);
-            }
-            //else //fit to flows
-            {
-                XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
-                analyticalElem.Add(fitToFlowsElem);
-                fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
-            }
+
+            // IsStandard
+            XElement momentsElem = new XElement(MOMENTS);
+            analyticalElem.Add(momentsElem);
+            momentsElem.SetAttributeValue(MEAN, elem.Mean);
+            momentsElem.SetAttributeValue(ST_DEV, elem.StDev);
+            momentsElem.SetAttributeValue(SKEW, elem.Skew);
+
+            //fit to flows
+            XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
+            analyticalElem.Add(fitToFlowsElem);
+            fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
+
             //do Graphical
             XElement graphicalElem = elem.MyGraphicalVM.ToXML();
             flowFreqElem.Add(graphicalElem);
