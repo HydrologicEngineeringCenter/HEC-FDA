@@ -6,7 +6,7 @@ namespace metrics
     public interface IContainImpactAreaScenarioResults
     {
         PerformanceByThresholds PerformanceByThresholds { get; }
-        ConsequenceResults ConsequenceResults { get; }
+        ConsequenceDistributionResults ConsequenceResults { get; }
         int ImpactAreaID { get; }
 
     }

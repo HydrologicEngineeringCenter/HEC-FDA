@@ -33,7 +33,7 @@ namespace Statistics.Histograms
         void AddObservationToHistogram(double observation, int iterationIndex);
         void ForceDeQueue();
         XElement WriteToXML();
-        bool TestForConvergence(double upperq, double lowerq);
+        bool IsHistogramConverged(double upperq, double lowerq);
         int EstimateIterationsRemaining(double upperq, double lowerq);
        void AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
         bool Equals(IHistogram histogramForComparison);

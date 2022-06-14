@@ -184,7 +184,7 @@ namespace StatisticsTests.Histograms
             {
                 histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
                 if (histogram.SampleSize%1000 == 0){
-                    histogram.TestForConvergence(quantile,1-quantile);
+                    histogram.IsHistogramConverged(quantile,1-quantile);
                 }
             }
             double actual = histogram.CDF(value);

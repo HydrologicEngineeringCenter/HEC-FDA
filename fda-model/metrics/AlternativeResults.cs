@@ -13,7 +13,7 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        private ConsequenceResults _consequenceResults;
+        private ConsequenceDistributionResults _consequenceResults;
         private bool _isNull;
         #endregion
 
@@ -22,7 +22,7 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
-        public ConsequenceResults ConsequenceResults
+        public ConsequenceDistributionResults ConsequenceResults
         {
             get
             {
@@ -48,15 +48,15 @@ namespace metrics
         {
             _isNull = true;
             _alternativeID = 0;
-            _consequenceResults = new ConsequenceResults();
+            _consequenceResults = new ConsequenceDistributionResults();
         }
         public AlternativeResults(int id)
         {
             _alternativeID = id;
-            _consequenceResults = new ConsequenceResults();
+            _consequenceResults = new ConsequenceDistributionResults();
             _isNull = false;
         }
-        private AlternativeResults(int id, ConsequenceResults consequenceResults)
+        private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults)
         {
             _alternativeID = id;
             _consequenceResults = consequenceResults;
@@ -69,7 +69,7 @@ namespace metrics
             List<string> assetCats = new List<string>();
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequenceResult.AssetCategory))
                     {
@@ -80,7 +80,7 @@ namespace metrics
             }
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequenceResult.AssetCategory))
                     {
@@ -96,7 +96,7 @@ namespace metrics
             List<string> damageCats = new List<string>();
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequenceResult.AssetCategory))
                     {
@@ -107,7 +107,7 @@ namespace metrics
             }
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequenceResult.AssetCategory))
                     {
@@ -167,16 +167,16 @@ namespace metrics
         //TODO what role will these play
         internal void AddConsequenceResults(int impactAreaID, string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
-            ConsequenceResult consequenceResult = ConsequenceResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            ConsequenceDistributionResult consequenceResult = ConsequenceResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (consequenceResult.IsNull)
             {
-                ConsequenceResult newConsequenceResult = new ConsequenceResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
+                ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
                 _consequenceResults.ConsequenceResultList.Add(newConsequenceResult);
             }
         }
-        internal void AddConsequenceResults(ConsequenceResult consequenceResultToAdd)
+        internal void AddConsequenceResults(ConsequenceDistributionResult consequenceResultToAdd)
         {
-            ConsequenceResult consequenceResults = ConsequenceResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            ConsequenceDistributionResult consequenceResults = ConsequenceResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
                 _consequenceResults.ConsequenceResultList.Add(consequenceResultToAdd);
@@ -198,7 +198,7 @@ namespace metrics
         public static AlternativeResults ReadFromXML(XElement xElement)
         {
             int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
-            ConsequenceResults consequenceResults = ConsequenceResults.ReadFromXML(xElement.Element("Consequences"));
+            ConsequenceDistributionResults consequenceResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Consequences"));
             AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults);
             return alternativeResults;
         }

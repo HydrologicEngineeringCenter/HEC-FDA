@@ -534,7 +534,7 @@ namespace Statistics.Histograms
             }
             return new Histogram(min, max, binWidth, binCounts);
         }
-        public bool TestForConvergence(double upperq, double lowerq)
+        public bool IsHistogramConverged(double upperq, double lowerq)
         {
             if (_Converged) { return true; }
             if (_N< _ConvergenceCriteria.MinIterations) { return false; }

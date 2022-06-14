@@ -93,7 +93,7 @@ namespace compute
             }
             SetStageForNonExceedanceProbability();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
-            _impactAreaScenarioResults.ParalellTestForConvergence(.95, .05);
+            _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
             return _impactAreaScenarioResults;
         }
 
@@ -112,29 +112,34 @@ namespace compute
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains errors. The compute has been aborted.")));
                     return false;
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings")));
                 }
                 //enumerate what the errors and warnings are 
+                //TODO: HOW???
             }
             if (randomProvider is MeanRandomProvider)
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
-                    return false;
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration.";
+                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+
                 }
             }
             else
             {
                 if (convergenceCriteria.MinIterations < 100)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
-                    return false;
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration.";
+                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+
                 }
             }
             return true;
@@ -191,8 +196,10 @@ namespace compute
                             if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
-                                return; //_results;
+                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted.";
+                                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                                ReportMessage(this, new MessageEventArgs(errorMessage));
+                                return; 
                             }
                             else
                             {
@@ -209,8 +216,10 @@ namespace compute
                             if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
-                                return;// _results;
+                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted.";
+                                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                                ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                                return;
                             }
                             else
                             {
@@ -234,7 +243,7 @@ namespace compute
                     }
 
                 });
-                if (!_impactAreaScenarioResults.TestResultsForConvergence(.95, .05, computeWithDamage))
+                if (!_impactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
                 {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
                     iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
@@ -242,6 +251,7 @@ namespace compute
                 }
                 else
                 {
+                    ReportMessage(this, new MessageEventArgs(new ComputeCompleteMessage(_completedIterations, _impactAreaID)));
                     iterations = 0;
                     break;
                 }
@@ -313,7 +323,7 @@ namespace compute
         }
         private IPairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
         {
-
+            //TODO: why is all this commented out code here? 
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
             //for (int i = 0; i < dist.SampleSize; i++) samples[i] = Math.Log10(dist.InverseCDF(samples[i]));
@@ -355,14 +365,13 @@ namespace compute
 
                 if (giveMeADamageFrequency)
                 {
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.CurveMetaData.DamageCategory, frequency_damage.CurveMetaData.AssetCategory, _impactAreaID)));
                 }
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories" + totalDamageFrequency.CurveMetaData.DamageCategory + "and" + totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory, _impactAreaID)));
 
             }
         }
@@ -382,15 +391,14 @@ namespace compute
                 if (giveMeADamageFrequency)
                 {
                     ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, frequency_damage.CurveMetaData.DamageCategory, frequency_damage.CurveMetaData.AssetCategory, _impactAreaID)));
                 }
 
             }
             _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories "+totalDamageFrequency.CurveMetaData.DamageCategory+" and "+totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory, _impactAreaID)));
 
             }
         }
@@ -496,7 +504,12 @@ namespace compute
                     {
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
-                            throw new Exception("A rating curve must accompany a flow-frequency function");
+                            double badThresholdStage = 0;
+                            string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used.";
+                            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                            return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+
                         }
                         else
                         {

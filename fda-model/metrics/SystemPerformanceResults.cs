@@ -140,7 +140,7 @@ namespace metrics
         {
             double standardNonExceedanceProbability = 0.98;
             ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
-            bool assuranceIsConverged = assuranceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            bool assuranceIsConverged = assuranceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return assuranceIsConverged;
         }
         public int AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
@@ -219,12 +219,12 @@ namespace metrics
         /// </summary>
         /// <param name="upperQuantile"></param>
         /// <param name="lowerQuantile"></param>
-        public void ParallelTestForConvergence(double upperQuantile, double lowerQuantile)
+        public void ParallelResultsAreConverged(double upperQuantile, double lowerQuantile)
         {
             double[] assuranceQuantity = new double[_assuranceList.Count];
             Parallel.For(0, assuranceQuantity.Length, i =>
             {
-                _assuranceList.ElementAt(i).AssuranceHistogram.TestForConvergence(upperQuantile, lowerQuantile);
+                _assuranceList.ElementAt(i).AssuranceHistogram.IsHistogramConverged(upperQuantile, lowerQuantile);
             });
         }
         public bool Equals(SystemPerformanceResults projectPerformanceResults)

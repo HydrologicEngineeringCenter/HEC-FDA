@@ -16,7 +16,7 @@ namespace metrics
 
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
-        public ConsequenceResults ConsequenceResults { get; }
+        public ConsequenceDistributionResults ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         #endregion
         public bool IsNull
@@ -30,18 +30,18 @@ namespace metrics
         public ImpactAreaScenarioResults()
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceResults();
+            ConsequenceResults = new ConsequenceDistributionResults();
             ImpactAreaID = 0;
             _isNull = true;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceResults();
+            ConsequenceResults = new ConsequenceDistributionResults();
             ImpactAreaID = impactAreaID;
             _isNull = false;
         }
-        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceResults expectedAnnualDamageResults, int impactAreaID)
+        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceDistributionResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             ConsequenceResults = expectedAnnualDamageResults;
@@ -154,12 +154,12 @@ namespace metrics
         {
             return IsEADConverged(computeWithDamage) && IsPerformanceConverged();
         }
-        public bool TestResultsForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
+        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             bool eadIsConverged = true;
             if (computeWithDamage)
             {//TODO: Hard-coded strings are TROUBLE
-                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.TestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
@@ -201,11 +201,11 @@ namespace metrics
             }
             return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
         }
-        public void ParalellTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public void ParallelResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                threshold.SystemPerformanceResults.ParallelTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                threshold.SystemPerformanceResults.ParallelResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
         }
         public bool Equals(ImpactAreaScenarioResults incomingIContainResults)
@@ -234,7 +234,7 @@ namespace metrics
         public static IContainImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
-            ConsequenceResults expectedAnnualDamageResults = ConsequenceResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
         }
