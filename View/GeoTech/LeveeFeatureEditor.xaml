@@ -7,7 +7,6 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
-             xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              d:DesignHeight="400" d:DesignWidth="620">

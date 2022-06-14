@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             if(!foundInventory)
             {
-                MessageBox.Show("The previously selected inventory used in the compute of stage damage curves was deleted. Select a new Inventory and compute again.", "Inventory Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("The previously selected inventory used in the compute of these aggregated stage-damage functions was deleted. Please select a new inventory and recompute.", "Inventory Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         private void SelectDepthGrid(int waterID)
@@ -115,7 +115,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             if (!foundHydro)
             {
-                MessageBox.Show("The previously selected hydraulogy used in the compute of stage damage curves was deleted. Select a new hydraulogy and compute again.", "Hydraulogy Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("The previously selected hydraulics data set used in the compute of these aggregated stage-damage functions was deleted. Please select a new hydraulics data set and recompute.", "Hydraulogy Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         private void loadDepthGrids()
