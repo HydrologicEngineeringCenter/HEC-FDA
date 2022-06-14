@@ -15,21 +15,36 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         public IDistribution Y { get; set; }
         public SequentialRow PreviousRow { get; set; }
         public SequentialRow NextRow { get; set; }
-        public SequentialRow(double x, IDistribution y, bool isStrictMonotonic = false)
+        public SequentialRow(double x, IDistribution y, bool isStrictMonotonic = false, bool xIsDecreasing = false)
         {
             X = x;
             Y = y;
-            if (isStrictMonotonic)
+            if (xIsDecreasing)
             {
-                AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X < PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
-                AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X > NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                if (isStrictMonotonic)
+                {
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X > PreviousRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X < NextRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                }
+                else
+                {
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X >= NextRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X <= PreviousRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                }
             }
             else
             {
-                AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X <= NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
-                AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X >= PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                if (isStrictMonotonic)
+                {
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X < PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X > NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                }
+                else
+                {
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X <= NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X >= PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                }
             }
-
         }
 
         public void SetGlobalMaxRules(double xMax , double yMax , double xMin, double yMin)
