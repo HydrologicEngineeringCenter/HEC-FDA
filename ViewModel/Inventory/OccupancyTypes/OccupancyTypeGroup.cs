@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.Inventory.DamageCategory;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {

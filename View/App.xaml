@@ -42,10 +42,7 @@
              xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory;assembly=HEC.FDA.ViewModel"
                           
              xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel.FlowTransforms;assembly=HEC.FDA.ViewModel"
-             
-             xmlns:DamageCategoryView="clr-namespace:HEC.FDA.View.Inventory.DamageCategory"
-             xmlns:DamageCategoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory.DamageCategory;assembly=HEC.FDA.ViewModel"
-             
+                          
              xmlns:OutputView="clr-namespace:HEC.FDA.View.Output"
              xmlns:OutputVM="clr-namespace:HEC.FDA.ViewModel.Output;assembly=HEC.FDA.ViewModel"
              
@@ -210,10 +207,6 @@
 
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
-            <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
