@@ -148,6 +148,7 @@ namespace Statistics.Histograms
             _ConvergenceCriteria = new ConvergenceCriteria();
         }
         #endregion
+        #region Functions
         public double Skewness()
         {
             double deviation = 0, deviation2 = 0, deviation3 = 0;
@@ -172,7 +173,7 @@ namespace Statistics.Histograms
             return skewness;
         }
         
-        #region Functions
+ 
         public void ForceDeQueue()
         {
             //do nothing
@@ -518,7 +519,7 @@ namespace Statistics.Histograms
             double min = Convert.ToDouble(minString);
             string maxString = element.Attribute("Max").Value;
             double max = Convert.ToDouble(maxString);
-            string binWidthString = element.Attribute("Bin Width").Value;
+            string binWidthString = element.Attribute("Bin_Width").Value;
             double binWidth = Convert.ToDouble(binWidthString);
             string sampleSizeString = element.Attribute("Ordinate_Count").Value;
             int sampleSize = Convert.ToInt32(sampleSizeString);
