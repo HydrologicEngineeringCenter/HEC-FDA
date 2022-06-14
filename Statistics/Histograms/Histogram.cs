@@ -139,13 +139,14 @@ namespace Statistics.Histograms
             _BinCounts = new Int32[numberOfBins];
             _ConvergenceCriteria = _c;
         }
-        private Histogram(double min, double max, double binWidth, Int32[] binCounts)
+        private Histogram(double min, double max, double binWidth, int sampleSize, Int32[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             Min = min;
             Max = max;
             _BinWidth = binWidth;
             _BinCounts = binCounts;
-            _ConvergenceCriteria = new ConvergenceCriteria();
+            _ConvergenceCriteria = convergenceCriteria;
+            _N = sampleSize;
         }
         #endregion
         #region Functions
@@ -507,13 +508,14 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                XElement rowElement = new XElement("Coordinate");
-                rowElement.SetAttributeValue("Bin_Counts", _BinCounts[i]);
-                masterElem.Add(rowElement);
+                masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
             }
+            XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
+            convergenceCriteriaElement.Name = "Convergence_Criteria";
+            masterElem.Add(convergenceCriteriaElement);
             return masterElem;
         }
-        public static Histogram ReadFromXML(XElement element)
+            public static Histogram ReadFromXML(XElement element)
         {
             string minString = element.Attribute("Min").Value;
             double min = Convert.ToDouble(minString);
@@ -526,13 +528,12 @@ namespace Statistics.Histograms
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
             Int32[] binCounts = new Int32[binQuantity];
-            int i = 0;
-            foreach (XElement binCountElement in element.Elements())
+            for (int i = 0; i < binQuantity; i++)
             {
-                binCounts[i] = Convert.ToInt32(binCountElement.Value);
-                i++;
+                binCounts[i] = Convert.ToInt32(element.Attribute($"Bin_Counts_{i}").Value);
             }
-            return new Histogram(min, max, binWidth, binCounts);
+            ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
+            return new Histogram(min, max, binWidth, sampleSize, binCounts, convergenceCriteria);
         }
         public bool TestForConvergence(double upperq, double lowerq)
         {

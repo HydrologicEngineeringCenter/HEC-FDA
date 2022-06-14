@@ -196,6 +196,8 @@ namespace Statistics.Histograms
             _backgroundWorker.DoWork += _bw_DoWork;
         }
         #endregion
+
+        #region Methods
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             DeQueue();
@@ -229,7 +231,6 @@ namespace Statistics.Histograms
             double variance = _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             return deviation3 / _SampleSize / Math.Pow(variance, 3 / 2);
         }
-        #region Methods
         public double HistogramMean()
         {
             ForceDeQueue();
@@ -647,9 +648,6 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                //XElement rowElement = new XElement("Coordinate");
-                //rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
-                //masterElem.Add(rowElement);
                 masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
             }
             XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();

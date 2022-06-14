@@ -7,6 +7,7 @@ using Statistics.Histograms;
 using Xunit;
 using Utilities;
 using Statistics.Distributions;
+using System.Xml.Linq;
 
 namespace StatisticsTests.Histograms
 {
@@ -247,6 +248,30 @@ namespace StatisticsTests.Histograms
                 Assert.True(error < tolerance);
             }
         }
+        [Theory]
+        [InlineData(10000, .1, .80, 1.96, .975)]
+        public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile, double value, double expected)
+        {
+            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            var rand = new Random(1234);
+            double z = stdNormal.InverseCDF(.5 + .5 * .85);
+            var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: 1, zAlpha: z);
+            Histogram histogram = new Histogram(0, binWidth, convergencecriteria);
+            while (!histogram.IsConverged)
+            {
+                histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
+                if (histogram.SampleSize % 1000 == 0)
+                {
+                    histogram.TestForConvergence(quantile, 1 - quantile);
+                }
+            }
+            XElement xElement = histogram.WriteToXML();
+            Histogram histogramFromXML = Histogram.ReadFromXML(xElement);
+            bool histogramsAreTheSame = histogram.Equals(histogramFromXML);
+            Assert.True(histogramsAreTheSame);
+        }
+
+
         /*
          * TODO this test is left commented out because it takes a long time to run. 
          * We should move this test to integration tests
