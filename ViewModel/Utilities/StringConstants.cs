@@ -174,6 +174,10 @@
         public static readonly string STAGE_DAMAGE_LABEL = "Stage-Damage:";
         #endregion
 
+        #region Graphical
+        public const string GRAPHICAL_FLOW_FREQUENCY = "Graphical Flow Frequency";
+        #endregion
+
         public const string OCCTYPE_PLOT_TITLE = "Depth-Percent Damage";
         public const string OCCTYPE_DEPTH = "Depth";
         public const string OCCTYPE_PERCENT_DAMAGE = "Percent Damage";
