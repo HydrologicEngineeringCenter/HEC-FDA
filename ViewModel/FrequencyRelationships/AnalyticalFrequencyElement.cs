@@ -25,14 +25,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public double StDev { get; set; }
         public double Skew { get; set; }
         public List<double> AnalyticalFlows { get; } = new List<double>();
-        public List<double> GraphicalFlows { get; } = new List<double>();
-
         public UncertainPairedData PairedData { get; set; }
+        public GraphicalVM MyGraphicalVM { get; set; }
 
         #endregion
         #region Constructors
+        //fresh editor
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, List<double> analyticalFlows, List<double> graphicalFlows, ComputeComponentVM function, int id) : base(id)
+            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) : base(id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -41,12 +41,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             StDev = stDev;
             Skew = skew;
             AnalyticalFlows = analyticalFlows;
-            GraphicalFlows = graphicalFlows;
             LastEditDate = lastEditDate;
             Name = name;
             Description = desc;
             if (Description == null) Description = "";
             ComputeComponentVM = function;
+            MyGraphicalVM = graphicalVM;
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             AddActions();
         }
-
+        //load from database
         public AnalyticalFrequencyElement(string name, string description, string xmlString, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xmlString);
@@ -84,6 +84,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             PairedData = CreatePairedData();
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
+            MyGraphicalVM = new GraphicalVM(graphiclVMele);
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
@@ -132,7 +134,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.GraphicalFlows, elem.ComputeComponentVM, elem.ID);
+                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.MyGraphicalVM, elem.ComputeComponentVM, elem.ID);
         }     
         #endregion
 

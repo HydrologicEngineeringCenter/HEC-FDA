@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.FDA.ViewModel.Utilities;
@@ -11,6 +12,7 @@ using paireddata;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -69,9 +71,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             _computeComponentVM = computeComponentVM;
             Initialize();
         }
+        public TableWithPlotVM(XElement ele)
+        {
+            LoadFromXML(ele);
+            Initialize();
+
+        }
         #endregion
 
         #region Methods
+        public void SetPlotForGraphicalFlowFrequency()
+        {
+            ComputeComponentVM.XLabel = StringConstants.EXCEEDANCE_PROBABILITY;
+            ComputeComponentVM.YLabel = StringConstants.DISCHARGE;
+            PlotModel.LegendPosition = LegendPosition.TopLeft;
+        }
         private void Initialize()
         {
             _computeComponentVM.PropertyChanged += _computeComponentVM_PropertyChanged;
@@ -108,11 +122,21 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
-            ele.SetAttributeValue("ReverseXAxis", _reverseXAxis);
+            ele.SetAttributeValue(nameof(ReverseXAxis), ReverseXAxis);
             ele.Add(ComputeComponentVM.ToXML());
             return ele;
         }
-
+        private void LoadFromXML(XElement ele)
+        {
+            _reverseXAxis = bool.Parse(ele.Attribute(nameof(ReverseXAxis)).Value);
+            var elements = ele.Descendants();
+            XElement computeCompElement = elements.First();
+            string componentType = computeCompElement.Name.ToString();
+            if(componentType == "GraphicalVM")
+            {
+                    _computeComponentVM = new GraphicalVM(computeCompElement);
+            }
+        }
         public UncertainPairedData GetUncertainPairedData()
         {
             return ComputeComponentVM.SelectedItem.ToUncertainPairedData(ComputeComponentVM.XLabel, ComputeComponentVM.YLabel, ComputeComponentVM.Name, ComputeComponentVM.Description, "testCategory?");

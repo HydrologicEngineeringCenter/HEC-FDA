@@ -8,6 +8,7 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static compute.ImpactAreaScenarioSimulation;
@@ -59,7 +60,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             FdaValidationResult vr = new FdaValidationResult();
             //stage damages
             List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
-            if(stageDamageCurves.Count == 0)
+            if (stageDamageCurves.Count == 0)
             {
                 //todo: maybe get the impact area name for this message?
                 vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
@@ -71,10 +72,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void LoadSimulationBuilder()
         {
             _SimulationBuilder = ImpactAreaScenarioSimulation.builder(_ImpactAreaID)
-                .withFlowFrequency(GetFrequencyDistribution())
-                .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData())
-                .withStageDamages(GetStageDamagesAsPairedData());
-
+            .withStageDamages(GetStageDamagesAsPairedData())
+             .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
+            if (_FreqElem.IsAnalytical)
+            {
+                _SimulationBuilder.withFlowFrequency(GetFrequencyDistribution());
+            }
+            else
+            {
+                _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+            }
             if (_UseInOut)
             {
                 _SimulationBuilder.withInflowOutflow(_InOutElem.ComputeComponentVM.SelectedItemToPairedData());
@@ -88,8 +95,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
             }
         }
-
-
         private ContinuousDistribution GetFrequencyDistribution()
         {
             return _FreqElem.CreateLP3Distribution();
@@ -111,7 +116,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return stageDamages;
         }
-
         public ImpactAreaScenarioSimulation BuildSimulation()
         {
             return _SimulationBuilder.build();
@@ -124,7 +128,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 _SimulationBuilder.withAdditionalThreshold(threshold);
             }
         }
-
         public void WithAdditionalThreshold(Threshold additionalThreshold)
         {
             _SimulationBuilder.withAdditionalThreshold(additionalThreshold);

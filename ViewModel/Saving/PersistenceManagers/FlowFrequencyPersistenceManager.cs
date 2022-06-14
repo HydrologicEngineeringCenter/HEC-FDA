@@ -24,6 +24,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public static readonly string SKEW = "Skew";
         public static readonly string FIT_TO_FLOWS = "FitToFlows";
         public static readonly string FLOWS = "Flows";
+        public static readonly string GRAPHICAL = "GRAPHICAL";
 
         private const int DESC_COL = 2;
         private const int XML_COL = 3;
@@ -35,12 +36,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get{return new string[] { NAME,DESCRIPTION, "XML" };}
+            get { return new string[] { NAME, DESCRIPTION, "XML" }; }
         }
 
         public override Type[] TableColumnTypes
         {
-            get  { return new Type[] { typeof(string), typeof(string), typeof(string)}; }
+            get { return new Type[] { typeof(string), typeof(string), typeof(string) }; }
         }
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
@@ -51,17 +52,17 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[]{element.Name, element.Description, WriteFlowFrequencyToXML(element) };
+            return new object[] { element.Name, element.Description, WriteFlowFrequencyToXML(element) };
         }
 
         private string ConvertFlowsToString(List<double> flows)
         {
-            if(flows.Count == 0)
+            if (flows.Count == 0)
             {
                 return "";
             }
             StringBuilder sb = new StringBuilder();
-            foreach(double d in flows)
+            foreach (double d in flows)
             {
                 sb.Append(d + ",");
             }
@@ -117,31 +118,27 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             flowFreqElem.SetAttributeValue(DESCRIPTION, elem.Description);
             flowFreqElem.SetAttributeValue(LAST_EDIT_DATE, elem.LastEditDate);
             flowFreqElem.SetAttributeValue(IS_ANALYTICAL, elem.IsAnalytical);
-            if(elem.IsAnalytical)
-            {
-                XElement analyticalElem = new XElement(ANALYTICAL_DATA);
-                flowFreqElem.Add(analyticalElem);
-                analyticalElem.SetAttributeValue(USES_MOMENTS, elem.IsStandard);
-                analyticalElem.SetAttributeValue(POR, elem.POR);
-                //if (elem.IsStandard)
-                {
-                    XElement momentsElem = new XElement(MOMENTS);
-                    analyticalElem.Add(momentsElem);
-                    momentsElem.SetAttributeValue(MEAN, elem.Mean);
-                    momentsElem.SetAttributeValue(ST_DEV, elem.StDev);
-                    momentsElem.SetAttributeValue(SKEW, elem.Skew);
-                }
-                //else //fit to flows
-                {
-                    XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
-                    analyticalElem.Add(fitToFlowsElem);
-                    fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
-                }
-            }
-            else //graphical
-            {
+            XElement analyticalElem = new XElement(ANALYTICAL_DATA);
+            flowFreqElem.Add(analyticalElem);
+            analyticalElem.SetAttributeValue(USES_MOMENTS, elem.IsStandard);
+            analyticalElem.SetAttributeValue(POR, elem.POR);
 
-            }
+            // IsStandard
+            XElement momentsElem = new XElement(MOMENTS);
+            analyticalElem.Add(momentsElem);
+            momentsElem.SetAttributeValue(MEAN, elem.Mean);
+            momentsElem.SetAttributeValue(ST_DEV, elem.StDev);
+            momentsElem.SetAttributeValue(SKEW, elem.Skew);
+
+            //fit to flows
+            XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
+            analyticalElem.Add(fitToFlowsElem);
+            fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(elem.AnalyticalFlows));
+
+            //do Graphical
+            XElement graphicalElem = elem.MyGraphicalVM.ToXML();
+            flowFreqElem.Add(graphicalElem);
+
             return flowFreqElem.ToString();
         }
 

@@ -444,11 +444,12 @@ namespace HEC.FDA.ViewModel.Utilities
 
             //there will be no analytical flows. We just need 
             List<double> analyticalFlows = new List<double>();
-            List<double> graphicalFlows = new List<double>();
+            GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FLOW_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalFlows, computeComponentVM, elemID);
+                 analyticalFlows, graphicalVM, computeComponentVM, elemID);
+
         }
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
