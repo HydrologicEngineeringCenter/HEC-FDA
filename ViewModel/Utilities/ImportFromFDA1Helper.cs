@@ -448,7 +448,7 @@ namespace HEC.FDA.ViewModel.Utilities
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
             return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalVM, computeComponentVM, id);
+                 analyticalFlows, graphicalVM, computeComponentVM, elemID);
 
         }
 
