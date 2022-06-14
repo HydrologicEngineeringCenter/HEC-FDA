@@ -82,8 +82,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #region Methods
         public void SetPlotForGraphicalFlowFrequency()
         {
-            ComputeComponentVM.XLabel = "Probability";
-            ComputeComponentVM.YLabel = "Flow";
+            ComputeComponentVM.XLabel = StringConstants.EXCEEDANCE_PROBABILITY;
+            ComputeComponentVM.YLabel = StringConstants.DISCHARGE;
             PlotModel.LegendPosition = LegendPosition.TopLeft;
         }
         private void Initialize()
@@ -122,21 +122,19 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
-            ele.SetAttributeValue("ReverseXAxis", _reverseXAxis);
+            ele.SetAttributeValue(nameof(ReverseXAxis), ReverseXAxis);
             ele.Add(ComputeComponentVM.ToXML());
             return ele;
         }
         private void LoadFromXML(XElement ele)
         {
-            _reverseXAxis = bool.Parse(ele.Attribute("ReverseXAxis").Value);
+            _reverseXAxis = bool.Parse(ele.Attribute(nameof(ReverseXAxis)).Value);
             var elements = ele.Descendants();
             XElement computeCompElement = elements.First();
             string componentType = computeCompElement.Name.ToString();
-            switch (componentType)
+            if(componentType == "GraphicalVM")
             {
-                case "GraphicalVM":
                     _computeComponentVM = new GraphicalVM(computeCompElement);
-                    break;
             }
         }
         public UncertainPairedData GetUncertainPairedData()
