@@ -10,13 +10,13 @@ namespace Statistics.Histograms
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
-        private double _SampleMean;
+        private double _SampleMean = 10;
         private double _SampleVariance;
         private double _Min;
         private double _Max;
         private double _SampleMin;
         private double _SampleMax;
-        private int _N;
+        private int _SampleSize;
         private double _BinWidth;
         private bool _Converged = false;
         private int _ConvergedIterations = int.MinValue;
@@ -91,7 +91,7 @@ namespace Statistics.Histograms
         }
         public double Variance {
             get{
-                return _SampleVariance*(double)((double)(_N-1)/(double)_N);
+                return _SampleVariance*(double)((double)(_SampleSize-1)/(double)_SampleSize);
             }
         }
         public double StandardDeviation { 
@@ -101,10 +101,10 @@ namespace Statistics.Histograms
         }
         public int SampleSize {
             get{
-                return _N;
+                return _SampleSize;
             }
             private set{
-                _N = value;
+                _SampleSize = value;
             }
         }
         #endregion      
@@ -139,20 +139,21 @@ namespace Statistics.Histograms
             _BinCounts = new Int32[numberOfBins];
             _ConvergenceCriteria = _c;
         }
-        private Histogram(double min, double max, double binWidth, Int32[] binCounts)
+        private Histogram(double min, double max, double binWidth, int sampleSize, Int32[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             Min = min;
             Max = max;
             _BinWidth = binWidth;
             _BinCounts = binCounts;
-            _ConvergenceCriteria = new ConvergenceCriteria();
+            _ConvergenceCriteria = convergenceCriteria;
+            _SampleSize = sampleSize;
         }
         #endregion
         #region Functions
         public double Skewness()
         {
             double deviation = 0, deviation2 = 0, deviation3 = 0;
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -181,7 +182,7 @@ namespace Statistics.Histograms
         }
         public double HistogramMean()
         {           
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -194,15 +195,15 @@ namespace Statistics.Histograms
             {
                 sum += (_Min + (i * _BinWidth) + (0.5 * _BinWidth)) * _BinCounts[i];
             }
-            return sum / _N;
+            return sum / _SampleSize;
         }
         public double HistogramVariance()
         {
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
-            if (_N == 1)
+            if (_SampleSize == 1)
             {
                 return 0.0;
             }
@@ -219,7 +220,7 @@ namespace Statistics.Histograms
                 deviation2 += deviation * deviation;
 
             }
-            double variance = deviation2 / (_N - 1);
+            double variance = deviation2 / (_SampleSize - 1);
             return variance;
         }
         public double HistogramStandardDeviation(){
@@ -234,7 +235,7 @@ namespace Statistics.Histograms
         /// <param name="index"></param>
         public void AddObservationToHistogram(double observation, int index = 0) //TODO index is a hack
         {   
-            if (_N == 0){
+            if (_SampleSize == 0){
                 _SampleMax = observation;
                 _SampleMin = observation;
                 _SampleMean = observation;
@@ -245,13 +246,13 @@ namespace Statistics.Histograms
                     Max = observation + _BinWidth;
                     _BinCounts = new int[] { 0};
                 }
-                _N = 1;
+                _SampleSize = 1;
             }else{
                 if (observation>_SampleMax) _SampleMax = observation;
                 if (observation<_SampleMin) _SampleMin = observation;
-                _N +=1;
-                double tmpMean = _SampleMean +((observation -_SampleMean)/(double)_N);
-                _SampleVariance = ((((double)(_N-2)/(double)(_N-1))*_SampleVariance)+(Math.Pow(observation-_SampleMean,2))/(double)_N);
+                _SampleSize +=1;
+                double tmpMean = _SampleMean +((observation -_SampleMean)/(double)_SampleSize);
+                _SampleVariance = ((((double)(_SampleSize-2)/(double)(_SampleSize-1))*_SampleVariance)+(Math.Pow(observation-_SampleMean,2))/(double)_SampleSize);
                 _SampleMean = tmpMean;
             }
             int quantityAdditionalBins = 0;
@@ -330,7 +331,7 @@ namespace Statistics.Histograms
         }
         public double PDF(double x)
         {
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -351,7 +352,7 @@ namespace Statistics.Histograms
         }
         public double CDF(double x)
         {
-            if (_N == 0)
+            if (_SampleSize == 0)
             {
                 return double.NaN;
             }
@@ -379,7 +380,7 @@ namespace Statistics.Histograms
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
-                if (_N == 0)
+                if (_SampleSize == 0)
                 {
                     return double.NaN;
                 }
@@ -489,7 +490,7 @@ namespace Statistics.Histograms
                 _Max = histogram._Max;
                 _SampleMin = histogram._SampleMin;
                 _SampleMax = histogram._SampleMax;
-                _N = histogram._N;
+                _SampleSize = histogram._SampleSize;
                 _BinWidth = histogram._BinWidth;
                 _Converged = histogram._Converged;
                 _ConvergedIterations = histogram._ConvergedIterations;
@@ -500,20 +501,29 @@ namespace Statistics.Histograms
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("Histogram");
-            masterElem.SetAttributeValue("Min", Min);
-            masterElem.SetAttributeValue("Max", Max);
+            masterElem.SetAttributeValue("Min", _Min);
+            masterElem.SetAttributeValue("Max", _Max);
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
-            masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
+            masterElem.SetAttributeValue("Sample_Size", SampleSize);
+            masterElem.SetAttributeValue("Sample_Mean", _SampleMean);
+            masterElem.SetAttributeValue("Sample_Variance", _SampleVariance);
+            masterElem.SetAttributeValue("Sample_Min", _SampleMin);
+            masterElem.SetAttributeValue("Sample_Max", _SampleMax);
             masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
+            masterElem.SetAttributeValue("Converged", _Converged);
+            masterElem.SetAttributeValue("Converged_Iterations", _ConvergedIterations);
+            masterElem.SetAttributeValue("Converged_On_Max", _ConvergedOnMax);
+            masterElem.SetAttributeValue("Min_Not_Set", _minHasNotBeenSet);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                XElement rowElement = new XElement("Coordinate");
-                rowElement.SetAttributeValue("Bin_Counts", _BinCounts[i]);
-                masterElem.Add(rowElement);
+                masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
             }
+            XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
+            convergenceCriteriaElement.Name = "Convergence_Criteria";
+            masterElem.Add(convergenceCriteriaElement);
             return masterElem;
         }
-        public static Histogram ReadFromXML(XElement element)
+            public static Histogram ReadFromXML(XElement element)
         {
             string minString = element.Attribute("Min").Value;
             double min = Convert.ToDouble(minString);
@@ -521,50 +531,74 @@ namespace Statistics.Histograms
             double max = Convert.ToDouble(maxString);
             string binWidthString = element.Attribute("Bin_Width").Value;
             double binWidth = Convert.ToDouble(binWidthString);
-            string sampleSizeString = element.Attribute("Ordinate_Count").Value;
+            string sampleSizeString = element.Attribute("Sample_Size").Value;
             int sampleSize = Convert.ToInt32(sampleSizeString);
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
             Int32[] binCounts = new Int32[binQuantity];
-            int i = 0;
-            foreach (XElement binCountElement in element.Elements())
+            for (int i = 0; i < binQuantity; i++)
             {
-                binCounts[i] = Convert.ToInt32(binCountElement.Value);
-                i++;
+                binCounts[i] = Convert.ToInt32(element.Attribute($"Bin_Counts_{i}").Value);
             }
-            return new Histogram(min, max, binWidth, binCounts);
+            ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
+            string sampleMeanString = element.Attribute("Sample_Mean").Value;
+            double sampleMean = Convert.ToDouble(sampleMeanString);
+            string sampleVarianceString = element.Attribute("Sample_Variance").Value;
+            double sampleVariance = Convert.ToDouble(sampleVarianceString);
+            string sampleMinString = element.Attribute("Sample_Min").Value;
+            double sampleMin = Convert.ToDouble(sampleMinString);
+            string sampleMaxString = element.Attribute("Sample_Max").Value;
+            double sampleMax = Convert.ToDouble(sampleMaxString);
+            string convergedString = element.Attribute("Converged").Value;
+            bool converged = Convert.ToBoolean(convergedString);
+            string convergedIterationsString = element.Attribute("Converged_Iterations").Value;
+            int convergedIterations = Convert.ToInt32(convergedIterationsString);
+            string convergedOnMaxString = element.Attribute("Converged_On_Max").Value;
+            bool convergedOnMax = Convert.ToBoolean(convergedOnMaxString);
+            string minNotSetString = element.Attribute("Min_Not_Set").Value;
+            bool minNotSet = Convert.ToBoolean(minNotSetString);
+            Histogram histogram = new Histogram(min, max, binWidth, sampleSize, binCounts, convergenceCriteria);
+            histogram._SampleMean = sampleMean;
+            histogram._SampleVariance = sampleVariance;
+            histogram._SampleMin = sampleMin;
+            histogram._SampleMax = sampleMax;
+            histogram._Converged = converged;
+            histogram._ConvergedIterations = convergedIterations;
+            histogram._ConvergedOnMax = convergedOnMax;
+            histogram._minHasNotBeenSet = minNotSet;
+            return histogram;
         }
         public bool IsHistogramConverged(double upperq, double lowerq)
         {
             if (_Converged) { return true; }
-            if (_N< _ConvergenceCriteria.MinIterations) { return false; }
-            if (_N >= _ConvergenceCriteria.MaxIterations) {
+            if (_SampleSize< _ConvergenceCriteria.MinIterations) { return false; }
+            if (_SampleSize >= _ConvergenceCriteria.MaxIterations) {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
                 _ConvergedOnMax = true;
                 return true;
             }
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
-            double variance = (lowerq * (1 - lowerq)) / (((double)_N) * qslope * qslope);
+            double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
             bool lower = false;
             double lower_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
             if (lower_comparison <= (_ConvergenceCriteria.Tolerance *.5)){ lower = true; }
             qval = InverseCDF(upperq);
             qslope = PDF(qval);
-            variance = (upperq * (1 - upperq)) / (((double)_N) * qslope * qslope);
+            variance = (upperq * (1 - upperq)) / (((double)_SampleSize) * qslope * qslope);
             bool upper = false;
             double upper_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
             if ( upper_comparison <= (_ConvergenceCriteria.Tolerance *.5)) { upper = true; }
             if (lower)
             {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
             }
             if (upper)
             {
                 _Converged = true;
-                _ConvergedIterations = _N;
+                _ConvergedIterations = _SampleSize;
             }
             return _Converged;
         }
@@ -588,12 +622,63 @@ namespace Statistics.Histograms
             {
                 return false;
             }
+            bool binWidthsAreEqual = _BinWidth.Equals(histogramToCompare.BinWidth);
+            if (!binWidthsAreEqual)
+            {
+                return false;
+            }
+            bool sampleSizesAreEqual = _SampleSize.Equals(histogramToCompare.SampleSize);
+            if (!sampleSizesAreEqual)
+            {
+                return false;
+            }
+            bool maxesAreEqual = _Max.Equals(histogramToCompare.Max);
+            if (!maxesAreEqual)
+            {
+                return false;
+            }
+            bool bothConverged = IsConverged.Equals(histogramToCompare.IsConverged);
+            if (!bothConverged)
+            {
+                return false;
+            }
+            bool convergedIterationsAreEqual = ConvergedIteration.Equals(histogramToCompare.ConvergedIteration);
+            if (!convergedIterationsAreEqual)
+            {
+                return false;
+            }
             return true;
 
         }
-        int IHistogram.EstimateIterationsRemaining(double upperq, double lowerq)
+        public int EstimateIterationsRemaining(double upperq, double lowerq)
         {
-            throw new NotImplementedException();
+            //TODO: WHAT DO THE BELOW VARIABLES EVEN MEAN??????????
+            //PLEASE PROVIDE VARIABLE NAMES IN ENGLISH thank you so much 
+            //until then this remains gobbledygook 
+            if (_Converged) return 0;
+            double up = upperq;
+            double val = up * (1 - up);
+            double uz2 = 2 * _ConvergenceCriteria.ZAlpha;
+            double uxp = InverseCDF(up);
+            double ufxp = PDF(uxp);
+            int upperestimate = _ConvergenceCriteria.MaxIterations;
+            if (ufxp > 0.0 & uxp != 0)
+            {
+                upperestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0))));
+            }
+            double lp = lowerq;
+            double lval = lp * (1 - lp);
+            double lz2 = 2 * _ConvergenceCriteria.ZAlpha;
+            double lxp = InverseCDF(lp);
+            double lfxp = PDF(lxp);
+            int lowerestimate = _ConvergenceCriteria.MaxIterations;
+            if (lfxp > 0.0 & uxp != 0)
+            {
+                lowerestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
+            }
+            int biggestGuess = Math.Max(upperestimate, lowerestimate);
+            int remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
+            return Convert.ToInt32(Math.Min(remainingIters, biggestGuess));
         }
 
         #endregion

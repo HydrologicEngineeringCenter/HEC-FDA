@@ -43,7 +43,13 @@ namespace compute
                 return !_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull;
             }
         }
-
+        public int ImpactAreaID
+        {
+            get
+            {
+                return _impactAreaID;
+            }
+        }
         internal ImpactAreaScenarioSimulation(int impactAreaID)
         {
             _frequency_discharge = null;
