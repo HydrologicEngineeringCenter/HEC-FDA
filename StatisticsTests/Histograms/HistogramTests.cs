@@ -249,8 +249,8 @@ namespace StatisticsTests.Histograms
             }
         }
         [Theory]
-        [InlineData(10000, .1, .80, 1.96, .975)]
-        public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile, double value, double expected)
+        [InlineData(10000, .1, .80)]
+        public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
@@ -262,7 +262,7 @@ namespace StatisticsTests.Histograms
                 histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
                 if (histogram.SampleSize % 1000 == 0)
                 {
-                    histogram.TestForConvergence(quantile, 1 - quantile);
+                    histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
             XElement xElement = histogram.WriteToXML();
