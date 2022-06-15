@@ -705,7 +705,7 @@ namespace Statistics.Histograms
             histogram._ConvergedOnMax = convergedOnMax;
             return histogram;
         }
-        public bool TestForConvergence(double upperq, double lowerq)
+        public bool IsHistogramConverged(double upperq, double lowerq)
         {
             ForceDeQueue();
             if (_Converged) { return true; }

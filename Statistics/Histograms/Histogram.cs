@@ -568,7 +568,7 @@ namespace Statistics.Histograms
             histogram._minHasNotBeenSet = minNotSet;
             return histogram;
         }
-        public bool TestForConvergence(double upperq, double lowerq)
+        public bool IsHistogramConverged(double upperq, double lowerq)
         {
             if (_Converged) { return true; }
             if (_SampleSize< _ConvergenceCriteria.MinIterations) { return false; }

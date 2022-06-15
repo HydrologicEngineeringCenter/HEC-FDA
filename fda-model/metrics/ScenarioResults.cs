@@ -43,7 +43,7 @@ namespace metrics
             List<string> assetCats = new List<string>();
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequenceResult.AssetCategory))
                     {
@@ -59,7 +59,7 @@ namespace metrics
             List<string> damCats = new List<string>();
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
             {
-                foreach (ConsequenceResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if(!damCats.Contains(consequenceResult.DamageCategory))
                     {
@@ -106,7 +106,7 @@ namespace metrics
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                     {
@@ -182,7 +182,7 @@ namespace metrics
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                     {
@@ -257,7 +257,7 @@ namespace metrics
 
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
-                foreach (ConsequenceResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                     {
