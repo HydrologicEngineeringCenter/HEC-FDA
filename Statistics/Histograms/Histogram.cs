@@ -589,6 +589,31 @@ namespace Statistics.Histograms
             {
                 return false;
             }
+            bool binWidthsAreEqual = _BinWidth.Equals(histogramToCompare.BinWidth);
+            if (!binWidthsAreEqual)
+            {
+                return false;
+            }
+            bool sampleSizesAreEqual = _N.Equals(histogramToCompare.SampleSize);
+            if (!sampleSizesAreEqual)
+            {
+                return false;
+            }
+            bool maxesAreEqual = _Max.Equals(histogramToCompare.Max);
+            if (!maxesAreEqual)
+            {
+                return false;
+            }
+            bool bothConverged = IsConverged.Equals(histogramToCompare.IsConverged);
+            if (!bothConverged)
+            {
+                return false;
+            }
+            bool convergedIterationsAreEqual = ConvergedIteration.Equals(histogramToCompare.ConvergedIteration);
+            if (!convergedIterationsAreEqual)
+            {
+                return false;
+            }
             return true;
 
         }
