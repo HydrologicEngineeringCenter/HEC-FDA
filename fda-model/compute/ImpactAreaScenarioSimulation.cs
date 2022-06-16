@@ -19,7 +19,7 @@ namespace compute
     public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
-        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
+        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
         private ContinuousDistribution _frequency_discharge;
         private GraphicalUncertainPairedData _frequency_discharge_graphical;

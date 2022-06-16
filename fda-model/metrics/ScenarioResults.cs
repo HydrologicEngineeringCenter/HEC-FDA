@@ -70,23 +70,23 @@ namespace metrics
             }
             return damCats;
         }
-        public double MeanAEP(int impactAreaID, int thresholdID)
+        public double MeanAEP(int impactAreaID, int thresholdID=0)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);
         }
-        public double MedianAEP(int impactAreaID, int thresholdID)
+        public double MedianAEP(int impactAreaID, int thresholdID=0)
         {
             return GetResults(impactAreaID).MedianAEP(thresholdID);
         }
-        public double AssuranceOfAEP(int impactAreaID, int thresholdID, double exceedanceProbability)
+        public double AssuranceOfAEP(int impactAreaID,  double exceedanceProbability, int thresholdID=0)
         {
             return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
         }
-        public double LongTermExceedanceProbability(int impactAreaID, int thresholdID, int years)
+        public double LongTermExceedanceProbability(int impactAreaID,  int years, int thresholdID = 0)
         {
             return GetResults(impactAreaID).LongTermExceedanceProbability(thresholdID, years);
         }
-        public double AssuranceOfEvent(int impactAreaID, int thresholdID, double standardNonExceedanceProbability)
+        public double AssuranceOfEvent(int impactAreaID, double standardNonExceedanceProbability, int thresholdID=0)
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
