@@ -97,6 +97,7 @@ namespace HEC.FDA.View
                 //this get called when any window closes. I might need to move these lines.
                 //MessageHub.UnsubscribeAll(TextFileMessageSubscriber.Instance);
                 TextFileMessageSubscriber.Instance.Dispose();
+                Environment.Exit(0);
             }
         }
 
