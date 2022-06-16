@@ -3,15 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using paireddata;
 using Statistics;
 using Statistics.Distributions;
+using Xunit;
 
 namespace fda_model_test.integrationtests
 {
-    class DefaultDataComputeOutcomes
+    public class DefaultDataComputeOutcomes
     {
-        private static List<double> _ExteriorInteriorXValues = new List<double>() { 474, 474.1, 474.3, 474.5, 478 };
-        private static List<IDistribution> _ExteriorInteriorYValues = new List<IDistribution>()
+        //this class draws on the default data used in the user interface
+        //this data can be found in HEC-FDA/ViewModel/Utilities/DefaultCurveData.cs
+
+        //Set up curve meta data and convergence criteria 
+        private static string xLabel = "X";
+        private static string yLabel = "Y";
+        private static string name = "Name";
+        private static CurveTypesEnum curveType = CurveTypesEnum.MonotonicallyIncreasing;
+        private static CurveMetaData generalCurveMetaData = new CurveMetaData(xLabel, yLabel, name, curveType);
+        private static ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
+
+        //set up exterior-interior relationship 
+        private static double[] _ExteriorInteriorXValues = new double[] { 474, 474.1, 474.3, 474.5, 478 };
+        private static IDistribution[] _ExteriorInteriorYValues = new IDistribution[]
         {
             new Deterministic(472),
             new Deterministic(473),
@@ -19,41 +33,28 @@ namespace fda_model_test.integrationtests
             new Deterministic(474.1),
             new Deterministic(478)
         };
+        private static UncertainPairedData interiorExterior = new UncertainPairedData(_ExteriorInteriorXValues, _ExteriorInteriorYValues, generalCurveMetaData);
 
-        private static List<double> _GraphicalXValues = new List<double>() { .5, .2, .1, .04, .02, .01, .004, .002 };
-        private static List<IDistribution> _GraphicalYValues = new List<IDistribution>()
-        {
-            new Deterministic(1500),
-            new Deterministic(2120),
-            new Deterministic(3140),
-            new Deterministic(4210),
-            new Deterministic(5070),
-            new Deterministic(6240),
-            new Deterministic(7050),
-            new Deterministic(9680)
-        };
+        //set up graphical flow-frequency relationship - uses LP3POR for ERL
+        private static double[] _GraphicalXValues = new double[] { .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static double[] _GraphicalYValues = new double[] { 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+        private static GraphicalUncertainPairedData graphicalFlowFrequency = new GraphicalUncertainPairedData(_GraphicalXValues, _GraphicalYValues, LP3POR, generalCurveMetaData, false);
 
-        private static List<double> _GraphicalStageFreqXValues = new List<double>() { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
-        private static List<IDistribution> _GraphicalStageFreqYValues = new List<IDistribution>()
-        {
-            new Deterministic(458),
-            new Deterministic(468.33),
-            new Deterministic(469.97),
-            new Deterministic(471.95),
-            new Deterministic(473.06),
-            new Deterministic(437.66),
-            new Deterministic(474.53),
-            new Deterministic(475.11),
-            new Deterministic(477.4)
-        };
+        //set up graphical stage-frequency relationship - uses LP3POR for ERL 
+        private static double[] _GraphicalStageFreqXValues = new double[] { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static double[] _GraphicalStageFreqYValues = new double[] { 458, 468.33, 469.97, 471.95, 473.06, 473.66, 474.53, 475.11, 477.4 };
+        private static GraphicalUncertainPairedData graphicalStageFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, generalCurveMetaData);
 
-        public static double LP3Mean = 3.3;
-        public static double LP3StDev = .254;
-        public static double LP3Skew = -.1021;
-        public static int LP3POR = 48;
+        //set up LP3 dist
+        private static double LP3Mean = 3.3;
+        private static double LP3StDev = .254;
+        private static double LP3Skew = -.1021;
+        private static int LP3POR = 48;
+        private static ContinuousDistribution lp3 = new LogPearson3(LP3Mean, LP3StDev, LP3Skew, LP3POR);
 
-        private static List<double> _RegulatedUnregulatedXValues = new List<double>() { 900, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
-        private static List<IDistribution> _RegulatedUnregulatedYValues = new List<IDistribution>()
+        //set up regulated-unregulated transform function 
+        private static double[] _RegulatedUnregulatedXValues = new double[] { 900, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+        private static IDistribution[] _RegulatedUnregulatedYValues = new IDistribution[]
         {
             new Deterministic(900),
             new Deterministic(1500),
@@ -65,9 +66,11 @@ namespace fda_model_test.integrationtests
             new Deterministic(7050),
             new Deterministic(9680)
         };
+        private static UncertainPairedData regulatedUnregulated = new UncertainPairedData(_RegulatedUnregulatedXValues, _RegulatedUnregulatedYValues, generalCurveMetaData);
 
-        private static List<double> _StageDamageXValues = new List<double>() { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482 };
-        private static List<IDistribution> _StageDamageYValues = new List<IDistribution>()
+        //set up a set of stage-damage functions - all functions are the same - just different damage categories and asset categories 
+        private static double[] _StageDamageXValues = new double[] { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482 };
+        private static IDistribution[] _StageDamageYValues = new IDistribution[]
         {
             new Normal(0,0),
             new Normal(0,0),
@@ -90,9 +93,23 @@ namespace fda_model_test.integrationtests
             new Normal(1287.45,62.34),
             new Normal(2376.23,134.896),
         };
+        private static string residentialDamCat = "residential";
+        private static string commercialDamCat = "commercial";
+        private static string structureAssetCat = "structure";
+        private static string contentAssetCat = "content";
+        private static CurveMetaData residentialStructureMeta = new CurveMetaData(xLabel, yLabel, name, residentialDamCat, curveType, structureAssetCat);
+        private static CurveMetaData residentialContentMeta = new CurveMetaData(xLabel, yLabel, name, residentialDamCat, curveType, contentAssetCat);
+        private static CurveMetaData commercialStructureMeta = new CurveMetaData(xLabel, yLabel, name, commercialDamCat, curveType, structureAssetCat);
+        private static CurveMetaData commercialContentMeta = new CurveMetaData(xLabel, yLabel, name, commercialDamCat, curveType, contentAssetCat);
+        private static UncertainPairedData residentialStructureDamage = new UncertainPairedData(_StageDamageXValues, _StageDamageYValues, residentialStructureMeta);
+        private static UncertainPairedData residentialContentDamage = new UncertainPairedData(_StageDamageXValues, _StageDamageYValues, residentialContentMeta);
+        private static UncertainPairedData commercialStructureDamage = new UncertainPairedData(_StageDamageXValues, _StageDamageYValues, commercialStructureMeta);
+        private static UncertainPairedData commercialContentDamage = new UncertainPairedData(_StageDamageXValues, _StageDamageYValues, commercialContentMeta);
+        private static List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { residentialStructureDamage, residentialContentDamage, commercialStructureDamage, commercialContentDamage };
 
-        private static List<double> _StageDischargeXValues = new List<double>() { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
-        private static List<IDistribution> _StageDischargeYValues = new List<IDistribution>()
+        //set up stage-discharge function 
+        private static double[] _StageDischargeXValues = new double[] { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+        private static IDistribution[] _StageDischargeYValues = new IDistribution[]
         {
             new Normal(458,0),
             new Normal(468.33,.312),
@@ -104,9 +121,11 @@ namespace fda_model_test.integrationtests
             new Normal(479.11,0.5),
             new Normal(481.44, 0.5),
         };
+        private static UncertainPairedData stageDischarge = new UncertainPairedData(_StageDischargeXValues, _StageDischargeYValues, generalCurveMetaData);
 
-        private static List<double> _FailureXValues = new List<double>() { 458, 468, 470, 471, 472, 472, 473, 474 };
-        private static List<IDistribution> _FailureYValues = new List<IDistribution>()
+        //set up levee
+        private static double[] _FailureXValues = new double[] { 458, 468, 470, 471, 472, 472, 473, 474 };
+        private static IDistribution[] _FailureYValues = new IDistribution[]
         {
             new Deterministic(0),
             new Deterministic(.01),
@@ -117,7 +136,7 @@ namespace fda_model_test.integrationtests
             new Deterministic(.9),
             new Deterministic(1),
         };
-
+        private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, generalCurveMetaData);
         public static double DefaultLeveeElevation = 476;
     }
 }
