@@ -121,8 +121,7 @@ namespace metrics
             return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
-        { //TODO: we're not getting good converged results because we are removing hard-coded total categories 
-            //it seems like we need to check each one and return true once they are all converged 
+        { 
             if (computeWithDamage == true)
             {   
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
@@ -164,10 +163,16 @@ namespace metrics
         public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             bool eadIsConverged = true;
-            if (computeWithDamage)
-            {//TODO: Hard-coded strings are TROUBLE
-                eadIsConverged = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-            }
+                if (computeWithDamage == true)
+                {
+                    foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
+                        {
+                            eadIsConverged = false;
+                        }
+                    }
+                }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
 
@@ -193,20 +198,21 @@ namespace metrics
         }
         public int RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            int eadIterationsRemaining = 0;
-            if (computeWithDamage)
+            List<int> eadIterationsRemaining = new List<int>();
+            if (computeWithDamage == true)
             {
-                eadIterationsRemaining = ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-
+                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                {
+                    eadIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                }
             }
-            List<int> performanceIterationsRemaining = new List<int>();
 
-            //i do not like this, but the keys are frustrating 
+            List<int> performanceIterationsRemaining = new List<int>();
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
                 performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
             }
-            return Math.Max(eadIterationsRemaining, performanceIterationsRemaining.Max());
+            return Math.Max(eadIterationsRemaining.Max(), performanceIterationsRemaining.Max());
         }
         public void ParallelResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
