@@ -172,5 +172,64 @@ namespace fda_model_test.integrationtests
             Assert.True(EADRelativeDifference < tolerance);
             
         }
+
+        [Theory]
+        [InlineData(.0523, .0468, .4159, .8007, .9320, .9619, .3406, .0464, .0028, 0, 0, 64.81)]
+        public void AnalyticalWithRegUnreg_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
+        {
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(lp3)
+                .withInflowOutflow(regulatedUnregulated)
+                .withFlowStage(stageDischarge)
+                .withStageDamages(stageDamageList)
+                .build();
+            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+            impactAreaScenarioSimulations.Add(simulation);
+
+            Scenario scenario = new Scenario(year, impactAreaScenarioSimulations);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
+            double actualMedianAEP = scenarioResults.AssuranceOfAEP(impactAreaID, 0.5);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+
+            double tolerance = 0.10;
+            double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
+            double medianAEPRelativeDifference = Math.Abs(actualMedianAEP - medianAEP) / medianAEP;
+            double LTEP10RelativeDifference = Math.Abs(actualLTEP10 - ltep10) / ltep10;
+            double LTEP30RelativeDifference = Math.Abs(actualLTEP30 - ltep30) / ltep30;
+            double LTEP50RelativeDifference = Math.Abs(actualLTEP50 - ltep50) / ltep50;
+            double CNEP1RelativeDifference = Math.Abs(actualCNEP1 - cnep1) / cnep1;
+            double CNEP04RelativeDifference = Math.Abs(actualCNEP04 - cnep04) / cnep04;
+            double CNEP02RelativeDifference = Math.Abs(actualCNEP02 - cnep02) / cnep02;
+            double CNEP01RelativeDifference = Math.Abs(actualCNEP01 - cnep01) / cnep01;
+            double CNEP004RelativeDifference = Math.Abs(actualCNEP004 - cnep004) / cnep004;
+            double CNEP002RelativeDifference = Math.Abs(actualCNEP002 - cnep002) / cnep002;
+            double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
+
+            Assert.True(AEPRelativeDifference < tolerance);
+            Assert.True(medianAEPRelativeDifference < tolerance);
+            Assert.True(LTEP10RelativeDifference < tolerance);
+            Assert.True(LTEP30RelativeDifference < tolerance);
+            Assert.True(LTEP50RelativeDifference < tolerance);
+            Assert.True(CNEP1RelativeDifference < tolerance);
+            Assert.True(CNEP04RelativeDifference < tolerance);
+            Assert.True(CNEP02RelativeDifference < tolerance);
+            Assert.True(CNEP01RelativeDifference < tolerance);
+            Assert.True(CNEP004RelativeDifference < tolerance);
+            Assert.True(CNEP002RelativeDifference < tolerance);
+            Assert.True(EADRelativeDifference < tolerance);
+
+        }
+
+
     }
 }
