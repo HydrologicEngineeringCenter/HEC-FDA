@@ -8,7 +8,7 @@ namespace alternatives
 {
     public class Alternative
     {
-        private const int _iterations = 10000;
+        private const int _iterations = 50000;
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 

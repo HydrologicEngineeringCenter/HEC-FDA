@@ -9,7 +9,7 @@ namespace alternativeComparisonReport
 {
     public class AlternativeComparisonReport
 {
-        private const int _iterations = 10000;
+        private const int _iterations = 50000;
         /// <summary>
         /// This method computes the distribution of average annual equivalent damage reduced between the without-project alternative and each of the with-project alternatives
         /// The function returns an AlternativeComparisonReportResults object which stores a list of AlternativeResults for each with-project condition. 
