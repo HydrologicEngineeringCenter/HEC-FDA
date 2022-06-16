@@ -172,7 +172,12 @@ namespace HEC.FDA.ViewModel.Storage
         }
         private string EscapeSingleQuotes(object value)
         {
-            return value.ToString().Replace("'", "''");
+            string returnValue = null;
+            if (value != null)
+            {
+                returnValue = value.ToString().Replace("'", "''");
+            }
+            return returnValue;
         }
 
         private string InsertIntoTableText(object[] rowData, string tablename, string[] colnames)
