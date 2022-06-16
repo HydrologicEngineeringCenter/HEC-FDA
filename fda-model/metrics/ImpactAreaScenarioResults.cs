@@ -121,10 +121,17 @@ namespace metrics
             return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
-        {
+        { //TODO: we're not getting good converged results because we are removing hard-coded total categories 
+            //it seems like we need to check each one and return true once they are all converged 
             if (computeWithDamage == true)
-            {   //TODO: these hard-coded strings are TROUBLE
-                return ConsequenceResults.GetConsequenceResult("Total", "Total", ImpactAreaID).ConsequenceHistogram.IsConverged;
+            {   
+                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                {
+                    if(consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
+                    {
+                        return false;
+                    }
+                }
             }
             return true;
         }
