@@ -164,7 +164,7 @@ namespace fda_model_test.integrationtests
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
 
-            double tolerance = 0.05;
+            double tolerance = 0.06;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - expectedMeanAEP) / expectedMeanAEP;
             double EADRelativeDifference = Math.Abs(actualMeanEAD - expectedMeanEAD) / expectedMeanEAD;
 
