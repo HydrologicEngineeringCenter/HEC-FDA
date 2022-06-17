@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(ScenarioResults scenarioResults)
         {
-            //todo: get the list of dam cats from the scenario results
+            //todo: get the list of dam cats from the scenario results when Richard fixes the bug
             List<string> damCats = new List<string>();// scenarioResults.GetDamageCategories();
             foreach(string damCat in damCats)
             {
@@ -20,6 +20,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults)
         {
+            //todo: get the list of dam cats from the results when Richard fixes the bug
             List<string> damCats = new List<string>();// alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
@@ -29,7 +30,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeComparisonReportResults alternativeResults, int altID)
         {
-            //todo: get the list of dam cats from the AlternativeResults
+            //todo: get the list of dam cats from the results when Richard fixes the bug
             List<string> damCats = new List<string>(); //alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {

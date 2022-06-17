@@ -1,11 +1,7 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
-
-namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems
+﻿namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems
 {
     public class EadRowItem
     {
-
         public double Frequency { get;  }
         public double Value { get;  }
 

@@ -117,7 +117,5 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             return impactName;
         }
 
-
-
     }
 }

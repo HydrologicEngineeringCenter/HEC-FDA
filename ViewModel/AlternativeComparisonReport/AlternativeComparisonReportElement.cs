@@ -1,10 +1,8 @@
-﻿using alternatives;
-using compute;
+﻿using compute;
 using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
@@ -60,13 +58,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
             Name = altElement.Attribute(NAME).Value;
             Description = altElement.Attribute(DESCRIPTION).Value;
-            WithoutProjAltID = Int32.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
+            WithoutProjAltID = int.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
             LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
             {
-                int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
+                int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name)
@@ -202,7 +200,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 {
                     ViewResults(this, new EventArgs());
                 }
-
             }
             else
             {
@@ -257,7 +254,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 vr.AddErrorMessage("There are no longer any with project alternatives.");
             }
 
-            //todo: check to see if the alts have results to compare.
             if(withoutAlt.Results == null)
             {
                 vr.AddErrorMessage("The without project alternative, " + withoutAlt.Name + ", has no results.");
@@ -287,10 +283,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
             List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
-            //todo: I think i loop over all the with proj conditions and then select them based on the combo box
-           // List<YearResult> yearResults = new List<YearResult>();
-
-            //richard will add a method to get the year results.
+            //TODO: richard will add a method to get the year results.
             //_EADBaseYearResults.BaseYear
             //todo: delete these hard coded years.
             YearResult yr1 = new YearResult(2000, new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, withProjID), new DamageByImpactAreaVM(discountRate, period, _EADBaseYearResults, withProjID), new DamageByDamCatVM(_EADBaseYearResults, withProjID));

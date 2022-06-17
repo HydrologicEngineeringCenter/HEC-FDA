@@ -213,10 +213,6 @@
             <AlternativeComparisonReport:ComparisonRowItem/>
         </DataTemplate>
 
-        <!--<DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AlternativeComparisonReportResultsVM }" >
-            <AlternativeCompReportResultsView:AlternativeComparisonReportResults/>
-        </DataTemplate>-->
-
         <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:SpecificAltCompReportResultsVM }" >
             <AlternativeCompReportResultsView:SpecificAltCompReportResults/>
         </DataTemplate>

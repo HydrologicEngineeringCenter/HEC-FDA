@@ -60,7 +60,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<ThresholdComboItem> Thresholds { get; } = new List<ThresholdComboItem>();
         
-
         public ThresholdComboItem SelectedThreshold
         {
             get { return _selectedThreshold; }
@@ -88,8 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         #endregion
 
         public SpecificIASResultVM(string iasName, ImpactAreaScenarioResults iasResult, List<string> damCats)
-        {
-            
+        {         
             _IASResult = iasResult;
             LoadThresholdData(iasResult);
             loadVMs(damCats);
@@ -101,12 +99,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
             Reports = _damageReports;
             SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-
         }
 
         private void LoadThresholdData(ImpactAreaScenarioResults iasResult)
         {
- 
             foreach(Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
             {
                  ThresholdRowItem row = new ThresholdRowItem(threshold.ThresholdID, threshold.ThresholdType, threshold.ThresholdValue);
@@ -118,7 +114,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 SelectedThreshold = Thresholds.First();
             }
         }
-
 
         private void loadVMs(List<string> damCats)
         {

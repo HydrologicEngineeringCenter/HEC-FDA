@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 foreach (int xVal in xVals)
                 {
                     double yVal = iasResult.LongTermExceedanceProbability(thresholdKey, xVal);
-                    //double yVal = iasResult.PerformanceByThresholds.GetThreshold(thresholdKey).SystemPerformanceResults.LongTermExceedanceProbability(xVal);
                     rows.Add(new PerformancePeriodRowItem(xVal, yVal));
                 }
                 MetricsToRows.Add(thresholdComboItems[i].Metric, rows);

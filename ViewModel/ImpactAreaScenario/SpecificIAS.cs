@@ -104,20 +104,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
         {
-            ImpactAreaID = Int32.Parse(iasElem.Attribute(IMPACT_AREA).Value);
+            ImpactAreaID = int.Parse(iasElem.Attribute(IMPACT_AREA).Value);
 
-            FlowFreqID = Int32.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
-            InflowOutflowID = Int32.Parse(iasElem.Element(INFLOW_OUTFLOW).Attribute(ID).Value);
-            RatingID = Int32.Parse(iasElem.Element(RATING).Attribute(ID).Value);
-            LeveeFailureID = Int32.Parse(iasElem.Element(LATERAL_STRUCTURE).Attribute(ID).Value);
-            ExtIntStageID = Int32.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
-            StageDamageID = Int32.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
-
-            //IEnumerable<XElement> results = iasElem.Elements("Results");
-            //if (results.Any())
-            //{
-            //    ComputeResults = (ImpactAreaScenarioResults)ImpactAreaScenarioResults.ReadFromXML(results.First());
-            //}
+            FlowFreqID = int.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
+            InflowOutflowID = int.Parse(iasElem.Element(INFLOW_OUTFLOW).Attribute(ID).Value);
+            RatingID = int.Parse(iasElem.Element(RATING).Attribute(ID).Value);
+            LeveeFailureID = int.Parse(iasElem.Element(LATERAL_STRUCTURE).Attribute(ID).Value);
+            ExtIntStageID = int.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
+            StageDamageID = int.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
@@ -169,80 +163,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return simulation;
         }
 
-
-        /// <summary>
-        /// </summary>
-        /// <param name="arg1"></param>
-        /// <param name="arg2"></param>
-        //public Task ComputeScenario(object arg1, EventArgs arg2)
-        //{
-        //    ImpactAreaScenarioResults results = null;
-
-        //    AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
-        //    InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
-        //    RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
-        //    ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
-        //    LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
-        //    AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
-
-        //    SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
-        //        stageDamageElem, ImpactAreaID);
-
-        //    int thresholdIndex = 1;
-        //    foreach(ThresholdRowItem thresholdRow in Thresholds)
-        //    {
-        //        double thresholdValue = 0;
-        //        if (thresholdRow.ThresholdValue != null)
-        //        {
-        //            thresholdValue = thresholdRow.ThresholdValue.Value;
-        //        }
-        //        Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdValue);
-        //        sc.WithAdditionalThreshold(threshold);
-        //        thresholdIndex++;
-        //    }
-
-        //    FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
-        //    Task output = Task.CompletedTask;
-        //    if (configurationValidationResult.IsValid)
-        //    {
-        //        ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-
-        //        output = Task.Run(() =>
-        //        {
-        //            try
-        //            {
-        //                MessageHub.Register(simulation);
-        //                //ComputeSimulation(simulation);
-        //            }
-        //            finally
-        //            {
-        //                MessageHub.Unregister(simulation);
-        //            }
-        //        });
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-        //    }
-
-        //    return output;
-
-        //}
-        //private void ComputeSimulation(ImpactAreaScenarioSimulation simulation)
-        //{
-        //    try
-        //    {
-        //        int seed = 999;
-        //        RandomProvider randomProvider = new RandomProvider(seed);
-        //        ConvergenceCriteria cc = new ConvergenceCriteria();
-        //        ComputeResults = simulation.Compute(randomProvider, cc);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
-        //    }
-        //}
-
         private XElement WriteThresholdsToXML()
         {
             XElement functionsElem = new XElement("Thresholds");
@@ -289,15 +209,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             iasElement.Add(WriteThresholdsToXML());
 
-            //if(ComputeResults != null)
-            //{
-            //    XElement resultsXElement = ComputeResults.WriteToXml();
-            //    iasElement.Add(resultsXElement);
-            //}
-
             return iasElement;
         }
-
 
         private List<ThresholdRowItem> ReadThresholdsXML(XElement thresholdsElem)
         {
@@ -337,12 +250,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 case "DAMAGES":
                     {
                         return new ThresholdType(ThresholdEnum.Damage, "Damages");
-                    }
-                //case "EAD":
-                //case "EXPECTEDANNUALDAMAGE":
-                    {
-                        //todo: do what?
-                        //return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
                     }
                 default:
                     {

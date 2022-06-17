@@ -31,7 +31,5 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
             }
         }
 
-
-
     }
 }

@@ -78,6 +78,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             if(altElement.Elements("AlternativeResults").Any())
             {
                 XElement resultElem = altElement.Elements("AlternativeResults").First();
+                //TODO: uncomment when richard fixes the bug
                 //_Results = AlternativeResults.ReadFromXML(resultElem);
             }
 
@@ -127,8 +128,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                // Run calculations. waiting for hec to put the new model in.
-                //grab the result objects off the ias elements and run the calculation.
                 IASElementSet[] iASElems = GetElementsFromID();
                 IASElementSet firstElem = iASElems[0];
                 IASElementSet secondElem = iASElems[1];
@@ -205,7 +204,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 int secondYear = secondElem.AnalysisYear;
                 if(firstYear > secondYear)
                 {
-                    //todo: test this
+                    //todo: test this 
                     //switch them 
                     iASElems[0] = secondElem;
                     iASElems[1] = firstElem;

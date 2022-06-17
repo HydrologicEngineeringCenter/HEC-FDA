@@ -92,7 +92,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            //todo: read results from xml
+            //todo: read results once Richard fixes the bug in writing results
+            XElement resultsElem = setElem.Element("ScenarioResults");
+            if(resultsElem != null)
+            {
+                //Results = ScenarioResults.ReadFromXML(resultsElem);
+            }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
@@ -101,24 +106,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             };
             AddActions();
         }
-
-        //private bool HaveAllIASComputed()
-        //{
-        //    bool allComputed = true;
-        //    if(SpecificIASElements.Count == 0)
-        //    {
-        //        allComputed = false;
-        //    }
-        //    foreach(SpecificIAS ias in SpecificIASElements)
-        //    {
-        //        if(ias.ComputeResults == null)
-        //        {
-        //            allComputed = false;
-        //            break;
-        //        }
-        //    }
-        //    return allComputed;
-        //}
 
         private void AddActions()
         {
@@ -159,7 +146,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="arg2"></param>
         public void EditIASSet(object arg1, EventArgs arg2)
         {
-
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
             IASEditorVM vm = new IASEditorVM(this, actionManager);
@@ -200,30 +186,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             return results;
         }
-
-        //public List<ImpactAreaScenarioResults> GetComputeResults()
-        //{
-        //    List < ImpactAreaScenarioResults > results = new List<ImpactAreaScenarioResults>();
-        //    foreach (SpecificIAS ias in SpecificIASElements)
-        //    {
-        //        if (ias.ComputeResults != null)
-        //        {
-        //            results.Add(ias.ComputeResults);
-        //        }
-        //    }
-        //    return results;
-        //}
-
-        //public ScenarioResults GetScenarioResults()
-        //{
-        //    ScenarioResults results = new ScenarioResults(AnalysisYear);
-        //    foreach (SpecificIAS ias in SpecificIASElements)
-        //    {
-        //        //todo: can i just use the method above this one?
-        //        results.AddResults(ias.ComputeResults);
-        //    }
-        //    return results;
-        //}
 
         public List<ImpactAreaScenarioSimulation> GetSimulations()
         {
@@ -288,16 +250,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }));
         }
         #endregion
-
-        #region Functions
+  
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
             IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear,elem.StageDamageID, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
-
-        #endregion
 
         public XElement WriteToXML()
         {

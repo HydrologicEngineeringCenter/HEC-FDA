@@ -1,12 +1,11 @@
-﻿using HEC.Plotting.SciChart2D.DataModel;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
-using System.Collections.Generic;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
-using System.Linq;
 using Statistics.Histograms;
-using System.Windows.Media;
-using HEC.FDA.ViewModel.Utilities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -40,13 +39,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
 
                     MetricsToRows.Add(threshold, rows);
-
-                    //todo: this is left commented out on purpose. This is a WIP.
-
-                    //get the histogram data
-
-                    ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();// ("AEP").AssuranceHistogram;
-                    //Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
+                    ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
                     int[] binCounts = histogramOfAEPs.BinCounts;
                     double binWidth = histogramOfAEPs.BinWidth;
                     double min = histogramOfAEPs.Min;
