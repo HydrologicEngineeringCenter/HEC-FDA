@@ -41,33 +41,41 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            if (_resultsList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
                 {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        assetCats.Add(consequenceResult.AssetCategory);
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
                     }
-                }
 
+                }
             }
+
             return assetCats;
         }
         public List<string> GetDamageCategories()
         {
             List<string> damCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            if (_resultsList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
                 {
-                    if(!damCats.Contains(consequenceResult.DamageCategory))
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        damCats.Add(consequenceResult.DamageCategory);
+                        if (!damCats.Contains(consequenceResult.DamageCategory))
+                        {
+                            damCats.Add(consequenceResult.DamageCategory);
+                        }
                     }
+
                 }
-                
             }
+
             return damCats;
         }
         public double MeanAEP(int impactAreaID, int thresholdID=0)

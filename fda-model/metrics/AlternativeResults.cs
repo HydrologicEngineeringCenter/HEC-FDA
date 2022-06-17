@@ -69,11 +69,14 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+            if (_consequenceResults.ConsequenceResultList.Count != 0)
             {
-                if (!assetCats.Contains(consequence.AssetCategory))
+                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
                 {
-                    assetCats.Add(consequence.AssetCategory);
+                    if (!assetCats.Contains(consequence.AssetCategory))
+                    {
+                        assetCats.Add(consequence.AssetCategory);
+                    }
                 }
             }
             return assetCats;
@@ -81,11 +84,14 @@ namespace metrics
         public List<string> GetDamageCategories()
         {//TODO: Just get these from the _consequenceResults
             List<string> damageCats = new List<string>();
-            foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+            if (_consequenceResults.ConsequenceResultList.Count != 0)
             {
-                if (!damageCats.Contains(consequence.DamageCategory))
+                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
                 {
-                    damageCats.Add(consequence.DamageCategory);
+                    if (!damageCats.Contains(consequence.DamageCategory))
+                    {
+                        damageCats.Add(consequence.DamageCategory);
+                    }
                 }
             }
             return damageCats;
