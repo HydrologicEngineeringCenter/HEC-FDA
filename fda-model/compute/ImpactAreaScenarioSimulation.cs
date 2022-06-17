@@ -443,9 +443,9 @@ namespace compute
         }
 
         public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, int iteration)
-        {
-            double[] stageOfEvent = new double[5];
-            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+        {//TODO: Get rid of these hard coded doubles 
+            double[] stageOfEvent = new double[6];
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
@@ -453,8 +453,8 @@ namespace compute
             }
         }
         public void SetStageForNonExceedanceProbability()
-        {
-            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+        {//TODO: get rid of these hard-coded doubles 
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
