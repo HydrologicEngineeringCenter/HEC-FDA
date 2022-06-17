@@ -101,7 +101,7 @@ namespace alternativeComparisonReport
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
                     ConsequenceDistributionResults withprojectDamageResults = impactAreaScenarioResults.ConsequenceResults;
-                    ConsequenceDistributionResults withoutProjectDamageResults = impactAreaScenarioResults.ConsequenceResults;
+                    ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
 
 
                     foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
