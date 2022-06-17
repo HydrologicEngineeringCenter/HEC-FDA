@@ -23,6 +23,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private const string MEAN = "Mean: ";
         private const string SKEW = "Skew: ";
         private const string ST_DEV = "St. Dev.: ";
+        private const string RECORD_LENGTH = "Record Length: ";
 
         private double _Mean;
         private double _StDev;
@@ -32,6 +33,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private string _FitToFlowMean = MEAN + "N/A";
         private string _FitToFlowStDev = ST_DEV + "N/A";
         private string _FitToFlowSkew = SKEW + "N/A";
+        private string _FitToFlowRecordLength = RECORD_LENGTH + "N/A";
         private int _POR;
         private PlotModel _plotModel;
         private int _StandardPOR;
@@ -61,6 +63,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _FitToFlowSkew; }
             set { _FitToFlowSkew = value; NotifyPropertyChanged(); }
         }
+
+
+        public string FitToFlowRecordLength
+        {
+            get { return _FitToFlowRecordLength; }
+            set { _FitToFlowRecordLength = value; NotifyPropertyChanged(); }
+        }
+
         public bool IsStandard
         {
             get { return _IsStandard; }
@@ -287,6 +297,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     FitToFlowMean = MEAN + Math.Round(lp3.Mean, 2);
                     FitToFlowSkew = SKEW + Math.Round(lp3.Skewness, 2);
                     FitToFlowStDev = ST_DEV + Math.Round(lp3.StandardDeviation, 2);
+                    FitToFlowRecordLength = RECORD_LENGTH + lp3.SampleSize;
                 }
             }
             else
@@ -295,6 +306,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowMean = MEAN + "N/A";
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
+                FitToFlowRecordLength = RECORD_LENGTH + "N/A";
 
                 MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }

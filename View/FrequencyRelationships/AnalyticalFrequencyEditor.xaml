@@ -46,8 +46,6 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Record Length:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Text="{Binding PeriodOfRecord, ValidatesOnDataErrors=True}" IsEnabled="{Binding IsStandard}" Margin="5"/>
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,5,0,0">
@@ -56,48 +54,50 @@
         </StackPanel>
 
         <GroupBox x:Name="group_graphical" Header="Graphical" Grid.Row="4"  Visibility="Visible">
-                     
-        <Grid x:Name="grid_graphical" Grid.Row="4" >
+
+            <Grid x:Name="grid_graphical" Grid.Row="4" >
                 <frequencyrelationships:GraphicalTableWithPlotControl  Grid.Row="1" DataContext="{Binding GraphicalTableWithPlotVM}"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="group_analytical" Header="Analytical" Grid.Row="4" Visibility="Hidden">
-            
-        <Grid x:Name="grid_analytical" Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100*" />
-                <ColumnDefinition Width="200*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                <RadioButton x:Name="rad_standard" Content="Enter LP3 Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
-                <RadioButton x:Name="rad_fitToFlows" Content="Fit LP3 Parameters to Flows" IsChecked="{Binding IsStandard, Converter={StaticResource InverseBooleanConverter}}" Checked="rad_fitToFlows_Checked" Margin="5"/>
-            </StackPanel>
 
-            <Grid x:Name="grid_analyticalLeft_standard" Grid.Row="1" Grid.Column="0" Visibility="Visible">
+            <Grid x:Name="grid_analytical" Grid.Row="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="80*"/>
+                    <ColumnDefinition Width="110*" />
+                    <ColumnDefinition Width="200*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="35"/>
-                    <RowDefinition Height="35"/>
-                    <RowDefinition Height="35"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                    <RadioButton x:Name="rad_standard" Content="Enter LP3 Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
+                    <RadioButton x:Name="rad_fitToFlows" Content="Fit LP3 Parameters to Flows" IsChecked="{Binding IsStandard, Converter={StaticResource InverseBooleanConverter}}" Checked="rad_fitToFlows_Checked" Margin="5"/>
+                </StackPanel>
 
-                <Label Grid.Row="0" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True, TargetNullValue=''}" Margin="5"/>
-                <Label Grid.Row="1"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
+                <Grid x:Name="grid_analyticalLeft_standard" Grid.Row="1" Grid.Column="0" Visibility="Visible">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="80*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <Label Grid.Row="2"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
-                              
-            </Grid>
+                    <Label Grid.Row="0" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True, TargetNullValue=''}" Margin="5"/>
+                    <Label Grid.Row="1"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
+                    <Label Grid.Row="2"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
+                    <Label Grid.Row="3" Content="Record Length:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PeriodOfRecord, ValidatesOnDataErrors=True}" IsEnabled="{Binding IsStandard}" Margin="5"/>
+
+                </Grid>
                 <Grid x:Name="grid_analyticalLeft_fitToFlows" Grid.Row="1" Grid.Column="0" Visibility="Hidden">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -124,13 +124,16 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25"/>
                             <RowDefinition Height="25"/>
+                            <RowDefinition Height="30"/>
                         </Grid.RowDefinitions>
                         <Button Content="Fit" Click="FitToFlows_Click" Grid.Row="0" Width="100" />
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <Label Name="lbl_fitToFlow_mean" Content="{Binding FitToFlowMean}" Grid.Row="0" Margin="0,0,0,0"/>
-                            <Label Name="lbl_fitToFlow_stDev" Content="{Binding FitToFlowStDev}" Grid.Row="1" Margin="15,0,0,0"/>
-                            <Label Name="lbl_fitToFlow_skew" Content="{Binding FitToFlowSkew}" Grid.Row="2" Margin="15,0,0,0"/>
-                            
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Label Name="lbl_fitToFlow_mean" Content="{Binding FitToFlowMean}" Margin="0,0,0,0"/>
+                            <Label Name="lbl_fitToFlow_stDev" Content="{Binding FitToFlowStDev}" Margin="15,0,0,0" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Label Name="lbl_fitToFlow_skew" Content="{Binding FitToFlowSkew}" Margin="0,0,0,0"/>
+                            <Label Name="lbl_fitToFlow_recordLength" Content="{Binding FitToFlowRecordLength}" Margin="15,0,0,0"/>
                         </StackPanel>
 
                     </Grid>
