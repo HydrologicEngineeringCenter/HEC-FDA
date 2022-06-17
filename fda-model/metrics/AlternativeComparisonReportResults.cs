@@ -98,9 +98,9 @@ namespace metrics
                 {
                     foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        if (!damCats.Contains(consequenceResult.DamageCategory))
                         {
-                            damCats.Add(consequenceResult.AssetCategory);
+                            damCats.Add(consequenceResult.DamageCategory);
                         }
                     }
 
@@ -109,9 +109,9 @@ namespace metrics
                 {
                     foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        if (!damCats.Contains(consequenceResult.AssetCategory))
+                        if (!damCats.Contains(consequenceResult.DamageCategory))
                         {
-                            damCats.Add(consequenceResult.AssetCategory);
+                            damCats.Add(consequenceResult.DamageCategory);
                         }
                     }
 
