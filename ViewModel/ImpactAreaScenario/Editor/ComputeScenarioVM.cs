@@ -1,4 +1,8 @@
 ﻿using compute;
+using HEC.MVVMFramework.Base.Implementations;
+using metrics;
+using scenarios;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,20 +12,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class ComputeScenarioVM:BaseViewModel
     {
 
-        public ComputeScenarioVM( List<SpecificIAS> iasElems, Action callback)
+        public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback)
         {
-            List<Task> tasks = new List<Task>();
+            List<ImpactAreaScenarioSimulation> sims = new List<ImpactAreaScenarioSimulation>();
+
             foreach (SpecificIAS ias in iasElems)
             {
-                tasks.Add( ias.ComputeScenario(this, new EventArgs()));
+                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
+                MessageHub.Register(sim);
+                sims.Add(sim);
             }
+            Scenario scenario = new Scenario(analysisYear, sims);
+            int seed = 999;
+            RandomProvider randomProvider = new RandomProvider(seed);
+            ConvergenceCriteria cc = new ConvergenceCriteria();
 
             Task.Run(() =>
             {
-                Task.WaitAll(tasks.ToArray());
-
+                ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
                 //Event for when everything has been computed.
-                callback?.Invoke();
+                callback?.Invoke(scenarioResults);
             });
         }
 

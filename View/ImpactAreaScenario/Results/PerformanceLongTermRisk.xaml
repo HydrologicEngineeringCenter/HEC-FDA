@@ -26,9 +26,9 @@
                         <TextBlock Text="Period (Years)" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding LongTermRisk}" Width="*">
+                <DataGridTextColumn Binding="{Binding LongTermRisk, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Long-term Risk" TextWrapping="Wrap" />
+                        <TextBlock Text="Long-Term Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

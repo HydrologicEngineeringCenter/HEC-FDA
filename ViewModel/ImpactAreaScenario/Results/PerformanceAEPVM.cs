@@ -4,6 +4,9 @@ using metrics;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using System.Linq;
+using Statistics.Histograms;
+using System.Windows.Media;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -41,13 +44,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     //todo: this is left commented out on purpose. This is a WIP.
 
                     //get the histogram data
+
+                    ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();// ("AEP").AssuranceHistogram;
                     //Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
-                    //int[] binCounts = histogramOfAEPs.BinCounts;
-                    //double binWidth = histogramOfAEPs.BinWidth;
-                    //double min = histogramOfAEPs.Min;
-                    //double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
-                    //HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
-                    //HistogramData.Add(threshold, _data);
+                    int[] binCounts = histogramOfAEPs.BinCounts;
+                    double binWidth = histogramOfAEPs.BinWidth;
+                    double min = histogramOfAEPs.Min;
+                    double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+                    HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+                    HistogramColor.SetHistogramColor(_data);
+                    HistogramData.Add(threshold, _data);
                 }
             }
 
@@ -76,6 +82,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             if (HistogramData.ContainsKey(metric.Metric))
             {
                 HistogramData2D histData = HistogramData[metric.Metric];
+                HistogramColor.SetHistogramColor(histData);
                 ChartViewModel.LineData.Set(new List<SciLineData>() { histData });
             }
         }

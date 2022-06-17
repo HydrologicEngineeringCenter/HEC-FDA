@@ -26,7 +26,7 @@
                         <TextBlock Text="Damage Category" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding EAD}" Width="*">
+                <DataGridTextColumn Binding="{Binding EAD, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

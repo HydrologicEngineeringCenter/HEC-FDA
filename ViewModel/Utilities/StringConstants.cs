@@ -88,11 +88,11 @@
         public const string IMPORT_HYDRAULICS_HEADER = "Import Hydraulics";
 
         public const string FREQUENCY_FUNCTIONS = "Frequency Functions";
-        public const string CREATE_FREQUENCY_FUNCTIONS_MENU = "Create New Analyitical Flow Frequency Function...";
-        public const string EDIT_FREQUENCY_FUNCTIONS_MENU = "Edit Analyitical Flow Frequency Function...";
+        public const string CREATE_FREQUENCY_FUNCTIONS_MENU = "Create New Frequency Function...";
+        public const string EDIT_FREQUENCY_FUNCTIONS_MENU = "Edit Frequency Function...";
         public const string CREATE_FREQUENCY_HEADER = "Create Frequency Function";
-        public const string IMPORT_FREQUENCY_FROM_OLD_NAME = "Frequency";
-        public const string IMPORT_FREQUENCY_FROM_OLD_HEADER = "Import Frequency From HEC-FDA 1.4.3";
+        public const string IMPORT_FREQUENCY_FROM_OLD_NAME = "Frequency Function";
+        public const string IMPORT_FREQUENCY_FROM_OLD_HEADER = "Import Frequency Functions From HEC-FDA 1.4.3";
 
         public const string REG_UNREG_TRANSFORM_FUNCTIONS = "Regulated-Unregulated Transform Functions";
         public const string CREATE_REG_UNREG_MENU = "Create New Regulated-Unregulated Relationship...";

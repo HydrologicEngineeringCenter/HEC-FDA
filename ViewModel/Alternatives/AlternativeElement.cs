@@ -10,6 +10,7 @@ using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -28,7 +29,10 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         #region properties
         public List<int> IASElementSets { get; } = new List<int>();
-        public AlternativeResults Results { get; }
+        public AlternativeResults Results
+        {
+            get { return _Results; }
+        }
         #endregion
         #region Constructors
 
@@ -70,6 +74,13 @@ namespace HEC.FDA.ViewModel.Alternatives
                 int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
                 IASElementSets.Add(iasID);
             }
+
+            if(altElement.Elements("AlternativeResults").Any())
+            {
+                XElement resultElem = altElement.Elements("AlternativeResults").First();
+                //_Results = AlternativeResults.ReadFromXML(resultElem);
+            }
+
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.ALTERNATIVE_IMAGE,
@@ -113,8 +124,6 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            //TODO: I am leaving this commented out. This is a WIP.
-
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
@@ -126,16 +135,8 @@ namespace HEC.FDA.ViewModel.Alternatives
 
                 int firstElemYear = firstElem.AnalysisYear;
                 int secondElemYear = secondElem.AnalysisYear;
-                ScenarioResults firstResults = firstElem.GetScenarioResults();
-                ScenarioResults secondResults = secondElem.GetScenarioResults();
-
-                bool secondElemIsFirst = firstElemYear > secondElemYear;
-
-                //Scenario scenario1 = new Scenario(firstElem.AnalysisYear, firstElem.GetSimulations());
-                //Scenario scenario2 = new Scenario(secondElem.AnalysisYear, secondElem.GetSimulations());
-                //long por = firstElem.AnalysisYear;
-                //int id = 99;
-                //Alternative alt = new Alternative(scenario1, scenario2, por, id);
+                ScenarioResults firstResults = firstElem.Results;
+                ScenarioResults secondResults = secondElem.Results;
 
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
@@ -145,19 +146,16 @@ namespace HEC.FDA.ViewModel.Alternatives
                 double discountRate = studyProperties.DiscountRate;
                 int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
-                if (secondElemIsFirst)
-                {
-                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, secondElemYear,
-                    secondResults, firstElemYear, firstResults);
-                }
-                else
-                {
-                    _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, firstElemYear,
-                    firstResults, secondElemYear, secondResults);
-                }
+                _Results = Alternative.AnnualizationCompute(randomProvider, cc, discountRate, periodOfAnalysis, ID, firstElemYear,
+                firstResults, secondElemYear, secondResults);
 
-                MessageBox.Show("compute complete");
                 Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(this);
+
+                MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", "Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if(messageBoxResult == MessageBoxResult.Yes)
+                {
+                    ViewResults(this, new EventArgs());
+                }
             }
             else
             {
@@ -172,7 +170,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// If the element cannot be found then it will be null.
         /// </summary>
         /// <returns></returns>
-        public IASElementSet[] GetElementsFromID()
+        private IASElementSet[] GetElementsFromID()
         {
             IASElementSet[] iASElems = new IASElementSet[] { null, null };
 
@@ -235,11 +233,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
             bool secondElemHasResults = false;
-            if (firstElem != null && firstElem.GetComputeResults().Count > 0)
+            if (firstElem != null && firstElem.Results != null)
             {
                 firstElemHasResults = true;
             }
-            if (secondElem != null && secondElem.GetComputeResults().Count > 0)
+            if (secondElem != null && secondElem.Results != null)
             {
                 secondElemHasResults = true;
             }
@@ -291,12 +289,12 @@ namespace HEC.FDA.ViewModel.Alternatives
             IASElementSet secondElem = iASElems[1];
 
 
-            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.GetScenarioResults()), new DamageByImpactAreaVM(firstElem.GetScenarioResults()), new DamageByDamCatVM(firstElem.GetScenarioResults()));
-            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.GetScenarioResults()), new DamageByImpactAreaVM(secondElem.GetScenarioResults()), new DamageByDamCatVM(secondElem.GetScenarioResults()));
+            YearResult yr1 = new YearResult(firstElem.AnalysisYear, new DamageWithUncertaintyVM(firstElem.Results), new DamageByImpactAreaVM(firstElem.Results), new DamageByDamCatVM(firstElem.Results));
+            YearResult yr2 = new YearResult(secondElem.AnalysisYear, new DamageWithUncertaintyVM(secondElem.Results), new DamageByImpactAreaVM(secondElem.Results), new DamageByDamCatVM(secondElem.Results));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
             AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _Results), new DamageByImpactAreaVM(discountRate, period, _Results), new DamageByDamCatVM(_Results));
-            altResult = new AlternativeResult(eadResult, aaeqResult);
+            altResult = new AlternativeResult(Name, eadResult, aaeqResult);
 
             return altResult;
         }
@@ -305,9 +303,6 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             if (_Results != null)
             {
-
-
-                //todo pass in the correct thing.
                 AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
                 string header = "Alternative Results: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);

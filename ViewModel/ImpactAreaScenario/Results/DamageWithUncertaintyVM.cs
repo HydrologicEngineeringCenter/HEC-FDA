@@ -5,6 +5,7 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using System.Linq;
 using metrics;
 using Statistics.Histograms;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -15,8 +16,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, int impactAreaID)
-        { 
+        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult)
+        {
+            int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.ConsequenceResults.MeanDamage("Total", "Total", impactAreaID);
             IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResult("Total", "Total", impactAreaID).ConsequenceHistogram;
             int[] binCounts = totalHistogram.BinCounts;
@@ -24,6 +26,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             double min = totalHistogram.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
             _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+            HistogramColor.SetHistogramColor(_data);
             ConsequenceResults eadResults = iasResult.ConsequenceResults;
             loadTableValues(eadResults);
         }
@@ -48,7 +51,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             foreach(double x in xVals)
             {
                 //TODO: this is a WIP:
-               // yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ("Total",x, "Total", eadResults.RegionID));
+                //"Total"
+                yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ(x));
             }
             return yValues;
         }

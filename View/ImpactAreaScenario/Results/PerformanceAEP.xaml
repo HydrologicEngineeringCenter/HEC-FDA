@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
         <Grid.RowDefinitions>
@@ -26,7 +27,7 @@
                         <TextBlock Text="AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance of AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

@@ -26,7 +26,7 @@
                         <TextBlock Text="Frequency" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

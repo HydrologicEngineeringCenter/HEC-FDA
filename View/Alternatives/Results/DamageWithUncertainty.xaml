@@ -24,7 +24,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label Content="Mean:" />
-            <Label Content="{Binding Mean}"/>
+            <TextBlock Text="{Binding Mean, StringFormat=N2}" VerticalAlignment="Center"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
@@ -36,7 +36,7 @@
                         <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Value}" Width="*">
+                <DataGridTextColumn Binding="{Binding Value, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
@@ -46,9 +46,9 @@
         </DataGrid>
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
-            <Label Content="{Binding DiscountRate}"/>
+            <TextBlock Text="{Binding DiscountRate, StringFormat=N2}" VerticalAlignment="Center"/>
             <Label Content="Period of Analysis:" />
-            <Label Content="{Binding PeriodOfAnalysis}"/>
+            <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
         </StackPanel>
 
     </Grid>

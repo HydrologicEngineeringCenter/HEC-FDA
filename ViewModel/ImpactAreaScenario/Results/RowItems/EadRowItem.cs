@@ -1,4 +1,7 @@
-﻿namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
+
+namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems
 {
     public class EadRowItem
     {

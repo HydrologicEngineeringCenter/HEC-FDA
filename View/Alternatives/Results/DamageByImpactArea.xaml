@@ -30,7 +30,7 @@
                         <TextBlock Text="Impact Area" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding EAD}" Width="*">
+                <DataGridTextColumn Binding="{Binding EAD, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
@@ -40,9 +40,9 @@
 
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
-            <Label Content="{Binding DiscountRate}"/>
+            <TextBlock Text="{Binding DiscountRate, StringFormat=N2}" VerticalAlignment="Center"/>
             <Label Content="Period of Analysis:" />
-            <Label Content="{Binding PeriodOfAnalysis}"/>
+            <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
         </StackPanel>
 
     </Grid>

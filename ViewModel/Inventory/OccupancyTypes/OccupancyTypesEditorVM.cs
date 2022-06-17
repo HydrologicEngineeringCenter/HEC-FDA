@@ -534,7 +534,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             if (areUnsavedChanges)
             {
-                if (MessageBox.Show("You have unsaved changes. Are you sure you want to close?", "Are You Sure", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show("There are unsaved changes. Are you sure you want to close?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     return true;
                 }

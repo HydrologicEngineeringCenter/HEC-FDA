@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         [Description("Annual Exceedance Probability")]
         Annual_Exceedance_Probability,
 
-        [Description("Long-term Risk")]
+        [Description("Long-Term Exceedance Probability")]
         Long_Term_Risk,
 
         [Description("Assurance of Threshold")]

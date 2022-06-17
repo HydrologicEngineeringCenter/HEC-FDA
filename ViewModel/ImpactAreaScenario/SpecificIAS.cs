@@ -6,14 +6,10 @@ using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
 using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -43,7 +39,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public ImpactAreaScenarioResults ComputeResults { get; set; }
+        //public ImpactAreaScenarioResults ComputeResults { get; set; }
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
@@ -117,25 +113,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ExtIntStageID = Int32.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
             StageDamageID = Int32.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
-            IEnumerable<XElement> results = iasElem.Elements("Results");
-            if (results.Any())
-            {
-                ComputeResults = (ImpactAreaScenarioResults)ImpactAreaScenarioResults.ReadFromXML(results.First());
-            }
+            //IEnumerable<XElement> results = iasElem.Elements("Results");
+            //if (results.Any())
+            //{
+            //    ComputeResults = (ImpactAreaScenarioResults)ImpactAreaScenarioResults.ReadFromXML(results.First());
+            //}
 
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
        
         #endregion
-        
-        /// <summary>
-        /// </summary>
-        /// <param name="arg1"></param>
-        /// <param name="arg2"></param>
-        public Task ComputeScenario(object arg1, EventArgs arg2)
-        {
-            ImpactAreaScenarioResults results = null;
 
+        private SimulationCreator GetSimulationCreator()
+        {
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
@@ -147,7 +137,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 stageDamageElem, ImpactAreaID);
 
             int thresholdIndex = 1;
-            foreach(ThresholdRowItem thresholdRow in Thresholds)
+            foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
                 double thresholdValue = 0;
                 if (thresholdRow.ThresholdValue != null)
@@ -158,48 +148,100 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 sc.WithAdditionalThreshold(threshold);
                 thresholdIndex++;
             }
+            return sc;
+        }
 
+        public ImpactAreaScenarioSimulation CreateSimulation()
+        {
+            ImpactAreaScenarioSimulation simulation = null;
+
+
+            SimulationCreator sc = GetSimulationCreator();
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
-            Task output = Task.CompletedTask;
             if (configurationValidationResult.IsValid)
             {
-                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-
-                output = Task.Run(() =>
-                {
-                    try
-                    {
-                        MessageHub.Register(simulation);
-                        ComputeSimulation(simulation);
-                    }
-                    finally
-                    {
-                        MessageHub.Unregister(simulation);
-                    }
-                });
+                simulation = sc.BuildSimulation();  
             }
             else
             {
                 MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
-            return output;
-
+            return simulation;
         }
-        private void ComputeSimulation(ImpactAreaScenarioSimulation simulation)
-        {
-            try
-            {
-                int seed = 999;
-                RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
-                ComputeResults = simulation.Compute(randomProvider, cc);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
-            }
-        }
+
+
+        /// <summary>
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        //public Task ComputeScenario(object arg1, EventArgs arg2)
+        //{
+        //    ImpactAreaScenarioResults results = null;
+
+        //    AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
+        //    InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
+        //    RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
+        //    ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
+        //    LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
+        //    AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+
+        //    SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
+        //        stageDamageElem, ImpactAreaID);
+
+        //    int thresholdIndex = 1;
+        //    foreach(ThresholdRowItem thresholdRow in Thresholds)
+        //    {
+        //        double thresholdValue = 0;
+        //        if (thresholdRow.ThresholdValue != null)
+        //        {
+        //            thresholdValue = thresholdRow.ThresholdValue.Value;
+        //        }
+        //        Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdValue);
+        //        sc.WithAdditionalThreshold(threshold);
+        //        thresholdIndex++;
+        //    }
+
+        //    FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
+        //    Task output = Task.CompletedTask;
+        //    if (configurationValidationResult.IsValid)
+        //    {
+        //        ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
+
+        //        output = Task.Run(() =>
+        //        {
+        //            try
+        //            {
+        //                MessageHub.Register(simulation);
+        //                //ComputeSimulation(simulation);
+        //            }
+        //            finally
+        //            {
+        //                MessageHub.Unregister(simulation);
+        //            }
+        //        });
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        //    }
+
+        //    return output;
+
+        //}
+        //private void ComputeSimulation(ImpactAreaScenarioSimulation simulation)
+        //{
+        //    try
+        //    {
+        //        int seed = 999;
+        //        RandomProvider randomProvider = new RandomProvider(seed);
+        //        ConvergenceCriteria cc = new ConvergenceCriteria();
+        //        ComputeResults = simulation.Compute(randomProvider, cc);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error); 
+        //    }
+        //}
 
         private XElement WriteThresholdsToXML()
         {
@@ -247,11 +289,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             iasElement.Add(WriteThresholdsToXML());
 
-            if(ComputeResults != null)
-            {
-                XElement resultsXElement = ComputeResults.WriteToXml();
-                iasElement.Add(resultsXElement);
-            }
+            //if(ComputeResults != null)
+            //{
+            //    XElement resultsXElement = ComputeResults.WriteToXml();
+            //    iasElement.Add(resultsXElement);
+            //}
 
             return iasElement;
         }

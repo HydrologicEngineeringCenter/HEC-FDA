@@ -20,7 +20,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label Content="Mean:" />
-            <Label Content="{Binding Mean}"/>
+            <TextBlock Text="{Binding Mean, StringFormat=N2}" VerticalAlignment="Center"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
@@ -32,7 +32,7 @@
                         <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>    
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Value}" Width="*">
+                <DataGridTextColumn Binding="{Binding Value, StringFormat=N2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

@@ -22,7 +22,7 @@ namespace HEC.FDA.View.Alternatives.Results
 
             //because this UI gets loaded every time the user switches and comes back to this, we were getting
             //an exception. We need to create a new chart view model every time it gets loaded and set it in the vm.
-            vm.ChartViewModel = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
+            vm.ChartViewModel = new Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
             Chart2D _chart = new Chart2D(vm.ChartViewModel);
 
             //add the chart to the UI
