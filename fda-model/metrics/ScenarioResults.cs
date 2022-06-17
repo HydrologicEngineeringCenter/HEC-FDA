@@ -110,7 +110,7 @@ namespace metrics
         /// <param name="impactAreaID"></param> the default is the null value -999
         /// <returns></returns>The mean of consequences
         public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory= null)
-        {//TODO: This could probably be more efficient 
+        {//TODO: This could probably be more efficient and could use some null checking
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
@@ -186,7 +186,7 @@ namespace metrics
         /// <param name="impactAreaID"></param>the default is the null value -999
         /// <returns></returns> the level of consequences exceeded by the specified probability 
         public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
-        {
+        {//efficiency and null checking 
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
