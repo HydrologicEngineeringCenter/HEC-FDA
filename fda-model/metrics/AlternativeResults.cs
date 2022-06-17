@@ -29,8 +29,7 @@ namespace metrics
                 return _consequenceResults;
             }
         }
-        public int BaseYear { get { return BaseYearScenarioResults.AnalysisYear; } }
-        public int FutureYear { get { return FutureYearScenarioResults.AnalysisYear; } }
+        public List<int> AnalysisYears { get; }
         public event MessageReportedEventHandler MessageReport;
         public bool IsNull
         {
@@ -39,8 +38,6 @@ namespace metrics
                 return _isNull;
             }
         }
-        internal ScenarioResults BaseYearScenarioResults { get; set; }
-        internal ScenarioResults FutureYearScenarioResults { get; set; }
         #endregion
 
         #region Constructor
@@ -50,17 +47,20 @@ namespace metrics
             _alternativeID = 0;
             _consequenceResults = new ConsequenceDistributionResults();
         }
-        public AlternativeResults(int id)
+        public AlternativeResults(int id, List<int> analysisYears)
         {
             _alternativeID = id;
             _consequenceResults = new ConsequenceDistributionResults();
             _isNull = false;
+            AnalysisYears = analysisYears;
         }
-        private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults)
+        private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears)
         {
             _alternativeID = id;
             _consequenceResults = consequenceResults;
             _isNull = false;
+            AnalysisYears = analysisYears;
+
         }
         #endregion
         #region Methods
@@ -92,7 +92,7 @@ namespace metrics
             return assetCats;
         }
         public List<string> GetDamageCategories()
-        {
+        {//TODO: Just get these from the _consequenceResults
             List<string> damageCats = new List<string>();
             foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
             {
