@@ -4,6 +4,7 @@ using alternatives;
 using Statistics.Histograms;
 using metrics;
 using Statistics;
+using System.Linq;
 
 namespace alternativeComparisonReport
 {
@@ -24,7 +25,7 @@ namespace alternativeComparisonReport
 
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
-                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withProjectAlternativeResults.AlternativeID);
+                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withProjectAlternativeResults.AlternativeID, withoutProjectAlternativeResults.AnalysisYears);
 
                 foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
                 {
@@ -72,29 +73,30 @@ namespace alternativeComparisonReport
         /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
         /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
         /// <returns></returns>
-        public static AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults, bool iWantBaseYearResults)
+        public static AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults, bool iWantBaseYearResults)
         {
             AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
             if (iWantBaseYearResults)
             {
-                damagesReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+                damagesReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, withoutProjectAlternativeResults, withProjectAlternativesResults);
             }
             else
             {
-                damagesReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+                damagesReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, withoutProjectAlternativeResults, withProjectAlternativesResults);
             }
             return damagesReducedAllAlternatives;
         } 
 
-        private static AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private static AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
-
+            List<int> baseYear = new List<int> { withoutProjectAlternativeResults.AnalysisYears.Min() };
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
 
-                AlternativeResults damageReducedAlternative = new AlternativeResults(withProjectResults.AlternativeID);
-
+                AlternativeResults damageReducedAlternative = new AlternativeResults(withProjectResults.AlternativeID, baseYear);
+                //todo: put scenario results back in
+                //but keep it internal 
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
@@ -137,13 +139,14 @@ namespace alternativeComparisonReport
         }
 
 
-        private static AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private static AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
+            List<int> futureYear = new List<int> { withoutProjectAlternativeResults.AnalysisYears.Max() };
 
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
-                AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.AlternativeID);
+                AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.AlternativeID, futureYear);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList)
                 {

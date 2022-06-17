@@ -21,31 +21,18 @@ namespace metrics
             }
         }
         public event MessageReportedEventHandler MessageReport;
-        public int BaseYear
+        public List<int> Years
         {
             get
             {
                 if(_resultsList.Count == 0)
                 {
-                    return 0;
+                    List<int> dummyList = new List<int> { 0 };
+                    return dummyList;
                 }
                 else
                 {
-                    return _resultsList[0].BaseYear;
-                }
-            }
-        }
-        public int FutureYear
-        {
-            get
-            {
-                if (_resultsList.Count == 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return _resultsList[0].FutureYear;
+                    return _resultsList[0].AnalysisYears;
                 }
             }
         }
@@ -60,32 +47,40 @@ namespace metrics
 
         #region Methods 
         public List<string> GetAssetCategories()
-        {
+        {//TODO: we're not guaranteed to have both base year and future year 
+            //Soooooo we need to check if they both exist 
             List<string> assetCats = new List<string>();
             foreach(AlternativeResults alternativeResults in _resultsList)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                if (alternativeResults.BaseYearScenarioResults.ResultsList.Count != 0)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
                     {
-                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                         {
-                            assetCats.Add(consequenceResult.AssetCategory);
+                            if (!assetCats.Contains(consequenceResult.AssetCategory))
+                            {
+                                assetCats.Add(consequenceResult.AssetCategory);
+                            }
                         }
-                    }
 
+                    }
                 }
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                if (alternativeResults.FutureYearScenarioResults.ResultsList.Count != 0)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
                     {
-                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                         {
-                            assetCats.Add(consequenceResult.AssetCategory);
+                            if (!assetCats.Contains(consequenceResult.AssetCategory))
+                            {
+                                assetCats.Add(consequenceResult.AssetCategory);
+                            }
                         }
-                    }
 
+                    }
                 }
+
             }
             return assetCats;
         }
@@ -94,27 +89,33 @@ namespace metrics
             List<string> damCats = new List<string>();
             foreach (AlternativeResults alternativeResults in _resultsList)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+                if (alternativeResults.BaseYearScenarioResults.ResultsList.Count != 0)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.BaseYearScenarioResults.ResultsList)
                     {
-                        if (!damCats.Contains(consequenceResult.DamageCategory))
+                        foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                         {
-                            damCats.Add(consequenceResult.DamageCategory);
+                            if (!damCats.Contains(consequenceResult.DamageCategory))
+                            {
+                                damCats.Add(consequenceResult.DamageCategory);
+                            }
                         }
-                    }
 
+                    }
                 }
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
+                if (alternativeResults.FutureYearScenarioResults.ResultsList.Count != 0)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in alternativeResults.FutureYearScenarioResults.ResultsList)
                     {
-                        if (!damCats.Contains(consequenceResult.DamageCategory))
+                        foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                         {
-                            damCats.Add(consequenceResult.DamageCategory);
+                            if (!damCats.Contains(consequenceResult.DamageCategory))
+                            {
+                                damCats.Add(consequenceResult.DamageCategory);
+                            }
                         }
-                    }
 
+                    }
                 }
             }
             return damCats;

@@ -38,6 +38,8 @@ namespace metrics
                 return _isNull;
             }
         }
+        internal ScenarioResults BaseYearScenarioResults { get; set; }
+        internal ScenarioResults FutureYearScenarioResults { get; set; }
         #endregion
 
         #region Constructor
@@ -67,54 +69,24 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                if (!assetCats.Contains(consequence.AssetCategory))
                 {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        assetCats.Add(consequenceResult.AssetCategory);
-                    }
+                    assetCats.Add(consequence.AssetCategory);
                 }
-
-            }
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
-            {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        assetCats.Add(consequenceResult.AssetCategory);
-                    }
-                }
-
             }
             return assetCats;
         }
         public List<string> GetDamageCategories()
         {//TODO: Just get these from the _consequenceResults
             List<string> damageCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                if (!damageCats.Contains(consequence.DamageCategory))
                 {
-                    if (!damageCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        damageCats.Add(consequenceResult.AssetCategory);
-                    }
+                    damageCats.Add(consequence.DamageCategory);
                 }
-
-            }
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
-            {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!damageCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        damageCats.Add(consequenceResult.AssetCategory);
-                    }
-                }
-
             }
             return damageCats;
         }
@@ -193,13 +165,26 @@ namespace metrics
             consequencesEvent.Name = "Consequences";
             mainElement.Add(consequencesEvent);
             mainElement.SetAttributeValue("ID", _alternativeID);
+            XElement yearsElement = new XElement("Years");
+            foreach (int year in AnalysisYears)
+            {
+                yearsElement.SetAttributeValue($"Year_{year}", year);
+            }
+            mainElement.Add(yearsElement);
             return mainElement;
         }
         public static AlternativeResults ReadFromXML(XElement xElement)
         {
             int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
             ConsequenceDistributionResults consequenceResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Consequences"));
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults);
+            List<int> years = new List<int>();
+            foreach (XAttribute attribute in xElement.Element("Years").Attributes())
+            {
+                string yearString = attribute.Value;
+                int year = Convert.ToInt32(yearString);
+                years.Add(year);
+            }
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults, years);
             return alternativeResults;
         }
         #endregion

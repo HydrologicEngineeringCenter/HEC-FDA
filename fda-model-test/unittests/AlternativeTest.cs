@@ -90,7 +90,7 @@ namespace fda_model_test.unittests
             Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, convergenceCriteria, discountRate, poa, alternativeID, baseYear, baseScenarioResults, futureYear, futureScenarioResults);
+            AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, convergenceCriteria, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
             double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
             double difference = actual - expected;
             double err = Math.Abs(difference / actual);
