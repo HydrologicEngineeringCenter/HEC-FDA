@@ -10,6 +10,7 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
     /// </summary>
     public partial class PerformanceAEP : UserControl
     {
+        private Chart2D _chart;
         public PerformanceAEP()
         {
             InitializeComponent();
@@ -23,7 +24,7 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
             if (vm != null)
             {
                 vm.ChartViewModel = new Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
-                Chart2D _chart = new Chart2D(vm.ChartViewModel);
+                _chart = new Chart2D(vm.ChartViewModel);
                 //add the chart to the UI
                 main_grd.Children.Add(_chart);
                 Grid.SetRow(_chart, 0);
@@ -31,5 +32,12 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
             }
         }
 
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is PerformanceAEPVM vm && _chart != null)
+            {
+                _chart.DataContext = vm.ChartViewModel;
+            }
+        }
     }
 }

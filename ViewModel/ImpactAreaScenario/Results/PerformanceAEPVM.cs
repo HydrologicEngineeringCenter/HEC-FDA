@@ -11,6 +11,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAEPVM : PerformanceVMBase
     {
+
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
@@ -39,14 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
 
                     MetricsToRows.Add(threshold, rows);
-                    ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
-                    int[] binCounts = histogramOfAEPs.BinCounts;
-                    double binWidth = histogramOfAEPs.BinWidth;
-                    double min = histogramOfAEPs.Min;
-                    double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
-                    HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
-                    HistogramColor.SetHistogramColor(_data);
-                    HistogramData.Add(threshold, _data);
+                    LoadHistogramData(performanceResults, threshold);
                 }
             }
 
@@ -54,6 +48,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             {
                 Rows = MetricsToRows.First().Value;
             }
+        }
+
+        private void LoadHistogramData(SystemPerformanceResults performanceResults, Threshold threshold)
+        {
+            ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
+            int[] binCounts = histogramOfAEPs.BinCounts;
+            double min = histogramOfAEPs.Min;
+            double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+
+            HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+            HistogramColor.SetHistogramColor(data);
+            HistogramData.Add(threshold, data);
+
+
+            //IHistogram histogram = scenarioResults.GetConsequencesHistogram();
+            //double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
+            //_data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", "X Data", "YData");
+            //HistogramColor.SetHistogramColor(_data);
+            //ChartViewModel.LineData.Add(_data);
         }
 
         private SystemPerformanceResults GetResultsOfType(ImpactAreaScenarioResults iasResult, ThresholdEnum thresholdType)

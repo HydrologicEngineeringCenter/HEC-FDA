@@ -25,13 +25,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             double binWidth = totalHistogram.BinWidth;
             double min = totalHistogram.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+
             _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
             HistogramColor.SetHistogramColor(_data);
-            ConsequenceResults eadResults = iasResult.ConsequenceResults;
+            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+
+            ConsequenceDistributionResults eadResults = iasResult.ConsequenceResults;
             loadTableValues(eadResults);
+
         }
 
-        private void loadTableValues(ConsequenceResults eadResults)
+        private void loadTableValues(ConsequenceDistributionResults eadResults)
         {
             List<double> xVals = new List<double>() { .75, .5, .25 };
             List<double> yVals = loadYData(xVals, eadResults);
@@ -45,7 +49,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             Rows.AddRange( rows);
         }
 
-        private List<double> loadYData(List<double> xVals, ConsequenceResults eadResults)
+        private List<double> loadYData(List<double> xVals, ConsequenceDistributionResults eadResults)
         {
             List<double> yValues = new List<double>();
             foreach(double x in xVals)
@@ -57,9 +61,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             return yValues;
         }
 
-        public void PlotHistogram()
-        {
-            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-        }
+        //public void PlotHistogram()
+        //{
+        //    ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+        //}
     }
 }

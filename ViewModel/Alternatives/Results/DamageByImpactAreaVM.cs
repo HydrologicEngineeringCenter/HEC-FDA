@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             List<int> impactAreaIDs = new List<int>();
 
-            foreach (ConsequenceResult result in results.ConsequenceResults.ConsequenceResultList)
+            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
             {
                 impactAreaIDs.Add(result.RegionID);
             }
@@ -83,7 +83,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             List<int> impactAreaIDs = new List<int>();
             //todo: waiting to get richards new get impact areas method.
-            foreach (ConsequenceResult result in results.ConsequenceResults.ConsequenceResultList)
+            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
             {
                 impactAreaIDs.Add(result.RegionID);
             }

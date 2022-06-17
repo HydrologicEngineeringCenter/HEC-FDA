@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              Loaded="UserControl_Loaded"
+             DataContextChanged="UserControl_DataContextChanged"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>

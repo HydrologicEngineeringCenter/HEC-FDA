@@ -9,12 +9,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public List<DamageCategoryRowItem> Rows { get; set; }
 
         public DamageByDamageCategoryVM(ImpactAreaScenarioResults iasResult, List<string> damCats)
-        {       
-            ConsequenceResults eadResults = iasResult.ConsequenceResults;
+        {
+            ConsequenceDistributionResults eadResults = iasResult.ConsequenceResults;
             LoadDamCatTable(eadResults, damCats);
         }
 
-        private void LoadDamCatTable(ConsequenceResults eadResults, List<string> damCats)
+        private void LoadDamCatTable(ConsequenceDistributionResults eadResults, List<string> damCats)
         {
             List<DamageCategoryRowItem> rows = new List<DamageCategoryRowItem>();
 

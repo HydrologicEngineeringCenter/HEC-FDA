@@ -6,6 +6,7 @@ using metrics;
 using Statistics.Histograms;
 using System.Linq;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
