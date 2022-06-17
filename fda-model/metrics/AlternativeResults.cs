@@ -164,6 +164,18 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(AlternativeResults alternativeResultsForComparison)
+        {
+            if (!ConsequenceResults.Equals(alternativeResultsForComparison.ConsequenceResults))
+            {
+                return false;
+            }
+            if (!AlternativeID.Equals(alternativeResultsForComparison.AlternativeID))
+            {
+                return false;
+            }
+            return true;
+        }
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("AlternativeResults");

@@ -195,6 +195,19 @@ namespace metrics
             MessageReport?.Invoke(sender, e);
         }
 
+        public bool Equals(AlternativeComparisonReportResults alternativeComparisonReportResultsToCompare)
+        {
+            foreach (AlternativeResults alternativeResults in _resultsList)
+            {
+                AlternativeResults comparee = alternativeComparisonReportResultsToCompare.GetAlternativeResults(alternativeResults.AlternativeID);
+                if (!alternativeResults.Equals(comparee))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("AlternativeComparisonReportResults");
