@@ -57,16 +57,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             double min = histogramOfAEPs.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
 
-            HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+            HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(data);
             HistogramData.Add(threshold, data);
-
-
-            //IHistogram histogram = scenarioResults.GetConsequencesHistogram();
-            //double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
-            //_data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", "X Data", "YData");
-            //HistogramColor.SetHistogramColor(_data);
-            //ChartViewModel.LineData.Add(_data);
         }
 
         private SystemPerformanceResults GetResultsOfType(ImpactAreaScenarioResults iasResult, ThresholdEnum thresholdType)

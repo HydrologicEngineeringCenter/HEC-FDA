@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             double min = totalHistogram.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
 
-            _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
+            _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
 

@@ -92,10 +92,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            //todo: read results once Richard fixes the bug in writing results
             XElement resultsElem = setElem.Element("ScenarioResults");
             if(resultsElem != null)
             {
+                //todo: read results once Richard fixes the bug in writing results
                 //Results = ScenarioResults.ReadFromXML(resultsElem);
             }
 

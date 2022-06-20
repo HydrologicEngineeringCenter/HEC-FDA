@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              DataContextChanged="UserControl_DataContextChanged"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
         <Grid.RowDefinitions>
@@ -28,7 +29,7 @@
                         <TextBlock Text="AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP, StringFormat=N2}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance of AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

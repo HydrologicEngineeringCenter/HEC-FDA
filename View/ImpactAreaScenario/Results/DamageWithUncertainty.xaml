@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              DataContextChanged="UserControl_DataContextChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
@@ -21,7 +22,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label Content="Mean:" />
-            <TextBlock Text="{Binding Mean, StringFormat=N2}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
@@ -33,7 +34,7 @@
                         <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>    
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Value, StringFormat=N2}" Width="*">
+                <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

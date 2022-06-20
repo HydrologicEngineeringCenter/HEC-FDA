@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              Loaded="UserControl_Loaded"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              DataContextChanged="UserControl_DataContextChanged"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -25,7 +26,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label Content="Mean:" />
-            <TextBlock Text="{Binding Mean, StringFormat=N2}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
@@ -37,7 +38,7 @@
                         <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Value, StringFormat=N2}" Width="*">
+                <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
@@ -47,7 +48,7 @@
         </DataGrid>
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
-            <TextBlock Text="{Binding DiscountRate, StringFormat=N2}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
             <Label Content="Period of Analysis:" />
             <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
         </StackPanel>
