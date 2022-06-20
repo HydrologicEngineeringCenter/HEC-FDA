@@ -41,52 +41,60 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            if (_resultsList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
                 {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        assetCats.Add(consequenceResult.AssetCategory);
+                        if (!assetCats.Contains(consequenceResult.AssetCategory))
+                        {
+                            assetCats.Add(consequenceResult.AssetCategory);
+                        }
                     }
-                }
 
+                }
             }
+
             return assetCats;
         }
         public List<string> GetDamageCategories()
         {
             List<string> damCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+            if (_resultsList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
                 {
-                    if(!damCats.Contains(consequenceResult.DamageCategory))
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
-                        damCats.Add(consequenceResult.DamageCategory);
+                        if (!damCats.Contains(consequenceResult.DamageCategory))
+                        {
+                            damCats.Add(consequenceResult.DamageCategory);
+                        }
                     }
+
                 }
-                
             }
+
             return damCats;
         }
-        public double MeanAEP(int impactAreaID, int thresholdID)
+        public double MeanAEP(int impactAreaID, int thresholdID=0)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);
         }
-        public double MedianAEP(int impactAreaID, int thresholdID)
+        public double MedianAEP(int impactAreaID, int thresholdID=0)
         {
             return GetResults(impactAreaID).MedianAEP(thresholdID);
         }
-        public double AssuranceOfAEP(int impactAreaID, int thresholdID, double exceedanceProbability)
+        public double AssuranceOfAEP(int impactAreaID,  double exceedanceProbability, int thresholdID=0)
         {
             return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
         }
-        public double LongTermExceedanceProbability(int impactAreaID, int thresholdID, int years)
+        public double LongTermExceedanceProbability(int impactAreaID,  int years, int thresholdID = 0)
         {
             return GetResults(impactAreaID).LongTermExceedanceProbability(thresholdID, years);
         }
-        public double AssuranceOfEvent(int impactAreaID, int thresholdID, double standardNonExceedanceProbability)
+        public double AssuranceOfEvent(int impactAreaID, double standardNonExceedanceProbability, int thresholdID=0)
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
@@ -102,7 +110,7 @@ namespace metrics
         /// <param name="impactAreaID"></param> the default is the null value -999
         /// <returns></returns>The mean of consequences
         public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory= null)
-        {//TODO: This could probably be more efficient 
+        {//TODO: This could probably be more efficient and could use some null checking
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
@@ -178,7 +186,7 @@ namespace metrics
         /// <param name="impactAreaID"></param>the default is the null value -999
         /// <returns></returns> the level of consequences exceeded by the specified probability 
         public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
-        {
+        {//efficiency and null checking 
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {

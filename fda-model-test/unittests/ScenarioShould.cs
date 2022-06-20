@@ -51,13 +51,17 @@ namespace fda_model_test.unittests
             upd.Add(stage_damage);
 
             Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            
+            // build IAS for Impact Area 1
             ImpactAreaScenarioSimulation simulation1 = ImpactAreaScenarioSimulation.builder(id1)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(id1)
+
+            // build IAS for Impact Area 2
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(id2)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)

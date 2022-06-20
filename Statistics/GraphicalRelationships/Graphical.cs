@@ -105,7 +105,7 @@ namespace Statistics.GraphicalRelationships
         /// <param name="minimumProbability"></param> The minimum exceedance probability used in the frequency relationship. 
       
         public Graphical(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
-        {
+        {//TODO: Validate that ERL > 0
             _SampleSize = equivalentRecordLength;
             _InputExceedanceProbabilities = exceedanceProbabilities;
             _MaximumExceedanceProbability = maximumProbability;

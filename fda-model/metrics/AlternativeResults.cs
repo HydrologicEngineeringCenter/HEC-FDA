@@ -29,8 +29,7 @@ namespace metrics
                 return _consequenceResults;
             }
         }
-        public int BaseYear { get { return BaseYearScenarioResults.AnalysisYear; } }
-        public int FutureYear { get { return FutureYearScenarioResults.AnalysisYear; } }
+        public List<int> AnalysisYears { get; }
         public event MessageReportedEventHandler MessageReport;
         public bool IsNull
         {
@@ -50,71 +49,50 @@ namespace metrics
             _alternativeID = 0;
             _consequenceResults = new ConsequenceDistributionResults();
         }
-        public AlternativeResults(int id)
+        public AlternativeResults(int id, List<int> analysisYears)
         {
             _alternativeID = id;
             _consequenceResults = new ConsequenceDistributionResults();
             _isNull = false;
+            AnalysisYears = analysisYears;
         }
-        private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults)
+        private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears)
         {
             _alternativeID = id;
             _consequenceResults = consequenceResults;
             _isNull = false;
+            AnalysisYears = analysisYears;
+
         }
         #endregion
         #region Methods
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            if (_consequenceResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
                 {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    if (!assetCats.Contains(consequence.AssetCategory))
                     {
-                        assetCats.Add(consequenceResult.AssetCategory);
+                        assetCats.Add(consequence.AssetCategory);
                     }
                 }
-
-            }
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
-            {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        assetCats.Add(consequenceResult.AssetCategory);
-                    }
-                }
-
             }
             return assetCats;
         }
         public List<string> GetDamageCategories()
-        {
+        {//TODO: Just get these from the _consequenceResults
             List<string> damageCats = new List<string>();
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in BaseYearScenarioResults.ResultsList)
+            if (_consequenceResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
                 {
-                    if (!damageCats.Contains(consequenceResult.AssetCategory))
+                    if (!damageCats.Contains(consequence.DamageCategory))
                     {
-                        damageCats.Add(consequenceResult.AssetCategory);
+                        damageCats.Add(consequence.DamageCategory);
                     }
                 }
-
-            }
-            foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in FutureYearScenarioResults.ResultsList)
-            {
-                foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!damageCats.Contains(consequenceResult.AssetCategory))
-                    {
-                        damageCats.Add(consequenceResult.AssetCategory);
-                    }
-                }
-
             }
             return damageCats;
         }
@@ -186,6 +164,18 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(AlternativeResults alternativeResultsForComparison)
+        {
+            if (!ConsequenceResults.Equals(alternativeResultsForComparison.ConsequenceResults))
+            {
+                return false;
+            }
+            if (!AlternativeID.Equals(alternativeResultsForComparison.AlternativeID))
+            {
+                return false;
+            }
+            return true;
+        }
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("AlternativeResults");
@@ -193,13 +183,26 @@ namespace metrics
             consequencesEvent.Name = "Consequences";
             mainElement.Add(consequencesEvent);
             mainElement.SetAttributeValue("ID", _alternativeID);
+            XElement yearsElement = new XElement("Years");
+            foreach (int year in AnalysisYears)
+            {
+                yearsElement.SetAttributeValue($"Year_{year}", year);
+            }
+            mainElement.Add(yearsElement);
             return mainElement;
         }
         public static AlternativeResults ReadFromXML(XElement xElement)
         {
             int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
             ConsequenceDistributionResults consequenceResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Consequences"));
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults);
+            List<int> years = new List<int>();
+            foreach (XAttribute attribute in xElement.Element("Years").Attributes())
+            {
+                string yearString = attribute.Value;
+                int year = Convert.ToInt32(yearString);
+                years.Add(year);
+            }
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults, years);
             return alternativeResults;
         }
         #endregion

@@ -3,12 +3,13 @@ using scenarios;
 using metrics;
 using Statistics;
 using Statistics.Histograms;
+using System.Collections.Generic;
 
 namespace alternatives
 {
     public class Alternative
     {
-        private const int _iterations = 10000;
+        private const int _iterations = 50000;
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -18,14 +19,22 @@ namespace alternatives
         /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
-        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, double discountRate, int periodOfAnalysis, int alternativeResultsID, int baseYear, ScenarioResults computedResultsBaseYear, int futureYear, ScenarioResults computedResultsFutureYear)
+        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
         {
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID);
+
+
+            int baseYear = computedResultsBaseYear.AnalysisYear;
+            int futureYear = computedResultsFutureYear.AnalysisYear;
+            List<int> analysisYears = new List<int>();
+            analysisYears.Add(baseYear);
+            analysisYears.Add(futureYear);
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears);
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
-            foreach (ImpactAreaScenarioResults baseYearResults in alternativeResults.BaseYearScenarioResults.ResultsList)
+
+            foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList)
             {
-                ImpactAreaScenarioResults mlfYearResults = alternativeResults.FutureYearScenarioResults.GetResults(baseYearResults.ImpactAreaID);
+                ImpactAreaScenarioResults mlfYearResults = computedResultsFutureYear.GetResults(baseYearResults.ImpactAreaID);
 
                 foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
                 {
