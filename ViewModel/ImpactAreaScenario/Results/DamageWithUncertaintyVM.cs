@@ -21,12 +21,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.ConsequenceResults.MeanDamage("Total", "Total", impactAreaID);
             IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResult("Total", "Total", impactAreaID).ConsequenceHistogram;
-            int[] binCounts = totalHistogram.BinCounts;
-            double binWidth = totalHistogram.BinWidth;
-            double min = totalHistogram.Min;
-            double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x).ToArray();
 
-            _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+            _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
 

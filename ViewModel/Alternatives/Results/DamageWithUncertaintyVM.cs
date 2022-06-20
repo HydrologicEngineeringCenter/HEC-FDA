@@ -100,7 +100,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             IHistogram histogram = altResults.GetAlternativeResultsHistogram(altID);
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
-            _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+            _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
         }

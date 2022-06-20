@@ -54,7 +54,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
             int[] binCounts = histogramOfAEPs.BinCounts;
-            double min = histogramOfAEPs.Min;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
 
             HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
