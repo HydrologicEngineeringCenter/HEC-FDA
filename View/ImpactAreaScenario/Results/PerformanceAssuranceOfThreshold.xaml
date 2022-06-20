@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -26,7 +27,7 @@
                         <TextBlock Text="Frequency" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

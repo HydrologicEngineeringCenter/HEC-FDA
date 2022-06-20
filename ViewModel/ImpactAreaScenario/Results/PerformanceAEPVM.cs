@@ -1,14 +1,17 @@
-﻿using HEC.Plotting.SciChart2D.DataModel;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
+using Statistics.Histograms;
 using System.Collections.Generic;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using System.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAEPVM : PerformanceVMBase
     {
+
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
@@ -37,17 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
 
                     MetricsToRows.Add(threshold, rows);
-
-                    //todo: this is left commented out on purpose. This is a WIP.
-
-                    //get the histogram data
-                    //Statistics.Histograms.ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAssurance("AEP").AssuranceHistogram;
-                    //int[] binCounts = histogramOfAEPs.BinCounts;
-                    //double binWidth = histogramOfAEPs.BinWidth;
-                    //double min = histogramOfAEPs.Min;
-                    //double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
-                    //HistogramData2D _data = new HistogramData2D(binWidth, min, binsAsDoubles, "Chart", "Series", "X Data", "YData");
-                    //HistogramData.Add(threshold, _data);
+                    LoadHistogramData(performanceResults, threshold);
                 }
             }
 
@@ -55,6 +48,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             {
                 Rows = MetricsToRows.First().Value;
             }
+        }
+
+        private void LoadHistogramData(SystemPerformanceResults performanceResults, Threshold threshold)
+        {
+            ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
+            int[] binCounts = histogramOfAEPs.BinCounts;
+            double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+
+            HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
+            HistogramColor.SetHistogramColor(data);
+            HistogramData.Add(threshold, data);
         }
 
         private SystemPerformanceResults GetResultsOfType(ImpactAreaScenarioResults iasResult, ThresholdEnum thresholdType)
@@ -76,6 +80,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             if (HistogramData.ContainsKey(metric.Metric))
             {
                 HistogramData2D histData = HistogramData[metric.Metric];
+                HistogramColor.SetHistogramColor(histData);
                 ChartViewModel.LineData.Set(new List<SciLineData>() { histData });
             }
         }

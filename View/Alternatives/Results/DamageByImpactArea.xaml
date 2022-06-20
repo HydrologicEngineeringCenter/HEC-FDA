@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -30,7 +31,7 @@
                         <TextBlock Text="Impact Area" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding EAD}" Width="*">
+                <DataGridTextColumn Binding="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
@@ -40,9 +41,9 @@
 
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
-            <Label Content="{Binding DiscountRate}"/>
+            <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
             <Label Content="Period of Analysis:" />
-            <Label Content="{Binding PeriodOfAnalysis}"/>
+            <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
         </StackPanel>
 
     </Grid>

@@ -2,7 +2,6 @@
 {
     public class EadRowItem
     {
-
         public double Frequency { get;  }
         public double Value { get;  }
 

@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public DamageByImpactAreaVM(ScenarioResults results)
         {
             RateAndPeriodVisible = false;
-
+            //todo: i think richard is writing a method to return the impact areas list
             List<int> impactAreaIDs = new List<int>();
 
             foreach(IContainImpactAreaScenarioResults result in results.ResultsList)
@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             List<int> impactAreaIDs = new List<int>();
 
-            foreach (ConsequenceResult result in results.ConsequenceResults.ConsequenceResultList)
+            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
             {
                 impactAreaIDs.Add(result.RegionID);
             }
@@ -82,8 +82,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             RateAndPeriodVisible = true;
 
             List<int> impactAreaIDs = new List<int>();
-
-            foreach (ConsequenceResult result in results.ConsequenceResults.ConsequenceResultList)
+            //todo: waiting to get richards new get impact areas method.
+            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
             {
                 impactAreaIDs.Add(result.RegionID);
             }
@@ -116,8 +116,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
             return impactName;
         }
-
-
 
     }
 }

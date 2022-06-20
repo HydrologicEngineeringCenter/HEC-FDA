@@ -68,10 +68,7 @@ namespace HEC.FDA.View
        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //TODO: I think Will is fixing the issue with this line. Leaving in for now.
-            //this get called when any window closes. I might need to move these lines.
-            //MessageHub.UnsubscribeAll(TextFileMessageSubscriber.Instance);
-            //TextFileMessageSubscriber.Instance.Dispose();
+            
             WindowVM vm = DataContext as WindowVM;
             if (vm.Tab != null)
             {
@@ -93,6 +90,11 @@ namespace HEC.FDA.View
                         e.Cancel = true;
                     }
                 }
+            }
+            else
+            {
+                TextFileMessageSubscriber.Instance.Dispose();
+                Environment.Exit(0);
             }
         }
 

@@ -1,9 +1,10 @@
-﻿using HEC.Plotting.SciChart2D.DataModel;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.Utilities;
+using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using System.Collections.Generic;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using metrics;
 using Statistics.Histograms;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
@@ -15,7 +16,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
@@ -24,12 +24,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         /// Ctor for EAD versions which don't have discount rate and period of analysis.
         /// </summary>
         public DamageWithUncertaintyVM(ScenarioResults scenarioResults)
-        {
-            double mean = scenarioResults.MeanExpectedAnnualConsequences();
+        {     
             RateAndPeriodVisible = false;
             LoadHistogramData(scenarioResults);            
             LoadData(scenarioResults);
-            Mean = mean;
+            Mean =  scenarioResults.MeanExpectedAnnualConsequences();
         }
 
         /// <summary>
@@ -83,7 +82,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             IHistogram histogram = scenarioResults.GetConsequencesHistogram();
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
-            _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
+            _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+            HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
         }
 
@@ -91,7 +91,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             IHistogram histogram = altResults.GetConsequencesHistogram();
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
-            _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
+            _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+            HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
         }
 
@@ -99,7 +100,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             IHistogram histogram = altResults.GetAlternativeResultsHistogram(altID);
             double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
-            _data = new HistogramData2D(histogram.BinWidth, 0, binValues, "Chart", "Series", "X Data", "YData");
+            _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+            HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
         }
 

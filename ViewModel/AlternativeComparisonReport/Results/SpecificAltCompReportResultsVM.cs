@@ -5,7 +5,7 @@ using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
-    public class AlternativeComparisonReportResultsVM : BaseViewModel
+    public class SpecificAltCompReportResultsVM : BaseViewModel
     {
         private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
@@ -23,6 +23,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private EADSummaryVM _EADSummaryVM;
         private AAEQSummaryVM _AAEQSummaryVM;
 
+        public string Name { get;}
         public bool YearsVisible
         {
             get { return _YearsVisible; }
@@ -59,8 +60,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeResult AlternativeResult { get; }
 
-        public AlternativeComparisonReportResultsVM(AlternativeResult altResult)
+        public SpecificAltCompReportResultsVM(AlternativeResult altResult)
         {
+            Name = altResult.Name;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
            
             _AAEQSummaryVM = new AAEQSummaryVM(studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);

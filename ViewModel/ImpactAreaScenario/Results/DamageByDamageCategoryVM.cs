@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using metrics;
-using Statistics.Histograms;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -9,28 +8,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
     {
         public List<DamageCategoryRowItem> Rows { get; set; }
 
-        public DamageByDamageCategoryVM(metrics.ImpactAreaScenarioResults iasResult)
+        public DamageByDamageCategoryVM(ImpactAreaScenarioResults iasResult, List<string> damCats)
         {
-            ConsequenceResults eadResults = iasResult.ConsequenceResults;
-            LoadDamCatTable(eadResults);
+            ConsequenceDistributionResults eadResults = iasResult.ConsequenceResults;
+            LoadDamCatTable(eadResults, damCats);
         }
 
-        private void LoadDamCatTable(ConsequenceResults eadResults)
+        private void LoadDamCatTable(ConsequenceDistributionResults eadResults, List<string> damCats)
         {
-            List<string> xVals = new List<string>();
-            List<double> yVals = new List<double>();
-
-            //todo: richard is updating this 
-            //foreach(KeyValuePair<string, ThreadsafeInlineHistogram> entry in eadResults.MeanDamage("test", "test", 1)
-            //{
-            //    xVals.Add(entry.Key);
-            //    yVals.Add(entry.Value.Mean);
-            //}
-
             List<DamageCategoryRowItem> rows = new List<DamageCategoryRowItem>();
-            for (int i = 0; i < xVals.Count; i++)
+
+            foreach(string damCat in damCats)
             {
-                rows.Add(new DamageCategoryRowItem(xVals[i], yVals[i]));
+                double yVal = eadResults.MeanDamage(damageCategory: damCat);
+                rows.Add(new DamageCategoryRowItem(damCat, yVal));
             }
 
             Rows = rows;

@@ -30,7 +30,7 @@
             <ComboBox Name="outcomes_cmb" ItemsSource="{Binding Outcomes}" SelectedItem="{Binding SelectedOutcome}"  Margin="5" Width="150"/>
 
             <Label Content="Report:" Margin="5" />
-            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="200"/>
+            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="220"/>
 
             <Label Content="Threshold:" Margin="5" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}"  />
             <ComboBox ItemsSource="{Binding Thresholds}" DisplayMemberPath="Description" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}" SelectedItem="{Binding SelectedThreshold}"  Margin="5" HorizontalAlignment="Stretch"/>

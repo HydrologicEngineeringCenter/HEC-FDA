@@ -10,8 +10,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(ScenarioResults scenarioResults)
         {
-            //todo: get the list of dam cats from the scenario results
-            List<string> damCats = new List<string>();
+            //todo: get the list of dam cats from the scenario results when Richard fixes the bug
+            List<string> damCats = new List<string>();// scenarioResults.GetDamageCategories();
             foreach(string damCat in damCats)
             {
                 Rows.Add(new DamageCategoryRowItem(damCat, scenarioResults.MeanExpectedAnnualConsequences(damageCategory: damCat)));
@@ -20,8 +20,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults)
         {
-            //todo: get the list of dam cats from the AlternativeResults
-            List<string> damCats = new List<string>();
+            //todo: get the list of dam cats from the results when Richard fixes the bug
+            List<string> damCats = new List<string>();// alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
                 Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequence(damageCategory: damCat)));
@@ -30,8 +30,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeComparisonReportResults alternativeResults, int altID)
         {
-            //todo: get the list of dam cats from the AlternativeResults
-            List<string> damCats = new List<string>();
+            //todo: get the list of dam cats from the results when Richard fixes the bug
+            List<string> damCats = new List<string>(); //alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
                 Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequencesReduced(altID, damageCategory: damCat)));

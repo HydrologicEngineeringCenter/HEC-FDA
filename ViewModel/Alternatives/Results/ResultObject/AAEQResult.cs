@@ -3,9 +3,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.ResultObject
 {
     public class AAEQResult
     {
-        public DamageWithUncertaintyVM DamageWithUncertaintyVM { get; set; }
-        public DamageByImpactAreaVM DamageByImpactAreaVM { get; set; }
-        public DamageByDamCatVM DamageByDamCatVM { get; set; }
+        public DamageWithUncertaintyVM DamageWithUncertaintyVM { get;  }
+        public DamageByImpactAreaVM DamageByImpactAreaVM { get;  }
+        public DamageByDamCatVM DamageByDamCatVM { get;  }
 
         public AAEQResult(DamageWithUncertaintyVM damWithUncert, DamageByImpactAreaVM damByImpactArea,
             DamageByDamCatVM damByDamCat)

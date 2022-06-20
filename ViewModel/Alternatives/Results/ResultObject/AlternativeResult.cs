@@ -2,11 +2,13 @@
 {
     public class AlternativeResult
     {
-        public EADResult EADResult{get;set;}
-        public AAEQResult AAEQResult { get; set; }
+        public EADResult EADResult{get;}
+        public AAEQResult AAEQResult { get;  }
+        public string Name { get;  }
 
-        public AlternativeResult(EADResult eadResult, AAEQResult aaeqResult)
+        public AlternativeResult(string name, EADResult eadResult, AAEQResult aaeqResult)
         {
+            Name = name;
             EADResult = eadResult;
             AAEQResult = aaeqResult;
         }

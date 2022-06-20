@@ -5,9 +5,9 @@ namespace HEC.FDA.View.AlternativeComparisonReport.Results
     /// <summary>
     /// Interaction logic for AlternativeComparisonReportResults.xaml
     /// </summary>
-    public partial class AlternativeComparisonReportResults : UserControl
+    public partial class SpecificAltCompReportResults : UserControl
     {
-        public AlternativeComparisonReportResults()
+        public SpecificAltCompReportResults()
         {
             InitializeComponent();
         }

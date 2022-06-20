@@ -24,13 +24,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     double exceedanceProb = 1.0 - xVal;
                     try
                     {
-                        //todo: this is purposely commented out. This is a WIP
-
-                        //Threshold threshold = iasResult.PerformanceByThresholds.GetThreshold(thresholdKey);
-                        //SystemPerformanceResults projectPerformanceResults = threshold.SystemPerformanceResults;
-                        //double yVal = projectPerformanceResults.GetAssurance("STAGE", exceedanceProb).AssuranceHistogram.CDF(threshold.ThresholdValue);
-
-                        //rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
+                        double yVal = iasResult.AssuranceOfEvent(thresholdKey, xVal);
+                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                     }
                     catch (Exception e)
                     {

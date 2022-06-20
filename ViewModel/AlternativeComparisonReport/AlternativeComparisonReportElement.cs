@@ -1,10 +1,8 @@
-﻿using alternatives;
-using compute;
+﻿using compute;
 using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
@@ -60,13 +58,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
             Name = altElement.Attribute(NAME).Value;
             Description = altElement.Attribute(DESCRIPTION).Value;
-            WithoutProjAltID = Int32.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
+            WithoutProjAltID = int.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
             LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
             {
-                int iasID = Int32.Parse(elem.Attribute(ID_STRING).Value);
+                int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
             CustomTreeViewHeader = new CustomHeaderVM(Name)
@@ -153,16 +151,26 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         {
             if (_AAEQResults != null)
             {
-                //TODO: commented out because this is a WIP:
-                //AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeComparisonResult());
-                //string header = "Alternative Comparison Report Results: " + Name;
-                //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
-                //Navigate(tab, false, true);
+                AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());
+                string header = "Alternative Comparison Report Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+                Navigate(tab, false, true);
             }
             else
             {
                 MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+        }
+
+        private List<SpecificAltCompReportResultsVM> CreateResults()
+        {
+            List < SpecificAltCompReportResultsVM > results = new List < SpecificAltCompReportResultsVM >();
+            foreach (int altID in WithProjAltIDs)
+            {
+                results.Add(CreateAlternativeComparisonResult(altID, GetAlternativeElementFromID(altID).Name));
+            }
+
+            return results;
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
@@ -187,6 +195,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 _EADBaseYearResults =  alternativeComparisonReport.AlternativeComparisonReport.ComputeDistributionEADReduced(randomProvider, cc, withoutAltResults, withResults, true);
                 _EADFutureYearResults = alternativeComparisonReport.AlternativeComparisonReport.ComputeDistributionEADReduced(randomProvider, cc, withoutAltResults, withResults, false);
 
+                MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", "Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    ViewResults(this, new EventArgs());
+                }
             }
             else
             {
@@ -236,46 +249,52 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 vr.AddErrorMessage("The without project alternative no longer exists.");
             }
 
-            if(WithProjAltIDs.Count==0)
+            if(withProjAlts.Count==0)
             {
                 vr.AddErrorMessage("There are no longer any with project alternatives.");
+            }
+
+            if(withoutAlt.Results == null)
+            {
+                vr.AddErrorMessage("The without project alternative, " + withoutAlt.Name + ", has no results.");
+            }
+            foreach(AlternativeElement altElem in withProjAlts)
+            {
+                if(altElem.Results == null)
+                {
+                    vr.AddErrorMessage("The with project alternative, " + altElem.Name + ", has no results.");
+                }
             }
 
             return vr;
         }
 
 
-        //TODO: this is commented out because this is a work in progress:
         /// <summary>
         /// This is a dummy result object that Cody created to fill the results UI with dummy data.
         /// </summary>
         /// <returns></returns>
-        //private AlternativeResult CreateAlternativeComparisonResult()
-        //{
+        private SpecificAltCompReportResultsVM CreateAlternativeComparisonResult(int withProjID, string withProjName)
+        {
+            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
 
-        //    StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
+            double discountRate = studyPropElem.DiscountRate;
+            int period = studyPropElem.PeriodOfAnalysis;
 
-        //    double discountRate = studyPropElem.DiscountRate;
-        //    int period = studyPropElem.PeriodOfAnalysis;
+            List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
-        //    List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
+            //TODO: richard will add a method to get the year results.
+            //_EADBaseYearResults.BaseYear
+            //todo: delete these hard coded years.
+            YearResult yr1 = new YearResult(2000, new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, withProjID), new DamageByImpactAreaVM(discountRate, period, _EADBaseYearResults, withProjID), new DamageByDamCatVM(_EADBaseYearResults, withProjID));
+            YearResult yr2 = new YearResult(2020, new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, withProjID), new DamageByImpactAreaVM(discountRate, period, _EADFutureYearResults, withProjID), new DamageByDamCatVM(_EADFutureYearResults, withProjID));
 
-        //    //todo: I think i loop over all the with proj conditions and then select them based on the combo box
-        //    List<YearResult> yearResults = new List<YearResult>();
-        //    foreach (int altID in WithProjAltIDs)
-        //    {
-        //        //richard will add a method to get the year results.
-        //        YearResult yr1 = new YearResult(_EADBaseYearResults.Year, new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, altID), new DamageByImpactAreaVM(discountRate, period, _EADBaseYearResults, altID), new DamageByDamCatVM(_EADBaseYearResults, altID));
-        //        YearResult yr2 = new YearResult(_EADFutureYearResults.Year, new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, altID), new DamageByImpactAreaVM(discountRate, period, _EADFutureYearResults, altID), new DamageByDamCatVM(_EADFutureYearResults, altID));
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, withProjID), new DamageByImpactAreaVM(discountRate, period, _AAEQResults, withProjID), new DamageByDamCatVM(_AAEQResults, withProjID));
 
-        //        AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _AAEQResults, altID), new DamageByImpactAreaVM(discountRate, period, _AAEQResults, altID), new DamageByDamCatVM(_AAEQResults, altID));
-        //    }
+            EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
+            AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, aaeqResult);
 
-
-        //    EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-        //    AlternativeResult altResult = new AlternativeResult(eadResult, aaeqResult);
-
-        //    return altResult;
-        //}
+            return new SpecificAltCompReportResultsVM(altResult);
+        }
     }
 }

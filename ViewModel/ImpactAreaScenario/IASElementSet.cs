@@ -31,6 +31,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
+        public ScenarioResults Results{get; set;}
         public string Description
         {
             get { return _Description; }
@@ -91,30 +92,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
+            XElement resultsElem = setElem.Element("ScenarioResults");
+            if(resultsElem != null)
+            {
+                //todo: read results once Richard fixes the bug in writing results
+                //Results = ScenarioResults.ReadFromXML(resultsElem);
+            }
+
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.SCENARIO_IMAGE,
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
             AddActions();
-        }
-
-        private bool HaveAllIASComputed()
-        {
-            bool allComputed = true;
-            if(SpecificIASElements.Count == 0)
-            {
-                allComputed = false;
-            }
-            foreach(SpecificIAS ias in SpecificIASElements)
-            {
-                if(ias.ComputeResults == null)
-                {
-                    allComputed = false;
-                    break;
-                }
-            }
-            return allComputed;
         }
 
         private void AddActions()
@@ -156,7 +146,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="arg2"></param>
         public void EditIASSet(object arg1, EventArgs arg2)
         {
-
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
             IASEditorVM vm = new IASEditorVM(this, actionManager);
@@ -181,41 +170,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-
+            //todo: i think i should get the impact areas from the results object right?
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            List<string> damCats = Results.GetDamageCategories();
             foreach (SpecificIAS ias in SpecificIASElements)
             {
                 int impactAreaID = ias.ImpactAreaID;
                 string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
-                if (impactAreaName != null && ias.ComputeResults != null)
+                if (impactAreaName != null)
                 {
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, ias.ComputeResults);
+                    
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, Results.GetResults(ias.ImpactAreaID), damCats);
                     results.Add(result);
                 }
-            }
-
-            return results;
-        }
-
-        public List<ImpactAreaScenarioResults> GetComputeResults()
-        {
-            List < ImpactAreaScenarioResults > results = new List<ImpactAreaScenarioResults>();
-            foreach (SpecificIAS ias in SpecificIASElements)
-            {
-                if (ias.ComputeResults != null)
-                {
-                    results.Add(ias.ComputeResults);
-                }
-            }
-            return results;
-        }
-
-        public ScenarioResults GetScenarioResults()
-        {
-            ScenarioResults results = new ScenarioResults(AnalysisYear);
-            foreach (SpecificIAS ias in SpecificIASElements)
-            {
-                results.AddResults(ias.ComputeResults);
             }
             return results;
         }
@@ -246,6 +213,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ViewResults(object arg1, EventArgs arg2)
         {
+            
             List<SpecificIASResultVM> results = GetResults();
             if (results.Count>0)
             {
@@ -262,31 +230,33 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM( SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
             string header = "Compute Log";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog");
             Navigate(tab, false, false);
         }
-        private void ComputeCompleted()
+        private void ComputeCompleted(ScenarioResults results)
         {
+            Results = results;
             Application.Current.Dispatcher.Invoke(
             (Action)(() => 
             { 
                 PersistenceFactory.GetIASManager().SaveExisting(this);
-                MessageBox.Show("Compute Completed");
+                MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", "Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    ViewResults(this, new EventArgs());
+                }
             }));
         }
         #endregion
-
-        #region Functions
+  
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
             IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear,elem.StageDamageID, elem.SpecificIASElements, elem.ID);
             return newElem;
         }
-
-        #endregion
 
         public XElement WriteToXML()
         {
@@ -301,6 +271,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             foreach(SpecificIAS elem in SpecificIASElements)
             {
                 setElement.Add(elem.WriteToXML());
+            }
+            if(Results != null)
+            {
+                XElement resultsElem = Results.WriteToXML();
+                setElement.Add(resultsElem);
             }
 
             return setElement;
