@@ -33,8 +33,6 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
                 Grid.SetRow(_chart, 0);
                 Grid.SetRowSpan(_chart, 2);
                 Grid.SetColumn(_chart, 1);
-                //plot the histogram
-                //vm.PlotHistogram();
             }
 
         }

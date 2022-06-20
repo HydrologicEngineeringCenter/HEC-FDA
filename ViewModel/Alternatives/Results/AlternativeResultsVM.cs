@@ -96,14 +96,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 YearsVisible = true;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-                //CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
             }
             else if(AAEQ.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = false;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-                //AlternativeResult.AAEQResult.DamageWithUncertaintyVM.UpdateTheHistogram();
-                //CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
             }
         }
         private void SelectedReportChanged()

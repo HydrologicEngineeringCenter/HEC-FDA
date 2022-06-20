@@ -51,16 +51,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             List<double> yValues = new List<double>();
             foreach(double x in xVals)
             {
-                //TODO: this is a WIP:
-                //"Total"
                 yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ(x));
             }
             return yValues;
         }
 
-        //public void PlotHistogram()
-        //{
-        //    ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-        //}
     }
 }
