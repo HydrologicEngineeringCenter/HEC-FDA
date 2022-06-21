@@ -14,7 +14,7 @@ namespace compute
         {
             get
             {
-                return $"The compute for the impact area with ID {_impactAreaID} has finished after {_iterations} iterations";
+                return $"The compute for the impact area with ID {_impactAreaID} has finished after {_iterations} iterations" + Environment.NewLine;
             }
         }
         public double Iterations
