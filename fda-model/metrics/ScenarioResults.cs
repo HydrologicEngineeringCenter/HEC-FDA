@@ -365,6 +365,20 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(ScenarioResults scenarioResultsForComparison)
+        {
+            bool resultsAreEqual = true;
+            foreach (ImpactAreaScenarioResults scenarioResults in _resultsList)
+            {
+                ImpactAreaScenarioResults impactAreaScenarioResultsToCompare = scenarioResultsForComparison.GetResults(scenarioResults.ImpactAreaID);
+                resultsAreEqual = scenarioResults.Equals(impactAreaScenarioResultsToCompare);
+                if (!resultsAreEqual)
+                {
+                    break;
+                }
+            }
+            return resultsAreEqual;
+        }
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("ScenarioResults");
@@ -372,7 +386,7 @@ namespace metrics
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
-                mainElement.Add(impactAreaScenarioResults);
+                mainElement.Add(impactAreaScenarioResultsElement);
             }
             return mainElement;
         }
@@ -386,6 +400,8 @@ namespace metrics
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
+            //do we need to construct the list and then pass in?
+            //if so why would that give us a different result? 
             return scenarioResults;
         }
         #endregion
