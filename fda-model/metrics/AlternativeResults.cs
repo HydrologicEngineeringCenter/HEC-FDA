@@ -66,6 +66,21 @@ namespace metrics
         }
         #endregion
         #region Methods
+        public List<int> GetImpactAreaIDs()
+        {
+            List<int> impactAreaIDs = new List<int>();
+            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            {
+                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                {
+                    if (!impactAreaIDs.Contains(consequence.RegionID))
+                    {
+                        impactAreaIDs.Add(consequence.RegionID);
+                    }
+                }
+            }
+            return impactAreaIDs;
+        }
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();

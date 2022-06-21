@@ -38,6 +38,25 @@ namespace metrics
         #endregion
 
         #region Methods
+        public List<int> GetImpactAreaIDs()
+        {
+            List<int> impactAreaIDs = new List<int>();
+            if (_resultsList.Count != 0)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+                {
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!impactAreaIDs.Contains(consequenceResult.RegionID))
+                        {
+                            impactAreaIDs.Add(consequenceResult.RegionID);
+                        }
+                    }
+
+                }
+            }
+            return impactAreaIDs;
+        }
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
@@ -400,8 +419,6 @@ namespace metrics
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
-            //do we need to construct the list and then pass in?
-            //if so why would that give us a different result? 
             return scenarioResults;
         }
         #endregion
