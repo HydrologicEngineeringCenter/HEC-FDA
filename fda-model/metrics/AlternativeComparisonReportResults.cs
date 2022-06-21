@@ -46,9 +46,24 @@ namespace metrics
         #endregion
 
         #region Methods 
+        public List<int> GetImpactAreaIDs()
+        {
+            List<int> impactAreaIDs = new List<int>();
+            foreach (AlternativeResults alternativeResults in _resultsList)
+            {
+                foreach (ConsequenceDistributionResult consequenceResult in alternativeResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    if (!impactAreaIDs.Contains(consequenceResult.RegionID))
+                    {
+                        impactAreaIDs.Add(consequenceResult.RegionID);
+                    }
+                }
+
+            }
+            return impactAreaIDs;
+        }
         public List<string> GetAssetCategories()
-        {//TODO: we're not guaranteed to have both base year and future year 
-            //Soooooo we need to check if they both exist 
+        {
             List<string> assetCats = new List<string>();
             foreach(AlternativeResults alternativeResults in _resultsList)
             {
@@ -70,9 +85,9 @@ namespace metrics
             {
                 foreach (ConsequenceDistributionResult consequenceResult in alternativeResults.ConsequenceResults.ConsequenceResultList)
                 {
-                    if (!damCats.Contains(consequenceResult.AssetCategory))
+                    if (!damCats.Contains(consequenceResult.DamageCategory))
                     {
-                        damCats.Add(consequenceResult.AssetCategory);
+                        damCats.Add(consequenceResult.DamageCategory);
                     }
                 }
 

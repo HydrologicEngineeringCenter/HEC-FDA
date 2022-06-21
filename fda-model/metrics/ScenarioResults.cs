@@ -38,6 +38,25 @@ namespace metrics
         #endregion
 
         #region Methods
+        public List<int> GetImpactAreaIDs()
+        {
+            List<int> impactAreaIDs = new List<int>();
+            if (_resultsList.Count != 0)
+            {
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+                {
+                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (!impactAreaIDs.Contains(consequenceResult.RegionID))
+                        {
+                            impactAreaIDs.Add(consequenceResult.RegionID);
+                        }
+                    }
+
+                }
+            }
+            return impactAreaIDs;
+        }
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
@@ -365,6 +384,20 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
+        public bool Equals(ScenarioResults scenarioResultsForComparison)
+        {
+            bool resultsAreEqual = true;
+            foreach (ImpactAreaScenarioResults scenarioResults in _resultsList)
+            {
+                ImpactAreaScenarioResults impactAreaScenarioResultsToCompare = scenarioResultsForComparison.GetResults(scenarioResults.ImpactAreaID);
+                resultsAreEqual = scenarioResults.Equals(impactAreaScenarioResultsToCompare);
+                if (!resultsAreEqual)
+                {
+                    break;
+                }
+            }
+            return resultsAreEqual;
+        }
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("ScenarioResults");
@@ -372,7 +405,7 @@ namespace metrics
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
-                mainElement.Add(impactAreaScenarioResults);
+                mainElement.Add(impactAreaScenarioResultsElement);
             }
             return mainElement;
         }

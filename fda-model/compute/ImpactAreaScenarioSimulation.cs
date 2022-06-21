@@ -373,7 +373,7 @@ namespace compute
             }
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory, _impactAreaID)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
             }
         }
         private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
@@ -395,7 +395,7 @@ namespace compute
             }
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, totalDamageFrequency.CurveMetaData.DamageCategory, totalDamageFrequency.CurveMetaData.AssetCategory, _impactAreaID)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
