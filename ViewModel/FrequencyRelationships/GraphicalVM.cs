@@ -13,9 +13,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     public class GraphicalVM : ComputeComponentVM
     {
         private int _equivalentRecordLength = 5;
+        private bool _useStage;
+        private bool _useFlow = true;
         private NamedAction _confidenceLimits;
-        public NamedAction ConfidenceLimits { get { return _confidenceLimits; } set { _confidenceLimits = value; NotifyPropertyChanged(); } }
 
+
+        public NamedAction ConfidenceLimits { get { return _confidenceLimits; } set { _confidenceLimits = value; NotifyPropertyChanged(); } }
         public GraphicalUncertainPairedData MyGraphical
         {
             get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
@@ -27,6 +30,32 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             set
             {
                 _equivalentRecordLength = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public bool UseFlow
+        {
+            get { return _useFlow; }
+            set
+            { 
+                _useFlow = value;
+                if(value == true)
+                {
+                    YLabel = Utilities.StringConstants.DISCHARGE;
+                }
+                NotifyPropertyChanged(); 
+            }
+        }
+        public bool UseStage
+        {
+            get { return _useStage; }
+            set
+            { 
+                _useStage = value;
+                if(value == true)
+                {
+                    YLabel = Utilities.StringConstants.STAGE;
+                }
                 NotifyPropertyChanged();
             }
         }

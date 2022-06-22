@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -23,6 +24,10 @@
             <TextBox Text="{Binding Path=EquivalentRecordLength, Mode=TwoWay}" Width="80" Margin="5"/>
             <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" />
         </StackPanel>
-        <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="2"/>
+        <StackPanel Orientation="Horizontal"  Grid.Row="2">
+            <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding Path=UseFlow, Mode=TwoWay}" Margin="5"/>
+            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding Path=UseStage, Mode=TwoWay}" Margin="5"/>
+        </StackPanel>
+        <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
 </UserControl>
