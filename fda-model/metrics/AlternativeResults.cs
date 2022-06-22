@@ -13,7 +13,7 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        private ConsequenceDistributionResults _consequenceResults;
+        private ConsequenceDistributionResults _aaeqResults;
         private bool _isNull;
         #endregion
 
@@ -22,11 +22,11 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
-        public ConsequenceDistributionResults ConsequenceResults
+        public ConsequenceDistributionResults AAEQDamageResults
         {
             get
             {
-                return _consequenceResults;
+                return _aaeqResults;
             }
         }
         public List<int> AnalysisYears { get; }
@@ -47,19 +47,19 @@ namespace metrics
         {
             _isNull = true;
             _alternativeID = 0;
-            _consequenceResults = new ConsequenceDistributionResults();
+            _aaeqResults = new ConsequenceDistributionResults();
         }
         public AlternativeResults(int id, List<int> analysisYears)
         {
             _alternativeID = id;
-            _consequenceResults = new ConsequenceDistributionResults();
+            _aaeqResults = new ConsequenceDistributionResults();
             _isNull = false;
             AnalysisYears = analysisYears;
         }
         private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears)
         {
             _alternativeID = id;
-            _consequenceResults = consequenceResults;
+            _aaeqResults = consequenceResults;
             _isNull = false;
             AnalysisYears = analysisYears;
 
@@ -69,9 +69,9 @@ namespace metrics
         public List<int> GetImpactAreaIDs()
         {
             List<int> impactAreaIDs = new List<int>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequence.RegionID))
                     {
@@ -84,9 +84,9 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequence.AssetCategory))
                     {
@@ -97,11 +97,11 @@ namespace metrics
             return assetCats;
         }
         public List<string> GetDamageCategories()
-        {//TODO: Just get these from the _consequenceResults
+        {
             List<string> damageCats = new List<string>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequence.DamageCategory))
                     {
@@ -112,114 +112,159 @@ namespace metrics
             return damageCats;
         }
         /// <summary>
-        /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
-        /// Damage measures could be EAD or other measures of consequences 
-        /// Note that when working with impact area scenario results, there is only 1 impact area 
+        /// This method returns the mean of the average annual equivalent damage for the given damage category, asset category, impact area combination 
         /// The level of aggregation of the mean is determined by the arguments used in the method
-        /// For example, if you wanted mean EAD for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double meanEAD = MeanDamage(damageCategory: "residential", impactAreaID: 2);
+        /// For example, if you wanted mean AAEQ damage for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanAAEQDamage(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value -999
-        /// <returns></returns>The mean of consequences
-        public double MeanConsequence(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        /// <returns></returns>The mean of aaeq damage
+        public double MeanAAEQDamage(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
-        /// The level of aggregation of  consequences is determined by the arguments used in the method
-        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
+        /// This method returns the mean of base year expected annual damage for the given damage category, asset category, impact area combination 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD damage for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanBaseYearEAD(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of ead damage for base year 
+        public double MeanBaseYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return BaseYearScenarioResults.MeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+        }
+        /// <summary>
+        /// This method returns the mean of future year expected annual damage for the given damage category, asset category, impact area combination 
+        /// The level of aggregation of the mean is determined by the arguments used in the method
+        /// For example, if you wanted mean EAD damage for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = MeanFutureYearEAD(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <returns></returns>The mean of ead damage for future year 
+        public double MeanFutureYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return FutureYearScenarioResults.MeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+        }
+        /// <summary>
+        /// This method calls the inverse CDF of the AAEQ damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  damage is determined by the arguments used in the method
+        /// For example, if you wanted the AAEQ damage exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = AAEQDamageExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value -999
-        /// <returns></returns>the level of consequences exceeded by the specified probability 
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        /// <returns></returns>the level of AAEQ damage exceeded by the specified probability 
+        public double AAEQDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
+        /// This method calls the inverse CDF of the base year EAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  damage is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = BaseYearEADDamageExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        public double BaseYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+        }
+        /// <summary>
+        /// This method calls the inverse CDF of the future year EAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// The level of aggregation of  damage is determined by the arguments used in the method
+        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = FutureYearEADDamageExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
+        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        public double FutureYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return FutureYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+        }
+        /// <summary>
+        /// This method gets the histogram (distribution) of aaeq damage for the given damage category(ies), asset category(ies), and impact area(s)
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// ThreadsafeInlineHistogram histogram = GetAAEQDamageHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="impactAreaID"></param>
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetAAEQDamageHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
+        /// <summary>
+        /// This method gets the histogram (distribution) of base year ead for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetBaseYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
+        public IHistogram GetBaseYearEADHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return BaseYearScenarioResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+        }
+        /// <summary>
+        /// This method gets the histogram (distribution) of future year ead for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// ThreadsafeInlineHistogram histogram = GetFutureYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
+        public IHistogram GetFutureYearEADHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return FutureYearScenarioResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+        }
+
 
         //TODO what role will these play
         internal void AddConsequenceResults(int impactAreaID, string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
-            ConsequenceDistributionResult consequenceResult = ConsequenceResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            ConsequenceDistributionResult consequenceResult = AAEQDamageResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (consequenceResult.IsNull)
             {
                 ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
-                _consequenceResults.ConsequenceResultList.Add(newConsequenceResult);
+                _aaeqResults.ConsequenceResultList.Add(newConsequenceResult);
             }
         }
         internal void AddConsequenceResults(ConsequenceDistributionResult consequenceResultToAdd)
         {
-            ConsequenceDistributionResult consequenceResults = ConsequenceResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            ConsequenceDistributionResult consequenceResults = AAEQDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                _consequenceResults.ConsequenceResultList.Add(consequenceResultToAdd);
+                _aaeqResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
         }
-        public bool Equals(AlternativeResults alternativeResultsForComparison)
-        {
-            if (!ConsequenceResults.Equals(alternativeResultsForComparison.ConsequenceResults))
-            {
-                return false;
-            }
-            if (!AlternativeID.Equals(alternativeResultsForComparison.AlternativeID))
-            {
-                return false;
-            }
-            return true;
-        }
-        public XElement WriteToXML()
-        {
-            XElement mainElement = new XElement("AlternativeResults");
-            XElement consequencesEvent = ConsequenceResults.WriteToXML();
-            consequencesEvent.Name = "Consequences";
-            mainElement.Add(consequencesEvent);
-            mainElement.SetAttributeValue("ID", _alternativeID);
-            XElement yearsElement = new XElement("Years");
-            foreach (int year in AnalysisYears)
-            {
-                yearsElement.SetAttributeValue($"Year_{year}", year);
-            }
-            mainElement.Add(yearsElement);
-            return mainElement;
-        }
-        public static AlternativeResults ReadFromXML(XElement xElement)
-        {
-            int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
-            ConsequenceDistributionResults consequenceResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Consequences"));
-            List<int> years = new List<int>();
-            foreach (XAttribute attribute in xElement.Element("Years").Attributes())
-            {
-                string yearString = attribute.Value;
-                int year = Convert.ToInt32(yearString);
-                years.Add(year);
-            }
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults, years);
-            return alternativeResults;
-        }
+
         #endregion
 
     }

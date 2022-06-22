@@ -10,29 +10,26 @@ namespace alternativeComparisonReport
 {
     public class AlternativeComparisonReport
 {
-        private const int _iterations = 50000;
-        /// <summary>
-        /// This method computes the distribution of average annual equivalent damage reduced between the without-project alternative and each of the with-project alternatives
-        /// The function returns an AlternativeComparisonReportResults object which stores a list of AlternativeResults for each with-project condition. 
-        /// </summary>
-        /// <param name="randomProvider"></param> random number provider
-        /// <param name="convergenceCriteria"></param> the study convergence criteria 
-        /// <param name="discountRate"></param> the discount rate at which to calculate the present value of damages, in decimal form
-        /// <returns></returns>
-        public static AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private const int ITERATIONS = 50000;
+        
+        public static AlternativeComparisonReportResults ComputeAlternativeComparisonReport(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
-
+            List<ConsequenceDistributionResults> aaeqResults = ComputeDistributionOfAAEQDamageReduced(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            List<ConsequenceDistributionResults> baseYearEADResults = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            List<ConsequenceDistributionResults> futureYearEADResults = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
+        }
+        private static List<ConsequenceDistributionResults> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        {
+            List<ConsequenceDistributionResults> damagesReducedAllAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
-                AlternativeResults damageReducedOneAlternative = new AlternativeResults(withProjectAlternativeResults.AlternativeID, withoutProjectAlternativeResults.AnalysisYears);
+                ConsequenceDistributionResults damageReducedOneAlternative = new ConsequenceDistributionResults(withProjectAlternativeResults.AlternativeID);
 
-                foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
                 {
-
-                    {
                         IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
-                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
+                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetAAEQDamageHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
                         double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min; 
@@ -44,65 +41,38 @@ namespace alternativeComparisonReport
                         double damagesReducedLowerBound = withoutProjectDamageAAEQLowerBound - withProjectDamageAAEQUpperBound;
 
                         double range = damagesReducedUpperBound - damagesReducedLowerBound;
-                        double binQuantity = 1 + 3.322 * Math.Log(_iterations);
+                        double binQuantity = 1 + 3.322 * Math.Log(ITERATIONS);
                         double binWidth = Math.Ceiling(range / binQuantity);
                         Histogram damageReducedHistogram = new Histogram(damagesReducedLowerBound, binWidth, withProjectDamageResult.ConvergenceCriteria);
                         ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence        
-                        for (int i = 0; i < _iterations; i++)
+                        for (int i = 0; i < ITERATIONS; i++)
                         {
                             double withProjectDamageAAEQ = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double withoutProjectDamageAAEQ = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double damagesReduced = withoutProjectDamageAAEQ - withProjectDamageAAEQ;
                             damageReducedResult.AddConsequenceRealization(damagesReduced,i);
                         }
-                        damageReducedOneAlternative.AddConsequenceResults(damageReducedResult);
-
-                    }
+                    damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                 }
-                damagesReducedAllAlternatives.AddAlternativeResults(damageReducedOneAlternative);
+                damagesReducedAllAlternatives.Add(damageReducedOneAlternative);
             }
             return damagesReducedAllAlternatives;
         }
-       
-        /// <summary>
-        /// This method computes the distribution of expected annual damage reduced between the without-project alternative and each of the with-project alternatives
-        /// This method returns an AlternativeComparisonReportResults object, which contains a list of AlternativeResults for each with-project condition. 
-        /// </summary>
-        /// <param name="randomProvider"></param> random number provider
-        /// <param name="iterations"></param> the number of iterations to sample the EAD distributions
-        /// <param name="iWantBaseYearResults"></param> true if the results should be for the base year, false if for the most likely future year. 
-        /// <returns></returns>
-        public static AlternativeComparisonReportResults ComputeDistributionEADReduced(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults, bool iWantBaseYearResults)
-        {
-            AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
-            if (iWantBaseYearResults)
-            {
-                damagesReducedAllAlternatives = ComputeDistributionEADReducedBaseYear(randomProvider, withoutProjectAlternativeResults, withProjectAlternativesResults);
-            }
-            else
-            {
-                damagesReducedAllAlternatives = ComputeDistributionEADReducedFutureYear(randomProvider, withoutProjectAlternativeResults, withProjectAlternativesResults);
-            }
-            return damagesReducedAllAlternatives;
-        } 
 
-        private static AlternativeComparisonReportResults ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+
+        private static List<ConsequenceDistributionResults> ComputeDistributionEADReducedBaseYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
-            List<int> baseYear = new List<int> { withoutProjectAlternativeResults.AnalysisYears.Min() };
+            List<ConsequenceDistributionResults> damageReducedAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
+                ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(withProjectResults.AlternativeID); 
 
-                AlternativeResults damageReducedAlternative = new AlternativeResults(withProjectResults.AlternativeID, baseYear);
-                //todo: put scenario results back in
-                //but keep it internal 
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
                     ConsequenceDistributionResults withprojectDamageResults = impactAreaScenarioResults.ConsequenceResults;
                     ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
-
 
                     foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
@@ -117,36 +87,34 @@ namespace alternativeComparisonReport
                         double maxDamageReduced = withoutProjectMax - withProjectMin;
                         double minDamageReduced = withoutProjectMin - withProjectMax;
                         double range = maxDamageReduced - minDamageReduced;
-                        double binQuantity = 1 + 3.322 * Math.Log(_iterations);
+                        double binQuantity = 1 + 3.322 * Math.Log(ITERATIONS);
                         double binWidth = Math.Ceiling(range / binQuantity);
                         Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
                         ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
-                        for (int i = 0; i < _iterations; i++)
+                        for (int i = 0; i < ITERATIONS; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReducedResult.AddConsequenceRealization(eadDamageReduced,i);
                         }
-                        damageReducedAlternative.AddConsequenceResults(damageReducedResult);
+                        damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                 }
-                damageReducedAlternatives.AddAlternativeResults(damageReducedAlternative);
+                damageReducedAlternatives.Add(damageReducedAlternative);
             }
             return damageReducedAlternatives;
 
         }
 
 
-        private static AlternativeComparisonReportResults ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private static List<ConsequenceDistributionResults> ComputeDistributionEADReducedFutureYear(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            AlternativeComparisonReportResults damageReducedAlternatives = new AlternativeComparisonReportResults();
-            List<int> futureYear = new List<int> { withoutProjectAlternativeResults.AnalysisYears.Max() };
-
+            List<ConsequenceDistributionResults> damageReducedAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
-                AlternativeResults damageReducedAlternative = new AlternativeResults(alternative.AlternativeID, futureYear);
+                ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(alternative.AlternativeID);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList)
                 {
@@ -167,22 +135,22 @@ namespace alternativeComparisonReport
                         double minDamageReduced = withoutMin - withMax;
                         double maxDamageReduced = withoutMax - withMin;
                         double range = maxDamageReduced - minDamageReduced;
-                        double binQuantity = 1 + 3.22 * Math.Log(_iterations);
+                        double binQuantity = 1 + 3.22 * Math.Log(ITERATIONS);
                         double binWidth = Math.Ceiling(binQuantity / range);
                         Histogram damageReducedHistogram = new Histogram(minDamageReduced, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
                         ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                         //TODO: run this loop until convergence 
-                        for (int i = 0; i < _iterations; i++)
+                        for (int i = 0; i < ITERATIONS; i++)
                         {
                             double eadSampledWithProject = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadSampledWithoutProject = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                             double eadDamageReduced = eadSampledWithoutProject - eadSampledWithProject;
                             damageReducedResult.AddConsequenceRealization(eadDamageReduced, i);
                         }
-                        damageReducedAlternative.AddConsequenceResults(damageReducedResult);
+                        damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                 }
-                damageReducedAlternatives.AddAlternativeResults(damageReducedAlternative);
+                damageReducedAlternatives.Add(damageReducedAlternative);
             }
             return damageReducedAlternatives;
 
