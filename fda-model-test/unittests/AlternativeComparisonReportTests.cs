@@ -21,7 +21,7 @@ namespace fda_model_test.unittests
         [Theory]
         [InlineData(51442, 36500, 75000, 50, .0275, 2023, 2072, 1, 75000)]
         [InlineData(59410, 36500, 75000, 50, .0275, 2023, 2050, 1, 75000)]
-        public void ComputeAAEQDamage(double expectedAAEQ, double expectedEADReducedBaseYear, double expectedEADReducedFutureYear, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
+        public void ComputeAAEQDamage(double expectedAAEQReduced, double expectedEADReducedBaseYear, double expectedEADReducedFutureYear, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
             double[] FlowXs = { 0, 100000 };
             double[] StageXs = { 0, 150000 };
@@ -132,9 +132,9 @@ namespace fda_model_test.unittests
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
             AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
-            double actualAAEQ = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
-            double differenceAAEQ = actualAAEQ - expectedAAEQ;
-            double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQ);
+            double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
+            double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
+            double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
 
             double actualBaseYearEADReduced = alternativeComparisonReportResults.MeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             double differenceEADReducedBaseYear = Math.Abs(actualBaseYearEADReduced - expectedEADReducedBaseYear);
@@ -148,6 +148,14 @@ namespace fda_model_test.unittests
             Assert.True(aaeqError < tolerance);
             Assert.True(eadErrorBase < tolerance);
             Assert.True(eadErrorFuture < tolerance);
+
+            double expectedBaseYearEADWithoutProject = withoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaIdentifier, damCat, assetCategory);
+            double actualBaseYearEADWithoutProject = alternativeComparisonReportResults.MeanWithoutProjectBaseYearEAD(impactAreaIdentifier, damCat, assetCategory);
+            Assert.Equal(expectedBaseYearEADWithoutProject, actualBaseYearEADWithoutProject);
+
+            double expectedAAEQWithProject = withProjectAlternativeResults.MeanAAEQDamage(impactAreaIdentifier, damCat, assetCategory);
+            double actualAAEQWithProject = alternativeComparisonReportResults.MeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
+            Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
         }
 
         [Theory]
