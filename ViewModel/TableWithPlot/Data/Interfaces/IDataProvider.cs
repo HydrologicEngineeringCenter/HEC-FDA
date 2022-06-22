@@ -12,6 +12,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces
         void AddRow(int i);
         void AddUnlinkedRow(int i);
         UncertainPairedData ToUncertainPairedData(string xlabel, string ylabel, string name, string description, string category);
+        void Clear();
     }
 }
 
