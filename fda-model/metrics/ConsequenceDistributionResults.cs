@@ -9,12 +9,11 @@ using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
 namespace metrics
-{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL. the problem then is testing. there is a lot of math in this class that should
-  //have lots of testing 
-
+{ 
     public class ConsequenceDistributionResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
+        private int _alternativeID; 
         private List<ConsequenceDistributionResult> _consequenceResultList;
         //impact area to be string?
         private bool _isNull;
@@ -45,6 +44,12 @@ namespace metrics
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = true;
+        }
+        internal ConsequenceDistributionResults(int alternativeID)
+        {
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _alternativeID = alternativeID;
+            _isNull = false;
         }
         private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {

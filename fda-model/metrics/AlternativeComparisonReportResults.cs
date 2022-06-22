@@ -13,28 +13,20 @@ namespace metrics
         private List<ConsequenceDistributionResults> _aaeqReducedResultsList;
         private List<ConsequenceDistributionResults> _baseYearEADReducedResultsList;
         private List<ConsequenceDistributionResults> _futureYearEADReducedResultsList;
+        private List<AlternativeResults> _withProjectAlternativeResults;
+        private AlternativeResults _withoutProjectAlternativeResults;
         #endregion
 
         #region Properties 
-        //TODO: I do not think that we'll need properties to access the results list 
-        public List<ConsequenceDistributionResults> ConsequencesReducedResultsList
-        {
-            get
-            {
-                return _aaeqReducedResultsList;
-            }
-        }
-
         public event MessageReportedEventHandler MessageReport;
         public List<int> Years
         {
             get
             {
-                return WithoutProjectAlternativeResults.AnalysisYears;
+                return _withoutProjectAlternativeResults.AnalysisYears;
             }
         }
-        internal List<AlternativeResults> WithProjectAlternativeResults { get; set; }
-        internal AlternativeResults WithoutProjectAlternativeResults { get; set; }
+
         #endregion
 
         #region Constructor
@@ -43,6 +35,14 @@ namespace metrics
             _aaeqReducedResultsList = new List<ConsequenceDistributionResults>();
             _baseYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
             _futureYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
+        }
+        internal AlternativeComparisonReportResults(List<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<ConsequenceDistributionResults> aaeqResults, List<ConsequenceDistributionResults> baseYearEADResults, List<ConsequenceDistributionResults> futureYearEADResults)
+        {
+            _withProjectAlternativeResults = withProjectAlternativeResults;
+            _withoutProjectAlternativeResults = withoutProjectAlternativeResults;
+            _aaeqReducedResultsList = aaeqResults;
+            _baseYearEADReducedResultsList = baseYearEADResults;
+            _futureYearEADReducedResultsList = futureYearEADResults;
         }
         #endregion
 
