@@ -37,7 +37,13 @@ namespace metrics
                 return _isNull;
             }
         }
-        internal int AlternativeID { get; set; }
+        internal int AlternativeID
+        {
+            get
+            {
+                return _alternativeID;
+            }
+        }
         #endregion
         #region Constructors
         public ConsequenceDistributionResults()

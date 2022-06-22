@@ -264,47 +264,7 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
-        public bool Equals(AlternativeResults alternativeResultsForComparison)
-        {
-            if (!AAEQDamageResults.Equals(alternativeResultsForComparison.AAEQDamageResults))
-            {
-                return false;
-            }
-            if (!AlternativeID.Equals(alternativeResultsForComparison.AlternativeID))
-            {
-                return false;
-            }
-            return true;
-        }
-        public XElement WriteToXML()
-        {
-            XElement mainElement = new XElement("AlternativeResults");
-            XElement consequencesEvent = AAEQDamageResults.WriteToXML();
-            consequencesEvent.Name = "Consequences";
-            mainElement.Add(consequencesEvent);
-            mainElement.SetAttributeValue("ID", _alternativeID);
-            XElement yearsElement = new XElement("Years");
-            foreach (int year in AnalysisYears)
-            {
-                yearsElement.SetAttributeValue($"Year_{year}", year);
-            }
-            mainElement.Add(yearsElement);
-            return mainElement;
-        }
-        public static AlternativeResults ReadFromXML(XElement xElement)
-        {
-            int alternativeID = Convert.ToInt32(xElement.Attribute("ID").Value);
-            ConsequenceDistributionResults consequenceResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Consequences"));
-            List<int> years = new List<int>();
-            foreach (XAttribute attribute in xElement.Element("Years").Attributes())
-            {
-                string yearString = attribute.Value;
-                int year = Convert.ToInt32(yearString);
-                years.Add(year);
-            }
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeID, consequenceResults, years);
-            return alternativeResults;
-        }
+
         #endregion
 
     }
