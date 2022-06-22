@@ -66,6 +66,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 SelectedItem.AddRow(i);
                 SelectedItem.Data[i] = new GraphicalRow(probs[i],ys[i]);
             }
+            EquivalentRecordLength = probabilityFunction.EquivalentLengthOfRecord;
         }
         private void Initialize()
         {
