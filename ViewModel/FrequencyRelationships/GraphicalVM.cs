@@ -18,7 +18,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private NamedAction _confidenceLimits;
 
 
-        public NamedAction ConfidenceLimits { get { return _confidenceLimits; } set { _confidenceLimits = value; NotifyPropertyChanged(); } }
+        public NamedAction ConfidenceLimits 
+        { 
+            get 
+            { 
+                return _confidenceLimits; 
+            } 
+            set 
+            { 
+                _confidenceLimits = value;
+                NotifyPropertyChanged(); 
+            }
+        }
         public GraphicalUncertainPairedData MyGraphical
         {
             get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
