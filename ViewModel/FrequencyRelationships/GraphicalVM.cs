@@ -7,6 +7,7 @@ using System;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
+using Importer;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -41,6 +42,30 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             LoadFromXML(vmEle);
             Initialize();
+        }
+        public GraphicalVM(ProbabilityFunction probabilityFunction) : base()
+        {
+            Options.Clear();
+            Options.Add(new GraphicalDataProvider());
+            SelectedItem = Options[0];
+            Initialize();
+            SelectedItem.Clear();
+
+            double[] probs = probabilityFunction.ExceedanceProbability;
+            double[] ys;
+            if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
+            {
+                ys = probabilityFunction.Discharge;
+            }
+            else
+            {
+                ys = probabilityFunction.Stage;
+            }
+            for (int i = 0; i < probabilityFunction.NumberOfGraphicalPoints; i++)
+            {
+                SelectedItem.AddRow(i);
+                SelectedItem.Data[i] = new GraphicalRow(probs[i],ys[i]);
+            }
         }
         private void Initialize()
         {
