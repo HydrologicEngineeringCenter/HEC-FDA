@@ -17,8 +17,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private bool _useStage;
         private bool _useFlow = true;
         private NamedAction _confidenceLimits;
-
-
         public NamedAction ConfidenceLimits 
         { 
             get 
@@ -96,10 +94,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
             {
                 ys = probabilityFunction.Discharge;
+                UseStage = true;
             }
             else
             {
                 ys = probabilityFunction.Stage;
+                UseFlow = true;
             }
             for (int i = 0; i < probabilityFunction.NumberOfGraphicalPoints; i++)
             {
@@ -107,6 +107,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 SelectedItem.Data[i] = new GraphicalRow(probs[i],ys[i]);
             }
             EquivalentRecordLength = probabilityFunction.EquivalentLengthOfRecord;
+            
         }
         private void Initialize()
         {
