@@ -55,6 +55,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             {
                 _xlabel = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Units));
             }
         }
         public string YLabel
@@ -67,6 +68,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             {
                 _ylabel = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Units));
             }
         }
         public string Description

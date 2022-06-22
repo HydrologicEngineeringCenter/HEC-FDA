@@ -72,15 +72,24 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void LoadSimulationBuilder()
         {
             _SimulationBuilder = ImpactAreaScenarioSimulation.builder(_ImpactAreaID)
-            .withStageDamages(GetStageDamagesAsPairedData())
-             .withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
+            .withStageDamages(GetStageDamagesAsPairedData());
+             
             if (_FreqElem.IsAnalytical)
             {
                 _SimulationBuilder.withFlowFrequency(GetFrequencyDistribution());
+                _SimulationBuilder.withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
             }
             else
             {
-                _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                if(_FreqElem.MyGraphicalVM.UseFlow == true)
+                {
+                    _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                    _SimulationBuilder.withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
+                }
+                else
+                {
+                    _SimulationBuilder.withFrequencyStage(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                }
             }
             if (_UseInOut)
             {
