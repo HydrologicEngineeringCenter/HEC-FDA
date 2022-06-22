@@ -13,7 +13,7 @@ namespace metrics
     {
         #region Fields
         private int _alternativeID;
-        private ConsequenceDistributionResults _consequenceResults;
+        private ConsequenceDistributionResults _aaeqResults;
         private bool _isNull;
         #endregion
 
@@ -22,11 +22,11 @@ namespace metrics
         {
             get { return _alternativeID; }
         }
-        public ConsequenceDistributionResults ConsequenceResults
+        public ConsequenceDistributionResults AAEQDamageResults
         {
             get
             {
-                return _consequenceResults;
+                return _aaeqResults;
             }
         }
         public List<int> AnalysisYears { get; }
@@ -47,19 +47,19 @@ namespace metrics
         {
             _isNull = true;
             _alternativeID = 0;
-            _consequenceResults = new ConsequenceDistributionResults();
+            _aaeqResults = new ConsequenceDistributionResults();
         }
         public AlternativeResults(int id, List<int> analysisYears)
         {
             _alternativeID = id;
-            _consequenceResults = new ConsequenceDistributionResults();
+            _aaeqResults = new ConsequenceDistributionResults();
             _isNull = false;
             AnalysisYears = analysisYears;
         }
         private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears)
         {
             _alternativeID = id;
-            _consequenceResults = consequenceResults;
+            _aaeqResults = consequenceResults;
             _isNull = false;
             AnalysisYears = analysisYears;
 
@@ -69,9 +69,9 @@ namespace metrics
         public List<int> GetImpactAreaIDs()
         {
             List<int> impactAreaIDs = new List<int>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequence.RegionID))
                     {
@@ -84,9 +84,9 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequence.AssetCategory))
                     {
@@ -99,9 +99,9 @@ namespace metrics
         public List<string> GetDamageCategories()
         {
             List<string> damageCats = new List<string>();
-            if (_consequenceResults.ConsequenceResultList.Count != 0)
+            if (_aaeqResults.ConsequenceResultList.Count != 0)
             {
-                foreach (ConsequenceDistributionResult consequence in _consequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequence in _aaeqResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequence.DamageCategory))
                     {
@@ -123,7 +123,7 @@ namespace metrics
         /// <returns></returns>The mean of aaeq damage
         public double MeanAAEQDamage(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method returns the mean of base year expected annual damage for the given damage category, asset category, impact area combination 
@@ -166,7 +166,7 @@ namespace metrics
         /// <returns></returns>the level of AAEQ damage exceeded by the specified probability 
         public double AAEQDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method calls the inverse CDF of the base year EAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -210,7 +210,7 @@ namespace metrics
         /// <returns></returns>
         public IHistogram GetAAEQDamageHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _consequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of base year ead for the given damage category(ies), asset category(ies), and impact area(s)
@@ -245,19 +245,19 @@ namespace metrics
         //TODO what role will these play
         internal void AddConsequenceResults(int impactAreaID, string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
-            ConsequenceDistributionResult consequenceResult = ConsequenceResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            ConsequenceDistributionResult consequenceResult = AAEQDamageResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (consequenceResult.IsNull)
             {
                 ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
-                _consequenceResults.ConsequenceResultList.Add(newConsequenceResult);
+                _aaeqResults.ConsequenceResultList.Add(newConsequenceResult);
             }
         }
         internal void AddConsequenceResults(ConsequenceDistributionResult consequenceResultToAdd)
         {
-            ConsequenceDistributionResult consequenceResults = ConsequenceResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            ConsequenceDistributionResult consequenceResults = AAEQDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                _consequenceResults.ConsequenceResultList.Add(consequenceResultToAdd);
+                _aaeqResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
         public void ReportMessage(object sender, MessageEventArgs e)
@@ -266,7 +266,7 @@ namespace metrics
         }
         public bool Equals(AlternativeResults alternativeResultsForComparison)
         {
-            if (!ConsequenceResults.Equals(alternativeResultsForComparison.ConsequenceResults))
+            if (!AAEQDamageResults.Equals(alternativeResultsForComparison.AAEQDamageResults))
             {
                 return false;
             }
@@ -279,7 +279,7 @@ namespace metrics
         public XElement WriteToXML()
         {
             XElement mainElement = new XElement("AlternativeResults");
-            XElement consequencesEvent = ConsequenceResults.WriteToXML();
+            XElement consequencesEvent = AAEQDamageResults.WriteToXML();
             consequencesEvent.Name = "Consequences";
             mainElement.Add(consequencesEvent);
             mainElement.SetAttributeValue("ID", _alternativeID);

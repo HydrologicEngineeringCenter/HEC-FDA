@@ -143,6 +143,35 @@ namespace metrics
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
+
+        public double MeanWithoutProjectBaseYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return _withoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
+        }
+        public double MeanWithoutProjectFutureYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return _withoutProjectAlternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
+        }
+        public double MeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
+            return alternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
+        }
+        public double MeanWithProjectFutureYearEAD(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
+            return alternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
+        }
+        public double MeanWithProjectAAEQDamage(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
+            return alternativeResults.MeanAAEQDamage(impactAreaID, damageCategory, assetCategory);
+        }
+        public double MeanWithoutProjectAAEQDamage(int impactArea = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return _withoutProjectAlternativeResults.MeanAAEQDamage(impactArea, damageCategory, assetCategory);
+        }
+
         /// <summary>
         /// This method calls the inverse CDF of aaeq damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
         ///  The level of aggregation of  consequences is determined by the arguments used in the method
@@ -261,11 +290,24 @@ namespace metrics
                     return consequenceDistResults;
                 }
             }
-            ConsequenceDistributionResults dummyAlternativeResult = new ConsequenceDistributionResults();
+            ConsequenceDistributionResults dummyConsequenceDistributionResults = new ConsequenceDistributionResults();
             ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An arbitrary object is being returned.")));
-            return dummyAlternativeResult;
+            return dummyConsequenceDistributionResults;
         }
 
+        private AlternativeResults GetAlternativeResults(int alternativeID)
+        {
+            foreach (AlternativeResults alternativeResults in _withProjectAlternativeResults)
+            {
+                if (alternativeResults.AlternativeID.Equals(alternativeID))
+                {
+                    return alternativeResults;
+                }
+            }
+            AlternativeResults dummyAlternativeResults = new AlternativeResults();
+            ReportMessage(this, new MessageEventArgs(new Message ("The requested alternative could not be found. An artibtrary object is being returned.")));
+            return dummyAlternativeResults;
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);

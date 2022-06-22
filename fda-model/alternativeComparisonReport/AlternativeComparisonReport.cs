@@ -26,7 +26,7 @@ namespace alternativeComparisonReport
             {
                 ConsequenceDistributionResults damageReducedOneAlternative = new ConsequenceDistributionResults(withProjectAlternativeResults.AlternativeID);
 
-                foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult withProjectDamageResult in withProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
                 {
                         IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
                         IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetAAEQDamageHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
@@ -67,6 +67,7 @@ namespace alternativeComparisonReport
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(withProjectResults.AlternativeID); 
+
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
