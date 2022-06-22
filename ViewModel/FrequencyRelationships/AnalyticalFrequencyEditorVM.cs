@@ -63,14 +63,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _FitToFlowSkew; }
             set { _FitToFlowSkew = value; NotifyPropertyChanged(); }
         }
-
-
         public string FitToFlowRecordLength
         {
             get { return _FitToFlowRecordLength; }
             set { _FitToFlowRecordLength = value; NotifyPropertyChanged(); }
         }
-
         public bool IsStandard
         {
             get { return _IsStandard; }
@@ -146,10 +143,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             IsStandard = elem.IsStandard;
             LoadFlows(elem);
             InitializePlotModel();
-            Mean = elem.Mean;
-            StandardDeviation = elem.StDev;
-            Skew = elem.Skew;
-            PeriodOfRecord = elem.POR;
+            _Mean = elem.Mean;
+            _StDev = elem.StDev;
+            _Skew = elem.Skew;
+            _POR = elem.POR;
             GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
             GraphicalTableWithPlotVM.SetPlotForGraphicalFlowFrequency();
         }
