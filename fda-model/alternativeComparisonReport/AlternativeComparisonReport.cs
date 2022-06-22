@@ -32,7 +32,7 @@ namespace alternativeComparisonReport
 
                     {
                         IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
-                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetConsequencesHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
+                        IHistogram withoutProjectHistogram = withoutProjectAlternativeResults.GetAAEQDamageHistogram(withProjectDamageResult.RegionID,withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory);
 
                         double withProjectDamageAAEQLowerBound = withProjectHistogram.Min;
                         double withoutProjectDamageAAEQLowerBound = withoutProjectHistogram.Min; 

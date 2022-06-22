@@ -30,16 +30,10 @@ namespace fda_model_test.unittests
         /// <summary>
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
-        /// <param name="expected"></param>
-        /// <param name="poa"></param>
-        /// <param name="discountRate"></param>
-        /// <param name="baseYear"></param>
-        /// <param name="futureYear"></param>
-        /// <param name="iterations"></param>
         [Theory]
-        [InlineData(208213.8061, 50, .0275, 2023, 2072, 1)]
-        [InlineData(239260.1814, 50, .0275, 2023, 2050, 1)]
-        public void ComputeAAEQDamage(double expected, int poa, double discountRate, int baseYear, int futureYear, int iterations)
+        [InlineData(208213.8061, 208213.8061, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2072, 1)]
+        [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1)]
+        public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
@@ -92,11 +86,37 @@ namespace fda_model_test.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
             AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
-            double actual = alternativeResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
-            double difference = actual - expected;
-            double err = Math.Abs(difference / actual);
-            double tol = 0.01;
-            Assert.True(err < tol);
+            double tolerance = 0.01;
+
+            double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+            double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
+            double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
+            Assert.True(errorAAEQExceededWithProb < tolerance);
+
+            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID, damCat, assetCat);
+            double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
+            double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
+            Assert.True(errorMeanAAEQ < tolerance);
+
+            double actualBaseYearEAD = alternativeResults.MeanBaseYearEAD(impactAreaID, damCat, assetCat);
+            double differenceActualBaseYearEAD = actualBaseYearEAD - expectedBaseYearEAD;
+            double errorBaseYearEAD = Math.Abs(differenceActualBaseYearEAD / actualBaseYearEAD);
+            Assert.True(errorBaseYearEAD < tolerance);
+
+            double actualFutureYearEAD = alternativeResults.MeanFutureYearEAD(impactAreaID, damCat, assetCat);
+            double differenceActualFutureYearEAD = actualFutureYearEAD - expectedFutureYearEAD;
+            double errorFutureYearEAD = Math.Abs(differenceActualFutureYearEAD / actualFutureYearEAD);
+            Assert.True(errorFutureYearEAD < tolerance);
+
+            double actualBaseYearEADExceeded = alternativeResults.BaseYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+            double differenceActualBaseYearEADExceeded = actualBaseYearEADExceeded - expectedBaseYearDamageExceededWithAnyProb;
+            double errorBaseYearEADExceeded = Math.Abs(differenceActualBaseYearEADExceeded/actualBaseYearEADExceeded);
+            Assert.True(errorBaseYearEADExceeded < tolerance);
+
+            double actualFutureYearEADExceeded = alternativeResults.FutureYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+            double differenceActualFutureYearEADExceeded = actualFutureYearEADExceeded - expectedFutureYearDamageExceededWithAnyProb;
+            double errorFutureYearEADExceeded = Math.Abs(differenceActualFutureYearEADExceeded / actualFutureYearEADExceeded);
+            Assert.True(errorFutureYearEADExceeded < tolerance);
 
         }
 

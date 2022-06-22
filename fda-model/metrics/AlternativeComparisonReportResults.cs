@@ -94,6 +94,7 @@ namespace metrics
             }
             return damCats;
         }
+        //TODO: The below method should be renamed to reflect a generalization of 
         /// <summary>
         /// This method gets the mean consequences reduced between the with- and without-project conditions for a given with-project condition, 
         /// impact area, damage category, and asset category combination. 
@@ -107,7 +108,7 @@ namespace metrics
         /// <returns></returns>
         public double MeanConsequencesReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetAlternativeResults(alternativeID).MeanConsequence(impactAreaID, damageCategory, assetCategory);
+            return GetAlternativeResults(alternativeID).MeanAAEQDamage(impactAreaID, damageCategory, assetCategory);
         }
         /// <summary>
         /// This method calls the inverse CDF of damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -123,7 +124,7 @@ namespace metrics
         /// <returns></returns>
         public double ConsequencesReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetAlternativeResults(alternativeID).ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+            return GetAlternativeResults(alternativeID).AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
         }
         public void AddAlternativeResults(AlternativeResults alternativeResultsToAdd)
         {
@@ -147,7 +148,7 @@ namespace metrics
         public Statistics.Histograms.IHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-            return alternativeResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+            return alternativeResults.GetAAEQDamageHistogram(impactAreaID, damageCategory, assetCategory);
         }
         public AlternativeResults GetAlternativeResults(int alternativeID)
         {
