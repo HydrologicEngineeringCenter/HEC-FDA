@@ -132,17 +132,17 @@ namespace fda_model_test.unittests
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
             AlternativeComparisonReportResults aaeqAlternativeComparisonReportResults = AlternativeComparisonReport.ComputeDistributionOfAAEQDamageReduced(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
-            double actualAAEQ = aaeqAlternativeComparisonReportResults.ConsequencesReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
+            double actualAAEQ = aaeqAlternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             double differenceAAEQ = actualAAEQ - expectedAAEQ;
             double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQ);
 
             AlternativeComparisonReportResults eadBaseYearAlternativeComparisonReportResults = AlternativeComparisonReport.ComputeDistributionEADReduced(mrp, withoutProjectAlternativeResults, withProjectAlternativeResultsList, true);
-            double actualBaseYearEADReduced = eadBaseYearAlternativeComparisonReportResults.MeanConsequencesReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
+            double actualBaseYearEADReduced = eadBaseYearAlternativeComparisonReportResults.MeanAAEQDamageReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             double differenceEADReducedBaseYear = Math.Abs(actualBaseYearEADReduced - expectedEADReducedBaseYear);
             double eadErrorBase = differenceEADReducedBaseYear / expectedEADReducedBaseYear;
 
             AlternativeComparisonReportResults eadFutureYearAlternativeComparisonReportResults = AlternativeComparisonReport.ComputeDistributionEADReduced(mrp, withoutProjectAlternativeResults, withProjectAlternativeResultsList, false);
-            double actualFutureYearEADReduced = eadFutureYearAlternativeComparisonReportResults.MeanConsequencesReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
+            double actualFutureYearEADReduced = eadFutureYearAlternativeComparisonReportResults.MeanAAEQDamageReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             double differenceEADReducedFutureYear = Math.Abs(actualFutureYearEADReduced - expectedEADReducedFutureYear);
             double eadErrorFuture = differenceEADReducedBaseYear / expectedEADReducedFutureYear;
 

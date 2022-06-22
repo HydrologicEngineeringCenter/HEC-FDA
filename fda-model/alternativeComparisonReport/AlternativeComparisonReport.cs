@@ -22,6 +22,8 @@ namespace alternativeComparisonReport
         public static AlternativeComparisonReportResults ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             AlternativeComparisonReportResults damagesReducedAllAlternatives = new AlternativeComparisonReportResults();
+            damagesReducedAllAlternatives.WithProjectAlternativeResults = withProjectAlternativesResults;
+            damagesReducedAllAlternatives.WithoutProjectAlternativeResults = withoutProjectAlternativeResults;
 
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {

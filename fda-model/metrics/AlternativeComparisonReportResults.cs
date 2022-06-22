@@ -3,55 +3,59 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using Statistics.Histograms;
 
 namespace metrics
 {
     public class AlternativeComparisonReportResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {   //TODO: save a year 
         #region Fields
-        private List<AlternativeResults> _resultsList;
+        private List<ConsequenceDistributionResults> _aaeqReducedResultsList;
+        private List<ConsequenceDistributionResults> _baseYearEADReducedResultsList;
+        private List<ConsequenceDistributionResults> _futureYearEADReducedResultsList;
         #endregion
 
         #region Properties 
-        public List<AlternativeResults> ConsequencesReducedResultsList
+        //TODO: I do not think that we'll need properties to access the results list 
+        public List<ConsequenceDistributionResults> ConsequencesReducedResultsList
         {
             get
             {
-                return _resultsList;
+                return _aaeqReducedResultsList;
             }
         }
+
         public event MessageReportedEventHandler MessageReport;
         public List<int> Years
         {
             get
             {
-                if(_resultsList.Count == 0)
-                {
-                    List<int> dummyList = new List<int> { 0 };
-                    return dummyList;
-                }
-                else
-                {
-                    return _resultsList[0].AnalysisYears;
-                }
+                return WithoutProjectAlternativeResults.AnalysisYears;
             }
         }
+        internal List<AlternativeResults> WithProjectAlternativeResults { get; set; }
+        internal AlternativeResults WithoutProjectAlternativeResults { get; set; }
         #endregion
 
         #region Constructor
         public AlternativeComparisonReportResults()
         {
-            _resultsList = new List<AlternativeResults>();
+            _aaeqReducedResultsList = new List<ConsequenceDistributionResults>();
+            _baseYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
+            _futureYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
         }
         #endregion
 
         #region Methods 
+        //These methods now assume that the same impact areas are in all three results lists - a reasonable assumption 
+        //How could they not? What could happen that could cause different impact areas or damage categories to be in different results?  
+        //We could cycle through each of the three lists, but that seems unnecessary 
         public List<int> GetImpactAreaIDs()
         {
             List<int> impactAreaIDs = new List<int>();
-            foreach (AlternativeResults alternativeResults in _resultsList)
+            foreach (ConsequenceDistributionResults consequenceReducedResults in _aaeqReducedResultsList)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in alternativeResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in consequenceReducedResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequenceResult.RegionID))
                     {
@@ -65,9 +69,9 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach(AlternativeResults alternativeResults in _resultsList)
+            foreach(ConsequenceDistributionResults consequenceReducedResults in _aaeqReducedResultsList)
             {
-                        foreach (ConsequenceDistributionResult consequenceResult in alternativeResults.ConsequenceResults.ConsequenceResultList)
+                        foreach (ConsequenceDistributionResult consequenceResult in consequenceReducedResults.ConsequenceResultList)
                         {
                             if (!assetCats.Contains(consequenceResult.AssetCategory))
                             {
@@ -81,9 +85,9 @@ namespace metrics
         public List<string> GetDamageCategories()
         {
             List<string> damCats = new List<string>();
-            foreach (AlternativeResults alternativeResults in _resultsList)
+            foreach (ConsequenceDistributionResults consequenceReducedResults in _aaeqReducedResultsList)
             {
-                foreach (ConsequenceDistributionResult consequenceResult in alternativeResults.ConsequenceResults.ConsequenceResultList)
+                foreach (ConsequenceDistributionResult consequenceResult in consequenceReducedResults.ConsequenceResultList)
                 {
                     if (!damCats.Contains(consequenceResult.DamageCategory))
                     {
@@ -94,27 +98,56 @@ namespace metrics
             }
             return damCats;
         }
-        //TODO: The below method should be renamed to reflect a generalization of 
         /// <summary>
-        /// This method gets the mean consequences reduced between the with- and without-project conditions for a given with-project condition, 
+        /// This method gets the mean aaeq damage reduced between the with- and without-project conditions for a given with-project condition, 
         /// impact area, damage category, and asset category combination. 
         ///  The level of aggregation of  consequences is determined by the arguments used in the method
-        /// For example, if you wanted the mean EAD for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = MeanConsequencesReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
+        /// For example, if you wanted the mean aaeq damage reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = MeanAAEQDamageReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
         /// <param name="alternativeID"></param>
         /// <param name="impactAreaID"></param>
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double MeanConsequencesReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanAAEQDamageReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetAlternativeResults(alternativeID).MeanAAEQDamage(impactAreaID, damageCategory, assetCategory);
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID).MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
-        /// This method calls the inverse CDF of damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// This method gets the mean base year ead reduced between the with- and without-project conditions for a given with-project condition, 
+        /// impact area, damage category, and asset category combination. 
         ///  The level of aggregation of  consequences is determined by the arguments used in the method
-        /// For example, if you wanted the EAD exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = ConsequencesReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
+        /// For example, if you wanted the mean EAD reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = MeanBaseYearEADReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <returns></returns>
+        public double MeanBaseYearEADReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).MeanDamage(damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition, 
+        /// impact area, damage category, and asset category combination. 
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the mean EAD for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = MeanFutureYearEADReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <returns></returns>
+        public double MeanFutureYearEADReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).MeanDamage(damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// This method calls the inverse CDF of aaeq damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = AAEQDamageReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="exceedanceProbability"></param>
         /// <param name="alternativeID"></param>
@@ -122,47 +155,115 @@ namespace metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double ConsequencesReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double AAEQDamageReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return GetAlternativeResults(alternativeID).AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
-        public void AddAlternativeResults(AlternativeResults alternativeResultsToAdd)
+        /// <summary>
+        /// This method calls the inverse CDF of base year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = BaseYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <returns></returns>
+        public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            AlternativeResults alternativeResults = GetAlternativeResults(alternativeResultsToAdd.AlternativeID);
-            if (alternativeResults.IsNull)
-            {
-                _resultsList.Add(alternativeResultsToAdd);
-            }
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// This method calls the inverse CDF of future year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        ///  The level of aggregation of  consequences is determined by the arguments used in the method
+        /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = FutureYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="exceedanceProbability"></param>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param> either residential, commercial, etc...
+        /// <param name="assetCategory"></param> either structure, content, etc...
+        /// <returns></returns>
+        public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
         /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// ThreadsafeInlineHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
+        /// IHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="alternativeID"></param>
         /// <param name="impactAreaID"></param>
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public Statistics.Histograms.IHistogram GetAlternativeResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-            return alternativeResults.GetAAEQDamageHistogram(impactAreaID, damageCategory, assetCategory);
+            ConsequenceDistributionResults aaeqResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
+            return aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
-        public AlternativeResults GetAlternativeResults(int alternativeID)
+        /// <summary>
+        /// This method gets the histogram (distribution) of base year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// IHistogram histogram = GetBaseYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
+        public IHistogram GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            foreach (AlternativeResults alternativeResults in _resultsList)
+            ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
+            return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+        }
+        /// <summary>
+        /// This method gets the histogram (distribution) of future year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
+        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
+        /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// IHistogram histogram = GetFutureYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
+        /// </summary>
+        /// <param name="alternativeID"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="assetCategory"></param>
+        /// <returns></returns>
+        public IHistogram GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        {
+            ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
+            return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+        }
+        internal void AddAlternativeResults(ConsequenceDistributionResults consequenceDistributionResults, bool isEADResults = false, bool isBaseYearResults = false)
+        {
+            ConsequenceDistributionResults consequenceResults = GetConsequencesReducedResultsForGivenAlternative(consequenceDistributionResults.AlternativeID, isEADResults, isBaseYearResults);
+            if (consequenceResults.IsNull)
             {
-                if (alternativeResults.AlternativeID.Equals(alternativeID))
+                _aaeqReducedResultsList.Add(consequenceDistributionResults);
+            }
+        }
+        internal ConsequenceDistributionResults GetConsequencesReducedResultsForGivenAlternative(int alternativeID, bool getEADResults = false, bool getBaseYearResults = false)
+        {
+            List<ConsequenceDistributionResults> listToSearch = new List<ConsequenceDistributionResults>();
+            if(!getEADResults) { listToSearch = _aaeqReducedResultsList; }
+            else if(getEADResults && getBaseYearResults) { listToSearch = _baseYearEADReducedResultsList; }
+            else if(getEADResults && !getBaseYearResults) { listToSearch = _futureYearEADReducedResultsList; }
+            else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }
+            foreach (ConsequenceDistributionResults consequenceDistResults in listToSearch)
+            {
+                if (consequenceDistResults.AlternativeID.Equals(alternativeID))
                 {
-                    return alternativeResults;
+                    return consequenceDistResults;
                 }
             }
-            AlternativeResults dummyAlternativeResult = new AlternativeResults();
+            ConsequenceDistributionResults dummyAlternativeResult = new ConsequenceDistributionResults();
             ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An arbitrary object is being returned.")));
             return dummyAlternativeResult;
-
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)
@@ -170,39 +271,6 @@ namespace metrics
             MessageReport?.Invoke(sender, e);
         }
 
-        public bool Equals(AlternativeComparisonReportResults alternativeComparisonReportResultsToCompare)
-        {
-            foreach (AlternativeResults alternativeResults in _resultsList)
-            {
-                AlternativeResults comparee = alternativeComparisonReportResultsToCompare.GetAlternativeResults(alternativeResults.AlternativeID);
-                if (!alternativeResults.Equals(comparee))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public XElement WriteToXML()
-        {
-            XElement mainElement = new XElement("AlternativeComparisonReportResults");
-            foreach (AlternativeResults alternativeResults in _resultsList)
-            {
-                XElement xElement = alternativeResults.WriteToXML();
-                mainElement.Add(xElement);
-            }
-            return mainElement;
-        }
-        public static AlternativeComparisonReportResults ReadFromXML(XElement xElement)
-        {
-            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReportResults();
-            foreach (XElement element in xElement.Elements())
-            {
-                AlternativeResults alternativeResults = AlternativeResults.ReadFromXML(element);
-                alternativeComparisonReportResults.AddAlternativeResults(alternativeResults);
-            }
-            return alternativeComparisonReportResults;
-        }
         #endregion
     }
 }
