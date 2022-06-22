@@ -17,12 +17,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <mvvmView:SelectableMessageView  Grid.Row="0"/>
-        <Button Content="Close" HorizontalAlignment="Right" Grid.Row="1" Margin="5,5,2,5" Width="100" Height="22" 
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label Content="Compute Progress:" />
+            <ProgressBar Grid.Row="1" Minimum="0" Maximum="100" Value="{Binding Progress}"  HorizontalAlignment="Stretch" Width="400" Margin="5"/>
+            <Label Content="{Binding Progress}"/>
+            <Label Content="%"/>
+            <Button Content="Close" HorizontalAlignment="Right" Grid.Row="1" Margin="5,5,2,5" Width="100" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
             <Button.CommandParameter>
                 <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
             </Button.CommandParameter>
-        </Button>
+            </Button>
+            
+        </StackPanel>
     </Grid>
     
 </UserControl>

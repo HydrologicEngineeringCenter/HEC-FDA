@@ -10,7 +10,7 @@
         public double Point75 { get; set; }
         public double Point5 { get; set; }
         public double Point25 { get; set; }
-        public AAEQSummaryRowItem()
+        public AAEQSummaryRowItem(string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ, double AAEQReduced, double point75, double point5, double point25)
         {
             WithoutProjAlternative = 1;
             WithoutProjAAEQ = 2;

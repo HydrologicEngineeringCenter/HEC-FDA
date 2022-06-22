@@ -60,13 +60,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeResult AlternativeResult { get; }
 
-        public SpecificAltCompReportResultsVM(AlternativeResult altResult)
+        public SpecificAltCompReportResultsVM(AlternativeResult altResult, List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<AAEQSummaryRowItem> aaeqSummary)
         {
             Name = altResult.Name;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
            
-            _AAEQSummaryVM = new AAEQSummaryVM(studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
-            _EADSummaryVM = new EADSummaryVM(studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
+            _AAEQSummaryVM = new AAEQSummaryVM(aaeqSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
+            _EADSummaryVM = new EADSummaryVM(baseYearSummary, altResult, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
             AlternativeResult = altResult;
             YearsVisible = true;
 

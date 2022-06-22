@@ -1,7 +1,6 @@
 ﻿using HEC.FDA.View.Utilities;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Implementations;
 using System;
 using System.Windows;
 

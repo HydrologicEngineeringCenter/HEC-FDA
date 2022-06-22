@@ -85,7 +85,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
-            MyGraphicalVM = new GraphicalVM(graphiclVMele);
+            if(graphiclVMele != null)
+            {
+                MyGraphicalVM = new GraphicalVM(graphiclVMele);
+            }
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
                 ImageSource = ImageSources.FREQUENCY_IMAGE,

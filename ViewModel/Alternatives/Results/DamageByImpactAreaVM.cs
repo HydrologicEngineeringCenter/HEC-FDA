@@ -81,6 +81,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             PeriodOfAnalysis = period;
             RateAndPeriodVisible = true;
 
+            
+
             List<int> impactAreaIDs = new List<int>();
             //todo: waiting to get richards new get impact areas method.
             foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
