@@ -26,13 +26,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
             }
             LinkList();
         }
-        public void Clear()
-        {
-            foreach(object row in Data)
-            {
-                Data.Remove(row);
-            }
-        }
         public void LinkList()
         {
             //Nothing to link if the list isn't more than 1.
