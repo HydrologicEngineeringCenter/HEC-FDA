@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             Options.Add(new GraphicalDataProvider());
             SelectedItem = Options[0];
             Initialize();
-            SelectedItem.Clear();
+            SelectedItem.Data.Clear();
 
             double[] probs = probabilityFunction.ExceedanceProbability;
             double[] ys;
