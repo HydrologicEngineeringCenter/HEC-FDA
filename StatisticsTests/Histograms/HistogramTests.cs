@@ -223,7 +223,7 @@ namespace StatisticsTests.Histograms
 
             int seed = 8305;
             Random random = new Random(seed);
-            int iterations = 100000;
+            int iterations = 10000;
             for (int i = 0; i < iterations; i++)
             {
                 histogram1.AddObservationToHistogram(normal1.InverseCDF(random.NextDouble()));

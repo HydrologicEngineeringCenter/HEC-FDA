@@ -311,12 +311,16 @@ namespace Statistics.Histograms
                 AddObservationToHistogram(x);
             }
         }
-        private double FindBinCount(double x, bool cumulative = true)
+        private int FindBinCount(double x, bool cumulative = true)
         {
             int obsIndex = Convert.ToInt32(Math.Floor((x - Min) / _BinWidth));
+            if(obsIndex == _BinCounts.Length)
+            {
+                obsIndex -= 1;
+            }
             if (cumulative)
             {
-                double sum = 0;
+                int sum = 0;
                 for (int i = 0; i<obsIndex+1; i++)
                 {
                     sum += _BinCounts[i];
@@ -452,6 +456,7 @@ namespace Statistics.Histograms
             //adding 0 histograms to *this* histogram changes nothing 
             if (histograms.Count > 0)
             {
+                int iterations = 10000;
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
                 double min = Min;
                 double max = Max;
@@ -465,34 +470,36 @@ namespace Statistics.Histograms
                 double range = max - min;
                 double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
                 double binWidth = range / binQuantity;
-                Histogram histogram = new Histogram(min, binWidth, convergenceCriteria);
-                int seed = 1234;
-                Random random = new Random(seed);
-                for (int i = 0; i < sampleSize; i++)
+                Histogram aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+                for (int i = 0; i < iterations; i++)
                 {
-                    double summedValue = 0;
+                    double probabilityStep = (i + 0.5) / iterations;
+                    double summedValue = this.InverseCDF(probabilityStep);
+                    int summedBinCount = this.FindBinCount(summedValue);
                     foreach (Histogram histogramToSample in histograms)
                     {
-                        double value = histogramToSample.InverseCDF(random.NextDouble());
-                        summedValue += value;
+                        double sampledValue = histogramToSample.InverseCDF(probabilityStep);
+                        summedValue += sampledValue;
+                        summedBinCount += histogramToSample.FindBinCount(sampledValue, false);
                     }
-                    double thisValue = this.InverseCDF(random.NextDouble());
-                    summedValue += thisValue;
-                    histogram.AddObservationToHistogram(summedValue, i);
+                    for (int j = 0; j < summedBinCount; j++)
+                    {
+                        aggregatedHistogram.AddObservationToHistogram(summedValue);
+                    }
                 }
-                _BinCounts = histogram._BinCounts;
-                _SampleMean = histogram._SampleMean;
-                _SampleVariance = histogram._SampleVariance;
-                _Min = histogram._Min;
-                _Max = histogram._Max;
-                _SampleMin = histogram._SampleMin;
-                _SampleMax = histogram._SampleMax;
-                _SampleSize = histogram._SampleSize;
-                _BinWidth = histogram._BinWidth;
-                _Converged = histogram._Converged;
-                _ConvergedIterations = histogram._ConvergedIterations;
-                _ConvergedOnMax = histogram._ConvergedOnMax;
-                _ConvergenceCriteria = histogram._ConvergenceCriteria;
+                _BinCounts = aggregatedHistogram._BinCounts;
+                _SampleMean = aggregatedHistogram._SampleMean;
+                _SampleVariance = aggregatedHistogram._SampleVariance;
+                _Min = aggregatedHistogram._Min;
+                _Max = aggregatedHistogram._Max;
+                _SampleMin = aggregatedHistogram._SampleMin;
+                _SampleMax = aggregatedHistogram._SampleMax;
+                _SampleSize = aggregatedHistogram._SampleSize;
+                _BinWidth = aggregatedHistogram._BinWidth;
+                _Converged = aggregatedHistogram._Converged;
+                _ConvergedIterations = aggregatedHistogram._ConvergedIterations;
+                _ConvergedOnMax = aggregatedHistogram._ConvergedOnMax;
+                _ConvergenceCriteria = aggregatedHistogram._ConvergenceCriteria;
             }
         }
         public XElement WriteToXML()
