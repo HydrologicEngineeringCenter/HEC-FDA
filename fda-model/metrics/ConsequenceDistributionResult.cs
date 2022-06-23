@@ -11,7 +11,6 @@ namespace metrics
     {
         #region Fields
         //TODO: hard-wiring the bin width is no good
-        private const double HISTOGRAM_BINWIDTH = 10;
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
@@ -75,7 +74,7 @@ namespace metrics
             _assetCategory = "unassigned";
             _regionID = 0;
             _convergenceCriteria = new ConvergenceCriteria();
-            _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = true;
         }
         /// <summary>
@@ -87,7 +86,7 @@ namespace metrics
             _assetCategory = assetCategory;
             _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new ThreadsafeInlineHistogram(HISTOGRAM_BINWIDTH, _convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
         }
         /// <summary>

@@ -481,13 +481,8 @@ namespace Statistics.Histograms
                 
             }
         }
-        public static IHistogram AddHistograms(List<IHistogram> histograms, int iterations = 10000)
+        public static IHistogram AddHistograms(List<IHistogram> histograms)
         {
-            string beginningMessage = "Beginning histogram addition";
-            TimeStampedErrorMessage beginningErrorMessage = new TimeStampedErrorMessage(beginningMessage, ErrorLevel.Info);
-            IHistogram messageReporter = histograms[0];
-            messageReporter.ReportMessage(messageReporter, new MessageEventArgs(beginningErrorMessage));
-
             IHistogram aggregatedHistogram;
 
             if (histograms.Count > 0)
@@ -495,26 +490,27 @@ namespace Statistics.Histograms
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
                 double min = 0;
                 double max = 0;
-                int sampleSize = 0;
+                int binQuantity = 0;
                 foreach (IHistogram histogramToAdd in histograms)
                 {
                     min += histogramToAdd.Min;
                     max += histogramToAdd.Max;
-                    sampleSize += histogramToAdd.SampleSize;
+                    binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
                 }
                 double range = max - min;
-                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
+                //double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
                 double binWidth = range / binQuantity;
                 aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
 
-                for (int i = 0; i < iterations; i++)
+                for (int i = 0; i < binQuantity; i++)
                 {
-                    double probabilityStep = (i + 0.5) / iterations;
+                    double probabilityStep = (i + 0.5) / binQuantity;
                     double summedValue = 0;
                     int summedBinCount = 0;
 
                     foreach (IHistogram histogramToSample in histograms)
                     {
+                        histogramToSample.ForceDeQueue();
                         double sampledValue = histogramToSample.InverseCDF(probabilityStep);
                         summedValue += sampledValue;
                         summedBinCount += histogramToSample.FindBinCount(sampledValue, false);
@@ -529,9 +525,6 @@ namespace Statistics.Histograms
             {
                 aggregatedHistogram = new Histogram(0,1);
             }
-            string completedMessage = "Histogram addition completed";
-            TimeStampedErrorMessage completedErrorMessage = new TimeStampedErrorMessage(completedMessage, ErrorLevel.Info);
-            aggregatedHistogram.ReportMessage(aggregatedHistogram, new MessageEventArgs(completedErrorMessage));
             return aggregatedHistogram;
         }
         public XElement WriteToXML()
