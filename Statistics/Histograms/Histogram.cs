@@ -3,10 +3,14 @@ using System.Linq;
 using Utilities;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.Histograms
 {
-    public class Histogram: IHistogram
+    public class Histogram: IHistogram, IReportMessage
     {
         #region Fields
         private Int32[] _BinCounts = new Int32[] { };
@@ -26,6 +30,29 @@ namespace Statistics.Histograms
         private const string _type = "Histogram";
         #endregion
         #region Properties
+        public event MessageReportedEventHandler MessageReport;
+
+        internal double SampleMax
+        {
+            get
+            {
+                return _SampleMax;
+            }
+        }
+        internal double SampleMin
+        {
+            get
+            {
+                return _SampleMin;
+            }
+        }
+        internal bool ConvergedOnMax
+        {
+            get
+            {
+                return _ConvergedOnMax;
+            }
+        }
 
         public string MyType
         {
@@ -150,6 +177,10 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Functions
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
         public double Skewness()
         {
             double deviation = 0, deviation2 = 0, deviation3 = 0;
@@ -311,7 +342,7 @@ namespace Statistics.Histograms
                 AddObservationToHistogram(x);
             }
         }
-        private int FindBinCount(double x, bool cumulative = true)
+        public int FindBinCount(double x, bool cumulative = true)
         {
             int obsIndex = Convert.ToInt32(Math.Floor((x - Min) / _BinWidth));
             if(obsIndex == _BinCounts.Length)
@@ -450,18 +481,22 @@ namespace Statistics.Histograms
                 
             }
         }
-        public void AddHistograms(List<IHistogram> histograms)
+        public static IHistogram AddHistograms(List<IHistogram> histograms, int iterations = 10000)
         {
-            //if histograms.count == 0, then nothing happens, as you would expect
-            //adding 0 histograms to *this* histogram changes nothing 
+            string beginningMessage = "Beginning histogram addition";
+            TimeStampedErrorMessage beginningErrorMessage = new TimeStampedErrorMessage(beginningMessage, ErrorLevel.Info);
+            IHistogram messageReporter = histograms[0];
+            messageReporter.ReportMessage(messageReporter, new MessageEventArgs(beginningErrorMessage));
+
+            IHistogram aggregatedHistogram;
+
             if (histograms.Count > 0)
             {
-                int iterations = 10000;
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                double min = Min;
-                double max = Max;
-                int sampleSize = SampleSize;
-                foreach (Histogram histogramToAdd in histograms)
+                double min = 0;
+                double max = 0;
+                int sampleSize = 0;
+                foreach (IHistogram histogramToAdd in histograms)
                 {
                     min += histogramToAdd.Min;
                     max += histogramToAdd.Max;
@@ -470,13 +505,15 @@ namespace Statistics.Histograms
                 double range = max - min;
                 double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
                 double binWidth = range / binQuantity;
-                Histogram aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+                aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+
                 for (int i = 0; i < iterations; i++)
                 {
                     double probabilityStep = (i + 0.5) / iterations;
-                    double summedValue = this.InverseCDF(probabilityStep);
-                    int summedBinCount = this.FindBinCount(summedValue);
-                    foreach (Histogram histogramToSample in histograms)
+                    double summedValue = 0;
+                    int summedBinCount = 0;
+
+                    foreach (IHistogram histogramToSample in histograms)
                     {
                         double sampledValue = histogramToSample.InverseCDF(probabilityStep);
                         summedValue += sampledValue;
@@ -484,23 +521,18 @@ namespace Statistics.Histograms
                     }
                     for (int j = 0; j < summedBinCount; j++)
                     {
-                        aggregatedHistogram.AddObservationToHistogram(summedValue);
+                        aggregatedHistogram.AddObservationToHistogram(summedValue, j);
                     }
                 }
-                _BinCounts = aggregatedHistogram._BinCounts;
-                _SampleMean = aggregatedHistogram._SampleMean;
-                _SampleVariance = aggregatedHistogram._SampleVariance;
-                _Min = aggregatedHistogram._Min;
-                _Max = aggregatedHistogram._Max;
-                _SampleMin = aggregatedHistogram._SampleMin;
-                _SampleMax = aggregatedHistogram._SampleMax;
-                _SampleSize = aggregatedHistogram._SampleSize;
-                _BinWidth = aggregatedHistogram._BinWidth;
-                _Converged = aggregatedHistogram._Converged;
-                _ConvergedIterations = aggregatedHistogram._ConvergedIterations;
-                _ConvergedOnMax = aggregatedHistogram._ConvergedOnMax;
-                _ConvergenceCriteria = aggregatedHistogram._ConvergenceCriteria;
             }
+            else
+            {
+                aggregatedHistogram = new Histogram(0,1);
+            }
+            string completedMessage = "Histogram addition completed";
+            TimeStampedErrorMessage completedErrorMessage = new TimeStampedErrorMessage(completedMessage, ErrorLevel.Info);
+            aggregatedHistogram.ReportMessage(aggregatedHistogram, new MessageEventArgs(completedErrorMessage));
+            return aggregatedHistogram;
         }
         public XElement WriteToXML()
         {
