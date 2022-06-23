@@ -453,17 +453,14 @@ namespace Statistics.Histograms
             if (histograms.Count > 0)
             {
                 ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                double min = 0;
-                double max = 0;
-                int sampleSize = 0;
+                double min = Min;
+                double max = Max;
+                int sampleSize = SampleSize;
                 foreach (Histogram histogramToAdd in histograms)
                 {
-                    double newMin = Math.Min(min, histogramToAdd.Min);
-                    min = newMin;
-                    double newMax = Math.Max(max, histogramToAdd.Max);
-                    max = newMax;
-                    int newSampleSize = Math.Max(sampleSize, (int)histogramToAdd.SampleSize);
-                    sampleSize = newSampleSize;
+                    min += histogramToAdd.Min;
+                    max += histogramToAdd.Max;
+                    sampleSize += histogramToAdd.SampleSize;
                 }
                 double range = max - min;
                 double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
