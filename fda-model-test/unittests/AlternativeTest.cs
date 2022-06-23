@@ -35,10 +35,6 @@ namespace fda_model_test.unittests
         [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1)]
         public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
-            for (int m = 0; m < 10; m++)
-            {
-
-
                 MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
                 ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
                 ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -121,7 +117,7 @@ namespace fda_model_test.unittests
                 double differenceActualFutureYearEADExceeded = actualFutureYearEADExceeded - expectedFutureYearDamageExceededWithAnyProb;
                 double errorFutureYearEADExceeded = Math.Abs(differenceActualFutureYearEADExceeded / actualFutureYearEADExceeded);
                 Assert.True(errorFutureYearEADExceeded < tolerance);
-            }    
+        
         }
 
         [Theory]

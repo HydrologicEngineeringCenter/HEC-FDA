@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.Histograms
 {
@@ -35,6 +39,8 @@ namespace Statistics.Histograms
         private const string _type = "ThreadsafeInlineHistogram";
         #endregion
         #region Properties
+        public event MessageReportedEventHandler MessageReport;
+
         public string MyType
         {
             get
@@ -198,6 +204,10 @@ namespace Statistics.Histograms
         #endregion
 
         #region Methods
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             DeQueue();

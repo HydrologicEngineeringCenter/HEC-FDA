@@ -200,8 +200,6 @@ namespace StatisticsTests.Histograms
         [Fact]
         public void HistogramsShouldAddCorrectly()
         {
-            for (int m = 0; m < 10; m++)
-            { 
                 Normal normal1 = new Normal(300, 10);
                 Normal normal2 = new Normal(400, 20);
                 Normal normal3 = new Normal(200, 9);
@@ -253,7 +251,7 @@ namespace StatisticsTests.Histograms
                         double error = Math.Abs((actual[i] - expected[i]) / expected[i]);
                         Assert.True(error < tolerance);
                     }
-            }
+         
         }
         [Theory]
         [InlineData(10000, .1, .80)]
