@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,93 +12,82 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
-        public DamageByImpactAreaVM(ScenarioResults results)
+
+        public DamageByImpactAreaVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int period = -1)
         {
-            RateAndPeriodVisible = false;
-            //todo: i think richard is writing a method to return the impact areas list
-            List<int> impactAreaIDs = new List<int>();
-
-            foreach(IContainImpactAreaScenarioResults result in results.ResultsList)
+            if (double.IsNaN(discountRate))
             {
-                impactAreaIDs.Add(result.ImpactAreaID);
+                RateAndPeriodVisible = false;
+            }
+            else
+            { 
+                DiscountRate = discountRate;
+                PeriodOfAnalysis = period;
+                RateAndPeriodVisible = true;
             }
 
-            foreach(int id in impactAreaIDs)
-            {
-                double mean = results.MeanExpectedAnnualConsequences(impactAreaID: id);
-                string impactAreaName = GetImpactAreaFromID(id);
-                Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
-            }
-
-        }
-
-        public DamageByImpactAreaVM(AlternativeResults results)
-        {
-            RateAndPeriodVisible = false;
-
-            List<int> impactAreaIDs = new List<int>();
-
-            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
-            {
-                impactAreaIDs.Add(result.RegionID);
-            }
+            List<int> impactAreaIDs = results.GetImpactAreaIDs();
 
             foreach (int id in impactAreaIDs)
             {
-                double mean = results.MeanConsequence(impactAreaID: id);
                 string impactAreaName = GetImpactAreaFromID(id);
-                Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
-            }
 
+                switch (damageMeasureYear)
+                {
+                    case DamageMeasureYear.Base:
+                        double baseMean = results.MeanBaseYearEAD(impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, baseMean));
+                        break;
+                    case DamageMeasureYear.Future:
+                        double futureMean = results.MeanFutureYearEAD(impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean)); 
+                        break;
+                    case DamageMeasureYear.AAEQ:
+                        double mean = results.MeanAAEQDamage(impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, mean)); 
+                        break;
+                }
+            }
         }
 
-        public DamageByImpactAreaVM(double discountRate,int period, AlternativeComparisonReportResults results, int altID)
+        public DamageByImpactAreaVM(double discountRate,int period, AlternativeComparisonReportResults results, int altID, DamageMeasureYear damageMeasureYear)
         {
-            DiscountRate = discountRate;
-            PeriodOfAnalysis = period;
-            RateAndPeriodVisible = false;
-
-            List<int> impactAreaIDs = new List<int>();
-
-            foreach (AlternativeResults result in results.ConsequencesReducedResultsList)
+            if (double.IsNaN(discountRate))
             {
-                //todo: richard will write method to get the impact area ids.
-                //impactAreaIDs.Add(result.);
+                RateAndPeriodVisible = false;
             }
+            else
+            {
+                DiscountRate = discountRate;
+                PeriodOfAnalysis = period;
+                RateAndPeriodVisible = true;
+            }
+
+            List<int> impactAreaIDs = results.GetImpactAreaIDs();
 
             foreach (int id in impactAreaIDs)
             {
-                double mean = results.MeanConsequencesReduced(altID, impactAreaID: id);
                 string impactAreaName = GetImpactAreaFromID(id);
-                Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
-            }
 
+                switch (damageMeasureYear)
+                {
+                    case DamageMeasureYear.Base:
+                        double baseMean = results.MeanWithProjectBaseYearEAD(altID, impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, baseMean));
+                        break;
+                    case DamageMeasureYear.Future:
+                        double futureMean = results.MeanWithProjectFutureYearEAD(altID, impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean));
+                        break;
+                    case DamageMeasureYear.AAEQ:
+                        double mean = results.MeanWithProjectAAEQDamage(altID, impactAreaID: id);
+                        Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
+                        break;
+                }
+
+            }
         }
-
-       
-        public DamageByImpactAreaVM(double discountRate, int period, AlternativeResults results)
-        {
-            DiscountRate = discountRate;
-            PeriodOfAnalysis = period;
-            RateAndPeriodVisible = true;
-
-            
-
-            List<int> impactAreaIDs = new List<int>();
-            //todo: waiting to get richards new get impact areas method.
-            foreach (ConsequenceDistributionResult result in results.ConsequenceResults.ConsequenceResultList)
-            {
-                impactAreaIDs.Add(result.RegionID);
-            }
-
-            foreach (int id in impactAreaIDs)
-            {
-                double mean = results.MeanConsequence(impactAreaID: id);
-                string impactAreaName = GetImpactAreaFromID(id);
-                Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
-            }
-
-        }
+  
 
         private string GetImpactAreaFromID(int id)
         {
@@ -105,7 +95,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<ImpactAreaElement> impactAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElems.Count > 0)
             {
-                //there only ever be one or zero
+                //there will only ever be one or zero
                 ObservableCollection<ImpactArea.ImpactAreaRowItem> impactAreaRows = impactAreaElems[0].ImpactAreaRows;
                 foreach (ImpactArea.ImpactAreaRowItem row in impactAreaRows)
                 {
