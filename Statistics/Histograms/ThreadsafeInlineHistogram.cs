@@ -605,7 +605,7 @@ namespace Statistics.Histograms
                 }
                 double range = max - min;
                 double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
-                double binWidth = range / sampleSize;
+                double binWidth = range / binQuantity;
                 ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
                 int seed = 1234;
                 Random random = new Random(seed);
