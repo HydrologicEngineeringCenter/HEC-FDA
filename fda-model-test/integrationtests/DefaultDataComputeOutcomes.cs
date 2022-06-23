@@ -192,9 +192,9 @@ namespace fda_model_test.integrationtests
             //TODO: Add these three lines to the investigation list. 
             //the results should be approximately the same but are off by 
             //about 10%
-            //IHistogram eadHistogram = alternativeResults.GetBaseYearEADHistogram();
-            //double actualMeanEADFromAnotherSource = eadHistogram.Mean;
-            //Assert.Equal(actualMeanEAD, actualMeanEADFromAnotherSource, 1);
+            IHistogram eadHistogram = alternativeResults.GetBaseYearEADHistogram();
+            double actualMeanEADFromAnotherSource = eadHistogram.Mean;
+            Assert.Equal(actualMeanEAD, actualMeanEADFromAnotherSource, 1);
 
             Assert.True(EADRelativeDifference < tolerance);
             Assert.True(AAEQRelativeDifference < tolerance);

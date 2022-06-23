@@ -491,20 +491,20 @@ namespace Statistics.Histograms
                 double min = 0;
                 double max = 0;
                 int binQuantity = 0;
+                double binWidth = 0;
                 foreach (IHistogram histogramToAdd in histograms)
                 {
                     min += histogramToAdd.Min;
                     max += histogramToAdd.Max;
                     binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
+                    binWidth += histogramToAdd.BinWidth;
                 }
-                double range = max - min;
-                //double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
-                double binWidth = range / binQuantity;
+                binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                 aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
 
                 for (int i = 0; i < binQuantity; i++)
                 {
-                    double probabilityStep = (i + 0.5) / binQuantity;
+                    double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
                     double summedValue = 0;
                     int summedBinCount = 0;
 
@@ -517,7 +517,7 @@ namespace Statistics.Histograms
                     }
                     for (int j = 0; j < summedBinCount; j++)
                     {
-                        aggregatedHistogram.AddObservationToHistogram(summedValue, j);
+                        aggregatedHistogram.AddObservationToHistogram(summedValue, j); //this is a coarse approximation, there is probably a more granular way of doing this 
                     }
                 }
             }
