@@ -501,7 +501,7 @@ namespace Statistics.Histograms
                 }
                 binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                 aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
-
+                //walk across the probability domain of each histogram at equal probability intervals 
                 for (int i = 0; i < binQuantity; i++)
                 {
                     double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
@@ -511,14 +511,14 @@ namespace Statistics.Histograms
                     foreach (IHistogram histogramToSample in histograms)
                     {
                         histogramToSample.ForceDeQueue();
-                        double sampledValue = histogramToSample.InverseCDF(probabilityStep);
-                        summedValue += sampledValue;
-                        summedBinCount += histogramToSample.FindBinCount(sampledValue, false);
+                        double sampledValue = histogramToSample.InverseCDF(probabilityStep); //what is the value of each histogram at the given probability step
+                        summedValue += sampledValue; //sum those values 
+                        summedBinCount += histogramToSample.FindBinCount(sampledValue, false); //sum their frequencies 
                     }
                     for (int j = 0; j < summedBinCount; j++)
-                    {
-                        aggregatedHistogram.AddObservationToHistogram(summedValue, j); //this is a coarse approximation, there is probably a more granular way of doing this 
-                    }
+                    {//this is a coarse approximation, there is probably a more granular way of doing this 
+                        aggregatedHistogram.AddObservationToHistogram(summedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
+                    } 
                 }
             }
             else

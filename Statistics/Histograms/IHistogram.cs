@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
 namespace Statistics.Histograms
 {
-    public interface IHistogram: IReportMessage //how to tell interface to implement another interface 
+    public interface IHistogram: IReportMessage 
     {
         #region Properties 
         bool IsConverged { get; } 
