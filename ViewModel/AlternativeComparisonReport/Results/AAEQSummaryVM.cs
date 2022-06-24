@@ -15,12 +15,5 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             Rows = rows;
         }
 
-        //private void loadDummyData()
-        //{
-        //    for (int i = 0; i < 5; i++)
-        //    {
-        //        Rows.Add(new AAEQSummaryRowItem());
-        //    }
-        //}
     }
 }

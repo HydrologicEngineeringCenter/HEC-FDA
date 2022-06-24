@@ -281,7 +281,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return eadSummaryRowItems;
         }
 
-        private List<AAEQSummaryRowItem> CreateAAEQSummaryTable(AlternativeComparisonReportResults results)// AlternativeResults withoutProjResults, AlternativeResults futureYearResults)
+        private List<AAEQSummaryRowItem> CreateAAEQSummaryTable(AlternativeComparisonReportResults results)
         {
             List<AAEQSummaryRowItem> aaeqSummaryRowItems = new List<AAEQSummaryRowItem>();
 
@@ -362,6 +362,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 if(!foundAlt)
                 {
                     vr.AddErrorMessage("An alternative has been removed. Edit this alternative comparison report and try again.");
+                    break;
                 }
             }        
 
