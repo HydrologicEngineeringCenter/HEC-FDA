@@ -160,9 +160,13 @@ namespace HEC.FDA.ViewModel.Alternatives
             IASElementSet firstElem = iASElems[0];
             IASElementSet secondElem = iASElems[1];
 
-            vr.AddErrorMessage(DoBothScenariosExist(firstElem, secondElem).ErrorMessage);
-            vr.AddErrorMessage(AreScenarioYearsDifferent(firstElem, secondElem).ErrorMessage);
-            vr.AddErrorMessage(DoScenariosHaveResults(firstElem, secondElem).ErrorMessage);
+            FdaValidationResult scenariosExistResults = DoBothScenariosExist(firstElem, secondElem);
+            vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
+            if (scenariosExistResults.IsValid)
+            {
+                vr.AddErrorMessage(AreScenarioYearsDifferent(firstElem, secondElem).ErrorMessage);
+                vr.AddErrorMessage(DoScenariosHaveResults(firstElem, secondElem).ErrorMessage);
+            }
 
             return vr;
         }
@@ -275,7 +279,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 

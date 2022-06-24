@@ -98,7 +98,6 @@ namespace HEC.FDA.ViewModel.Saving
             //this updates the parent table
             UpdateTableRow(TableName, elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
 
-            //make this so that i can pass in "childElement" and have it updated
             StudyCacheForSaving.UpdateElement( elementToSave);
         }
 

@@ -115,6 +115,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void SaveExisting( ChildElement element)
         {
+            string tooltip = StringConstants.CreateLastEditTooltip(DateTime.Now.ToString("G"));
+            element.UpdateTreeViewHeader(element.Name);
+            element.CustomTreeViewHeader.Tooltip = tooltip;
             base.SaveExisting( element);
         }
 

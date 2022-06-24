@@ -228,7 +228,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Results = results;
             Application.Current.Dispatcher.Invoke(
             (Action)(() => 
-            { 
+            {
                 PersistenceFactory.GetIASManager().SaveExisting(this);
                 MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (messageBoxResult == MessageBoxResult.Yes)
