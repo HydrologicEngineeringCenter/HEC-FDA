@@ -95,8 +95,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             XElement resultsElem = setElem.Element("ScenarioResults");
             if(resultsElem != null)
             {
-                //todo: read results once Richard fixes the bug in writing results
-                //Results = ScenarioResults.ReadFromXML(resultsElem);
+                Results = ScenarioResults.ReadFromXML(resultsElem);
             }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name)
@@ -187,16 +186,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
         }
 
-        public List<ImpactAreaScenarioSimulation> GetSimulations()
-        {
-            List<ImpactAreaScenarioSimulation> results = new List<ImpactAreaScenarioSimulation>();
-            foreach (SpecificIAS ias in SpecificIASElements)
-            {
-                results.Add(ias.Simulation);
-            }
-            return results;
-        }
-
         private string GetImpactAreaNameFromID(ObservableCollection<ImpactAreaRowItem> rows, int id)
         {
             string rowName = null;
@@ -212,8 +201,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         }
 
         private void ViewResults(object arg1, EventArgs arg2)
-        {
-            
+        {          
             List<SpecificIASResultVM> results = GetResults();
             if (results.Count>0)
             {
@@ -231,8 +219,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
             ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
-            string header = "Compute Log";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog");
+            string header = "Compute Log For: " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);
         }
         private void ComputeCompleted(ScenarioResults results)
@@ -242,7 +230,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             (Action)(() => 
             { 
                 PersistenceFactory.GetIASManager().SaveExisting(this);
-                MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", "Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     ViewResults(this, new EventArgs());

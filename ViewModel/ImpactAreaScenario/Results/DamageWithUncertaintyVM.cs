@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.ConsequenceResults.MeanDamage("Total", "Total", impactAreaID);
-            IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResult("Total", "Total", impactAreaID).ConsequenceHistogram;
+            IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: impactAreaID);
             double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x).ToArray();
 
             _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);

@@ -4,13 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
+             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -35,5 +39,12 @@
             </DataGrid.Columns>
 
         </DataGrid>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Label Content="Discount Rate:" />
+            <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+            <Label Content="Period of Analysis:" />
+            <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </UserControl>

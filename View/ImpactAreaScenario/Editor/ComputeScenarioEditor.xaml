@@ -17,12 +17,38 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <mvvmView:SelectableMessageView  Grid.Row="0"/>
-        <Button Content="Close" HorizontalAlignment="Right" Grid.Row="1" Margin="5,5,2,5" Width="100" Height="22" 
+        
+        <Grid Grid.Row="1"  >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Computing Impact Area:" VerticalAlignment="Center" Margin="5,0,5,0" />
+            <TextBlock Grid.Column="1" Text="{Binding SimName}" Margin="2,0,5,0" VerticalAlignment="Center"/>
+
+            <ProgressBar Grid.Column="2" Minimum="0" Maximum="100" Value="{Binding Progress}"  HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
+            
+            <TextBlock Grid.Column="3" Text="{Binding Progress}" Margin="2,0,0,0" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="4" Text="%" Margin="2" VerticalAlignment="Center" />
+
+            <TextBlock Grid.Column="5" Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="6" Text="{Binding NumberCompleted}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+
+            <Button Grid.Column="7" Content="Close" HorizontalAlignment="Right"  Margin="20,5,2,5" Width="100" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
             <Button.CommandParameter>
                 <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>
             </Button.CommandParameter>
-        </Button>
+            </Button>
+            
+        </Grid>
     </Grid>
     
 </UserControl>

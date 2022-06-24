@@ -8,19 +8,12 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public List<AAEQSummaryRowItem> Rows { get; } = new List<AAEQSummaryRowItem>();
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
-        public AAEQSummaryVM(double discountRate, int period) 
+        public AAEQSummaryVM(List<AAEQSummaryRowItem> rows, double discountRate, int period) 
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
-            loadDummyData();
+            Rows = rows;
         }
 
-        private void loadDummyData()
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                Rows.Add(new AAEQSummaryRowItem());
-            }
-        }
     }
 }

@@ -8,16 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0"  >
+        <Grid Grid.Row="0" Margin="5" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="With-Project Alternative:"  />
-            <ComboBox Grid.Column="1" ItemsSource="{Binding ResultVMs}" SelectedItem="{Binding SelectedResult}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" Margin="5"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding ResultVMs}" SelectedItem="{Binding SelectedResult}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" Margin="0"/>
         </Grid>
         
         <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding SelectedResult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"

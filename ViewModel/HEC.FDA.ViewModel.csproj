@@ -101,7 +101,7 @@
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-06-15-2127" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-06-22-2022" />
   </ItemGroup>
   
 </Project>

@@ -13,8 +13,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 {
     public class CreateNewAlternativeComparisonReportVM : BaseEditorVM
     {
-        private bool _IsInEditMode;
-
         private int _SelectedIndex = 0;
         private CustomObservableCollection<AlternativeComboItem> _ProjectAlternatives = new CustomObservableCollection<AlternativeComboItem>();
         public CustomObservableCollection<AlternativeComboItem> ProjectAlternatives
@@ -38,7 +36,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base((ChildElement)elem, actionManager)
         {
-            _IsInEditMode = true;
             FillForm(elem);
             ListenToAlternativeEvents();
         }
@@ -167,35 +164,33 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         public override void Save()
         {
             FdaValidationResult result = IsValid();
-            if(!result.IsValid)
+            if (!result.IsValid)
             {
                 MessageBox.Show(result.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
-            if(Description == null)
+            if (Description == null)
             {
                 Description = "";
             }
             List<int> selectedIds = new List<int>();
-            foreach(ComparisonRowItemVM row in Rows)
+            foreach (ComparisonRowItemVM row in Rows)
             {
                 selectedIds.Add(row.SelectedAlternative.Alternative.ID);
             }
 
-            if (_IsInEditMode)
+            int id = -1;
+            if (!IsCreatingNewElement)
             {
-                AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, OriginalElement.ID);
-                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(elemToSave);
+                id = OriginalElement.ID;
             }
             else
             {
-                int id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
-                AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
-
-                PersistenceFactory.GetAlternativeCompReportManager().SaveNew(elemToSave);
-                _IsInEditMode = true;
+                id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
             }
+            AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
+            base.Save(elemToSave);
         }
 
         public void RemoveSelectedRow()

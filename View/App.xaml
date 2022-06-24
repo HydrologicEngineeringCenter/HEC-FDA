@@ -232,7 +232,7 @@
             <AlternativeResultsView:AlternativeResults/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByDamCatVM }" >
-            <AlternativeResultsView:EADDamageByDamCat/>
+            <IASResultsView:DamageByDamageCategory/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByImpactAreaVM }" >
             <AlternativeResultsView:EADDamageByImpactArea/>

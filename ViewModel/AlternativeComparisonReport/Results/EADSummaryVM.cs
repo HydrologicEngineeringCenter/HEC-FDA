@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
@@ -8,19 +9,12 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public List<EADSummaryRowItem> Rows { get; } = new List<EADSummaryRowItem>();
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
-        public EADSummaryVM(double discountRate, int period) 
+        public EADSummaryVM(List<EADSummaryRowItem> rows , AlternativeResult altResult, double discountRate, int period) 
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
-            loadDummyData();
+            Rows = rows;
         }
 
-        private void loadDummyData()
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                Rows.Add(new EADSummaryRowItem());
-            }
-        }
     }
 }

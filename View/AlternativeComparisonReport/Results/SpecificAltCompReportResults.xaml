@@ -22,17 +22,26 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label Content="Damage Measure: " Margin="5" />
-            <ComboBox ItemsSource="{Binding DamageMeasure}" SelectedItem="{Binding SelectedDamageMeasure}" Width="200" Margin="5"/>
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
 
-            <Label Content="Analysis Year:" Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
-            <ComboBox ItemsSource="{Binding AlternativeResult.EADResult.YearResults}" SelectedItem="{Binding SelectedYear}" DisplayMemberPath="Year"  Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Damage Measure: " Margin="5" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding DamageMeasure}" SelectedItem="{Binding SelectedDamageMeasure}"  Margin="5"/>
 
-            <Label Content="Report:" Margin="5" />
-            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="200"/>
+            <Label Grid.Column="2" Content="Analysis Year:" Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
+            <ComboBox Grid.Column="3" ItemsSource="{Binding AlternativeResult.EADResult.YearResults}" SelectedItem="{Binding SelectedYear}" DisplayMemberPath="Year"  Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
 
-        </StackPanel>
+            <Label Grid.Column="4" Content="Report:" Margin="5" />
+            <ComboBox Grid.Column="5" ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" />
+
+        </Grid>
 
         <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />

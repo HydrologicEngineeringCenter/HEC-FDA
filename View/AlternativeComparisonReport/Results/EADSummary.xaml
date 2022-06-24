@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"          
              xmlns:local="clr-namespace:HEC.FDA.View.AlternativeComparisonReport.Results"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -16,7 +17,7 @@
                     <TextBlock Text="Without-Project Alternative" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
-            <DataGridTextColumn Binding="{Binding WithoutProjEAD}" Width="110">
+            <DataGridTextColumn Binding="{Binding WithoutProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
                     <TextBlock Text="Without-Project EAD Damage" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
@@ -26,12 +27,12 @@
                     <TextBlock Text="With-Project Alternative" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
-            <DataGridTextColumn Binding="{Binding WithProjEAD}" Width="110">
+            <DataGridTextColumn Binding="{Binding WithProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
                     <TextBlock Text="With-Project EAD Damage" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
-            <DataGridTextColumn Binding="{Binding EADDamageReduced}" Width="110">
+            <DataGridTextColumn Binding="{Binding EADDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
                     <TextBlock Text="EAD Reduced" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
@@ -65,9 +66,9 @@
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Point75}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Point5}" Grid.Row="1" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="{Binding Point25}" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="0" Text="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Grid.Row="1" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Grid.Row="1" HorizontalAlignment="Center" />
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>

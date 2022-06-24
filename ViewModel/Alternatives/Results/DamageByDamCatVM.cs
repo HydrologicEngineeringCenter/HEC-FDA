@@ -1,40 +1,66 @@
 ﻿using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.ViewModel.Utilities;
 using metrics;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByDamCatVM : IAlternativeResult
     {
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
+        public bool RateAndPeriodVisible { get; }
+
         public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
 
-        public DamageByDamCatVM(ScenarioResults scenarioResults)
+        public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate = double.NaN, int period = -1)
         {
-            //todo: get the list of dam cats from the scenario results when Richard fixes the bug
-            List<string> damCats = new List<string>();// scenarioResults.GetDamageCategories();
-            foreach(string damCat in damCats)
+            if (double.IsNaN(discountRate))
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, scenarioResults.MeanExpectedAnnualConsequences(damageCategory: damCat)));
+                RateAndPeriodVisible = false;
+            }
+            else
+            {
+                DiscountRate = discountRate;
+                PeriodOfAnalysis = period;
+                RateAndPeriodVisible = true;
+            }
+
+            List<string> damCats =  alternativeResults.GetDamageCategories();
+            foreach (string damCat in damCats)
+            {
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanAAEQDamage(damageCategory: damCat)));
             }
         }
 
-        public DamageByDamCatVM(AlternativeResults alternativeResults)
+        public DamageByDamCatVM(AlternativeComparisonReportResults alternativeResults, DamageMeasureYear dmy,  int altID, double discountRate = double.NaN, int period = -1)
         {
-            //todo: get the list of dam cats from the results when Richard fixes the bug
-            List<string> damCats = new List<string>();// alternativeResults.GetDamageCategories();
-            foreach (string damCat in damCats)
+            if (double.IsNaN(discountRate))
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequence(damageCategory: damCat)));
+                RateAndPeriodVisible = false;
             }
-        }
+            else
+            {
+                DiscountRate = discountRate;
+                PeriodOfAnalysis = period;
+                RateAndPeriodVisible = true;
+            }
 
-        public DamageByDamCatVM(AlternativeComparisonReportResults alternativeResults, int altID)
-        {
-            //todo: get the list of dam cats from the results when Richard fixes the bug
-            List<string> damCats = new List<string>(); //alternativeResults.GetDamageCategories();
+            List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanConsequencesReduced(altID, damageCategory: damCat)));
+                switch(dmy)
+                {
+                    case DamageMeasureYear.Base:
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanWithProjectBaseYearEAD(altID, damageCategory: damCat)));
+                        break;
+                    case DamageMeasureYear.Future:
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanWithProjectFutureYearEAD(altID, damageCategory: damCat)));
+                        break;
+                    case DamageMeasureYear.AAEQ:
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanWithProjectAAEQDamage(altID, damageCategory: damCat)));
+                        break;
+                }
             }
         }
     }
