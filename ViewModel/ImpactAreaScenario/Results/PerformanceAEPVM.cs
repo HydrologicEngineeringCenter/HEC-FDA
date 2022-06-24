@@ -30,6 +30,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
                 if (performanceResults != null)
                 {
+                    Mean = performanceResults.MeanAEP();
+                    Median = performanceResults.MedianAEP();
+
                     List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                     //get the table values
                     List<double> xVals = new List<double>() { .1, .04, .02, .01, .005, .002 };

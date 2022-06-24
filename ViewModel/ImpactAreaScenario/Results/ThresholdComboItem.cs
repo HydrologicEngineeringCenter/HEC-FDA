@@ -1,4 +1,5 @@
-﻿using metrics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -14,7 +15,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public ThresholdComboItem(Threshold metric)
         {
             Metric = metric;
-            Description = metric.ThresholdType + " (" + metric.ThresholdValue + ")";
+            string thresholdValue = string.Format("{0:0.##}", metric.ThresholdValue);
+            Description = metric.ThresholdType + " (" + thresholdValue + ")";
         }
 
     }
