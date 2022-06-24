@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using System.Xml.Linq;
+using HEC.MVVMFramework.Model.Messaging;
 namespace Statistics.Histograms
 {
-    public interface IHistogram
+    public interface IHistogram: IReportMessage 
     {
         #region Properties 
         bool IsConverged { get; } 
@@ -35,8 +40,8 @@ namespace Statistics.Histograms
         XElement WriteToXML();
         bool IsHistogramConverged(double upperq, double lowerq);
         int EstimateIterationsRemaining(double upperq, double lowerq);
-       void AddHistograms(List<IHistogram> listOfHistogramsToBeAdded);
         bool Equals(IHistogram histogramForComparison);
+        int FindBinCount(double x, bool cumulative = true);
         #endregion
     }
 }

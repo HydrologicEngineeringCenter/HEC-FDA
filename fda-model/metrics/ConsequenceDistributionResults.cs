@@ -397,9 +397,7 @@ namespace metrics
             }
             else
             {
-                aggregateHistogram = histograms[0];
-                histograms.RemoveAt(0);
-                aggregateHistogram.AddHistograms(histograms);
+                aggregateHistogram = Histogram.AddHistograms(histograms);
             }
             return aggregateHistogram;
 

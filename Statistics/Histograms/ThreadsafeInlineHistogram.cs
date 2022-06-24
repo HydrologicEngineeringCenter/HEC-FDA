@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.Histograms
 {
@@ -35,6 +39,8 @@ namespace Statistics.Histograms
         private const string _type = "ThreadsafeInlineHistogram";
         #endregion
         #region Properties
+        public event MessageReportedEventHandler MessageReport;
+
         public string MyType
         {
             get
@@ -198,6 +204,10 @@ namespace Statistics.Histograms
         #endregion
 
         #region Methods
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             DeQueue();
@@ -448,12 +458,12 @@ namespace Statistics.Histograms
                 AddObservationToHistogram(x,1);
             }
         }
-        private double FindBinCount(double x, bool cumulative = true)
+        public int FindBinCount(double x, bool cumulative = true)
         {
             int obsIndex = Convert.ToInt32(Math.Floor((x - _Min) / _BinWidth));
             if (cumulative)
             {
-                double sum = 0;
+                int sum = 0;
                 for (int i = 0; i < obsIndex + 1; i++)
                 {
                     sum += _BinCounts[i];
@@ -584,58 +594,7 @@ namespace Statistics.Histograms
             }
         }
 
-        public void AddHistograms(List<IHistogram> histograms)
-        {
-            //if histograms.count == 0, then nothing happens, as you would expect
-            //adding 0 histograms to *this* histogram changes nothing 
-            if (histograms.Count > 0)
-            {
-                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                double min = 0;
-                double max = 0;
-                int sampleSize = 0;
-                foreach (ThreadsafeInlineHistogram histogramToAdd in histograms)
-                {
-                    double newMin = Math.Min(min, histogramToAdd.Min);
-                    min = newMin;
-                    double newMax = Math.Max(max, histogramToAdd.Max);
-                    max = newMax;
-                    int newSampleSize = Math.Max(sampleSize, (int)histogramToAdd.SampleSize);
-                    sampleSize = newSampleSize;
-                }
-                double range = max - min;
-                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
-                double binWidth = range / sampleSize;
-                ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
-                int seed = 1234;
-                Random random = new Random(seed);
-                for (int i = 0; i < sampleSize; i++)
-                {
-                    double summedValue = 0;
-                    foreach (ThreadsafeInlineHistogram histogramToSample in histograms)
-                    {
-                        double value = histogramToSample.InverseCDF(random.NextDouble());
-                        summedValue += value;
-                    }
-                    double thisValue = this.InverseCDF(random.NextDouble());
-                    summedValue += thisValue;
-                    histogram.AddObservationToHistogram(summedValue, i);
-                }
-                _BinCounts = histogram._BinCounts;
-                _SampleMean = histogram._SampleMean;
-                _SampleVariance = histogram._SampleVariance;
-                _Min = histogram._Min;
-                _Max = histogram._Max;
-                _SampleMin = histogram._SampleMin;
-                _SampleMax = histogram._SampleMax;
-                _SampleSize = histogram._SampleSize;
-                _BinWidth = histogram._BinWidth;
-                _Converged = histogram._Converged;
-                _ConvergedIterations = histogram._ConvergedIterations;
-                _ConvergedOnMax = histogram._ConvergedOnMax;
-                _ConvergenceCriteria = histogram._ConvergenceCriteria;
-            }
-        }
+ 
 
         public XElement WriteToXML()
         {
