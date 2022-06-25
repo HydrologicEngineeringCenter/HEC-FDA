@@ -21,11 +21,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 List<double> xVals = new List<double>(){ .1, .04, .02, .01, .004, .002};
                 foreach (double xVal in xVals)
                 {
-                    double exceedanceProb = 1.0 - xVal;
+                    double nonExceedanceProb = 1.0 - xVal;
                     try
                     {
-                        double yVal = iasResult.AssuranceOfEvent(thresholdKey, xVal);
-                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
+                        double yVal = iasResult.AssuranceOfEvent(thresholdKey, nonExceedanceProb);
+                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal)); //should this be nonExceedanceProb too?
                     }
                     catch (Exception e)
                     {
