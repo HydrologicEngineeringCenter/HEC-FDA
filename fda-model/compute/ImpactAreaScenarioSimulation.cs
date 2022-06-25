@@ -488,7 +488,7 @@ namespace compute
                     IPairedData frequencyFlow;
                     if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
-                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 1000);
+                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 200);
                     }
                     else
                     {

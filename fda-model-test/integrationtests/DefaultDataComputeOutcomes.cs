@@ -227,7 +227,7 @@ namespace fda_model_test.integrationtests
         }
 
         [Theory]
-        [InlineData(.0523, .0468, .4159, .8007, .9320, .9619, .3406, .0464, .0028, 0, 0, 64.81)]
+        [InlineData(.0526, .0468, .4172, .8021, .9328, .9589, .3418, .0496, .0036, 0, 0, 65.20)]
         public void AnalyticalWithRegUnreg_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
@@ -253,6 +253,10 @@ namespace fda_model_test.integrationtests
             double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
             double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualFirstQuartileEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.75);
+            double actualMedianEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.5);
+            double actualThirdQuartileEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.25);
+
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;

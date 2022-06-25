@@ -30,6 +30,7 @@ namespace Statistics.Histograms
         private const string _type = "Histogram";
         #endregion
         #region Properties
+        public string note { get; set; }//for debugging
         public event MessageReportedEventHandler MessageReport;
 
         internal double SampleMax
