@@ -176,11 +176,18 @@ namespace fda_model_test.unittests
 
             RandomProvider randomProvider = new RandomProvider(seed);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
-            double actual = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
-            double difference = Math.Abs(actual - expected);
-            double relativeDifference = difference / expected;
+
+            double actualAssuranceOfThreshold = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
+            double differenceAssuranceOfThreshold = Math.Abs(actualAssuranceOfThreshold - expected);
+            double relativeDifferenceAssuranceOfThreshold = differenceAssuranceOfThreshold / expected;
+
+            double actualAssuranceOfAEP = results.AssuranceOfAEP(thresholdID, 1 - recurrenceInterval);
+            double differenceAssuranceOfAEP = Math.Abs(actualAssuranceOfAEP - expected); //assurance of AEP is theoretically equal to assurance of threshold 
+            double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;
+
             double tolerance = 0.025;
-            Assert.True(relativeDifference < tolerance);
+            Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
+            Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
         }
 
         [Fact]
