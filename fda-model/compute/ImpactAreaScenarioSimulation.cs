@@ -97,7 +97,7 @@ namespace compute
             {//I am not sure if there is a better way to add the default threshold
                 _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
-            SetStageForNonExceedanceProbability();
+            CreateHistogramsForAssuranceOfThresholds();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
             _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
             return _impactAreaScenarioResults;
@@ -444,15 +444,14 @@ namespace compute
 
         public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, int iteration)
         {//TODO: Get rid of these hard coded doubles 
-            double[] stageOfEvent = new double[6];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
-            for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
+            foreach (double nonExceedanceProbability in er101RequiredNonExceedanceProbabilities)
             {
-                stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.SystemPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
+                double stageOfEvent = frequency_stage.f(nonExceedanceProbability);
+                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, iteration);
             }
         }
-        public void SetStageForNonExceedanceProbability()
+        public void CreateHistogramsForAssuranceOfThresholds()
         {//TODO: get rid of these hard-coded doubles 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
