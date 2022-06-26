@@ -56,9 +56,7 @@ namespace Statistics.Distributions
         }
         /// <summary>
         /// LP# Dist
-        /// TODO: we need a good default sample size. int.max will result in a system.OutOfMemoryException.
-        /// The default value of 1000 is a placeholder
-        /// Still seems larger than any typical sample size ... I don't think anyone has been taking records of river flows for 1000 years 
+        /// Default sample size is 1. 
         /// </summary>
         /// <param name="mean"></param>
         /// <param name="standardDeviation"></param>
