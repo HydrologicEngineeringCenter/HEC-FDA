@@ -157,16 +157,17 @@ namespace fda_model_test.integrationtests
         };
         private static UncertainPairedData defaultSystemResponse = new UncertainPairedData(defaultFailureStages, defaultFailureProbs, generalCurveMetaData);
 
-        private static int impactAreaID = 1;
+        private static int impactAreaID1 = 1;
+        private static int impactAreaID2 = 2;
         private static int baseYear = 2030;
         private static int futureYear = 2050;
         #endregion
 
         [Theory]
         [InlineData(240.5)]
-        public void WithoutAnalytical_ScenarioResults(double expectedMeanEAD)
+        public void WithoutAnalyticalExpandedStageDamage_ScenarioResults(double expectedMeanEAD)
         {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(expandedStageDamageList)
@@ -202,9 +203,9 @@ namespace fda_model_test.integrationtests
 
         [Theory]
         [InlineData(.3591, 120.23)]
-        public void WithoutAnalyticalExpandedStageDamage_ScenarioResults(double expectedMeanAEP, double expectedMeanEAD)
+        public void WithoutAnalytical_ScenarioResults(double expectedMeanAEP, double expectedMeanEAD)
         {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
@@ -214,8 +215,8 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.06;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - expectedMeanAEP) / expectedMeanAEP;
@@ -230,7 +231,13 @@ namespace fda_model_test.integrationtests
         [InlineData(.0526, .0468, .4172, .8021, .9328, .9589, .3418, .0496, .0036, 0, 0, 65.20)]
         public void AnalyticalWithRegUnreg_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+                .withFlowFrequency(lp3)
+                .withInflowOutflow(regulatedUnregulated)
+                .withFlowStage(stageDischarge)
+                .withStageDamages(stageDamageList)
+                .build();
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(impactAreaID2)
                 .withFlowFrequency(lp3)
                 .withInflowOutflow(regulatedUnregulated)
                 .withFlowStage(stageDischarge)
@@ -238,21 +245,22 @@ namespace fda_model_test.integrationtests
                 .build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
+            impactAreaScenarioSimulations.Add(simulation2);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
             double actualFirstQuartileEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.75);
             double actualMedianEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.5);
             double actualThirdQuartileEAD = scenarioResults.ConsequencesExceededWithProbabilityQ(.25);
@@ -294,7 +302,7 @@ namespace fda_model_test.integrationtests
         public void AnalyticalWithLevee_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {  
             //TODO: The compute ran when I passed a double[] instead of IDistribution[] into .WithLevee - WHY?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withLevee(defaultSystemResponse,defaultLeveeElevation)
                 .withFlowStage(stageDischarge)
@@ -305,18 +313,18 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
@@ -354,7 +362,7 @@ namespace fda_model_test.integrationtests
         [InlineData(.036, .0314, .3071, .6673, .8403, .9946, .6466, .1974, .0309, .0012, 0, 24.80)]
         public void AnalyticalWithLeveeAndExtInt_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {//TODO: Why would AEP here be closer than AEP above?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withLevee(defaultSystemResponse, defaultLeveeElevation)
                 .withFlowStage(stageDischarge)
@@ -365,18 +373,18 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
@@ -414,29 +422,30 @@ namespace fda_model_test.integrationtests
         [InlineData(.1986, .1928, .8907, .9987, 1, .1756, .0236, .0026, .0002, 0, 0, 88.73)]
         public void AnalyticalWithLeveeAndFragility_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withLevee(systemResponse, defaultLeveeElevation)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
                 .build();
+
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
@@ -474,7 +483,7 @@ namespace fda_model_test.integrationtests
         [InlineData(.1522, .1524, .8082, .9929, .9997, .1320, .0082, .0047, .0025, .001, 0, 65.42)]
         public void WithoutGraphicalFlow_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {//TODO: These results are REALLY messed up mathematically 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(graphicalFlowFrequency)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
@@ -484,18 +493,18 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
@@ -533,7 +542,7 @@ namespace fda_model_test.integrationtests
         [InlineData(.1554, .1573, .8152, .9937, .9998, .0757, 0, .0002, .0002, 0, 0, 45.36)]
         public void WithoutGraphicalStage_ScenarioResults(double meanAEP, double medianAEP, double ltep10, double ltep30, double ltep50, double cnep1, double cnep04, double cnep02, double cnep01, double cnep004, double cnep002, double meanEAD)
         {//TODO: These results are REALLY messed up mathematically 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFrequencyStage(graphicalStageFrequency)
                 .withStageDamages(stageDamageList)
                 .build();
@@ -542,18 +551,18 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID);
-            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID);
-            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 10);
-            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 30);
-            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID, 50);
-            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID, .9);
-            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID, .96);
-            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID, .98);
-            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID, .99);
-            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID, .996);
-            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID, .998);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMedianAEP = scenarioResults.MedianAEP(impactAreaID1);
+            double actualLTEP10 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 10);
+            double actualLTEP30 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 30);
+            double actualLTEP50 = scenarioResults.LongTermExceedanceProbability(impactAreaID1, 50);
+            double actualCNEP1 = scenarioResults.AssuranceOfEvent(impactAreaID1, .9);
+            double actualCNEP04 = scenarioResults.AssuranceOfEvent(impactAreaID1, .96);
+            double actualCNEP02 = scenarioResults.AssuranceOfEvent(impactAreaID1, .98);
+            double actualCNEP01 = scenarioResults.AssuranceOfEvent(impactAreaID1, .99);
+            double actualCNEP004 = scenarioResults.AssuranceOfEvent(impactAreaID1, .996);
+            double actualCNEP002 = scenarioResults.AssuranceOfEvent(impactAreaID1, .998);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
