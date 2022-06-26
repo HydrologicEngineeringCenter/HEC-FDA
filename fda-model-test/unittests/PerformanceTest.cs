@@ -279,16 +279,18 @@ namespace fda_model_test.unittests
             Assert.True(success);
         }
 
-        [Fact]
-        public void AssuranceNonOverlappingStages()
+        [Theory]
+        [InlineData(0, 400, 0)]
+        [InlineData(2000, 4000, 1)]
+        public void AssuranceNonOverlappingStages(double minStageForStageDamage, double maxStageForStageDamage, double expectedAssurance)
         {
-            ContinuousDistribution uniformFLows = new Uniform(0, 100000);
+            ContinuousDistribution uniformFLows = new Uniform(0, 100000, 100);
 
             double[] flowsForStageDischarge = new double[] { 0, 100000 };
             IDistribution[] stagesForStageDischarge = new IDistribution[] { new Uniform(500, 1000), new Uniform(1000, 1500) };
             UncertainPairedData stageDischarge = new UncertainPairedData(flowsForStageDischarge, stagesForStageDischarge, metaData);
 
-            double[] stagesForStageDamage = new double[] { 0, 400 };
+            double[] stagesForStageDamage = new double[] { minStageForStageDamage, maxStageForStageDamage };
             IDistribution[] damageForStageDamage = new IDistribution[] { new Uniform(200, 500), new Uniform(1000, 1500) };
             UncertainPairedData stageDamage = new UncertainPairedData(stagesForStageDamage, damageForStageDamage, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
@@ -304,7 +306,7 @@ namespace fda_model_test.unittests
             ImpactAreaScenarioResults impactAreaScenarioResults = impactAreaScenarioSimulation.Compute(randomProvider, defaultConvergenceCriteria);
 
             double assuranceOfAEP = impactAreaScenarioResults.AssuranceOfAEP(0, .1);
-            double expectedAssuranceOfAEP = 1;
+            Assert.Equal(assuranceOfAEP, expectedAssurance);
 
         }
     }
