@@ -50,7 +50,7 @@ namespace Statistics.Distributions
             _Constructed = true;
 
         }
-        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, int sampleSize = int.MaxValue)
+        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = standardDeviation;

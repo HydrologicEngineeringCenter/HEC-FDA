@@ -240,7 +240,7 @@ namespace fda_model_test.unittests
         [InlineData(9102, 10001, 16000)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue)
         {
-            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -279,6 +279,34 @@ namespace fda_model_test.unittests
             Assert.True(success);
         }
 
+        [Fact]
+        public void AssuranceNonOverlappingStages()
+        {
+            ContinuousDistribution uniformFLows = new Uniform(0, 100000);
+
+            double[] flowsForStageDischarge = new double[] { 0, 100000 };
+            IDistribution[] stagesForStageDischarge = new IDistribution[] { new Uniform(500, 1000), new Uniform(1000, 1500) };
+            UncertainPairedData stageDischarge = new UncertainPairedData(flowsForStageDischarge, stagesForStageDischarge, metaData);
+
+            double[] stagesForStageDamage = new double[] { 0, 400 };
+            IDistribution[] damageForStageDamage = new IDistribution[] { new Uniform(200, 500), new Uniform(1000, 1500) };
+            UncertainPairedData stageDamage = new UncertainPairedData(stagesForStageDamage, damageForStageDamage, metaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
+
+            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(1)
+                .withFlowFrequency(uniformFLows)
+                .withFlowStage(stageDischarge)
+                .withStageDamages(stageDamageList)
+                .build();
+
+            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
+            RandomProvider randomProvider = new RandomProvider(1234);
+            ImpactAreaScenarioResults impactAreaScenarioResults = impactAreaScenarioSimulation.Compute(randomProvider, defaultConvergenceCriteria);
+
+            double assuranceOfAEP = impactAreaScenarioResults.AssuranceOfAEP(0, .1);
+            double expectedAssuranceOfAEP = 1;
+
+        }
     }
 
 }
