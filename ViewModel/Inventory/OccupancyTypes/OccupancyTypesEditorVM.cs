@@ -545,6 +545,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
             else
             {
+                //this prevents the tab controller from asking if we want to close with unsaved changes.
+                HasChanges = false;
                 return true;
             }
         }

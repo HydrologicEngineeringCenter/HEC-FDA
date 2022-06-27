@@ -11,15 +11,30 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="500"/>
-
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+        <Grid Grid.Row="0" Grid.Column="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Mean:" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+        </Grid>
+        
+        <DataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
                   VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">

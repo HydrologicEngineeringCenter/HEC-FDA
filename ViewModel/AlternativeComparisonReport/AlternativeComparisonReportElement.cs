@@ -204,7 +204,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             }
             else
             {
-                MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -364,13 +364,25 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     vr.AddErrorMessage("An alternative has been removed. Edit this alternative comparison report and try again.");
                     break;
                 }
-            }        
+            }
 
-            vr.AddErrorMessage(withoutAlt.RunPreComputeValidation().ErrorMessage);
+            FdaValidationResult withoutAltValidationResult = withoutAlt.RunPreComputeValidation();
+            if(!withoutAltValidationResult.IsValid)
+            {
+                vr.AddErrorMessage("Alternative " + withoutAlt.Name + ":");
+                vr.AddErrorMessage(withoutAltValidationResult.ErrorMessage);
+                vr.AddErrorMessage(Environment.NewLine);
+            }
 
             foreach (AlternativeElement altElem in withProjAlts)
             {
-                vr.AddErrorMessage(altElem.RunPreComputeValidation().ErrorMessage);
+                FdaValidationResult withProjectValidationResult = altElem.RunPreComputeValidation();
+                if (!withProjectValidationResult.IsValid)
+                {
+                    vr.AddErrorMessage("Alternative " + altElem.Name + ":");
+                    vr.AddErrorMessage(withProjectValidationResult.ErrorMessage);
+                    vr.AddErrorMessage(Environment.NewLine);
+                }
             }
 
             return vr;
