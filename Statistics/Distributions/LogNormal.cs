@@ -35,7 +35,7 @@ namespace Statistics.Distributions
         /// <param name="mean"></param> mean of the logged data
         /// <param name="sd"></param> standard deviation of the logged data
         /// <param name="sampleSize"></param>
-        public LogNormal(double mean, double sd, int sampleSize = int.MaxValue)
+        public LogNormal(double mean, double sd, int sampleSize = 1)
         {
                         
           _mean = mean;

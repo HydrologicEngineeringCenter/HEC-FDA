@@ -28,7 +28,7 @@ namespace Statistics.Distributions
             SampleSize = 0;
             addRules();
         }
-        public Uniform(double min, double max, int sampleSize = int.MaxValue)
+        public Uniform(double min, double max, int sampleSize = 1)
         {
             Min = min;
             Max = max;

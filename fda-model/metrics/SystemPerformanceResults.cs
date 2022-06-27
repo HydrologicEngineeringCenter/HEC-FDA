@@ -127,7 +127,9 @@ namespace metrics
 
         public double AssuranceOfAEP(double exceedanceProbability)
         {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
-            double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
+            IHistogram aepHistogram = GetAEPHistogram();
+            double assuranceOfAEP = aepHistogram.CDF(exceedanceProbability);
+            //double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
         public bool AssuranceIsConverged()

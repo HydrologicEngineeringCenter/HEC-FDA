@@ -18,7 +18,7 @@ namespace Statistics.Distributions
         public double Skewness { get; }
         public int SampleSize { get; }
 
-        public PearsonIII(double mean, double sd, double skew, int n = int.MaxValue)
+        public PearsonIII(double mean, double sd, double skew, int n = 1)
         {
             Mean = mean;
             StandardDeviation = sd;

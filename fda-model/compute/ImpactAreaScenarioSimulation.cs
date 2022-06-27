@@ -97,7 +97,7 @@ namespace compute
             {//I am not sure if there is a better way to add the default threshold
                 _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
-            SetStageForNonExceedanceProbability();
+            CreateHistogramsForAssuranceOfThresholds();
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
             _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
             return _impactAreaScenarioResults;
@@ -117,12 +117,12 @@ namespace compute
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains errors. The compute has been aborted.")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                     return false;
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings" + Environment.NewLine)));
                 }
                 //enumerate what the errors and warnings are 
                 //TODO: HOW???
@@ -131,7 +131,7 @@ namespace compute
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
-                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration.";
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
 
@@ -141,7 +141,7 @@ namespace compute
             {
                 if (convergenceCriteria.MinIterations < 100)
                 {
-                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration.";
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
 
@@ -201,7 +201,7 @@ namespace compute
                             if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
-                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted.";
+                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted." + Environment.NewLine;
                                 ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                                 ReportMessage(this, new MessageEventArgs(errorMessage));
                                 return; 
@@ -221,7 +221,7 @@ namespace compute
                             if (_discharge_stage.CurveMetaData.IsNull)
                             {
                                 //complain loudly
-                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted.";
+                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted." + Environment.NewLine;
                                 ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                                 ReportMessage(this, new MessageEventArgs(errorMessage)); 
                                 return;
@@ -444,15 +444,14 @@ namespace compute
 
         public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, int iteration)
         {//TODO: Get rid of these hard coded doubles 
-            double[] stageOfEvent = new double[6];
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
-            for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
+            foreach (double nonExceedanceProbability in er101RequiredNonExceedanceProbabilities)
             {
-                stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.SystemPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
+                double stageOfEvent = frequency_stage.f(nonExceedanceProbability);
+                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, iteration);
             }
         }
-        public void SetStageForNonExceedanceProbability()
+        public void CreateHistogramsForAssuranceOfThresholds()
         {//TODO: get rid of these hard-coded doubles 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
@@ -477,7 +476,7 @@ namespace compute
                 if(_damage_category_stage_damage.Count == 0)
                 {
                     double badThresholdStage = 0;
-                    string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics";
+                    string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                     return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
@@ -488,7 +487,7 @@ namespace compute
                     IPairedData frequencyFlow;
                     if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
-                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 1000);
+                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 200);
                     }
                     else
                     {
@@ -499,7 +498,7 @@ namespace compute
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
                             double badThresholdStage = 0;
-                            string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used.";
+                            string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
                             ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage)); 
                             return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
@@ -518,7 +517,7 @@ namespace compute
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
                             double badThresholdStage = 0;
-                            string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used.";
+                            string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
                             ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage));
                             return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
@@ -584,7 +583,7 @@ namespace compute
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull) return false;
             if (_systemResponseFunction_stage_failureProbability.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
-                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
+                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
                 ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 return false;
@@ -593,7 +592,7 @@ namespace compute
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
+                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
                 ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
             }
@@ -613,14 +612,14 @@ namespace compute
             {
                 if (_systemResponseFunction_stage_failureProbability.Yvals[index].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
-                    string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
+                    string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                 }
             }
             else
             {   //top of levee elevation is not included in the fragility curve
-                string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
+                string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
                 ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
