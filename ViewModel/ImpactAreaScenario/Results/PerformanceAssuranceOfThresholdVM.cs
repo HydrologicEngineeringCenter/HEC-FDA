@@ -18,14 +18,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             {
                 int thresholdKey = thresholdComboItems[i].Metric.ThresholdID;
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                List<double> xVals = new List<double>(){ .1, .04, .02, .01, .004, .002};//exceedance probabilities
+                //The xVals are exceedance probabilities
+                List<double> xVals = new List<double>(){ .1, .04, .02, .01, .004, .002};
                 foreach (double xVal in xVals)
                 {
                     double nonExceedanceProb = 1.0 - xVal;
                     try
                     {
                         double yVal = iasResult.AssuranceOfEvent(thresholdKey, nonExceedanceProb);
-                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal)); //should this be nonExceedanceProb too?
+                        //TODO: should this be non-exceedance probabilities, too?
+                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                     }
                     catch (Exception e)
                     {
