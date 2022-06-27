@@ -451,7 +451,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
-                SaveAllReportGroupVM saveAllReport = group.SaveAll();
+                 SaveAllReportGroupVM saveAllReport = group.SaveAll();
                 if(saveAllReport != null && saveAllReport.HasWarnings)
                 {
                     warningReports.Add(saveAllReport);
@@ -545,6 +545,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
             else
             {
+                //this prevents the tab controller from asking if we want to close with unsaved changes.
+                HasChanges = false;
                 return true;
             }
         }

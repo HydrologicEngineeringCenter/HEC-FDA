@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             {
                 int thresholdKey = thresholdComboItems[i].Metric.ThresholdID;
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                List<double> xVals = new List<double>(){ .1, .04, .02, .01, .005, .002};
+                List<double> xVals = new List<double>(){ .9, .96, .98, .99, .996, .998 };
                 foreach (double xVal in xVals)
                 {
                     double exceedanceProb = 1.0 - xVal;
