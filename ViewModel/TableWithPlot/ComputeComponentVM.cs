@@ -98,11 +98,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public ComputeComponentVM()
-        {
-            Initialize();
-            SetValidation();
-        }
         public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
         {
             _DeterministicOnly = deterministicOnly;

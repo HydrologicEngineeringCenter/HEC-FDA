@@ -454,6 +454,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
         {
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             AnalyticalFrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
@@ -464,54 +465,9 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
-                //todo: graphical will be addressed in a future task.
-
-                ////get probabilities
-                //List<double> probabilities = new List<double>();
-                //for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //{
-                //    probabilities.Add(pf.ExceedanceProbability[i]);
-                //}
-
-                //if (pf.ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
-                //{
-                //    Write("\t\tDischarge: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf.Discharge[i]}");
-                //}
-                //else if (pf.ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
-                //{
-                //    Write("\t\tStage: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf.Stage[i]}");
-                //}
-                ////User Defined Uncertainty
-                //if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
-                //{
-                //    Write("\t\tNormal: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevNormalUserDef[i]}");
-                //    Write("\n");
-                //}
-                //else if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
-                //{
-                //    Write("\t\tLog Normal: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevLogUserDef[i]}");
-                //    Write("\n");
-                //}
-                //else if (pf.UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
-                //{
-                //    Write("\t\tTriangular High: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevUpperUserDef[i]}");
-                //    Write("\n");
-                //    Write("\t\tTriangular Low: ");
-                //    for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-                //        Write($"\t{pf._StdDevLowerUserDef[i]}");
-                //}
+                GraphicalVM vm = new GraphicalVM(pf);
+                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, pf.EquivalentLengthOfRecord, false, false, 5, .25, .1, new List<double>(), vm, computeComponentVM, elemID); //this sucks. Why am I making up a fake analytical curve to import a graphical one?
             }
-
             return elem;
         }
 
