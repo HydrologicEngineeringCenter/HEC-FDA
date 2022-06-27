@@ -451,7 +451,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
-                 SaveAllReportGroupVM saveAllReport = group.SaveAll();
+                SaveAllReportGroupVM saveAllReport = group.SaveAll();
                 if(saveAllReport != null && saveAllReport.HasWarnings)
                 {
                     warningReports.Add(saveAllReport);
