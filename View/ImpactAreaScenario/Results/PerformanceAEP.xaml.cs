@@ -27,7 +27,8 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
                 //add the chart to the UI
                 main_grd.Children.Add(_chart);
                 Grid.SetRow(_chart, 0);
-                Grid.SetColumn(_chart, 1);               
+                Grid.SetColumn(_chart, 1);
+                Grid.SetRowSpan(_chart, 2);
             }
         }
 

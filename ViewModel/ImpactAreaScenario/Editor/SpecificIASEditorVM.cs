@@ -516,7 +516,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (e.Message is FrequencyDamageMessage damageMessage)
             {
                 //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
-                if(e.Message.Message.Equals("Damage-frequency function for damage and asset categoriesdefaultandunassigned"))
+                if(e.Message.Message.Equals("FrequencyDamage"))
                 {
                     _DamageFrequencyCurve = damageMessage.FrequencyDamage;
                 }
