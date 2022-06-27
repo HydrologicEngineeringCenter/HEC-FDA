@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using metrics;
+﻿using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
