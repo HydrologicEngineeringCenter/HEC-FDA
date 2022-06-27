@@ -135,7 +135,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static UncertainPairedData RegulatedUnregulatedDefaultCurve()
         {
-            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), StringConstants.REGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED_UNREGULATED);
+            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
         }
 
         public static UncertainPairedData StageDamageDefaultCurve()

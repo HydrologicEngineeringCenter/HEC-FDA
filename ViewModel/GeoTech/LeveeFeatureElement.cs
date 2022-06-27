@@ -1,6 +1,9 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
+using paireddata;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 
@@ -92,6 +95,16 @@ namespace HEC.FDA.ViewModel.GeoTech
         }        
         #endregion
         #region Functions
+
+        public UncertainPairedData CreateDefaultCurve()
+        {
+            double elev = Elevation;
+            double[] xs = new double[] { elev, elev + double.Epsilon };
+            IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            return new UncertainPairedData(xs, ys, curveMetaData);
+        }
+
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ChildElement clonedElem = null;

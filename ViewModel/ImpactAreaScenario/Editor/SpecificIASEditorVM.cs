@@ -335,10 +335,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                //todo: we need to check to see if this is a flow freq.
-                //if the flow freq is of type flow freq, then the rating curve is required.
-                //this is task 5 in the clean document.
-                RatingRequired = true;
+                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
+                {
+                    RatingRequired = !elem.IsAnalytical;
+                }
             }
         }
 
