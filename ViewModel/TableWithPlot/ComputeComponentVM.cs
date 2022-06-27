@@ -98,11 +98,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public ComputeComponentVM()
-        {
-            Initialize();
-            SetValidation();
-        }
         public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
         {
             _DeterministicOnly = deterministicOnly;
@@ -211,7 +206,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             XElement ele = new XElement(this.GetType().Name);
             ele.SetAttributeValue("selectedItem", SelectedItem.Name);
-            ele.SetAttributeValue("Name", Name);
+            ele.SetAttributeValue("Name", Name); //why is this null?
             ele.SetAttributeValue("DeterministicOnly", _DeterministicOnly);
             ele.SetAttributeValue("Description", Description);
 
