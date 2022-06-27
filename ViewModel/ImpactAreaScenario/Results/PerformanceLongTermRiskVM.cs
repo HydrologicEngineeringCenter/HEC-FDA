@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 int thresholdKey = thresholdComboItems[i].Metric.ThresholdID;
 
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                List<int> xVals = new List<int>() { 10,20,30 };
+                List<int> xVals = new List<int>() { 10,30,50 };
                 foreach (int xVal in xVals)
                 {
                     double yVal = iasResult.LongTermExceedanceProbability(thresholdKey, xVal);

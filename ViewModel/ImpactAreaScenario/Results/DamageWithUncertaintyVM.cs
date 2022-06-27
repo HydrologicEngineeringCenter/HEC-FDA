@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult)
         {
             int impactAreaID = iasResult.ImpactAreaID;
-            Mean = iasResult.ConsequenceResults.MeanDamage("Total", "Total", impactAreaID);
+            Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
             IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: impactAreaID);
             double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x).ToArray();
 
