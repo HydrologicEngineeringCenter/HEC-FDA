@@ -14,7 +14,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     public class GraphicalVM : ComputeComponentVM
     {
         private int _equivalentRecordLength = 5;
-        private bool _useStage;
         private bool _useFlow = true;
         private NamedAction _confidenceLimits;
         public NamedAction ConfidenceLimits 
@@ -58,10 +57,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public bool UseStage
         {
-            get { return _useStage; }
+            get { return !_useFlow; }
             set
-            { 
-                _useStage = value;
+            {
+                _useFlow = !value;
                 if(value == true)
                 {
                     YLabel = Utilities.StringConstants.STAGE;
@@ -94,7 +93,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
             {
                 ys = probabilityFunction.Discharge;
-                UseStage = true;
+                UseStage = false;
             }
             else
             {
