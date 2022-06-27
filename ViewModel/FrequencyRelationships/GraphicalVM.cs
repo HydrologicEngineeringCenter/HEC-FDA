@@ -149,7 +149,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()
         {
-           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, "Exceedence Probability", "Flow", "Graphical Flow Frequency");
+            CurveMetaData meta = new CurveMetaData(Utilities.StringConstants.EXCEEDANCE_PROBABILITY,Utilities.StringConstants.DISCHARGE,Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY,"None",CurveTypesEnum.MonotonicallyIncreasing);
+           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta);
         }
     }
 }
