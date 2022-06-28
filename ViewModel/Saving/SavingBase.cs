@@ -114,18 +114,14 @@ namespace HEC.FDA.ViewModel.Saving
         /// <returns></returns>
         private bool IDExistsInDB(string tableName, int id, string idColumnName)
         {
-            //SELECT EXISTS(SELECT 1 FROM alternatives WHERE id="2");
-
             bool idExists = false;
-
             OpenConnection();
-            //columns and values need to be corespond to each other, you don't have to update columns that don't need it
+
             StringBuilder sb = new StringBuilder("SELECT 1 FROM ").Append(tableName).Append(" WHERE ").Append(idColumnName)
             .Append(" = '").Append(id).Append("'");
 
             SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
-            //int returnValue = command.ExecuteNonQuery();
             object returnValue = command.ExecuteScalar();
             int returnValueInt = Convert.ToInt32(returnValue);
 
@@ -137,7 +133,6 @@ namespace HEC.FDA.ViewModel.Saving
             return idExists;
         }
    
-
         private void OpenConnection()
         {
             if (!Connection.Instance.IsOpen)
