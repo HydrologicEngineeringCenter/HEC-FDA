@@ -336,15 +336,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
             {
                 RatingRequired = false;
-                if(elem.IsAnalytical)
+                if (elem.IsAnalytical || elem.MyGraphicalVM.UseFlow)
                 {
                     RatingRequired = true;
                 }
-                else if(elem.MyGraphicalVM.UseFlow)
-                {
-                    RatingRequired = true;
-                }
-
             }
         }
 
