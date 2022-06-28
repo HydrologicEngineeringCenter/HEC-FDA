@@ -52,21 +52,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     YLabel = Utilities.StringConstants.DISCHARGE;
                 }
-                NotifyPropertyChanged(); 
+                else
+                {
+                    YLabel = Utilities.StringConstants.STAGE;
+                }
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(UseStage));
             }
         }
         public bool UseStage
         {
             get { return !_useFlow; }
-            set
-            {
-                _useFlow = !value;
-                if(value == true)
-                {
-                    YLabel = Utilities.StringConstants.STAGE;
-                }
-                NotifyPropertyChanged();
-            }
         }
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
@@ -94,12 +90,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
             {
                 ys = probabilityFunction.Discharge;
-                UseStage = false;
+                UseFlow = true;
             }
             else
             {
                 ys = probabilityFunction.Stage;
-                UseFlow = true;
+                UseFlow = false;
             }
             for (int i = 0; i < probabilityFunction.NumberOfGraphicalPoints; i++)
             {

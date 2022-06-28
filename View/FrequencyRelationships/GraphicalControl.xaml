@@ -26,7 +26,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal"  Grid.Row="2">
             <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding Path=UseFlow, Mode=TwoWay}" Margin="5"/>
-            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding Path=UseStage, Mode=TwoWay}" Margin="5"/>
+            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding Path=UseStage, Mode=OneWay}" Margin="5"/>
         </StackPanel>
         <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
