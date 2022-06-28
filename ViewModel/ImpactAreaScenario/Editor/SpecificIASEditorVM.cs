@@ -335,7 +335,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
             {
-                RatingRequired = !elem.IsAnalytical;
+                RatingRequired = false;
+                if(elem.IsAnalytical)
+                {
+                    RatingRequired = true;
+                }
+                else if(elem.MyGraphicalVM.UseFlow)
+                {
+                    RatingRequired = true;
+                }
+
             }
         }
 
@@ -389,15 +398,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private FdaValidationResult GetRatingCurveValidationResult()
         {
-            //todo: the rating curve is required if the frequency relationship is of type
-            //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
             FdaValidationResult vr = new FdaValidationResult();
             if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
             {
-                vr.AddErrorMessage("A Rating Curve is required when using a frequency relationship.");
+                vr.AddErrorMessage("A stage-discharge function is required if the frequency function reflects discharge");
             }
             return vr;
-
         }
         private FdaValidationResult GetStageDamageValidationResult()
         {

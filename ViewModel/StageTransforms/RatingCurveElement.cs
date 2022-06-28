@@ -73,6 +73,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   
         }
+
         #endregion
     }
 }
