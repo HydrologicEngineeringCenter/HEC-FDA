@@ -14,7 +14,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     public class GraphicalVM : ComputeComponentVM
     {
         private int _equivalentRecordLength = 5;
-        private bool _useStage;
         private bool _useFlow = true;
         private NamedAction _confidenceLimits;
         public NamedAction ConfidenceLimits 
@@ -58,10 +57,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public bool UseStage
         {
-            get { return _useStage; }
+            get { return !_useFlow; }
             set
-            { 
-                _useStage = value;
+            {
+                _useFlow = !value;
                 if(value == true)
                 {
                     YLabel = Utilities.StringConstants.STAGE;
@@ -88,13 +87,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             SelectedItem = Options[0];
             Initialize();
             SelectedItem.Data.Clear();
+            base.Name = Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY;
 
             double[] probs = probabilityFunction.ExceedanceProbability;
             double[] ys;
             if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
             {
                 ys = probabilityFunction.Discharge;
-                UseStage = true;
+                UseStage = false;
             }
             else
             {
@@ -119,11 +119,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             XElement ele = base.ToXML();
             ele.SetAttributeValue("EquivalentRecordLength", EquivalentRecordLength);
+            ele.SetAttributeValue(nameof(UseFlow), UseFlow);
             return ele;
         }
         override public void LoadFromXML(XElement element)
         {
             EquivalentRecordLength = int.Parse(element.Attribute("EquivalentRecordLength").Value);
+            UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
             base.LoadFromXML(element);
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
@@ -150,7 +152,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()
         {
-           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, "Exceedence Probability", "Flow", "Graphical Flow Frequency");
+            CurveMetaData meta = new CurveMetaData(Utilities.StringConstants.EXCEEDANCE_PROBABILITY,Utilities.StringConstants.DISCHARGE,Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY,"None",CurveTypesEnum.MonotonicallyIncreasing);
+           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta);
         }
     }
 }

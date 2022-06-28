@@ -91,6 +91,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             get { return _IsAnalytical; }
             set  { _IsAnalytical = value; NotifyPropertyChanged();}
         }
+        public bool IsGraphical
+        {
+            get { return !_IsAnalytical; }
+            set { _IsAnalytical = !value; NotifyPropertyChanged(); }
+        }
         public double Mean
         {
             get { return _Mean; }
@@ -135,6 +140,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             GraphicalTableWithPlotVM.SetPlotForGraphicalFlowFrequency();
             LoadDefaultFlows();
             InitializePlotModel();
+            NotifyPropertyChanged(nameof(IsAnalytical));
         }
         //This supports loading from a saved state. 
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
