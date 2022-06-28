@@ -50,7 +50,7 @@
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,5,0,0">
             <RadioButton x:Name="rad_analytical" Content="Analytical" IsChecked="{Binding IsAnalytical}" Checked="rad_analytical_Checked" Margin="5" />
-            <RadioButton x:Name="rad_graphical" Content="Graphical" Checked="rad_graphical_Checked" Margin="5"/>
+            <RadioButton x:Name="rad_graphical" Content="Graphical" IsChecked="{Binding IsGraphical}" Checked="rad_graphical_Checked" Margin="5"/>
         </StackPanel>
 
         <GroupBox x:Name="group_graphical" Header="Graphical" Grid.Row="4"  Visibility="Visible">
