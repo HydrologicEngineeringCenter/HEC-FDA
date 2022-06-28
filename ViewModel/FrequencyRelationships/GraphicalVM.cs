@@ -119,11 +119,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             XElement ele = base.ToXML();
             ele.SetAttributeValue("EquivalentRecordLength", EquivalentRecordLength);
+            ele.SetAttributeValue(nameof(UseFlow), UseFlow);
             return ele;
         }
         override public void LoadFromXML(XElement element)
         {
             EquivalentRecordLength = int.Parse(element.Attribute("EquivalentRecordLength").Value);
+            UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
             base.LoadFromXML(element);
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
