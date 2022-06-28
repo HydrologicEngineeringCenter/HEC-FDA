@@ -333,12 +333,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void UpdateRatingRequired()
         {
-            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
+            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
             {
-                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
-                {
-                    RatingRequired = !elem.IsAnalytical;
-                }
+                RatingRequired = !elem.IsAnalytical;
             }
         }
 
