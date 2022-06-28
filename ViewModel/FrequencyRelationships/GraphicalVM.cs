@@ -87,6 +87,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             SelectedItem = Options[0];
             Initialize();
             SelectedItem.Data.Clear();
+            base.Name = Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY;
 
             double[] probs = probabilityFunction.ExceedanceProbability;
             double[] ys;
