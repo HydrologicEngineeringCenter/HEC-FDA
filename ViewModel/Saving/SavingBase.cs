@@ -65,7 +65,6 @@ namespace HEC.FDA.ViewModel.Saving
         }
         #endregion
 
-        #region save new
         public virtual void SaveNew(ChildElement element)
         {
             OpenConnection();
@@ -95,14 +94,45 @@ namespace HEC.FDA.ViewModel.Saving
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
-            //this updates the parent table
-            UpdateTableRow(TableName, elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
-
-            StudyCacheForSaving.UpdateElement( elementToSave);
+            if(IDExistsInDB(TableName, elementToSave.ID, ID_COL_NAME))
+            {
+                UpdateTableRow(TableName, elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
+                StudyCacheForSaving.UpdateElement( elementToSave);
+            }
+            else
+            {
+                elementToSave.ID = GetNextAvailableId();
+                SaveNew(elementToSave);
+            }
         }
 
-        #endregion
+        /// <summary>
+        /// Check to see if the id still exists. If it doesn't, then we can save it as a new element.
+        /// This is here because it was possible to open up an editor and then delete the element from the tree
+        /// and then click save on the editor. 
+        /// </summary>
+        /// <returns></returns>
+        private bool IDExistsInDB(string tableName, int id, string idColumnName)
+        {
+            bool idExists = false;
+            OpenConnection();
 
+            StringBuilder sb = new StringBuilder("SELECT 1 FROM ").Append(tableName).Append(" WHERE ").Append(idColumnName)
+            .Append(" = '").Append(id).Append("'");
+
+            SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            object returnValue = command.ExecuteScalar();
+            int returnValueInt = Convert.ToInt32(returnValue);
+
+            if (returnValueInt > 0)
+            {
+                idExists = true;
+            }
+
+            return idExists;
+        }
+   
         private void OpenConnection()
         {
             if (!Connection.Instance.IsOpen)
