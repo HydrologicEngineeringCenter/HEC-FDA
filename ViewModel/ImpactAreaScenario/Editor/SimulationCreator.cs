@@ -8,6 +8,7 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,7 +102,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             if (_UseLevee)
             {
-                _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+                if(_LeveeElem.IsDefaultCurveUsed)
+                {
+                    _SimulationBuilder.withLevee(_LeveeElem.CreateDefaultCurve(), _LeveeElem.Elevation);
+                }
+                else
+                {
+                    _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+                }
             }
         }
         private ContinuousDistribution GetFrequencyDistribution()

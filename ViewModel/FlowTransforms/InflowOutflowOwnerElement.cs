@@ -60,7 +60,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.REGULATED, StringConstants.UNREGULATED);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             computeComponentVM.SetPairedData(DefaultCurveData.RegulatedUnregulatedDefaultCurve());
 
             Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(computeComponentVM, actionManager);

@@ -504,7 +504,7 @@ namespace HEC.FDA.ViewModel.Utilities
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.REGULATED, StringConstants.UNREGULATED);
+            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             computeComponentVM.SetPairedData(func);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, elemID);
         }
