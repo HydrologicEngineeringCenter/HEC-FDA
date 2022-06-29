@@ -175,7 +175,6 @@
         #endregion
 
         #region Graphical
-        public const string GRAPHICAL_FLOW_FREQUENCY = "Graphical Flow Frequency";
         #endregion
 
         #region Result Histogram Labels
