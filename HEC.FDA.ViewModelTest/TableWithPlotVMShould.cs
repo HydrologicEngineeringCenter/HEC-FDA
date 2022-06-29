@@ -3,7 +3,7 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using System.Xml.Linq;
 using Xunit;
 
-namespace fda_viewmodel_test
+namespace HEC.FDA.ViewModelTest
 {
     
     public class TableWithPlotVMShould

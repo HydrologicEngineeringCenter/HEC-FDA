@@ -52,21 +52,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     YLabel = Utilities.StringConstants.DISCHARGE;
                 }
-                NotifyPropertyChanged(); 
+                else
+                {
+                    YLabel = Utilities.StringConstants.STAGE;
+                }
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(UseStage));
             }
         }
         public bool UseStage
         {
             get { return !_useFlow; }
-            set
-            {
-                _useFlow = !value;
-                if(value == true)
-                {
-                    YLabel = Utilities.StringConstants.STAGE;
-                }
-                NotifyPropertyChanged();
-            }
         }
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
@@ -80,34 +76,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             LoadFromXML(vmEle);
             Initialize();
         }
-        public GraphicalVM(ProbabilityFunction probabilityFunction) : base()
+        public GraphicalVM(ProbabilityFunction probabilityFunction)
         {
-            Options.Clear();
-            Options.Add(new GraphicalDataProvider());
-            SelectedItem = Options[0];
+            LoadFromProbabilityFunction(probabilityFunction);
             Initialize();
-            SelectedItem.Data.Clear();
-            base.Name = Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY;
-
-            double[] probs = probabilityFunction.ExceedanceProbability;
-            double[] ys;
-            if (probabilityFunction.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
-            {
-                ys = probabilityFunction.Discharge;
-                UseStage = false;
-            }
-            else
-            {
-                ys = probabilityFunction.Stage;
-                UseFlow = true;
-            }
-            for (int i = 0; i < probabilityFunction.NumberOfGraphicalPoints; i++)
-            {
-                SelectedItem.AddRow(i);
-                SelectedItem.Data[i] = new GraphicalRow(probs[i],ys[i]);
-            }
-            EquivalentRecordLength = probabilityFunction.EquivalentLengthOfRecord;
-            
         }
         private void Initialize()
         {
@@ -118,15 +90,48 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         override public XElement ToXML()
         {
             XElement ele = base.ToXML();
-            ele.SetAttributeValue("EquivalentRecordLength", EquivalentRecordLength);
+            ele.SetAttributeValue(nameof(EquivalentRecordLength), EquivalentRecordLength);
             ele.SetAttributeValue(nameof(UseFlow), UseFlow);
             return ele;
         }
         override public void LoadFromXML(XElement element)
         {
-            EquivalentRecordLength = int.Parse(element.Attribute("EquivalentRecordLength").Value);
+            EquivalentRecordLength = int.Parse(element.Attribute(nameof(EquivalentRecordLength)).Value);
             UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
             base.LoadFromXML(element);
+        }
+        /// <summary>
+        /// This loads a default GraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
+        /// </summary>
+        /// <param name="pf"></param>
+        private void LoadFromProbabilityFunction(ProbabilityFunction pf)
+        {
+            Options.Clear();
+            Options.Add(new GraphicalDataProvider());
+            SelectedItem = Options[0];
+            Initialize();
+            SelectedItem.Data.Clear();
+            base.Name = Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY;
+            base.XLabel = Utilities.StringConstants.EXCEEDANCE_PROBABILITY;
+            double[] probs = pf.ExceedanceProbability;
+            double[] ys;
+            if (pf.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
+            {
+                ys = pf.Discharge;
+                UseFlow = true; //This will also set the YLabel
+            }
+            else
+            {
+                ys = pf.Stage;
+                UseFlow = false;//This will also set the YLabel
+            }
+
+            for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
+            {
+                SelectedItem.AddRow(i);
+                SelectedItem.Data[i] = new GraphicalRow(probs[i], ys[i]);
+            }
+            EquivalentRecordLength = pf.EquivalentLengthOfRecord;
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {

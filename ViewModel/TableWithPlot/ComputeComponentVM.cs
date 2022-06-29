@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public ComputeComponentVM(string name = "name", string xlabel = "xlabel", string ylabel = "ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
+        public ComputeComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
         {
             _DeterministicOnly = deterministicOnly;
             _IsStrictMonotonic = isStrictMonotonic;

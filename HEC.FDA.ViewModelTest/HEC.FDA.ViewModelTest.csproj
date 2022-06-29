@@ -24,6 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Importer\Importer.csproj" />
 		<ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
 	</ItemGroup>
 
