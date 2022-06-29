@@ -97,6 +97,10 @@ namespace metrics
 
             return damCats;
         }
+        public IHistogram AEPHistogram(int impactAreaID, int thresholdID = 0)
+        {
+            return GetResults(impactAreaID).GetAEPHistogram(thresholdID);
+        }
         public double MeanAEP(int impactAreaID, int thresholdID=0)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);
