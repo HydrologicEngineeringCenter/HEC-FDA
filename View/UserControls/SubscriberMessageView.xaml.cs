@@ -15,12 +15,24 @@ namespace HEC.MVVMFramework.View.UserControls
         public static readonly DependencyProperty SenderTypeFilterProperty = DependencyProperty.Register(nameof(SenderTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, SenderTypeFilterChangedCallback));
         public static readonly DependencyProperty MessageTypeFilterProperty = DependencyProperty.Register(nameof(MessageTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, MessageTypeFilterChangedCallback));
         public static readonly DependencyProperty MessageCountProperty = DependencyProperty.Register(nameof(MessageCount), typeof(int), typeof(SubscriberMessageView), new PropertyMetadata(100, MessageCountChangedCallback));
+        public static readonly DependencyProperty InstanceFilterProperty = DependencyProperty.Register(nameof(InstanceFilter), typeof(int), typeof(SubscriberMessageView), new PropertyMetadata(null, InstanceFilterPropertyChangedCallback));
 
         private ViewModel.Implementations.SubscriberMessageViewModel _vm = new ViewModel.Implementations.SubscriberMessageViewModel();
         public int MessageCount
         {
             get { return (int)GetValue(MessageCountProperty); }
             set { SetValue(MessageCountProperty, value); }
+        }
+        public int InstanceFilter
+        {
+            get 
+            { 
+                return (int)GetValue(InstanceFilterProperty);
+            }
+            set
+            {
+                SetValue(InstanceFilterProperty, value);
+            }
         }
         public ErrorLevel FilterLevel
         {
@@ -72,7 +84,6 @@ namespace HEC.MVVMFramework.View.UserControls
         private static void SenderTypeFilterChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             SubscriberMessageView v = d as SubscriberMessageView;
-            System.Diagnostics.Debugger.Break();
             v._vm.SenderTypeFilter = v.SenderTypeFilter;
         }
         private static void MessageTypeFilterChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -84,6 +95,11 @@ namespace HEC.MVVMFramework.View.UserControls
         {
             SubscriberMessageView v = d as SubscriberMessageView;
             v._vm.MessageCount = v.MessageCount;
+        }
+        private static void InstanceFilterPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            SubscriberMessageView v = d as SubscriberMessageView;
+            v._vm.InstanceFilter = v.InstanceFilter;
         }
     }
 }
