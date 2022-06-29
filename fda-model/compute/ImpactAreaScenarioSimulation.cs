@@ -13,6 +13,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Text;
 
 namespace compute
 {
@@ -122,10 +123,32 @@ namespace compute
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings" + Environment.NewLine)));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
                 }
                 //enumerate what the errors and warnings are 
                 //TODO: HOW???
+
+                foreach (PropertyRule propertyRule in RuleMap.Values)
+                {
+                    if (propertyRule.ErrorLevel > ErrorLevel.Unassigned)
+                    {
+                        foreach (Rule rule in propertyRule.Rules)
+                        {
+                            if (rule.ErrorLevel > ErrorLevel.Unassigned)
+                            {
+                                ReportMessage(this, new MessageEventArgs(new Message (rule.Message)));
+                            }
+                        }
+                    }
+                }
+                //TODO: alternative is to use GetErrors() 
+                //StringBuilder stringBuilder = new StringBuilder();
+                //foreach (string errorMessage in GetErrors())
+                //{
+                //    stringBuilder.Append(errorMessage);
+
+                //}
+                //ReportMessage(this, new MessageEventArgs(new Message(stringBuilder.ToString())));
             }
             if (randomProvider is MeanRandomProvider)
             {
@@ -378,6 +401,7 @@ namespace compute
         }
         private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
         {
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
