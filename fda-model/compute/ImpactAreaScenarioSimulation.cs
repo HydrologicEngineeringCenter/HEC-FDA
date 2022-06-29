@@ -136,7 +136,7 @@ namespace compute
                         {
                             if (rule.ErrorLevel > ErrorLevel.Unassigned)
                             {
-                                ReportMessage(this, new MessageEventArgs(new Message (rule.Message)));
+                                ReportMessage(this, new MessageEventArgs(new Message (rule.Message + Environment.NewLine)));
                             }
                         }
                     }
