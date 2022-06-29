@@ -48,7 +48,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
             }
             set
             {
-                System.Diagnostics.Debugger.Break();
                 _senderType = value; NotifyPropertyChanged();
             }
         }
