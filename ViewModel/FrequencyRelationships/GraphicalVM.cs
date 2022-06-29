@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             SelectedItem = Options[0];
             Initialize();
             SelectedItem.Data.Clear();
-            base.Name = Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY;
+            base.Name = Utilities.StringConstants.GRAPHICAL_FREQUENCY;
             base.XLabel = Utilities.StringConstants.EXCEEDANCE_PROBABILITY;
             double[] probs = pf.ExceedanceProbability;
             double[] ys;
@@ -157,7 +157,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()
         {
-            CurveMetaData meta = new CurveMetaData(Utilities.StringConstants.EXCEEDANCE_PROBABILITY,Utilities.StringConstants.DISCHARGE,Utilities.StringConstants.GRAPHICAL_FLOW_FREQUENCY,"None",CurveTypesEnum.MonotonicallyIncreasing);
+            CurveMetaData meta = new CurveMetaData(XLabel, YLabel,Name,"None",CurveTypesEnum.MonotonicallyIncreasing);
            return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta);
         }
     }
