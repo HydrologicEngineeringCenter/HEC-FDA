@@ -17,6 +17,10 @@
     <None Remove="Inventory\DepthDamage\**" />
     <Page Remove="Inventory\DepthDamage\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ImpactAreaScenario\Results\DamageByDamageCategoryVM.cs" />
+  </ItemGroup>
 	
   <ItemGroup>
     <Reference Include="BitMiracle.LibTiff.NET40">
