@@ -56,15 +56,12 @@ namespace HEC.MVVMFramework.View.NamedActionConverters
             //the only thing i can think of is to put a default name in the named action that is in the default dependency property and trigger the property callback to disable the button if the property doesnt exist.
             if (basevalue == null)
             {
-                //System.Diagnostics.Debugger.Break();
                 return null;
             }
-            //System.Diagnostics.Debugger.Break();
             return basevalue;
         }
         private static void ButtonNamedActionPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            //System.Diagnostics.Debugger.Break();
             ImageNamedActionButton nab = (ImageNamedActionButton)d;
             Button btn = nab.btn;
             if (nab._ActionHandler != null)

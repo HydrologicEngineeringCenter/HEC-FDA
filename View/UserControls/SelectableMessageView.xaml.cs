@@ -13,7 +13,6 @@ namespace HEC.MVVMFramework.View.UserControls
         public SelectableMessageView()
         {
             InitializeComponent();
-            //System.Diagnostics.Debugger.Break();
             DataContext = _vm;
             MessageHub.Subscribe(_vm);
         }
