@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -31,7 +33,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private bool _thresholdComboVisible;
 
         private DamageWithUncertaintyVM _damageWithUncertaintyVM;
-        private DamageByDamageCategoryVM _damageByDamageCategoryVM;
+        private DamageByDamCatVM _damageByDamageCategoryVM;
         private PerformanceVMBase _performanceAEPVM;
         private PerformanceVMBase _performanceAssuranceOfThresholdVM;
         private PerformanceVMBase _performanceLongTermRiskVM;
@@ -117,8 +119,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         private void loadVMs(List<string> damCats)
         {
+            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
+            double discountRate = studyPropElem.DiscountRate;
+            int period = studyPropElem.PeriodOfAnalysis;
+
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
-            _damageByDamageCategoryVM = new DamageByDamageCategoryVM(_IASResult, damCats);
+            _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
             _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
             _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
             _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(_IASResult, Thresholds);

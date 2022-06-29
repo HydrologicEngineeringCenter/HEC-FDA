@@ -265,9 +265,9 @@
             <IASResultsView:SpecificIASResultsControl/>
         </DataTemplate>
         
-        <DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
+        <!--<DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
             <IASResultsView:DamageByDamageCategory/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
             <IASResultsView:PerformanceAEP/>
