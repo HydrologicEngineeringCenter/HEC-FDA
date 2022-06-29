@@ -14,7 +14,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         private Type _senderType = null;
         private Type _messageType = null;
         private int _messageCount = 100;
-
         private int _instanceFilter;
 
         public int InstanceFilter
@@ -22,7 +21,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
             get { return _instanceFilter; }
             set { _instanceFilter = value; NotifyPropertyChanged(); }
         }
-
         public IMessage IMessage
         {
             get { return _message; }
@@ -39,7 +37,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
                 _filterLevel = value; NotifyPropertyChanged();
             }
         }
-
         public Type SenderTypeFilter
         {
             get
@@ -51,7 +48,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
                 _senderType = value; NotifyPropertyChanged();
             }
         }
-
         public Type MessageTypeFilter
         {
             get
