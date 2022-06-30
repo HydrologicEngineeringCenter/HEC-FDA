@@ -21,6 +21,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
 
+        //public int Hash
+        //{
+        //    get { return GetHashCode(); }
+        //}
+
         public string NumberCompleted
         {
             get { return _NumberCompleted; }
