@@ -37,8 +37,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
                 UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
                 UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
-                UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
             }
+            UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
 
         }
 
