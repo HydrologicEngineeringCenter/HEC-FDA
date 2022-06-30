@@ -31,24 +31,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             RatingRelationshipControl.Plot();
             StageDamageControl.Plot();
             DamageFrequencyControl.Plot();
-
-            UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, Axis.Y);
-            UpdateMinMax(StageDamageControl, DamageFrequencyControl, Axis.Y);
-            UpdateMinMax(RatingRelationshipControl, StageDamageControl, Axis.X);
+            
+            UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
+            UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
+            UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
+            UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
         }
 
-        private void UpdateMinMax(ChartControlBase primary, ChartControlBase secondary, Axis axis)
-        {
+        private void UpdateMinMax(ChartControlBase primary, ChartControlBase horizontalNeighbor, ChartControlBase verticalNeighbor)
+        { 
+            Tuple<double, double> minMaxX = GetMinMax(primary.GetMinMax(Axis.X), verticalNeighbor.GetMinMax(Axis.X));
+            Tuple<double, double> minMaxY = GetMinMax(primary.GetMinMax(Axis.Y), horizontalNeighbor.GetMinMax(Axis.Y));
             
-            Tuple<double, double> leftMinMax = primary.GetMinMax(axis);
-            Tuple<double, double> rightMinMax = secondary.GetMinMax(axis);
+            primary.SetMinMax(minMaxX, minMaxY);
+        }
 
-            //TODO:  Once Y goes log again, we will need to adjust the min so it doesn't go <= 0, or there needs to be some guarantee outside of this that guarantees the min does not go <= 0.
-            double min = Math.Min(leftMinMax.Item1, rightMinMax.Item1);
-            double max = Math.Max(leftMinMax.Item2, rightMinMax.Item2);
-
-            //They're bound, so only set the primary's min/max and it will update the secondary min/max.
-            primary.SetMinMax(axis, min, max);
+        private Tuple<double, double> GetMinMax(Tuple<double, double> left, Tuple<double, double> right)
+        {
+            double item1 = Math.Min(left.Item1, right.Item1);
+            double item2 = Math.Max(left.Item2, right.Item2);
+            return new Tuple<double, double>(item1, item2);
         }
     }
 }

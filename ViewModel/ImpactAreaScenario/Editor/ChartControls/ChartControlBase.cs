@@ -1,5 +1,4 @@
 ﻿using HEC.Plotting.Core;
-using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using paireddata;
@@ -10,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using SciChart.Charting.Visuals.Axes;
+using AxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
@@ -51,28 +52,44 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
                 FlipXAxisValues = useProbabilityX,
                 CustomProbabilityTicks = ProbabilityTicks,
             };
+            
             ChartVM.LineData.Add(_data);
         }
 
-        public void SetMinMax(Axis axis, double min, double max)
+        public void SetMinMax(Tuple<double, double> minMaxX, Tuple<double, double> minMaxY)
         {
-            IAxisViewModel vm = GetAxisViewModel(axis);
-            vm.VisibleRange.SetMinMax(min, max);
+            AxisCoreViewModel vmX = GetAxisViewModel(Axis.X);
+            AxisCoreViewModel vmY = GetAxisViewModel(Axis.Y);
+            
+            UpdateVisibleRange(minMaxX, vmX);
+            UpdateVisibleRange(minMaxY, vmY);
         }
 
-        private IAxisViewModel GetAxisViewModel(Axis axis)
+        private static void UpdateVisibleRange(Tuple<double, double> minMax, AxisCoreViewModel vm)
         {
-            IAxisViewModel axisVm = null;
+            if (vm?.VisibleRange != null)
+            {
+                double delta = minMax.Item2 - minMax.Item1;
+                double minDeltaGrowth = vm.GrowBy.Min * delta;
+                double maxDeltaGrowth = vm.GrowBy.Max * delta;
+                vm.VisibleRange = vm.VisibleRange.SetMinMax(minMax.Item1 - minDeltaGrowth, minMax.Item2 + maxDeltaGrowth);
+            }
+        }
+
+        private AxisCoreViewModel GetAxisViewModel(Axis axis)
+        {
+            //*lots* of assumptions going on in here, but it's for the betterment of society, trust me. -Ryan Miles
+            AxisCoreViewModel axisVm = null;
             SciChartAxisViewModel vm = ChartVM.AxisViewModel as SciChartAxisViewModel;
             if (vm != null)
             {
                 switch (axis)
                 {
                     case Axis.X:
-                        axisVm = vm.XAxisViewModels[0];
+                        axisVm = vm.XAxisViewModels[0] as AxisCoreViewModel;
                         break;
                     case Axis.Y:
-                        axisVm = vm.YAxisViewModels[0];
+                        axisVm = vm.YAxisViewModels[0] as AxisCoreViewModel;
                         break;
                     default:
                         throw new NotSupportedException("2D chart only supports X and Y axes.");
@@ -80,7 +97,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
             }
             return axisVm;
         }
-
+        
         public Tuple<double, double> GetMinMax(Axis axis)
         {
             double[] values;
