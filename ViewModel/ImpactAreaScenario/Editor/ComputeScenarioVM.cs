@@ -18,13 +18,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private string _NumberCompleted;
         private int _IterationsCompleted = 0;
         private int _TotalSims;
+        private int _Hash;
 
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
 
-        //public int Hash
-        //{
-        //    get { return GetHashCode(); }
-        //}
+        public int Hash
+        {
+            get 
+            {
+                return _Hash;
+            }
+            set
+            {
+                _Hash = value; NotifyPropertyChanged();
+            }
+        }
 
         public string NumberCompleted
         {
@@ -43,6 +51,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback)
         {
+            Hash = GetHashCode();
             _TotalSims = iasElems.Count;
             NumberCompleted = _IterationsCompleted + "/" + _TotalSims;
 

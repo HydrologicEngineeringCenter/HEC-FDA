@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private void loadTableValues(List<double> qValues)
         {
             List<EadRowItem> rows = new List<EadRowItem>();
-            if (qValues.Count != 3)
+            if (qValues.Count == 3)
             {
                 List<double> xVals = new List<double>() { .75, .5, .25 };
 

@@ -79,20 +79,20 @@ namespace HEC.FDA.ViewModel.ImpactArea
             DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-            List<string> uniqueNameList = new List<string>();
+            List<string> uniqueNameList = dtv.ColumnNames.ToList();
 
-            for(int i = 0;i< dtv.ColumnNames.Count(); i++)
-            {
-                if(dtv.ColumnTypes[i]== typeof(string))
-                {
-                    uniqueNameList.Add(dtv.ColumnNames[i]);
-                }
-            }
-            if (!(uniqueNameList.Count > 0))
-            {
-                MessageBox.Show("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", "No String Fields", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
+            //for(int i = 0;i< dtv.ColumnNames.Count(); i++)
+            //{
+            //    if(dtv.ColumnTypes[i]== typeof(string))
+            //    {
+            //        uniqueNameList.Add(dtv.ColumnNames[i]);
+            //    }
+            //}
+            //if (!(uniqueNameList.Count > 0))
+            //{
+            //    MessageBox.Show("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", "No String Fields", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            //    return;
+            //}
             UniqueFields = uniqueNameList;
         }
 
