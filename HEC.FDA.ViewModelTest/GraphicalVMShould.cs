@@ -27,6 +27,7 @@ namespace HEC.FDA.ViewModelTest
             Assert.Equal(expected.YLabel, Actual.YLabel);
         }
 
+        [Fact]
         public void LoadFromAnImportFile()
         {
             double[] stages = new double[] { 1, 2, 3 };
