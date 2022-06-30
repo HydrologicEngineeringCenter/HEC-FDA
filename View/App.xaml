@@ -118,7 +118,7 @@
         </DataTemplate>
 
         <!--FrequencyRelationships Region-->
-        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:FrequencyEditorVM }" >
+        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
             <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
         </DataTemplate> 
 

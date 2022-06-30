@@ -160,7 +160,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             UncertainPairedData data;
 
-            if (elem is FrequencyElement freqElem)
+            if (elem is AnalyticalFrequencyElement freqElem)
             {
                 data = freqElem.CreatePairedData();
             }

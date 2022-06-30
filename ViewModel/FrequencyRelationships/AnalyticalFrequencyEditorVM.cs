@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class FrequencyEditorVM :CurveEditorVM
+    public class AnalyticalFrequencyEditorVM :CurveEditorVM
     {
         #region Notes
         #endregion
@@ -130,7 +130,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         //This supports a fresh editor
-        public FrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
             _Mean = DefaultCurveData.LP3Mean;
             _StDev = DefaultCurveData.LP3StDev;
@@ -143,7 +143,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             NotifyPropertyChanged(nameof(IsAnalytical));
         }
         //This supports loading from a saved state. 
-        public FrequencyEditorVM(FrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             IsAnalytical = elem.IsAnalytical;
             IsStandard = elem.IsStandard;
@@ -159,7 +159,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Voids  
         
-        private void LoadFlows(FrequencyElement elem)
+        private void LoadFlows(AnalyticalFrequencyElement elem)
         {
             if (elem.AnalyticalFlows.Count == 0)
             {
@@ -345,7 +345,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
                 int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
 
-                FrequencyElement elem = new FrequencyElement(Name, editDate, Description, PeriodOfRecord, IsAnalytical, IsStandard, Mean, StandardDeviation, Skew,
+                AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, PeriodOfRecord, IsAnalytical, IsStandard, Mean, StandardDeviation, Skew,
                      analyticalFlows, GraphicalTableWithPlotVM.ComputeComponentVM as GraphicalVM, TableWithPlot.ComputeComponentVM, id);
 
                 base.Save(elem);

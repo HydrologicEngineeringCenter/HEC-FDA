@@ -120,7 +120,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private SimulationCreator GetSimulationCreator()
         {
-            FrequencyElement freqElem = (FrequencyElement)StudyCache.GetChildElementOfType(typeof(FrequencyElement), FlowFreqID);
+            AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
             ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);

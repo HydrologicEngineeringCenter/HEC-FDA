@@ -205,7 +205,7 @@ namespace HEC.FDA.ViewModel.Tabs
             //when the window closes it will call RemoveWindow()
             _Tabs.Add(tabToPopIn);
             SelectedDynamicTabIndex = Tabs.Count - 1;
-            if (tabToPopIn.BaseVM is FrequencyEditorVM vm)
+            if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
             {
                 vm.InitializePlotModel();
             }
@@ -276,7 +276,7 @@ namespace HEC.FDA.ViewModel.Tabs
             _Tabs.Remove(tabToPopOut);
             _Windows.Add(tabToPopOut);
 
-            if (tabToPopOut.BaseVM is FrequencyEditorVM frequencyVM)
+            if (tabToPopOut.BaseVM is AnalyticalFrequencyEditorVM frequencyVM)
             {
                 frequencyVM.InitializePlotModel();
             }

@@ -60,7 +60,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                .WithSiblingRules(this);
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            FrequencyEditorVM vm = new FrequencyEditorVM(computeComponentVM, actionManager);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);

@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(FrequencyElement element)
+        private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
             return new object[] { element.Name, element.Description, WriteFlowFrequencyToXML(element) };
         }
@@ -74,7 +74,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
-            return new FrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL], id);
+            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL], id);
         }
 
         #endregion
@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(FrequencyElement))
+            if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
                 //save to parent table
                 base.SaveNew(element);
@@ -100,7 +100,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override void Load()
         {
             List<ChildElement> flowFreqs = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
-            foreach (FrequencyElement elem in flowFreqs)
+            foreach (AnalyticalFrequencyElement elem in flowFreqs)
             {
                 StudyCacheForSaving.AddElement(elem);
             }
@@ -108,10 +108,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            return GetRowDataFromElement((FrequencyElement)elem);
+            return GetRowDataFromElement((AnalyticalFrequencyElement)elem);
         }
 
-        public string WriteFlowFrequencyToXML(FrequencyElement elem)
+        public string WriteFlowFrequencyToXML(AnalyticalFrequencyElement elem)
         {
             XElement flowFreqElem = new XElement(FLOW_FREQUENCY);
             flowFreqElem.SetAttributeValue(NAME, elem.Name);
