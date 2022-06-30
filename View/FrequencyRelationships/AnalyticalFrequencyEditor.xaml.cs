@@ -27,7 +27,7 @@ namespace HEC.FDA.View.FrequencyRelationships
             //This was added to allow the table to complete it's enter/edit complete action and then perform the add logic.
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (DataContext is AnalyticalFrequencyEditorVM vm)
+                if (DataContext is FrequencyEditorVM vm)
                 {
                     vm.AddRow();
                     int lastRowIndex = dg_table.Items.Count - 1;
@@ -38,7 +38,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void Dg_table_RowsDeleted(List<int> rowindices)
         {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            if (DataContext is FrequencyEditorVM vm)
             {
                 vm.DeleteRows(rowindices);
             }
@@ -46,7 +46,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void Dg_table_RowsAdded(int startrow, int numrows)
         {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            if (DataContext is FrequencyEditorVM vm)
             {
                 vm.AddRows(startrow, numrows);
             }
@@ -77,7 +77,7 @@ namespace HEC.FDA.View.FrequencyRelationships
                 grid_analyticalLeft_standard.Visibility = Visibility.Visible;
                 grid_analyticalLeft_fitToFlows.Visibility = Visibility.Hidden;
 
-                if (DataContext is AnalyticalFrequencyEditorVM vm)
+                if (DataContext is FrequencyEditorVM vm)
                 {
                     vm.UpdateChartLineData();
                 }
@@ -91,7 +91,7 @@ namespace HEC.FDA.View.FrequencyRelationships
                 grid_analyticalLeft_standard.Visibility = Visibility.Hidden;
                 grid_analyticalLeft_fitToFlows.Visibility = Visibility.Visible;
 
-                if (DataContext is AnalyticalFrequencyEditorVM vm)
+                if (DataContext is FrequencyEditorVM vm)
                 {
                     vm.UpdateChartLineData();
                 }
@@ -178,7 +178,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void FitToFlows_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            if (DataContext is FrequencyEditorVM vm)
             {
                 vm.UpdateChartLineData();
             }

@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyElement : CurveChildElement
+    public class FrequencyElement : CurveChildElement
     {
         #region Notes
         #endregion
@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         //fresh editor
-        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
+        public FrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
             double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) : base(id)
         {
             POR = por;
@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             AddActions();
         }
         //load from database
-        public AnalyticalFrequencyElement(string name, string description, string xmlString, int id) : base(id)
+        public FrequencyElement(string name, string description, string xmlString, int id) : base(id)
         {
             XDocument doc = XDocument.Parse(xmlString);
             XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);
+            FrequencyEditorVM vm = new FrequencyEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
@@ -135,8 +135,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
-            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
+            FrequencyElement elem = (FrequencyElement)elementToClone;
+            return new FrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
                 elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.MyGraphicalVM, elem.ComputeComponentVM, elem.ID);
         }     
         #endregion

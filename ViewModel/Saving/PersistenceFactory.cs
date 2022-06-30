@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(AnalyticalFrequencyElement))
+            else if (element.GetType() == typeof(FrequencyElement))
             {
                 manager = new FlowFrequencyPersistenceManager(StudyCacheForSaving);
             }

@@ -80,7 +80,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
         public List<WaterSurfaceElevationElement> WaterSurfaceElements { get; } = new List<WaterSurfaceElevationElement>();
-        public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
+        public List<FrequencyElement> FlowFrequencyElements { get; } = new List<FrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; } = new List<ExteriorInteriorElement>();
         public List<LeveeFeatureElement> LeveeElements { get; } = new List<LeveeFeatureElement>();
@@ -141,7 +141,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(WaterSurfaceElements, elem);
                 WaterSurfaceElevationRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(AnalyticalFrequencyElement))
+            else if (elem.GetType() == typeof(FrequencyElement))
             {
                 RemoveElementFromList(FlowFrequencyElements, elem);
                 FlowFrequencyRemoved?.Invoke(this, elementAddedEventArgs);
@@ -235,9 +235,9 @@ namespace HEC.FDA.ViewModel.Study
                 WaterSurfaceElements.Add((WaterSurfaceElevationElement)elem);
                 WaterSurfaceElevationAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is AnalyticalFrequencyElement )
+            else if (elem is FrequencyElement )
             {
-                FlowFrequencyElements.Add((AnalyticalFrequencyElement)elem);
+                FlowFrequencyElements.Add((FrequencyElement)elem);
                 FlowFrequencyAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is InflowOutflowElement)
@@ -318,9 +318,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateWaterSurfaceElevationElement( (WaterSurfaceElevationElement)newElement);
             }
-            else if (newElement is AnalyticalFrequencyElement )
+            else if (newElement is FrequencyElement )
             {
-                UpdateFlowFrequencyElement( (AnalyticalFrequencyElement)newElement);
+                UpdateFlowFrequencyElement( (FrequencyElement)newElement);
             }
             else if (newElement is InflowOutflowElement )
             {
@@ -400,7 +400,7 @@ namespace HEC.FDA.ViewModel.Study
                 WaterSurfaceElevationUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateFlowFrequencyElement( AnalyticalFrequencyElement newElement)
+        public void UpdateFlowFrequencyElement( FrequencyElement newElement)
         {
             int index = FlowFrequencyElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -624,7 +624,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(WaterSurfaceElements);
             }
-            else if (childElementType == typeof(AnalyticalFrequencyElement))
+            else if (childElementType == typeof(FrequencyElement))
             {
                 retVal.AddRange(FlowFrequencyElements);
             }
@@ -704,7 +704,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = ImpactAreaElements.Where(elem => elem.ID == ID).FirstOrDefault();    
             }           
-            else if (childElementType == typeof(AnalyticalFrequencyElement))
+            else if (childElementType == typeof(FrequencyElement))
             {
                 childElem = FlowFrequencyElements.Where(elem => elem.ID == ID).FirstOrDefault();  
             }
