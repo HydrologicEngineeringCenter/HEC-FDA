@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
-                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="False" CanUserReorderColumns="False"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
         <DataGrid.Columns>
             <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">

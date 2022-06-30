@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult)
+        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, List<double> qValues)
         {
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
@@ -27,33 +27,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
 
-            ConsequenceDistributionResults eadResults = iasResult.ConsequenceResults;
-            loadTableValues(eadResults);
-
+            loadTableValues(qValues);
         }
 
-        private void loadTableValues(ConsequenceDistributionResults eadResults)
+        private void loadTableValues(List<double> qValues)
         {
-            List<double> xVals = new List<double>() { .75, .5, .25 };
-            List<double> yVals = loadYData(xVals, eadResults);
-
             List<EadRowItem> rows = new List<EadRowItem>();
-            for(int i = 0;i<xVals.Count;i++)
+            if (qValues.Count != 3)
             {
-                rows.Add(new EadRowItem(xVals[i], yVals[i]));
-            }
+                List<double> xVals = new List<double>() { .75, .5, .25 };
 
+                for (int i = 0; i < xVals.Count; i++)
+                {
+                    rows.Add(new EadRowItem(xVals[i], qValues[i]));
+                }
+            }
             Rows.AddRange( rows);
-        }
-
-        private List<double> loadYData(List<double> xVals, ConsequenceDistributionResults eadResults)
-        {
-            List<double> yValues = new List<double>();
-            foreach(double x in xVals)
-            {
-                yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ(x));
-            }
-            return yValues;
         }
 
     }
