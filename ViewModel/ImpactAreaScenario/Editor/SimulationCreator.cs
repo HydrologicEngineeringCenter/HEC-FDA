@@ -8,8 +8,6 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
-using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static compute.ImpactAreaScenarioSimulation;
@@ -112,6 +110,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
             }
         }
+
         private ContinuousDistribution GetFrequencyDistribution()
         {
             return _FreqElem.CreateLP3Distribution();

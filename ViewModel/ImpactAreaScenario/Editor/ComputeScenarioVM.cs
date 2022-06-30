@@ -53,7 +53,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 sims.Add(sim);
             }
             Scenario scenario = new Scenario(analysisYear, sims);
-            int seed = 999;
+
+            int seed = 1234;
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria();
 
@@ -111,7 +112,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
             }
             Progress = progress.Progress;
-            if(_Progress == 100)
+            if(_Progress >= 99)
             {
                 UpdateTotalCompleted();
             }

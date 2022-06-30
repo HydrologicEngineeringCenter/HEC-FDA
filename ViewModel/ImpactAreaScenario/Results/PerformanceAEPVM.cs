@@ -26,25 +26,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             {
                 Threshold threshold = thresholdComboItems[i].Metric;
                 ThresholdEnum thresholdType = threshold.ThresholdType;
-                SystemPerformanceResults performanceResults = GetResultsOfType(iasResult, thresholdType);
+                int thresholdID = threshold.ThresholdID;
+                Mean = iasResult.MeanAEP(thresholdID);
+                Median = iasResult.MedianAEP(thresholdID);
 
-                if (performanceResults != null)
+                List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
+                //get the table values
+                List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };
+                foreach (double xVal in xVals)
                 {
-                    Mean = performanceResults.MeanAEP();
-                    Median = performanceResults.MedianAEP();
-
-                    List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
-                    //get the table values
-                    List<double> xVals = new List<double>() { .1, .04, .02, .01, .005, .002 };
-                    foreach (double xVal in xVals)
-                    {
-                        double yVal = performanceResults.AssuranceOfAEP(xVal);
-                        rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
-                    }
-
-                    MetricsToRows.Add(threshold, rows);
-                    LoadHistogramData(performanceResults, threshold);
+                    double yVal = iasResult.AssuranceOfAEP(thresholdID, xVal);
+                    rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                 }
+
+                MetricsToRows.Add(threshold, rows);
+                LoadHistogramData(iasResult, threshold);
             }
 
             if(MetricsToRows.Count>0)
@@ -53,29 +49,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private void LoadHistogramData(SystemPerformanceResults performanceResults, Threshold threshold)
+        private void LoadHistogramData(ImpactAreaScenarioResults results, Threshold threshold)
         {
-            ThreadsafeInlineHistogram histogramOfAEPs = performanceResults.GetAEPHistogram();
+            ThreadsafeInlineHistogram histogramOfAEPs = results.GetAEPHistogram(threshold.ThresholdID);
             int[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
 
             HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(data);
             HistogramData.Add(threshold, data);
-        }
-
-        private SystemPerformanceResults GetResultsOfType(ImpactAreaScenarioResults iasResult, ThresholdEnum thresholdType)
-        {
-            SystemPerformanceResults retval = null;
-            foreach (Threshold threshold in iasResult.PerformanceByThresholds.ListOfThresholds)
-            {
-                if(threshold.ThresholdType == thresholdType)
-                {
-                    retval = threshold.SystemPerformanceResults;
-                    break;
-                }
-            }
-            return retval;
         }
 
         public override void UpdateHistogram(ThresholdComboItem metric)

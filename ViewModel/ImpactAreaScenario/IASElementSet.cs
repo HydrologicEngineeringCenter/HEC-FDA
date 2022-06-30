@@ -169,8 +169,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-            //todo: i think i should get the impact areas from the results object right?
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();          
             List<string> damCats = Results.GetDamageCategories();
             foreach (SpecificIAS ias in SpecificIASElements)
             {
@@ -178,8 +177,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
                 if (impactAreaName != null)
                 {
-                    
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, Results.GetResults(ias.ImpactAreaID), damCats);
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, impactAreaID, Results, damCats);
                     results.Add(result);
                 }
             }
@@ -207,7 +205,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 IASResultsVM resultViewer = new IASResultsVM(results);
                 string header = "Results for " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
+                DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer" + Name);
                 Navigate(tab, false, false);
             }
             else
