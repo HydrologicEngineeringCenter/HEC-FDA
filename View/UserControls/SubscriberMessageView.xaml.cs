@@ -74,6 +74,7 @@ namespace HEC.MVVMFramework.View.UserControls
             _vm.FilterLevel = FilterLevel;
             _vm.SenderTypeFilter = SenderTypeFilter;
             _vm.MessageTypeFilter = MessageTypeFilter;
+            _vm.InstanceFilter = InstanceFilter;
             MessageHub.Subscribe(_vm);
         }
         private static void FilterLevelChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
