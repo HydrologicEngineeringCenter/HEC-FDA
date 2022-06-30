@@ -10,7 +10,6 @@ using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -150,16 +149,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             ImpactAreaScenarioSimulation simulation = null;
 
-
             SimulationCreator sc = GetSimulationCreator();
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
                 simulation = sc.BuildSimulation();
-                //todo: delete me
-                //File.WriteAllText("C:\\Temp\\SimTestingFdaUI.txt", simulation.WriteToXML().ToString());
-                //int i = 0;
-                //end delete me
             }
             else
             {
