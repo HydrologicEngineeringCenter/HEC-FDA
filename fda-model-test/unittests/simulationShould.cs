@@ -237,7 +237,55 @@ namespace fda_model_test.unittests
             Assert.True(simulationMatches);
         }
 
-     
-        
+        [Fact]
+        public void ComputeShouldReturnBlankResultsIfNoDamages()
+        {
+            int impactAreaID = 1;
+            int erl = 50;
+            double[] exceedanceProabilities = new double[] { .5, .2, .1, .04, .02, .01, .005, .002 };
+            double[] stagesForFrequency = new double[] { .001, .002, .003, .004, .005, .006, .007, .553 };
+            CurveMetaData metaDataDefault = new CurveMetaData("x", "y", "res", "struct");
+            GraphicalUncertainPairedData graphicalUncertain = new GraphicalUncertainPairedData(exceedanceProabilities, stagesForFrequency, erl, metaDataDefault);
+            double[] stagesForDamage = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1 };
+
+            IDistribution[] zeroDamageDistributions = new IDistribution[]
+            {
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0)
+            };
+            UncertainPairedData zeroStageDamage = new UncertainPairedData(stagesForDamage, zeroDamageDistributions, metaDataDefault);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(zeroStageDamage);
+
+            int seed = 1234;
+            RandomProvider randomProvider = new RandomProvider(seed);
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFrequencyStage(graphicalUncertain)
+                .withStageDamages(stageDamageList)
+                .build();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            Assert.True(impactAreaScenarioResults.ConsequenceResults.IsNull);
+
+        }
     }
 }

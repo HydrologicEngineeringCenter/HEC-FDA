@@ -83,12 +83,12 @@ namespace fda_model_test.integrationtests
                     Interlocked.Increment(ref _completedIterations);
 
                 });
-            }
-            if (!graphicalThreadsafeInlineHistogram.IsConverged)
-            {
-                iterations = graphicalThreadsafeInlineHistogram.EstimateIterationsRemaining(.95, .05);
-                _ExpectedIterations = _completedIterations + iterations;
-                progressChunks = _ExpectedIterations / 100;
+                if (!graphicalThreadsafeInlineHistogram.IsConverged)
+                {
+                    iterations = graphicalThreadsafeInlineHistogram.EstimateIterationsRemaining(.95, .05);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
+                }
             }
             graphicalThreadsafeInlineHistogram.ForceDeQueue();
             //double[] percentiles = new double[] { 0.05, 0.25, 0.75, 0.95 };
