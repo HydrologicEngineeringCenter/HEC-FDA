@@ -54,7 +54,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             ID = id;
             ImpactAreas = impAreas;
-            SelectedImpArea = ImpactAreas[0];
+            if (ImpactAreas.Count > 0)
+            {
+                SelectedImpArea = ImpactAreas[0];
+            }
             DamageCategories = damCats;
             if (damCats.Count > 0)
             {

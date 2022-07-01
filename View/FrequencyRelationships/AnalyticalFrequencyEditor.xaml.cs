@@ -183,5 +183,13 @@ namespace HEC.FDA.View.FrequencyRelationships
                 vm.UpdateChartLineData();
             }
         }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
+            {
+                vm.HasChanges = false;
+            }
+        }
     }
 }

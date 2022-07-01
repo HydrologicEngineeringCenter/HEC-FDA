@@ -33,24 +33,24 @@
                             <GridViewColumn Header="Impact Area" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
-                                            ItemsSource="{Binding ImpactAreas}"     HorizontalAlignment="Stretch"     />
+                                        <ComboBox Width="Auto" ItemsSource="{Binding ImpactAreas}"  SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
+                                                HorizontalAlignment="Stretch"     />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Damage Category" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedDamCat}"                  
-                                            ItemsSource="{Binding DamageCategories}"      HorizontalAlignment="Stretch"   />
+                                        <ComboBox Width="Auto" ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamCat}"                  
+                                                  HorizontalAlignment="Stretch"   />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Asset Category" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="Auto" SelectedItem="{Binding SelectedAssetCategory}"                  
-                                            ItemsSource="{Binding AssetCategories}"      HorizontalAlignment="Stretch"   />
+                                        <ComboBox Width="Auto" ItemsSource="{Binding AssetCategories}" SelectedItem="{Binding SelectedAssetCategory}"                  
+                                                  HorizontalAlignment="Stretch"   />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
@@ -46,8 +47,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
+
+
+            //todo: delete me
+            XElement curvesElement = WriteCurvesToXML(element.Curves);
+            File.WriteAllText("C:\\Temp\\TestingStageDamages_" + element.Name + ".txt", curvesElement.ToString());
+
+            //end delete me
+
             return new object[] { element.Name, element.LastEditDate, element.Description,
-               element.IsManual, element.SelectedWSE, element.SelectedStructures, WriteCurvesToXML(element.Curves) };
+               element.IsManual, element.SelectedWSE, element.SelectedStructures,  curvesElement};
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -104,6 +113,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 curvesElement.Add(curve.WriteToXML(curve));
             }
+
             return curvesElement;
         }
 
