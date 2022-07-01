@@ -108,7 +108,11 @@ namespace HEC.MVVMFramework.Base.Implementations
                 if (s is IRecieveInstanceMessages)
                 {
                     IRecieveInstanceMessages sinstance = s as IRecieveInstanceMessages;
-                    if (sinstance.InstanceHash != sender.GetHashCode()) { continue; }
+                    int senderHash = sender.GetHashCode();
+                    if (sinstance.InstanceHash != senderHash) 
+                    {
+                        break; 
+                    }
                     if (e.Message is IErrorMessage)
                     {
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
@@ -118,6 +122,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
+                                break;
                             }
                         }
                     }
@@ -126,6 +131,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             s.RecieveMessage(sender, e);
+                            break;
                         }
                     }
                 }
@@ -140,6 +146,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
+                                break;
                             }
                         }
                     }
@@ -151,6 +158,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             s.RecieveMessage(sender, e);
+                            break;
                         }
                     }
                 }
