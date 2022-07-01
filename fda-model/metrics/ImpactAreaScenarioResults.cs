@@ -11,6 +11,8 @@ namespace metrics
     public class ImpactAreaScenarioResults: IContainImpactAreaScenarioResults
     {//TODO: I want to make this class internal. We should access this logic through ScenarioResults. 
         #region Fields
+        //TODO: this is not working quite like I expect. 
+        //if blank results are returned from a compute, isNull is false
         bool _isNull;
         #endregion
 

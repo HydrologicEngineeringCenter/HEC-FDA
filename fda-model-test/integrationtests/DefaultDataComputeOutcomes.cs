@@ -58,6 +58,7 @@ namespace fda_model_test.integrationtests
         private static double[] _GraphicalStageFreqYValues = new double[] { 458, 468.33, 469.97, 471.95, 473.06, 473.66, 474.53, 475.11, 477.4 };
 
         private static GraphicalUncertainPairedData graphicalStageFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, generalCurveMetaData);
+        private static GraphicalUncertainPairedData graphicalStageAsFlowsFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, generalCurveMetaData, false);
 
 
 
@@ -593,6 +594,32 @@ namespace fda_model_test.integrationtests
             //Assert.True(CNEP004RelativeDifference < tolerance);
             //Assert.True(CNEP002RelativeDifference < tolerance);
             //Assert.True(EADRelativeDifference < tolerance);
+
+        }
+        //passing stages as flow frequency to attempt to hit bug in threadsafe 
+        [Theory]
+        [InlineData(.1554, 45.36)]
+        public void WithoutGraphicalStageAsFlows_ScenarioResults(double meanAEP, double meanEAD)
+        {//TODO: These results are REALLY messed up mathematically 
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+                .withFlowFrequency(graphicalStageAsFlowsFrequency)
+                .withFlowStage(stageDischarge)
+                .withStageDamages(stageDamageList)
+                .build();
+            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+            impactAreaScenarioSimulations.Add(simulation);
+
+            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
+
+            double tolerance = 0.10;
+            double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
+            double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
+
+            Assert.True(AEPRelativeDifference < tolerance);
+            Assert.True(EADRelativeDifference < tolerance);
 
         }
     }
