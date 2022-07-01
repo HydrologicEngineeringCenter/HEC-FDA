@@ -26,13 +26,9 @@ namespace fda_model_test.integrationtests
         {
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
-            //for (int i = 0; i < dist.SampleSize; i++) samples[i] = Math.Log10(dist.InverseCDF(samples[i]));
-            //ISampleStatistics ss = new SampleStatistics(samples);
+
             double[] x = new double[ordinates];
             double[] y = new double[ordinates];
-            //double skewdividedbysix = ss.Skewness / 6.0;
-            //double twodividedbyskew = 2.0 / ss.Skewness;
-            //double sd = ss.StandardDeviation;
             for (int i = 0; i < ordinates; i++)
             {
                 double val = (double)i + .5;
@@ -42,8 +38,6 @@ namespace fda_model_test.integrationtests
 
                 //y values in increasing order 
                 y[i] = bootstrap.InverseCDF(prob);
-                //y[i] =LogPearson3.FastInverseCDF(ss.Mean, sd , ss.Skewness, skewdividedbysix, twodividedbyskew, prob);
-
             }
 
             return new PairedData(x, y);
@@ -130,11 +124,5 @@ namespace fda_model_test.integrationtests
             }
 
         }
-
-        //Debug.WriteLine("  ------------------------------------------------------------------------------------------------------------------------------------------------");
-        //    Debug.WriteLine("  Mean | Standard Deviation |  Skew  | ERL | Event AEP | Percentile of Event Flows | Expected Percentile | Actual Percentile | Relative Difference");
-        //    Debug.WriteLine("  ------------------------------------------------------------------------------------------------------------------------------------------------");
-        //                Debug.WriteLine("  ------------------------------------------------------------------------------------------------------------------------------------------------");
-
     }
 }
