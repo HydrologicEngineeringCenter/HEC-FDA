@@ -1,6 +1,6 @@
 ﻿namespace HEC.MVVMFramework.Base.Interfaces
 {
-    interface IRecieveInstanceMessages : IRecieveMessages
+    public interface IRecieveInstanceMessages : IRecieveMessages
     {
         int InstanceHash { get; }
     }
