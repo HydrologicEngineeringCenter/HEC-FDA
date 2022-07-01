@@ -6,7 +6,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class SubscriberMessageViewModel : IRecieveMessages, INotifyPropertyChanged
+    public class SubscriberMessageViewModel : IRecieveInstanceMessages, INotifyPropertyChanged
     {
         private IMessage _message;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -14,12 +14,12 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         private Type _senderType = null;
         private Type _messageType = null;
         private int _messageCount = 100;
-        private int _instanceFilter;
+        private int _instanceHash;
 
-        public int InstanceFilter
+        public int InstanceHash
         {
-            get { return _instanceFilter; }
-            set { _instanceFilter = value; NotifyPropertyChanged(); }
+            get { return _instanceHash; }
+            set { _instanceHash = value; NotifyPropertyChanged(); }
         }
         public IMessage IMessage
         {
