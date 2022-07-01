@@ -74,7 +74,7 @@ namespace HEC.MVVMFramework.View.UserControls
             _vm.FilterLevel = FilterLevel;
             _vm.SenderTypeFilter = SenderTypeFilter;
             _vm.MessageTypeFilter = MessageTypeFilter;
-            _vm.InstanceFilter = InstanceFilter;
+            _vm.InstanceHash = InstanceFilter;
             MessageHub.Subscribe(_vm);
         }
         private static void FilterLevelChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -100,7 +100,7 @@ namespace HEC.MVVMFramework.View.UserControls
         private static void InstanceFilterPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             SubscriberMessageView v = d as SubscriberMessageView;
-            v._vm.InstanceFilter = v.InstanceFilter;
+            v._vm.InstanceHash = v.InstanceFilter;
         }
     }
 }
