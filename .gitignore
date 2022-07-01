@@ -297,4 +297,4 @@ __pycache__/
 OpenCover/
 *.dll
 *.dll
-/BaseTest
+/BaseTest/bin/Debug/net6.0
