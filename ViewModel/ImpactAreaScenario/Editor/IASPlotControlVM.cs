@@ -32,12 +32,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             StageDamageControl.Plot();
             DamageFrequencyControl.Plot();
 
-            if (RatingRelationshipControl.Function != null)
-            {
-                UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
-                UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
-                UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
-            }
+            UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
+            UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
+            UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
             UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
 
         }

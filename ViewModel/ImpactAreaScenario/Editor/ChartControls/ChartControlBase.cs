@@ -114,7 +114,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
                     throw new NotSupportedException("2D Chart only supports X and Y values.");
             }
 
-            return new Tuple<double, double>(values.Min(), values.Max());
+            Tuple<double, double> output = new Tuple<double, double>(double.PositiveInfinity, double.NegativeInfinity);
+
+            if (values.Length > 0)
+            {
+                output = new Tuple<double, double>(values.Min(), values.Max());
+            }
+
+            return output;
         }
 
         public void RefreshChartViewModel()
