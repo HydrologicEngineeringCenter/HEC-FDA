@@ -94,12 +94,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             _IASResult = results;
             LoadThresholdData(results);
 
-            List<double> qValues = new List<double>();
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25));
+           
 
-            loadVMs(damCats, qValues);
+            loadVMs(damCats, scenarioResults, impactAreaID);
             CurrentResultVM = _damageWithUncertaintyVM;
             
             IASName = iasName;
@@ -124,15 +121,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private void loadVMs(List<string> damCats, List<double> qValues)
+        private void loadVMs(List<string> damCats, ScenarioResults scenarioResults, int impactAreaID)
         {
+
+
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
             double discountRate = studyPropElem.DiscountRate;
             int period = studyPropElem.PeriodOfAnalysis;
 
-            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult, qValues);
+            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult, scenarioResults);
             _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
-            _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
+            _performanceAEPVM = new PerformanceAEPVM(scenarioResults, impactAreaID, Thresholds);
             _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
             _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(_IASResult, Thresholds);
             _performanceAssuranceOfThresholdVM.updateSelectedMetric(SelectedThreshold);

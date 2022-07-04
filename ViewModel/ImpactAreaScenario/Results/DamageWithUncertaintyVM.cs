@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, List<double> qValues)
+        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, ScenarioResults scenarioResults)
         {
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
@@ -26,6 +26,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+
+            List<double> qValues = new List<double>();
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25));
 
             loadTableValues(qValues);
         }

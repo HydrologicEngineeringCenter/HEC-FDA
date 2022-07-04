@@ -126,7 +126,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
             }
             Progress = progress.Progress;
-            if(_Progress >= 99)
+            if(_Progress == 100)
             {
                 UpdateTotalCompleted();
             }

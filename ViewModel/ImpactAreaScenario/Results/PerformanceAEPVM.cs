@@ -15,12 +15,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
 
-        public PerformanceAEPVM(ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
+        public PerformanceAEPVM(ScenarioResults iasResult, int impactAreaID, List<ThresholdComboItem> thresholdComboItems)
         {
-            LoadData(iasResult, thresholdComboItems);
+            LoadData(iasResult, impactAreaID, thresholdComboItems);
         }
 
-        private void LoadData(ImpactAreaScenarioResults iasResult, List<ThresholdComboItem> thresholdComboItems)
+        private void LoadData(ScenarioResults iasResult, int impactAreaID, List<ThresholdComboItem> thresholdComboItems)
         {
             for (int i = 0; i < thresholdComboItems.Count; i++)
             {
@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 }
 
                 MetricsToRows.Add(threshold, rows);
-                LoadHistogramData(iasResult, threshold);
+                LoadHistogramData(iasResult, impactAreaID, threshold);
             }
 
             if(MetricsToRows.Count>0)
@@ -49,8 +49,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private void LoadHistogramData(ImpactAreaScenarioResults results, Threshold threshold)
+        private void LoadHistogramData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
         {
+            ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
             ThreadsafeInlineHistogram histogramOfAEPs = results.GetAEPHistogram(threshold.ThresholdID);
             int[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();

@@ -313,10 +313,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.6.30.1825" />
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.1.1951" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-01-1831" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
  

@@ -99,13 +99,13 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="GDAL-HEC" Version="0.0.1" />
-    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.6.30.1825" />
+    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.1.1951" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-06-29-1517" />
+    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-01-1831" />
   </ItemGroup>
   
 </Project>

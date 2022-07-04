@@ -127,6 +127,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
+            //todo: delete this?
+            RemoveZeroDamageCurves(stageDamageElem);
+
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
 
@@ -144,6 +147,44 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             return sc;
         }
+
+        private void RemoveZeroDamageCurves(AggregatedStageDamageElement elem)
+        {
+
+           for(int i = elem.Curves.Count-1; i>=0;i--)
+            {
+                StageDamageCurve curve = elem.Curves[i];
+                bool allZeroes = IsCurveYValuesAllZero(curve);
+                if (allZeroes)
+                {
+                    elem.Curves.RemoveAt(i);
+                }
+            }
+
+
+
+        }
+
+        private bool IsCurveYValuesAllZero(StageDamageCurve curve)
+        {
+            bool allZeroes = true;
+            IDistribution[] yvals = curve.ComputeComponent.SelectedItemToPairedData().Yvals;
+            List<double> ys = new List<double>();
+            foreach (IDistribution yval in yvals)
+            {
+                ys.Add(yval.InverseCDF(.5));
+            }
+
+            foreach(double y in ys)
+            {
+                if (y != 0)
+                {
+                    allZeroes = false;
+                }
+            }
+            return allZeroes;
+        }
+
 
         public ImpactAreaScenarioSimulation CreateSimulation()
         {
