@@ -8,7 +8,7 @@ namespace compute
 {
     public class ComputeCompleteMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
     {
-        private double _iterations;
+        private int _iterations;
         private int _impactAreaID;
         public string Message
         {
@@ -17,7 +17,7 @@ namespace compute
                 return $"The compute for the impact area with ID {_impactAreaID} has finished after {_iterations} iterations" + Environment.NewLine;
             }
         }
-        public double Iterations
+        public int Iterations
         {
             get
             {

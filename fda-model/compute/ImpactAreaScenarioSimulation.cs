@@ -13,6 +13,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Text;
 
 namespace compute
 {
@@ -122,10 +123,32 @@ namespace compute
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings" + Environment.NewLine)));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
                 }
                 //enumerate what the errors and warnings are 
                 //TODO: HOW???
+
+                foreach (PropertyRule propertyRule in RuleMap.Values)
+                {
+                    if (propertyRule.ErrorLevel > ErrorLevel.Unassigned)
+                    {
+                        foreach (Rule rule in propertyRule.Rules)
+                        {
+                            if (rule.ErrorLevel > ErrorLevel.Unassigned)
+                            {
+                                ReportMessage(this, new MessageEventArgs(new Message (rule.Message + Environment.NewLine)));
+                            }
+                        }
+                    }
+                }
+                //TODO: alternative is to use GetErrors() 
+                //StringBuilder stringBuilder = new StringBuilder();
+                //foreach (string errorMessage in GetErrors())
+                //{
+                //    stringBuilder.Append(errorMessage);
+
+                //}
+                //ReportMessage(this, new MessageEventArgs(new Message(stringBuilder.ToString())));
             }
             if (randomProvider is MeanRandomProvider)
             {
@@ -378,6 +401,7 @@ namespace compute
         }
         private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
         {
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
@@ -815,9 +839,11 @@ namespace compute
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(ContinuousDistribution continuousDistribution)
-            {
+            {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
                 _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
+                bool frequencyCurveSampleIsAtLeastTwo = _sim._frequency_discharge.SampleSize > 2;
+                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return frequencyCurveSampleIsAtLeastTwo; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
@@ -859,12 +885,14 @@ namespace compute
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> uncertainPairedDataList)
-            {
+            {//TODO: I do not think the positive damage validation works.
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
                     _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
-                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5) > 0; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                    double median = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5);
+                    bool stageDamageIsPositive = median > 0;
+                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return stageDamageIsPositive; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 }
                 return new SimulationBuilder(_sim);
             }
