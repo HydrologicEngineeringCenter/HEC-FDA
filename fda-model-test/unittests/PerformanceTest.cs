@@ -307,9 +307,7 @@ namespace fda_model_test.unittests
 
             double assuranceOfAEP = impactAreaScenarioResults.AssuranceOfAEP(0, .1);
             Assert.Equal(assuranceOfAEP, expectedAssurance);
-
-        }
+        }  
     }
-
 }
 

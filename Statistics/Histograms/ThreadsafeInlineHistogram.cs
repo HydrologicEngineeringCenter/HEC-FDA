@@ -460,11 +460,22 @@ namespace Statistics.Histograms
         }
         public int FindBinCount(double x, bool cumulative = true)
         {
-            int obsIndex = Convert.ToInt32(Math.Floor((x - _Min) / _BinWidth));
-            if (obsIndex == _BinCounts.Length)
+            if(x > Max)
             {
-                obsIndex -= 1;
+                if (cumulative)
+                {
+                    return SampleSize;
+                }
+                else
+                {
+                    return 0;
+                }
             }
+            if (x < Min)
+            {
+                return 0;
+            }
+            int obsIndex = Convert.ToInt32(Math.Floor((x - _Min) / _BinWidth));
             if (cumulative)
             {
                 int sum = 0;

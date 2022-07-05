@@ -622,5 +622,32 @@ namespace fda_model_test.integrationtests
             Assert.True(EADRelativeDifference < tolerance);
 
         }
+        //The expected values below are not for testing the validity of the compute 
+        //rather, the values are used as part of troubleshooting unhandled exceptions
+        //TODO this test was written to catch an exception but did not 
+        [Theory]
+        [InlineData(1)]
+        public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException(double actualAssurance)
+        {
+            ContinuousDistribution lp3 = new LogPearson3(2.5, .254, -.1021, 0);
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+                .withFlowFrequency(lp3)
+                .withFlowStage(stageDischarge)
+                .withStageDamages(stageDamageList)
+                .withInflowOutflow(regulatedUnregulated)
+                .withInteriorExterior(interiorExterior)
+                .withLevee(systemResponse, defaultLeveeElevation)
+                .build();
+            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+            impactAreaScenarioSimulations.Add(simulation);
+
+            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            double actualAssuranceOfAEP = scenarioResults.AssuranceOfAEP(impactAreaID1, .5);
+
+            double tolerance = 0.10;
+            double AEPRelativeDifference = Math.Abs(actualAssuranceOfAEP - actualAssurance) / actualAssurance;
+            Assert.True(AEPRelativeDifference < tolerance);
+        }
     }
 }

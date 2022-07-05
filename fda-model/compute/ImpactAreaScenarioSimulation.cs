@@ -839,9 +839,11 @@ namespace compute
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(ContinuousDistribution continuousDistribution)
-            {
+            {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
                 _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
+                bool frequencyCurveSampleIsAtLeastTwo = _sim._frequency_discharge.SampleSize > 2;
+                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return frequencyCurveSampleIsAtLeastTwo; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
@@ -883,7 +885,7 @@ namespace compute
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> uncertainPairedDataList)
-            {
+            {//TODO: I do not think the positive damage validation works.
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
