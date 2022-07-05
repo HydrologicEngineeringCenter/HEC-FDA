@@ -704,34 +704,42 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
-        public int EstimateIterationsRemaining(double upperq, double lowerq)
+        public int EstimateIterationsRemaining(double upperProbability, double lowerProbability)
         {
-            //TODO: WHAT DO THE BELOW VARIABLES EVEN MEAN??????????
-            //PLEASE PROVIDE VARIABLE NAMES IN ENGLISH thank you so much 
             if (_Converged) return 0;
-            double up = upperq;
-            double val = up * (1 - up);
-            double uz2 = 2 * _ConvergenceCriteria.ZAlpha;
-            double uxp = InverseCDF(up);
-            double ufxp = PDF(uxp);
-            int upperestimate = _ConvergenceCriteria.MaxIterations;
-            if (ufxp > 0.0 & uxp !=0 )
+            double upperProb = upperProbability;
+            double valueOfSomethingNotClear = upperProb * (1 - upperProb); //this is probably a part of a variance equation? 
+            double zAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha;
+            double upperValueAtUpperProb = InverseCDF(upperProb);
+            double probOfUpperValue = PDF(upperValueAtUpperProb);
+            int upperEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            if (probOfUpperValue > 0.0 & upperValueAtUpperProb !=0 )
             {
-                upperestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0))));
+                double bottomTerm = upperValueAtUpperProb * _ConvergenceCriteria.Tolerance * probOfUpperValue;
+                double anotherTerm = (zAlphaDoubled / (bottomTerm));
+                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double productTerm = valueOfSomethingNotClear * anotherTermSquared;
+                int productTermToInt = (int)Math.Ceiling(productTerm);
+                upperEstimateIterationsRemaining = Math.Abs(productTermToInt);
             }
-            double lp = lowerq;
-            double lval = lp * (1 - lp);
-            double lz2 = 2 * _ConvergenceCriteria.ZAlpha;
-            double lxp = InverseCDF(lp);
-            double lfxp = PDF(lxp);
-            int lowerestimate = _ConvergenceCriteria.MaxIterations;
-            if (lfxp > 0.0 & uxp != 0)
+            double lowerProb = lowerProbability;
+            double lowerValueOfSomethingNotClear = lowerProb * (1 - lowerProb);
+            double lowerZAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha; //this need not be negative?
+            double lowerValueAtLowerProb = InverseCDF(lowerProb);
+            double probOfLowerValue = PDF(lowerValueAtLowerProb);
+            int lowerEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            if (probOfLowerValue > 0.0 & upperValueAtUpperProb != 0)
             {
-                lowerestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
+                double bottomTerm = lowerValueAtLowerProb * _ConvergenceCriteria.Tolerance * probOfLowerValue;
+                double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
+                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double productTerm = valueOfSomethingNotClear * anotherTermSquared;
+                int productTermToInt = (int)Math.Ceiling(productTerm);
+                lowerEstimateIterationsRemaining = Math.Abs(productTermToInt);
             }
-            int biggestGuess = Math.Max(upperestimate, lowerestimate);
-            int remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
-            return Convert.ToInt32(Math.Min(remainingIters, biggestGuess));
+            int biggestGuessIterationsRemaining = Math.Max(upperEstimateIterationsRemaining, lowerEstimateIterationsRemaining);
+            int remainingIterations = _ConvergenceCriteria.MaxIterations - _SampleSize;
+            return Convert.ToInt32(Math.Min(remainingIterations, biggestGuessIterationsRemaining));
         }
         public bool Equals(IHistogram histogramToCompare)
         {

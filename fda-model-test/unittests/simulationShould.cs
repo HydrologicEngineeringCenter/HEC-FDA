@@ -237,89 +237,55 @@ namespace fda_model_test.unittests
             Assert.True(simulationMatches);
         }
 
-        //I am including this method here because I want to be able to compare flow dists between 1.4.3 and 2.0 
-        //without all of the simulation stuff getting in the way 
-        public IPairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
-        {
-            double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
-            IDistribution bootstrap = continuousDistribution.Sample(samples);
-            //for (int i = 0; i < dist.SampleSize; i++) samples[i] = Math.Log10(dist.InverseCDF(samples[i]));
-            //ISampleStatistics ss = new SampleStatistics(samples);
-            double[] x = new double[ordinates];
-            double[] y = new double[ordinates];
-            //double skewdividedbysix = ss.Skewness / 6.0;
-            //double twodividedbyskew = 2.0 / ss.Skewness;
-            //double sd = ss.StandardDeviation;
-            for (int i = 0; i < ordinates; i++)
-            {
-                double val = (double)i + .5;
-                //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                double prob = (val) / ((double)ordinates);
-                x[i] = prob;
-
-                //y values in increasing order 
-                y[i] = bootstrap.InverseCDF(prob);
-                //y[i] =LogPearson3.FastInverseCDF(ss.Mean, sd , ss.Skewness, skewdividedbysix, twodividedbyskew, prob);
-
-            }
-
-            return new PairedData(x, y);
-
-        }
         [Fact]
-        public void BootstrapToPairedDataProducesSameDistributionsAsFDA143()
+        public void ComputeShouldReturnBlankResultsIfNoDamages()
         {
-            LogPearson3 logPearson3 = new LogPearson3(3.3, .254, -.1021, 48); //dist in default data
+            int impactAreaID = 1;
+            int erl = 50;
+            double[] exceedanceProabilities = new double[] { .5, .2, .1, .04, .02, .01, .005, .002 };
+            double[] stagesForFrequency = new double[] { .001, .002, .003, .004, .005, .006, .007, .553 };
+            CurveMetaData metaDataDefault = new CurveMetaData("x", "y", "res", "struct");
+            GraphicalUncertainPairedData graphicalUncertain = new GraphicalUncertainPairedData(exceedanceProabilities, stagesForFrequency, erl, metaDataDefault);
+            double[] stagesForDamage = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1 };
+
+            IDistribution[] zeroDamageDistributions = new IDistribution[]
+            {
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0)
+            };
+            UncertainPairedData zeroStageDamage = new UncertainPairedData(stagesForDamage, zeroDamageDistributions, metaDataDefault);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(zeroStageDamage);
+
+            int seed = 1234;
             RandomProvider randomProvider = new RandomProvider(seed);
-            double[] nonExceedanceProbabilities = new double[] { .9, .95, .98, .99, .995, .998 };
-            Histogram Flows90Pct = new Histogram(5); //guess of a decent bin width 
-            Flows90Pct.note = "90";
-            Histogram Flows95Pct = new Histogram(5);
-            Flows95Pct.note = "95";
-            Histogram Flows98Pct = new Histogram(5);
-            Flows98Pct.note = "98";
-            Histogram Flows99Pct = new Histogram(5);
-            Flows99Pct.note = "99";
-            Histogram Flows995Pct = new Histogram(5);
-            Flows995Pct.note = "995";
-            Histogram Flows998Pct = new Histogram(5);
-            Flows998Pct.note = "998";
-            List<Histogram> histograms = new List<Histogram>() { Flows90Pct, Flows95Pct, Flows98Pct, Flows99Pct, Flows995Pct, Flows998Pct };
-            int iterations = 10000;
-            for (int i = 0; i < iterations; i++)
-            {
-                IPairedData frequencyFlow = BootstrapToPairedData(randomProvider, logPearson3, 200);
-                for (int j = 0; j < nonExceedanceProbabilities.Length; j++)
-                {
-                    histograms[j].AddObservationToHistogram(frequencyFlow.f(nonExceedanceProbabilities[j]));
-                }
 
-            }
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFrequencyStage(graphicalUncertain)
+                .withStageDamages(stageDamageList)
+                .build();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            Assert.True(impactAreaScenarioResults.ConsequenceResults.IsNull);
 
-            //from 143 UI 
-            double[] percentiles = new double[] {0, .05, .25, .75, .95 };
-            double[] expectedQuantiles90pct = new double[] {90, 3540, 3896, 4547, 5192 };
-            double[] expectedQuantiles95pct = new double[] {95, 4248, 4725, 5626, 6557 };
-            double[] expectedQuantiles98pct = new double[] {98, 5187, 5845, 7135, 8520 };
-            double[] expectedQuantiles99pct = new double[] {99, 5910, 6722, 8348, 10135 };
-            double[] expectedQuantiles995pct = new double[] {995, 6648, 7628, 9627, 11870 };
-            double[] expectedQuantiles998pct = new double[] {998, 7651, 8876, 11426, 14357 };
-
-            List<double[]> expectedQuantiles = new List<double[]>() { expectedQuantiles90pct, expectedQuantiles95pct, expectedQuantiles98pct, expectedQuantiles99pct, expectedQuantiles995pct, expectedQuantiles998pct };
-
-            for (int i = 0; i < expectedQuantiles.Count; i++)
-            {
-                for (int j = 1; j < expectedQuantiles90pct.Length; j++)
-                {
-                    double actualFlow = histograms[i].InverseCDF(percentiles[j]);
-                    double expectedFlow = expectedQuantiles[i][j];
-                    double error = (actualFlow - expectedFlow) / expectedFlow;
-                    double tolerance = 0.05;
-                    string message = $"The error between the {percentiles[j]}th percentile of the histogram of {histograms[i].note}th percentile flows as compared to the set of expected {expectedQuantiles[i][0]}th percentile flows is {error}";
-                    System.Diagnostics.Debug.WriteLine(message);
-                    //Assert.True(error < tolerance);
-                }
-            }
         }
     }
 }
