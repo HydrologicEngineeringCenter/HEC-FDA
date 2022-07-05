@@ -864,7 +864,9 @@ namespace compute
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
                     _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
-                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5) > 0; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                    double median = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5);
+                    bool stageDamageIsPositive = median > 0;
+                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return stageDamageIsPositive; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 }
                 return new SimulationBuilder(_sim);
             }
