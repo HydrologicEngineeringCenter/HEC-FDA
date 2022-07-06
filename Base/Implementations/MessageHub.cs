@@ -111,7 +111,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                     int senderHash = sender.GetHashCode();
                     if (sinstance.InstanceHash != senderHash) 
                     {
-                        break; 
+                        continue; 
                     }
                     if (e.Message is IErrorMessage)
                     {
@@ -122,7 +122,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
-                                break;
+                                continue;
                             }
                         }
                     }
@@ -131,7 +131,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             s.RecieveMessage(sender, e);
-                            break;
+                            continue;
                         }
                     }
                 }
@@ -146,7 +146,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                             if (emess.ErrorLevel >= s.FilterLevel)
                             {
                                 s.RecieveMessage(sender, e);
-                                break;
+                                continue;
                             }
                         }
                     }
@@ -158,7 +158,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                         if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             s.RecieveMessage(sender, e);
-                            break;
+                            continue;
                         }
                     }
                 }
