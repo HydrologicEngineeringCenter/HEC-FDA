@@ -20,7 +20,6 @@ namespace BaseTest.MessageHubTesting
             messengerList.Add(messenger2);
 
             int message1Hash = messenger1.GetHashCode();
-            int message2Hash = messenger2.GetHashCode();
 
             InstanceMessageReciever reciever = new InstanceMessageReciever(message1Hash);
             MessageHub.Subscribe(reciever); 

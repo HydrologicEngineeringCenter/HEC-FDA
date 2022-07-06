@@ -6,7 +6,6 @@ namespace BaseTest.MessageHubTesting
 {
     public class InstanceMessenger : HEC.MVVMFramework.Base.Interfaces.IReportMessage
     {
-        private int count = 0; //debug
         public event MessageReportedEventHandler MessageReport;
 
         public void ReportMessage(object sender, MessageEventArgs e)
@@ -16,9 +15,7 @@ namespace BaseTest.MessageHubTesting
 
         public void Poke()
         {
-            count++;
-            int hash = this.GetHashCode();
-            ReportMessage(this, new MessageEventArgs(new Message("poked ya" + " " + count)));
+            ReportMessage(this, new MessageEventArgs(new Message("poked ya")));
         }
     }
 }
