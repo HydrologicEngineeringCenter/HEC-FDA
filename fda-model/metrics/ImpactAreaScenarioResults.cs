@@ -128,9 +128,12 @@ namespace metrics
             {   
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
-                    if(consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
+                    if(!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
-                        return false;
+                        if(consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
@@ -168,10 +171,16 @@ namespace metrics
                 if (computeWithDamage == true)
                 {
                     foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                    {
-                        if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
+                    {   
+                        if(consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                         {
-                            eadIsConverged = false;
+                            eadIsConverged = true;
+                        } else
+                        {
+                            if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
+                            {
+                                eadIsConverged = false;
+                            }
                         }
                     }
                 }
@@ -205,7 +214,14 @@ namespace metrics
             {
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
+                    if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
+                    {
+                        eadIterationsRemaining.Add(0);
+                    }
+                    else
+                    {
                     eadIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                    }
                 }
             }
 

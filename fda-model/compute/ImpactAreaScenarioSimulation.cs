@@ -92,7 +92,7 @@ namespace compute
             }
             else
             {
-                AddEADKeys(convergenceCriteria);
+                CreateEADHistograms(convergenceCriteria);
             }
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
@@ -104,11 +104,18 @@ namespace compute
             return _impactAreaScenarioResults;
         }
 
-        private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
+        private void CreateEADHistograms(ConvergenceCriteria convergenceCriteria)
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
+                bool histogramIsZeroValued = false;
+                double largeProbability = 0.999;
+                double highPercentile = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(largeProbability);
+                if(highPercentile == 0)
+                {
+                    histogramIsZeroValued = true;
+                }
+                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID, histogramIsZeroValued);
             }
         }
 
@@ -382,12 +389,14 @@ namespace compute
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
-            foreach (UncertainPairedData pairedData in _damage_category_stage_damage)
+            foreach (UncertainPairedData stageDamageWithUncertainty in _damage_category_stage_damage)
             {
-                IPairedData _stage_damage_sample = pairedData.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //TODO: here we need to check if stage damage is zero 
+                //if so, then skip this stuff and just add 0 to consequenceResults
+                IPairedData _stage_damage_sample = stageDamageWithUncertainty.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageDamageWithUncertainty.CurveMetaData.DamageCategory, stageDamageWithUncertainty.CurveMetaData.AssetCategory, _impactAreaID, iteration);
 
                 if (giveMeADamageFrequency)
                 {
@@ -885,14 +894,11 @@ namespace compute
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> uncertainPairedDataList)
-            {//TODO: I do not think the positive damage validation works.
+            {
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
                     _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
-                    double median = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5);
-                    bool stageDamageIsPositive = median > 0;
-                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return stageDamageIsPositive; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 }
                 return new SimulationBuilder(_sim);
             }
