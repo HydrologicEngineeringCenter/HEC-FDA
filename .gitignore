@@ -298,3 +298,4 @@ OpenCover/
 *.dll
 *.dll
 /BaseTest/bin/Debug/net6.0
+/ViewTest/bin/Debug/net6.0-windows
