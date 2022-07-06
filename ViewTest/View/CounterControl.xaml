@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="ViewTest.View.CounterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ViewTest.View" 
+             xmlns:vmh="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View" 
+             xmlns:vna="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
+             xmlns:vm ="clr-namespace:ViewTest.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <vna:NamedActionButton Grid.Column="0" NamedAction="{Binding CountUp}" Margin="5"/>
+        <vmh:SubscriberMessageView Grid.Column="1" Margin="5" InstanceFilter="{Binding DataContext.InstanceHash, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+        <vmh:SelectableMessageView Grid.Column="2" Margin="5"/>
+        <Label Grid.Column="3" Content="{Binding InstanceHash}"/>
+    </Grid>
+</UserControl>
+
+            
