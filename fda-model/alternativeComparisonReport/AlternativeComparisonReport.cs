@@ -73,7 +73,8 @@ namespace alternativeComparisonReport
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(impactAreaScenarioResults.ImpactAreaID);
                     ConsequenceDistributionResults withprojectDamageResults = impactAreaScenarioResults.ConsequenceResults;
                     ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
-
+                    //TODO: I will only get a damagedReducedResult for those damcat - asset cat - impact area ID combinations that exist in withoutProjectDamageResults
+                    //I need to figure out of there are exists a consequencedistributionresult in with that does not exist in without 
                     foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
                         IHistogram withProjectHistogram = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID).ConsequenceHistogram;

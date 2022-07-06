@@ -554,6 +554,10 @@ namespace Statistics.Histograms
             if (p >= 1) return _Max;
             else
             {
+                if (_HistogramIsZeroValued)
+                {
+                    return 0.0;
+                }
                 if (_SampleSize == 0)
                 {
                     return double.NaN;
