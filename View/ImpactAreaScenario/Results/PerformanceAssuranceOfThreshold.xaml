@@ -27,7 +27,7 @@
                         <TextBlock Text="Frequency" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.FOUR_DECIMAL_FORMAT}}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

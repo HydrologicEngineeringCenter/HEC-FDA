@@ -47,16 +47,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
-
-
-            //todo: delete me
-            XElement curvesElement = WriteCurvesToXML(element.Curves);
-            File.WriteAllText("C:\\Temp\\TestingStageDamages_" + element.Name + ".txt", curvesElement.ToString());
-
-            //end delete me
-
             return new object[] { element.Name, element.LastEditDate, element.Description,
-               element.IsManual, element.SelectedWSE, element.SelectedStructures,  curvesElement};
+               element.IsManual, element.SelectedWSE, element.SelectedStructures,  WriteCurvesToXML(element.Curves)};
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)

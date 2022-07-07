@@ -195,7 +195,7 @@
         public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";
 
         public const string DEFAULT_UNIT_FORMAT = "N2";
-        public const string FOUR_DECIMAL_FORMAT = "N4";
+        public const string DETAILED_DECIMAL_FORMAT = "N4";
 
         public static string ImportFromOldFda(string elementName)
         {

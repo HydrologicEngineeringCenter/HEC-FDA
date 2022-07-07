@@ -30,20 +30,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
-        private string _StageDamagesWithZeroDamageMessage;
-        int _NumberOfStageDamagesIgnored = 0;
 
         #endregion
         #region Properties
-
-        public int NumberOfStageDamagesIgnored
-        {
-            get { return _NumberOfStageDamagesIgnored; }
-        }
-        //public string StageDamagesWithZeroDamageMessage
-        //{
-        //    get { return _StageDamagesWithZeroDamageMessage; }
-        //}
 
         public ImpactAreaScenarioSimulation Simulation { get; }
 
@@ -180,7 +169,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             if (configurationValidationResult.IsValid)
             {
                 simulation = sc.BuildSimulation();
-                _NumberOfStageDamagesIgnored = sc.NumberOfStageDamagesIgnored;
             }
             else
             {

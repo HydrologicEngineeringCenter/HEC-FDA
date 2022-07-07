@@ -16,7 +16,6 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--<mvvmView:SelectableMessageView  Grid.Row="0"   />-->
 
         <mvvmView:SubscriberMessageView DataContext="{Binding MessageVM}"  Grid.Row="0"   />
         

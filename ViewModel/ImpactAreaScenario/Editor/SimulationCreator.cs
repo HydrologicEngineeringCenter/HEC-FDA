@@ -8,7 +8,6 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static compute.ImpactAreaScenarioSimulation;
@@ -29,19 +28,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly int _ImpactAreaID;
 
         private SimulationBuilder _SimulationBuilder;
-        int _NumberOfStageDamagesIgnored = 0;
-
-        public int NumberOfStageDamagesIgnored
-        {
-            get { return _NumberOfStageDamagesIgnored; }
-        }
-        //private string _StageDamagesWithZeroDamageMessage;
-
-
-        //public string StageDamagesWithZeroDamageMessage
-        //{
-        //    get { return _StageDamagesWithZeroDamageMessage; }
-        //}
 
         public SimulationCreator(AnalyticalFrequencyElement freqElem, InflowOutflowElement inOutElem, RatingCurveElement ratElem,
             ExteriorInteriorElement extIntElem, LeveeFeatureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
@@ -138,41 +124,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private List<UncertainPairedData> GetStageDamagesAsPairedData()
         {
-
             List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
                 bool allZeroes = IsCurveYValuesAllZero(curve);
-                if (allZeroes)
-                {
-                    _NumberOfStageDamagesIgnored++;
-                }
-                else
+                if(!allZeroes)
                 {
                     UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat);
                     stageDamages.Add(upd);
                 }
             }
 
-
-
             return stageDamages;
-        }
-
-        private void RemoveZeroDamageCurves(StageDamageCurve curve)
-        {
-            int numberOfCurvesRemoved = 0;
-            
-
-                bool allZeroes = IsCurveYValuesAllZero(curve);
-                if (allZeroes)
-                {
-                    numberOfCurvesRemoved++;
-                }
-            
-
-            
         }
 
         private bool IsCurveYValuesAllZero(StageDamageCurve curve)
@@ -194,9 +158,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return allZeroes;
         }
-
-
-
 
         public ImpactAreaScenarioSimulation BuildSimulation()
         {

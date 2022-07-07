@@ -55,28 +55,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<ImpactAreaScenarioSimulation> sims = new List<ImpactAreaScenarioSimulation>();
 
             LoadImpactAreaNames(iasElems);
-            StringBuilder sb = new StringBuilder();
 
             foreach (SpecificIAS ias in iasElems)
             {
-                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
-                int stageDamagesIgnored = ias.NumberOfStageDamagesIgnored;
-                if (stageDamagesIgnored > 0)
-                {
-                    sb.AppendLine("For impact area ID: " + ias.ImpactAreaID + Environment.NewLine + stageDamagesIgnored + " stage-damage functions are not being used in the compute because they have zero damage.");
-                }
+                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();             
                 MessageHub.Register(sim);
-                sim.ReportMessage(sim, new MessageEventArgs(new Message("cody test message")));
                 sim.ProgressReport += Sim_ProgressReport;
                 sims.Add(sim);
 
                 MessageVM.InstanceHash.Add( sim.GetHashCode());
-
-            }
-
-            if(sb.ToString().Length>0)
-            {
-                MessageBox.Show(sb.ToString(), "Ignoring Stage Damages", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
             Scenario scenario = new Scenario(analysisYear, sims);
@@ -88,7 +75,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             Task.Run(() =>
             {
                 ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
-                //MessageHub.UnsubscribeAll(_MessageVM);
                 foreach(ImpactAreaScenarioSimulation sim in sims)
                 {
                     MessageHub.Unregister(sim);
