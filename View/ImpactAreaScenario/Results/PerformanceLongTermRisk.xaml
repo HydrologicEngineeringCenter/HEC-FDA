@@ -27,7 +27,7 @@
                         <TextBlock Text="Period (Years)" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding LongTermRisk, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
+                <DataGridTextColumn Binding="{Binding LongTermRisk, StringFormat={x:Static utilVM:StringConstants.FOUR_DECIMAL_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Long-Term Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

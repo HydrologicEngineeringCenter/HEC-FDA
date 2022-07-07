@@ -30,8 +30,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
+        private string _StageDamagesWithZeroDamageMessage;
+        int _NumberOfStageDamagesIgnored = 0;
+
         #endregion
         #region Properties
+
+        public int NumberOfStageDamagesIgnored
+        {
+            get { return _NumberOfStageDamagesIgnored; }
+        }
+        //public string StageDamagesWithZeroDamageMessage
+        //{
+        //    get { return _StageDamagesWithZeroDamageMessage; }
+        //}
 
         public ImpactAreaScenarioSimulation Simulation { get; }
 
@@ -115,7 +127,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
-       
+
         #endregion
 
         private SimulationCreator GetSimulationCreator()
@@ -127,11 +139,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
-            //todo: delete this?
-            RemoveZeroDamageCurves(stageDamageElem);
+            //RemoveZeroDamageCurves(stageDamageElem);
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
+
+            //_StageDamagesWithZeroDamageMessage = sc.StageDamagesWithZeroDamageMessage;
+            //if (sc.NumberOfStageDamagesIgnored > 0)
+            //{
+            //    _StageDamagesWithZeroDamageMessage = "For impact area ID: " + ImpactAreaID + Environment.NewLine + sc.NumberOfStageDamagesIgnored + " stage-damage functions are not being used in the compute because they have zero damage.";
+            //}
+            //else
+            //{
+            //    _StageDamagesWithZeroDamageMessage = null;
+            //}
 
             int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
@@ -148,43 +169,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return sc;
         }
 
-        private void RemoveZeroDamageCurves(AggregatedStageDamageElement elem)
-        {
-
-           for(int i = elem.Curves.Count-1; i>=0;i--)
-            {
-                StageDamageCurve curve = elem.Curves[i];
-                bool allZeroes = IsCurveYValuesAllZero(curve);
-                if (allZeroes)
-                {
-                    elem.Curves.RemoveAt(i);
-                }
-            }
-
-
-
-        }
-
-        private bool IsCurveYValuesAllZero(StageDamageCurve curve)
-        {
-            bool allZeroes = true;
-            IDistribution[] yvals = curve.ComputeComponent.SelectedItemToPairedData().Yvals;
-            List<double> ys = new List<double>();
-            foreach (IDistribution yval in yvals)
-            {
-                ys.Add(yval.InverseCDF(.5));
-            }
-
-            foreach(double y in ys)
-            {
-                if (y != 0)
-                {
-                    allZeroes = false;
-                }
-            }
-            return allZeroes;
-        }
-
+        
 
         public ImpactAreaScenarioSimulation CreateSimulation()
         {
@@ -195,6 +180,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             if (configurationValidationResult.IsValid)
             {
                 simulation = sc.BuildSimulation();
+                _NumberOfStageDamagesIgnored = sc.NumberOfStageDamagesIgnored;
             }
             else
             {

@@ -1,13 +1,17 @@
 ﻿using compute;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using metrics;
 using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -18,22 +22,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private string _NumberCompleted;
         private int _IterationsCompleted = 0;
         private int _TotalSims;
-        private int _Hash;
 
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
 
-        public int Hash
-        {
-            get 
-            {
-                return _Hash;
-            }
-            set
-            {
-                _Hash = value; NotifyPropertyChanged();
-            }
-        }
+        private SubscriberMessageViewModel _MessageVM = new SubscriberMessageViewModel();
 
+
+        public SubscriberMessageViewModel MessageVM
+        {
+            get { return _MessageVM; }
+        }
         public string NumberCompleted
         {
             get { return _NumberCompleted; }
@@ -51,21 +49,42 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback)
         {
-            Hash = GetHashCode();
             _TotalSims = iasElems.Count;
             NumberCompleted = _IterationsCompleted + "/" + _TotalSims;
 
             List<ImpactAreaScenarioSimulation> sims = new List<ImpactAreaScenarioSimulation>();
 
             LoadImpactAreaNames(iasElems);
+            StringBuilder sb = new StringBuilder();
 
+            bool added = false;
             foreach (SpecificIAS ias in iasElems)
             {
                 ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
+                int stageDamagesIgnored = ias.NumberOfStageDamagesIgnored;
+                if (stageDamagesIgnored > 0)
+                {
+                    sb.AppendLine("For impact area ID: " + ias.ImpactAreaID + Environment.NewLine + stageDamagesIgnored + " stage-damage functions are not being used in the compute because they have zero damage.");
+                }
+
                 MessageHub.Register(sim);
+                sim.ReportMessage(sim, new MessageEventArgs(new Message("cody test message")));
                 sim.ProgressReport += Sim_ProgressReport;
                 sims.Add(sim);
+
+                if(!added)
+                {
+                    //MessageVM.InstanceHash = sim.GetHashCode();
+                    added = true;
+                }
+
             }
+
+            if(sb.ToString().Length>0)
+            {
+                MessageBox.Show(sb.ToString(), "Ignoring Stage Damages", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
             Scenario scenario = new Scenario(analysisYear, sims);
 
             int seed = 1234;
@@ -75,6 +94,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             Task.Run(() =>
             {
                 ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
+                //MessageHub.UnsubscribeAll(_MessageVM);
+                foreach(ImpactAreaScenarioSimulation sim in sims)
+                {
+                    MessageHub.Unregister(sim);
+                }
+                MessageHub.UnsubscribeAll(MessageVM);
                 //Event for when everything has been computed.
                 callback?.Invoke(scenarioResults);
             });

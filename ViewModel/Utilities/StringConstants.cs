@@ -179,7 +179,7 @@
 
         #region Result Histogram Labels
         public static readonly string HISTOGRAM_VALUE = "Value";
-        public static readonly string HISTOGRAM_FREQUENCY = "Frequency";
+        public static readonly string HISTOGRAM_FREQUENCY = "Relative Frequency";
         public static readonly string HISTOGRAM_EXCEEDANCE_PROBABILITY = "Exceedance Probability";
 
         #endregion
@@ -195,6 +195,7 @@
         public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";
 
         public const string DEFAULT_UNIT_FORMAT = "N2";
+        public const string FOUR_DECIMAL_FORMAT = "N4";
 
         public static string ImportFromOldFda(string elementName)
         {

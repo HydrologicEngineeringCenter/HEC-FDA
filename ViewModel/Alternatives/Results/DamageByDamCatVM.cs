@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
-            RateAndPeriodVisible = true;
+            RateAndPeriodVisible = false;
 
             foreach (string damCat in damCats)
             {
@@ -27,18 +27,33 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
         }
 
-        public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate = double.NaN, int period = -1)
+        public DamageByDamCatVM(AlternativeResults alternativeResults, DamageMeasureYear damageMeasureYear)
         {
-            if (double.IsNaN(discountRate))
-            {
+            
                 RateAndPeriodVisible = false;
-            }
-            else
+            
+
+            List<string> damCats = alternativeResults.GetDamageCategories();
+            foreach (string damCat in damCats)
             {
+                if (damageMeasureYear == DamageMeasureYear.Base)
+                {
+                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanBaseYearEAD(damageCategory: damCat)));
+                }
+                else
+                {
+                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanFutureYearEAD(damageCategory: damCat)));
+                }
+            }
+        }
+
+        public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate , int period)
+        {
+            
                 DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;
-            }
+            
 
             List<string> damCats =  alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)

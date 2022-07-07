@@ -27,15 +27,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 Threshold threshold = thresholdComboItems[i].Metric;
                 ThresholdEnum thresholdType = threshold.ThresholdType;
                 int thresholdID = threshold.ThresholdID;
-                Mean = iasResult.MeanAEP(thresholdID);
-                Median = iasResult.MedianAEP(thresholdID);
+                Mean = iasResult.MeanAEP(impactAreaID, thresholdID);
+                Median = iasResult.MedianAEP(impactAreaID, thresholdID);
 
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                 //get the table values
                 List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };
                 foreach (double xVal in xVals)
                 {
-                    double yVal = iasResult.AssuranceOfAEP(thresholdID, xVal);
+                    double yVal = iasResult.AssuranceOfAEP(impactAreaID, xVal,thresholdID);
                     rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                 }
 
@@ -51,10 +51,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         private void LoadHistogramData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
         {
-            ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
-            ThreadsafeInlineHistogram histogramOfAEPs = results.GetAEPHistogram(threshold.ThresholdID);
+            //ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
+            
+            IHistogram histogramOfAEPs = scenarioResults.AEPHistogram(impactAreaID, threshold.ThresholdID);
             int[] binCounts = histogramOfAEPs.BinCounts;
-            double[] binsAsDoubles = binCounts.Select(x => (double)x).ToArray();
+            double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();
 
             HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(data);

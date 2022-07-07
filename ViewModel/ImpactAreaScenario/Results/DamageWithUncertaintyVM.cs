@@ -21,16 +21,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
             IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: impactAreaID);
-            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x).ToArray();
+            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x/totalHistogram.SampleSize).ToArray();
 
             _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
 
             List<double> qValues = new List<double>();
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID));
 
             loadTableValues(qValues);
         }

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -21,7 +22,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+        <controls:CopyPasteDataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
                   VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
@@ -38,7 +39,7 @@
                 </DataGridTextColumn>
             </DataGrid.Columns>
 
-        </DataGrid>
+        </controls:CopyPasteDataGrid>
 
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
