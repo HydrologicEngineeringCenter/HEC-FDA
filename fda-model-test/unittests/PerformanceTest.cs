@@ -277,36 +277,6 @@ namespace fda_model_test.unittests
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);
         }
-
-        [Theory]
-        [InlineData(0, 400, 0)]
-        [InlineData(2000, 4000, 1)]
-        public void AssuranceNonOverlappingStages(double minStageForStageDamage, double maxStageForStageDamage, double expectedAssurance)
-        {
-            ContinuousDistribution uniformFLows = new Uniform(0, 100000, 100);
-
-            double[] flowsForStageDischarge = new double[] { 0, 100000 };
-            IDistribution[] stagesForStageDischarge = new IDistribution[] { new Uniform(500, 1000), new Uniform(1000, 1500) };
-            UncertainPairedData stageDischarge = new UncertainPairedData(flowsForStageDischarge, stagesForStageDischarge, metaData);
-
-            double[] stagesForStageDamage = new double[] { minStageForStageDamage, maxStageForStageDamage };
-            IDistribution[] damageForStageDamage = new IDistribution[] { new Uniform(200, 500), new Uniform(1000, 1500) };
-            UncertainPairedData stageDamage = new UncertainPairedData(stagesForStageDamage, damageForStageDamage, metaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
-
-            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(1)
-                .withFlowFrequency(uniformFLows)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-
-            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-            RandomProvider randomProvider = new RandomProvider(1234);
-            ImpactAreaScenarioResults impactAreaScenarioResults = impactAreaScenarioSimulation.Compute(randomProvider, defaultConvergenceCriteria);
-
-            double assuranceOfAEP = impactAreaScenarioResults.AssuranceOfAEP(0, .1);
-            Assert.Equal(assuranceOfAEP, expectedAssurance);
-        }  
     }
 }
 
