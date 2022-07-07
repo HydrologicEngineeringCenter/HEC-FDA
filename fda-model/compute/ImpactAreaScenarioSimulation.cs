@@ -809,8 +809,8 @@ namespace compute
 
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
         {
-            double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
-            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Yvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
             double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
             double maxOfG = uncertainPairedData_g.Yvals[uncertainPairedData_g.Yvals.Length - 1].InverseCDF(.999);
 
@@ -819,8 +819,8 @@ namespace compute
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
         {
-            double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
-            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
             double minOfG = uncertainPairedData_g.StageOrLogFlowDistributions[0].InverseCDF(.001);
             double maxOfG = uncertainPairedData_g.StageOrLogFlowDistributions[uncertainPairedData_g.StageOrLogFlowDistributions.Length - 1].InverseCDF(.999);
 
@@ -829,8 +829,8 @@ namespace compute
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
         {
-            double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
-            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
             double minOfG = continuousDistribution_g.InverseCDF(.001);
             double maxOfG = continuousDistribution_g.InverseCDF(.999);
 
