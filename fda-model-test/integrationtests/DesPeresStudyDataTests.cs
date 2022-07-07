@@ -56,7 +56,6 @@ namespace fda_model_test.integrationtests
 
         static List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
         static int seed = 1234;
-        static int baseYear = 1990;
         static RandomProvider randomProvider = new RandomProvider(seed);
         [Fact]
         public void ComputeShould()

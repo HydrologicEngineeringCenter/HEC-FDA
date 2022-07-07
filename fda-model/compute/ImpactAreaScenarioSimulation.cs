@@ -791,7 +791,7 @@ namespace compute
             double maxOfG = continuousDistribution_g.InverseCDF(.999);
 
             bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
-            return curvesOverlap;
+             return curvesOverlap;
         }
         private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
         {
@@ -806,7 +806,7 @@ namespace compute
             double maxDiffRelativeToF = maxDifference / rangeOfF;
             double maxDiffRelativeToG = maxDifference / rangeOfG;
 
-            if (minDiffRelativeToF > .25 || minDiffRelativeToG > .25 || maxDiffRelativeToF > .25 || maxDiffRelativeToG > .25)
+            if (minDiffRelativeToF > .5 || minDiffRelativeToG > .5 || maxDiffRelativeToF > .5 || maxDiffRelativeToG > .5)
             {
                 curvesOverlap = false;
             }
