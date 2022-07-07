@@ -169,16 +169,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public List<SpecificIASResultVM> GetResults()
         {
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();          
-            List<string> damCats = Results.GetDamageCategories();
-            foreach (SpecificIAS ias in SpecificIASElements)
+            if (Results != null)
             {
-                int impactAreaID = ias.ImpactAreaID;
-                string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
-                if (impactAreaName != null)
+                List<string> damCats = Results.GetDamageCategories();
+                ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+                foreach (SpecificIAS ias in SpecificIASElements)
                 {
-                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, impactAreaID, Results, damCats);
-                    results.Add(result);
+                    int impactAreaID = ias.ImpactAreaID;
+                    string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
+                    if (impactAreaName != null)
+                    {
+                        SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, impactAreaID, Results, damCats);
+                        results.Add(result);
+                    }
                 }
             }
             return results;
