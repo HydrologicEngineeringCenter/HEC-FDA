@@ -788,7 +788,7 @@ namespace compute
             double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
             double minOfF = uncertainPairedData_f.Xvals[0];
             double minOfG = continuousDistribution_g.InverseCDF(.001);
-            double maxOfG = continuousDistribution_g.InverseCDF(.999);
+            double maxOfG = continuousDistribution_g.InverseCDF(.75);
 
             bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
              return curvesOverlap;
