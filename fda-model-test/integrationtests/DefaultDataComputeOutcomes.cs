@@ -617,18 +617,17 @@ namespace fda_model_test.integrationtests
         }
         //The expected values below are not for testing the validity of the compute 
         //rather, the values are used as part of troubleshooting unhandled exceptions
-        //TODO this test was written to catch an exception but did not 
-        [Theory]
-        [InlineData(1)]
-        public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException(double actualAssurance)
+        //TODO this objective of this test is to pass in a sample size of zero and return blank results 
+        //The property rule is not working like we expect 
+        //until the property rule works, we need to keep a good sample size here 
+        [Fact]
+        public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException()
         {
-            ContinuousDistribution lp3 = new LogPearson3(2.5, .254, -.1021, 0);
+            ContinuousDistribution lp3 = new LogPearson3(3.3, .254, -.1021, 10);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withFlowStage(stageDischarge)
                 .withStageDamages(stageDamageList)
-                .withInflowOutflow(regulatedUnregulated)
-                .withInteriorExterior(interiorExterior)
                 .withLevee(systemResponse, defaultLeveeElevation)
                 .build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
@@ -636,11 +635,9 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
-            double actualAssuranceOfAEP = scenarioResults.AssuranceOfAEP(impactAreaID1, .5);
 
-            double tolerance = 0.10;
-            double AEPRelativeDifference = Math.Abs(actualAssuranceOfAEP - actualAssurance) / actualAssurance;
-            Assert.True(AEPRelativeDifference < tolerance);
+            bool resultsAreNull = scenarioResults.GetResults(impactAreaID1).ConsequenceResults.ConsequenceResultList.Count == 0;
+            Assert.True(resultsAreNull);
         }
     }
 }
