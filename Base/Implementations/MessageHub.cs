@@ -99,6 +99,18 @@ namespace HEC.MVVMFramework.Base.Implementations
             }
 
         }
+        private static bool CheckSubscribersHashSubscribtions(IRecieveInstanceMessages subscriber, int senderHash)
+        {
+            foreach(int hash in subscriber.InstanceHash)
+            {
+                if(hash == senderHash)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
         private static void Broadcast(object sender, MessageEventArgs e)
         {
             foreach (IRecieveMessages s in _subscribers)
@@ -107,7 +119,8 @@ namespace HEC.MVVMFramework.Base.Implementations
                 {
                     IRecieveInstanceMessages sinstance = s as IRecieveInstanceMessages;
                     int senderHash = sender.GetHashCode();
-                    if (sinstance.InstanceHash != senderHash) 
+                    bool senderIsOnTheList = CheckSubscribersHashSubscribtions(sinstance, senderHash);
+                    if (!senderIsOnTheList) 
                     {
                         continue; 
                     }
