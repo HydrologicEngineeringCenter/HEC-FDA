@@ -29,12 +29,11 @@ namespace ViewTest.ViewModel
             CountUp = new NamedAction();
             CountUp.Name = "CountUp";
             CountUp.Action = CountUpAction;
-            
+            MySubscriberMessageViewModel.InstanceHash.Add(FastCounter.GetHashCode());
         }
 
         private void CountUpAction(object arg1, EventArgs arg2)
         {
-            MySubscriberMessageViewModel.InstanceHash.Add(FastCounter.GetHashCode());
             FastCounter.DoCounting();
             SlowCounter.DoCounting();
             SuperFastCounter.DoCounting();
