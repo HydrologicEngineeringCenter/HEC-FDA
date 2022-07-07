@@ -1,7 +1,9 @@
-﻿namespace HEC.MVVMFramework.Base.Interfaces
+﻿using System.Collections.Generic;
+
+namespace HEC.MVVMFramework.Base.Interfaces
 {
     public interface IRecieveInstanceMessages : IRecieveMessages
     {
-        int InstanceHash { get; }
+        List<int> InstanceHash { get; set; } 
     }
 }
