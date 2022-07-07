@@ -51,6 +51,11 @@ namespace metrics
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = true;
         }
+        internal ConsequenceDistributionResults(bool isNull)
+        {
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _isNull = isNull;
+        }
         internal ConsequenceDistributionResults(int alternativeID)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();

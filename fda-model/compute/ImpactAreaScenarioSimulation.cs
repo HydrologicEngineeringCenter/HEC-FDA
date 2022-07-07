@@ -119,6 +119,8 @@ namespace compute
             }
         }
 
+
+
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
         {
             if (HasErrors)
@@ -176,6 +178,11 @@ namespace compute
                     ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
 
                 }
+            }
+            bool curvesOverlap = SimulationCurvesHaveOverlap();
+            if(!curvesOverlap)
+            {
+                return false;
             }
             return true;
         }
@@ -642,6 +649,7 @@ namespace compute
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
+        //TODO: Add messaging to indicate which curves do not overlap
         private bool SimulationCurvesHaveOverlap()
         {
             bool allCurvesHaveOverlap = true;
@@ -697,12 +705,30 @@ namespace compute
                         allCurvesHaveOverlap = nextTwoCurvesOverlap;
                     }
                 }
-                if (!_channelstage_floodplainstage.CurveMetaData.IsNull)
+                if (_channelstage_floodplainstage.CurveMetaData.IsNull)
+                {
+                    foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertainPairedData, _discharge_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
                 {
                     bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_channelstage_floodplainstage, _discharge_stage);
                     if (!nextTwoCurvesHaveOverlap)
                     {
                         allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
                     }
                 }
                 if(!_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
@@ -711,6 +737,14 @@ namespace compute
                     if (!nextTwoCurvesHaveOverlap)
                     {
                         allCurvesHaveOverlap = nextTwoCurvesHaveOverlap; 
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlapOnXs(uncertain, _systemResponseFunction_stage_failureProbability);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
                     }
                 }
             }
@@ -723,6 +757,24 @@ namespace compute
                     {
                         allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
                     }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
+                {
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _frequency_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
                 }
                 if (!_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
                 {
@@ -731,30 +783,92 @@ namespace compute
                     {
                         allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
                     }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlapOnXs(uncertain, _systemResponseFunction_stage_failureProbability);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
                 }
             }
             return allCurvesHaveOverlap;
         }
+
+        private bool CurvesHaveOverlapOnXs(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
+        {
+            bool curvesOverlap = true;
+
+            double maxOfF = uncertainPairedData_f.Xvals.Max();
+            double minOfF = uncertainPairedData_f.Xvals.Min();
+            double maxOfG = uncertainPairedData_g.Xvals.Max();
+            double minOfG = uncertainPairedData_g.Xvals.Min();
+
+            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
+            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
+
+            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
+            {
+                curvesOverlap = false;
+            }
+            return curvesOverlap;
+
+        }
+
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
         {
+            bool curvesOverlap = true;
+
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
+            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
-            bool maxOfFIsGreaterThanMinOfG = maxOfF > minOfG;
-            return maxOfFIsGreaterThanMinOfG;
+            double maxOfG = uncertainPairedData_g.Yvals[uncertainPairedData_g.Yvals.Length - 1].InverseCDF(.999);
+
+            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
+            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
+
+            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
+            {
+                curvesOverlap = false;
+            }
+            return curvesOverlap;
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
         {
+            bool curvesOverlap = true;
+
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
+            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = uncertainPairedData_g.StageOrLogFlowDistributions[0].InverseCDF(.001);
-            bool maxOfFIsGreaterThanMinOfG = maxOfF > minOfG;
-            return maxOfFIsGreaterThanMinOfG;
+            double maxOfG = uncertainPairedData_g.StageOrLogFlowDistributions[uncertainPairedData_g.StageOrLogFlowDistributions.Length - 1].InverseCDF(.999);
+
+            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
+            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
+
+            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
+            {
+                curvesOverlap = false;
+            }
+            return curvesOverlap;
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
         {
+            bool curvesOverlap = true;
+
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
+            double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = continuousDistribution_g.InverseCDF(.001);
-            bool maxOfFIsGreaterThanMinOfG = maxOfF > minOfG;
-            return maxOfFIsGreaterThanMinOfG;
+            double maxOfG = continuousDistribution_g.InverseCDF(.999);
+
+            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
+            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
+            
+            if(minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
+            {
+                curvesOverlap = false;
+            }
+            return curvesOverlap;
         }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
