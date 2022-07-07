@@ -16,8 +16,6 @@ namespace HEC.MVVMFramework.Base.Implementations
         private static TcpClient _reporter;
         private static TcpListener _listener;
         private static System.Net.IPAddress _ip;
-        //private static int _listeningPort;
-        //private static int _reportingPort;
         private static bool _connected;
         public static List<IReportMessage> Reporters
         {
@@ -172,9 +170,12 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public static void UnsubscribeAll(IRecieveMessages listener)
         {
-            foreach (IRecieveMessages s in _subscribers)
+            for(int i=_subscribers.Count-1; i >= 0; i--)
             {
-                if (s == listener) _subscribers.Remove(s);
+                if ( _subscribers[i] == listener)
+                {
+                    _subscribers.RemoveAt(i);
+                }
             }
         }
         public static void Unsubscribe(IRecieveMessages listener, ErrorLevel filterLevel, System.Type senderFilterType, System.Type messageFilterType)
