@@ -7,6 +7,8 @@ namespace ViewTest.ViewModel
     {
         private Model.Counter FastCounter = new Model.Counter(0, 25);
         private Model.Counter SlowCounter = new Model.Counter(0, 2);
+        private Model.Counter SuperFastCounter = new Model.Counter(0, 2);
+        private Model.Counter SuperSlowCounter = new Model.Counter(0, 2);
 
         private NamedAction _countUp;
         public NamedAction CountUp
@@ -27,14 +29,16 @@ namespace ViewTest.ViewModel
             CountUp = new NamedAction();
             CountUp.Name = "CountUp";
             CountUp.Action = CountUpAction;
-            MySubscriberMessageViewModel.InstanceHash = FastCounter.GetHashCode();
+            
         }
 
         private void CountUpAction(object arg1, EventArgs arg2)
         {
-            MySubscriberMessageViewModel.InstanceHash = FastCounter.GetHashCode();
+            MySubscriberMessageViewModel.InstanceHash.Add(FastCounter.GetHashCode());
             FastCounter.DoCounting();
             SlowCounter.DoCounting();
+            SuperFastCounter.DoCounting();
+            SuperSlowCounter.DoCounting();
         }
     }
 }
