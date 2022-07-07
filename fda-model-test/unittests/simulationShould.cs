@@ -124,11 +124,12 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
