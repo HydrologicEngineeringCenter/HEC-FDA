@@ -731,22 +731,6 @@ namespace compute
                         }
                     }
                 }
-                if(!_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
-                {
-                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_systemResponseFunction_stage_failureProbability, _discharge_stage);
-                    if (!nextTwoCurvesHaveOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap; 
-                    }
-                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlapOnXs(uncertain, _systemResponseFunction_stage_failureProbability);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
             }
             else
             {
@@ -776,37 +760,9 @@ namespace compute
                         }
                     }
                 }
-                if (!_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
-                {
-                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_systemResponseFunction_stage_failureProbability, _frequency_stage);
-                    if (!nextTwoCurvesHaveOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
-                    }
-                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlapOnXs(uncertain, _systemResponseFunction_stage_failureProbability);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
             }
             return allCurvesHaveOverlap;
         }
-
-        private bool CurvesHaveOverlapOnXs(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
-        {
-            double maxOfF = uncertainPairedData_f.Xvals.Max();
-            double minOfF = uncertainPairedData_f.Xvals.Min();
-            double maxOfG = uncertainPairedData_g.Xvals.Max();
-            double minOfG = uncertainPairedData_g.Xvals.Min();
-            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
-            return curvesOverlap;
-        }
-
-
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
         {
             double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Yvals.Length - 1];
