@@ -9,18 +9,17 @@
              xmlns:vm ="clr-namespace:ViewTest.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:CounterVM}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <vna:NamedActionButton Grid.Column="0" NamedAction="{Binding CountUp}" Margin="5"/>
-        <vmh:SubscriberMessageView Grid.Column="1" Margin="5" InstanceFilter="{Binding DataContext.InstanceHash, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+        <vmh:SubscriberMessageView Grid.Column="1" Margin="5" DataContext="{Binding MySubscriberMessageViewModel }"/>
         <vmh:SelectableMessageView Grid.Column="2" Margin="5"/>
-        <Label Grid.Column="3" Content="{Binding InstanceHash}"/>
     </Grid>
 </UserControl>
 

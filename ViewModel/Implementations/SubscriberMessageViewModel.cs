@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.MVVMFramework.ViewModel.Implementations
@@ -15,7 +16,6 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         private Type _messageType = null;
         private int _messageCount = 100;
         private int _instanceHash;
-
         public int InstanceHash
         {
             get { return _instanceHash; }
@@ -69,6 +69,10 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
             {
                 _messageCount = value; NotifyPropertyChanged();
             }
+        }
+        public SubscriberMessageViewModel()
+        {
+            MessageHub.Subscribe(this);
         }
         protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {

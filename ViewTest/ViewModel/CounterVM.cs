@@ -1,8 +1,4 @@
-﻿using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.ViewModel.Implementations;
+﻿using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
 
 namespace ViewTest.ViewModel
@@ -18,37 +14,25 @@ namespace ViewTest.ViewModel
             get { return _countUp; }
             set { _countUp = value; NotifyPropertyChanged(); }
         }
-
         private int _countInterval = 1;
-
         public int CountInterval
         {
             get { return _countInterval; }
             set { _countInterval = value; }
         }
 
-        private int _instanceHash;
-        public int InstanceHash
-        {
-            get { return _instanceHash; }
-            set
-            {
-                _instanceHash = value;
-                NotifyPropertyChanged();
-            }
-        }
-
+        public SubscriberMessageViewModel MySubscriberMessageViewModel { get; } = new SubscriberMessageViewModel();
         public CounterVM()
         {
             CountUp = new NamedAction();
             CountUp.Name = "CountUp";
             CountUp.Action = CountUpAction;
-            InstanceHash = FastCounter.GetHashCode();
+            MySubscriberMessageViewModel.InstanceHash = FastCounter.GetHashCode();
         }
 
         private void CountUpAction(object arg1, EventArgs arg2)
         {
-            InstanceHash = FastCounter.GetHashCode();
+            MySubscriberMessageViewModel.InstanceHash = FastCounter.GetHashCode();
             FastCounter.DoCounting();
             SlowCounter.DoCounting();
         }
