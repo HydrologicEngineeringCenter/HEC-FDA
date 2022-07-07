@@ -1008,7 +1008,9 @@ namespace compute
             {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
                 _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
-                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return _sim._frequency_discharge.SampleSize > 2; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { 
+                    return _sim._frequency_discharge.SampleSize > 2; 
+                }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)

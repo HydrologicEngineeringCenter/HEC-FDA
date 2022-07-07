@@ -623,7 +623,7 @@ namespace fda_model_test.integrationtests
         [Fact]
         public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException()
         {
-            ContinuousDistribution lp3 = new LogPearson3(3.3, .254, -.1021, 10);
+            ContinuousDistribution lp3 = new LogPearson3(3.3, .254, -.1021, 0);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withFlowStage(stageDischarge)
