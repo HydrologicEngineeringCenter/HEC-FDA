@@ -798,78 +798,66 @@ namespace compute
 
         private bool CurvesHaveOverlapOnXs(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
         {
-            bool curvesOverlap = true;
-
             double maxOfF = uncertainPairedData_f.Xvals.Max();
             double minOfF = uncertainPairedData_f.Xvals.Min();
             double maxOfG = uncertainPairedData_g.Xvals.Max();
             double minOfG = uncertainPairedData_g.Xvals.Min();
-
-            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
-            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
-
-            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
-            {
-                curvesOverlap = false;
-            }
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
-
         }
+
 
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
         {
-            bool curvesOverlap = true;
-
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
             double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
             double maxOfG = uncertainPairedData_g.Yvals[uncertainPairedData_g.Yvals.Length - 1].InverseCDF(.999);
 
-            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
-            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
-
-            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
-            {
-                curvesOverlap = false;
-            }
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
         {
-            bool curvesOverlap = true;
-
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
             double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = uncertainPairedData_g.StageOrLogFlowDistributions[0].InverseCDF(.001);
             double maxOfG = uncertainPairedData_g.StageOrLogFlowDistributions[uncertainPairedData_g.StageOrLogFlowDistributions.Length - 1].InverseCDF(.999);
 
-            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
-            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
-
-            if (minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
-            {
-                curvesOverlap = false;
-            }
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
         }
         private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
         {
-            bool curvesOverlap = true;
-
             double maxOfF = uncertainPairedData_f.Yvals[uncertainPairedData_f.Yvals.Length - 1].InverseCDF(.999);
             double minOfF = uncertainPairedData_f.Yvals[0].InverseCDF(.001);
             double minOfG = continuousDistribution_g.InverseCDF(.001);
             double maxOfG = continuousDistribution_g.InverseCDF(.999);
 
-            bool minOfFIsGreaterThanMaxOfG = minOfF > maxOfG;
-            bool minOfGIsGreaterThanMaxOfF = minOfG > maxOfF;
-            
-            if(minOfFIsGreaterThanMaxOfG || minOfGIsGreaterThanMaxOfF)
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            return curvesOverlap;
+        }
+        private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
+        {
+            bool curvesOverlap = true;
+
+            double rangeOfF = maxOfF - minOfF;
+            double rangeOfG = maxOfF - minOfG;
+            double minDifference = Math.Abs(minOfG - minOfF);
+            double maxDifference = Math.Abs(maxOfG - maxOfF);
+            double minDiffRelativeToF = minDifference / rangeOfF;
+            double minDiffRelativeToG = minDifference / rangeOfG;
+            double maxDiffRelativeToF = maxDifference / rangeOfF;
+            double maxDiffRelativeToG = maxDifference / rangeOfG;
+
+            if (minDiffRelativeToF > .25 || minDiffRelativeToG > .25 || maxDiffRelativeToF > .25 || maxDiffRelativeToG > .25)
             {
                 curvesOverlap = false;
             }
+
             return curvesOverlap;
         }
+
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
