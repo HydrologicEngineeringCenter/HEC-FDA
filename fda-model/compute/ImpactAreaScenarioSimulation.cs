@@ -777,8 +777,8 @@ namespace compute
         {
             double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
             double minOfF = uncertainPairedData_f.Xvals[0];
-            double minOfG = uncertainPairedData_g.StageOrLogFlowDistributions[0].InverseCDF(.001);
-            double maxOfG = uncertainPairedData_g.StageOrLogFlowDistributions[uncertainPairedData_g.StageOrLogFlowDistributions.Length - 1].InverseCDF(.999);
+            double minOfG = uncertainPairedData_g.InputFlowOrStageValues[0];
+            double maxOfG = uncertainPairedData_g.InputFlowOrStageValues[uncertainPairedData_g.InputFlowOrStageValues.Length - 1];
 
             bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
@@ -1008,8 +1008,7 @@ namespace compute
             {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
                 _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
-                bool frequencyCurveSampleIsAtLeastTwo = _sim._frequency_discharge.SampleSize > 2;
-                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return !frequencyCurveSampleIsAtLeastTwo; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return _sim._frequency_discharge.SampleSize > 2; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
