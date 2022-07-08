@@ -48,7 +48,7 @@ namespace alternatives
                 foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
                 {
                     ConsequenceDistributionResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-                    ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
+                    ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
                     mlfYearDamageResultsList.Remove(mlfYearDamageResult);
                     alternativeResults.AddConsequenceResults(aaeqResult);
                 }
@@ -87,7 +87,7 @@ namespace alternatives
                         foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearDamageResultsList)
                         {
                             ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-                            ConsequenceDistributionResult aaeqResult = IterateOnAAEQ( baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
+                            ConsequenceDistributionResult aaeqResult = IterateOnAAEQ( baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
                             alternativeResults.AddConsequenceResults(aaeqResult);
                         }
                     }
@@ -96,7 +96,7 @@ namespace alternatives
             return alternativeResults;
         }
 
-        private static ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider)
+        private static ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
         {
             double eadSampledBaseYearLowerBound = baseYearDamageResult.ConsequenceHistogram.Min;
             double eadSampledFutureYearLowerBound = mlfYearDamageResult.ConsequenceHistogram.Min;
@@ -108,9 +108,18 @@ namespace alternatives
             double range = aaeqDamageUpperBound - aaeqDamageLowerBound;
             double binQuantity = 1 + 3.322 * Math.Log(_iterations);
             double binWidth = Math.Ceiling(range / binQuantity);
+            Histogram aaeqHistogram;
+            ConsequenceDistributionResult aaeqResult; 
+            if (iterateOnFutureYear)
+            {
+                aaeqHistogram = new Histogram(aaeqDamageLowerBound, binWidth, mlfYearDamageResult.ConvergenceCriteria);
+                aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, aaeqHistogram, mlfYearDamageResult.RegionID);
 
-            Histogram aaeqHistogram = new Histogram(aaeqDamageLowerBound, binWidth, baseYearDamageResult.ConvergenceCriteria);
-            ConsequenceDistributionResult aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
+            } else
+            {
+                aaeqHistogram = new Histogram(aaeqDamageLowerBound, binWidth, baseYearDamageResult.ConvergenceCriteria);
+                aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
+            }
             //TODO: run this loop until convergence 
             for (int i = 0; i < _iterations; i++)
             {
