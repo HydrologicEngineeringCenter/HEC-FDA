@@ -89,7 +89,10 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         }
         public IEnumerable GetErrors(string propertyName)
         {
-            if (propertyName == null) return null;
+            if (propertyName == null)
+            {
+                return GetErrors();
+            }
             if (_RuleMap.ContainsKey(propertyName))
             {
                 if (_RuleMap[propertyName].ErrorLevel > ErrorLevel.Unassigned)
@@ -103,11 +106,7 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         {
             if (_Errors == null)
             {
-                if (HasErrors)
-                {//validate hasnt been called, but there are errors (due to single property validation), update and validate all properties, and return the master list of errors.
-                    Validate();
-                }
-                return new List<string>();
+                Validate();
             }
             return _Errors;
         }
