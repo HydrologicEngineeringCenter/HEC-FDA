@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              Loaded="UserControl_Loaded"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              DataContextChanged="UserControl_DataContextChanged"
@@ -28,8 +29,8 @@
             <Label Content="Mean:" />
             <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
         </StackPanel>
-        <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+        <controls:CopyPasteDataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left" SelectionUnit="Cell"
                   VerticalAlignment="Top" Width="200" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
@@ -45,7 +46,7 @@
                 </DataGridTextColumn>
             </DataGrid.Columns>
 
-        </DataGrid>
+        </controls:CopyPasteDataGrid>
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
             <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>

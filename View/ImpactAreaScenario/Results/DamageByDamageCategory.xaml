@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
 
         <controls:CopyPasteDataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+                   HorizontalAlignment="Left" SelectionUnit="Cell"
                   VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>

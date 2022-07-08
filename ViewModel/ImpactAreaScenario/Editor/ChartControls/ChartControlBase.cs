@@ -56,6 +56,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
             ChartVM.LineData.Add(_data);
         }
 
+        public void UpdateYAxisLabel(string label)
+        {
+            _yAxisLabel = label;
+            _data.YAxisName = label;
+        }
+
         public void SetMinMax(Tuple<double, double> minMaxX, Tuple<double, double> minMaxY)
         {
             AxisCoreViewModel vmX = GetAxisViewModel(Axis.X);

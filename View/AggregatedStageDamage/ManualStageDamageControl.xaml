@@ -21,7 +21,7 @@
                     <Button Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
                 </StackPanel>
 
-                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  HorizontalAlignment="Stretch" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView Height="130" Margin="5" ItemsSource="{Binding Rows}"  HorizontalAlignment="Stretch" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
