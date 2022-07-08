@@ -81,7 +81,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
 
-            PairedData = CreatePairedData();
 
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
@@ -94,6 +93,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 ImageSource = ImageSources.FREQUENCY_IMAGE,
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
+
+            PairedData = CreatePairedData();
 
             AddActions();
         }
@@ -168,10 +169,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 string errorVals = string.Join(Environment.NewLine + "\t",badStrings);              
                 MessageBox.Show(msg + Environment.NewLine + "\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            return flowDoubles;
-            
+            return flowDoubles;           
         }
-        public LogPearson3 CreateLP3Distribution()
+
+        public LogPearson3 CreateAnalyticalLP3Distribution()
         {
             LogPearson3 lp3 = new LogPearson3();
             if (IsStandard)
@@ -186,10 +187,41 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return lp3;
         }
 
+        private UncertainPairedData CreateGraphicalPairedData()
+        {
+            GraphicalUncertainPairedData graphicalData = MyGraphicalVM.ToGraphicalUncertainPairedData();
+
+            ContinuousDistribution[] stageOrLogFlowDistributions = graphicalData.StageOrLogFlowDistributions;
+            double[] exceedanceProbs = graphicalData.ExceedanceProbabilities;
+
+            List<double> xs = new List<double>();
+            foreach(double exceed in exceedanceProbs)
+            {
+                xs.Add(1-exceed);
+            }
+
+            List<double> ys = new List<double>();
+            foreach(ContinuousDistribution cont in stageOrLogFlowDistributions)
+            {
+                ys.Add( cont.InverseCDF(.5));
+            }
+
+            return UncertainPairedDataFactory.CreateDeterminateData(xs.ToArray(), ys.ToArray(), graphicalData.XLabel, graphicalData.YLabel, graphicalData.Name);
+        }
+
         public UncertainPairedData CreatePairedData()
         {
-            LogPearson3 lp3 = CreateLP3Distribution();
-            return UncertainPairedDataFactory.CreateLP3Data(lp3);
+            UncertainPairedData frequencyData = null;
+            if (IsAnalytical)
+            {
+                LogPearson3 lp3 = CreateAnalyticalLP3Distribution();
+                frequencyData = UncertainPairedDataFactory.CreateLP3Data(lp3);
+            }
+            else
+            {
+                frequencyData = CreateGraphicalPairedData();
+            }
+            return frequencyData;
         }
 
     }

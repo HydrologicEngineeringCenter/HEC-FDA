@@ -17,9 +17,19 @@ namespace HEC.FDA.View.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-            WaterSurfaceElevationImporterVM vm = (WaterSurfaceElevationImporterVM)this.DataContext;
-            vm.FileSelected(fullpath);          
-            vm.SelectedPath = fullpath;
+            if (DataContext is WaterSurfaceElevationImporterVM vm)
+            {
+                vm.FileSelected(fullpath);
+                vm.SelectedPath = fullpath;
+            }
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is WaterSurfaceElevationImporterVM vm)
+            {
+                vm.HasChanges = false;
+            }
         }
     }
 }

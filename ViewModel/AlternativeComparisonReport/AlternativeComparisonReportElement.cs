@@ -168,7 +168,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     //This should never happen.
                     canComputeValidationResult.AddErrorMessage(withoutAlt.Name + " compute produced no results.");
                 }
-                foreach (AlternativeElement withProjElem in withProjAlts)
+                foreach(AlternativeElement withProjElem in withProjAlts)
                 {
                     AlternativeResults withProjResults = withProjElem.ComputeAlternative();
                     if (withProjResults == null)

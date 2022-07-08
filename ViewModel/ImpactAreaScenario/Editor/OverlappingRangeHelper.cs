@@ -30,21 +30,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //       Ext - Int:  Exterior Stage,  Interior Stage
             //    Stage Damage:  Interior Stage,  Damage
 
-            //assume that the big 3 exist by the time we get here (flow-freq, rating, stage-damage).
+            //We can assume that by the time we get here flow-freq,  stage-damage exist. You do not need a rating curve
+            //if the frequency function is a stage-frequency
             //we do not care about the exterior interior curve, just skip it.
 
             bool inflowOutflowSelected = SelectedInflowOutflowElement.ChildElement != null;
+            bool ratingSelected = SelectedRatingCurveElement.ChildElement != null;
 
             if (inflowOutflowSelected)
             {
                 //check in-out flows with flow freq
                 CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW, messageRows);
-                //check outflows with rating flows
-                CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
-                //check rating stages with stage-damage stages
-                CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+                if (ratingSelected)
+                {
+                    //check outflows with rating flows
+                    CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
+                    //check rating stages with stage-damage stages
+                    CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+                }
             }
-            else
+            else if(ratingSelected)
             {
                 //check rating flows with flow-freq flows
                 CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement, true, false, RATING, FLOW, messageRows);

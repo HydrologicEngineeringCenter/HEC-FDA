@@ -16,44 +16,38 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult)
+        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, ScenarioResults scenarioResults)
         {
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
             IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: impactAreaID);
-            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x).ToArray();
+            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x/totalHistogram.SampleSize).ToArray();
 
             _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
 
-            ConsequenceDistributionResults eadResults = iasResult.ConsequenceResults;
-            loadTableValues(eadResults);
+            List<double> qValues = new List<double>();
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID));
+            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID));
 
+            loadTableValues(qValues);
         }
 
-        private void loadTableValues(ConsequenceDistributionResults eadResults)
+        private void loadTableValues(List<double> qValues)
         {
-            List<double> xVals = new List<double>() { .75, .5, .25 };
-            List<double> yVals = loadYData(xVals, eadResults);
-
             List<EadRowItem> rows = new List<EadRowItem>();
-            for(int i = 0;i<xVals.Count;i++)
+            if (qValues.Count == 3)
             {
-                rows.Add(new EadRowItem(xVals[i], yVals[i]));
-            }
+                List<double> xVals = new List<double>() { .75, .5, .25 };
 
+                for (int i = 0; i < xVals.Count; i++)
+                {
+                    rows.Add(new EadRowItem(xVals[i], qValues[i]));
+                }
+            }
             Rows.AddRange( rows);
-        }
-
-        private List<double> loadYData(List<double> xVals, ConsequenceDistributionResults eadResults)
-        {
-            List<double> yValues = new List<double>();
-            foreach(double x in xVals)
-            {
-                yValues.Add( eadResults.ConsequenceExceededWithProbabilityQ(x));
-            }
-            return yValues;
         }
 
     }

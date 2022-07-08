@@ -31,11 +31,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             RatingRelationshipControl.Plot();
             StageDamageControl.Plot();
             DamageFrequencyControl.Plot();
-            
+
             UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
             UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
             UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
             UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
+
         }
 
         private void UpdateMinMax(ChartControlBase primary, ChartControlBase horizontalNeighbor, ChartControlBase verticalNeighbor)

@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
@@ -47,7 +48,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
-               element.IsManual, element.SelectedWSE, element.SelectedStructures, WriteCurvesToXML(element.Curves) };
+               element.IsManual, element.SelectedWSE, element.SelectedStructures,  WriteCurvesToXML(element.Curves)};
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -104,6 +105,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 curvesElement.Add(curve.WriteToXML(curve));
             }
+
             return curvesElement;
         }
 

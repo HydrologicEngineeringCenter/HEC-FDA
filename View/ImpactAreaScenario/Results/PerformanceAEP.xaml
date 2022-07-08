@@ -29,9 +29,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Content="Mean:" HorizontalAlignment="Right" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
             <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Right" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
         </Grid>
         
         <DataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 

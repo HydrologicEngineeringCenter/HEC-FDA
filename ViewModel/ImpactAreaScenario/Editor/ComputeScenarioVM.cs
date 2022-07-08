@@ -1,13 +1,17 @@
 ﻿using compute;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using metrics;
 using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -21,6 +25,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
 
+        private SubscriberMessageViewModel _MessageVM = new SubscriberMessageViewModel();
+
+
+        public SubscriberMessageViewModel MessageVM
+        {
+            get { return _MessageVM; }
+        }
         public string NumberCompleted
         {
             get { return _NumberCompleted; }
@@ -47,19 +58,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             foreach (SpecificIAS ias in iasElems)
             {
-                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
+                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();             
                 MessageHub.Register(sim);
                 sim.ProgressReport += Sim_ProgressReport;
                 sims.Add(sim);
+
+                MessageVM.InstanceHash.Add( sim.GetHashCode());
             }
+
             Scenario scenario = new Scenario(analysisYear, sims);
-            int seed = 999;
+
+            int seed = 1234;
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria();
 
             Task.Run(() =>
             {
                 ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
+                foreach(ImpactAreaScenarioSimulation sim in sims)
+                {
+                    MessageHub.Unregister(sim);
+                }
                 //Event for when everything has been computed.
                 callback?.Invoke(scenarioResults);
             });

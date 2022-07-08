@@ -102,7 +102,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     break;
             }
 
-            double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
+            double[] binValues = histogram.BinCounts.Select(binCount => (double)binCount/histogram.SampleSize).ToArray();
             _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             if (histogram != null)
             {
-                double[] binValues = histogram.BinCounts.Select(i => (double)i).ToArray();
+                double[] binValues = histogram.BinCounts.Select(i => (double)i/histogram.SampleSize).ToArray();
                 _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
                 HistogramColor.SetHistogramColor(_data);
                 ChartViewModel.LineData.Add(_data);

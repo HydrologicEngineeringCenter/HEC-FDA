@@ -75,24 +75,12 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            SelectedPath = path; //todo: isnt this bound??
+            SelectedPath = path;
             DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
             DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-            List<string> uniqueNameList = new List<string>();
+            List<string> uniqueNameList = dtv.ColumnNames.ToList();
 
-            for(int i = 0;i< dtv.ColumnNames.Count(); i++)
-            {
-                if(dtv.ColumnTypes[i]== typeof(string))
-                {
-                    uniqueNameList.Add(dtv.ColumnNames[i]);
-                }
-            }
-            if (!(uniqueNameList.Count > 0))
-            {
-                MessageBox.Show("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", "No String Fields", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
             UniqueFields = uniqueNameList;
         }
 
@@ -123,17 +111,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override void AddValidationRules()
         {
             base.AddValidationRules();
-
-            //todo: leaving commented out for now 5/2/22
-            //AddSinglePropertyRule(nameof(SelectedUniqueName), new Rule(() =>
-            //{
-            //    return SelectedUniqueName == null;
-            //}, "A unique name has not been selected.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
-
-            //AddSinglePropertyRule(nameof(ListOfRows), new Rule(() =>
-            //{
-            //    return ListOfRows == null;
-            //}, "There are no impact area rows.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
         }
 
         public override void Save()

@@ -264,10 +264,6 @@
         <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
             <IASResultsView:SpecificIASResultsControl/>
         </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
-            <IASResultsView:DamageByDamageCategory/>
-        </DataTemplate>
 
         <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
             <IASResultsView:PerformanceAEP/>

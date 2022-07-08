@@ -228,8 +228,8 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             List<int> analysisYears = results.AnalysisYears;
 
-            YearResult yr1 = new YearResult(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results));
-            YearResult yr2 = new YearResult(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results));
+            YearResult yr1 = new YearResult(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results, DamageMeasureYear.Base));
+            YearResult yr2 = new YearResult(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
             AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(results, discountRate, period));

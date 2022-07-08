@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Alternatives.Results;
+using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -31,7 +33,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private bool _thresholdComboVisible;
 
         private DamageWithUncertaintyVM _damageWithUncertaintyVM;
-        private DamageByDamageCategoryVM _damageByDamageCategoryVM;
+        private DamageByDamCatVM _damageByDamageCategoryVM;
         private PerformanceVMBase _performanceAEPVM;
         private PerformanceVMBase _performanceAssuranceOfThresholdVM;
         private PerformanceVMBase _performanceLongTermRiskVM;
@@ -83,14 +85,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             get { return _thresholdComboVisible; }
             set { _thresholdComboVisible = value; NotifyPropertyChanged(); }
         }
-
         #endregion
 
-        public SpecificIASResultVM(string iasName, ImpactAreaScenarioResults iasResult, List<string> damCats)
-        {         
-            _IASResult = iasResult;
-            LoadThresholdData(iasResult);
-            loadVMs(damCats);
+        public SpecificIASResultVM(string iasName, int impactAreaID, ScenarioResults scenarioResults, List<string> damCats)
+        {
+            ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
+            _IASResult = results;
+            LoadThresholdData(results);      
+
+            loadVMs(damCats, scenarioResults, impactAreaID);
             CurrentResultVM = _damageWithUncertaintyVM;
             
             IASName = iasName;
@@ -115,11 +118,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private void loadVMs(List<string> damCats)
+        private void loadVMs(List<string> damCats, ScenarioResults scenarioResults, int impactAreaID)
         {
-            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
-            _damageByDamageCategoryVM = new DamageByDamageCategoryVM(_IASResult, damCats);
-            _performanceAEPVM = new PerformanceAEPVM(_IASResult, Thresholds);
+
+
+            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
+            double discountRate = studyPropElem.DiscountRate;
+            int period = studyPropElem.PeriodOfAnalysis;
+
+            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult, scenarioResults);
+            _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
+            _performanceAEPVM = new PerformanceAEPVM(scenarioResults, impactAreaID, Thresholds);
             _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
             _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(_IASResult, Thresholds);
             _performanceAssuranceOfThresholdVM.updateSelectedMetric(SelectedThreshold);

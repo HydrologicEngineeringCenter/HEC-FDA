@@ -23,22 +23,27 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-       
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label Grid.Column="0"  Content="Outcomes:" Margin="5" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Outcomes}" SelectedItem="{Binding SelectedOutcome}"  Margin="5" />
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label Content="Outcomes:" Margin="5" />
-            <ComboBox Name="outcomes_cmb" ItemsSource="{Binding Outcomes}" SelectedItem="{Binding SelectedOutcome}"  Margin="5" Width="150"/>
+            <Label Grid.Column="2" Content="Report:" Margin="5" />
+            <ComboBox Grid.Column="3" ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" />
 
-            <Label Content="Report:" Margin="5" />
-            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="220"/>
+            <Label Grid.Column="4" Content="Threshold:" Margin="5" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}"  />
+            <ComboBox Grid.Column="5" ItemsSource="{Binding Thresholds}" DisplayMemberPath="Description" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}" SelectedItem="{Binding SelectedThreshold}"  Margin="5" HorizontalAlignment="Stretch"/>
+        </Grid>
 
-            <Label Content="Threshold:" Margin="5" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}"  />
-            <ComboBox ItemsSource="{Binding Thresholds}" DisplayMemberPath="Description" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}" SelectedItem="{Binding SelectedThreshold}"  Margin="5" HorizontalAlignment="Stretch"/>
-
-        </StackPanel>
-
-
-        <ContentControl Grid.Row="3" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
+        <ContentControl Grid.Row="3" Grid.ColumnSpan="2" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
 
     </Grid>

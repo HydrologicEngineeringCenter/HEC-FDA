@@ -30,6 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
+
         #endregion
         #region Properties
 
@@ -115,7 +116,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
-       
+
         #endregion
 
         private SimulationCreator GetSimulationCreator()
@@ -143,18 +144,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 thresholdIndex++;
             }
             return sc;
-        }
+        }      
 
         public ImpactAreaScenarioSimulation CreateSimulation()
         {
             ImpactAreaScenarioSimulation simulation = null;
 
-
             SimulationCreator sc = GetSimulationCreator();
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
             if (configurationValidationResult.IsValid)
             {
-                simulation = sc.BuildSimulation();  
+                simulation = sc.BuildSimulation();
             }
             else
             {
@@ -248,6 +248,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     }
                 case "DAMAGEAEP":
                 case "DAMAGES":
+                case "DAMAGE":
                     {
                         return new ThresholdType(ThresholdEnum.Damage, "Damages");
                     }

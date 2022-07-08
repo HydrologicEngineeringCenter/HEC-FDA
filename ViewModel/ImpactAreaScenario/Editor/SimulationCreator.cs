@@ -8,8 +8,6 @@ using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using paireddata;
 using Statistics;
-using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static compute.ImpactAreaScenarioSimulation;
@@ -112,9 +110,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
             }
         }
+
         private ContinuousDistribution GetFrequencyDistribution()
         {
-            return _FreqElem.CreateLP3Distribution();
+            return _FreqElem.CreateAnalyticalLP3Distribution();
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
@@ -129,10 +128,38 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
-                stageDamages.Add(curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat));
+                bool allZeroes = IsCurveYValuesAllZero(curve);
+                if(!allZeroes)
+                {
+                    UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat);
+                    stageDamages.Add(upd);
+                }
             }
+
             return stageDamages;
         }
+
+        private bool IsCurveYValuesAllZero(StageDamageCurve curve)
+        {
+            bool allZeroes = true;
+            IDistribution[] yvals = curve.ComputeComponent.SelectedItemToPairedData().Yvals;
+            List<double> ys = new List<double>();
+            foreach (IDistribution yval in yvals)
+            {
+                ys.Add(yval.InverseCDF(.5));
+            }
+
+            foreach (double y in ys)
+            {
+                if (y != 0)
+                {
+                    allZeroes = false;
+                    break;
+                }
+            }
+            return allZeroes;
+        }
+
         public ImpactAreaScenarioSimulation BuildSimulation()
         {
             return _SimulationBuilder.build();
