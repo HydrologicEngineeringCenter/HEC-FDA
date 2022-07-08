@@ -128,20 +128,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
-            //RemoveZeroDamageCurves(stageDamageElem);
-
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, ImpactAreaID);
-
-            //_StageDamagesWithZeroDamageMessage = sc.StageDamagesWithZeroDamageMessage;
-            //if (sc.NumberOfStageDamagesIgnored > 0)
-            //{
-            //    _StageDamagesWithZeroDamageMessage = "For impact area ID: " + ImpactAreaID + Environment.NewLine + sc.NumberOfStageDamagesIgnored + " stage-damage functions are not being used in the compute because they have zero damage.";
-            //}
-            //else
-            //{
-            //    _StageDamagesWithZeroDamageMessage = null;
-            //}
 
             int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
@@ -156,9 +144,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 thresholdIndex++;
             }
             return sc;
-        }
-
-        
+        }      
 
         public ImpactAreaScenarioSimulation CreateSimulation()
         {

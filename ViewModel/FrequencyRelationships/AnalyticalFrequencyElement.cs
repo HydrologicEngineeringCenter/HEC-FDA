@@ -169,11 +169,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 string errorVals = string.Join(Environment.NewLine + "\t",badStrings);              
                 MessageBox.Show(msg + Environment.NewLine + "\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            return flowDoubles;
-            
+            return flowDoubles;           
         }
-
-
 
         public LogPearson3 CreateAnalyticalLP3Distribution()
         {

@@ -154,6 +154,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 if (y != 0)
                 {
                     allZeroes = false;
+                    break;
                 }
             }
             return allZeroes;

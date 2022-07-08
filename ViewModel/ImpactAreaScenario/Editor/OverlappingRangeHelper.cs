@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //       Ext - Int:  Exterior Stage,  Interior Stage
             //    Stage Damage:  Interior Stage,  Damage
 
-            //assume that the big 3 exist by the time we get here (flow-freq, rating, stage-damage). This is no longer true. You do not need a rating curve
+            //We can assume that by the time we get here flow-freq,  stage-damage exist. You do not need a rating curve
             //if the frequency function is a stage-frequency
             //we do not care about the exterior interior curve, just skip it.
 

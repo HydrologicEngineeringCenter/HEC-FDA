@@ -29,10 +29,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults, DamageMeasureYear damageMeasureYear)
         {
-            
-                RateAndPeriodVisible = false;
-            
-
+            RateAndPeriodVisible = false;
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {

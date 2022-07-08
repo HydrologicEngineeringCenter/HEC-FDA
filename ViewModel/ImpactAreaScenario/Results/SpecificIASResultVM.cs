@@ -85,16 +85,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             get { return _thresholdComboVisible; }
             set { _thresholdComboVisible = value; NotifyPropertyChanged(); }
         }
-
         #endregion
 
         public SpecificIASResultVM(string iasName, int impactAreaID, ScenarioResults scenarioResults, List<string> damCats)
         {
             ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
             _IASResult = results;
-            LoadThresholdData(results);
-
-           
+            LoadThresholdData(results);      
 
             loadVMs(damCats, scenarioResults, impactAreaID);
             CurrentResultVM = _damageWithUncertaintyVM;
