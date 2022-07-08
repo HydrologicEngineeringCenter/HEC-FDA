@@ -28,8 +28,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseTest", "BaseTest\BaseTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewTest", "ViewTest\ViewTest.csproj", "{6458603E-F2EF-437F-B44A-E6A8C52DFACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModelTest", "ViewModelTest\ViewModelTest.csproj", "{1777D301-769E-4BD5-8577-8D4C4444331B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,10 +58,6 @@ Global
 		{6458603E-F2EF-437F-B44A-E6A8C52DFACA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6458603E-F2EF-437F-B44A-E6A8C52DFACA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6458603E-F2EF-437F-B44A-E6A8C52DFACA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1777D301-769E-4BD5-8577-8D4C4444331B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1777D301-769E-4BD5-8577-8D4C4444331B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1777D301-769E-4BD5-8577-8D4C4444331B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1777D301-769E-4BD5-8577-8D4C4444331B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
