@@ -92,7 +92,7 @@ namespace compute
             }
             else
             {
-                AddEADKeys(convergenceCriteria);
+                CreateEADHistograms(convergenceCriteria);
             }
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
@@ -104,13 +104,22 @@ namespace compute
             return _impactAreaScenarioResults;
         }
 
-        private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
+        private void CreateEADHistograms(ConvergenceCriteria convergenceCriteria)
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
+                bool histogramIsZeroValued = false;
+                double largeProbability = 0.999;
+                double highPercentile = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(largeProbability);
+                if(highPercentile == 0)
+                {
+                    histogramIsZeroValued = true;
+                }
+                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID, histogramIsZeroValued);
             }
         }
+
+
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
         {
@@ -170,6 +179,11 @@ namespace compute
 
                 }
             }
+            bool curvesOverlap = SimulationCurvesHaveOverlap();
+            if(!curvesOverlap)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -207,11 +221,18 @@ namespace compute
                     }
                     if (_frequency_stage.CurveMetaData.IsNull)
                     {
+                        if (_discharge_stage.CurveMetaData.IsNull)
+                        {
+                            //complain loudly
+                            string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted." + Environment.NewLine;
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage));
+                            return;
+                        }
                         IPairedData frequencyDischarge;
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
                             frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
-
                         }
                         else
                         {
@@ -221,40 +242,17 @@ namespace compute
                         //check if flow transform exists, and use it here
                         if (_unregulated_regulated.CurveMetaData.IsNull)
                         {
-                            if (_discharge_stage.CurveMetaData.IsNull)
-                            {
-                                //complain loudly
-                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted." + Environment.NewLine;
-                                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
-                                ReportMessage(this, new MessageEventArgs(errorMessage));
-                                return; 
-                            }
-                            else
-                            {
-                                IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                                IPairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
-                            }
-
+                             IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                             IPairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
+                             ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                         }
                         else
                         {
                             IPairedData inflow_outflow_sample = _unregulated_regulated.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
                             IPairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                            if (_discharge_stage.CurveMetaData.IsNull)
-                            {
-                                //complain loudly
-                                string message = $"The stage-discharge function for impact area {_impactAreaID} is null. Compute aborted." + Environment.NewLine;
-                                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
-                                ReportMessage(this, new MessageEventArgs(errorMessage)); 
-                                return;
-                            }
-                            else
-                            {
-                                IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
-                                IPairedData frequency_stage = discharge_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
-                            }
+                            IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
+                            IPairedData frequency_stage = discharge_stage_sample.compose(transformff);
+                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                         }
 
                     }
@@ -307,6 +305,7 @@ namespace compute
                 {
                     if (_leveeIsValid)
                     {
+
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                         if(computeWithDamage)
@@ -382,12 +381,14 @@ namespace compute
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
-            foreach (UncertainPairedData pairedData in _damage_category_stage_damage)
+            foreach (UncertainPairedData stageDamageWithUncertainty in _damage_category_stage_damage)
             {
-                IPairedData _stage_damage_sample = pairedData.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //TODO: here we need to check if stage damage is zero 
+                //if so, then skip this stuff and just add 0 to consequenceResults
+                IPairedData _stage_damage_sample = stageDamageWithUncertainty.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageDamageWithUncertainty.CurveMetaData.DamageCategory, stageDamageWithUncertainty.CurveMetaData.AssetCategory, _impactAreaID, iteration);
 
                 if (giveMeADamageFrequency)
                 {
@@ -648,6 +649,171 @@ namespace compute
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
+        //TODO: Add messaging to indicate which curves do not overlap
+        private bool SimulationCurvesHaveOverlap()
+        {
+            bool allCurvesHaveOverlap = true;
+            if (_frequency_stage.CurveMetaData.IsNull)
+            {
+                if (_discharge_stage.CurveMetaData.IsNull)
+                {
+                    string message = $"The stage-discharge function for impact area {_impactAreaID} is null. A stage-discharge must accompany a discharge-frequency. Compute aborted." + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage));
+                    allCurvesHaveOverlap = false;
+                }
+                if (_frequency_discharge_graphical.CurveMetaData.IsNull)
+                {
+                    bool firstTwoCurvesOverlap = true;
+                    bool nextTwoCurvesOverlap = true;
+                    if (_unregulated_regulated.CurveMetaData.IsNull)
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _frequency_discharge);
+                    }
+                    else
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_unregulated_regulated, _frequency_discharge);
+                        nextTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _unregulated_regulated);
+                    }
+                    if (!firstTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
+                    }
+                    if (!nextTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
+                    }
+                } else
+                {
+                    bool firstTwoCurvesOverlap = true;
+                    bool nextTwoCurvesOverlap = true;
+                    if (_unregulated_regulated.CurveMetaData.IsNull)
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _frequency_discharge_graphical);
+                    }
+                    else
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_unregulated_regulated, _frequency_discharge_graphical);
+                        nextTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _unregulated_regulated);
+                    }
+                    if (!firstTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
+                    }
+                    if (!nextTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
+                    }
+                }
+                if (_channelstage_floodplainstage.CurveMetaData.IsNull)
+                {
+                    foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertainPairedData, _discharge_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
+                {
+                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_channelstage_floodplainstage, _discharge_stage);
+                    if (!nextTwoCurvesHaveOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!_channelstage_floodplainstage.CurveMetaData.IsNull)
+                {
+                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_channelstage_floodplainstage, _frequency_stage);
+                    if (!nextTwoCurvesHaveOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
+                {
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _frequency_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                }
+            }
+            return allCurvesHaveOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Yvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
+            double maxOfG = uncertainPairedData_g.Yvals[uncertainPairedData_g.Yvals.Length - 1].InverseCDF(.999);
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            return curvesOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = uncertainPairedData_g.InputFlowOrStageValues[0];
+            double maxOfG = uncertainPairedData_g.InputFlowOrStageValues[uncertainPairedData_g.InputFlowOrStageValues.Length - 1];
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            return curvesOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = continuousDistribution_g.InverseCDF(.001);
+            double maxOfG = continuousDistribution_g.InverseCDF(.75);
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+             return curvesOverlap;
+        }
+        private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
+        {
+            bool curvesOverlap = true;
+
+            double rangeOfF = maxOfF - minOfF;
+            double rangeOfG = maxOfF - minOfG;
+            double minDifference = Math.Abs(minOfG - minOfF);
+            double maxDifference = Math.Abs(maxOfG - maxOfF);
+            double minDiffRelativeToF = minDifference / rangeOfF;
+            double minDiffRelativeToG = minDifference / rangeOfG;
+            double maxDiffRelativeToF = maxDifference / rangeOfF;
+            double maxDiffRelativeToG = maxDifference / rangeOfG;
+
+            if (minDiffRelativeToF > .5 || minDiffRelativeToG > .5 || maxDiffRelativeToF > .5 || maxDiffRelativeToG > .5)
+            {
+                curvesOverlap = false;
+            }
+
+            return curvesOverlap;
+        }
+
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
@@ -842,8 +1008,9 @@ namespace compute
             {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
                 _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
-                bool frequencyCurveSampleIsAtLeastTwo = _sim._frequency_discharge.SampleSize > 2;
-                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { return frequencyCurveSampleIsAtLeastTwo; }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { 
+                    return _sim._frequency_discharge.SampleSize > 2; 
+                }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
@@ -885,14 +1052,11 @@ namespace compute
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> uncertainPairedDataList)
-            {//TODO: I do not think the positive damage validation works.
+            {
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
                     _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
-                    double median = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(0.5);
-                    bool stageDamageIsPositive = median > 0;
-                    _sim.AddSinglePropertyRule("PositiveDamage", new Rule(() => { return stageDamageIsPositive; }, "Stage-damage reflects 0 damage for highest stage", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
                 }
                 return new SimulationBuilder(_sim);
             }

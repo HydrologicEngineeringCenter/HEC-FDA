@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.Histograms
 {
     public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
+        private bool _HistogramIsZeroValued = false;
         private Int32[] _BinCounts = new Int32[] { };
         private double _SampleMean;
         private double _SampleVariance;
@@ -40,7 +35,17 @@ namespace Statistics.Histograms
         #endregion
         #region Properties
         public event MessageReportedEventHandler MessageReport;
-
+        public bool HistogramIsZeroValued
+        {
+            get
+            {
+                return _HistogramIsZeroValued;
+            }
+            set
+            {
+                _HistogramIsZeroValued = value;
+            }
+        }
         public string MyType
         {
             get
@@ -166,6 +171,7 @@ namespace Statistics.Histograms
             _ConvergenceCriteria = new ConvergenceCriteria();
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
+            _HistogramIsZeroValued = true;
         }
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {
@@ -365,7 +371,7 @@ namespace Statistics.Histograms
                     }
                     else
                     {
-                        _BinWidth = range / (1.0 + 3.322 * Math.Log(size));
+                        _BinWidth = range / (1.0 + 3.322 * Math.Log10(size));
                     }
                 }
 
@@ -548,6 +554,10 @@ namespace Statistics.Histograms
             if (p >= 1) return _Max;
             else
             {
+                if (_HistogramIsZeroValued)
+                {
+                    return 0.0;
+                }
                 if (_SampleSize == 0)
                 {
                     return double.NaN;

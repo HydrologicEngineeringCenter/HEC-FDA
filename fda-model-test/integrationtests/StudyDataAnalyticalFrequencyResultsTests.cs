@@ -43,9 +43,19 @@ namespace fda_model_test
             new Normal(477.4,.5)
                 //note that the rating curve domain lies within the stage-damage domain
         };
-        static double[] StageDamageStages = { 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
+        static double[] StageDamageStages = {460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
         static IDistribution[] DamageDistrbutions =
         {
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
+            new Normal(0,0),
             new Normal(0,0.00001),
             new Normal(.04,.16),
             new Normal(.66,1.02),

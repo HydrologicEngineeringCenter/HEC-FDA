@@ -14,7 +14,7 @@ namespace fda_model_test.unittests
     public class PerformanceTest
     {//TODO: access the requisite logic through ScenarioResults 
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 150000 };
+        static double[] Stages = { 0, 20000 };
         static double[] StageForNonLeveeFailureProbs = { 5000, 8000, 9000, 9600, 9800, 9900, 9960, 9980 };
         static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, 1 };
         static string xLabel = "x label";
@@ -73,9 +73,8 @@ namespace fda_model_test.unittests
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
 
-            // PLEASE LEAVE THE COMMENTS TO THE RIGHT OF THESE LINES AS AN EXAMPLE FOR LATER REFERENCE 
-            double actualAEP = results.MeanAEP(thresholdID); // results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MeanAEP();
-            double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years); //results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.LongTermExceedanceProbability(years);
+            double actualAEP = results.MeanAEP(thresholdID); 
+            double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years); 
 
             double aepDifference = Math.Abs(expectedAEP - actualAEP);
             double aepRelativeDifference = aepDifference / expectedAEP;
@@ -278,36 +277,6 @@ namespace fda_model_test.unittests
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);
         }
-
-        [Theory]
-        [InlineData(0, 400, 0)]
-        [InlineData(2000, 4000, 1)]
-        public void AssuranceNonOverlappingStages(double minStageForStageDamage, double maxStageForStageDamage, double expectedAssurance)
-        {
-            ContinuousDistribution uniformFLows = new Uniform(0, 100000, 100);
-
-            double[] flowsForStageDischarge = new double[] { 0, 100000 };
-            IDistribution[] stagesForStageDischarge = new IDistribution[] { new Uniform(500, 1000), new Uniform(1000, 1500) };
-            UncertainPairedData stageDischarge = new UncertainPairedData(flowsForStageDischarge, stagesForStageDischarge, metaData);
-
-            double[] stagesForStageDamage = new double[] { minStageForStageDamage, maxStageForStageDamage };
-            IDistribution[] damageForStageDamage = new IDistribution[] { new Uniform(200, 500), new Uniform(1000, 1500) };
-            UncertainPairedData stageDamage = new UncertainPairedData(stagesForStageDamage, damageForStageDamage, metaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
-
-            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(1)
-                .withFlowFrequency(uniformFLows)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-
-            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-            RandomProvider randomProvider = new RandomProvider(1234);
-            ImpactAreaScenarioResults impactAreaScenarioResults = impactAreaScenarioSimulation.Compute(randomProvider, defaultConvergenceCriteria);
-
-            double assuranceOfAEP = impactAreaScenarioResults.AssuranceOfAEP(0, .1);
-            Assert.Equal(assuranceOfAEP, expectedAssurance);
-        }  
     }
 }
 

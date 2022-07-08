@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using alternatives;
 using compute;
 using interfaces;
-using metrics;
 using paireddata;
-using scenarios;
 using Statistics;
 using Statistics.Distributions;
 using Statistics.Histograms;
@@ -103,7 +96,6 @@ namespace fda_model_test.integrationtests
             int quantityOfBins = (int)(1 + 3.3 * Math.Log10(iterations));
             int binWidth = (int)(range / quantityOfBins);
             Histogram flowHistogram = new Histogram(histoMin, binWidth); //guess of a decent bin width 
-            flowHistogram.note = $"{nonExceedanceProbability}";
  
             for (int i = 0; i < iterations; i++)
             {

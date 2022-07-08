@@ -74,7 +74,7 @@ namespace metrics
             _assetCategory = "unassigned";
             _regionID = 0;
             _convergenceCriteria = new ConvergenceCriteria();
-            _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram();
             _isNull = true;
         }
         /// <summary>
