@@ -299,3 +299,6 @@ OpenCover/
 *.dll
 /BaseTest/bin/Debug/net6.0
 /ViewTest/bin/Debug/net6.0-windows
+ViewModelTest/bin/Debug/net6.0/testhost.exe
+ViewModelTest/bin/Debug/net6.0/ViewModelTest.deps.json
+ViewModelTest/bin/Debug/net6.0/ViewModelTest.runtimeconfig.json

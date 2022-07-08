@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseTest", "BaseTest\BaseTest.csproj", "{8B5AADC0-38C6-47F3-8BDF-F10E297C479A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewTest", "ViewTest\ViewTest.csproj", "{6458603E-F2EF-437F-B44A-E6A8C52DFACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewTest", "ViewTest\ViewTest.csproj", "{6458603E-F2EF-437F-B44A-E6A8C52DFACA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
