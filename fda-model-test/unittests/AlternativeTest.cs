@@ -17,7 +17,7 @@ namespace fda_model_test.unittests
     public class AlternativeTest
     {
         static double[] FlowXs = { 0, 100000 };
-        static double[] StageXs = { 0, 150000 };
+        static double[] StageXs = { 0, 150000, 300000 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -45,17 +45,19 @@ namespace fda_model_test.unittests
                     stages[i] = new Uniform(0, 300000 * i, 10);
                 }
                 UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
-                //create a damage distribution for base and future year (future year assumption is massive economic development) 
-                IDistribution[] baseDamages = new IDistribution[2];
-                for (int i = 0; i < 2; i++)
-                {
-                    baseDamages[i] = new Uniform(0, 600000 * i, 10);
-                }
-                IDistribution[] futureDamages = new IDistribution[2];
-                for (int i = 0; i < 2; i++)
-                {
-                    futureDamages[i] = new Uniform(0, 1200000 * i, 10);
-                }
+            //create a damage distribution for base and future year (future year assumption is massive economic development) 
+            IDistribution[] baseDamages = new IDistribution[3]
+            {
+                    new Uniform(0,0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0,600000, 10)
+            };
+            IDistribution[] futureDamages = new IDistribution[3]
+            {
+                    new Uniform(0,0,10),
+                    new Uniform(0,1200000,10),
+                    new Uniform(0,1200000, 10)
+            };
                 UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
                 UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
                 List<UncertainPairedData> updBase = new List<UncertainPairedData>();
@@ -136,16 +138,18 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
-            IDistribution[] baseDamages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] baseDamages = new IDistribution[3]
             {
-                baseDamages[i] = new Uniform(0, 600000 * i, 10);
-            }
-            IDistribution[] futureDamages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+                    new Uniform(0,0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0,600000, 10)
+            };
+            IDistribution[] futureDamages = new IDistribution[3]
             {
-                futureDamages[i] = new Uniform(0, 1200000 * i, 10);
-            }
+                    new Uniform(0,0,10),
+                    new Uniform(0,1200000,10),
+                    new Uniform(0,1200000, 10)
+            };
             CurveMetaData commercialCurveMetaData = new CurveMetaData(xLabel, yLabel, name, "commercial", "structure");
 
             UncertainPairedData base_stage_damage_residential = new UncertainPairedData(StageXs, baseDamages, metaData);
