@@ -145,7 +145,8 @@ namespace compute
                         {
                             if (rule.ErrorLevel > ErrorLevel.Unassigned)
                             {
-                                ReportMessage(this, new MessageEventArgs(new Message (rule.Message + Environment.NewLine)));
+                                Message message = new Message(rule.Message + Environment.NewLine);
+                                ReportMessage(this, new MessageEventArgs(message));
                             }
                         }
                     }
@@ -164,7 +165,7 @@ namespace compute
                 if (convergenceCriteria.MaxIterations != 1)
                 {
                     string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
 
                 }
@@ -174,7 +175,7 @@ namespace compute
                 if (convergenceCriteria.MinIterations < 100)
                 {
                     string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
 
                 }
@@ -502,7 +503,7 @@ namespace compute
                 {
                     double badThresholdStage = 0;
                     string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                     return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
                 }
@@ -524,7 +525,7 @@ namespace compute
                         {
                             double badThresholdStage = 0;
                             string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
-                            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage)); 
                             return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
 
@@ -543,7 +544,7 @@ namespace compute
                         {
                             double badThresholdStage = 0;
                             string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
-                            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage));
                             return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
                         }
@@ -609,7 +610,7 @@ namespace compute
             if (_systemResponseFunction_stage_failureProbability.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
                 string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 return false;
             }
@@ -618,7 +619,7 @@ namespace compute
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
                 string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
             }
             else
@@ -638,14 +639,14 @@ namespace compute
                 if (_systemResponseFunction_stage_failureProbability.Yvals[index].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
                     string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                 }
             }
             else
             {   //top of levee elevation is not included in the fragility curve
                 string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution" + Environment.NewLine;
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
@@ -975,7 +976,7 @@ namespace compute
             double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
 
-            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = builder(impactAreaID)
                 .withFlowFrequency(frequencyDischarge)
                 .withFlowFrequency(frequencyDischargeGraphical)
                 .withInflowOutflow(regulatedUnregulated)
@@ -1007,10 +1008,7 @@ namespace compute
             public SimulationBuilder withFlowFrequency(ContinuousDistribution continuousDistribution)
             {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
-                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
-                _sim.AddSinglePropertyRule("FlowFrequency", new Rule(() => { 
-                    return _sim._frequency_discharge.SampleSize > 2; 
-                }, "Frequency function has a sample size less than two", HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, String.Join(Environment.NewLine, _sim._frequency_discharge.GetErrors())));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
@@ -1021,27 +1019,27 @@ namespace compute
             public SimulationBuilder withInflowOutflow(UncertainPairedData uncertainPairedData)
             {
                 _sim._unregulated_regulated = uncertainPairedData;
-                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, _sim._unregulated_regulated.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, String.Join(Environment.NewLine, _sim._unregulated_regulated.GetErrors())));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData uncertainPairedData)
             {
                 _sim._discharge_stage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, _sim._discharge_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, String.Join(Environment.NewLine, _sim._discharge_stage.GetErrors())));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
                 _sim._frequency_stage = graphicalUncertainPairedData;
-                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, String.Join(Environment.NewLine, _sim._frequency_stage.GetErrors())));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData uncertainPairedData)
             {
                 _sim._channelstage_floodplainstage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, _sim._channelstage_floodplainstage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, String.Join(Environment.NewLine, _sim._channelstage_floodplainstage.GetErrors())));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(UncertainPairedData uncertainPairedData, double topOfLeveeElevation)
