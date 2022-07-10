@@ -48,11 +48,13 @@ namespace metrics
             _isNull = true;
             _alternativeID = 0;
             _aaeqResults = new ConsequenceDistributionResults();
+            BaseYearScenarioResults = new ScenarioResults();
+            FutureYearScenarioResults = new ScenarioResults();
         }
         public AlternativeResults(int id, List<int> analysisYears)
         {
             _alternativeID = id;
-            _aaeqResults = new ConsequenceDistributionResults();
+            _aaeqResults = new ConsequenceDistributionResults(false);
             _isNull = false;
             AnalysisYears = analysisYears;
         }

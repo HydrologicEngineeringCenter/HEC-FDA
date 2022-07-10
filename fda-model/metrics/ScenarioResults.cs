@@ -30,6 +30,13 @@ namespace metrics
         #endregion
 
         #region Constructor
+        internal ScenarioResults()
+        {
+            _resultsList = new List<IContainImpactAreaScenarioResults>();
+            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults();
+            _resultsList.Add(dummyImpactAreaScenarioResults);
+            AnalysisYear = 1900;
+        }
         public ScenarioResults(int year)
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();

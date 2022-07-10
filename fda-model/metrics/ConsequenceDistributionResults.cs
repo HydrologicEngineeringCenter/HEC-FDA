@@ -49,6 +49,8 @@ namespace metrics
         public ConsequenceDistributionResults()
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
+            ConsequenceDistributionResult dummyConsequenceDistributionResult = new ConsequenceDistributionResult();
+            _consequenceResultList.Add(dummyConsequenceDistributionResult);
             _isNull = true;
         }
         internal ConsequenceDistributionResults(bool isNull)

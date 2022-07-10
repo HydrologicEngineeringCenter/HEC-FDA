@@ -172,6 +172,10 @@ namespace Statistics.Histograms
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
             _HistogramIsZeroValued = true;
+            for (int i = 0; i < 10; i++)
+            {
+                AddObservationToHistogram(0,i);
+            }
         }
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {

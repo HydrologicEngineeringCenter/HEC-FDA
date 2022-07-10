@@ -11,19 +11,27 @@ namespace metrics
     public class PerformanceByThresholds : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
-        private List<Threshold> _thresholds;
+        private List<Threshold> _Thresholds;
+        private bool _IsNull;
         #endregion
 
         #region Properties 
+        internal bool IsNull
+        {
+            get
+            {
+                return _IsNull;
+            }
+        }
         public List<Threshold> ListOfThresholds
         {
             get
             {
-                return _thresholds;
+                return _Thresholds;
             }
             set
             {
-                _thresholds = value;
+                _Thresholds = value;
             }
         }
         public event MessageReportedEventHandler MessageReport;
@@ -34,18 +42,26 @@ namespace metrics
 
         public PerformanceByThresholds()
         {
-            _thresholds = new List<Threshold>();
+            _Thresholds = new List<Threshold>();
                    
-        }      
+        }
+        public PerformanceByThresholds(bool isNull)
+        {
+            _Thresholds = new List<Threshold>();
+            Threshold dummyThreshold = new Threshold();
+            _Thresholds.Add(dummyThreshold);
+            _IsNull = isNull;
+
+        }
         private PerformanceByThresholds(List<Threshold> thresholds)
         {
-            _thresholds = thresholds;
+            _Thresholds = thresholds;
         }
         #endregion
         #region Methods 
         public void AddThreshold(Threshold threshold)
         {
-            _thresholds.Add(threshold);
+            _Thresholds.Add(threshold);
         }
         public bool Equals(PerformanceByThresholds incomingPerformanceByThresholds)
         {
@@ -68,7 +84,7 @@ namespace metrics
         }
         public Threshold GetThreshold(int thresholdID)
         {
-            foreach (Threshold threshold in _thresholds)
+            foreach (Threshold threshold in _Thresholds)
             {
                 if (threshold.ThresholdID.Equals(thresholdID))
                 {
