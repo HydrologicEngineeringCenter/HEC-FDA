@@ -151,6 +151,10 @@ namespace Statistics.Histograms
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
             _HistogramIsZeroValued = true;
+            for (int i = 0; i < 10; i++)
+            {
+                AddObservationToHistogram(0);
+            }
         }
         public Histogram(double min, double binWidth)
         {

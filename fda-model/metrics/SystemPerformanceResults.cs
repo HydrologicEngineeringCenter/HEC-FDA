@@ -14,7 +14,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace metrics
 {
-    public class SystemPerformanceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    public class SystemPerformanceResults : Validation, IReportMessage
     {
         #region Fields
         private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
@@ -41,6 +41,23 @@ namespace metrics
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructors 
+        ///
+        public SystemPerformanceResults()
+        {
+            _thresholdType = ThresholdEnum.ExteriorStage;
+            _thresholdValue = 0;
+            _ConvergenceCriteria = new ConvergenceCriteria();
+            _assuranceList = new List<AssuranceResultStorage>();
+            AssuranceResultStorage dummyAEP = new AssuranceResultStorage(AEP_ASSURANCE_TYPE,0);
+            _assuranceList.Add(dummyAEP);
+            double[] standardNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
+             foreach (double probability in standardNonExceedanceProbabilities)
+            {
+                AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, probability);
+                _assuranceList.Add(dummyAssurance);
+            }
+
+        }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
             _thresholdType = thresholdType;
@@ -85,8 +102,12 @@ namespace metrics
 
         #endregion
         #region Methods
+        /// <summary>
+        /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
+        /// </summary>
+        /// <param name="standardNonExceedanceProbability"></param>
         public void AddAssuranceHistogram(double standardNonExceedanceProbability)
-        {
+        {   
             AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, CNEP_HISTOGRAM_DEFAULT_BINWIDTH, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
             {
@@ -256,7 +277,7 @@ namespace metrics
             string message = $"The requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned";
             HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
-            AssuranceResultStorage dummyAssurance = new AssuranceResultStorage();
+            AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE,.98);
             return dummyAssurance;
 
         }

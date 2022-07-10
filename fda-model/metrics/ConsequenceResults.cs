@@ -40,6 +40,8 @@ namespace metrics
         public ConsequenceResults()
         {
             _consequenceResultList = new List<ConsequenceResult>();
+            ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
+            _consequenceResultList.Add(dummyConsequenceResult);
             _isNull = true;
         }
         private ConsequenceResults(List<ConsequenceResult> damageResults)

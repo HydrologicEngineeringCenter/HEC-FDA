@@ -15,10 +15,19 @@ namespace metrics
         private List<ConsequenceDistributionResults> _futureYearEADReducedResultsList;
         private List<AlternativeResults> _withProjectAlternativeResults;
         private AlternativeResults _withoutProjectAlternativeResults;
+        private bool _isNull;
+    
         #endregion
 
         #region Properties 
         public event MessageReportedEventHandler MessageReport;
+        internal bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
         public List<int> Years
         {
             get
@@ -32,9 +41,16 @@ namespace metrics
         #region Constructor
         public AlternativeComparisonReportResults()
         {
+            _isNull = true;
             _aaeqReducedResultsList = new List<ConsequenceDistributionResults>();
+            ConsequenceDistributionResults dummyAaeqResults = new ConsequenceDistributionResults();
+            _aaeqReducedResultsList.Add(dummyAaeqResults);
             _baseYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
+            ConsequenceDistributionResults dummyBaseYearResults = new ConsequenceDistributionResults();
+            _baseYearEADReducedResultsList.Add(dummyBaseYearResults);
             _futureYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
+            ConsequenceDistributionResults dummyFutureYearResults = new ConsequenceDistributionResults();
+            _futureYearEADReducedResultsList.Add(dummyFutureYearResults);
         }
         internal AlternativeComparisonReportResults(List<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<ConsequenceDistributionResults> aaeqResults, List<ConsequenceDistributionResults> baseYearEADResults, List<ConsequenceDistributionResults> futureYearEADResults)
         {
