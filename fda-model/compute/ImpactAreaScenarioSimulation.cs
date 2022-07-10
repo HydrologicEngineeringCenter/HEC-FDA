@@ -76,6 +76,7 @@ namespace compute
             //Validate();
             if (!CanCompute(convergenceCriteria,randomProvider))
             {
+                _impactAreaScenarioResults = new ImpactAreaScenarioResults();
                 return _impactAreaScenarioResults;
             }
             int masterseed = 0;
@@ -501,11 +502,10 @@ namespace compute
             {
                 if(_damage_category_stage_damage.Count == 0)
                 {
-                    double badThresholdStage = 0;
                     string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
-                    return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+                    return new Threshold();
                 }
 
                 if (_frequency_stage.CurveMetaData.IsNull)
@@ -523,11 +523,10 @@ namespace compute
                     {
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
-                            double badThresholdStage = 0;
                             string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
                             ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage)); 
-                            return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+                            return new Threshold();
 
                         }
                         else
@@ -542,11 +541,10 @@ namespace compute
                         IPairedData transformFlowFrequency = inflowOutflowSample.compose(frequencyFlow);
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
-                            double badThresholdStage = 0;
                             string message = "A rating curve must accompany a flow-frequency function. An arbitrary threshold is being used." + Environment.NewLine;
                             ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                             ReportMessage(this, new MessageEventArgs(errorMessage));
-                            return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+                            return new Threshold();
                         }
                         else
                         {
