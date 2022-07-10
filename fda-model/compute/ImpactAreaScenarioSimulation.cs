@@ -76,7 +76,7 @@ namespace compute
             //Validate();
             if (!CanCompute(convergenceCriteria,randomProvider))
             {
-                _impactAreaScenarioResults = new ImpactAreaScenarioResults();
+                _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID,true);
                 return _impactAreaScenarioResults;
             }
             int masterseed = 0;

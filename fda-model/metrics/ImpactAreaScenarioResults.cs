@@ -29,12 +29,12 @@ namespace metrics
             }
         }
         #region Constructors 
-        public ImpactAreaScenarioResults()
+        public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
         {
-            PerformanceByThresholds = new PerformanceByThresholds();
+            PerformanceByThresholds = new PerformanceByThresholds(true);
             ConsequenceResults = new ConsequenceDistributionResults();
-            ImpactAreaID = 0;
-            _isNull = true;
+            ImpactAreaID = impactAreaID;
+            _isNull = isNull;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
