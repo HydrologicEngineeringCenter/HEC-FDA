@@ -206,6 +206,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void UpdateFlowFreqElement(object sender, ElementUpdatedEventArgs e)
         {
             UpdateElement(FrequencyElements, SelectedFrequencyElement, e.NewElement);
+            //check for the situation where the selected frequency doesn't require a rating, but the new updated one does
+            UpdateRatingRequired();
         }
         private void AddRatingElement(object sender, ElementAddedEventArgs e)
         {

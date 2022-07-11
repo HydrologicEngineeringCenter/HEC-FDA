@@ -36,7 +36,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
+                        <TextBlock Name="frequency_textblock" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">

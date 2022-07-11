@@ -12,6 +12,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
         private HistogramData2D _data;
+        private string _ProbabilityExceedsValueLabel;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
@@ -19,6 +20,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
+        public string ProbabilityExceedsValueLabel
+        {
+            get { return _ProbabilityExceedsValueLabel; }
+            set { _ProbabilityExceedsValueLabel = value; NotifyPropertyChanged(); }
+        }
 
         public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
@@ -27,10 +33,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
+                ProbabilityExceedsValueLabel = "Probability that damage exceeds indicated value";
             }
             else
             {
                 RateAndPeriodVisible = true;
+                ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
             }
             LoadHistogramData(results, damageMeasureYear);
             LoadData(results, damageMeasureYear);
@@ -50,11 +58,20 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         }
 
-        public DamageWithUncertaintyVM(double discountRate, int periodOfAnalysis, AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
+        public DamageWithUncertaintyVM( AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
-            RateAndPeriodVisible = true;
+            if (double.IsNaN(discountRate))
+            {
+                RateAndPeriodVisible = false;
+                ProbabilityExceedsValueLabel = "Probability that damage exceeds indicated value";
+            }
+            else
+            {
+                RateAndPeriodVisible = true;
+                ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
+            }
             LoadHistogramData(altResults, altID, damageMeasureYear);
 
             LoadAAEQData(altResults, altID, damageMeasureYear);

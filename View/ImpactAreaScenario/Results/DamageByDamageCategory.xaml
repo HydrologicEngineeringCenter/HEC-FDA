@@ -7,6 +7,7 @@
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -34,7 +35,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
+                        <TextBlock Name="ead_textblock" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

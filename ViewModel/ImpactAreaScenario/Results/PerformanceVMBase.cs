@@ -37,12 +37,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public void updateSelectedMetric(ThresholdComboItem metric)
         {
-            if (MetricsToRows.ContainsKey(metric.Metric))
+            if (metric != null)
             {
-                Rows = MetricsToRows[metric.Metric];
+                if (MetricsToRows.ContainsKey(metric.Metric))
+                {
+                    Rows = MetricsToRows[metric.Metric];
+                }
+                UpdateHistogram(metric);
             }
-            UpdateHistogram(metric);
-            
         }
 
     }

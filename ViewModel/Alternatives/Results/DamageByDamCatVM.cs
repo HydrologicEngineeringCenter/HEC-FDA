@@ -7,15 +7,22 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByDamCatVM : BaseViewModel, IAlternativeResult
     {
+        private string _EADLabel;
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
+        public string EADLabel
+        {
+            get { return _EADLabel; }
+            set { _EADLabel = value; NotifyPropertyChanged(); }
+        }
 
         public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
 
 
         public DamageByDamCatVM(ImpactAreaScenarioResults iasResult, List<string> damCats, double discountRate, int period)
         {
+            EADLabel = "Expected Annual Damage";
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
             RateAndPeriodVisible = false;
@@ -29,6 +36,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults, DamageMeasureYear damageMeasureYear)
         {
+            EADLabel = "Expected Annual Damage";
             RateAndPeriodVisible = false;
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
@@ -46,8 +54,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate , int period)
         {
-            
-                DiscountRate = discountRate;
+            EADLabel = "AAEQ Damage";
+
+            DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;
             
@@ -64,9 +73,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
+                EADLabel = "EAD Reduced";
             }
             else
             {
+                EADLabel = "AAEQ Damage Reduced";
                 DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;
