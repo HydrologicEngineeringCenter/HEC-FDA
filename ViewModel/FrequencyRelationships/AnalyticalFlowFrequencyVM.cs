@@ -9,15 +9,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     internal class AnalyticalFlowFrequencyVM
     {
         private FitToFlowsLP3VM _myFitToFlowsLP3VM;
+        private ParameterLP3VM _myParameterLP3VM;
 
         public FitToFlowsLP3VM MyFitToFlowsLP3VM
         {
             get { return _myFitToFlowsLP3VM; }
             set { _myFitToFlowsLP3VM = value; }
         }
-
-        private ParameterLP3VM _myParameterLP3VM;
-
         public ParameterLP3VM MyParameterLP3VM
         {
             get { return _myParameterLP3VM; }
