@@ -43,13 +43,13 @@ public class AssuranceResultStorage
         #endregion
 
         #region Constructors
-        public AssuranceResultStorage()
+        internal AssuranceResultStorage(string dummyAsuranceType, double standardNonExceedanceProbability)
         {
-            _standardNonExceedanceProbability = 0;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            _assurance = new ThreadsafeInlineHistogram(convergenceCriteria);
+            _assurance = new ThreadsafeInlineHistogram();
             _assurance.SetIterationSize(convergenceCriteria.MaxIterations);
-            _type = "unknown";
+            _type = dummyAsuranceType;
+            _standardNonExceedanceProbability = standardNonExceedanceProbability;
         }
         public AssuranceResultStorage(string assuranceType, ConvergenceCriteria convergenceCriteria, double binWidth, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {

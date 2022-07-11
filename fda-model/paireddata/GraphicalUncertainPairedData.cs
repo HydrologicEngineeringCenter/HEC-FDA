@@ -23,10 +23,17 @@ namespace paireddata
         private bool _UsingStagesNotFlows;
         private double _MaximumProbability;
         private double _MinimumProbability;
-
+        private double[] _inputFlowOrStageValues;
         #endregion
 
         #region Properties
+        internal double[] InputFlowOrStageValues
+        {
+            get
+            {
+                return _inputFlowOrStageValues;
+            }
+        }
 
         public string XLabel
         {
@@ -97,6 +104,7 @@ namespace paireddata
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -113,6 +121,7 @@ namespace paireddata
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -127,8 +136,9 @@ namespace paireddata
             AddRules();
 
         }
-        private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = inputFlowsOrStages;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -243,7 +253,7 @@ namespace paireddata
             XElement curveMetaDataElement = CurveMetaData.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
-            if(CurveMetaData.IsNull)
+            if (CurveMetaData.IsNull)
             {
                 return masterElement;
             }
@@ -266,6 +276,14 @@ namespace paireddata
                     pairedDataElement.Add(rowElement);
                 }
                 masterElement.Add(pairedDataElement);
+                XElement inputFlowOrStageValues = new XElement("InputFlowOrStage");
+                for (int i = 0; i < _inputFlowOrStageValues.Length; i++)
+                {
+                    XElement valueElement = new XElement("FlowOrStageValue");
+                    valueElement.SetAttributeValue("Value", _inputFlowOrStageValues[i]);
+                    inputFlowOrStageValues.Add(valueElement);
+                }
+                masterElement.Add(inputFlowOrStageValues);
                 return masterElement;
             }
 
@@ -303,7 +321,13 @@ namespace paireddata
                     }
                     i++;
                 }
-                return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability);
+                List<double> inputFlowOrStageValues = new List<double>();
+                foreach(XElement valueElement in xElement.Element("InputFlowOrStage").Elements())
+                {
+                    double value = Convert.ToDouble(valueElement.Attribute("Value").Value);
+                    inputFlowOrStageValues.Add(value);
+                }
+                return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, inputFlowOrStageValues.ToArray(), equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability);
             }
 
         }

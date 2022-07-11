@@ -5,14 +5,13 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.Histograms
 {
     public class Histogram: IHistogram, IReportMessage
     {
         #region Fields
+        private bool _HistogramIsZeroValued = false;
         private Int32[] _BinCounts = new Int32[] { };
         private double _SampleMean = 10;
         private double _SampleVariance;
@@ -30,9 +29,18 @@ namespace Statistics.Histograms
         private const string _type = "Histogram";
         #endregion
         #region Properties
-        public string note { get; set; }//for debugging
         public event MessageReportedEventHandler MessageReport;
-
+        public bool HistogramIsZeroValued
+        {
+            get
+            {
+                return _HistogramIsZeroValued;
+            }
+            set
+            {
+                _HistogramIsZeroValued = value;
+            }
+        }
         internal double SampleMax
         {
             get
@@ -142,6 +150,11 @@ namespace Statistics.Histograms
             _BinWidth = 1; //TODO this hard-coded value is a hack 
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
+            _HistogramIsZeroValued = true;
+            for (int i = 0; i < 10; i++)
+            {
+                AddObservationToHistogram(0);
+            }
         }
         public Histogram(double min, double binWidth)
         {
@@ -158,14 +171,24 @@ namespace Statistics.Histograms
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
         }
-        public Histogram(double min, double binWidth, ConvergenceCriteria _c)
+        public Histogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
         {
             _BinWidth = binWidth;
             Min = min;
             Max = Min + _BinWidth;
             int numberOfBins = 1;
             _BinCounts = new Int32[numberOfBins];
-            _ConvergenceCriteria = _c;
+            _ConvergenceCriteria = convergenceCriteria;
+        }
+        public Histogram(double[] data, ConvergenceCriteria convergenceCriteria)
+        {
+            _ConvergenceCriteria = convergenceCriteria;
+            Min = data.Min();
+            Max = data.Max();
+            int quantityOfBins = (int)Math.Ceiling(1 + 3.322 * Math.Log10(data.Length));
+            double range = Max - Min;
+             _BinWidth = range / quantityOfBins;
+            AddObservationsToHistogram(data);
         }
         private Histogram(double min, double max, double binWidth, int sampleSize, Int32[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
@@ -431,6 +454,10 @@ namespace Statistics.Histograms
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
+                if (_HistogramIsZeroValued)
+                {
+                    return 0.0;
+                }
                 if (_SampleSize == 0)
                 {
                     return double.NaN;

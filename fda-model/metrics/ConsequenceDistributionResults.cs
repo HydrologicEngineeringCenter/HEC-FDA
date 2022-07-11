@@ -49,7 +49,14 @@ namespace metrics
         public ConsequenceDistributionResults()
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
+            ConsequenceDistributionResult dummyConsequenceDistributionResult = new ConsequenceDistributionResult();
+            _consequenceResultList.Add(dummyConsequenceDistributionResult);
             _isNull = true;
+        }
+        internal ConsequenceDistributionResults(bool isNull)
+        {
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _isNull = isNull;
         }
         internal ConsequenceDistributionResults(int alternativeID)
         {
@@ -66,12 +73,13 @@ namespace metrics
         #endregion
 
         #region Methods 
-        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, bool histogramIsZeroValued = false)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
             {
                 ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
+                newDamageResult.ConsequenceHistogram.HistogramIsZeroValued = histogramIsZeroValued;
                 _consequenceResultList.Add(newDamageResult);
             }
         }
@@ -282,44 +290,6 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
-        }
-        [Obsolete("An overloaded method of MeanDamage has been created to return MeanDamage in a systematic way. This method is now deprecated")]
-        /// <summary>
-        /// This method returns the sum of mean EAD over damage categories for a given asset category. 
-        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure. 
-        /// </summary>
-        /// <param name="assetCategory"></param>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequencesAllDamageCategories(string assetCategory)
-        {
-            double meanEAD = 0;
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
-            {
-                if (consequenceResult.AssetCategory.Equals(assetCategory))
-                {
-                    meanEAD += consequenceResult.MeanExpectedAnnualConsequences();
-                }
-            }
-            return meanEAD;
-        }
-        [Obsolete("This method is deprecated. An overloaded method of MeanDamage has been created to return MeanDamage in a systematic way.")]
-        /// <summary>
-        /// This method returns the sum of mean EAD over damage categories for a given asset category. 
-        /// For example, for asset category of structure, this would return the mean EAD for all damage categories that have an asset category of structure.         
-        /// /// </summary>
-        /// <param name="damageCategory"></param>
-        /// <returns></returns>
-        public double MeanExpectedAnnualConsequencesAllAssetCategories(string damageCategory)
-        {
-            double meanEAD = 0;
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
-            {
-                if(consequenceResult.DamageCategory.Equals(damageCategory))
-                {
-                    meanEAD += consequenceResult.MeanExpectedAnnualConsequences();
-                }
-            }
-            return meanEAD;
         }
         /// <summary>
         /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)

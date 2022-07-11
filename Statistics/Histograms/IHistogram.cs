@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using System.Xml.Linq;
-using HEC.MVVMFramework.Model.Messaging;
 namespace Statistics.Histograms
 {
     public interface IHistogram: IReportMessage 
     {
         #region Properties 
-        bool IsConverged { get; } 
+        bool IsConverged { get; }
+        bool HistogramIsZeroValued { get; set; }
         int ConvergedIteration { get; }
         double BinWidth { get; }
         Int32[] BinCounts { get; }
