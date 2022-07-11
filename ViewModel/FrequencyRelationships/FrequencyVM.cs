@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    internal class FlowFrequencyVM
+    internal class FrequencyVM
     {
     }
 }
