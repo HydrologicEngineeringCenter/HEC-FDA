@@ -12,7 +12,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
         private HistogramData2D _data;
-        private string _ProbabilityExceedsValueLabel;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
@@ -20,11 +19,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
-        public string ProbabilityExceedsValueLabel
-        {
-            get { return _ProbabilityExceedsValueLabel; }
-            set { _ProbabilityExceedsValueLabel = value; NotifyPropertyChanged(); }
-        }
+        public string ProbabilityExceedsValueLabel { get; }
+
 
         public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
         {

@@ -7,15 +7,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByDamCatVM : BaseViewModel, IAlternativeResult
     {
-        private string _EADLabel;
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
-        public string EADLabel
-        {
-            get { return _EADLabel; }
-            set { _EADLabel = value; NotifyPropertyChanged(); }
-        }
+        public string EADLabel { get; }
 
         public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
 
@@ -52,16 +47,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
         }
 
-        public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate , int period)
+        public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate, int period)
         {
             EADLabel = "AAEQ Damage";
 
             DiscountRate = discountRate;
-                PeriodOfAnalysis = period;
-                RateAndPeriodVisible = true;
-            
+            PeriodOfAnalysis = period;
+            RateAndPeriodVisible = true;
 
-            List<string> damCats =  alternativeResults.GetDamageCategories();
+            List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
                 Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanAAEQDamage(damageCategory: damCat)));

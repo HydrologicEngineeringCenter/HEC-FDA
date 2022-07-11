@@ -8,16 +8,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageByImpactAreaVM :BaseViewModel, IAlternativeResult
     {
-        private string _EADLabel;
         public List<ImpactAreaRowItem> Rows { get; } = new List<ImpactAreaRowItem>();
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
-        public string EADLabel
-        {
-            get { return _EADLabel; }
-            set { _EADLabel = value; NotifyPropertyChanged(); }
-        }
+        public string EADLabel { get; }
+
 
         public DamageByImpactAreaVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int period = -1)
         {
