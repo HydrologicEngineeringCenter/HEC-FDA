@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.2.15.2147" />
+    <PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.7.8.2331" />
     <PackageReference Include="USACE.HEC.FDA.Utilities" Version="1.1.0-alpha-2022.1.24.1758" />
   </ItemGroup>
 

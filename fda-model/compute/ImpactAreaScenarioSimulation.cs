@@ -71,10 +71,10 @@ namespace compute
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public ImpactAreaScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
-            if (!CanCompute(convergenceCriteria,randomProvider))
+            if (!CanCompute(convergenceCriteria, randomProvider))
             {
                 _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID,true);
                 return _impactAreaScenarioResults;
@@ -87,7 +87,7 @@ namespace compute
             //TODO: levee is valid is not used
             _leveeIsValid = true;
             bool computeWithDamage = true;
-            if(_damage_category_stage_damage.Count==0)
+            if (_damage_category_stage_damage.Count == 0)
             {
                 computeWithDamage = false;
             }
@@ -136,30 +136,86 @@ namespace compute
                     ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
                 }
                 //enumerate what the errors and warnings are 
-                //TODO: HOW???
-
-                foreach (PropertyRule propertyRule in RuleMap.Values)
+                StringBuilder errors = new StringBuilder();
+                if (_frequency_discharge != null && _frequency_discharge.HasErrors)
                 {
-                    if (propertyRule.ErrorLevel > ErrorLevel.Unassigned)
+                    errors.AppendLine(nameof(_frequency_discharge) + " has the following messages");
+                    foreach (string s in _frequency_discharge.GetErrors())
                     {
-                        foreach (Rule rule in propertyRule.Rules)
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_frequency_discharge_graphical.IsNull && _frequency_discharge_graphical.HasErrors)
+                {
+                    errors.AppendLine(nameof(_frequency_discharge_graphical) + " has the following messages");
+                    foreach (string s in _frequency_discharge_graphical.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_unregulated_regulated.IsNull && _unregulated_regulated.HasErrors)
+                {
+                    errors.AppendLine(nameof(_unregulated_regulated) + " has the following messages");
+                    foreach (string s in _unregulated_regulated.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_discharge_stage.IsNull && _discharge_stage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_discharge_stage) + " has the following messages");
+                    foreach (string s in _discharge_stage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_frequency_stage.IsNull && _frequency_stage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_frequency_stage) + " has the following messages");
+                    foreach (string s in _frequency_stage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_channelstage_floodplainstage.IsNull && _channelstage_floodplainstage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_channelstage_floodplainstage) + " has the following messages");
+                    foreach (string s in _channelstage_floodplainstage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_systemResponseFunction_stage_failureProbability.IsNull && _systemResponseFunction_stage_failureProbability.HasErrors)
+                {
+                    errors.AppendLine(nameof(_systemResponseFunction_stage_failureProbability) + " has the following messages");
+                    foreach (string s in _systemResponseFunction_stage_failureProbability.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                foreach(UncertainPairedData relationship in _damage_category_stage_damage)
+                {
+                    if (!relationship.IsNull && relationship.HasErrors)
+                    {
+                        errors.AppendLine(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " +"has the following messages");
+                        foreach (string s in relationship.GetErrors())
                         {
-                            if (rule.ErrorLevel > ErrorLevel.Unassigned)
-                            {
-                                Message message = new Message(rule.Message + Environment.NewLine);
-                                ReportMessage(this, new MessageEventArgs(message));
-                            }
+                            errors.AppendLine(s);
                         }
+
                     }
                 }
-                //TODO: alternative is to use GetErrors() 
-                //StringBuilder stringBuilder = new StringBuilder();
-                //foreach (string errorMessage in GetErrors())
-                //{
-                //    stringBuilder.Append(errorMessage);
+               
+                Message mess = new Message(errors.ToString());
+                ReportMessage(this, new MessageEventArgs(mess));
 
-                //}
-                //ReportMessage(this, new MessageEventArgs(new Message(stringBuilder.ToString())));
             }
             if (randomProvider is MeanRandomProvider)
             {
@@ -310,7 +366,7 @@ namespace compute
 
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                        if(computeWithDamage)
+                        if (computeWithDamage)
                         {
                             ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
                         }
@@ -327,7 +383,7 @@ namespace compute
                 //levees
                 if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
                 {
-                    if(computeWithDamage)
+                    if (computeWithDamage)
                     {
                         ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, giveMeADamageFrequency, iteration);
                     }
@@ -500,7 +556,7 @@ namespace compute
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
             {
-                if(_damage_category_stage_damage.Count == 0)
+                if (_damage_category_stage_damage.Count == 0)
                 {
                     string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
@@ -886,7 +942,7 @@ namespace compute
                     if ((stageDamage.CurveMetaData.DamageCategory.Equals(incomingStageDamage.CurveMetaData.DamageCategory)) && (stageDamage.CurveMetaData.AssetCategory.Equals(incomingStageDamage.CurveMetaData.AssetCategory)))
                     {
                         bool stageDamagesMatch = stageDamage.Equals(incomingStageDamage);
-                        if(!stageDamagesMatch)
+                        if (!stageDamagesMatch)
                         {
                             return false;
                         }
@@ -999,7 +1055,6 @@ namespace compute
             public ImpactAreaScenarioSimulation build()
             {
                 _sim.Validate();
-
                 //add validation here to test ranges and domains.
                 return _sim;
             }
@@ -1017,27 +1072,32 @@ namespace compute
             public SimulationBuilder withInflowOutflow(UncertainPairedData uncertainPairedData)
             {
                 _sim._unregulated_regulated = uncertainPairedData;
-                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, String.Join(Environment.NewLine, _sim._unregulated_regulated.GetErrors())));
+                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, "Inflow-Outflow has errors"));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData uncertainPairedData)
             {
                 _sim._discharge_stage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, String.Join(Environment.NewLine, _sim._discharge_stage.GetErrors())));
+                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, "Flow-Stage has errors"));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
                 _sim._frequency_stage = graphicalUncertainPairedData;
-                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, String.Join(Environment.NewLine, _sim._frequency_stage.GetErrors())));
+                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, "Frequency-Stage has errors"));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData uncertainPairedData)
             {
                 _sim._channelstage_floodplainstage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, String.Join(Environment.NewLine, _sim._channelstage_floodplainstage.GetErrors())));
+                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() =>
+                {
+                    _sim._channelstage_floodplainstage.Validate();
+                    return !_sim._channelstage_floodplainstage.HasErrors;
+                }
+                , "there are errors in the InteriorExterior relationship"));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(UncertainPairedData uncertainPairedData, double topOfLeveeElevation)
