@@ -51,7 +51,14 @@ public class AssuranceResultStorage
             _type = dummyAsuranceType;
             _standardNonExceedanceProbability = standardNonExceedanceProbability;
         }
-        public AssuranceResultStorage(string assuranceType, ConvergenceCriteria convergenceCriteria, double binWidth, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
+        public AssuranceResultStorage(string assuranceType, ConvergenceCriteria convergenceCriteria, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
+        {
+            _standardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
+            _assurance = new ThreadsafeInlineHistogram(convergenceCriteria);
+            _assurance.SetIterationSize(convergenceCriteria.MaxIterations);
+            _type = assuranceType;
+        }
+        public AssuranceResultStorage(string assuranceType, double binWidth, ConvergenceCriteria convergenceCriteria, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
             _standardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
             _assurance = new ThreadsafeInlineHistogram(binWidth,convergenceCriteria);

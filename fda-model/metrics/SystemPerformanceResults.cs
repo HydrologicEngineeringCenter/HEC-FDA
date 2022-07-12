@@ -17,10 +17,10 @@ namespace metrics
     public class SystemPerformanceResults : Validation, IReportMessage
     {
         #region Fields
-        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
-        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
         private const string AEP_ASSURANCE_TYPE = "AEP";
+        private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
+        private const double AEP_BIN_WIDTH = 0.002;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
@@ -49,7 +49,9 @@ namespace metrics
             _ConvergenceCriteria = new ConvergenceCriteria();
             _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage dummyAEP = new AssuranceResultStorage(AEP_ASSURANCE_TYPE,0);
+            AssuranceResultStorage dummyPlottingAEP = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, 0);
             _assuranceList.Add(dummyAEP);
+            _assuranceList.Add(dummyPlottingAEP);
             double[] standardNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
              foreach (double probability in standardNonExceedanceProbabilities)
             {
@@ -64,9 +66,10 @@ namespace metrics
             _thresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
-
+            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
+            _assuranceList.Add(aepAssuranceForPlotting);
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
         {
@@ -75,8 +78,10 @@ namespace metrics
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
+            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
+            _assuranceList.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
 
         }
@@ -108,7 +113,7 @@ namespace metrics
         /// <param name="standardNonExceedanceProbability"></param>
         public void AddAssuranceHistogram(double standardNonExceedanceProbability)
         {   
-            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, CNEP_HISTOGRAM_DEFAULT_BINWIDTH, standardNonExceedanceProbability);
+            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
             {
                 _assuranceList.Add(assurance);
@@ -116,9 +121,15 @@ namespace metrics
         }
         /// <summary>
         /// This method returns the thread safe inline histogram of AEPs
+        /// This method is only used to get the histogram for plotting purposes. 
         /// </summary>
         /// <returns></returns>
         public ThreadsafeInlineHistogram GetAEPHistogram()
+        {
+            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
+            return aepHistogram;
+        }
+        private ThreadsafeInlineHistogram GetAEPHistogramForMetrics()
         {
             ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
@@ -130,6 +141,7 @@ namespace metrics
         public void AddAEPForAssurance(double aep, int iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
         }
         public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
         {
@@ -148,9 +160,7 @@ namespace metrics
 
         public double AssuranceOfAEP(double exceedanceProbability)
         {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
-            IHistogram aepHistogram = GetAEPHistogram();
-            double assuranceOfAEP = aepHistogram.CDF(exceedanceProbability);
-            //double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
+            double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
         public bool AssuranceIsConverged()
