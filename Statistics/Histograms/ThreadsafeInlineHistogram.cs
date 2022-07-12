@@ -185,7 +185,7 @@ namespace Statistics.Histograms
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
         }
-        public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 1000, int postqueueSize = 100)
+        public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 10000, int postqueueSize = 100)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _BinWidth = binWidth;
@@ -379,7 +379,11 @@ namespace Statistics.Histograms
                         _BinWidth = range / (1.0 + 3.322 * Math.Log10(size));
                     }
                 }
-
+                else
+                {
+                    double temporaryBinWidth = range / (1.0 + 3.322 * Math.Log10(size));
+                    _BinWidth = Math.Min(_BinWidth, temporaryBinWidth);
+                }
                 _BinCounts = new int[] { 0 };
                 _Max = _Min + _BinWidth;
                 _maxQueueCount = _postQueueCount;

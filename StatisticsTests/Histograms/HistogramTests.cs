@@ -175,13 +175,13 @@ namespace StatisticsTests.Histograms
         }
         */
         [Theory]
-        [InlineData(10000, .1, .80, 1.96, .975)]
-        public void NormallyDistributed_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
+        [InlineData(1000, 10000, .1, .80, 1.96, .975)]
+        public void NormallyDistributed_Histogram_Convergence(int minIter, int maxiter, double binWidth, double quantile, double value, double expected)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
-            var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: 1, zAlpha: z);
+            var convergencecriteria = new ConvergenceCriteria(minIterations:minIter, maxIterations: maxiter, tolerance: 1, zAlpha: z);
             Histogram histogram = new Histogram(0, binWidth, convergencecriteria);
             while(!histogram.IsConverged)
             {
@@ -193,7 +193,7 @@ namespace StatisticsTests.Histograms
             double actual = histogram.CDF(value);
             double err = Math.Abs((expected - actual) / expected);
             double errTol = 0.01;
-            Assert.True(histogram.ConvergedIteration < maxiter);
+            Assert.True(histogram.ConvergedIteration <= maxiter);
             Assert.True(err < errTol);
         }
         //TODO: This test does not pass for distributions which have a non-negligible share below zero

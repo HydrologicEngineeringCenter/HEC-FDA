@@ -19,6 +19,7 @@ namespace metrics
         #region Fields
         private const string AEP_ASSURANCE_TYPE = "AEP";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
+        private const double AEP_BIN_WIDTH = 0.002;
         private bool _calculatePerformanceForLevee;
         //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
@@ -62,7 +63,7 @@ namespace metrics
             _thresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
 
         }
@@ -73,7 +74,7 @@ namespace metrics
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
             _ConvergenceCriteria = convergenceCriteria;
 

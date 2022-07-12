@@ -141,12 +141,12 @@ namespace StatisticsTests.Histograms
             Assert.Equal(expected, actual, 5);//this gives much more meaningful error reporting
         }
         [Theory]
-        [InlineData(1, 0.4, 2.25)]
+        [InlineData(1, 0.375, 2.33)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
-            double[] data = new double[14] { 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4 };
+            double[] data = new double[] { 0, 1, 1, 2, 2, 3, 3, 4 };
             ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, new ConvergenceCriteria());
-            histogram.SetIterationSize(14);
+            histogram.SetIterationSize(8);
             int i = 0;
             foreach (double observation in data)
             {
