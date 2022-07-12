@@ -207,12 +207,11 @@ namespace fda_model_test.unittests
             performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
             performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
 
-            int iterations = 10000;
             int seed = 1234;
             Random random = new Random(seed);
             Normal normal = new Normal();
 
-            for (int i = 0; i < iterations; i++)
+            for (int i = 0; i < convergenceCriteria.MinIterations/2; i++)
             {
                 double uniformObservation1 = random.NextDouble()+1;
                 double uniformObservation2 = random.NextDouble()+2;

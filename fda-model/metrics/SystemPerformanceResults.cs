@@ -18,6 +18,7 @@ namespace metrics
     {
         #region Fields
         private const string AEP_ASSURANCE_TYPE = "AEP";
+        private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
         private const double AEP_BIN_WIDTH = 0.002;
         private bool _calculatePerformanceForLevee;
@@ -48,7 +49,9 @@ namespace metrics
             _ConvergenceCriteria = new ConvergenceCriteria();
             _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage dummyAEP = new AssuranceResultStorage(AEP_ASSURANCE_TYPE,0);
+            AssuranceResultStorage dummyPlottingAEP = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, 0);
             _assuranceList.Add(dummyAEP);
+            _assuranceList.Add(dummyPlottingAEP);
             double[] standardNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
              foreach (double probability in standardNonExceedanceProbabilities)
             {
@@ -65,7 +68,8 @@ namespace metrics
             _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
-
+            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
+            _assuranceList.Add(aepAssuranceForPlotting);
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
         {
@@ -76,6 +80,8 @@ namespace metrics
             _assuranceList = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
+            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
+            _assuranceList.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
 
         }
@@ -115,9 +121,15 @@ namespace metrics
         }
         /// <summary>
         /// This method returns the thread safe inline histogram of AEPs
+        /// This method is only used to get the histogram for plotting purposes. 
         /// </summary>
         /// <returns></returns>
         public ThreadsafeInlineHistogram GetAEPHistogram()
+        {
+            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
+            return aepHistogram;
+        }
+        private ThreadsafeInlineHistogram GetAEPHistogramForMetrics()
         {
             ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
@@ -129,6 +141,7 @@ namespace metrics
         public void AddAEPForAssurance(double aep, int iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
         }
         public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
         {
@@ -147,9 +160,7 @@ namespace metrics
 
         public double AssuranceOfAEP(double exceedanceProbability)
         {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
-            IHistogram aepHistogram = GetAEPHistogram();
-            double assuranceOfAEP = aepHistogram.CDF(exceedanceProbability);
-            //double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
+            double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
         public bool AssuranceIsConverged()
