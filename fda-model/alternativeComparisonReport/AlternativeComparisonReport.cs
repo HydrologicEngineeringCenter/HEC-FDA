@@ -5,6 +5,9 @@ using Statistics.Histograms;
 using metrics;
 using Statistics;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
+using compute;
 
 namespace alternativeComparisonReport
 {
@@ -60,37 +63,65 @@ namespace alternativeComparisonReport
             IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
             IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
 
-            double withProjectDamageLowerBound = withProjectHistogram.Min;
-            double withoutProjectDamageLowerBound = withoutProjectHistogram.Min;
-
-            double withProjectDamageUpperBound = withProjectHistogram.Max;
-            double withoutProjectDamageUpperBound = withoutProjectHistogram.Max;
-
-            double damagesReducedUpperBound = withoutProjectDamageUpperBound - withProjectDamageLowerBound;
-            double damagesReducedLowerBound = withoutProjectDamageLowerBound - withProjectDamageUpperBound;
-
-            double range = damagesReducedUpperBound - damagesReducedLowerBound;
-            double binQuantity = 1 + 3.322 * Math.Log(ITERATIONS);
-            double binWidth = Math.Ceiling(range / binQuantity);
-            Histogram damageReducedHistogram;
+            ThreadsafeInlineHistogram damageReducedHistogram;
             ConsequenceDistributionResult damageReducedResult;
-            if (iterateOnWithProject)
+            ConvergenceCriteria convergenceCriteria;
+            if (!withoutProjectHistogram.HistogramIsZeroValued && !withoutProjectHistogram.HistogramIsZeroValued)
             {
-                damageReducedHistogram = new Histogram(damagesReducedLowerBound, binWidth, withProjectDamageResult.ConvergenceCriteria);
-                damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
+                if (iterateOnWithProject)
+                {
+                    convergenceCriteria = withProjectDamageResult.ConvergenceCriteria;
+                    damageReducedHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                    damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
+                }
+                else
+                {
+                    convergenceCriteria = withoutProjectDamageResult.ConvergenceCriteria;
+                    damageReducedHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                    damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
+                }
+                int masterseed = 0;
+                if (randomProvider is RandomProvider)
+                {
+                    masterseed = randomProvider.Seed;
+                }
+                int progressChunks = 1;
+                int _completedIterations = 0;
+                int _ExpectedIterations = convergenceCriteria.MaxIterations;
+                if (_ExpectedIterations > 100)
+                {
+                    progressChunks = _ExpectedIterations / 100;
+                }
+                Random masterSeedList = new Random(masterseed);//must be seeded.
+                int[] seeds = new int[convergenceCriteria.MaxIterations];
+                for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+                {
+                    seeds[i] = masterSeedList.Next();
+                }
+                int iterations = convergenceCriteria.MinIterations;
+
+                while (!damageReducedResult.ConsequenceHistogram.IsConverged)
+                {
+                    Parallel.For(0, iterations, i =>
+                    {
+                        double withProjectDamage = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                        double withoutProjectDamage = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                        double damagesReduced = withoutProjectDamage - withProjectDamage;
+                        damageReducedResult.AddConsequenceRealization(damagesReduced, i);
+                        Interlocked.Increment(ref _completedIterations);
+                        if (!damageReducedResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
+                        {
+                            iterations = damageReducedResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
+                            _ExpectedIterations = _completedIterations + iterations;
+                            progressChunks = _ExpectedIterations / 100;
+                        }
+                    });
+                }
+                damageReducedResult.ConsequenceHistogram.ForceDeQueue();
             }
             else
             {
-                damageReducedHistogram = new Histogram(damagesReducedLowerBound, binWidth, withoutProjectDamageResult.ConvergenceCriteria);
-                damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
-            }
-            //TODO: run this loop until convergence        
-            for (int i = 0; i < ITERATIONS; i++)
-            {
-                double withProjectDamage = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
-                double withoutProjectDamage = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
-                double damagesReduced = withoutProjectDamage - withProjectDamage;
-                damageReducedResult.AddConsequenceRealization(damagesReduced, i);
+                damageReducedResult = new ConsequenceDistributionResult();
             }
             return damageReducedResult;
         }

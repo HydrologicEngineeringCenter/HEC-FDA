@@ -179,11 +179,6 @@ namespace fda_model_test.unittests
             Assert.True(eadErrorFutureDamCat1 < tolerance);
             Assert.True(eadErrorBaseDamCat2 < tolerance);
             Assert.True(eadErrorFutureDamCat2 < tolerance);
-
-            //Assert.Equal(expectedEADReducedBaseYearDamCat1, actualBaseYearEADReducedDamCat1,0);
-            //Assert.Equal(expectedEADReducedBaseYearDamCat2, actualBaseYearEADReducedDamCat2,0);
-            //Assert.Equal(expectedEADReducedFutureYearDamCat1, actualFutureYearEADReducedDamCat1,0);
-            //Assert.Equal(expectedEADReducedFutureYearDamCat2,actualFutureYearEADReducedDamCat2,0);
         }
 
         [Theory]
