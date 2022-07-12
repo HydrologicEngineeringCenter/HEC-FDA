@@ -163,7 +163,7 @@ namespace fda_model_test.unittests
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
 
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations, tolerance: .001);
             Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.ExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
@@ -184,7 +184,7 @@ namespace fda_model_test.unittests
             double differenceAssuranceOfAEP = Math.Abs(actualAssuranceOfAEP - expected); //assurance of AEP is theoretically equal to assurance of threshold 
             double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;
 
-            double tolerance = 0.025;
+            double tolerance = 0.10;
             Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
             Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
         }
@@ -207,7 +207,7 @@ namespace fda_model_test.unittests
             performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
             performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
 
-            int iterations = 2250;
+            int iterations = 10000;
             int seed = 1234;
             Random random = new Random(seed);
             Normal normal = new Normal();

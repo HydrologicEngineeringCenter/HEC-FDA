@@ -90,18 +90,6 @@ namespace metrics
             _isNull = false;
         }
         /// <summary>
-        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
-        /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double binWidth)
-        {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _regionID = impactAreaID;
-            _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new ThreadsafeInlineHistogram(binWidth, _convergenceCriteria);
-            _isNull = false;
-        }
-        /// <summary>
         /// This constructor can accept wither a Histogram or a ThreadsageInlineHistogram
         /// as such can be used for both compute types
         /// </summary>

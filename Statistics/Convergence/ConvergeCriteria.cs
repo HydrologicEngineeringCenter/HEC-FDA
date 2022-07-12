@@ -13,7 +13,7 @@ namespace Statistics
         public double ZAlpha { get; }
         public double Tolerance { get; }
 
-        public ConvergenceCriteria(int minIterations = 100, int maxIterations = 100000, double zAlpha = 1.96039491692543, double tolerance = .01)
+        public ConvergenceCriteria(int minIterations = 10000, int maxIterations = 100000, double zAlpha = 1.96039491692543, double tolerance = .01)
         {
             MinIterations = minIterations;
             MaxIterations = maxIterations;

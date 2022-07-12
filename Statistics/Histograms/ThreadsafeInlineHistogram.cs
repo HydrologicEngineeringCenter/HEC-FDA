@@ -181,6 +181,7 @@ namespace Statistics.Histograms
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _ConvergenceCriteria = c;
+            _maxQueueCount = c.MinIterations;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
         }

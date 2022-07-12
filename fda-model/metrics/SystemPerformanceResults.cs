@@ -17,8 +17,6 @@ namespace metrics
     public class SystemPerformanceResults : Validation, IReportMessage
     {
         #region Fields
-        private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .001;
-        private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .5;
         private const string AEP_ASSURANCE_TYPE = "AEP";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
         private bool _calculatePerformanceForLevee;
@@ -64,7 +62,7 @@ namespace metrics
             _thresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
 
         }
@@ -75,7 +73,7 @@ namespace metrics
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, convergenceCriteria);
             _assuranceList.Add(aepAssurance);
             _ConvergenceCriteria = convergenceCriteria;
 
@@ -108,7 +106,7 @@ namespace metrics
         /// <param name="standardNonExceedanceProbability"></param>
         public void AddAssuranceHistogram(double standardNonExceedanceProbability)
         {   
-            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, CNEP_HISTOGRAM_DEFAULT_BINWIDTH, standardNonExceedanceProbability);
+            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
             {
                 _assuranceList.Add(assurance);
