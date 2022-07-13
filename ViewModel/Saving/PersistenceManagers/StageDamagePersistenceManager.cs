@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
@@ -16,14 +15,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int SELECTED_WSE_COL = 5;
         private const int SELECTED_STRUCTURE_COL = 6;
         private const int CURVES_COL = 7;
+        private const int IMP_AREA_FREQ_ROWS_COL = 8;
 
         private const String STAGE_DAMAGE_CURVES_TAG = "StageDamageCurves";
+        private const String IMPACT_AREA_FREQ_ROWS_TAG = "ImpactAreaFrequencyRows";
 
         private const string TABLE_NAME = "stage_damage_relationships";
 
-        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves" };
+        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves", "impact_area_frequency_rows" };
     
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string) };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -48,7 +49,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
-               element.IsManual, element.SelectedWSE, element.SelectedStructures,  WriteCurvesToXML(element.Curves)};
+               element.IsManual, element.SelectedWSE, element.SelectedStructures,  WriteCurvesToXML(element.Curves), WriteImpactAreaFrequencyRows(element.ImpactAreaFrequencyRows)};
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -61,15 +62,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
             int id = Convert.ToInt32(rowData[ID_COL]);
 
+            List<ImpactAreaFrequencyFunctionRowItem> impactAreaFrequencyRows = LoadImpactAreaFreqRows((string)rowData[IMP_AREA_FREQ_ROWS_COL]);
+
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
-            (string)rowData[DESC_COL], selectedWSE, selectedStructs,stageDamageCurves, isManual, id);
+            (string)rowData[DESC_COL], selectedWSE, selectedStructs,stageDamageCurves, impactAreaFrequencyRows, isManual, id);
             return asd;
         }
-        #endregion
-        public void SaveAssetCurve(ChildElement element, StageDamageAssetType type, string nameOfTotalFunctionInParentTable)
-        {
-            SaveNew(element);
-        }
+        #endregion   
 
         public void SaveNew(ChildElement element)
         {
@@ -103,10 +102,23 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement curvesElement = new XElement(STAGE_DAMAGE_CURVES_TAG);
             foreach(StageDamageCurve curve in curves)
             {
-                curvesElement.Add(curve.WriteToXML(curve));
+                curvesElement.Add(curve.WriteToXML());
             }
 
             return curvesElement;
+        }
+
+        private XElement WriteImpactAreaFrequencyRows(List<ImpactAreaFrequencyFunctionRowItem> impactAreaFrequencyRows)
+        {
+            XElement impAreaFreqRowsElement = new XElement(IMPACT_AREA_FREQ_ROWS_TAG);
+            if (impactAreaFrequencyRows != null)
+            {
+                foreach (ImpactAreaFrequencyFunctionRowItem row in impactAreaFrequencyRows)
+                {
+                    impAreaFreqRowsElement.Add(row.WriteToXML());
+                }
+            }
+            return impAreaFreqRowsElement;
         }
 
         private List<StageDamageCurve> LoadCurvesFromXML(string xml)
@@ -121,6 +133,21 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
 
             return curves;
+        }
+
+        private List<ImpactAreaFrequencyFunctionRowItem> LoadImpactAreaFreqRows(string xml)
+        {
+            List<ImpactAreaFrequencyFunctionRowItem> impactAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
+
+            XDocument doc = XDocument.Parse(xml);
+            XElement rowsElem = doc.Element(IMPACT_AREA_FREQ_ROWS_TAG);
+            IEnumerable<XElement> rowElems = rowsElem.Elements(ImpactAreaFrequencyFunctionRowItem.IMPACT_AREA_FREQUENCY_ROW);
+            foreach (XElement elem in rowElems)
+            {
+                impactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(elem));
+            }
+
+            return impactAreaFrequencyRows;
         }
     }
 }

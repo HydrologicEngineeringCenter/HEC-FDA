@@ -19,10 +19,15 @@ namespace HEC.FDA.View.AggregatedStageDamage
         {
             if (DataContext is CalculatedStageDamageVM vm)
             {
-                vm.CalculateCurves();
+                vm.ComputeCurves();
             }
         }
 
+        /// <summary>
+        /// This is to stretch the listview columns to fill the space as the user stretches the window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ListView listView = sender as ListView;
@@ -42,6 +47,11 @@ namespace HEC.FDA.View.AggregatedStageDamage
             }
         }
 
+        /// <summary>
+        /// This is to stretch the listview columns to fill the space as the user stretches the window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListView_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             ListView listView = sender as ListView;
@@ -61,7 +71,6 @@ namespace HEC.FDA.View.AggregatedStageDamage
                 gView.Columns[2].Width = workingWidth * col3;
                 gView.Columns[3].Width = workingWidth * col4;
             }
-
         }
     }
 }

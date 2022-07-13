@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private TableWithPlotVM _TableWithPlot;
 
 
-        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaRows { get; set; } = new List<ImpactAreaFrequencyFunctionRowItem>();
+        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get;} = new List<ImpactAreaFrequencyFunctionRowItem>();
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
         public TableWithPlotVM TableWithPlot
@@ -60,10 +60,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             loadStructureInventories();
             loadDepthGrids();
-            LoadImpactAreaFrequencyRows();
+            LoadNewImpactAreaFrequencyRows();
         }
         
-        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves)
+        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows)
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             loadStructureInventories();
@@ -71,31 +71,37 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             loadDepthGrids();
             SelectDepthGrid(wseId);
             LoadCurves(curves);
-            //LoadDummyRows();
-        }
 
-        
-        private void LoadImpactAreaFrequencyRows()
+            //clone the rows
+            foreach (ImpactAreaFrequencyFunctionRowItem row in impAreaFrequencyRows)
+            {
+                ImpactAreaFrequencyRows.Add(row.Clone());
+            }
+        }       
+
+        private void LoadNewImpactAreaFrequencyRows()
         {
-            List<ImpactAreaRowItem> impactAreaRows = new List<ImpactAreaRowItem>();
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if(impAreaElems.Count > 0)
+            if (impAreaElems.Count > 0)
             {
                 ObservableCollection<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
-                impactAreaRows.AddRange(impactAreaRowsCollection);
-            }
+                List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+                List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
 
-            foreach(ImpactAreaRowItem impactAreaRow in impactAreaRows)
-            {
-                ImpactAreaRows.Add(new ImpactAreaFrequencyFunctionRowItem( impactAreaRow, StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(), StudyCache.GetChildElementsOfType<RatingCurveElement>()));        
+                foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
+                {
+                    ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements));
+                }
             }
         }
 
         private void LoadCurves(List<StageDamageCurve> curves)
         {
             int i = 1;
-            foreach (StageDamageCurve curve in curves)
+            foreach (StageDamageCurve stageDamageCurve in curves)
             {
+                //used cloned curve so that you do not modify the original data
+                StageDamageCurve curve = new StageDamageCurve(stageDamageCurve.WriteToXML());
                 CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory);
                 Rows.Add(newRow);
                 i++;
@@ -184,14 +190,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaRows)
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
                 vr.AddErrorMessage(row.ValidateRow().ErrorMessage);
             }
             return vr;
         }
 
-        public void CalculateCurves()
+        public void ComputeCurves()
         {
             //todo Richard will implament this method. I am not sure what all you need. You can grab elements from the study cache
             //just like i did in the line below to get the impact area elements. You will need to create "CalculatedStageDamageRowItem"s.

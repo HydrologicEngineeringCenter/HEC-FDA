@@ -38,13 +38,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             ComputeComponent = computeComponentVM;
         } 
 
-        public XElement WriteToXML(StageDamageCurve curve)
+        public XElement WriteToXML()
         {
             XElement stageDamageCurveElement = new XElement(STAGE_DAMAGE_CURVE_TAG);
-            stageDamageCurveElement.SetAttributeValue(SELECTED_IMPACT_AREA_TAG, curve.ImpArea.ID);
-            stageDamageCurveElement.SetAttributeValue(SELECTED_DAM_CAT_TAG, curve.DamCat);
+            stageDamageCurveElement.SetAttributeValue(SELECTED_IMPACT_AREA_TAG, ImpArea.ID);
+            stageDamageCurveElement.SetAttributeValue(SELECTED_DAM_CAT_TAG, DamCat);
             stageDamageCurveElement.SetAttributeValue(ASSET_CATEGORY, AssetCategory);
-            stageDamageCurveElement.Add(curve.ComputeComponent.ToXML());
+            stageDamageCurveElement.Add(ComputeComponent.ToXML());
 
             return stageDamageCurveElement;
         }

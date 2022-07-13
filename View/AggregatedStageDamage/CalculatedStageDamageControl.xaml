@@ -12,8 +12,8 @@
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <local:StageDischargeVisibilityConverter x:Key="StageDischargeVisibilityConverter" />
         <local:InverseStageDischargeVisibilityConverter x:Key="InverseStageDischargeVisibilityConverter" />
-
     </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" MinHeight="30"/>
@@ -22,7 +22,6 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
 
         <GroupBox Header="Configure and Compute" Grid.Row="0" Margin="5">
             
@@ -54,7 +53,7 @@
                 <Button Grid.Row="2" Grid.Column="1" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Margin="5" Click="calculate_btn_Click"/>
             </Grid>
 
-                <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 
+                <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 
                            SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ListView_SizeChanged" >
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
@@ -73,7 +72,7 @@
                             <GridViewColumn Header="Frequency Function" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="Auto" ItemsSource="{Binding FrequencyFunctions}" SelectedItem="{Binding FrequencyFunction}"                  
+                                        <ComboBox Width="Auto" Height="22" ItemsSource="{Binding FrequencyFunctions}" SelectedItem="{Binding FrequencyFunction}"                  
                                                   HorizontalAlignment="Stretch"  DisplayMemberPath="Name" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -83,7 +82,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             
-                                        <ComboBox Width="Auto" ItemsSource="{Binding StageDischargeFunctions}" SelectedItem="{Binding StageDischargeFunction}"                  
+                                        <ComboBox Width="Auto" Height="22" ItemsSource="{Binding StageDischargeFunctions}" SelectedItem="{Binding StageDischargeFunction}"                  
                                                   HorizontalAlignment="Stretch"  DisplayMemberPath="Name" Visibility="{Binding FrequencyFunction, Converter={StaticResource StageDischargeVisibilityConverter}}"/>
                                             <Label Content="Not Required" Visibility="{Binding FrequencyFunction, Converter={StaticResource InverseStageDischargeVisibilityConverter}}"/>
                                         </Grid>
