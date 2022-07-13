@@ -74,7 +74,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             Task.Run(() =>
             {
-                ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
+                ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);                    
+
                 foreach(ImpactAreaScenarioSimulation sim in sims)
                 {
                     MessageHub.Unregister(sim);

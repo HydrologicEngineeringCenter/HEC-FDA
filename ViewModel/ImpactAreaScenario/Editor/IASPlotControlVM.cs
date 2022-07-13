@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     {
         private Visibility _plotVisibility = Visibility.Hidden;
 
-        public ChartControlBase FrequencyRelationshipControl { get; } = new FrequencyRelationshipControl();
+        public FrequencyRelationshipControl FrequencyRelationshipControl { get; } = new FrequencyRelationshipControl();
         public ChartControlBase RatingRelationshipControl { get; } = new RatingRelationshipControl();
         public ChartControlBase StageDamageControl { get; } = new StageDamageControl();
         public ChartControlBase DamageFrequencyControl { get; } = new DamageFrequencyControl();
@@ -27,6 +27,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public void Plot()
         {
             PlotControlVisibility = Visibility.Visible;
+            FrequencyRelationshipControl.UpdateYAxisLabel();
             FrequencyRelationshipControl.Plot();
             RatingRelationshipControl.Plot();
             StageDamageControl.Plot();

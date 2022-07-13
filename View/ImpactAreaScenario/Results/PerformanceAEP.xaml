@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              DataContextChanged="UserControl_DataContextChanged"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
@@ -33,9 +34,9 @@
             <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
         </Grid>
-        
-        <DataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+
+        <controls:CopyPasteDataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left" SelectionUnit="Cell"
                   VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
@@ -51,6 +52,6 @@
                 </DataGridTextColumn>
             </DataGrid.Columns>
 
-        </DataGrid>
+        </controls:CopyPasteDataGrid>
     </Grid>
 </UserControl>

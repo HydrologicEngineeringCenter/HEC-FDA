@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -22,8 +24,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <controls:CopyPasteDataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left"
+        <twp:FdaDataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left" SelectionUnit="Cell"
                   VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
@@ -34,12 +36,12 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
+                        <TextBlock Name="ead_textblock" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>
 
-        </controls:CopyPasteDataGrid>
+        </twp:FdaDataGrid>
 
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />

@@ -5,12 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"          
              xmlns:local="clr-namespace:HEC.FDA.View.AlternativeComparisonReport.Results"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+    <twp:FdaDataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
-                  CanUserSortColumns="false" Margin="5">
+                  CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
         <DataGrid.Columns>
             <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">
                 <DataGridTextColumn.Header>
@@ -74,6 +76,6 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
         </DataGrid.Columns>
-    </DataGrid>
+    </twp:FdaDataGrid>
 
 </UserControl>

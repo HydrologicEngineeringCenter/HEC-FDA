@@ -400,10 +400,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             int baseYear = _Results.Years[0];
             int futureYear = _Results.Years[1];
 
-            YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM(discountRate, period, _Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM(discountRate, period, _Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
-            YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM(discountRate, period, _Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM(discountRate, period, _Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
+            YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
+            YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
 
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, _Results, withProjID, DamageMeasureYear.AAEQ), new DamageByImpactAreaVM(discountRate, period, _Results, withProjID, DamageMeasureYear.AAEQ), new DamageByDamCatVM(_Results, DamageMeasureYear.AAEQ, withProjID, discountRate, period));
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.AAEQ, withProjID, discountRate, period));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
             AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, aaeqResult);

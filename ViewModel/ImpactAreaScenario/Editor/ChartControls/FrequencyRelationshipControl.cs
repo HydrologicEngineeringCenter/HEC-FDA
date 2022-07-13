@@ -13,7 +13,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
             
         }
 
-        
+        public void UpdateYAxisLabel()
+        {
+            if (Function != null)
+            {
+                UpdateYAxisLabel(Function.CurveMetaData.YLabel);
+            }
+        }
 
     }
 }
