@@ -62,7 +62,6 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="145"/>
                                     <ColumnDefinition Width="*"/>
-
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding Name}" TextAlignment="Right" VerticalAlignment="Center"/>

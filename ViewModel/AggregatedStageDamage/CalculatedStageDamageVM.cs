@@ -1,5 +1,7 @@
-﻿using HEC.FDA.ViewModel.ImpactArea;
+﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.WaterSurfaceElevation;
@@ -17,6 +19,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
 
+
+        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaRows { get; set; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
         public TableWithPlotVM TableWithPlot
@@ -56,6 +60,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             loadStructureInventories();
             loadDepthGrids();
+            LoadImpactAreaFrequencyRows();
         }
         
         public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves)
@@ -66,6 +71,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             loadDepthGrids();
             SelectDepthGrid(wseId);
             LoadCurves(curves);
+            //LoadDummyRows();
+        }
+
+        
+        private void LoadImpactAreaFrequencyRows()
+        {
+            List<ImpactAreaRowItem> impactAreaRows = new List<ImpactAreaRowItem>();
+            List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if(impAreaElems.Count > 0)
+            {
+                ObservableCollection<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
+                impactAreaRows.AddRange(impactAreaRowsCollection);
+            }
+
+            foreach(ImpactAreaRowItem impactAreaRow in impactAreaRows)
+            {
+                ImpactAreaRows.Add(new ImpactAreaFrequencyFunctionRowItem( impactAreaRow, StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(), StudyCache.GetChildElementsOfType<RatingCurveElement>()));        
+            }
         }
 
         private void LoadCurves(List<StageDamageCurve> curves)
@@ -150,6 +173,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(SelectedWaterSurfaceElevation == null || SelectedStructures == null)
             {
                 vr.AddErrorMessage("A hydraulics data set and a structure inventory selection is required to compute.");
+            }
+            else
+            {
+                vr.AddErrorMessage(ValidateImpactAreaFrequencyFunctionTable().ErrorMessage);
+            }
+            return vr;
+        }
+
+        private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaRows)
+            {
+                vr.AddErrorMessage(row.ValidateRow().ErrorMessage);
             }
             return vr;
         }

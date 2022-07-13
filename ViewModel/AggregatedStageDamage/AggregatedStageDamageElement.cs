@@ -24,7 +24,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #endregion
         #region Constructors
 
-        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual, int id) : base(id)
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
+            List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaRows, bool isManual, int id) : base(id)
         {
             LastEditDate = lastEditDate;
             CustomTreeViewHeader = new CustomHeaderVM(name)
