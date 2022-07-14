@@ -36,6 +36,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             HasChanges = true;
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
+            //this registration is so that fda can detect changes made in child view models
+            //and prompt the user if they want to save when closing
+            RegisterChildViewModel(ManualVM);
+            RegisterChildViewModel(CalculatedVM);
             CurrentVM = CalculatedVM;
         }
 
@@ -58,6 +62,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves, element.ImpactAreaFrequencyRows);
                 CurrentVM = CalculatedVM;
             }
+            //this registration is so that fda can detect changes made in child view models
+            //and prompt the user if they want to save when closing
+            RegisterChildViewModel(ManualVM);
+            RegisterChildViewModel(CalculatedVM);
         }
         #endregion
 

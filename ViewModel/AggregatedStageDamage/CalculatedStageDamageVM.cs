@@ -75,7 +75,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //clone the rows
             foreach (ImpactAreaFrequencyFunctionRowItem row in impAreaFrequencyRows)
             {
-                ImpactAreaFrequencyRows.Add(row.Clone());
+                ImpactAreaFrequencyFunctionRowItem clonedRow = row.Clone();
+                //register for "HasChanges"
+                RegisterChildViewModel(clonedRow);
+                ImpactAreaFrequencyRows.Add(clonedRow);
             }
         }       
 
@@ -90,7 +93,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
                 {
-                    ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements));
+                    ImpactAreaFrequencyFunctionRowItem newRow = new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements);
+                    //register for "HasChanges"
+                    RegisterChildViewModel(newRow);
+                    ImpactAreaFrequencyRows.Add(newRow);
                 }
             }
         }

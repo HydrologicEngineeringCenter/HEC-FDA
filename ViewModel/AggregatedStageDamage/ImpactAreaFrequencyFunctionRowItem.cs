@@ -15,15 +15,26 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public static string IMPACT_AREA_ID = "ImpactAreaID";
         public static string STAGE_DISCHARGE_ELEMENT_ID = "StageDischargeElementID";
 
+        private StageDischargeElementWrapper _StageDischargeFunction;
+        private FrequencyElementWrapper _FrequencyFunction;
+
         public ImpactAreaRowItem ImpactArea { get; }
         
         public List<FrequencyElementWrapper> FrequencyFunctions { get;  }
 
-        public FrequencyElementWrapper FrequencyFunction { get; set; }
+        public FrequencyElementWrapper FrequencyFunction
+        {
+            get { return _FrequencyFunction; }
+            set { _FrequencyFunction = value; NotifyPropertyChanged(); }
+        }
 
         public List<StageDischargeElementWrapper> StageDischargeFunctions { get;  }
 
-        public StageDischargeElementWrapper StageDischargeFunction { get; set; }
+        public StageDischargeElementWrapper StageDischargeFunction
+        {
+            get { return _StageDischargeFunction; }
+            set { _StageDischargeFunction = value; NotifyPropertyChanged(); }
+        }
 
         public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<RatingCurveElement> stageDischargeFunctions)
         {
