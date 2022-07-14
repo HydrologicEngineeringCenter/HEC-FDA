@@ -43,41 +43,24 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
         }
 
-        private bool _IsA;
-        public bool IsA
-        {
-            get { return _IsA; }
-            set { _IsA = value; NotifyPropertyChanged(); }
-        }
-        private bool _TestUseFlow;
-        public bool TestUseFlow
-        {
-            get { return _TestUseFlow;}
-            set { _TestUseFlow = value; NotifyPropertyChanged(); }  
-        }
-
         public bool UseFlow
         {
             get { return _useFlow; }
             set
             { 
                 _useFlow = value;
-                //if(value == true)
-                //{
-                //    YLabel = Utilities.StringConstants.DISCHARGE;
-                //}
-                //else
-                //{
-                //    YLabel = Utilities.StringConstants.STAGE;
-                //}
+                if (value == true)
+                {
+                    YLabel = Utilities.StringConstants.DISCHARGE;
+                }
+                else
+                {
+                    YLabel = Utilities.StringConstants.STAGE;
+                }
                 NotifyPropertyChanged();
-                //NotifyPropertyChanged(nameof(UseStage));
             }
         }
-        //public bool UseStage
-        //{
-        //    get { return !_useFlow; }
-        //}
+
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();

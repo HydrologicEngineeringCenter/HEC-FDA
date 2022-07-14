@@ -30,11 +30,8 @@
             <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" />
         </StackPanel>
         <StackPanel Orientation="Horizontal"  Grid.Row="2">
-            <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding TestUseFlow}" Margin="5"/>
-            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding TestUseFlow, Converter={StaticResource InverseBooleanConverter}}" Margin="5"/>
-            <!--<RadioButton Content="TestA" IsChecked="{Binding IsA}" Margin="5" />
-            <RadioButton Content="TestB" IsChecked="{Binding IsA,Converter={StaticResource InverseBooleanConverter}}" Margin="5" />-->
-
+            <RadioButton Content="Flow" IsChecked="{Binding UseFlow}" Margin="5"/>
+            <RadioButton Content="Stage" IsChecked="{Binding UseFlow, Converter={StaticResource InverseBooleanConverter}}" Margin="5"/>
         </StackPanel>
         <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
