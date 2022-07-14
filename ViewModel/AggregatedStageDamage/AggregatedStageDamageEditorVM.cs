@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -109,7 +110,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = GetElementID();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(),null, true, id);
+                List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
                 base.Save(elem);
             }
         }
