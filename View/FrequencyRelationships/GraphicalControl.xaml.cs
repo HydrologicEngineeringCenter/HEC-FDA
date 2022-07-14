@@ -9,5 +9,10 @@ namespace HEC.FDA.View.FrequencyRelationships
             InitializeComponent();
             
         }
+
+        private void UserControl_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            int ti = 0;
+        }
     }
 }

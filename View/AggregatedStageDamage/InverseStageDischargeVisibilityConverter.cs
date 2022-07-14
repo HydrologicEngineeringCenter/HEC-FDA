@@ -16,7 +16,7 @@ namespace HEC.FDA.View.AggregatedStageDamage
                 {
                     if (!wrapper.Element.IsAnalytical)
                     {
-                        if (wrapper.Element.MyGraphicalVM.UseStage)
+                        if (!wrapper.Element.MyGraphicalVM.UseFlow)
                         {
                             return Visibility.Visible;
                         }

@@ -57,7 +57,6 @@ namespace HEC.FDA.ViewModelTest
             Assert.Equal(expected.XLabel, actual.XLabel);
             Assert.Equal(expected.YLabel, actual.YLabel);
             Assert.Equal(expected.UseFlow, actual.UseFlow);
-            Assert.Equal(expected.UseStage, actual.UseStage);
             Assert.Equal(expected.EquivalentRecordLength, actual.EquivalentRecordLength);
         } 
     }

@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
+             DataContextChanged="UserControl_DataContextChanged"
              mc:Ignorable="d" 
              xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
@@ -25,8 +30,11 @@
             <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" />
         </StackPanel>
         <StackPanel Orientation="Horizontal"  Grid.Row="2">
-            <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding Path=UseFlow, Mode=TwoWay}" Margin="5"/>
-            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding Path=UseStage, Mode=OneWay}" Margin="5"/>
+            <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding TestUseFlow}" Margin="5"/>
+            <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding TestUseFlow, Converter={StaticResource InverseBooleanConverter}}" Margin="5"/>
+            <!--<RadioButton Content="TestA" IsChecked="{Binding IsA}" Margin="5" />
+            <RadioButton Content="TestB" IsChecked="{Binding IsA,Converter={StaticResource InverseBooleanConverter}}" Margin="5" />-->
+
         </StackPanel>
         <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
