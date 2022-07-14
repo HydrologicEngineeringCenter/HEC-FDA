@@ -18,6 +18,7 @@ namespace HEC.FDA.ViewModel.Watershed
         private const string VRT = ".vrt";
         private const string FLT = ".flt";
         private const string TIF = ".tif";
+        private const string HDF = ".hdf";
 
         private string _TerrainPath;
         #endregion
@@ -50,9 +51,9 @@ namespace HEC.FDA.ViewModel.Watershed
                     FdaValidationResult vrtResult = IsVRTPathValid();
                     vr.AddErrorMessage(vrtResult.ErrorMessage);
                 }
-                else if (FLT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || TIF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
+                else if (FLT.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || TIF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase) || HDF.Equals(pathExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    //do nothing
+                    //No special validation required.
                 }
                 else
                 {
