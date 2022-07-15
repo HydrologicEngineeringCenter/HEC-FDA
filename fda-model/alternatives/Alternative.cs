@@ -11,7 +11,6 @@ namespace alternatives
 {
     public class Alternative
     {
-        private const int _iterations = 50000;
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -148,14 +147,14 @@ namespace alternatives
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     aaeqResult.AddConsequenceRealization(aaeqDamage, i);
                     Interlocked.Increment(ref _completedIterations);
-                    if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95,.05))
-                    {
-                        iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
-                        _ExpectedIterations = _completedIterations + iterations;
-                        progressChunks = _ExpectedIterations / 100;
-                    }
                 }
                 );
+                if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
+                {
+                    iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
+                }
             }
             aaeqResult.ConsequenceHistogram.ForceDeQueue();
             return aaeqResult;

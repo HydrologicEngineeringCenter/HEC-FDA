@@ -109,13 +109,13 @@ namespace alternativeComparisonReport
                         double damagesReduced = withoutProjectDamage - withProjectDamage;
                         damageReducedResult.AddConsequenceRealization(damagesReduced, i);
                         Interlocked.Increment(ref _completedIterations);
-                        if (!damageReducedResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
-                        {
-                            iterations = damageReducedResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
-                            _ExpectedIterations = _completedIterations + iterations;
-                            progressChunks = _ExpectedIterations / 100;
-                        }
                     });
+                    if (!damageReducedResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
+                    {
+                        iterations = damageReducedResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
+                        _ExpectedIterations = _completedIterations + iterations;
+                        progressChunks = _ExpectedIterations / 100;
+                    }
                 }
                 damageReducedResult.ConsequenceHistogram.ForceDeQueue();
             }
