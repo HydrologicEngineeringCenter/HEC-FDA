@@ -162,7 +162,7 @@ namespace paireddata
             switch (_metaData.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), "X must be strictly monotonically decreasing"));
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
                     break;
                 default:
                     break;
@@ -205,11 +205,11 @@ namespace paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"Sampled Y Values were not monotonically increasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"X values are not monotonically decreasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
