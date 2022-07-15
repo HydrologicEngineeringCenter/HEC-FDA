@@ -851,7 +851,7 @@ namespace compute
         private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
         {
             bool curvesOverlap = true;
-            double overlapThreshold = 0.2;
+            double overlapThreshold = 0.5;
             double rangeOfF = maxOfF - minOfF;
             double rangeOfG = maxOfF - minOfG;
             double minDifference = Math.Abs(minOfG - minOfF);
