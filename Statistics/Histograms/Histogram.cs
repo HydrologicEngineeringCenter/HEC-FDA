@@ -736,7 +736,15 @@ namespace Statistics.Histograms
             int upperestimate = _ConvergenceCriteria.MaxIterations;
             if (ufxp > 0.0 & uxp != 0)
             {
-                upperestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0))));
+                double estimate = Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0)));
+                if (estimate > int.MaxValue)
+                {
+                    upperestimate = int.MaxValue;
+                }
+                else
+                {
+                    upperestimate = Math.Abs((int)estimate);
+                }
             }
             double lp = lowerq;
             double lval = lp * (1 - lp);
@@ -746,7 +754,15 @@ namespace Statistics.Histograms
             int lowerestimate = _ConvergenceCriteria.MaxIterations;
             if (lfxp > 0.0 & uxp != 0)
             {
-                lowerestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
+                double estimate = Math.Ceiling(lval * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0)));
+                if (estimate > int.MaxValue)
+                {
+                    lowerestimate = int.MaxValue;
+                }
+                else
+                {
+                    lowerestimate = Math.Abs((int)estimate);
+                }
             }
             int biggestGuess = Math.Max(upperestimate, lowerestimate);
             int remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;

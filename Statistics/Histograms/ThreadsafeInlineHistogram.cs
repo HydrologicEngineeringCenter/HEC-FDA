@@ -710,6 +710,8 @@ namespace Statistics.Histograms
                 _ConvergedOnMax = true;
                 return true;
             }
+            //TODO: it appears that this logic is similar or the same to that which is below. 
+            //consider extraction and build on this nomenclature 
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
             double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
@@ -749,8 +751,15 @@ namespace Statistics.Histograms
                 double anotherTerm = (zAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
                 double productTerm = valueOfSomethingNotClear * anotherTermSquared;
-                int productTermToInt = (int)Math.Ceiling(productTerm);
-                upperEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                if (productTerm > int.MaxValue)
+                {
+                    upperEstimateIterationsRemaining = int.MaxValue;
+                }
+                else
+                {
+                    int productTermToInt = (int)Math.Ceiling(productTerm);
+                    upperEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                }
             }
             double lowerProb = lowerProbability;
             double lowerValueOfSomethingNotClear = lowerProb * (1 - lowerProb);
@@ -763,9 +772,16 @@ namespace Statistics.Histograms
                 double bottomTerm = lowerValueAtLowerProb * _ConvergenceCriteria.Tolerance * probOfLowerValue;
                 double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
-                double productTerm = valueOfSomethingNotClear * anotherTermSquared;
+                double productTerm = lowerValueOfSomethingNotClear * anotherTermSquared;
+                if (productTerm > int.MaxValue)
+                {
+                    lowerEstimateIterationsRemaining = int.MaxValue;
+                }
+                else
+                {
                 int productTermToInt = (int)Math.Ceiling(productTerm);
                 lowerEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                }
             }
             int biggestGuessIterationsRemaining = Math.Max(upperEstimateIterationsRemaining, lowerEstimateIterationsRemaining);
             int remainingIterations = _ConvergenceCriteria.MaxIterations - _SampleSize;
