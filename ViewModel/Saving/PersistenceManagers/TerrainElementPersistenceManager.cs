@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
             bool isHDF = Path.GetExtension(element.FileName).Equals(".hdf");
 
-            if (isVRT)
+            if(isVRT)
             {
                 //then copy all the vrt and tif files
                 string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
