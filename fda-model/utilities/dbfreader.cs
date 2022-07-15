@@ -25,6 +25,12 @@ namespace utilities
         private int _NRows;
         private int _NColumns;
 
+        public int NumberOfRows
+        {
+            get { return _NRows; }
+        }
+
+
         public dbfreader(string filepath)
         {
             if (Path.GetExtension(filepath).ToLower() != ".dbf")
