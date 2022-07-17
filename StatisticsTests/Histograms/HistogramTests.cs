@@ -356,7 +356,7 @@ namespace StatisticsTests.Histograms
 
             double min = 0;
             double max = 0;
-            int sampleSize = 0;
+            Int64 sampleSize = 0;
             foreach (IHistogram histogramToAdd in histograms)
             {
                 min += histogramToAdd.Min;
@@ -373,7 +373,7 @@ namespace StatisticsTests.Histograms
             {
                 double probabilityStep = (i + 0.5) / iterations;
                 double summedValue = 0;
-                int summedBinCount = 0;
+                Int64 summedBinCount = 0;
 
                 foreach (IHistogram histogramToSample in histograms)
                 {

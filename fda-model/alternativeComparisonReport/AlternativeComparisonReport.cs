@@ -85,9 +85,9 @@ namespace alternativeComparisonReport
                 {
                     masterseed = randomProvider.Seed;
                 }
-                int progressChunks = 1;
-                int _completedIterations = 0;
-                int _ExpectedIterations = convergenceCriteria.MaxIterations;
+                Int64 progressChunks = 1;
+                Int64 _completedIterations = 0;
+                Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
                 if (_ExpectedIterations > 100)
                 {
                     progressChunks = _ExpectedIterations / 100;
@@ -98,7 +98,7 @@ namespace alternativeComparisonReport
                 {
                     seeds[i] = masterSeedList.Next();
                 }
-                int iterations = convergenceCriteria.MinIterations;
+                Int64 iterations = convergenceCriteria.MinIterations;
 
                 while (!damageReducedResult.ConsequenceHistogram.IsConverged)
                 {

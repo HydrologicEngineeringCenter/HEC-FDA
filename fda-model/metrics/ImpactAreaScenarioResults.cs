@@ -207,9 +207,9 @@ namespace metrics
             }
             return eadIsConverged && cnepIsConverged;
         }
-        public int RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
+        public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            List<int> eadIterationsRemaining = new List<int>();
+            List<Int64> eadIterationsRemaining = new List<Int64>();
             if (computeWithDamage == true)
             {
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
@@ -225,7 +225,7 @@ namespace metrics
                 }
             }
 
-            List<int> performanceIterationsRemaining = new List<int>();
+            List<Int64> performanceIterationsRemaining = new List<Int64>();
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
                 performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
