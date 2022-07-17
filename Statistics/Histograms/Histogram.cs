@@ -737,9 +737,9 @@ namespace Statistics.Histograms
             if (ufxp > 0.0 & uxp != 0)
             {
                 double estimate = Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0)));
-                if (estimate > int.MaxValue)
+                if (estimate > int.MaxValue - 1)
                 {
-                    upperestimate = int.MaxValue;
+                    upperestimate = int.MaxValue - 1;
                 }
                 else
                 {
@@ -755,9 +755,9 @@ namespace Statistics.Histograms
             if (lfxp > 0.0 & uxp != 0)
             {
                 double estimate = Math.Ceiling(lval * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0)));
-                if (estimate > int.MaxValue)
+                if (estimate > int.MaxValue - 1)
                 {
-                    lowerestimate = int.MaxValue;
+                    lowerestimate = int.MaxValue - 1;
                 }
                 else
                 {

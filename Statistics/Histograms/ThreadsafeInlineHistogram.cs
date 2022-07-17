@@ -751,9 +751,9 @@ namespace Statistics.Histograms
                 double anotherTerm = (zAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
                 double productTerm = valueOfSomethingNotClear * anotherTermSquared;
-                if (productTerm > int.MaxValue)
+                if (productTerm > int.MaxValue - 1)
                 {
-                    upperEstimateIterationsRemaining = int.MaxValue;
+                    upperEstimateIterationsRemaining = int.MaxValue - 1;
                 }
                 else
                 {
@@ -773,9 +773,9 @@ namespace Statistics.Histograms
                 double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
                 double productTerm = lowerValueOfSomethingNotClear * anotherTermSquared;
-                if (productTerm > int.MaxValue)
+                if (productTerm > int.MaxValue - 1)
                 {
-                    lowerEstimateIterationsRemaining = int.MaxValue;
+                    lowerEstimateIterationsRemaining = int.MaxValue - 1;
                 }
                 else
                 {
