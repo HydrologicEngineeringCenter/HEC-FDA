@@ -409,7 +409,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
             List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
-            int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {

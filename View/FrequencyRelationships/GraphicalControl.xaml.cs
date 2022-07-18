@@ -6,13 +6,7 @@ namespace HEC.FDA.View.FrequencyRelationships
     {
         public GraphicalControl()
         {
-            InitializeComponent();
-            
-        }
-
-        private void UserControl_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-        {
-            int ti = 0;
+            InitializeComponent();           
         }
     }
 }

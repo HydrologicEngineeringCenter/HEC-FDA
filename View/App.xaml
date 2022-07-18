@@ -130,6 +130,10 @@
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:CreateSyntheticFrequencyFunctionVM }" >
+            <FrequencyRelationshipsView:CreateSyntheticFrequencyFunction/>
+        </DataTemplate>
+        
         <!--GeoTech Region-->
         <DataTemplate DataType="{x:Type GeoTechVM:LeveeFeatureEditorVM }" >
             <GeoTechView:LeveeFeatureEditor/>

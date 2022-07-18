@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
-             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d"
              xmlns:frequencyrelationships="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              xmlns:oxy="http://oxyplot.org/wpf"
@@ -14,33 +12,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
-        <!--<Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <Label Content="{Binding Path= ComputeComponentVM.Name}"  FontWeight="Bold"/>
-                <Label Content="{Binding Path= ComputeComponentVM.Units}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal"  Grid.Row="1">
-                <Label Content="Equivalent Record Length: "/>
-                <TextBox Text="{Binding Path=ComputeComponentVM.EquivalentRecordLength, Mode=TwoWay}" Width="80" Margin="5"/>
-                <v:NamedActionButton NamedAction="{Binding ComputeComponentVM.ConfidenceLimits}" Margin="5" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"  Grid.Row="2">
-                <RadioButton GroupName="FlowOrStage" Content="Flow" IsChecked="{Binding Path=ComputeComponentVM.UseFlow, Mode=TwoWay}" Margin="5"/>
-                <RadioButton GroupName="FlowOrStage" Content="Stage" IsChecked="{Binding Path=ComputeComponentVM.UseStage, Mode=OneWay}" Margin="5"/>
-            </StackPanel>
-            <twp:FdaDataGridControl DataContext="{Binding Path =ComputeComponentVM.SelectedItem }" Grid.Row="3"/>
-        </Grid>-->
-        
-        
         <frequencyrelationships:GraphicalControl DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
-        <oxy:PlotView Model="{Binding Path= ComputeComponentVM.PlotModel}" Grid.Column="1"/>
+        <oxy:PlotView Model="{Binding Path= PlotModel}" Grid.Column="1"/>
     </Grid>
 </UserControl>

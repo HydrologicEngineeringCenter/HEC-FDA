@@ -61,7 +61,6 @@ namespace HEC.FDA.ViewModel.Utilities
 
                 CreateElements();
 
-                FdaValidationResult result = new FdaValidationResult();
                 dispatcher.Invoke(new Action(() =>
                 {
                     SaveElements();
