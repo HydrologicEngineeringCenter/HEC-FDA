@@ -6,8 +6,7 @@ namespace HEC.FDA.View.FrequencyRelationships
     {
         public GraphicalControl()
         {
-            InitializeComponent();
-            
+            InitializeComponent();           
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -35,6 +36,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             HasChanges = true;
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
+            //this registration is so that fda can detect changes made in child view models
+            //and prompt the user if they want to save when closing
+            RegisterChildViewModel(ManualVM);
+            RegisterChildViewModel(CalculatedVM);
             CurrentVM = CalculatedVM;
         }
 
@@ -54,14 +59,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             else
             {
                 ManualVM = new ManualStageDamageVM();
-                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves);
+                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves, element.ImpactAreaFrequencyRows);
                 CurrentVM = CalculatedVM;
             }
+            //this registration is so that fda can detect changes made in child view models
+            //and prompt the user if they want to save when closing
+            RegisterChildViewModel(ManualVM);
+            RegisterChildViewModel(CalculatedVM);
         }
         #endregion
 
-        #region voids    
-        
+        #region voids          
         
         private void UpdateVM()
         {
@@ -92,7 +100,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
                 }
-                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false, id);              
+
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, 
+                    CalculatedVM.GetStageDamageCurves(), CalculatedVM.ImpactAreaFrequencyRows, false, id);              
                 base.Save(elemToSave);
             }
             else
@@ -108,7 +118,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = GetElementID();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true, id);
+                List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
                 base.Save(elem);
             }
         }

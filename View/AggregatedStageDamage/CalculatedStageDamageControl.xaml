@@ -4,45 +4,103 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:local="clr-namespace:HEC.FDA.View.AggregatedStageDamage"
              mc:Ignorable="d" 
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <local:StageDischargeVisibilityConverter x:Key="StageDischargeVisibilityConverter" />
+        <local:InverseStageDischargeVisibilityConverter x:Key="InverseStageDischargeVisibilityConverter" />
     </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="30"/>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" MinHeight="30" />
+            <RowDefinition Height="5" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-     
+
+        <GroupBox Header="Configure and Compute" Grid.Row="0" Margin="5">
+            
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width=".5*" MinWidth="260"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
+            <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
 
-            <Label Grid.Row="2" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
+                <Label Grid.Row="1" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
+                
+                <Button Grid.Row="2" Grid.Column="1" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Margin="5" Click="calculate_btn_Click"/>
+            </Grid>
 
-            <Button Grid.Row="3" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" Margin="5" Click="calculate_btn_Click"/>
+                <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 
+                           SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ImpactAreaFrequencyListView_SizeChanged" >
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Impact Area" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock    Text="{Binding ImpactArea.Name}"  />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Frequency Function" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox Width="Auto" Height="22" ItemsSource="{Binding FrequencyFunctions}" SelectedItem="{Binding FrequencyFunction}"                  
+                                                  HorizontalAlignment="Stretch"  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Stage Discharge Function" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            
+                                        <ComboBox Width="Auto" Height="22" ItemsSource="{Binding StageDischargeFunctions}" SelectedItem="{Binding StageDischargeFunction}"                  
+                                                  HorizontalAlignment="Stretch"  DisplayMemberPath="Name" Visibility="{Binding FrequencyFunction, Converter={StaticResource StageDischargeVisibilityConverter}}"/>
+                                            <Label Content="Not Required" Visibility="{Binding FrequencyFunction, Converter={StaticResource InverseStageDischargeVisibilityConverter}}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                
         </Grid>
-     
-        <GroupBox Grid.Row="0" Grid.Column="1"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Left">
-            <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+        </GroupBox>
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+
+        <GroupBox Grid.Row="2" Grid.Column="0"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Stretch">
+            <ListView  Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" 
+                       ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ComputedCurves_SizeChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding ID}" />
@@ -53,9 +111,10 @@
                 </ListView.View>
             </ListView>
         </GroupBox>
+        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch"/>
 
-        <Grid x:Name="editorGrid" Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
-            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}"  Grid.Column="0" Margin="5" IsEnabled="False"/>
+        <Grid x:Name="editorGrid" Grid.Row="4" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}"  Grid.Column="0" Margin="5" />
         </Grid>
     </Grid>
 </UserControl>

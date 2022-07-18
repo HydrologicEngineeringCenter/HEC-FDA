@@ -21,9 +21,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             importFlowFreq.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_FREQUENCY_FROM_OLD_NAME);
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
+            NamedAction importSyntheticFreq = new NamedAction();
+            importSyntheticFreq.Header = StringConstants.CREATE_SYNTHETIC_FREQUENCY_FUNCTIONS_MENU;
+            importSyntheticFreq.Action = CreateSyntheticFreqFromDBF;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(createNew);
             localActions.Add(importFlowFreq);
+            localActions.Add(importSyntheticFreq);
 
             Actions = localActions;
 
@@ -44,6 +49,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void AddFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
+        }
+
+        private void CreateSyntheticFreqFromDBF(object arg1, EventArgs arg2)
+        {
+            CreateSyntheticFrequencyFunctionVM vm = new CreateSyntheticFrequencyFunctionVM();
+            string header = "Create Synthetic Frequency Function";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "synthetic");
+            Navigate(tab, false, true);
         }
 
         private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)

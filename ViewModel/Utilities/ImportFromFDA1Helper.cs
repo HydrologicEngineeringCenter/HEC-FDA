@@ -324,7 +324,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
                 if (curves.Count > 0)
                 {
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, true, elemID);
+                    List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows, true, elemID);
                 }
                 else
                 {
@@ -408,7 +409,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
             List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
-            int id = Saving.PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {

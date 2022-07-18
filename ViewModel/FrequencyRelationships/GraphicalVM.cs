@@ -42,13 +42,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
+
         public bool UseFlow
         {
             get { return _useFlow; }
             set
             { 
                 _useFlow = value;
-                if(value == true)
+                if (value == true)
                 {
                     YLabel = Utilities.StringConstants.DISCHARGE;
                 }
@@ -57,13 +58,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     YLabel = Utilities.StringConstants.STAGE;
                 }
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(UseStage));
             }
         }
-        public bool UseStage
-        {
-            get { return !_useFlow; }
-        }
+
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();
