@@ -8,7 +8,9 @@ namespace HEC.MVVMFramework.View.UserControls
 {
     public partial class TextBoxFolderBrowserControl : UserControl
     {
-        public static readonly DependencyProperty PathProperty = DependencyProperty.Register("Path", typeof(string), typeof(TextBoxFolderBrowserControl), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(PathChangedCallBack)));
+        public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string), typeof(TextBoxFolderBrowserControl), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(PathChangedCallBack)));
+        public static readonly DependencyProperty InitialDirectoryProperty = DependencyProperty.Register(nameof(InitialDirectory), typeof(string), typeof(TextBoxFolderBrowserControl), new PropertyMetadata(Directory.GetCurrentDirectory()));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(TextBoxFolderBrowserControl), new PropertyMetadata("Forgot to set this title didn't you?"));
 
         public TextBoxFolderBrowserControl()
         {
@@ -19,7 +21,16 @@ namespace HEC.MVVMFramework.View.UserControls
             get { return Convert.ToString(GetValue(PathProperty)); }
             set { SetValue(PathProperty, value); }
         }
-        public string InitialDirectory { get; set; } = Directory.GetCurrentDirectory();
+        public string InitialDirectory
+        {
+            get { return Convert.ToString(GetValue(InitialDirectoryProperty)); }
+            set { SetValue(InitialDirectoryProperty, value); }
+        }
+        public string Title
+        {
+            get { return Convert.ToString(GetValue(TitleProperty)); }
+            set { SetValue(TitleProperty, value); }
+        }
         private static void PathChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             TextBoxFolderBrowserControl owner = sender as TextBoxFolderBrowserControl;
@@ -32,6 +43,7 @@ namespace HEC.MVVMFramework.View.UserControls
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.InitialDirectory = InitialDirectory;
             dialog.IsFolderPicker = true;
+            dialog.Title = Title;
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 Path = dialog.FileName;
