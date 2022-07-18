@@ -9,7 +9,7 @@ namespace HEC.MVVMFramework.View.UserControls
     public partial class TextBoxFolderBrowserControl : UserControl
     {
         public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string), typeof(TextBoxFolderBrowserControl), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(PathChangedCallBack)));
-        public static readonly DependencyProperty InitialDirectoryProperty = DependencyProperty.Register(nameof(InitialDirectory), typeof(string), typeof(TextBoxFolderBrowserControl), new PropertyMetadata(Directory.GetCurrentDirectory()));
+        public static readonly DependencyProperty InitialDirectoryProperty = DependencyProperty.Register(nameof(InitialDirectory), typeof(string), typeof(TextBoxFolderBrowserControl), new PropertyMetadata(""));
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(TextBoxFolderBrowserControl), new PropertyMetadata("Forgot to set this title didn't you?"));
 
         public TextBoxFolderBrowserControl()
