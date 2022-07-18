@@ -54,34 +54,27 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         }
 
-        public DamageWithUncertaintyVM( AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
+        public DamageWithUncertaintyVM( AlternativeComparisonReportResults altCompReport, int altID, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
-            if (double.IsNaN(discountRate))
-            {
-                RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = "Probability that damage exceeds indicated value";
-            }
-            else
-            {
-                RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
-            }
-            LoadHistogramData(altResults, altID, damageMeasureYear);
+            ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
+            RateAndPeriodVisible = !double.IsNaN(discountRate);
 
-            LoadAAEQData(altResults, altID, damageMeasureYear);
+            LoadHistogramData(altCompReport, altID, damageMeasureYear);
+
+            LoadAAEQData(altCompReport, altID, damageMeasureYear);
 
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = altResults.MeanWithProjectBaseYearEAD(altID);
+                    Mean = altCompReport.MeanWithProjectBaseYearEAD(altID);
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = altResults.MeanWithProjectFutureYearEAD(altID);
+                    Mean = altCompReport.MeanWithProjectFutureYearEAD(altID);
                     break;
                 case DamageMeasureYear.AAEQ:
-                    Mean = altResults.MeanWithProjectAAEQDamage(altID);
+                    Mean = altCompReport.MeanAAEQDamageReduced(altID);
                     break;
             }
 

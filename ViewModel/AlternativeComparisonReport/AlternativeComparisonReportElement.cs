@@ -292,7 +292,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 string withProjName = GetAlternativeElementFromID(altID).Name;
 
-                double withProjEAD = results.MeanWithoutProjectAAEQDamage(altID);
+                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);
 
                 double aaeqReduced = results.MeanAAEQDamageReduced(altID);
 
@@ -301,7 +301,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID);
                 double point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID);
 
-                AAEQSummaryRowItem row = new AAEQSummaryRowItem(withoutProjName, aaeqWithoutProjDamage, withProjName, withProjEAD, aaeqReduced, point75, point5, point25);
+                AAEQSummaryRowItem row = new AAEQSummaryRowItem(withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
 
                 aaeqSummaryRowItems.Add(row);
 

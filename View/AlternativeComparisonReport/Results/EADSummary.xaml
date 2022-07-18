@@ -21,7 +21,7 @@
             </DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding WithoutProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
-                    <TextBlock Text="Without-Project EAD Damage" TextWrapping="Wrap" />
+                    <TextBlock Text="Without-Project EAD" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding WithProjAlternative}" Width="110">
@@ -31,7 +31,7 @@
             </DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding WithProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
-                    <TextBlock Text="With-Project EAD Damage" TextWrapping="Wrap" />
+                    <TextBlock Text="With-Project EAD" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding EADDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
@@ -39,8 +39,15 @@
                     <TextBlock Text="EAD Reduced" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding QuartileDamages}" Width="280">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="Probability EAD reduced exceeds indicated values  0.75                    0.5                   0.25" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
             
-            <DataGridTemplateColumn>
+            
+            
+            <!--<DataGridTemplateColumn>
                 <DataGridTemplateColumn.HeaderTemplate >
                     <DataTemplate>
                         <Grid>
@@ -74,7 +81,7 @@
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+            </DataGridTemplateColumn>-->
         </DataGrid.Columns>
     </twp:FdaDataGrid>
 

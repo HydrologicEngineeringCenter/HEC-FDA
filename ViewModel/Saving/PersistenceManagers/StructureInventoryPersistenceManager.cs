@@ -66,7 +66,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         StructureInventoryBaseElement.VehicleValueField,
         StructureInventoryBaseElement.FirstFloorElevationField,
         StructureInventoryBaseElement.GroundElevationField,
-        StructureInventoryBaseElement.YearField,
         StructureInventoryBaseElement.ModuleField
         };
 
@@ -81,7 +80,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         typeof(double),
         typeof(double),
         typeof(double),
-        typeof(int),
         typeof(string)
         };
 
@@ -108,7 +106,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             newStructureTable.Columns.Add(StructureInventoryBaseElement.VehicleValueField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.FirstFloorElevationField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.GroundElevationField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.YearField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
 
             newStructureTable.Columns.Add(BEG_DAM_DEPTH, typeof(string));
