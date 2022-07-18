@@ -17,9 +17,16 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <vna:NamedActionButton Grid.Column="0" NamedAction="{Binding CountUp}" Margin="5"/>
         <vmh:SubscriberMessageView Grid.Column="1" Margin="5" DataContext="{Binding MySubscriberMessageViewModel }"/>
         <vmh:SelectableMessageView Grid.Column="2" Margin="5"/>
+
+        <vmh:TextBoxFileBrowserControl Grid.Row="2" CheckFileExists="False" IsOpenDialog="True" FileDialogTitle="NAchoCheeze"/>
+        <vmh:TextBoxFolderBrowserControl Grid.Row="2" Grid.Column="1" InitialDirectory=""/>
     </Grid>
 </UserControl>
 
