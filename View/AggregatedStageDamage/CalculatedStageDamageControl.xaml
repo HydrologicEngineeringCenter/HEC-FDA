@@ -54,7 +54,7 @@
             </Grid>
 
                 <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 
-                           SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ListView_SizeChanged" >
+                           SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ImpactAreaFrequencyListView_SizeChanged" >
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -100,7 +100,7 @@
 
         <GroupBox Grid.Row="2" Grid.Column="0"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Stretch">
             <ListView  Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" 
-                       ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ListView_SizeChanged_1">
+                       ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ComputedCurves_SizeChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding ID}" />

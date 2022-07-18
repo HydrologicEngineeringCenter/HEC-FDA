@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,23 +29,13 @@ namespace HEC.FDA.View.AggregatedStageDamage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void ImpactAreaFrequencyListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
-            
-            // take into account vertical scrollbar
-            var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth - 5; 
-            var col1 = 0.33;
-            var col2 = 0.33;
-            var col3 = 0.33;
+            double oneThird = .33;
 
-            if (workingWidth > 0)
-            {
-                gView.Columns[0].Width = workingWidth * col1;
-                gView.Columns[1].Width = workingWidth * col2;
-                gView.Columns[2].Width = workingWidth * col3;
-            }
+            ListView listView = sender as ListView;
+            List<double> columnPercents = new List<double>() { oneThird, oneThird, oneThird };
+            StretchListView(listView, 5, columnPercents);
         }
 
         /// <summary>
@@ -52,25 +43,27 @@ namespace HEC.FDA.View.AggregatedStageDamage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListView_SizeChanged_1(object sender, SizeChangedEventArgs e)
+        private void ComputedCurves_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
+            List<double> columnPercents = new List<double>() { .1, .3, .3, .3 };
+            StretchListView(listView, 15, columnPercents);
+        }
 
-            // take into account vertical scrollbar
+
+        private void StretchListView(ListView listView, double scrollBarOffset, List<double> columnPercent)
+        {
+            GridView gView = listView.View as GridView;
             var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth - 15;
-            var col1 = 0.1;
-            var col2 = 0.3;
-            var col3 = 0.3;
-            var col4 = 0.3;
 
             if (workingWidth > 0)
             {
-                gView.Columns[0].Width = workingWidth * col1;
-                gView.Columns[1].Width = workingWidth * col2;
-                gView.Columns[2].Width = workingWidth * col3;
-                gView.Columns[3].Width = workingWidth * col4;
+                for(int i = 0;i<columnPercent.Count;i++)
+                {
+                    gView.Columns[i].Width = workingWidth * columnPercent[i];
+                }
             }
         }
+
     }
 }
