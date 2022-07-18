@@ -45,7 +45,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 dbfreader dbr = new dbfreader(Path);
 
-
                 ImportLog = "";
                 ElementsToImport.Clear();
 
@@ -56,7 +55,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 int numRows = dbr.NumberOfRows;
                 ImportLog += "Reading " + numRows + " rows:\n";
 
-
                 for (int i = 0; i < numRows; i++)
                 {
                     double mean = (double)dbr.GetCell("LOG_MEAN", i);
@@ -64,9 +62,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     double skew = (double)dbr.GetCell("SKEW", i);
                     int por = (int)dbr.GetCell("REC_LENGTH", i);
 
-                    //TODO: waiting for latest bug fix from FDA.Model
-                    string name = "test_" + i; // (string)dbr.GetCell("NM_PROBFU", i);
-                    string description = "test_" + i; //(string)dbr.GetCell("DE_PROBFU", i);
+                    string name = (string)dbr.GetCell("NM_PROBFU", i);
+                    string description = (string)dbr.GetCell("DE_PROBFU", i);
 
                     if (IsRowValid(mean, stdev, skew))
                     {
@@ -76,7 +73,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     else
                     {
                         ImportLog += "Ignoring row with invalid data (-901)\n";
-
                     }
                 }
 
@@ -96,7 +92,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
 
                 ImportLog += "\nImport Completed\n";
-
             }
         }
 
@@ -114,11 +109,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             string lastEditDate = DateTime.Now.ToString("G");
 
-            //string description = "Synthetic Import From FDA 1.4.3";
             List<double> fitToFlows = CreateDefaultFitToFlowValues();
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             GraphicalVM vm = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-
 
             AnalyticalFrequencyElement newFreqElem = new AnalyticalFrequencyElement(name, lastEditDate, description, por, true, true, mean, stDev, skew, fitToFlows, vm, computeComponentVM, id);
             return newFreqElem; 
