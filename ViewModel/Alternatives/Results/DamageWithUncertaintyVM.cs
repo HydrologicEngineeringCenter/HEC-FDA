@@ -5,9 +5,7 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
 using Statistics.Histograms;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
