@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"          
              xmlns:local="clr-namespace:HEC.FDA.View.AlternativeComparisonReport.Results"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -36,52 +35,30 @@
             </DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding EADDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
-                    <TextBlock Text="EAD Reduced" TextWrapping="Wrap" />
+                    <TextBlock Text="Mean EAD Reduced" TextWrapping="Wrap" />
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
-            <DataGridTextColumn Binding="{Binding QuartileDamages}" Width="280">
+            <DataGridTextColumn Binding="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                 <DataGridTextColumn.Header>
-                    <TextBlock Text="Probability EAD reduced exceeds indicated values  0.75                    0.5                   0.25" TextWrapping="Wrap" />
+                    <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">1</Run> <Run>EAD Reduced</Run>
+                    </TextBlock>
                 </DataGridTextColumn.Header>
             </DataGridTextColumn>
-            
-            
-            
-            <!--<DataGridTemplateColumn>
-                <DataGridTemplateColumn.HeaderTemplate >
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Probability EAD reduced exceeds indicated values" TextWrapping="Wrap" TextAlignment="Center"  />
-                            <TextBlock  Grid.Row="1" Grid.Column="0" Text="0.75" HorizontalAlignment="Center" />
-                            <TextBlock  Grid.Row="1" Grid.Column="1" Text="0.5" HorizontalAlignment="Center"/>
-                            <TextBlock  Grid.Row="1" Grid.Column="2" Text="0.25" HorizontalAlignment="Center"/>
-                        </Grid>
-                    </DataTemplate>
-                </DataGridTemplateColumn.HeaderTemplate>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Grid.Row="1" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Grid.Row="1" HorizontalAlignment="Center" />
-                        </Grid>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>-->
+            <DataGridTextColumn Binding="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">2</Run> <Run>EAD Reduced</Run>
+                    </TextBlock>
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">3</Run> <Run>EAD Reduced</Run>
+                    </TextBlock>
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
         </DataGrid.Columns>
     </twp:FdaDataGrid>
 

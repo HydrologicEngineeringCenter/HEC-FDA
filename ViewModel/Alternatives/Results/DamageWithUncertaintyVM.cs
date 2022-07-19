@@ -5,7 +5,9 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using metrics;
 using Statistics.Histograms;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
@@ -29,12 +31,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = "Probability that damage exceeds indicated value";
+                ProbabilityExceedsValueLabel = "Quartile of EAD Distribution";
             }
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
+                ProbabilityExceedsValueLabel = "Quartile of AAEQ Damage Distribution";
             }
             LoadHistogramData(results, damageMeasureYear);
             LoadData(results, damageMeasureYear);
@@ -58,8 +60,17 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
-            ProbabilityExceedsValueLabel = "Probability that damage reduced exceeds indicated value";
-            RateAndPeriodVisible = !double.IsNaN(discountRate);
+
+            if (double.IsNaN(discountRate))
+            {
+                RateAndPeriodVisible = false;
+                ProbabilityExceedsValueLabel = "Quartile of EAD Reduced Distribution";
+            }
+            else
+            {
+                RateAndPeriodVisible = true;
+                ProbabilityExceedsValueLabel = "Quartile of AAEQ Damage Reduced Distribution";
+            }
 
             LoadHistogramData(altCompReport, altID, damageMeasureYear);
 
@@ -83,11 +94,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         private void LoadAAEQData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
         {
             List<double> xVals = new List<double>() { .75, .5, .25 };
+            List<string> xValNames = new List<string>() { "First", "Second", "Third" };
             List<double> yVals = loadYData(xVals, altResults, altID, damageMeasureYear);
 
-            for (int i = 0; i < xVals.Count; i++)
+            for (int i = 0; i < xValNames.Count; i++)
             {
-                Rows.Add(new EadRowItem(xVals[i], yVals[i]));
+                Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
             }
         }
 
@@ -109,6 +121,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
 
             double[] binValues = histogram.BinCounts.Select(binCount => (double)binCount/histogram.SampleSize).ToArray();
+
             _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
             HistogramColor.SetHistogramColor(_data);
             ChartViewModel.LineData.Add(_data);
@@ -143,11 +156,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         private void LoadData(AlternativeResults scenarioResults, DamageMeasureYear damageMeasureYear)
         {
             List<double> xVals = new List<double>() { .75, .5, .25 };
+            List<string> xValNames = new List<string>() { "First", "Second", "Third" };
             List<double> yVals = loadYData(xVals, scenarioResults, damageMeasureYear);
 
-            for (int i = 0; i < xVals.Count; i++)
+            for (int i = 0; i < xValNames.Count; i++)
             {
-                Rows.Add(new EadRowItem(xVals[i], yVals[i]));
+                Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
             }
         }
 
