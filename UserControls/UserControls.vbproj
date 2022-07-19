@@ -49,8 +49,17 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HEC.MVVMFramework.Base.1.0.0-alpha-2022.7.8.2331\lib\netstandard2.0\Base.dll</HintPath>
+    </Reference>
+    <Reference Include="fda-model, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\USACE.HEC.FDA.Model.1.1.0-alpha-2022-07-15-2223\lib\net48\fda-model.dll</HintPath>
+    </Reference>
+    <Reference Include="Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HEC.MVVMFramework.Model.1.0.0-alpha-2022.7.8.2331\lib\netstandard2.0\Model.dll</HintPath>
+    </Reference>
     <Reference Include="Statistics, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\USACE.HEC.FDA.Statistics.1.1.0-alpha-2022-06-24-0106\lib\net48\Statistics.dll</HintPath>
+      <HintPath>..\packages\USACE.HEC.FDA.Statistics.1.1.0-alpha-2022-07-15-2223\lib\net48\Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows" />

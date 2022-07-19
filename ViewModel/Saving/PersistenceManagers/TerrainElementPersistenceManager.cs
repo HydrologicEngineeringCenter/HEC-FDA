@@ -63,6 +63,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             Directory.CreateDirectory(newDirectory);
             
             bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
+            bool isHDF = Path.GetExtension(element.FileName).Equals(".hdf");
 
             if(isVRT)
             {
@@ -77,6 +78,17 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     {
                         await Task.Run(() => File.Copy(path, newDirectory + "\\"+ Path.GetFileName(path)));
                     }
+                }
+            }
+            else if(isHDF)
+            {
+                //copy all files at this level
+                string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
+
+                string[] paths = Directory.GetFiles(originalDirName);
+                foreach (string path in paths)
+                {
+                    await Task.Run(() => File.Copy(path, newDirectory + "\\" + Path.GetFileName(path)));
                 }
             }
             else
