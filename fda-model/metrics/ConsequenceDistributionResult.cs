@@ -110,7 +110,7 @@ namespace metrics
         #endregion
 
         #region Methods
-        internal void AddConsequenceRealization(double damageRealization, int iteration)
+        internal void AddConsequenceRealization(double damageRealization, Int64 iteration)
         {
             _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
         }

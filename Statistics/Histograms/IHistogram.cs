@@ -8,15 +8,15 @@ namespace Statistics.Histograms
         #region Properties 
         bool IsConverged { get; }
         bool HistogramIsZeroValued { get; set; }
-        int ConvergedIteration { get; }
+        Int64 ConvergedIteration { get; }
         double BinWidth { get; }
-        Int32[] BinCounts { get; }
+        Int64[] BinCounts { get; }
         double Min { get;  }
         double Max { get;  }
         double Mean { get; }
         double Variance { get; }
         double StandardDeviation { get; }
-        int SampleSize { get; }
+        Int64 SampleSize { get; }
         ConvergenceCriteria ConvergenceCriteria { get; }
         string MyType { get; }
 
@@ -27,13 +27,13 @@ namespace Statistics.Histograms
         double PDF(double x);
         double CDF(double x);
         double InverseCDF(double p);
-        void AddObservationToHistogram(double observation, int iterationIndex);
+        void AddObservationToHistogram(double observation, Int64 iterationIndex);
         void ForceDeQueue();
         XElement WriteToXML();
         bool IsHistogramConverged(double upperq, double lowerq);
-        int EstimateIterationsRemaining(double upperq, double lowerq);
+        Int64 EstimateIterationsRemaining(double upperq, double lowerq);
         bool Equals(IHistogram histogramForComparison);
-        int FindBinCount(double x, bool cumulative = true);
+        Int64 FindBinCount(double x, bool cumulative = true);
         #endregion
     }
 }
