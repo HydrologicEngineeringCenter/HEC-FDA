@@ -6,7 +6,7 @@ namespace HEC.MVVMFramework.View.UserControls
 {
     public partial class TextBoxFileBrowserControl : UserControl
     {
-        public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string), typeof(TextBoxFileBrowserControl), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(PathChangedCallBack)));
+        public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string), typeof(TextBoxFileBrowserControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(PathChangedCallBack)));
         public static readonly DependencyProperty CheckFileExistsProperty = DependencyProperty.Register(nameof(CheckFileExists), typeof(bool), typeof(TextBoxFileBrowserControl), new PropertyMetadata(false));
         public static readonly DependencyProperty FilterProperty = DependencyProperty.Register(nameof(Filter), typeof(string), typeof(TextBoxFileBrowserControl), new PropertyMetadata("Text Files|*.txt"));
         public static readonly DependencyProperty IsOpenDialogProperty = DependencyProperty.Register(nameof(IsOpenDialog), typeof(bool), typeof(TextBoxFileBrowserControl), new PropertyMetadata(true));
