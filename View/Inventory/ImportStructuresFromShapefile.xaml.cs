@@ -14,27 +14,7 @@ namespace HEC.FDA.View.Inventory
         public ImportStructuresFromShapefile()
         {
             InitializeComponent();
-        }
-
-        //Todo: Ideally this code wouldn't be necessary. The path selection control should be able to bind to the view model
-        //correctly. That is more work than i want to deal with so i am leaving this code here for now. - cody 12/8/21
-        private void TextBoxFileBrowser_SelectionMade(string path, string filename)
-        {
-            ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
-            if (vm != null)
-            {
-                vm.SelectedPath = path;
-            }
-
-            if (!File.Exists(Path.ChangeExtension(path, "dbf")))
-            {
-                NextButton.IsEnabled = false;
-                return;
-            }
-            NextButton.IsEnabled = true;
-            NextButton.Content = "Next→";
-            PreviousButton.Visibility = Visibility.Hidden;
-        }
+        }      
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {

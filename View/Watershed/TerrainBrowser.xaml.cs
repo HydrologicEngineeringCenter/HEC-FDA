@@ -13,12 +13,5 @@ namespace HEC.FDA.View.Watershed
             InitializeComponent();
         }
 
-        private void cmb_Path_CmbSelectionMade(string fullpath, string filename)
-        {
-            if (DataContext is TerrainBrowserVM vm)
-            {
-                vm.FileSelected(fullpath);
-            }
-        }
     }
 }

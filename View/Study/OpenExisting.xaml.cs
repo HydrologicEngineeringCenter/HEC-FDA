@@ -11,13 +11,6 @@ namespace HEC.FDA.View.Study
         public OpenExisting()
         {
             InitializeComponent();
-        }
-
-        private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
-        {
-            ExistingStudyVM vm = (ExistingStudyVM)this.DataContext;
-            vm.Path = fullpath;
-            txtbox.Text = fullpath;
-        }
+        }   
     }
 }
