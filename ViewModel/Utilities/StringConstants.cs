@@ -185,7 +185,6 @@
 
         #endregion
 
-
         public const string OCCTYPE_PLOT_TITLE = "Depth-Percent Damage";
         public const string OCCTYPE_DEPTH = "Depth";
         public const string OCCTYPE_PERCENT_DAMAGE = "Percent Damage";
@@ -197,6 +196,13 @@
 
         public const string DEFAULT_UNIT_FORMAT = "N2";
         public const string DETAILED_DECIMAL_FORMAT = "N4";
+
+        public const string ALTERNATIVE_EAD_LABEL = "Quartile of EAD Distribution";
+        public const string ALTERNATIVE_AAEQ_LABEL = "Quartile of AAEQ Damage Distribution";
+
+        public const string ALTERNATIVE_COMP_REPORT_EAD_LABEL = "Quartile of EAD Reduced Distribution";
+        public const string ALTERNATIVE_COMP_REPORT_AAEQ_LABEL = "Quartile of AAEQ Damage Reduced Distribution";
+
 
         public static string ImportFromOldFda(string elementName)
         {

@@ -82,14 +82,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 switch(dmy)
                 {
+                    
                     case DamageMeasureYear.Base:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanWithProjectBaseYearEAD(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanBaseYearEADReduced(altID, damageCategory: damCat)));
                         break;
                     case DamageMeasureYear.Future:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanWithProjectFutureYearEAD(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanFutureYearEADReduced(altID, damageCategory: damCat)));
                         break;
                     case DamageMeasureYear.AAEQ:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanWithProjectAAEQDamage(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanAAEQDamageReduced(altID, damageCategory: damCat)));
                         break;
                 }
             }

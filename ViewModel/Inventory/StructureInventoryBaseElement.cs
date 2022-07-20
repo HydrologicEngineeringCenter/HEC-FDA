@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public static string OccupancyTypeGroup = "OccTypeGroup";
         public static string GroundElevationField = "GroundElevation";
         public static string FirstFloorElevationField = "FirstFloorElevation";
-        public static string YearField = "Year";
         public static string ModuleField = "Module";
         public static string fidField = "fid";
         public static string geomField = "geom";
