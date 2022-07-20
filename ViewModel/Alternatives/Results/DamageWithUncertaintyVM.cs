@@ -29,12 +29,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = "Quartile of EAD Distribution";
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_EAD_LABEL;
             }
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = "Quartile of AAEQ Damage Distribution";
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_AAEQ_LABEL;
             }
             LoadHistogramData(results, damageMeasureYear);
             LoadData(results, damageMeasureYear);
@@ -62,12 +62,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = "Quartile of EAD Reduced Distribution";
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_EAD_LABEL;
             }
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = "Quartile of AAEQ Damage Reduced Distribution";
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_AAEQ_LABEL;
             }
 
             LoadHistogramData(altCompReport, altID, damageMeasureYear);
