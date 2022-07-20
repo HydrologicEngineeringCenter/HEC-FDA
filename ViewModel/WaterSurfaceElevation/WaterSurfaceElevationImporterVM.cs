@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public string SelectedPath
         {
             get { return _SelectedPath; }
-            set { _SelectedPath = value; NotifyPropertyChanged(); }
+            set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
         public bool IsDepthGridChecked
@@ -185,7 +185,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
 
         public void FileSelected(string fullpath)
         {
-            if (fullpath != null && !fullpath.Equals(SelectedPath) && IsCreatingNewElement)
+            if (fullpath != null && IsCreatingNewElement)
             {
                 FdaValidationResult importResult = new FdaValidationResult();
                 ListOfRows.Clear();

@@ -15,14 +15,14 @@ namespace HEC.FDA.View.WaterSurfaceElevation
             InitializeComponent();
         }
 
-        private void TxtDirectory_SelectionMade(string fullpath)
-        {
-            if (DataContext is WaterSurfaceElevationImporterVM vm)
-            {
-                vm.FileSelected(fullpath);
-                vm.SelectedPath = fullpath;
-            }
-        }
+        //private void TxtDirectory_SelectionMade(string fullpath)
+        //{
+        //    if (DataContext is WaterSurfaceElevationImporterVM vm)
+        //    {
+        //        vm.FileSelected(fullpath);
+        //        vm.SelectedPath = fullpath;
+        //    }
+        //}
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

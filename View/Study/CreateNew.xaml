@@ -5,13 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -21,7 +22,7 @@
         <Label Content="Study Name" Grid.Row="0" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
         <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=StudyName, ValidatesOnDataErrors=True}" />
         <Label Content="Study Path" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
-        <CA:TextBoxFolderBrowser Grid.Row="1" Grid.Column="1" Margin="5" FolderPath="{Binding Path, ValidatesOnDataErrors=True}" SelectionMade="TextBoxFolderBrowser_SelectionMade" />
+        <frameworkControls:TextBoxFolderBrowserControl Grid.Row="1" Grid.Column="1" Margin="5" Path="{Binding Path, ValidatesOnDataErrors=True}"  />
         <Label Grid.Row="2" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
         <UserControls:TextBoxDescription Text="{Binding Path=Description}" Grid.Row="2" Grid.Column="1" Margin="5"/>
         <Utils:OKCloseControl Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom"/>

@@ -15,13 +15,13 @@ namespace HEC.FDA.View.Study
             InitializeComponent();        
         }
 
-        private void TextBoxFolderBrowser_SelectionMade(string fullpath)
-        {
-            if(DataContext is ImportStudyFromFDA1VM vm)
-            {
-                vm.FolderPath = fullpath;
-            }
-        }
+        //private void TextBoxFolderBrowser_SelectionMade(string fullpath)
+        //{
+        //    if(DataContext is ImportStudyFromFDA1VM vm)
+        //    {
+        //        vm.FolderPath = fullpath;
+        //    }
+        //}
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
