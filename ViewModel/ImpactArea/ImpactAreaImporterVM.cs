@@ -73,14 +73,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
             if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
             {
                 MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
             }
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
-            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+            else
+            {
+                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
+                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-            List<string> uniqueNameList = dtv.ColumnNames.ToList();
+                List<string> uniqueNameList = dtv.ColumnNames.ToList();
 
-            UniqueFields = uniqueNameList;
+                UniqueFields = uniqueNameList;
+            }
         }
 
         public void LoadTheRows()
