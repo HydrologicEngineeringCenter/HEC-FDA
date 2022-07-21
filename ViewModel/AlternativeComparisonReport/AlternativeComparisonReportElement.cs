@@ -292,10 +292,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 string withProjName = GetAlternativeElementFromID(altID).Name;
 
-                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);
+                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);               
 
                 double aaeqReduced = results.MeanAAEQDamageReduced(altID);
-
 
                 double point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID);
                 double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID);
