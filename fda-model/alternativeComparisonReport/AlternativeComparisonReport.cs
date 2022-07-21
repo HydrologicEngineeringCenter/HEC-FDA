@@ -116,6 +116,11 @@ namespace alternativeComparisonReport
                         _ExpectedIterations = _completedIterations + iterations;
                         progressChunks = _ExpectedIterations / 100;
                     }
+                    else
+                    {
+                        iterations = 0;
+                        break;
+                    }
                 }
                 damageReducedResult.ConsequenceHistogram.ForceDeQueue();
             }
