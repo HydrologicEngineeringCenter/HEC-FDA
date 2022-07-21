@@ -77,10 +77,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = altCompReport.MeanWithProjectBaseYearEAD(altID);
+                    Mean = altCompReport.MeanBaseYearEADReduced(altID);
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = altCompReport.MeanWithProjectFutureYearEAD(altID);
+                    Mean = altCompReport.MeanFutureYearEADReduced(altID);
                     break;
                 case DamageMeasureYear.AAEQ:
                     Mean = altCompReport.MeanAAEQDamageReduced(altID);
