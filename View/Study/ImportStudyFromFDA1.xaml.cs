@@ -1,7 +1,6 @@
-﻿using System.Windows;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System.Windows;
 using System.Windows.Controls;
-using HEC.FDA.ViewModel.Study;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.View.Study
 {

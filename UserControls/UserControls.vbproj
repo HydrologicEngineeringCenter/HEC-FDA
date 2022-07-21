@@ -52,9 +52,6 @@
     <Reference Include="Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HEC.MVVMFramework.Base.1.0.0-alpha-2022.7.20.1519\lib\netstandard2.0\Base.dll</HintPath>
     </Reference>
-    <Reference Include="fda-model, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\USACE.HEC.FDA.Model.1.1.0-alpha-2022-07-19-1451\lib\net48\fda-model.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
