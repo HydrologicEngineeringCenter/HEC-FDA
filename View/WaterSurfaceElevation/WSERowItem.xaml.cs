@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.WaterSurfaceElevation;
+﻿using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Windows.Controls;
 
 namespace HEC.FDA.View.WaterSurfaceElevation

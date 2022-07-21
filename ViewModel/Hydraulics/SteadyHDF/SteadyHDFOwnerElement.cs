@@ -1,6 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 {
     public class SteadyHDFOwnerElement: ParentElement
     {

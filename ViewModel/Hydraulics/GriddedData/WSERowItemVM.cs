@@ -1,4 +1,4 @@
-﻿namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+﻿namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     public class WSERowItemVM:BaseViewModel
     {

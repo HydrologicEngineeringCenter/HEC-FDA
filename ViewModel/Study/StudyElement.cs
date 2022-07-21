@@ -8,7 +8,7 @@ using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

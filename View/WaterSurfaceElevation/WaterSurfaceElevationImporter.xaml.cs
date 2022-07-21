@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.WaterSurfaceElevation;
+﻿using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,7 +18,7 @@ namespace HEC.FDA.View.WaterSurfaceElevation
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is WaterSurfaceElevationImporterVM vm)
+            if (DataContext is GriddedImporterVM vm)
             {
                 vm.HasChanges = false;
             }

@@ -1,8 +1,9 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics
 {
     public class UnsteadyHDFOwnerElement : ParentElement
     {
@@ -45,7 +46,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
 
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
+            GriddedImporterVM vm = new GriddedImporterVM(actionManager);
 
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);

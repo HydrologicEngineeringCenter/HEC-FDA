@@ -68,7 +68,7 @@
              xmlns:UtilitiesVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              
              xmlns:WaterSurfaceElevationsView="clr-namespace:HEC.FDA.View.WaterSurfaceElevation"
-             xmlns:WaterSurfaceElevationsVM="clr-namespace:HEC.FDA.ViewModel.WaterSurfaceElevation;assembly=HEC.FDA.ViewModel"
+             xmlns:GriddedHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.GriddedData;assembly=HEC.FDA.ViewModel"
                           
              StartupUri="ViewWindow.xaml">
     <Application.Resources>
@@ -360,7 +360,7 @@
         </DataTemplate>
 
         <!--Water Surface Elevations region-->
-        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
+        <DataTemplate DataType="{x:Type GriddedHydraulicsVM:GriddedImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
     </Application.Resources>

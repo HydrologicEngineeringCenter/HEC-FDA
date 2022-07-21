@@ -4,10 +4,11 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {

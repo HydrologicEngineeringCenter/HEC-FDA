@@ -7,7 +7,7 @@ using HEC.FDA.ViewModel.Utilities;
 using LifeSimGIS;
 using OpenGLMapping;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 6 / 2017 9:47:42 AM)]
     public class WaterSurfaceElevationElement : ChildElement
@@ -94,7 +94,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
 
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, actionManager);
+            GriddedImporterVM vm = new GriddedImporterVM(this, actionManager);
 
             string header = "Edit Hydraulics -" + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElev" + Name);

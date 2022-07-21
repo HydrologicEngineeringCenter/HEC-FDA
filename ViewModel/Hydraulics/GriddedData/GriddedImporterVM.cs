@@ -7,10 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class WaterSurfaceElevationImporterVM:BaseEditorVM
+    public class GriddedImporterVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
+        public GriddedImporterVM(EditorActionManager actionManager):base(actionManager)
         {
         }
         /// <summary>
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        public GriddedImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             _ID = elem.ID;

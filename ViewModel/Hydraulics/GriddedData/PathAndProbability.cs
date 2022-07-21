@@ -1,4 +1,4 @@
-﻿namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+﻿namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 11 / 2017 8:48:18 AM)]
     public class PathAndProbability

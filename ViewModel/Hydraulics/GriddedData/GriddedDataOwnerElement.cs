@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     public class GriddedDataOwnerElement : ParentElement
     {
@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
 
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
+            GriddedImporterVM vm = new GriddedImporterVM(actionManager);
 
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
