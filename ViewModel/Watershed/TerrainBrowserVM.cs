@@ -154,12 +154,6 @@ namespace HEC.FDA.ViewModel.Watershed
         }
 
         #endregion
-        #region Voids
-        public void FileSelected(string filePath)
-        {
-            TerrainPath = filePath;
-        }
 
-        #endregion
     }
 }

@@ -48,10 +48,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
-    </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
       <Private>true</Private>
@@ -313,7 +309,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.7.2056" />
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.20.1655" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="PresentationFramework" Version="4.6.0" />

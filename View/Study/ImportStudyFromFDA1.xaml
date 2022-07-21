@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Study"
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -20,10 +20,10 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -35,10 +35,10 @@
             <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=StudyName, ValidatesOnDataErrors=True}" />
 
             <Label Content="HEC-FDA 1.4.3 Import File" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
-            <CA:TextBoxFileBrowser Name="txtbox" Grid.Row="1" Grid.Column="1" Path="{Binding Path}" Height="22" Margin="5" Filter="txt (*.txt) |*.txt|All files (*.*) |*.*"  SelectionMade="TextBoxFileBrowser_SelectionMade" />
+            <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Grid.Row="1" Grid.Column="1" Path="{Binding Path}"  Margin="5" Filter="txt (*.txt) |*.txt|All files (*.*) |*.*"   />
 
             <Label Content="Study Path" Grid.Row="2" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
-            <CA:TextBoxFolderBrowser Grid.Row="2" Grid.Column="1" Margin="5" FolderPath="{Binding FolderPath, ValidatesOnDataErrors=True}" SelectionMade="TextBoxFolderBrowser_SelectionMade" />
+            <frameworkControls:TextBoxFolderBrowserControl Title="Select Folder"  Grid.Row="2" Grid.Column="1" Margin="5" Path="{Binding FolderPath, ValidatesOnDataErrors=True}"  />
 
             <Label Grid.Row="3" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
             <UserControls:TextBoxDescription Grid.Row="3" Grid.Column="1" Text="{Binding Description}" Margin="5"/>
