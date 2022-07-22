@@ -45,7 +45,6 @@ namespace HEC.MVVMFramework.View.UserControls
         {
             TextBoxFileBrowserControl owner = sender as TextBoxFileBrowserControl;
             string p = e.NewValue.ToString();
-            owner.Path = p;
             owner.TextBox.Text = p;
         }
 

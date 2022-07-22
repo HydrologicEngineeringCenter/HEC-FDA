@@ -35,7 +35,6 @@ namespace HEC.MVVMFramework.View.UserControls
         {
             TextBoxFolderBrowserControl owner = sender as TextBoxFolderBrowserControl;
             string p = e.NewValue.ToString();
-            owner.Path = p;
             owner.TextBox.Text = p;
         }
         private void OpenBrowser(object sender, RoutedEventArgs e)
