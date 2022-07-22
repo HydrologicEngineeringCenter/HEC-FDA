@@ -9,15 +9,16 @@ namespace fda_hydro.hydraulics
         public double Probability { get; set; }
         public string FilePath { get; set; }
         public string TerrainPath { get; set; }
-        public HydraulicDataSource dataSourceFormat { get; set; }
+        public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, string terrainFile, HydraulicDataSource dataSource)
+        public HydraulicProfile(double probability, string filepath, string terrainFile, HydraulicDataSource dataSource, string profileName)
         {
             Probability = probability;
             FilePath = filepath;
             TerrainPath = terrainFile;
-            dataSourceFormat = dataSource;
+            DataSourceFormat = dataSource;
+            ProfileName = profileName;
         }
         public float[] GetDepths(PointMs pts)
         {
@@ -28,7 +29,7 @@ namespace fda_hydro.hydraulics
             float[] terrainElevs = terrain.ComputePointElevations(pts);
             // Construct a result from the given filename.
 
-            if (dataSourceFormat == HydraulicDataSource.UnsteadyHDF || dataSourceFormat == HydraulicDataSource.SteadyHDF)
+            if (DataSourceFormat == HydraulicDataSource.UnsteadyHDF || DataSourceFormat == HydraulicDataSource.SteadyHDF)
             {
                 return GetDepthsFromHDF(pts, terrainElevs);
             }
@@ -58,7 +59,7 @@ namespace fda_hydro.hydraulics
             float[] depthVals = null;
 
             int profileIndex;
-            if (dataSourceFormat == HydraulicDataSource.UnsteadyHDF)
+            if (DataSourceFormat == HydraulicDataSource.UnsteadyHDF)
             {
                 profileIndex = RASResultsMap.MaxProfileIndex;
             }
