@@ -103,13 +103,13 @@ namespace alternatives
         {
 
 
-            ThreadsafeInlineHistogram aaeqHistogram;
+            Histogram aaeqHistogram;//ThreadsafeInlineHistogram aaeqHistogram;
             ConsequenceDistributionResult aaeqResult;
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new Histogram(20);// ThreadsafeInlineHistogram(convergenceCriteria);
 
                 aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, aaeqHistogram, mlfYearDamageResult.RegionID);
 
@@ -117,7 +117,7 @@ namespace alternatives
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new Histogram(20);//ThreadsafeInlineHistogram(convergenceCriteria);
                 aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
             }
             int masterseed = 0;
@@ -142,15 +142,16 @@ namespace alternatives
 
             while (!aaeqResult.ConsequenceHistogram.IsConverged)
             {
-                Parallel.For(0, iterations, i =>
+                //Parallel.For(0, iterations, i =>
+                for (int i = 0; i < iterations; i++)
                 {
                     double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     aaeqResult.AddConsequenceRealization(aaeqDamage, i);
-                    Interlocked.Increment(ref _completedIterations);
+                    //Interlocked.Increment(ref _completedIterations);
                 }
-                );
+                //);
                 if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
                 {
                     iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
