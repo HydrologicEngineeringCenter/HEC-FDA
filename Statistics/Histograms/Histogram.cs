@@ -180,8 +180,9 @@ namespace Statistics.Histograms
             _BinCounts = new Int64[numberOfBins];
             _ConvergenceCriteria = convergenceCriteria;
         }
-        public Histogram(double[] data, ConvergenceCriteria convergenceCriteria)
+        public Histogram(List<double> dataList, ConvergenceCriteria convergenceCriteria)
         {
+            double[] data = dataList.ToArray();
             _ConvergenceCriteria = convergenceCriteria;
             Min = data.Min();
             Max = data.Max();
