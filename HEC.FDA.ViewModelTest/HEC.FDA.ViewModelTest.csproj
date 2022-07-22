@@ -4,13 +4,14 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>C:\Temp\FDA2.0</OutputPath>
+		<OutputPath>..\Build\FDA2.0</OutputPath>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.7.2056" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Include="RASMapperLibDistro6.2" Version="0.0.1" />
 		<PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-15-2223" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -26,6 +27,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Importer\Importer.csproj" />
 		<ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
 </Project>
