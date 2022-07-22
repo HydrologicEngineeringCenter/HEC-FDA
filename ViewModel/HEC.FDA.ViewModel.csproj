@@ -98,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
-    <PackageReference Include="GDAL-HEC" Version="0.0.1" />
     <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.7.2056" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
