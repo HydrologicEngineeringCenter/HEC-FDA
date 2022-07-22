@@ -11,7 +11,6 @@ namespace alternatives
 {
     public class Alternative
     {
-        private const int _iterations = 50000;
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -56,9 +55,9 @@ namespace alternatives
                     mlfYearDamageResultsList.Remove(mlfYearDamageResult);
                     alternativeResults.AddConsequenceResults(aaeqResult);
                 }
-                if(mlfYearDamageResultsList.Count > 0)
+                if (mlfYearDamageResultsList.Count > 0)
                 {
-                    foreach(ConsequenceDistributionResult mlfYearDamageResult in mlfYearDamageResultsList)
+                    foreach (ConsequenceDistributionResult mlfYearDamageResult in mlfYearDamageResultsList)
                     {
                         ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, mlfYearDamageResult.RegionID);
                         ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
@@ -66,7 +65,7 @@ namespace alternatives
                     }
                 }
             }
-            if(futureYearResultsList.Count > 0)
+            if (futureYearResultsList.Count > 0)
             {
 
                 foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList)
@@ -82,7 +81,7 @@ namespace alternatives
                     foreach (ConsequenceDistributionResult futureYearDamageResult in futureYearResults.ConsequenceResults.ConsequenceResultList)
                     {
                         ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(futureYearDamageResult.DamageCategory, futureYearDamageResult.AssetCategory, futureYearDamageResult.RegionID);
-                        ConsequenceDistributionResult aaeqResult = IterateOnAAEQ( baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
+                        ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
                         baseYearDamageResultsList.Remove(baseYearDamageResult);
                         alternativeResults.AddConsequenceResults(aaeqResult);
                     }
@@ -91,7 +90,7 @@ namespace alternatives
                         foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearDamageResultsList)
                         {
                             ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-                            ConsequenceDistributionResult aaeqResult = IterateOnAAEQ( baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
+                            ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
                             alternativeResults.AddConsequenceResults(aaeqResult);
                         }
                     }
@@ -104,19 +103,21 @@ namespace alternatives
         {
 
 
-            ThreadsafeInlineHistogram aaeqHistogram;
+            Histogram aaeqHistogram;//ThreadsafeInlineHistogram aaeqHistogram;
             ConsequenceDistributionResult aaeqResult;
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new Histogram(20);// ThreadsafeInlineHistogram(convergenceCriteria);
+
                 aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, aaeqHistogram, mlfYearDamageResult.RegionID);
 
-            } else
+            }
+            else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new Histogram(20);//ThreadsafeInlineHistogram(convergenceCriteria);
                 aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
             }
             int masterseed = 0;
@@ -124,9 +125,9 @@ namespace alternatives
             {
                 masterseed = randomProvider.Seed;
             }
-            int progressChunks = 1;
-            int _completedIterations = 0;
-            int _ExpectedIterations = convergenceCriteria.MaxIterations;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -137,25 +138,31 @@ namespace alternatives
             {
                 seeds[i] = masterSeedList.Next();
             }
-            int iterations = convergenceCriteria.MinIterations;
+            Int64 iterations = convergenceCriteria.MinIterations;
 
             while (!aaeqResult.ConsequenceHistogram.IsConverged)
             {
-                Parallel.For(0, iterations, i =>
+                //Parallel.For(0, iterations, i =>
+                for (int i = 0; i < iterations; i++)
                 {
                     double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     aaeqResult.AddConsequenceRealization(aaeqDamage, i);
-                    Interlocked.Increment(ref _completedIterations);
-                    if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95,.05))
-                    {
-                        iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
-                        _ExpectedIterations = _completedIterations + iterations;
-                        progressChunks = _ExpectedIterations / 100;
-                    }
+                    //Interlocked.Increment(ref _completedIterations);
                 }
-                );
+                //);
+                if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
+                {
+                    iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
+                }
+                else
+                {
+                    iterations = 0;
+                    break;
+                }
             }
             aaeqResult.ConsequenceHistogram.ForceDeQueue();
             return aaeqResult;
@@ -163,7 +170,8 @@ namespace alternatives
 
         //TODO: these functions should be private, but currently have unit tests 
         //so these will remain public until the unit tests are re-written on the above public method
-        public static double ComputeEEAD(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate){
+        public static double ComputeEEAD(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate)
+        {
 
             //probably instantiate a rng to seed each impact area differently
 
@@ -183,9 +191,9 @@ namespace alternatives
             int periodOfAnalysis = interpolatedEADs.Length;
             double[] presentValueInterestFactor = new double[periodOfAnalysis];
             double sumPresentValueEAD = 0;
-            for (int i=0; i<periodOfAnalysis; i++)
+            for (int i = 0; i < periodOfAnalysis; i++)
             {
-                presentValueInterestFactor[i] = 1 / Math.Pow(1 + discountRate, i+1);
+                presentValueInterestFactor[i] = 1 / Math.Pow(1 + discountRate, i + 1);
                 sumPresentValueEAD += interpolatedEADs[i] * presentValueInterestFactor[i];
             }
             return sumPresentValueEAD;
@@ -194,11 +202,11 @@ namespace alternatives
         {
             double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear);
             double[] interpolatedEADs = new double[periodOfAnalysis];
-            for (int i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
+            for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseYearEAD + i*(1 / yearsBetweenBaseAndMLFInclusive) * (mostLikelyFutureEAD - baseYearEAD);
+                interpolatedEADs[i] = baseYearEAD + i * (1 / yearsBetweenBaseAndMLFInclusive) * (mostLikelyFutureEAD - baseYearEAD);
             }
-            for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i<periodOfAnalysis; i++)
+            for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i < periodOfAnalysis; i++)
             {
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }

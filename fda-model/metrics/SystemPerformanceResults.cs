@@ -138,12 +138,12 @@ namespace metrics
         {
             MessageReport?.Invoke(sender, e);
         }
-        public void AddAEPForAssurance(double aep, int iteration)
+        public void AddAEPForAssurance(double aep, Int64 iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
             GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
         }
-        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
+        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, Int64 iteration)
         {
             GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.AddObservationToHistogram(stage, iteration);
         }
@@ -176,11 +176,11 @@ namespace metrics
             bool assuranceIsConverged = assuranceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return assuranceIsConverged;
         }
-        public int AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        public Int64 AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
             ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
-            int iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            Int64 iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return iterationsRemaining;
         }
         public double AssuranceOfEvent(double standardNonExceedanceProbability)

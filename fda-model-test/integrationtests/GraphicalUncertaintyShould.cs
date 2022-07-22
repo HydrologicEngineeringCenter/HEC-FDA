@@ -54,9 +54,9 @@ namespace fda_model_test.integrationtests
             double binWidth = (int)(range / quantityOfBins);
             ThreadsafeInlineHistogram graphicalThreadsafeInlineHistogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
             int masterseed = 1234;
-            int progressChunks = 1;
-            int _completedIterations = 0;
-            int _ExpectedIterations = convergenceCriteria.MaxIterations;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -67,7 +67,7 @@ namespace fda_model_test.integrationtests
             {
                 seeds[i] = masterSeedList.Next();
             }
-            int iterations = convergenceCriteria.MinIterations;
+            Int64 iterations = convergenceCriteria.MinIterations;
             double lowerQuantile = 0.025;
             double upperQuantile = 0.975;
             
