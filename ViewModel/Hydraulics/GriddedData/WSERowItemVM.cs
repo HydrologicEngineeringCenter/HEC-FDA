@@ -7,8 +7,8 @@
         public string Description { get; set; }
         public int NumberOfElevations { get; set; }
         public bool IsUsingWSE { get; set; }
-        public WaterSurfaceElevationElement Element { get; set; }
-        public WSERowItemVM(WaterSurfaceElevationElement element)
+        public HydraulicElement Element { get; set; }
+        public WSERowItemVM(HydraulicElement element)
         {
             IsSelected = true;
             Name = element.Name;

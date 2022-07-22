@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Editors
                 StudyCache.ImpactAreaAdded += SiblingWasAdded;
                 StudyCache.ImpactAreaUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(WaterSurfaceElevationElement))
+            if (childElementType == typeof(HydraulicElement))
             {
                 StudyCache.WaterSurfaceElevationAdded += SiblingWasAdded;
                 StudyCache.WaterSurfaceElevationUpdated += SiblingNameChanged;

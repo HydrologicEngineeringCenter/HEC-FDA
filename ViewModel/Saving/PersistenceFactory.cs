@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new ImpactAreaPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(WaterSurfaceElevationElement))
+            else if (element.GetType() == typeof(HydraulicElement))
             {
                 manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }

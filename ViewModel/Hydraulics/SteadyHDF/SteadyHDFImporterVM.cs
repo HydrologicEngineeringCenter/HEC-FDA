@@ -1,13 +1,16 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -40,13 +43,20 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         #region Constructors
         public SteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
+            //string gdalPath = "GDAL\\";
+            //if (!Directory.Exists(gdalPath))
+            //{
+            //    Console.WriteLine("GDAL directory not found: " + gdalPath);
+            //    return;
+            //}
+            //GDALSetup.InitializeMultiplatform(gdalPath);
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public SteadyHDFImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        public SteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             _ID = elem.ID;
@@ -110,10 +120,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (ListOfRows.Count != 8)
-            {
-                vr.AddErrorMessage("Eight hydraulic files are required to import.");
-            }
+
             List<double> probs = new List<double>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
@@ -127,117 +134,67 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             return vr;
         }
 
-        private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
 
-            List<string> tifFiles = new List<string>();
-            List<string> vrtFiles = new List<string>();
 
-            string[] fileList = Directory.GetFiles(directoryPath);
-            foreach (string file in fileList)
-            {
-                if (Path.GetExtension(file) == ".tif")
-                {
-                    tifFiles.Add(file);
-                }
-                if (Path.GetExtension(file) == ".vrt")
-                {
-                    vrtFiles.Add(file);
-                }
-            }
 
-            string dirName = Path.GetFileName(directoryPath);
-
-            vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
-            vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
-
-            return vr;
-        }
-
-        private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (tifFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
-            }
-            return vr;
-        }
-
-        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            if (vrtFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
-            }
-            else if (vrtFiles.Count > 1)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
-            }
-            return vr;
-        }
 
         #endregion
 
+        private FdaValidationResult IsFileValid(string file)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int firstPeriodIndex = file.IndexOf(".");
+            if (firstPeriodIndex != -1)
+            {
+                string substring = file.Substring(firstPeriodIndex + 1);
+                Regex r = new Regex("p??.hdf");
+                if (!r.Match(substring).Success)
+                {
+                    //failed
+                    vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+                }
+            }
+            else
+            {
+                //wrong format no period found in file path
+                vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+            }
+
+            return vr;
+        }
+
         public void FileSelected(string fullpath)
         {
+            FdaValidationResult vr = new FdaValidationResult();
             if (fullpath != null && IsCreatingNewElement)
             {
-                FdaValidationResult importResult = new FdaValidationResult();
                 ListOfRows.Clear();
-                //clear out any already existing rows
-                if (!Directory.Exists(fullpath))
-                {
-                    return;
-                }
 
-                List<string> validDirectories = new List<string>();
-                string[] directories = Directory.GetDirectories(fullpath);
-                foreach (string directory in directories)
+
+                FdaValidationResult fileValidResult = IsFileValid(fullpath);
+                if (fileValidResult.IsValid)
                 {
-                    FdaValidationResult result = ContainsVRTAndTIF(directory);
-                    if (result.IsValid)
+                    //todo: get the list of values from ras mapper?
+                    //RASResults rasResults = new RASResults(fullpath);
+                    //string[] profileNames = rasResults.ProfileNames;
+
+                    string[] profileNames = new string[] {"cody", "kayak", "test"};
+
+                    double prob = 0;
+                    foreach (string file in profileNames)
                     {
-                        validDirectories.Add(directory);
+                        prob += .1;
+                        AddRow(Path.GetFileName(file), Path.GetFullPath(file), prob);
                     }
-                    else
+                    if (!vr.IsValid)
                     {
-                        importResult.AddErrorMessage(result.ErrorMessage);
+                        vr.InsertMessage(0, "Some files or subdirectories are being ignored:\n");
+                        MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                }
-
-                string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
-
-                //we require 8 valid directories
-                if (validDirectories.Count < 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (validDirectories.Count > 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
-                    double prob = 0;
-                    foreach (string dir in validDirectories)
-                    {
-                        prob += .1;
-                        AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
-                    }
-                    //we might have some message for the user?
-                    if (!importResult.IsValid)
-                    {
-                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
-                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                    vr.AddErrorMessage(fileValidResult.ErrorMessage);
                 }
             }
         }
@@ -272,19 +229,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
                 for (int i = 0; i < ListOfRows.Count; i++)
                 {
-                    string newName = ListOfRows[i].Name;
-                    string originalName = _OriginalFolderNames[i];
-                    if (!newName.Equals(originalName))
-                    {
-                        string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                        string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
-                        Directory.Move(sourceFilePath, destinationFilePath);
-                        _OriginalFolderNames[i] = newName;
-                    }
-                    newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
+                    newPathProbs.Add(new PathAndProbability(ListOfRows[i].Name, ListOfRows[i].Probability));
                 }
 
-                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Steady, _ID);
                 Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
                 manager.SaveExisting(elementToSave, _OriginalFolderName);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
@@ -303,18 +251,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             FdaValidationResult validResult = ValidateImporter();
             if (validResult.IsValid)
             {
+                string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                Directory.CreateDirectory(destinationDirectory);
+                string originalFileName = Path.GetFileName(SelectedPath);
+                File.Copy(SelectedPath, destinationDirectory + "\\" + originalFileName);
+
                 List<PathAndProbability> pathProbs = new List<PathAndProbability>();
                 foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
                 {
                     _OriginalFolderNames.Add(row.Name);
                     string directoryName = Path.GetFileName(row.Name);
                     pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
-
-                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 }
 
                 int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
-                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, pathProbs, IsDepthGridChecked, id);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Steady, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;
                 _ID = id;

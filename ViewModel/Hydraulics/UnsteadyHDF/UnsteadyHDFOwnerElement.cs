@@ -3,7 +3,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace HEC.FDA.ViewModel.Hydraulics
+namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 {
     public class UnsteadyHDFOwnerElement : ParentElement
     {
@@ -37,8 +37,13 @@ namespace HEC.FDA.ViewModel.Hydraulics
         }
         private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            //todo: probably have to update this and the gridded one to figure out if it should be added here.
-            AddElement(e.Element);
+            if(e.Element is HydraulicElement elem)
+            {
+                if(elem.HydroType == HydraulicType.Unsteady)
+                {
+                    AddElement(e.Element);
+                }
+            }
         }
 
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
@@ -46,10 +51,10 @@ namespace HEC.FDA.ViewModel.Hydraulics
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
 
-            GriddedImporterVM vm = new GriddedImporterVM(actionManager);
+            UnsteadyHDFImporterVM vm = new UnsteadyHDFImporterVM(actionManager);
 
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Unsteady");
             Navigate(tab, false, false);
         }
 

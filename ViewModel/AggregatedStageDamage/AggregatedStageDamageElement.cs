@@ -115,7 +115,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void WriteStructureTable(StreamWriter sw)
         {
             List<ChildElement> structureInventories = StudyCache.GetChildElementsOfType(typeof(InventoryElement));
-            List<ChildElement> wseElems = StudyCache.GetChildElementsOfType(typeof(WaterSurfaceElevationElement));
+            List<ChildElement> wseElems = StudyCache.GetChildElementsOfType(typeof(HydraulicElement));
 
             //I thought i would create a datatable object so that i could define columns and then create rows. I think this will make it 
             //easier to update and maintain than just trying to write it out as a big string or something like that.

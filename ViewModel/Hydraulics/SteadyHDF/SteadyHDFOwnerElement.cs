@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -37,7 +38,13 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         }
         private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            AddElement(e.Element);
+            if (e.Element is HydraulicElement elem)
+            {
+                if (elem.HydroType == HydraulicType.Steady)
+                {
+                    AddElement(e.Element);
+                }
+            }
         }
 
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
@@ -48,7 +55,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             SteadyHDFImporterVM vm = new SteadyHDFImporterVM(actionManager);
 
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Steady");
             Navigate(tab, false, false);
         }
 

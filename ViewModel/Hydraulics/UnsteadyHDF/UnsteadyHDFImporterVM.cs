@@ -1,21 +1,21 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 
-namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
+namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 {
-    //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class GriddedImporterVM:BaseEditorVM
+    public class UnsteadyHDFImporterVM:BaseEditorVM
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 9/1/2017 8:31:13 AM
-        #endregion
         #region Fields
         private bool _IsDepthGridChecked;
         private int _ID;
@@ -36,10 +36,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             get { return _IsDepthGridChecked; }
             set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
         }
-        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         #endregion
         #region Constructors
-        public GriddedImporterVM(EditorActionManager actionManager):base(actionManager)
+        public UnsteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
         }
         /// <summary>
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        public UnsteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             _ID = elem.ID;
@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             _OriginalFolderName = elem.Name;
             Description = elem.Description;
             IsDepthGridChecked = elem.IsDepthGrids;
-            foreach(PathAndProbability pp in elem.RelativePathAndProbability)
+            foreach (PathAndProbability pp in elem.RelativePathAndProbability)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
                 string folderName = Path.GetFileName(pp.Path);
@@ -65,9 +65,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
         #endregion
         #region Voids
-        public void AddRow( string name, string path, double probability, bool isEnabled = true)
+        public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM( name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow = new WaterSurfaceElevationRowItemVM(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
 
@@ -102,7 +102,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
         {
-            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
+            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
             Copy(path, destinationFilePath);
         }
         #endregion
@@ -111,10 +111,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (ListOfRows.Count != 8)
-            {
-                vr.AddErrorMessage("Eight hydraulic files are required to import.");
-            }
+
             List<double> probs = new List<double>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
@@ -128,116 +125,80 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
+       
 
-            List<string> tifFiles = new List<string>();
-            List<string> vrtFiles = new List<string>();
-
-            string[] fileList = Directory.GetFiles(directoryPath);
-            foreach (string file in fileList)
-            {
-                if (Path.GetExtension(file) == ".tif") 
-                { 
-                    tifFiles.Add(file); 
-                }
-                if (Path.GetExtension(file) == ".vrt") 
-                { 
-                    vrtFiles.Add(file); 
-                }
-            }
-
-            string dirName = Path.GetFileName(directoryPath);
-
-            vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
-            vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
-
-            return vr;
-        }
-
-        private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (tifFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
-            }
-            return vr;
-        }
-
-        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            if (vrtFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
-            }
-            else if (vrtFiles.Count > 1)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
-            }
-            return vr;
-        }
+        
 
         #endregion
 
+        private FdaValidationResult IsFileValid(string file)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int firstPeriodIndex = file.IndexOf(".");
+            if(firstPeriodIndex != -1)
+            {
+                string substring = file.Substring(firstPeriodIndex + 1);
+                Regex r = new Regex("p??.hdf");
+                if(!r.Match(substring).Success)
+                {
+                    //failed
+                    vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+                }         
+            }
+            else
+            {
+                //wrong format no period found in file path
+                vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+            }
+
+            return vr;
+        }
+
         public void FileSelected(string fullpath)
         {
+            FdaValidationResult vr = new FdaValidationResult();
             if (fullpath != null && IsCreatingNewElement)
             {
-                FdaValidationResult importResult = new FdaValidationResult();
                 ListOfRows.Clear();
-                //clear out any already existing rows
-                if (!Directory.Exists(fullpath))
-                {
-                    return;
-                }
 
-                List<string> validDirectories = new List<string>();
-                string[] directories = Directory.GetDirectories(fullpath);
-                foreach (string directory in directories)
+                string[] files = Directory.GetFiles(fullpath);
+                List<string> validFiles = new List<string>();
+                foreach(string file in files)
                 {
-                    FdaValidationResult result = ContainsVRTAndTIF(directory);
-                    if (result.IsValid)
+                    FdaValidationResult fileValidResult = IsFileValid(file);
+                    if(fileValidResult.IsValid)
                     {
-                        validDirectories.Add(directory);
+                        validFiles.Add(file);
                     }
                     else
                     {
-                        importResult.AddErrorMessage(result.ErrorMessage);
+                        vr.AddErrorMessage(fileValidResult.ErrorMessage);
                     }
                 }
 
-                string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
+                //warn users that these directories were ignored.
+                string[] directories = Directory.GetDirectories(fullpath);
+                if(directories.Length > 0)
+                {
+                    vr.AddErrorMessage("Ignoring subdirectories.");
+                }
 
-                //we require 8 valid directories
-                if (validDirectories.Count < 8)
+                if (validFiles.Count == 0)
                 {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (validDirectories.Count > 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    vr.AddErrorMessage("No valid hdf files were detected. Files must match pattern '*.p##.hdf'.");
+                }     
                 else
                 {
                     double prob = 0;
-                    foreach (string dir in validDirectories)
+                    foreach (string file in validFiles)
                     {
                         prob += .1;
-                        AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                        AddRow(Path.GetFileName(file), Path.GetFullPath(file), prob);
                     }
-                    //we might have some message for the user?
-                    if (!importResult.IsValid)
+                    if (!vr.IsValid)
                     {
-                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
-                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                        vr.InsertMessage(0, "Some files or subdirectories are being ignored:\n");
+                        MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }
@@ -245,9 +206,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         public override void Save()
         {
-            if(IsCreatingNewElement)
+            if (IsCreatingNewElement)
             {
-                SaveNew();            
+                SaveNew();
             }
             else
             {
@@ -285,7 +246,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
                 }
 
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Unsteady, _ID);
                 Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
                 manager.SaveExisting(elementToSave, _OriginalFolderName);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
@@ -304,18 +265,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             FdaValidationResult validResult = ValidateImporter();
             if (validResult.IsValid)
             {
+                string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                Directory.CreateDirectory(destinationDirectory);
+
                 List<PathAndProbability> pathProbs = new List<PathAndProbability>();
                 foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
                 {
                     _OriginalFolderNames.Add(row.Name);
                     string directoryName = Path.GetFileName(row.Name);
-                    pathProbs.Add(new PathAndProbability( directoryName, row.Probability));
+                    pathProbs.Add(new PathAndProbability(directoryName, row.Probability));                    
 
-                    CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
+                    File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
                 }
 
                 int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Unsteady, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;
                 _ID = id;

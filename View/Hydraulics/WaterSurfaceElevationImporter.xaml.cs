@@ -3,7 +3,7 @@ using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace HEC.FDA.View.WaterSurfaceElevation
+namespace HEC.FDA.View.Hydraulics
 {
     /// <summary>
     /// Interaction logic for WaterSurfaceElevationImporter.xaml

@@ -41,7 +41,13 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
         private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            AddElement(e.Element);
+            if (e.Element is HydraulicElement elem)
+            {
+                if (elem.HydroType == HydraulicType.Gridded)
+                {
+                    AddElement(e.Element);
+                }
+            }
         }
 
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)

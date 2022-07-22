@@ -2,7 +2,7 @@
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Windows.Controls;
 
-namespace HEC.FDA.View.WaterSurfaceElevation
+namespace HEC.FDA.View.Hydraulics
 {
     /// <summary>
     /// Interaction logic for WSERowItem.xaml
@@ -11,7 +11,7 @@ namespace HEC.FDA.View.WaterSurfaceElevation
     {
 
 
-        public WSERowItem(WaterSurfaceElevationElement element)
+        public WSERowItem(HydraulicElement element)
         {
             InitializeComponent();
             txt_name.Text = element.Name;
