@@ -8,6 +8,7 @@ namespace Statistics.Histograms
         #region Properties 
         bool IsConverged { get; }
         bool HistogramIsZeroValued { get; set; }
+        bool HistogramIsSingleValued { get; }
         Int64 ConvergedIteration { get; }
         double BinWidth { get; }
         Int64[] BinCounts { get; }

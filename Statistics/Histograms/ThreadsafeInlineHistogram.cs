@@ -46,6 +46,20 @@ namespace Statistics.Histograms
                 _HistogramIsZeroValued = value;
             }
         }
+        public bool HistogramIsSingleValued
+        {
+            get
+            {
+                if (_BinCounts.Length == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string MyType
         {
             get
