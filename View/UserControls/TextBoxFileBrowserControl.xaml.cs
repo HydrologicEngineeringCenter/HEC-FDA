@@ -56,8 +56,10 @@ namespace HEC.MVVMFramework.View.UserControls
                 fileDialog.Filter = Filter;
                 fileDialog.CheckFileExists = CheckFileExists;
                 fileDialog.Title = FileDialogTitle;
-                fileDialog.ShowDialog();
-                Path = fileDialog.FileName;
+                if (fileDialog.ShowDialog() == true)
+                {
+                    Path = fileDialog.FileName;
+                }
 
             }
             else
@@ -65,8 +67,10 @@ namespace HEC.MVVMFramework.View.UserControls
                 Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
                 fileDialog.Title = FileDialogTitle ;
                 fileDialog.Filter = Filter;
-                fileDialog.ShowDialog();
-                Path = fileDialog.FileName;
+                if (fileDialog.ShowDialog() == true)
+                {
+                    Path = fileDialog.FileName;
+                }
             }
         }
     }
