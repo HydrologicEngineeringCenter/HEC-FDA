@@ -238,8 +238,16 @@ namespace compute
                 }
             }
             //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
+            //Nor is there relevant messaging 
             bool curvesOverlap = SimulationCurvesHaveOverlap();
             if(!curvesOverlap)
+            {
+                return false;
+            }
+            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
+            //nor is there relevant messaging
+            convergenceCriteria.Validate();
+            if(convergenceCriteria.HasErrors)
             {
                 return false;
             }

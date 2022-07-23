@@ -64,7 +64,7 @@ namespace fda_model_test.unittests
         }
 
         [Fact]
-        public void ResultsShouldNotComputeOnOneIterationWithRandomProvider()
+        public void ResultsShouldNotComputeWhenMaxIterationsAreGreaterThanMinIterations()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 1);
             Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
@@ -76,11 +76,12 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                IDistributionFactory.FactoryUniform(0, 600000, 10),
+                IDistributionFactory.FactoryUniform(0, 600000, 10),
+                IDistributionFactory.FactoryUniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
@@ -94,9 +95,7 @@ namespace fda_model_test.unittests
                 .build();
             RandomProvider randomProvider = new RandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
-            XElement resultsElement = results.WriteToXml();
-            IContainImpactAreaScenarioResults resultsFromXML = ImpactAreaScenarioResults.ReadFromXML(resultsElement);
-            bool success = results.Equals(resultsFromXML);
+            Assert.True(results.IsNull);
         }
 
     }
