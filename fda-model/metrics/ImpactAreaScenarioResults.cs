@@ -262,7 +262,7 @@ namespace metrics
             return masterElement;
         }
 
-        public static IContainImpactAreaScenarioResults ReadFromXML(XElement xElement)
+        public static ImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));

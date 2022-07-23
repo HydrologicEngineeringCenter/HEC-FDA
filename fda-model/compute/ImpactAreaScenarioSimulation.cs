@@ -237,6 +237,7 @@ namespace compute
 
                 }
             }
+            //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
             bool curvesOverlap = SimulationCurvesHaveOverlap();
             if(!curvesOverlap)
             {
@@ -1054,6 +1055,9 @@ namespace compute
             }
             public ImpactAreaScenarioSimulation build()
             {
+                //TODO: The validation below is not very helpful. We only see that "XX has errors" but 
+                //we are not informing the user what the errors are 
+                //somehow we need to add the error messages of the object being validated to the error messages of the impact area scenario simulation 
                 _sim.Validate();
                 //add validation here to test ranges and domains.
                 return _sim;

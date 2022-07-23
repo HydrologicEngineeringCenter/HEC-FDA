@@ -103,14 +103,14 @@ namespace paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a < b)), "X must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals,.9999, (a, b) => (a < b)), "Y must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a < b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals,(a, b) => (a < b)), "X must be deterministic or strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals,.9999, (a, b) => (a < b)), "Y must be deterministic or strictly monotonically increasing. The upper bound is not."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a < b)), "Y must be deterministic or strictly monotonically increasing. The lower bound is not."));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a < b)), "X must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a <= b)), "Y must be weakly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a <= b)), "Y must be weakly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), "X must be deterministic or strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .9999, (a, b) => (a <= b)), "Y must be deterministic or weakly monotonically increasing. The upper bound is not."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a <= b)), "Y must be deterministic or weakly monotonically increasing. The lower bound is not."));
                     break;
                 default:
                     break;
