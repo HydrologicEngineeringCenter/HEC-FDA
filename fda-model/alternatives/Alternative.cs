@@ -208,7 +208,7 @@ namespace alternatives
         }
         private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, int baseYear, int mostLikelyFutureYear, int periodOfAnalysis)
         {
-            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear);
+            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear +1);
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
