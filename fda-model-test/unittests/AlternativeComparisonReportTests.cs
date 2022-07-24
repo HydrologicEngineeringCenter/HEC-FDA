@@ -454,6 +454,10 @@ namespace fda_model_test.unittests
             double expectedAAEQWithProject = withProjectAlternativeResults.MeanAAEQDamage(impactAreaIdentifier, residentialDamCat, assetCategory);
             double actualAAEQWithProject = alternativeComparisonReportResults.MeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
+
+
         }
+
+
     }
 }
