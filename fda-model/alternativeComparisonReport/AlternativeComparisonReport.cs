@@ -104,8 +104,17 @@ namespace alternativeComparisonReport
                 {
                     Parallel.For(0, iterations, i =>
                     {
-                        double withProjectDamage = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
-                        double withoutProjectDamage = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                        interfaces.IProvideRandomNumbers threadlocalRandomProvider;
+                        if (randomProvider is MeanRandomProvider)
+                        {
+                            threadlocalRandomProvider = new MeanRandomProvider();
+                        }
+                        else
+                        {
+                            threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                        }
+                        double withProjectDamage = withProjectHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
+                        double withoutProjectDamage = withoutProjectHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
                         double damagesReduced = withoutProjectDamage - withProjectDamage;
                         damageReducedResult.AddConsequenceRealization(damagesReduced, i);
                         Interlocked.Increment(ref _completedIterations);

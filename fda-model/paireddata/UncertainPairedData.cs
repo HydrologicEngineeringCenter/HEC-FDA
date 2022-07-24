@@ -103,14 +103,14 @@ namespace paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals,(a, b) => (a < b)), "X must be deterministic or strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals,.9999, (a, b) => (a < b)), "Y must be deterministic or strictly monotonically increasing. The upper bound is not."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a < b)), "Y must be deterministic or strictly monotonically increasing. The lower bound is not."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals,.9999, (a, b) => (a < b)), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a < b)), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound."));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), "X must be deterministic or strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .9999, (a, b) => (a <= b)), "Y must be deterministic or weakly monotonically increasing. The upper bound is not."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a <= b)), "Y must be deterministic or weakly monotonically increasing. The lower bound is not."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .9999, (a, b) => (a <= b)), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a <= b)), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found."));
                     break;
                 default:
                     break;
@@ -155,11 +155,11 @@ namespace paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The Y Values sampled from the function named {_metadata.Name} were not monotonically increasing as required and were forced to be monotonic")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The X values on the function named {_metadata.Name} are not monotonically decreasing as required and were forced to be monotonic")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
