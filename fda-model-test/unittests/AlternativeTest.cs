@@ -36,7 +36,7 @@ namespace fda_model_test.unittests
         public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
                 MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
+                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
                 ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
                 //create a stage distribution
                 IDistribution[] stages = new IDistribution[2];
@@ -128,7 +128,7 @@ namespace fda_model_test.unittests
         public void AlternativeReturnsCorrectDamCats(int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
