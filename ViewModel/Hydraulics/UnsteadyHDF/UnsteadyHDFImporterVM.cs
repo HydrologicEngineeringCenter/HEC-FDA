@@ -100,11 +100,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
         }
 
-        private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
-        {
-            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
-            Copy(path, destinationFilePath);
-        }
         #endregion
 
         #region validation
@@ -124,10 +119,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
             return vr;
         }
-
-       
-
-        
 
         #endregion
 

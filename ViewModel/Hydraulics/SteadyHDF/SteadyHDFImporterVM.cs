@@ -43,13 +43,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         #region Constructors
         public SteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
-            //string gdalPath = "GDAL\\";
-            //if (!Directory.Exists(gdalPath))
-            //{
-            //    Console.WriteLine("GDAL directory not found: " + gdalPath);
-            //    return;
-            //}
-            //GDALSetup.InitializeMultiplatform(gdalPath);
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
@@ -109,11 +102,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
         }
 
-        private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
-        {
-            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
-            Copy(path, destinationFilePath);
-        }
         #endregion
 
         #region validation
@@ -133,10 +121,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
             return vr;
         }
-
-
-
-
 
         #endregion
 
