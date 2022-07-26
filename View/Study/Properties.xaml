@@ -26,6 +26,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
@@ -108,7 +109,10 @@
 
             </Grid>
         </GroupBox>
-        <Utilities:OKCloseControl Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+
+        <Button Grid.Row="3" Content="Convergence Criteria..." Width="150" HorizontalAlignment="Left" Margin="5" Click="ConvergenceCriteria_Click" />
+
+        <Utilities:OKCloseControl Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
     </Grid>
 </UserControl>

@@ -1,5 +1,7 @@
 ﻿using compute;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.ViewModel.Implementations;
@@ -13,42 +15,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
+namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeScenarioVM:BaseViewModel
+    public class ComputeScenarioVM:ComputeBase
     {
-        private string _SimName;
-        private int _Progress;
-        private string _NumberCompleted;
-        private int _IterationsCompleted = 0;
+        // private string _SimName;
         private int _TotalSims;
-
+        private int _IterationsCompleted = 0;
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
 
-        private SubscriberMessageViewModel _MessageVM = new SubscriberMessageViewModel();
 
 
-        public SubscriberMessageViewModel MessageVM
+
+
+
+
+
+        //public string SimName
+        //{
+        //    get { return _SimName; }
+        //    set { _SimName = value; NotifyPropertyChanged(); }
+        //}
+
+        public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback):base()
         {
-            get { return _MessageVM; }
-        }
-        public string NumberCompleted
-        {
-            get { return _NumberCompleted; }
-            set { _NumberCompleted = value; NotifyPropertyChanged(); }
-        }
-        public string SimName
-        {
-            get { return _SimName; }
-            set { _SimName = value; NotifyPropertyChanged(); }
-        }
-        public int Progress
-        {
-            get { return _Progress; }
-            set { _Progress = value; NotifyPropertyChanged(); }
-        }
-        public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback)
-        {
+            ProgressLabel = StringConstants.SCENARIO_PROGRESS_LABEL;
             _TotalSims = iasElems.Count;
             NumberCompleted = _IterationsCompleted + "/" + _TotalSims;
 
@@ -127,11 +118,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 int impactAreaID = sim.ImpactAreaID;
                 if(_ImpactAreaIdToName.ContainsKey(impactAreaID))
                 {
-                    SimName = _ImpactAreaIdToName[impactAreaID];
+                    ProgressLabel =  StringConstants.SCENARIO_PROGRESS_LABEL + " " + _ImpactAreaIdToName[impactAreaID];
                 }
             }
             Progress = progress.Progress;
-            if(_Progress == 100)
+            if(Progress == 100)
             {
                 UpdateTotalCompleted();
             }

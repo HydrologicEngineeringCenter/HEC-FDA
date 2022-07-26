@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"     
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
              mc:Ignorable="d" 
@@ -22,7 +23,6 @@
         <Grid Grid.Row="1"  > 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -31,18 +31,17 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="Computing Impact Area:" VerticalAlignment="Center" Margin="5,0,5,0" />
-            <TextBlock Grid.Column="1" Text="{Binding SimName}" Margin="2,0,5,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="{Binding ProgressLabel}" VerticalAlignment="Center" Margin="5,0,5,0" />
 
-            <ProgressBar Grid.Column="2" Minimum="0" Maximum="100" Value="{Binding Progress}"  HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
+            <ProgressBar Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Progress}"  HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
             
-            <TextBlock Grid.Column="3" Text="{Binding Progress}" Margin="2,0,0,0" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="4" Text="%" Margin="2" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" Text="{Binding Progress}" Margin="2,0,0,0" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="%" Margin="2" VerticalAlignment="Center" />
 
-            <TextBlock Grid.Column="5" Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center"/>
-            <TextBlock Grid.Column="6" Text="{Binding NumberCompleted}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="4" Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="5" Text="{Binding NumberCompleted}" Margin="10,0,0,0" VerticalAlignment="Center"/>
 
-            <Button Grid.Column="7" Content="Close" HorizontalAlignment="Right"  Margin="20,5,2,5" Width="100" Height="22" 
+            <Button Grid.Column="6" Content="Close" HorizontalAlignment="Right"  Margin="20,5,2,5" Width="100" Height="22" 
                     IsCancel="True" Command="{Binding Source={StaticResource close}}">
             <Button.CommandParameter>
                 <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Window}"/>

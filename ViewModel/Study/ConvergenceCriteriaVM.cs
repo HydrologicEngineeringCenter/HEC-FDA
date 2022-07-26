@@ -1,0 +1,110 @@
+﻿using System;
+using HEC.MVVMFramework.ViewModel.Validation;
+using HEC.MVVMFramework.Base.Enumerations;
+using Statistics;
+using System.Xml.Linq;
+using HEC.MVVMFramework.ViewModel.Implementations;
+
+namespace HEC.FDA.ViewModel.Study
+{
+    public class ConvergenceCriteriaVM: ValidatingBaseViewModel
+    {
+        private double _confidence = 95;
+        private double _tolerance = .01;
+        private int _min = 1000;
+        private int _max = 10000000;
+        public double Confidence
+        {
+            get
+            {
+                return _confidence;
+            }
+
+            set
+            {
+                _confidence = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public double Tolerance
+        {
+            get
+            {
+                return _tolerance;
+            }
+            set
+            {
+                _tolerance = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public int Min
+        {
+            get
+            {
+                return _min;
+            }
+            set
+            {
+                _min = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Max));
+            }
+        }
+        public int Max
+        {
+            get
+            {
+                return _max;
+            }
+            set
+            {
+                _max = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Min));
+            }
+        }
+        public ConvergenceCriteriaVM(XElement ele)
+        {
+            fromXML(ele);
+            Initialize();
+        }
+        public ConvergenceCriteriaVM()
+        {
+            Initialize();
+        }
+        private void Initialize()
+        {
+            AddSinglePropertyRule(nameof(Min), new Rule(() => { return Min > 100; }, "Min iterations must be more than 100.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Min), new Rule(() => { return Min < Max; }, "Min iterations must be less than Max iterations.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Max), new Rule(() => { return Max < double.MaxValue; }, "Max iterations must be less than the maximum value for a double.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Confidence), new Rule(() => { return Confidence < 100; }, "Confidence must be less than 100", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Confidence), new Rule(() => { return Confidence > 50; }, "Confidence must be greater than 50", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Tolerance), new Rule(() => { return Tolerance >= .001; }, "Tolerance must be greater than .001", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Tolerance), new Rule(() => { return Tolerance <= 1; }, "Tolerance must be less than 1", ErrorLevel.Severe));
+            Validate();
+        }
+        public XElement toXML()
+        {
+            XElement ele = new XElement("ConvergenceCriteriaVM");
+            ele.SetAttributeValue(nameof(Min), Min);
+            ele.SetAttributeValue(nameof(Max), Max);
+            ele.SetAttributeValue(nameof(Confidence), Confidence);
+            ele.SetAttributeValue(nameof(Tolerance), Tolerance);
+            return ele;
+        }
+        public void fromXML(XElement ele)
+        {
+            Max = int.Parse(ele.Attribute(nameof(Max)).Value);
+            Min = int.Parse(ele.Attribute(nameof(Min)).Value);
+            Tolerance = double.Parse(ele.Attribute(nameof(Tolerance)).Value);
+            Confidence = double.Parse(ele.Attribute(nameof(Confidence)).Value);
+        }
+        public ConvergenceCriteria toConvergenceCriteria()
+        {
+            Statistics.Distributions.Normal sn = new Statistics.Distributions.Normal(0, 1);
+            double zAlpha = sn.InverseCDF(.5 + Confidence / 200);
+            return new ConvergenceCriteria(Min, Max, zAlpha, Tolerance);
+        }
+    }
+}

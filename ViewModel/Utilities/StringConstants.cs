@@ -203,6 +203,10 @@
         public const string ALTERNATIVE_COMP_REPORT_EAD_LABEL = "Quartile of EAD Reduced Distribution";
         public const string ALTERNATIVE_COMP_REPORT_AAEQ_LABEL = "Quartile of AAEQ Damage Reduced Distribution";
 
+        public const string SCENARIO_PROGRESS_LABEL = "Computing Impact Area:";
+        public const string ALTERNATIVE_PROGRESS_LABEL = "Compute progress:";
+        public const string ALT_COMP_REPORT_PROGRESS_LABEL = "Compute progress:";
+
 
         public static string ImportFromOldFda(string elementName)
         {

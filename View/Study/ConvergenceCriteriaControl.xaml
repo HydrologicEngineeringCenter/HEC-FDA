@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="HEC.FDA.View.Study.ConvergenceCriteriaControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HEC.FDA.View.Study"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="0"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Convergence Criteria Settings" FontWeight="Bold"/>
+        <Label Content="Confidence (%)" Grid.Row="4"/>
+        <Label Content="Tolerance (0-1)" Grid.Row="5"/>
+        <Label Content="Minimum Iterations" Grid.Row="6"/>
+        <Label Content="Maximum Iterations" Grid.Row="7"/>
+        <TextBox  Text="{Binding Path= Confidence}" Grid.Column="1" Grid.Row="4" Width="120" Margin="5" />
+        <TextBox  Text="{Binding Path= Tolerance}" Grid.Column="1" Grid.Row="5" Width="120" Margin="5" />
+        <TextBox  Text="{Binding Path= Min}" Grid.Column="1" Grid.Row="6" Width="120" Margin="5" />
+        <TextBox  Text="{Binding Path= Max}" Grid.Column="1" Grid.Row="7" Width="120" Margin="5" />
+
+    </Grid>
+</UserControl>

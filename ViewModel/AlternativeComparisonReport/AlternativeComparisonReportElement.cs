@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
@@ -84,7 +85,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
-            viewResults.Action = ViewResults;
+            viewResults.Action = ComputeAltCompReport;
 
             NamedAction removeCondition = new NamedAction();
             removeCondition.Header = StringConstants.REMOVE_MENU;
@@ -142,70 +143,63 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Navigate(tab, false, true);
         }
 
-        public void ComputeAltCompReport(AlternativeResults withoutAltResults, List<AlternativeResults> withResults)
-        {
-            int seed = 99;
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria();
-
-            _Results = alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutAltResults, withResults);
-        }       
-
-        public void ViewResults(object arg1, EventArgs arg2)
+        public void ComputeAltCompReport(object arg1 = null, EventArgs arg2 = null)
         {
             FdaValidationResult canComputeValidationResult = GetCanComputeResults();
             if (canComputeValidationResult.IsValid)
             {
-                List<AlternativeResults> withResults = new List<AlternativeResults>();
-
-                //everything should be good to start computing. Start by computing alternatives
                 AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
                 List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
-                AlternativeResults withoutProjResults = withoutAlt.ComputeAlternative();
-                if (withoutProjResults == null)
-                {
-                    //This should never happen.
-                    canComputeValidationResult.AddErrorMessage(withoutAlt.Name + " compute produced no results.");
-                }
-                foreach(AlternativeElement withProjElem in withProjAlts)
-                {
-                    AlternativeResults withProjResults = withProjElem.ComputeAlternative();
-                    if (withProjResults == null)
-                    {
-                        //This should never happen.
-                        canComputeValidationResult.AddErrorMessage(withProjElem.Name + " compute produced no results.");
-                    }
-                    else
-                    {
-                        withResults.Add(withProjResults);
-                    }
-                }
-
-                if (canComputeValidationResult.IsValid)
-                {
-                    ComputeAltCompReport(withoutProjResults, withResults);
-                    if (_Results != null)
-                    {
-                        AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());
-                        string header = "Alternative Comparison Report Results: " + Name;
-                        DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
-                        Navigate(tab, false, true);
-                    }
-                    else
-                    {
-                        MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                ComputeAltCompReportVM compVM = new ComputeAltCompReportVM(withoutAlt, withProjAlts, ComputeCompleted);
+                string header = "Compute Log For Alternative Comp Report: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, compVM, "ComputeLogAltCompReport" + Name);
+                Navigate(tab, false, false);
             }
             else
             {
                 MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+
+
+            //AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+            //List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
+
+
+            //int seed = 99;
+            //RandomProvider randomProvider = new RandomProvider(seed);
+            //ConvergenceCriteria cc = new ConvergenceCriteria();
+
+            //_Results = alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutAltResults, withResults);
+        }
+
+        private void ComputeCompleted(AlternativeComparisonReportResults results)
+        {
+            _Results = results;
+            Application.Current.Dispatcher.Invoke(
+            (Action)(() =>
+            {
+                ViewResults();
+            }));
+        }
+
+        public void ViewResults()
+        {
+
+            if (_Results != null)
+            {
+                AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());
+                string header = "Alternative Comparison Report Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+                Navigate(tab, false, true);
+            }
+            else
+            {
+                MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+
+            
         }
 
         private List<SpecificAltCompReportResultsVM> CreateResults()
