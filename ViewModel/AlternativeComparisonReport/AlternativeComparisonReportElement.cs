@@ -143,7 +143,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Navigate(tab, false, true);
         }
 
-        public void ComputeAltCompReport(object arg1 = null, EventArgs arg2 = null)
+        public void ComputeAltCompReport(object arg1, EventArgs arg2)
         {
             FdaValidationResult canComputeValidationResult = GetCanComputeResults();
             if (canComputeValidationResult.IsValid)
@@ -160,17 +160,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
-
-            //AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
-            //List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
-
-
-            //int seed = 99;
-            //RandomProvider randomProvider = new RandomProvider(seed);
-            //ConvergenceCriteria cc = new ConvergenceCriteria();
-
-            //_Results = alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutAltResults, withResults);
         }
 
         private void ComputeCompleted(AlternativeComparisonReportResults results)
@@ -197,9 +186,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 MessageBox.Show("There are no results to view.", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
-
-            
         }
 
         private List<SpecificAltCompReportResultsVM> CreateResults()
@@ -214,7 +200,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
                 results.Add(specificAltCompReportResultsVM);
             }
-
 
             return results;
         }
