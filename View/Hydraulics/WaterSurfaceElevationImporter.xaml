@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="HEC.FDA.View.WaterSurfaceElevation.WaterSurfaceElevationImporter"
+﻿<UserControl x:Class="HEC.FDA.View.Hydraulics.WaterSurfaceElevationImporter"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
              Loaded="UserControl_Loaded"
@@ -22,9 +23,6 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -60,31 +58,9 @@
                 <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
+        <local:PathAndProbabilityTableControl Grid.Row="4" />
 
-        <DataGrid Grid.Row="4" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left" CanUserAddRows="False" CanUserDeleteRows="False"
-                  VerticalAlignment="Top" CanUserReorderColumns="False"
-                  CanUserSortColumns="false" Margin="5">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Name" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Probability}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Return Interval" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" >
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" >
             <Util:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

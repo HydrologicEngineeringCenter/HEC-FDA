@@ -15,7 +15,10 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
+using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -79,7 +82,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
-        public List<WaterSurfaceElevationElement> WaterSurfaceElements { get; } = new List<WaterSurfaceElevationElement>();
+        public List<HydraulicElement> WaterSurfaceElements { get; } = new List<HydraulicElement>();
         public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; } = new List<ExteriorInteriorElement>();
@@ -136,7 +139,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(ImpactAreaElements, elem);
                 ImpactAreaRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(WaterSurfaceElevationElement))
+            else if (elem.GetType() == typeof(HydraulicElement))
             {
                 RemoveElementFromList(WaterSurfaceElements, elem);
                 WaterSurfaceElevationRemoved?.Invoke(this, elementAddedEventArgs);
@@ -230,9 +233,9 @@ namespace HEC.FDA.ViewModel.Study
                 ImpactAreaElements.Add((ImpactAreaElement)elem);
                 ImpactAreaAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is WaterSurfaceElevationElement )
+            else if (elem is HydraulicElement )
             {
-                WaterSurfaceElements.Add((WaterSurfaceElevationElement)elem);
+                WaterSurfaceElements.Add((HydraulicElement)elem);
                 WaterSurfaceElevationAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is AnalyticalFrequencyElement )
@@ -314,9 +317,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateImpactAreaElement( (ImpactAreaElement)newElement);
             }
-            else if (newElement is WaterSurfaceElevationElement )
+            else if (newElement is HydraulicElement )
             {
-                UpdateWaterSurfaceElevationElement( (WaterSurfaceElevationElement)newElement);
+                UpdateWaterSurfaceElevationElement( (HydraulicElement)newElement);
             }
             else if (newElement is AnalyticalFrequencyElement )
             {
@@ -391,7 +394,7 @@ namespace HEC.FDA.ViewModel.Study
                 ImpactAreaUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateWaterSurfaceElevationElement( WaterSurfaceElevationElement newElement)
+        public void UpdateWaterSurfaceElevationElement( HydraulicElement newElement)
         {
             int index = WaterSurfaceElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -510,7 +513,15 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
-            else if (element is HydraulicsOwnerElement)
+            else if (element is GriddedDataOwnerElement)
+            {
+                retVal.AddRange(WaterSurfaceElements);
+            }
+            else if (element is UnsteadyHDFOwnerElement)
+            {
+                retVal.AddRange(WaterSurfaceElements);
+            }
+            else if (element is SteadyHDFOwnerElement)
             {
                 retVal.AddRange(WaterSurfaceElements);
             }
@@ -620,7 +631,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
-            else if (childElementType == typeof(WaterSurfaceElevationElement))
+            else if (childElementType == typeof(HydraulicElement))
             {
                 retVal.AddRange(WaterSurfaceElements);
             }

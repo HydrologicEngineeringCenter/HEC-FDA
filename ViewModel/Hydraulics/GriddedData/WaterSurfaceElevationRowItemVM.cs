@@ -1,7 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:32:06 AM)]
     public class WaterSurfaceElevationRowItemVM:NameValidatingVM

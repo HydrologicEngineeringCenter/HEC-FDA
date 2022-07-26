@@ -67,8 +67,12 @@
              xmlns:UtilitiesView="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UtilitiesVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              
-             xmlns:WaterSurfaceElevationsView="clr-namespace:HEC.FDA.View.WaterSurfaceElevation"
-             xmlns:WaterSurfaceElevationsVM="clr-namespace:HEC.FDA.ViewModel.WaterSurfaceElevation;assembly=HEC.FDA.ViewModel"
+             xmlns:WaterSurfaceElevationsView="clr-namespace:HEC.FDA.View.Hydraulics"
+             xmlns:GriddedHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.GriddedData;assembly=HEC.FDA.ViewModel"
+             
+             xmlns:SteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel"
+             xmlns:UnsteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;assembly=HEC.FDA.ViewModel"
+
                           
              StartupUri="ViewWindow.xaml">
     <Application.Resources>
@@ -360,8 +364,17 @@
         </DataTemplate>
 
         <!--Water Surface Elevations region-->
-        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
+        <DataTemplate DataType="{x:Type GriddedHydraulicsVM:GriddedImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type SteadyHydraulicsVM:SteadyHDFImporterVM }" >
+            <WaterSurfaceElevationsView:SteadyHydraulicsImporter/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type UnsteadyHydraulicsVM:UnsteadyHDFImporterVM }" >
+            <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
+        </DataTemplate>
+
     </Application.Resources>
 </Application>

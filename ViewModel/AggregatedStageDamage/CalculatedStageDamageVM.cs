@@ -4,16 +4,17 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {
-        private WaterSurfaceElevationElement _SelectedWaterSurfaceElevation;
+        private HydraulicElement _SelectedWaterSurfaceElevation;
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
@@ -47,9 +48,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedStructureInventoryElement = value; NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations { get; } = new ObservableCollection<WaterSurfaceElevationElement>();
+        public ObservableCollection<HydraulicElement> WaterSurfaceElevations { get; } = new ObservableCollection<HydraulicElement>();
 
-        public WaterSurfaceElevationElement SelectedWaterSurfaceElevation
+        public HydraulicElement SelectedWaterSurfaceElevation
         {
             get { return _SelectedWaterSurfaceElevation; }
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
@@ -139,7 +140,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void SelectDepthGrid(int waterID)
         {
             bool foundHydro = false;
-            foreach (WaterSurfaceElevationElement wat in WaterSurfaceElevations)
+            foreach (HydraulicElement wat in WaterSurfaceElevations)
             {
                 if(wat.ID == waterID)
                 {
@@ -155,8 +156,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         private void loadDepthGrids()
         {
-            List<WaterSurfaceElevationElement> WSEElements = StudyCache.GetChildElementsOfType<WaterSurfaceElevationElement>();
-            foreach (WaterSurfaceElevationElement elem in WSEElements)
+            List<HydraulicElement> WSEElements = StudyCache.GetChildElementsOfType<HydraulicElement>();
+            foreach (HydraulicElement elem in WSEElements)
             {
                 WaterSurfaceElevations.Add(elem);
             }
@@ -220,7 +221,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ImpactAreaElement impactAreaElement = impactAreaElements[0];
 
                 InventoryElement inventoryElement = SelectedStructures;
-                WaterSurfaceElevationElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
+                HydraulicElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
 
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)

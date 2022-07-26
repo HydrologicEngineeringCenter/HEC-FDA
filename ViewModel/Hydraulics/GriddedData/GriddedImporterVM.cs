@@ -7,10 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class WaterSurfaceElevationImporterVM:BaseEditorVM
+    public class GriddedImporterVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
+        public GriddedImporterVM(EditorActionManager actionManager):base(actionManager)
         {
         }
         /// <summary>
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             _ID = elem.ID;
@@ -285,7 +285,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                     newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
                 }
 
-                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, newPathProbs, IsDepthGridChecked, _ID);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);
                 Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
                 manager.SaveExisting(elementToSave, _OriginalFolderName);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
@@ -315,7 +315,7 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
                 }
 
                 int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
-                WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, pathProbs, IsDepthGridChecked, id);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;
                 _ID = id;

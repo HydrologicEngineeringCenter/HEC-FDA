@@ -7,7 +7,8 @@ using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -114,7 +115,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void WriteStructureTable(StreamWriter sw)
         {
             List<ChildElement> structureInventories = StudyCache.GetChildElementsOfType(typeof(InventoryElement));
-            List<ChildElement> wseElems = StudyCache.GetChildElementsOfType(typeof(WaterSurfaceElevationElement));
+            List<ChildElement> wseElems = StudyCache.GetChildElementsOfType(typeof(HydraulicElement));
 
             //I thought i would create a datatable object so that i could define columns and then create rows. I think this will make it 
             //easier to update and maintain than just trying to write it out as a big string or something like that.
