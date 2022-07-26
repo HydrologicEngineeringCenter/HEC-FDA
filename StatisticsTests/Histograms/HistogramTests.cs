@@ -416,5 +416,27 @@ namespace StatisticsTests.Histograms
             }
 
         }
+
+        [Theory]
+        [InlineData(1.96)]
+        public void HistogramConstructsCorrectly(double expected)
+        {
+            int iterations = 10000;
+            Normal normal = new Normal();
+            Random random = new Random();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            List<double> data = new List<double>();
+            for (int i=0; i<iterations; i++)
+            {
+                double randomObservation = normal.InverseCDF(random.NextDouble());
+                data.Add(randomObservation);
+            }
+
+            Histogram histogram = new Histogram(data,convergenceCriteria);
+            double actual = histogram.InverseCDF(.975);
+
+            Assert.Equal(expected, actual, 1);
+
+        }
     }
 }
