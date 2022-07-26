@@ -62,80 +62,52 @@ namespace alternativeComparisonReport
         {//TODO rename local variables to reflect generalization of this extracted logic 
             IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
             IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
-
-            ThreadsafeInlineHistogram damageReducedHistogram;
-            ConsequenceDistributionResult damageReducedResult;
+            ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult();
             ConvergenceCriteria convergenceCriteria;
-            if (!withoutProjectHistogram.HistogramIsZeroValued && !withoutProjectHistogram.HistogramIsZeroValued)
+            bool bothHistogramsAreZeroValued = withoutProjectHistogram.HistogramIsZeroValued && withProjectHistogram.HistogramIsZeroValued;
+            if (!bothHistogramsAreZeroValued)
             {
                 if (iterateOnWithProject)
                 {
                     convergenceCriteria = withProjectDamageResult.ConvergenceCriteria;
-                    damageReducedHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
-                    damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, damageReducedHistogram, withProjectDamageResult.RegionID);
                 }
                 else
                 {
                     convergenceCriteria = withoutProjectDamageResult.ConvergenceCriteria;
-                    damageReducedHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
-                    damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, damageReducedHistogram, withoutProjectDamageResult.RegionID);
                 }
-                int masterseed = 0;
-                if (randomProvider is RandomProvider)
-                {
-                    masterseed = randomProvider.Seed;
-                }
-                Int64 progressChunks = 1;
-                Int64 _completedIterations = 0;
-                Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
-                if (_ExpectedIterations > 100)
-                {
-                    progressChunks = _ExpectedIterations / 100;
-                }
-                Random masterSeedList = new Random(masterseed);//must be seeded.
-                int[] seeds = new int[convergenceCriteria.MaxIterations];
-                for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
-                {
-                    seeds[i] = masterSeedList.Next();
-                }
+                List<double> resultCollection = new List<double>();
                 Int64 iterations = convergenceCriteria.MinIterations;
+                bool converged = false;
 
-                while (!damageReducedResult.ConsequenceHistogram.IsConverged)
+                while (!converged)
                 {
-                    Parallel.For(0, iterations, i =>
+                    for (int i = 0; i < iterations; i++) 
                     {
-                        interfaces.IProvideRandomNumbers threadlocalRandomProvider;
-                        if (randomProvider is MeanRandomProvider)
-                        {
-                            threadlocalRandomProvider = new MeanRandomProvider();
-                        }
-                        else
-                        {
-                            threadlocalRandomProvider = new RandomProvider(seeds[i]);
-                        }
-                        double withProjectDamage = withProjectHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
-                        double withoutProjectDamage = withoutProjectHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
+                        double withProjectDamage = withProjectHistogram.InverseCDF(randomProvider.NextRandom());
+                        double withoutProjectDamage = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                         double damagesReduced = withoutProjectDamage - withProjectDamage;
-                        damageReducedResult.AddConsequenceRealization(damagesReduced, i);
-                        Interlocked.Increment(ref _completedIterations);
-                    });
-                    if (!damageReducedResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
+                        resultCollection.Add(damagesReduced);
+                    }
+                    Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
+                    converged = histogram.IsHistogramConverged(.95, .05);
+                    if (!converged)
                     {
-                        iterations = damageReducedResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
-                        _ExpectedIterations = _completedIterations + iterations;
-                        progressChunks = _ExpectedIterations / 100;
+                        iterations = histogram.EstimateIterationsRemaining(.95, .05);
                     }
                     else
                     {
+                        if (iterateOnWithProject)
+                        {
+                            damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, histogram, withProjectDamageResult.RegionID);
+                        }
+                        else
+                        {
+                            damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, histogram, withoutProjectDamageResult.RegionID);
+                        }
                         iterations = 0;
                         break;
                     }
                 }
-                damageReducedResult.ConsequenceHistogram.ForceDeQueue();
-            }
-            else
-            {
-                damageReducedResult = new ConsequenceDistributionResult();
             }
             return damageReducedResult;
         }
