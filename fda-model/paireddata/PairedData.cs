@@ -48,12 +48,12 @@ namespace paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), "X must be strictly monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a >= b)), "Y must be strictly monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), $"X must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a >= b)), $"Y must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), "X must be monotonically increasing"));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a > b)), "Y must be monotonically increasing"));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), $"X must be monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a > b)), $"Y must be monotonically increasing but is not for the function named {_metadata.Name}."));
                     break;
                 default:
                     break;

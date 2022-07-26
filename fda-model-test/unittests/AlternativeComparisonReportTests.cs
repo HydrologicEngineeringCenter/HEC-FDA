@@ -33,7 +33,7 @@ namespace fda_model_test.unittests
             int impactAreaIdentifier = 1;
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             MeanRandomProvider mrp = new MeanRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -196,7 +196,7 @@ namespace fda_model_test.unittests
             int impactAreaIdentifier = 1;
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             MeanRandomProvider mrp = new MeanRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -330,7 +330,7 @@ namespace fda_model_test.unittests
             int impactAreaIdentifier = 1;
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             MeanRandomProvider mrp = new MeanRandomProvider();
             double exceedanceProbability = 0.5;
 
@@ -454,6 +454,10 @@ namespace fda_model_test.unittests
             double expectedAAEQWithProject = withProjectAlternativeResults.MeanAAEQDamage(impactAreaIdentifier, residentialDamCat, assetCategory);
             double actualAAEQWithProject = alternativeComparisonReportResults.MeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
+
+
         }
+
+
     }
 }

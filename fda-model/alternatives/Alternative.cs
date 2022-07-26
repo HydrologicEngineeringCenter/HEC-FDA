@@ -6,10 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace alternatives
 {
-    public class Alternative
+    public class Alternative: Validation
     {
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
@@ -24,10 +28,15 @@ namespace alternatives
         {
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
+            //validation on future year relative to base year 
             List<int> analysisYears = new List<int>();
             analysisYears.Add(baseYear);
             analysisYears.Add(futureYear);
-            AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears);
+            if (!CanCompute(baseYear,futureYear, periodOfAnalysis))
+            {
+                return new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            }
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
@@ -99,17 +108,36 @@ namespace alternatives
             return alternativeResults;
         }
 
+        private static bool CanCompute(int baseYear, int futureYear, int periodOfAnalysis)
+        {
+            bool canCompute = true;
+            if (baseYear > futureYear)
+            {
+                canCompute = false;
+            }
+            int differenceBetweenBaseAndFutureYearInclusive = futureYear - baseYear + 1;
+            if (differenceBetweenBaseAndFutureYearInclusive < 2)
+            {
+                canCompute = false;
+            }
+            if (differenceBetweenBaseAndFutureYearInclusive > periodOfAnalysis)
+            {
+                canCompute = false;
+            }
+            return canCompute;
+        }
+
         private static ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
         {
 
 
-            Histogram aaeqHistogram;//ThreadsafeInlineHistogram aaeqHistogram;
+            ThreadsafeInlineHistogram aaeqHistogram;
             ConsequenceDistributionResult aaeqResult;
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new Histogram(20);// ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
 
                 aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, aaeqHistogram, mlfYearDamageResult.RegionID);
 
@@ -117,7 +145,7 @@ namespace alternatives
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                aaeqHistogram = new Histogram(20);//ThreadsafeInlineHistogram(convergenceCriteria);
+                aaeqHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
                 aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, aaeqHistogram, baseYearDamageResult.RegionID);
             }
             int masterseed = 0;
@@ -142,16 +170,24 @@ namespace alternatives
 
             while (!aaeqResult.ConsequenceHistogram.IsConverged)
             {
-                //Parallel.For(0, iterations, i =>
-                for (int i = 0; i < iterations; i++)
+                Parallel.For(0, iterations, i =>
                 {
-                    double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
-                    double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
+                    interfaces.IProvideRandomNumbers threadlocalRandomProvider;
+                    if (randomProvider is MeanRandomProvider)
+                    {
+                        threadlocalRandomProvider = new MeanRandomProvider();
+                    }
+                    else
+                    {
+                        threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                    }
+                    double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
+                    double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(threadlocalRandomProvider.NextRandom());
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     aaeqResult.AddConsequenceRealization(aaeqDamage, i);
-                    //Interlocked.Increment(ref _completedIterations);
+                    Interlocked.Increment(ref _completedIterations);
                 }
-                //);
+                );
                 if (!aaeqResult.ConsequenceHistogram.IsHistogramConverged(.95, .05))
                 {
                     iterations = aaeqResult.ConsequenceHistogram.EstimateIterationsRemaining(.95, .05);
@@ -200,7 +236,7 @@ namespace alternatives
         }
         private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, int baseYear, int mostLikelyFutureYear, int periodOfAnalysis)
         {
-            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear);
+            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear +1);
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
