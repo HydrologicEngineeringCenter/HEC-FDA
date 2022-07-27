@@ -7,7 +7,7 @@ using HEC.MVVMFramework.ViewModel.Implementations;
 
 namespace HEC.FDA.ViewModel.Study
 {
-    public class ConvergenceCriteriaVM: ValidatingBaseViewModel
+    public class ConvergenceCriteriaVM:BaseViewModel
     {
         private double _confidence = 95;
         private double _tolerance = .01;
@@ -15,54 +15,23 @@ namespace HEC.FDA.ViewModel.Study
         private int _max = 10000000;
         public double Confidence
         {
-            get
-            {
-                return _confidence;
-            }
-
-            set
-            {
-                _confidence = value;
-                NotifyPropertyChanged();
-            }
+            get { return _confidence; }
+            set { _confidence = value;  NotifyPropertyChanged();  }
         }
         public double Tolerance
         {
-            get
-            {
-                return _tolerance;
-            }
-            set
-            {
-                _tolerance = value;
-                NotifyPropertyChanged();
-            }
+            get {  return _tolerance; }
+            set{  _tolerance = value; NotifyPropertyChanged();}
         }
         public int Min
         {
-            get
-            {
-                return _min;
-            }
-            set
-            {
-                _min = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(Max));
-            }
+            get  {   return _min;  }
+            set {  _min = value;  NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Max));  }
         }
         public int Max
         {
-            get
-            {
-                return _max;
-            }
-            set
-            {
-                _max = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(Min));
-            }
+            get  { return _max; }
+            set { _max = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Min)); }
         }
         public ConvergenceCriteriaVM(XElement ele)
         {
@@ -75,13 +44,15 @@ namespace HEC.FDA.ViewModel.Study
         }
         private void Initialize()
         {
-            AddSinglePropertyRule(nameof(Min), new Rule(() => { return Min > 100; }, "Min iterations must be more than 100.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Min), new Rule(() => { return Min < Max; }, "Min iterations must be less than Max iterations.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Max), new Rule(() => { return Max < double.MaxValue; }, "Max iterations must be less than the maximum value for a double.", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Confidence), new Rule(() => { return Confidence < 100; }, "Confidence must be less than 100", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Confidence), new Rule(() => { return Confidence > 50; }, "Confidence must be greater than 50", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Tolerance), new Rule(() => { return Tolerance >= .001; }, "Tolerance must be greater than .001", ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(Tolerance), new Rule(() => { return Tolerance <= 1; }, "Tolerance must be less than 1", ErrorLevel.Severe));
+            AddRule(nameof(Min), () => Min > 100, "Min iterations must be more than 100.");
+            AddRule(nameof(Max), () => Max > Min, "Min iterations must be less than Max iterations.");
+            AddRule(nameof(Min), () => Min < Max, "Min iterations must be less than Max iterations.");
+            AddRule(nameof(Max), () => Max < double.MaxValue, "Max iterations must be less than the maximum value for a double.");
+            AddRule(nameof(Confidence), () => Confidence < 100, "Confidence must be less than 100.");
+            AddRule(nameof(Confidence), () => Confidence > 50, "Confidence must be greater than 50.");
+            AddRule(nameof(Tolerance), () => Tolerance >= .001, "Tolerance must be greater than .001.");
+            AddRule(nameof(Tolerance), () => Tolerance <= 1, "Tolerance must be less than 1.");
+
             Validate();
         }
         public XElement toXML()

@@ -20,10 +20,14 @@ namespace HEC.FDA.ViewModel.Study
         private const string UPDATED_PRICE_INDEX = "UpdatedPriceIndex";
         private const string DISCOUNT_RATE = "DiscountRate";
         private const string PERIOD_OF_ANALYSIS = "PeriodOfAnalysis";
+        private const string CONVERGENCE_CRITERIA = "ConvergenceCriteriaVM";
+
+
         #region Fields
 
         #endregion
         #region Properties
+        public ConvergenceCriteriaVM ConvergenceCriteria { get; }
 
         public double DiscountRate { get; }
         
@@ -58,7 +62,7 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="studyName"></param>
         /// <param name="studyPath"></param>
         /// <param name="description"></param>
-        public StudyPropertiesElement(string studyName, string studyPath, string description, int id):base(id)
+        public StudyPropertiesElement(string studyName, string studyPath, string description,ConvergenceCriteriaVM convCriteria, int id):base(id)
         {
             Name = studyName;
             StudyPath = studyPath;
@@ -73,10 +77,12 @@ namespace HEC.FDA.ViewModel.Study
             UpdatedPriceIndex = 0.01;
             DiscountRate = .025;
             PeriodOfAnalysis = 50;
+            ConvergenceCriteria = convCriteria;
         }
 
         public StudyPropertiesElement(string name, string path, string description, string createdBy, string createdDate, string studyNotes,
-            MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, int periodOfAnalysis, int id) : base(id)
+            MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, 
+            int periodOfAnalysis, ConvergenceCriteriaVM convCriteria, int id) : base(id)
         {
             Name = name;
             StudyPath = path;
@@ -91,6 +97,7 @@ namespace HEC.FDA.ViewModel.Study
             UpdatedPriceIndex = priceIndex;
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
+            ConvergenceCriteria = convCriteria;
         }
        
         public StudyPropertiesElement(StudyPropertiesElement elem, int id):base(id)
@@ -108,6 +115,7 @@ namespace HEC.FDA.ViewModel.Study
             UpdatedPriceIndex = elem.UpdatedPriceIndex;
             DiscountRate = elem.DiscountRate;
             PeriodOfAnalysis = elem.PeriodOfAnalysis;
+            ConvergenceCriteria = elem.ConvergenceCriteria;
         }
 
         /// <summary>
@@ -124,6 +132,15 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = studyProperty.Attribute(CREATED_BY).Value;
             CreatedDate = studyProperty.Attribute(CREATED_DATE).Value;
             StudyNotes = studyProperty.Attribute(STUDY_NOTES).Value;
+            if(studyProperty.Element(CONVERGENCE_CRITERIA) != null)
+            {
+                ConvergenceCriteria = new ConvergenceCriteriaVM( studyProperty.Element(CONVERGENCE_CRITERIA));
+            }
+            else
+            {
+                //this is for backwards compatibility
+                ConvergenceCriteria = new ConvergenceCriteriaVM();
+            }
 
             MonetaryUnitsEnum monetaryUnitsEnum = MonetaryUnitsEnum.Dollars;
             if (!Enum.TryParse(studyProperty.Attribute(MONETARY_UNIT).Value, out monetaryUnitsEnum))
@@ -178,6 +195,8 @@ namespace HEC.FDA.ViewModel.Study
             studyPropsElem.SetAttributeValue(UPDATED_PRICE_INDEX, UpdatedPriceIndex);
             studyPropsElem.SetAttributeValue(DISCOUNT_RATE, DiscountRate);
             studyPropsElem.SetAttributeValue(PERIOD_OF_ANALYSIS, PeriodOfAnalysis);
+
+            studyPropsElem.Add(ConvergenceCriteria.toXML());
 
             return studyPropsElem.ToString();
         }

@@ -147,13 +147,32 @@ namespace HEC.FDA.ViewModel
                     NotifyPropertyChanged("HasError");
                 }
             }
+            if(!HasFatalError)
+            {
+                //check children
+                bool hasFatalError = false;
+
+                foreach (BaseViewModel baseVM in _Children)
+                {
+                    if (baseVM.HasFatalError)
+                    {
+                        hasFatalError = true;
+                        break;
+                    }
+                }
+                HasFatalError = hasFatalError;
+            }
+
             if (HasError)
             {
                 //this is used to display the tooltip on the OK and SAVE buttons
                 Error = errors.ToString().Remove(errors.ToString().Length - 2);
             }
+            else
+            {
+                NotifyPropertyChanged(nameof(Error));
+            }
 
-            NotifyPropertyChanged(nameof(Error));
         }
 
         protected void RegisterChildViewModel(BaseViewModel vm)
@@ -167,9 +186,32 @@ namespace HEC.FDA.ViewModel
 
         private void ChildChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals(nameof(HasChanges)) && sender is BaseViewModel vm)
+            if (sender is BaseViewModel vm)
             {
-                HasChanges |= vm.HasChanges;
+                if (e.PropertyName.Equals(nameof(HasChanges)))
+                {
+                    HasChanges |= vm.HasChanges;
+                }
+                else if (e.PropertyName.Equals(nameof(HasFatalError)))
+                {             
+                    if (vm.HasFatalError)
+                    {
+                        HasFatalError = true;
+                        
+                    }
+                    else
+                    {
+                        Validate();
+                    }
+                }
+                else if(e.PropertyName.Equals(nameof(Error)))
+                {
+                    if(vm.Error != "")
+                    {
+                        Error += Environment.NewLine + vm.Error;
+                        Error = Error.Trim();
+                    }
+                }
             }
         }
 

@@ -191,7 +191,8 @@ namespace HEC.FDA.ViewModel.Study
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
             int id = PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
-            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, id);
+            ConvergenceCriteriaVM convergenceCriteriaVM = new ConvergenceCriteriaVM();
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, convergenceCriteriaVM, id);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
         public void StudyProperties()
