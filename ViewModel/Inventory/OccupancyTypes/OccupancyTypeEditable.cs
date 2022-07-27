@@ -149,7 +149,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
-                if (!vm.HasError)
+                if (!vm.HasFatalError)
                 {
                     //store the new damage category
                     DamageCategory = vm.Name;

@@ -17,6 +17,8 @@
              
              xmlns:IASEditorVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Editor;assembly=HEC.FDA.ViewModel"
              xmlns:IASEditorView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
+             
+             xmlns:ComputeVM="clr-namespace:HEC.FDA.ViewModel.Compute;assembly=HEC.FDA.ViewModel"
                           
              xmlns:AlternativeComparisonReportVM="clr-namespace:HEC.FDA.ViewModel.AlternativeComparisonReport;assembly=HEC.FDA.ViewModel"
              xmlns:AlternativeComparisonReport ="clr-namespace:HEC.FDA.View.AlternativeComparisonReport"
@@ -252,7 +254,7 @@
             <IASEditorView:IASEditor/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASEditorVM:ComputeScenarioVM }" >
+        <DataTemplate DataType="{x:Type ComputeVM:ComputeBase }" >
             <IASEditorView:ComputeScenarioEditor/>
         </DataTemplate>
 

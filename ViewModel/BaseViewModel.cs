@@ -75,7 +75,6 @@ namespace HEC.FDA.ViewModel
 
         public string ValidationErrorMessage { get; set; }
 
-        public bool HasError { get; private set; }
         private bool _HasFatalError;
         public bool HasFatalError
         {
@@ -125,35 +124,50 @@ namespace HEC.FDA.ViewModel
         /// </summary>
         public void Validate()
         {
-            HasError = false;
             HasFatalError = false;
-            NotifyPropertyChanged("HasError");
-            NotifyPropertyChanged("HasFatalError");
-            StringBuilder errors = new StringBuilder();
+            List<string> errors = new List<string>();
             Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
-
                 pr.Update();
                 if (pr.HasError)
                 {
                     if (pr.HasFatalError == true)
                     {
                         HasFatalError = true;
-                        NotifyPropertyChanged("HasFatalError");
                     }
-                    errors.AppendLine(pr.Error);
-                    HasError = true;
-                    NotifyPropertyChanged("HasError");
+                    errors.Add(pr.Error);
                 }
             }
-            if (HasError)
+            //If this VM doesn't have a fatal error, it is possible that a child VM has fatal errors. We want to 
+            //bubble that up to this VM.
+            if (!HasFatalError)
             {
-                //this is used to display the tooltip on the OK and SAVE buttons
-                Error = errors.ToString().Remove(errors.ToString().Length - 2);
+                bool hasFatalError = false;
+                foreach (BaseViewModel baseVM in _Children)
+                {
+                    if (baseVM.HasFatalError)
+                    {
+                        hasFatalError = true;
+                        break;
+                    }
+                }
+                HasFatalError = hasFatalError;
             }
 
-            NotifyPropertyChanged(nameof(Error));
+            //handle the errors tooltip
+            //we have already added the errors for this vm but there might be errors
+            //to report from the child vms
+            foreach (BaseViewModel baseVM in _Children)
+            {
+                if (baseVM.Error.Length > 0)
+                {
+                    errors.Add(baseVM.Error);
+                }
+            }
+
+            //this is used to display the tooltip on the OK and SAVE buttons. Removing the last newline chars
+            Error = string.Join(Environment.NewLine, errors);
         }
 
         protected void RegisterChildViewModel(BaseViewModel vm)
@@ -167,9 +181,32 @@ namespace HEC.FDA.ViewModel
 
         private void ChildChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals(nameof(HasChanges)) && sender is BaseViewModel vm)
+            if (sender is BaseViewModel vm)
             {
-                HasChanges |= vm.HasChanges;
+                if (e.PropertyName.Equals(nameof(HasChanges)))
+                {
+                    HasChanges |= vm.HasChanges;
+                }
+                else if (e.PropertyName.Equals(nameof(HasFatalError)))
+                {             
+                    if (vm.HasFatalError)
+                    {
+                        HasFatalError = true;
+                        
+                    }
+                    else
+                    {
+                        Validate();
+                    }
+                }
+                else if(e.PropertyName.Equals(nameof(Error)))
+                {
+                    if(vm.Error != "")
+                    {
+                        Error += Environment.NewLine + vm.Error;
+                        Error = Error.Trim();
+                    }
+                }
             }
         }
 
@@ -178,8 +215,7 @@ namespace HEC.FDA.ViewModel
 
             //todo: I don't like excluding properties like this, but if the validate is going to update
             //properties, then you will get an infinite loop if you don't exclude them.
-            if (propertyName.Equals(nameof(HasError))
-                || propertyName.Equals(nameof(HasFatalError))
+            if (propertyName.Equals(nameof(HasFatalError))
                 || propertyName.Equals(nameof(Error))
                 || propertyName.Equals(nameof(HasChanges))
                 || propertyName.Equals("MessageRows")

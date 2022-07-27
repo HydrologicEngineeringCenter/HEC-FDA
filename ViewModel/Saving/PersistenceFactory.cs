@@ -13,6 +13,7 @@ using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.Saving
 {
@@ -41,6 +42,10 @@ namespace HEC.FDA.ViewModel.Saving
             if (element.GetType() == typeof(TerrainElement))
             {
                 manager = new TerrainElementPersistenceManager(StudyCacheForSaving);
+            }
+            else if(element.GetType() == typeof(StudyPropertiesElement))
+            {
+                manager = new StudyPropertiesPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
