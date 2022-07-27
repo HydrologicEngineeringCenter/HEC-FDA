@@ -1,20 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>fda_model_cmd</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.7.8.2331" />
-    <PackageReference Include="USACE.HEC.FDA.Utilities" Version="1.1.0-alpha-2022.1.24.1758" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>fda_model_cmd</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.0-alpha-2022.2.15.2147" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\fda-model\fda-model.csproj" />
-    <ProjectReference Include="..\Statistics\Statistics.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\fda-model\fda-model.csproj" />
+		<ProjectReference Include="..\Statistics\Statistics.csproj" />
+	</ItemGroup>
 
 </Project>
