@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -196,9 +197,14 @@ namespace HEC.FDA.ViewModel.Study
             studyPropsElem.SetAttributeValue(DISCOUNT_RATE, DiscountRate);
             studyPropsElem.SetAttributeValue(PERIOD_OF_ANALYSIS, PeriodOfAnalysis);
 
-            studyPropsElem.Add(ConvergenceCriteria.toXML());
+            studyPropsElem.Add(ConvergenceCriteria.ToXML());
 
             return studyPropsElem.ToString();
+        }
+
+        public ConvergenceCriteria GetStudyConvergenceCriteria()
+        {
+            return ConvergenceCriteria.ToConvergenceCriteria();
         }
 
         #endregion

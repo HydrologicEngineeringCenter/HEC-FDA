@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.Compute
 
             int seed = 1234;
             RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria();
+            ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
             Task.Run(() =>
             {

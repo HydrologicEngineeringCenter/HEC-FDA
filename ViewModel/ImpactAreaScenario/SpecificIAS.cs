@@ -139,7 +139,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 {
                     thresholdValue = thresholdRow.ThresholdValue.Value;
                 }
-                Threshold threshold = new Threshold(thresholdIndex, new ConvergenceCriteria(), thresholdRow.ThresholdType.Metric, thresholdValue);
+                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
+                Threshold threshold = new Threshold(thresholdIndex, cc, thresholdRow.ThresholdType.Metric, thresholdValue);
                 sc.WithAdditionalThreshold(threshold);
                 thresholdIndex++;
             }

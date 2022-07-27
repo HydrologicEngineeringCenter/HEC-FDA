@@ -7,6 +7,12 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public static class DefaultCurveData
     {
+        #region Convergence Criteria
+        public static double CONFIDENCE = 95;
+        public static double TOLERANCE = .01;
+        public static int MIN = 1000;
+        public static int MAX = 10000000;
+        #endregion
 
         private static List<double> _ExteriorInteriorXValues = new List<double>() {474, 474.1, 474.3, 474.5, 478};
         private static List<IDistribution> _ExteriorInteriorYValues = new List<IDistribution>() 

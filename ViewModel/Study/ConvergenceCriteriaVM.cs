@@ -1,18 +1,15 @@
-﻿using System;
-using HEC.MVVMFramework.ViewModel.Validation;
-using HEC.MVVMFramework.Base.Enumerations;
+﻿using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System.Xml.Linq;
-using HEC.MVVMFramework.ViewModel.Implementations;
 
 namespace HEC.FDA.ViewModel.Study
 {
     public class ConvergenceCriteriaVM:BaseViewModel
     {
-        private double _confidence = 95;
-        private double _tolerance = .01;
-        private int _min = 1000;
-        private int _max = 10000000;
+        private double _confidence = DefaultCurveData.CONFIDENCE;
+        private double _tolerance = DefaultCurveData.TOLERANCE;
+        private int _min = DefaultCurveData.MIN;
+        private int _max = DefaultCurveData.MAX;
         public double Confidence
         {
             get { return _confidence; }
@@ -35,7 +32,7 @@ namespace HEC.FDA.ViewModel.Study
         }
         public ConvergenceCriteriaVM(XElement ele)
         {
-            fromXML(ele);
+            FromXML(ele);
             Initialize();
         }
         public ConvergenceCriteriaVM()
@@ -55,7 +52,7 @@ namespace HEC.FDA.ViewModel.Study
 
             Validate();
         }
-        public XElement toXML()
+        public XElement ToXML()
         {
             XElement ele = new XElement("ConvergenceCriteriaVM");
             ele.SetAttributeValue(nameof(Min), Min);
@@ -64,14 +61,14 @@ namespace HEC.FDA.ViewModel.Study
             ele.SetAttributeValue(nameof(Tolerance), Tolerance);
             return ele;
         }
-        public void fromXML(XElement ele)
+        public void FromXML(XElement ele)
         {
             Max = int.Parse(ele.Attribute(nameof(Max)).Value);
             Min = int.Parse(ele.Attribute(nameof(Min)).Value);
             Tolerance = double.Parse(ele.Attribute(nameof(Tolerance)).Value);
             Confidence = double.Parse(ele.Attribute(nameof(Confidence)).Value);
         }
-        public ConvergenceCriteria toConvergenceCriteria()
+        public ConvergenceCriteria ToConvergenceCriteria()
         {
             Statistics.Distributions.Normal sn = new Statistics.Distributions.Normal(0, 1);
             double zAlpha = sn.InverseCDF(.5 + Confidence / 200);

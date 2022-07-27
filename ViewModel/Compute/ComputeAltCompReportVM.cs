@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.Compute
 
                 int seed = 99;
                 RandomProvider randomProvider = new RandomProvider(seed);
-                ConvergenceCriteria cc = new ConvergenceCriteria();
+                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
                 AlternativeComparisonReportResults results = alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
                 Progress = 100;
