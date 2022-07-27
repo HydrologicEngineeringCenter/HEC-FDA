@@ -1,7 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
-using System.Windows;
-
+﻿using System;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -14,7 +11,6 @@ namespace HEC.FDA.ViewModel.Study
         private double _DiscountRate;
 
         #region Properties
-        //Properties with rules need to notify property changed.
         public double DiscountRate
         {
             get { return _DiscountRate; }
@@ -44,7 +40,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public PropertiesVM(StudyPropertiesElement elem):base(elem, null)
         {
-            ConvergenceCriteria = elem.ConvergenceCriteria;
+            ConvergenceCriteria = new ConvergenceCriteriaVM(elem.ConvergenceCriteria.ToXML());
             RegisterChildViewModel(ConvergenceCriteria);
 
             StudyName = elem.Name;
@@ -60,7 +56,6 @@ namespace HEC.FDA.ViewModel.Study
             UpdatedPriceIndex = elem.UpdatedPriceIndex;
             DiscountRate = elem.DiscountRate;
             PeriodOfAnalysis = elem.PeriodOfAnalysis;
-
         }
 
         #endregion
@@ -72,12 +67,10 @@ namespace HEC.FDA.ViewModel.Study
             AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
             AddRule(nameof(DiscountRate), () => DiscountRate >= 0 && DiscountRate <= 100, "Discount Rate must be between 0 and 100.");
             AddRule(nameof(PeriodOfAnalysis), () => PeriodOfAnalysis >= 0 && PeriodOfAnalysis <= 500, "Period of Analysis must be between 0 and 500.");
-
         }
 
         public override void Save()
         {
-
             //the properties are unique in that it gets saved when the study is created. This editor
             //is, therefore, always in 'edit mode'. We are always saving an existing element.
             //there is only one row of study properties. The id will always be 1.
@@ -85,9 +78,7 @@ namespace HEC.FDA.ViewModel.Study
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
                 CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
 
-            Saving.PersistenceManagers.StudyPropertiesPersistenceManager manager = Saving.PersistenceFactory.GetStudyPropertiesManager();
-            manager.SaveExisting(elemToSave);
-
+            base.Save(elemToSave);
         }
         #endregion        
     }

@@ -2,40 +2,22 @@
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.ViewModel.Implementations;
 using metrics;
 using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace HEC.FDA.ViewModel.Compute
 {
     public class ComputeScenarioVM:ComputeBase
     {
-        // private string _SimName;
         private int _TotalSims;
         private int _IterationsCompleted = 0;
         private Dictionary<int, string> _ImpactAreaIdToName = new Dictionary<int, string>();
-
-
-
-
-
-
-
-
-        //public string SimName
-        //{
-        //    get { return _SimName; }
-        //    set { _SimName = value; NotifyPropertyChanged(); }
-        //}
 
         public ComputeScenarioVM(int analysisYear, List<SpecificIAS> iasElems, Action<ScenarioResults> callback):base()
         {

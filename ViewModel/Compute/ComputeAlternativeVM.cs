@@ -6,9 +6,6 @@ using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
@@ -34,10 +31,7 @@ namespace HEC.FDA.ViewModel.Compute
             double discountRate = studyProperties.DiscountRate;
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
-            //todo:
-            //MessageHub.Register(firstResults);
-            //firstResults.ProgressReport += Sim_ProgressReport;
-            //sims.Add(sim);
+            //todo: register something with message hub?
 
             Task.Run(() =>
             {
@@ -46,7 +40,6 @@ namespace HEC.FDA.ViewModel.Compute
             });
 
         }
-
 
     }
 }

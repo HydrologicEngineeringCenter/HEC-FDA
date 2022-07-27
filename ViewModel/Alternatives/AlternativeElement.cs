@@ -11,7 +11,6 @@ using metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -171,22 +170,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 vr.AddErrorMessage(AreScenarioYearsDifferent(firstElem, secondElem).ErrorMessage);
                 vr.AddErrorMessage(DoScenariosHaveResults(firstElem, secondElem).ErrorMessage);
-                //vr.AddErrorMessage(DoesAlternativeHaveResults().ErrorMessage);
             }
 
             return vr;
         }
-
-        //private FdaValidationResult DoesAlternativeHaveResults()
-        //{
-        //    FdaValidationResult vr = new FdaValidationResult();
-
-        //    if (Results != null)
-        //    {
-        //        vr.AddErrorMessage("This alternative has no compute results.");
-        //    }
-        //    return vr;
-        //}
 
         private FdaValidationResult DoScenariosHaveResults(IASElementSet firstElem, IASElementSet secondElem)
         {
@@ -263,21 +250,17 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-
-
                 IASElementSet[] iASElems = GetElementsFromID();
 
                 ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
-
             }
             else
             {
                 MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
         }
 
         public void ComputeAlternative(Action<AlternativeResults> callback)
@@ -297,15 +280,9 @@ namespace HEC.FDA.ViewModel.Alternatives
             double discountRate = studyProperties.DiscountRate;
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
-            //todo:
-            //MessageHub.Register(firstResults);
-            //firstResults.ProgressReport += Sim_ProgressReport;
-            //sims.Add(sim);
-
-         
-                AlternativeResults results = Alternative.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
-                callback?.Invoke(results);
-          
+            //todo: register somthing with the message hub?
+            AlternativeResults results = Alternative.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
+            callback?.Invoke(results);
         }
 
         private void ComputeCompleted(AlternativeResults results)
