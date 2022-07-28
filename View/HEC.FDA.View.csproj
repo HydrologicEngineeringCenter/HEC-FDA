@@ -22,13 +22,6 @@
     <Reference Include="DataTableViewControl">
       <HintPath>..\lib\DataTableViewControl.dll</HintPath>
     </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="GenericControlsWPF">
-      <HintPath>..\lib\GenericControlsWPF.dll</HintPath>
-    </Reference>
     <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\HecCs.dll</HintPath>
@@ -266,8 +259,6 @@
     <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.20.1655" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
-    <PackageReference Include="PresentationFramework" Version="4.6.0" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-21-2156" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
  
