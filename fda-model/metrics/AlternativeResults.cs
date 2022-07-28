@@ -54,6 +54,7 @@ namespace metrics
             AnalysisYears = new List<int>() { 2030, 2049 };
             PeriodOfAnalysis = 50;
             AddRules();
+            MessageHub.Register(this);
         }
 
 
@@ -66,6 +67,7 @@ namespace metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
+            MessageHub.Register(this);
         }
         internal AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
@@ -75,6 +77,7 @@ namespace metrics
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
             AddRules();
+            MessageHub.Register(this);
         }
         private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears, int periodOfAnalysis)
         {
@@ -84,6 +87,7 @@ namespace metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
+            MessageHub.Register(this);
 
         }
         #endregion

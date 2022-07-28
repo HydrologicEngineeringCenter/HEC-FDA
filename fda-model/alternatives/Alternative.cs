@@ -13,8 +13,12 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace alternatives
 {
-    public class Alternative: Validation
+    public class Alternative: Validation, IReportMessage,IProgressReport
     {
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+
+
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -24,8 +28,14 @@ namespace alternatives
         /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
-        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
+        /// 
+
+        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
+            ScenarioResults computedResultsFutureYear)
         {
+            
+          
+
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
             //validation on future year relative to base year 
@@ -36,7 +46,12 @@ namespace alternatives
             {
                 return new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
             }
+
+
             AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
+            MessageEventArgs messargs = new MessageEventArgs(new Message("Starting up"));
+            alternativeResults.ReportMessage(alternativeResults, messargs);
+
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
@@ -219,7 +234,14 @@ namespace alternatives
             return interpolatedEADs;
         }
 
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
-
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
