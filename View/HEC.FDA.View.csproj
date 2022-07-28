@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<OutputPath>..\Build\FDA2.0</OutputPath>
     <OutputType>WinExe</OutputType>
@@ -321,11 +321,11 @@
   </ItemGroup>
  
   <PropertyGroup>
-    <PostBuildEvent>
+    <!--<PostBuildEvent>
 		echo "Copying the RasMapperLibDistribution Folder to your output directory"
-		Xcopy "%userprofile%\.nuget\packages\rasmapperlibdistro6.2\0.0.1\contentFiles\6.2 (RasMapperLib Distro)" $(TargetDir)/E /H /C /I /Q /Y
+		Xcopy "%userprofile%\.nuget\packages\rasmapperlibdistro6.2\0.0.1\contentFiles\6.2 (RasMapperLib Distro)" $(TargetDir)/E /H /C /I /Q 
 		echo "Copied to" $(TargetDir)\GDAL
-	</PostBuildEvent>
+	</PostBuildEvent>-->
     <RootNamespace>HEC.FDA.View</RootNamespace>
   </PropertyGroup>
 </Project>
