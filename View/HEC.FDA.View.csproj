@@ -256,7 +256,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.20.1655" />
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.22.2150" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
