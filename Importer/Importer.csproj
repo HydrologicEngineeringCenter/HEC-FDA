@@ -7,6 +7,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-04-25-1317" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-07-28-1619" />
   </ItemGroup>
 </Project>
