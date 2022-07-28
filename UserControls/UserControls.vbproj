@@ -49,8 +49,8 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Statistics, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\USACE.HEC.FDA.Statistics.1.1.0-alpha-2022-06-24-0106\lib\net48\Statistics.dll</HintPath>
+    <Reference Include="Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HEC.MVVMFramework.Base.1.0.0-alpha-2022.7.20.1519\lib\netstandard2.0\Base.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows" />

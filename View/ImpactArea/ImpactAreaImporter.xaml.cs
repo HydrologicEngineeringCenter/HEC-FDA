@@ -36,11 +36,5 @@ namespace HEC.FDA.View.ImpactArea
             }
         }
 
-        private void Cmb_Path_SelectionMade(string fullpath, string filename)
-        {
-            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
-            vm.SelectedPath = fullpath;
-            vm.LoadUniqueNames(fullpath);
-        }
     }
 }

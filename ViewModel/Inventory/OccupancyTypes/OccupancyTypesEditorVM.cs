@@ -199,7 +199,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (!vm.WasCanceled)
             {
-                if (!vm.HasError)
+                if (!vm.HasFatalError)
                 {
                     ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
                     string damCatName = "";
@@ -234,7 +234,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 Navigate(tab, true, true);
                 if (vm.WasCanceled == false)
                 {
-                    if (vm.HasError == false)
+                    if (vm.HasFatalError == false)
                     {
                         newOT.Name = vm.Name;
                         ObservableCollection<string> damcats = _GroupsToDamcats[newOT.GroupID];
@@ -407,7 +407,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, true, true);
             if (!vm.WasCanceled)
             {
-                if (!vm.HasError)
+                if (!vm.HasFatalError)
                 {
                     string newName = vm.Name;
                     SelectedOccTypeGroup.Name = newName;

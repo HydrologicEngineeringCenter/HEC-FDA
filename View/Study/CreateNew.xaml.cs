@@ -12,11 +12,5 @@ namespace HEC.FDA.View.Study
             InitializeComponent();
         }
 
-        private void TextBoxFolderBrowser_SelectionMade(string fullpath)
-        {
-            HEC.FDA.ViewModel.Study.NewStudyVM vm = (HEC.FDA.ViewModel.Study.NewStudyVM)this.DataContext;
-            vm.Path = fullpath;
-        }
-
     }
 }

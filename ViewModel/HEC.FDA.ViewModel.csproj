@@ -26,10 +26,6 @@
     <Reference Include="BitMiracle.LibTiff.NET40">
       <HintPath>..\lib\BitMiracle.LibTiff.NET40.dll</HintPath>
     </Reference>
-    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
-    </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
       <Private>true</Private>
@@ -107,7 +103,4 @@
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
     <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-28-1619" />
   </ItemGroup>
-	
-	
-  
 </Project>

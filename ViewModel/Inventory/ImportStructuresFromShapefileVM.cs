@@ -1,14 +1,14 @@
 ﻿using DatabaseManager;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.Saving;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -24,8 +24,10 @@ namespace HEC.FDA.ViewModel.Inventory
         private DefineSIAttributesVM _DefineSIAttributes;
         private AttributeLinkingListVM _AttributeLinkingList;
         private bool _CurrentViewIsEnabled;
+
         #endregion
         #region Properties
+
         public bool CurrentViewIsEnabled
         {
             get { return _CurrentViewIsEnabled; }
@@ -56,13 +58,15 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
         #region Voids
-
         private void SelectedPathChanged()
         {
-            _DefineSIAttributes.Path = SelectedPath;
             //the selected file has changed. I set the second page to null
             //so that it will grab everything fresh.
             _AttributeLinkingList = null;
+            if (File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
+            {
+                _DefineSIAttributes.Path = SelectedPath;
+            }
         }
 
         public void PreviousButtonClicked()

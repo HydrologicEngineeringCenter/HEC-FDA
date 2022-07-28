@@ -14,15 +14,6 @@ namespace HEC.FDA.View.Utilities
             InitializeComponent();
         }
 
-        private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
-        {
-            if(DataContext is ImportFromFDA1VM vm)
-            {
-                vm.Path = fullpath;
-                ImportBtn.IsEnabled = true;
-            }          
-        }
-
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is ImportFromFDA1VM vm)

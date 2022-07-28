@@ -1,18 +1,19 @@
 ﻿using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class WaterSurfaceAreaPersistenceManager : SavingBase
     {
         private const string TABLE_NAME = "hydraulics";
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool) };
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids", "hydraulic_type" };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -41,9 +42,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(WaterSurfaceElevationElement element)
+        private object[] GetRowDataFromElement(HydraulicElement element)
         {
-            return new object[] { element.Name, element.Description, element.IsDepthGrids };
+            return new object[] { element.Name, element.Description, element.IsDepthGrids, element.HydroType };
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -56,7 +57,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
             }
             int id = Convert.ToInt32(rowData[ID_COL]);
-            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]), id);
+
+            HydraulicType hydroType = HydraulicType.Gridded;
+            if (rowData.Length>4)
+            {
+                Enum.TryParse((string)rowData[4], out hydroType);
+            }
+            HydraulicElement wse = new HydraulicElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]), hydroType, id);
             if(ppList.Count>0 && ppList[0].Path.Equals("NA"))
             {
                 wse.HasAssociatedFiles = false;
@@ -64,7 +71,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return wse;
         }
 
-        private void SavePathAndProbabilitiesTable(WaterSurfaceElevationElement element)
+        private void SavePathAndProbabilitiesTable(HydraulicElement element)
         {
             //gets called if savestotable is true
             if (!Connection.Instance.IsConnectionNull)
@@ -96,7 +103,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        private void RemoveWaterSurfElevFiles(WaterSurfaceElevationElement element)
+        private void RemoveWaterSurfElevFiles(HydraulicElement element)
         {
             try
             {
@@ -112,15 +119,15 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(WaterSurfaceElevationElement))
+            if (element.GetType() == typeof(HydraulicElement))
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
 
-                SaveNewElementToParentTable(GetRowDataFromElement((WaterSurfaceElevationElement)element), TableName, TableColumnNames, TableColumnTypes);
-                SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
+                SaveNewElementToParentTable(GetRowDataFromElement((HydraulicElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SavePathAndProbabilitiesTable((HydraulicElement)element);
                 //save files to the study directory
-                StudyCacheForSaving.AddElement((WaterSurfaceElevationElement)element);
+                StudyCacheForSaving.AddElement((HydraulicElement)element);
             }
         }
 
@@ -129,12 +136,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             RemoveFromParentTable(element, TableName);
             RemoveTable(PATH_AND_PROB_TABLE + element.Name);
             //if the wse was imported from old fda, then it won't have associated files.
-            WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)element;
+            HydraulicElement elem = (HydraulicElement)element;
             if (elem.HasAssociatedFiles)
             {
-                RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
+                RemoveWaterSurfElevFiles((HydraulicElement)element);
             }
-            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
+            StudyCacheForSaving.RemoveElement((HydraulicElement)element);
         }
 
         public void SaveExisting( ChildElement element, string oldName )
@@ -142,7 +149,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             base.SaveExisting( element);
             //delete the old table and create a new one
             Connection.Instance.DeleteTable(PATH_AND_PROB_TABLE + oldName);
-            SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);        
+            SavePathAndProbabilitiesTable((HydraulicElement)element);        
         }
 
         public void RenamePathAndProbabilitesTableName(string oldName, string newName)
@@ -153,7 +160,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override void Load()
         {
             List<ChildElement> waterSurfaceElevs = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
-            foreach (WaterSurfaceElevationElement elem in waterSurfaceElevs)
+            foreach (HydraulicElement elem in waterSurfaceElevs)
             {
                 StudyCacheForSaving.AddElement(elem);
             }
@@ -161,7 +168,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            return GetRowDataFromElement((WaterSurfaceElevationElement)elem);
+            return GetRowDataFromElement((HydraulicElement)elem);
         }
     }
 }

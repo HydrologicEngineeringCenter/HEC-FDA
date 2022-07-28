@@ -488,7 +488,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
                 MeanRandomProvider randomProvider = new MeanRandomProvider();
-                ConvergenceCriteria cc = new ConvergenceCriteria();
+                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
                 try
                 {
                     ImpactAreaScenarioResults result = simulation.PreviewCompute();

@@ -1,8 +1,9 @@
-﻿using HEC.FDA.ViewModel.WaterSurfaceElevation;
+﻿using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace HEC.FDA.View.WaterSurfaceElevation
+namespace HEC.FDA.View.Hydraulics
 {
     /// <summary>
     /// Interaction logic for WaterSurfaceElevationImporter.xaml
@@ -15,18 +16,9 @@ namespace HEC.FDA.View.WaterSurfaceElevation
             InitializeComponent();
         }
 
-        private void TxtDirectory_SelectionMade(string fullpath)
-        {
-            if (DataContext is WaterSurfaceElevationImporterVM vm)
-            {
-                vm.FileSelected(fullpath);
-                vm.SelectedPath = fullpath;
-            }
-        }
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is WaterSurfaceElevationImporterVM vm)
+            if (DataContext is GriddedImporterVM vm)
             {
                 vm.HasChanges = false;
             }

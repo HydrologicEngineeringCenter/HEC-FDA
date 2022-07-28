@@ -32,7 +32,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private DefineSIAttributesRowItem _ContentValueRow = new DefineSIAttributesRowItem("Content Value:");
         private DefineSIAttributesRowItem _OtherValueRow = new DefineSIAttributesRowItem("Other Value:");
         private DefineSIAttributesRowItem _VehicleValueRow = new DefineSIAttributesRowItem("Vehicle Value:");
-        private DefineSIAttributesRowItem _YearRow = new DefineSIAttributesRowItem("Year:");
         private DefineSIAttributesRowItem _ModuleRow = new DefineSIAttributesRowItem("Module:");
         private DefineSIAttributesRowItem _BegDamDepthRow = new DefineSIAttributesRowItem("Beginning Damage Depth:");
         private DefineSIAttributesRowItem _YearInConstructionRow = new DefineSIAttributesRowItem("Year In Construction:");
@@ -121,7 +120,6 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_ContentValueRow);
             OptionalRows.Add(_OtherValueRow);
             OptionalRows.Add(_VehicleValueRow);
-            OptionalRows.Add(_YearRow);
             OptionalRows.Add(_ModuleRow);
             OptionalRows.Add(_BegDamDepthRow);
             OptionalRows.Add(_YearInConstructionRow);
@@ -159,8 +157,6 @@ namespace HEC.FDA.ViewModel.Inventory
             _OtherValueRow.Items.AddRange(allColumnNames);
             _VehicleValueRow.Items.Clear();
             _VehicleValueRow.Items.AddRange(allColumnNames);
-            _YearRow.Items.Clear();
-            _YearRow.Items.AddRange(allColumnNames);
             _ModuleRow.Items.Clear();
             _ModuleRow.Items.AddRange(allColumnNames);
             _BegDamDepthRow.Items.Clear();
@@ -516,7 +512,6 @@ namespace HEC.FDA.ViewModel.Inventory
             row[StructureInventoryBaseElement.VehicleValueField] = GetValueForRow(dataTableView, i, _VehicleValueRow);
 
             //optional fields
-            row[StructureInventoryBaseElement.YearField] = GetValueForRow(dataTableView, i, _YearRow);
             row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
             row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
             row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);

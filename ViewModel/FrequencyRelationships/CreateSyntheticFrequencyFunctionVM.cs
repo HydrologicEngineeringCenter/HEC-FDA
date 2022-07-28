@@ -15,8 +15,15 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         private string _ImportLog = "";
         private string _Path;
+        private bool _ImportEnabled;
 
         private List<ChildElement> ElementsToImport { get; } = new List<ChildElement>();
+
+        public bool ImportEnabled
+        {
+            get { return _ImportEnabled; }
+            set { _ImportEnabled = value; NotifyPropertyChanged(); }
+        }
 
         public string ImportLog
         {
@@ -26,7 +33,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public string Path
         {
             get { return _Path; }
-            set { _Path = value; NotifyPropertyChanged(); }
+            set { _Path = value; ImportEnabled = true; NotifyPropertyChanged(); }
         }
 
         public CreateSyntheticFrequencyFunctionVM()

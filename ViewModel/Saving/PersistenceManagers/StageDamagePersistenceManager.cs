@@ -62,7 +62,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
             int id = Convert.ToInt32(rowData[ID_COL]);
 
-            List<ImpactAreaFrequencyFunctionRowItem> impactAreaFrequencyRows = LoadImpactAreaFreqRows((string)rowData[IMP_AREA_FREQ_ROWS_COL]);
+            List<ImpactAreaFrequencyFunctionRowItem> impactAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
+         
+            if (rowData.Length > IMP_AREA_FREQ_ROWS_COL)
+            {
+                //this is for backwards compatibility
+                impactAreaFrequencyRows = LoadImpactAreaFreqRows((string)rowData[IMP_AREA_FREQ_ROWS_COL]);
+            }
 
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
             (string)rowData[DESC_COL], selectedWSE, selectedStructs,stageDamageCurves, impactAreaFrequencyRows, isManual, id);

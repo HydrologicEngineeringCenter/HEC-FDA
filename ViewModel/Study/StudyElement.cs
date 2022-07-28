@@ -8,7 +8,7 @@ using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,7 +67,10 @@ namespace HEC.FDA.ViewModel.Study
             if (sender is MenuItem menuItem)
             {
                 string filePath = menuItem.Tag as string;
-                OpenStudyFromFilePath(Path.GetFileNameWithoutExtension(filePath), filePath);
+                if (Connection.Instance.ProjectFile == null || !Connection.Instance.ProjectFile.Equals(filePath))
+                {
+                    OpenStudyFromFilePath(Path.GetFileNameWithoutExtension(filePath), filePath);
+                }
             }
         }
 
@@ -191,7 +194,8 @@ namespace HEC.FDA.ViewModel.Study
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
             int id = PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
-            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, id);
+            ConvergenceCriteriaVM convergenceCriteriaVM = new ConvergenceCriteriaVM();
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, convergenceCriteriaVM, id);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
         public void StudyProperties()
@@ -208,16 +212,19 @@ namespace HEC.FDA.ViewModel.Study
 
         public void OpenStudyFromFilePath(string name, string path)
         {
-            TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
+            if (Connection.Instance.ProjectFile == null || !Connection.Instance.ProjectFile.Equals(path))
+            {
+                TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
 
-            UpdateRecentStudiesFile(path);
-            
-            Connection.Instance.ProjectFile = path;
+                UpdateRecentStudiesFile(path);
 
-            Name = name;
-            UpdateTreeViewHeader(name);
-            StudyCache = null;
-            AddBaseElements();
+                Connection.Instance.ProjectFile = path;
+
+                Name = name;
+                UpdateTreeViewHeader(name);
+                StudyCache = null;
+                AddBaseElements();
+            }
         }
 
         public void ImportStudyFromOldFda()
