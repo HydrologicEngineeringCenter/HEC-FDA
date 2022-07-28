@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             //ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
             
             IHistogram histogramOfAEPs = scenarioResults.AEPHistogram(impactAreaID, threshold.ThresholdID);
-            int[] binCounts = histogramOfAEPs.BinCounts;
+            long[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();
 
             HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
