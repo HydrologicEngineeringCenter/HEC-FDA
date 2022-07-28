@@ -13,39 +13,6 @@
   <PropertyGroup>
     <StartupObject>HEC.FDA.View.App</StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Inventory\DepthDamageCurves\**" />
-    <Compile Remove="Plans\**" />
-    <EmbeddedResource Remove="Inventory\DepthDamageCurves\**" />
-    <EmbeddedResource Remove="Plans\**" />
-    <EntityDeploy Remove="Inventory\DepthDamageCurves\**" />
-    <EntityDeploy Remove="Plans\**" />
-    <None Remove="Inventory\DepthDamageCurves\**" />
-    <None Remove="Plans\**" />
-    <Page Remove="Inventory\DepthDamageCurves\**" />
-    <Page Remove="Plans\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\AlternativeComparisonReport_20x20.png" />
-    <None Remove="Resources\Alternatives_20x20.png" />
-    <None Remove="Resources\ImpactAreaScenario_20x20.png" />
-    <None Remove="Resources\PanHand.png" />
-    <None Remove="Resources\TrackPlot.png" />
-    <None Remove="Resources\ZoomAll.png" />
-    <None Remove="Resources\ZoomIn.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="GeoTech\FailureFunctionEditor.xaml" />
-    <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
-    <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
-    <Page Remove="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml" />
-    <Page Remove="Study\AnalysisYears.xaml" />
-    <Page Remove="Utilities\MapWindowControl.xaml" />
-    <Page Remove="Utilities\MapWindowWrapper.xaml" />
-  </ItemGroup>
 	
   <ItemGroup>
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
