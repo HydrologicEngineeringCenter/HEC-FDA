@@ -11,18 +11,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const String SELECTED_IMPACT_AREA_TAG = "SelectedImpactArea";
         private const String SELECTED_DAM_CAT_TAG = "SelectedDamCat";
         private const String ASSET_CATEGORY = "AssetCategory";
+        private const String CONSTRUCTION_TYPE = "AssetCategory";
 
         public ImpactAreaRowItem ImpArea { get; }
         public string DamCat { get; }
         public ComputeComponentVM ComputeComponent { get; }
         public string AssetCategory { get; }
+        public StageDamageConstructionType ConstructionType { get; }
 
-        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, string assetCategory)
+        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, 
+            string assetCategory, StageDamageConstructionType constructionType)
         {
             ImpArea = impArea;
             DamCat = damCat;
             ComputeComponent = function;
             AssetCategory = assetCategory;
+            ConstructionType = constructionType;
         }
 
         public StageDamageCurve(XElement curveElement)
@@ -36,7 +40,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "impact area row");
             DamCat = selectedDamCat;
             ComputeComponent = computeComponentVM;
-        } 
+
+            //this is for backwards compatability
+            if (curveElement.Attribute(CONSTRUCTION_TYPE) != null)
+            {
+                Enum.TryParse(curveElement.Attribute(CONSTRUCTION_TYPE).Value, out StageDamageConstructionType constructionType);
+                ConstructionType = constructionType;
+            }
+            else
+            {
+                ConstructionType = StageDamageConstructionType.COMPUTED;
+            }
+        }
 
         public XElement WriteToXML()
         {
@@ -44,6 +59,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             stageDamageCurveElement.SetAttributeValue(SELECTED_IMPACT_AREA_TAG, ImpArea.ID);
             stageDamageCurveElement.SetAttributeValue(SELECTED_DAM_CAT_TAG, DamCat);
             stageDamageCurveElement.SetAttributeValue(ASSET_CATEGORY, AssetCategory);
+            stageDamageCurveElement.SetAttributeValue(CONSTRUCTION_TYPE, ConstructionType);
             stageDamageCurveElement.Add(ComputeComponent.ToXML());
 
             return stageDamageCurveElement;

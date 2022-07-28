@@ -192,7 +192,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
             foreach (ManualStageDamageRowItem r in Rows)
             {
-                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent, r.SelectedAssetCategory);
+                StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.ComputeComponent, 
+                    r.SelectedAssetCategory, StageDamageConstructionType.USER);
                 curves.Add(curve);
             }
             return curves;
