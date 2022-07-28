@@ -1,11 +1,12 @@
-﻿<UserControl x:Class="HEC.FDA.View.WaterSurfaceElevation.WaterSurfaceElevationImporter"
+﻿<UserControl x:Class="HEC.FDA.View.Hydraulics.WaterSurfaceElevationImporter"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d"
              d:DesignHeight="520" d:DesignWidth="550">
@@ -15,19 +16,15 @@
     </UserControl.Resources>
     <Grid x:Name="main_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -35,7 +32,7 @@
             <TextBlock Text="Profile Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox Name="TxtName" Text="{Binding Name,ValidatesOnDataErrors=True}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -43,15 +40,15 @@
             <TextBlock Text="Profile Description:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <UserControls:TextBoxDescription Grid.Row="0" Grid.Column="1" Text="{Binding Description}" Margin="3" />
         </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Source Directory:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <CA:TextBoxFolderBrowser Name="TxtDirectory" FolderPath="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" SelectionMade="TxtDirectory_SelectionMade"/>
+            <frameworkControls:TextBoxFolderBrowserControl Title="Select Folder"  Path="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" />
         </Grid>
-        <Grid  Grid.Row="4">
+        <Grid  Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -61,31 +58,9 @@
                 <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
+        <local:PathAndProbabilityTableControl Grid.Row="4" />
 
-        <DataGrid Grid.Row="5" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left" CanUserAddRows="False" CanUserDeleteRows="False"
-                  VerticalAlignment="Top" CanUserReorderColumns="False"
-                  CanUserSortColumns="false" Margin="5">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Name" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Probability}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Return Interval" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" >
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" >
             <Util:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

@@ -11,7 +11,9 @@ using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Study;
 
 namespace HEC.FDA.ViewModel.Saving
 {
@@ -41,6 +43,10 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new TerrainElementPersistenceManager(StudyCacheForSaving);
             }
+            else if(element.GetType() == typeof(StudyPropertiesElement))
+            {
+                manager = new StudyPropertiesPersistenceManager(StudyCacheForSaving);
+            }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
                 manager = new RatingElementPersistenceManager(StudyCacheForSaving);
@@ -53,7 +59,7 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new ImpactAreaPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(WaterSurfaceElevationElement))
+            else if (element.GetType() == typeof(HydraulicElement))
             {
                 manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }

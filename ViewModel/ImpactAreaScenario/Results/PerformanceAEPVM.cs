@@ -50,9 +50,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         }
 
         private void LoadHistogramData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
-        {
-            //ImpactAreaScenarioResults results = scenarioResults.GetResults(impactAreaID);
-            
+        {            
             IHistogram histogramOfAEPs = scenarioResults.AEPHistogram(impactAreaID, threshold.ThresholdID);
             long[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();

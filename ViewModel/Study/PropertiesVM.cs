@@ -1,7 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
-using System.Windows;
-
+﻿using System;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -10,8 +7,15 @@ namespace HEC.FDA.ViewModel.Study
         #region Notes
         #endregion
 
+        private int _SurveyedYear;
+        private double _DiscountRate;
+
         #region Properties
-        public double DiscountRate { get; set; }
+        public double DiscountRate
+        {
+            get { return _DiscountRate; }
+            set { _DiscountRate = value; NotifyPropertyChanged(); }
+        }
         public int PeriodOfAnalysis { get; set; }
         public string StudyName { get; set; }
         public string StudyPath { get; set; }
@@ -21,15 +25,24 @@ namespace HEC.FDA.ViewModel.Study
         public string StudyNotes { get; set; }
         public MonetaryUnitsEnum MonetaryUnit { get; set; }
         public UnitsSystemEnum UnitSystem { get; set; }
-        public int SurveyedYear { get; set; }
+        public int SurveyedYear
+        {
+            get { return _SurveyedYear; }
+            set { _SurveyedYear = value; NotifyPropertyChanged(); }
+        }
         public int UpdatedYear { get; set; }
         public double UpdatedPriceIndex { get; set; }
-        
+
+        public ConvergenceCriteriaVM ConvergenceCriteria { get; set; }
+
         #endregion
         #region Constructors      
 
         public PropertiesVM(StudyPropertiesElement elem):base(elem, null)
         {
+            ConvergenceCriteria = new ConvergenceCriteriaVM(elem.ConvergenceCriteria.ToXML());
+            RegisterChildViewModel(ConvergenceCriteria);
+
             StudyName = elem.Name;
             StudyPath = elem.StudyPath;
             StudyDescription = elem.Description;
@@ -52,39 +65,20 @@ namespace HEC.FDA.ViewModel.Study
             AddRule(nameof(SurveyedYear), () => SurveyedYear <= DateTime.Now.Year, "The Surveyed Year must not be in the future.");
             AddRule(nameof(UpdatedYear), () => UpdatedYear <= DateTime.Now.Year, "The Updated Year must not be in the future.");
             AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
+            AddRule(nameof(DiscountRate), () => DiscountRate >= 0 && DiscountRate <= 100, "Discount Rate must be between 0 and 100.");
+            AddRule(nameof(PeriodOfAnalysis), () => PeriodOfAnalysis >= 0 && PeriodOfAnalysis <= 500, "Period of Analysis must be between 0 and 500.");
         }
-        private FdaValidationResult Validate()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if(DiscountRate<0 || DiscountRate>100)
-            {
-                vr.AddErrorMessage("Discount Rate must be between 0 and 100.");
-            }
-            if(PeriodOfAnalysis<0 || PeriodOfAnalysis>500)
-            {
-                vr.AddErrorMessage("Period of Analysis must be between 0 and 500.");
-            }
-            return vr;
-        }
+
         public override void Save()
         {
-            FdaValidationResult result = Validate();
-            if (!result.IsValid)
-            {
-                MessageBox.Show(result.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            else
-            {
-                //the properties are unique in that it gets saved when the study is created. This editor
-                //is, therefore, always in 'edit mode'. We are always saving an existing element.
-                //there is only one row of study properties. The id will always be 1.
-                int id = 1;
-                StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
-                    CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, id);
+            //the properties are unique in that it gets saved when the study is created. This editor
+            //is, therefore, always in 'edit mode'. We are always saving an existing element.
+            //there is only one row of study properties. The id will always be 1.
+            int id = 1;
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
+                CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
 
-                Saving.PersistenceManagers.StudyPropertiesPersistenceManager manager = Saving.PersistenceFactory.GetStudyPropertiesManager();
-                manager.SaveExisting( elemToSave);
-            }
+            base.Save(elemToSave);
         }
         #endregion        
     }

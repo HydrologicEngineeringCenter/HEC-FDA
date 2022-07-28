@@ -1,10 +1,11 @@
 ﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.WaterSurfaceElevation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -13,13 +14,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class CalculatedStageDamageVM : BaseViewModel
     {
-        private WaterSurfaceElevationElement _SelectedWaterSurfaceElevation;
+        private HydraulicElement _SelectedWaterSurfaceElevation;
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
+        private string _CurvesEditedLabel;
 
-
+        public string CurvesEditedLabel
+        {
+            get { return _CurvesEditedLabel; }
+            set { _CurvesEditedLabel = value; NotifyPropertyChanged(); }
+        }
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get;} = new List<ImpactAreaFrequencyFunctionRowItem>();
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
@@ -47,9 +53,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedStructureInventoryElement = value; NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<WaterSurfaceElevationElement> WaterSurfaceElevations { get; } = new ObservableCollection<WaterSurfaceElevationElement>();
+        public ObservableCollection<HydraulicElement> WaterSurfaceElevations { get; } = new ObservableCollection<HydraulicElement>();
 
-        public WaterSurfaceElevationElement SelectedWaterSurfaceElevation
+        public HydraulicElement SelectedWaterSurfaceElevation
         {
             get { return _SelectedWaterSurfaceElevation; }
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
@@ -80,6 +86,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 RegisterChildViewModel(clonedRow);
                 ImpactAreaFrequencyRows.Add(clonedRow);
             }
+            UpdateComputedCurvesModifiedLabel();
         }       
 
         private void LoadNewImpactAreaFrequencyRows()
@@ -108,7 +115,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //used cloned curve so that you do not modify the original data
                 StageDamageCurve curve = new StageDamageCurve(stageDamageCurve.WriteToXML());
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory);
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
                 Rows.Add(newRow);
                 i++;
             }
@@ -139,7 +146,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void SelectDepthGrid(int waterID)
         {
             bool foundHydro = false;
-            foreach (WaterSurfaceElevationElement wat in WaterSurfaceElevations)
+            foreach (HydraulicElement wat in WaterSurfaceElevations)
             {
                 if(wat.ID == waterID)
                 {
@@ -155,8 +162,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         private void loadDepthGrids()
         {
-            List<WaterSurfaceElevationElement> WSEElements = StudyCache.GetChildElementsOfType<WaterSurfaceElevationElement>();
-            foreach (WaterSurfaceElevationElement elem in WSEElements)
+            List<HydraulicElement> WSEElements = StudyCache.GetChildElementsOfType<HydraulicElement>();
+            foreach (HydraulicElement elem in WSEElements)
             {
                 WaterSurfaceElevations.Add(elem);
             }
@@ -213,6 +220,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = ValidateForCompute();
             if (vr.IsValid)
             {
+                Rows.Clear();
                 //we know that we have an impact area, we need to verify that we have a structure inventory
                 List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
 
@@ -220,25 +228,52 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ImpactAreaElement impactAreaElement = impactAreaElements[0];
 
                 InventoryElement inventoryElement = SelectedStructures;
-                WaterSurfaceElevationElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
+                HydraulicElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
 
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
                     ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total"));
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total", StageDamageConstructionType.COMPUTED));
                 }
                 //end dummy rows
                 if (Rows.Count > 0)
-                {
-                    TableWithPlot = new TableWithPlotVM(Rows[0].ComputeComponent);
+                {                  
                     ShowChart = true;
-                    SelectedRow = Rows[0];
+                    SelectedRow = Rows[0];                   
                 }
+                UpdateComputedCurvesModifiedLabel();
             }
             else
             {
                 MessageBox.Show(vr.ErrorMessage, "Unable to Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
+        }
+
+        private void TableDataChanged(object sender, EventArgs e)
+        {
+            SelectedRow.ConstructionType = StageDamageConstructionType.COMPUTED_EDITED;
+            UpdateComputedCurvesModifiedLabel();
+        }
+
+        private void UpdateComputedCurvesModifiedLabel()
+        {
+            List<int> editedRows = new List<int>();
+            foreach(CalculatedStageDamageRowItem row in Rows)
+            {
+                if(row.ConstructionType == StageDamageConstructionType.COMPUTED_EDITED)
+                {
+                    editedRows.Add(row.ID);
+                }
+            }
+            if(editedRows.Count>0)
+            {
+                CurvesEditedLabel = "User modified curves: " + string.Join(", ", editedRows);
+            }
+            else
+            {
+                CurvesEditedLabel = "";
             }
         }
 
@@ -272,7 +307,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.AssetCategory); 
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.AssetCategory, r.ConstructionType); 
                 curves.Add(curve);
             }
             return curves;
@@ -280,7 +315,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void RowChanged()
         {
-            TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
+            if (TableWithPlot != null)
+            {
+                //remove previous event
+                TableWithPlot.WasModified -= TableDataChanged;
+            }
+
+            if (SelectedRow != null)
+            {
+                TableWithPlot = new TableWithPlotVM(SelectedRow.ComputeComponent);
+                //add the event
+                TableWithPlot.WasModified += TableDataChanged;
+            }
         }
     }
 }

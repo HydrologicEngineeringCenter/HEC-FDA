@@ -1,17 +1,15 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 {
-    public class GriddedDataOwnerElement : ParentElement
+    public class SteadyHDFOwnerElement: ParentElement
     {
-        public GriddedDataOwnerElement():base()
+        public SteadyHDFOwnerElement() : base()
         {
-            Name = StringConstants.GRIDDED_DATA;
+            Name = StringConstants.STEADY_HDF;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             IsBold = false;
 
@@ -28,7 +26,6 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationUpdated += UpdateWaterSurfaceElevationElement;
 
-
         }
 
         private void UpdateWaterSurfaceElevationElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -41,7 +38,13 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
         }
         private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            AddElement(e.Element);
+            if (e.Element is HydraulicElement elem)
+            {
+                if (elem.HydroType == HydraulicType.Steady)
+                {
+                    AddElement(e.Element);
+                }
+            }
         }
 
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
@@ -49,13 +52,12 @@ namespace HEC.FDA.ViewModel.WaterSurfaceElevation
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
 
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
+            SteadyHDFImporterVM vm = new SteadyHDFImporterVM(actionManager);
 
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Steady");
             Navigate(tab, false, false);
         }
-
 
 
     }

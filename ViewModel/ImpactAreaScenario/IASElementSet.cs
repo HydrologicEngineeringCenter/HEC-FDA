@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Xml.Linq;
 using compute;
+using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
@@ -220,7 +221,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
             ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
-            string header = "Compute Log For: " + Name;
+            string header = "Compute Log For Scenario: " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);
         }

@@ -286,6 +286,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             UncertainPairedData upd = null;
             LogPearson3 lp3 = CreateLP3();
+            
             FdaValidationResult result = IsLP3Valid(lp3);
             if (result.IsValid)
             {

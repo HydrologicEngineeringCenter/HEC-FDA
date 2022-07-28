@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
@@ -12,6 +14,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public double Point75 { get; set; }
         public double Point5 { get; set; }
         public double Point25 { get; set; }
+
+
         public EADSummaryRowItem(string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ, double AAEQReduced, double point75, double point5, double point25 )
         {
             WithoutProjAlternative = withoutName;

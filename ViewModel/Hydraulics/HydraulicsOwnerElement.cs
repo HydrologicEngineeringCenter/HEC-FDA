@@ -1,7 +1,10 @@
-﻿using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
+using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 
-namespace HEC.FDA.ViewModel.WaterSurfaceElevation
+namespace HEC.FDA.ViewModel.Hydraulics
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:46:34 AM)]
     public class HydraulicsOwnerElement : ParentElement

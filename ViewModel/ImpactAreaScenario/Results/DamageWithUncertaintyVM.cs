@@ -41,10 +41,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             if (qValues.Count == 3)
             {
                 List<double> xVals = new List<double>() { .75, .5, .25 };
+                List<string> xValNames = new List<string>() { "First", "Second", "Third" };
 
-                for (int i = 0; i < xVals.Count; i++)
+                for (int i = 0; i < xValNames.Count; i++)
                 {
-                    rows.Add(new EadRowItem(xVals[i], qValues[i]));
+                    rows.Add(new EadRowItem(xValNames[i], qValues[i]));
                 }
             }
             Rows.AddRange( rows);

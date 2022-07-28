@@ -2,6 +2,7 @@
 using compute;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
+using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
@@ -25,6 +26,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         private const string ID_STRING = "ID";
 
         #region properties
+
+        public AlternativeResults Results { get; set; }
+
         public List<int> IASElementSets { get; } = new List<int>();
         #endregion
 
@@ -86,7 +90,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
-            viewResults.Action = ViewResults;
+            viewResults.Action = ComputeAlternative;
 
             NamedAction removeCondition = new NamedAction();
             removeCondition.Header = StringConstants.REMOVE_MENU;
@@ -170,6 +174,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             return vr;
         }
+
         private FdaValidationResult DoScenariosHaveResults(IASElementSet firstElem, IASElementSet secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -238,9 +243,30 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altResult;
         }
 
-        public AlternativeResults ComputeAlternative()
+        public void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
+        {
+            //This is the new entry point for the "view results" menu item
+            //when the compute is completed it will call ComputeCompleted which will then call the "ViewResults".
+            FdaValidationResult vr = RunPreComputeValidation();
+            if (vr.IsValid)
+            {
+                IASElementSet[] iASElems = GetElementsFromID();
+
+                ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
+                string header = "Compute Log For Alternative: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
+                Navigate(tab, false, false);
+            }
+            else
+            {
+                MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        public void ComputeAlternative(Action<AlternativeResults> callback)
         {
             IASElementSet[] iASElems = GetElementsFromID();
+
             IASElementSet firstElem = iASElems[0];
             IASElementSet secondElem = iASElems[1];
 
@@ -254,32 +280,33 @@ namespace HEC.FDA.ViewModel.Alternatives
             double discountRate = studyProperties.DiscountRate;
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
+            //todo: register somthing with the message hub?
             AlternativeResults results = Alternative.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
-
-            return results;
+            callback?.Invoke(results);
         }
 
-        public void ViewResults(object arg1, EventArgs arg2)
+        private void ComputeCompleted(AlternativeResults results)
         {
-            FdaValidationResult vr = RunPreComputeValidation();
-            if (vr.IsValid)
+            Results = results;
+            Application.Current.Dispatcher.Invoke(
+            (Action)(() =>
             {
-                AlternativeResults results = ComputeAlternative();
-                if (results != null)
-                {
-                    AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult(results));
-                    string header = "Alternative Results: " + Name;
-                    DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
-                    Navigate(tab, false, true);
-                }
-                else
-                {
-                    MessageBox.Show("There are no results to view", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                    ViewResults();
+            }));
+        }
+
+        private void ViewResults()
+        {
+            if (Results != null)
+            {
+                AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult(Results));
+                string header = "Alternative Results: " + Name;
+                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+                Navigate(tab, false, true);
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("There are no results to view", "No Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 

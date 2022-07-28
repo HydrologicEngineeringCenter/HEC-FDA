@@ -2,10 +2,10 @@
 {
     public class EadRowItem
     {
-        public double Frequency { get;  }
+        public string Frequency { get;  }
         public double Value { get;  }
 
-        public EadRowItem(double frequency, double value)
+        public EadRowItem(string frequency, double value)
         {
             Frequency = frequency;
             Value = value;

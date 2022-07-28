@@ -389,7 +389,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     {
                         ComputeComponentVM vm = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
                         vm.SetPairedData(stageDamagePairedData);
-                        curve = new StageDamageCurve(row, damCat, vm, assetCategory);
+                        curve = new StageDamageCurve(row, damCat, vm, assetCategory, StageDamageConstructionType.COMPUTED);
                         nameMatchedImpactArea = true;
                         break;
                     }
