@@ -1,7 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Tabs;
 using System;
 
-
 namespace HEC.FDA.ViewModel.Study
 {
     public class FdaStudyVM : BaseViewModel
@@ -56,20 +55,20 @@ namespace HEC.FDA.ViewModel.Study
 
         private void InitializeGDAL()
         {
-            try
-            {
-                Environment.SetEnvironmentVariable("GDAL_TIFF_OVR_BLOCKSIZE", "256");
-                string dir = AppDomain.CurrentDomain.BaseDirectory;
-                string ToolDir = dir + @"GDAL\bin";
-                string DataDir = dir + @"GDAL\data";
-                string PluginDir = dir + @"GDAL\bin\gdalplugins";
-                string WMSDir = dir + @"GDAL\Web Map Services";
-                GDALAssist.GDALSetup.Initialize(ToolDir, DataDir, PluginDir, WMSDir, true);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            //try
+            //{
+            //    string gdalPath = "C:\\Programs\\6.x Development\\GDAL\\";
+            //    if (!Directory.Exists(gdalPath))
+            //    {
+            //        Console.WriteLine("GDAL directory not found: " + gdalPath);
+            //        return;
+            //    }
+            //    GDALSetup.InitializeMultiplatform(gdalPath);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw;
+            //}
         }  
         
         private void UpdateSaveStatus(object sender, EventArgs e)
