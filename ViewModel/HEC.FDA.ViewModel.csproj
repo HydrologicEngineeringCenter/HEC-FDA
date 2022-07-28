@@ -23,16 +23,9 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Reference Include="BitMiracle.LibTiff.NET40">
-      <HintPath>..\lib\BitMiracle.LibTiff.NET40.dll</HintPath>
-    </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
       <Private>true</Private>
-    </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\GDALAssist.dll</HintPath>
     </Reference>
     <Reference Include="HecCs">
       <HintPath>..\lib\HecCs.dll</HintPath>
