@@ -20,8 +20,16 @@ namespace HEC.FDA.ViewModel.Storage
         #endregion
         #region Properties
         public string ProjectFile
-        {   
-            get { return _SqliteReader.DataBasePath; }
+        {
+            get
+            {
+                string projectPath = null;
+                if (_SqliteReader != null)
+                {
+                    projectPath = _SqliteReader.DataBasePath;
+                }
+                return projectPath;
+            }
             set
             {
                 if (_SqliteReader == null)
