@@ -14,9 +14,7 @@ using HEC.MVVMFramework.Base.Implementations;
 namespace alternativeComparisonReport
 {
     public class AlternativeComparisonReport
-{
-        private const int ITERATIONS = 50000;
-        
+{        
         public static AlternativeComparisonReportResults ComputeAlternativeComparisonReport(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
@@ -69,7 +67,7 @@ namespace alternativeComparisonReport
         }
         
         private static ConsequenceDistributionResult IterateOnConsequenceDistributionResult(ConsequenceDistributionResult withProjectDamageResult, ConsequenceDistributionResult withoutProjectDamageResult, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnWithProject = true)
-        {//TODO rename local variables to reflect generalization of this extracted logic 
+        {
             IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
             IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
             ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult();

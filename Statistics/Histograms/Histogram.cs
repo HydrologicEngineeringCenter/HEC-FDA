@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace Statistics.Histograms
 {
@@ -169,6 +170,7 @@ namespace Statistics.Histograms
             {
                 AddObservationToHistogram(0);
             }
+            MessageHub.Register(this);
         }
         public Histogram(double min, double binWidth)
         {
@@ -178,12 +180,14 @@ namespace Statistics.Histograms
             int numberOfBins = 1;
             _BinCounts = new Int64[numberOfBins];
             _ConvergenceCriteria = new ConvergenceCriteria();
+            MessageHub.Register(this);
         }
         public Histogram(double binWidth)
         {
             _BinWidth = binWidth;
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
+            MessageHub.Register(this);
         }
         public Histogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
         {
@@ -193,6 +197,7 @@ namespace Statistics.Histograms
             int numberOfBins = 1;
             _BinCounts = new Int64[numberOfBins];
             _ConvergenceCriteria = convergenceCriteria;
+            MessageHub.Register(this);
         }
         public Histogram(List<double> dataList, ConvergenceCriteria convergenceCriteria)
         {
@@ -205,6 +210,7 @@ namespace Statistics.Histograms
              _BinWidth = range / quantityOfBins;
             _BinCounts = new long[quantityOfBins];
             AddObservationsToHistogram(data);
+            MessageHub.Register(this);
         }
         private Histogram(double min, double max, double binWidth, Int64 sampleSize, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
@@ -214,6 +220,7 @@ namespace Statistics.Histograms
             _BinCounts = binCounts;
             _ConvergenceCriteria = convergenceCriteria;
             _SampleSize = sampleSize;
+            MessageHub.Register(this);
         }
         #endregion
         #region Functions

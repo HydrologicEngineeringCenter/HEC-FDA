@@ -63,6 +63,7 @@ namespace compute
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
             _impactAreaID = impactAreaID;
             _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
+            MessageHub.Register(this);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.

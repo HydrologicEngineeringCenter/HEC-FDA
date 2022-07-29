@@ -69,6 +69,7 @@ namespace paireddata
         {
             _metadata = new CurveMetaData();
             AddRules();
+            MessageHub.Register(this);
 
 
         }
@@ -79,6 +80,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel,ylabel,name);
             AddRules();
+            MessageHub.Register(this);
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
@@ -87,6 +89,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel, ylabel, name, category);
             AddRules();
+            MessageHub.Register(this);
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
@@ -94,6 +97,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = metadata;
             AddRules();
+            MessageHub.Register(this);
         }
         #endregion
 

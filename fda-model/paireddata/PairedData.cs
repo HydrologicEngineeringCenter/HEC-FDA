@@ -32,6 +32,7 @@ namespace paireddata
             Yvals = ys;
             _metadata = new CurveMetaData("default");
             AddRules();
+            MessageHub.Register(this);
         }
         public PairedData(double[] xs, double[] ys, CurveMetaData metadata)
         {
@@ -39,6 +40,7 @@ namespace paireddata
             Xvals = xs;
             Yvals = ys;
             AddRules();
+            MessageHub.Register(this);
         }
         /// <summary>
         /// These rules only work in the case that we're working with non-exceedance probability 

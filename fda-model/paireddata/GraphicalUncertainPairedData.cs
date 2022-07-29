@@ -100,6 +100,7 @@ namespace paireddata
         {
             _metaData = new CurveMetaData();
             AddRules();
+            MessageHub.Register(this);
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
@@ -117,6 +118,7 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
             AddRules();
+            MessageHub.Register(this);
 
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
@@ -134,6 +136,7 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
+            MessageHub.Register(this);
 
         }
         private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
@@ -148,6 +151,7 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
+            MessageHub.Register(this);
         }
         #endregion
 
