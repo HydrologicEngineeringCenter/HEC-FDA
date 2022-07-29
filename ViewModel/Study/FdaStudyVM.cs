@@ -1,5 +1,7 @@
-﻿using HEC.FDA.ViewModel.Tabs;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.ViewModel.Tabs;
 using System;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -44,6 +46,7 @@ namespace HEC.FDA.ViewModel.Study
             CurrentStudyElement = new StudyElement();
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.PropertyChanged += _StudyElement_PropertyChanged;
+
             InitializeGDAL();
         }
 
@@ -55,20 +58,13 @@ namespace HEC.FDA.ViewModel.Study
 
         private void InitializeGDAL()
         {
-            //try
-            //{
-            //    string gdalPath = "C:\\Programs\\6.x Development\\GDAL\\";
-            //    if (!Directory.Exists(gdalPath))
-            //    {
-            //        Console.WriteLine("GDAL directory not found: " + gdalPath);
-            //        return;
-            //    }
-            //    GDALSetup.InitializeMultiplatform(gdalPath);
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw;
-            //}
+            string gdalPath = @"GDAL\";
+            if (!Directory.Exists(gdalPath))
+            {
+                Console.WriteLine("GDAL directory not found: " + gdalPath);
+                return;
+            }
+            GDALSetup.InitializeMultiplatform(gdalPath);
         }  
         
         private void UpdateSaveStatus(object sender, EventArgs e)
