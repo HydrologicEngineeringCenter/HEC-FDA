@@ -12,6 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D6BCFF89-1584-4930-BC20-CF0263D7DA84}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\CI-CD.yml = .github\workflows\CI-CD.yml
+		.github\workflows\CI.yaml = .github\workflows\CI.yaml
 		CODE_OF_CONDUCT = CODE_OF_CONDUCT
 		CONTRIBUTING = CONTRIBUTING
 		LICENSE = LICENSE
