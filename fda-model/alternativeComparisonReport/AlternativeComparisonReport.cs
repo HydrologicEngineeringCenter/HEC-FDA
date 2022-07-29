@@ -36,6 +36,8 @@ namespace alternativeComparisonReport
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedOneAlternative = new ConsequenceDistributionResults(withProjectAlternativeResults.AlternativeID);
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {withProjectAlternativeResults.AlternativeID} has been initiated."));
+                damageReducedOneAlternative.ReportMessage(damageReducedOneAlternative, beginComputeMessageArgs);
 
                 List<ConsequenceDistributionResult> withoutProjectConsequenceDistList = new List<ConsequenceDistributionResult>();
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
@@ -68,6 +70,16 @@ namespace alternativeComparisonReport
         
         private static ConsequenceDistributionResult IterateOnConsequenceDistributionResult(ConsequenceDistributionResult withProjectDamageResult, ConsequenceDistributionResult withoutProjectDamageResult, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnWithProject = true)
         {
+            if (iterateOnWithProject)
+            {
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {withProjectDamageResult.DamageCategory}, asset category {withProjectDamageResult.AssetCategory}, and impact area ID {withProjectDamageResult.RegionID} has been initiated."));
+                withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
+            }
+            else
+            {
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {withoutProjectDamageResult.DamageCategory}, asset category {withoutProjectDamageResult.AssetCategory}, and impact area ID {withoutProjectDamageResult.RegionID} has been initiated."));
+                withoutProjectDamageResult.ReportMessage(withoutProjectDamageResult, beginComputeMessageArgs);
+            }
             IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
             IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
             ConsequenceDistributionResult damageReducedResult = new ConsequenceDistributionResult();
@@ -119,10 +131,14 @@ namespace alternativeComparisonReport
                         if (iterateOnWithProject)
                         {
                             damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, histogram, withProjectDamageResult.RegionID);
+                            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
+                            withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
                         }
                         else
                         {
                             damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, histogram, withoutProjectDamageResult.RegionID);
+                            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
+                            withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
                         }
                         iterations = 0;
                         break;
@@ -137,7 +153,9 @@ namespace alternativeComparisonReport
             List<ConsequenceDistributionResults> damageReducedAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
-                ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(withProjectResults.AlternativeID); 
+                ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(withProjectResults.AlternativeID);
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of base year EAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
+                damageReducedAlternative.ReportMessage(damageReducedAlternative, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectIAS in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
@@ -183,6 +201,8 @@ namespace alternativeComparisonReport
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(alternative.AlternativeID);
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
+                damageReducedAlternative.ReportMessage(damageReducedAlternative, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList)
                 {
