@@ -38,7 +38,7 @@
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Grid.Row="1" Grid.Column="1" Path="{Binding Path}"  Margin="5" Filter="txt (*.txt) |*.txt|All files (*.*) |*.*"   />
 
             <Label Content="Study Path" Grid.Row="2" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
-            <frameworkControls:TextBoxFolderBrowserControl Title="Select Folder"  Grid.Row="2" Grid.Column="1" Margin="5" Path="{Binding FolderPath, ValidatesOnDataErrors=True}"  />
+            <frameworkControls:TextBoxFolderBrowserControl Grid.Row="2" Grid.Column="1" Margin="5" Path="{Binding FolderPath, ValidatesOnDataErrors=True}"  />
 
             <Label Grid.Row="3" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
             <UserControls:TextBoxDescription Grid.Row="3" Grid.Column="1" Text="{Binding Description}" Margin="5"/>

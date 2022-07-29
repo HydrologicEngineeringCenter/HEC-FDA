@@ -21,7 +21,7 @@
         <Label Content="Study Name" Grid.Row="0" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
         <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=StudyName, ValidatesOnDataErrors=True}" />
         <Label Content="Study Path" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
-        <frameworkControls:TextBoxFolderBrowserControl Title="Select Folder"  Grid.Row="1" Grid.Column="1" Margin="5" Path="{Binding Path, ValidatesOnDataErrors=True}"  />
+        <frameworkControls:TextBoxFolderBrowserControl  Grid.Row="1" Grid.Column="1" Margin="5" Path="{Binding Path, ValidatesOnDataErrors=True}"  />
         <Label Grid.Row="2" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
         <UserControls:TextBoxDescription Text="{Binding Path=Description}" Grid.Row="2" Grid.Column="1" Margin="5"/>
         <Utils:OKCloseControl Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom"/>
