@@ -58,6 +58,7 @@ namespace metrics
                 AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, probability);
                 _assuranceList.Add(dummyAssurance);
             }
+            MessageHub.Register(this);
 
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
@@ -70,6 +71,7 @@ namespace metrics
             _assuranceList.Add(aepAssurance);
             AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
             _assuranceList.Add(aepAssuranceForPlotting);
+            MessageHub.Register(this);
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria  convergenceCriteria)
         {
@@ -83,6 +85,7 @@ namespace metrics
             AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
             _assuranceList.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
+            MessageHub.Register(this);
 
         }
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
@@ -91,7 +94,7 @@ namespace metrics
             _thresholdValue = thresholdValue;
             _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
-
+            MessageHub.Register(this);
         }
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
@@ -101,7 +104,7 @@ namespace metrics
             _thresholdValue = thresholdValue;
             _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
-
+            MessageHub.Register(this);
         }
 
 

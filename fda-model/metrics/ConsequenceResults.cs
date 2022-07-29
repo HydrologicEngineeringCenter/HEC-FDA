@@ -43,11 +43,13 @@ namespace metrics
             ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
             _consequenceResultList.Add(dummyConsequenceResult);
             _isNull = true;
+            MessageHub.Register(this);
         }
         private ConsequenceResults(List<ConsequenceResult> damageResults)
         {
             _consequenceResultList = damageResults;
             _isNull = false;
+            MessageHub.Register(this);
 
         }
         #endregion

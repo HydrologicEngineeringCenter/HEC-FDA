@@ -7,6 +7,7 @@ using System.Reflection;
 using Statistics.Distributions;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
@@ -82,6 +83,8 @@ namespace metrics
             _convergenceCriteria = new ConvergenceCriteria();
             _consequenceHistogram = new ThreadsafeInlineHistogram();
             _isNull = true;
+            MessageHub.Register(this);
+
         }
         /// <summary>
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
@@ -94,6 +97,8 @@ namespace metrics
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
+            MessageHub.Register(this);
+
         }
         /// <summary>
         /// This constructor can accept wither a Histogram or a ThreadsageInlineHistogram
@@ -111,7 +116,7 @@ namespace metrics
             _convergenceCriteria = _consequenceHistogram.ConvergenceCriteria;
             _regionID = impactAreaID;
             _isNull = false;
-
+            MessageHub.Register(this);
         }
         #endregion
 
