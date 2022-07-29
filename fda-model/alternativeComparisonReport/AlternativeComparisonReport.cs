@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using compute;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace alternativeComparisonReport
 {
@@ -17,9 +19,16 @@ namespace alternativeComparisonReport
         
         public static AlternativeComparisonReportResults ComputeAlternativeComparisonReport(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
+            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
+            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults,beginComputeMessageArgs);
             List<ConsequenceDistributionResults> aaeqResults = ComputeDistributionOfAAEQDamageReduced(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            MessageEventArgs aaeqResultsMessageArgs = new MessageEventArgs(new Message("The distributions of AAEQ Damage Reduced for the given with-project conditions have been computed."));
+            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, aaeqResultsMessageArgs);
             List<ConsequenceDistributionResults> baseYearEADResults = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            MessageEventArgs baseYearEADReducedMessageArgs = new MessageEventArgs(new Message("THe distributions of base year EAD reduced for the given with-project conditions have been computed."));
+            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, baseYearEADReducedMessageArgs);
             List<ConsequenceDistributionResults> futureYearEADResults = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
+            MessageEventArgs futureYearEADReducedMessageArgs = new MessageEventArgs(new Message("The distributions of future year EAD reduced for the given with-project conditions have been computed."));
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
         }
         private static List<ConsequenceDistributionResults> ComputeDistributionOfAAEQDamageReduced(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
@@ -78,7 +87,13 @@ namespace alternativeComparisonReport
                 List<double> resultCollection = new List<double>();
                 Int64 iterations = convergenceCriteria.MinIterations;
                 bool converged = false;
-
+                Int64 progressChunks = 1;
+                Int64 _completedIterations = 0;
+                Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
+                if (_ExpectedIterations > 100)
+                {
+                    progressChunks = _ExpectedIterations / 100;
+                }
                 while (!converged)
                 {
                     for (int i = 0; i < iterations; i++) 
@@ -87,6 +102,12 @@ namespace alternativeComparisonReport
                         double withoutProjectDamage = withoutProjectHistogram.InverseCDF(randomProvider.NextRandom());
                         double damagesReduced = withoutProjectDamage - withProjectDamage;
                         resultCollection.Add(damagesReduced);
+                        _completedIterations++;
+                        if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
+                        {
+                            double percentcomplete = ((double)_completedIterations) / ((double)_ExpectedIterations) * 100;
+                            damageReducedResult.ReportProgress(damageReducedResult, new ProgressReportEventArgs((int)percentcomplete));
+                        }
                     }
                     Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
                     converged = histogram.IsHistogramConverged(.95, .05);
