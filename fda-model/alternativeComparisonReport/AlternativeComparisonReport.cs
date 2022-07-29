@@ -131,20 +131,20 @@ namespace alternativeComparisonReport
                         if (iterateOnWithProject)
                         {
                             damageReducedResult = new ConsequenceDistributionResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, histogram, withProjectDamageResult.RegionID);
-                            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
-                            withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
+
                         }
                         else
                         {
                             damageReducedResult = new ConsequenceDistributionResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, histogram, withoutProjectDamageResult.RegionID);
-                            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
-                            withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
+
                         }
                         iterations = 0;
                         break;
                     }
                 }
             }
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
+            withProjectDamageResult.ReportMessage(withProjectDamageResult, endComputeMessageArgs);
             return damageReducedResult;
         }
 

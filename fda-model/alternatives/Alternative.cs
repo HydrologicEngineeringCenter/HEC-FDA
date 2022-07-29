@@ -142,10 +142,14 @@ namespace alternatives
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated."));
+                mlfYearDamageResult.ReportMessage(mlfYearDamageResult, beginComputeMessageArgs);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated."));
+                baseYearDamageResult.ReportMessage(baseYearDamageResult, beginComputeMessageArgs);
             }
             List<double> resultCollection = new List<double>();
             Int64 iterations = convergenceCriteria.MinIterations;
@@ -184,6 +188,7 @@ namespace alternatives
                     if (iterateOnFutureYear)
                     {
                         aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, histogram, mlfYearDamageResult.RegionID);
+
                     }
                     else
                     {
@@ -192,6 +197,8 @@ namespace alternatives
                     break;
                 }
             }
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed."));
+            aaeqResult.ReportMessage(aaeqResult, endComputeMessageArgs);
             return aaeqResult;
         }
 
