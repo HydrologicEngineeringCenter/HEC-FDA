@@ -314,6 +314,7 @@ namespace HEC.FDA.ViewModel.Study
             PersistenceFactory.GetRatingManager().Load();
             PersistenceFactory.GetTerrainManager().Load();
             PersistenceFactory.GetImpactAreaManager().Load();
+            PersistenceFactory.GetIndexPointsPersistenceManager().Load();
             PersistenceFactory.GetWaterSurfaceManager().Load();
             PersistenceFactory.GetFlowFrequencyManager().Load();
             PersistenceFactory.GetInflowOutflowManager().Load();

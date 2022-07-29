@@ -74,7 +74,7 @@ namespace HEC.FDA.ViewModel.Compute
             if (impactAreaElems.Count > 0)
             {
                 //there only ever be one or zero
-                ObservableCollection<ImpactAreaRowItem> impactAreaRows = impactAreaElems[0].ImpactAreaRows;
+                List<ImpactAreaRowItem> impactAreaRows = impactAreaElems[0].ImpactAreaRows;
                 foreach (ImpactAreaRowItem row in impactAreaRows)
                 {
                     if (row.ID == id)

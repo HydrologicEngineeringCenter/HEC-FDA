@@ -75,6 +75,9 @@
 
         public const string INDEX_POINTS = "Index Points";
         public const string CREATE_INDEX_POINTS_MENU = "Create New Index Points...";
+        public const string CREATE_INDEX_POINTS_HEADER = "Create New Index Points";
+        public const string EDIT_INDEX_POINTS_MENU = "Edit Index Points...";
+        public const string EDIT_INDEX_POINTS_HEADER = "Edit Index Points";
 
         public const string HYDRAULICS = "Hydraulics";
 

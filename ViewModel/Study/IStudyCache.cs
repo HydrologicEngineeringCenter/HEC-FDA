@@ -18,6 +18,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.AddElementEventHandler RatingAdded;
         event FDACache.AddElementEventHandler TerrainAdded;
         event FDACache.AddElementEventHandler ImpactAreaAdded;
+        event FDACache.AddElementEventHandler IndexPointsAdded;
         event FDACache.AddElementEventHandler WaterSurfaceElevationAdded;
         event FDACache.AddElementEventHandler FlowFrequencyAdded;
         event FDACache.AddElementEventHandler InflowOutflowAdded;
@@ -33,6 +34,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
         event FDACache.AddElementEventHandler ImpactAreaRemoved;
+        event FDACache.AddElementEventHandler IndexPointsRemoved;
         event FDACache.AddElementEventHandler WaterSurfaceElevationRemoved;
         event FDACache.AddElementEventHandler FlowFrequencyRemoved;
         event FDACache.AddElementEventHandler InflowOutflowRemoved;
@@ -48,6 +50,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
         event FDACache.UpdateElementEventHandler ImpactAreaUpdated;
+        event FDACache.UpdateElementEventHandler IndexPointsUpdated;
         event FDACache.UpdateElementEventHandler WaterSurfaceElevationUpdated;
         event FDACache.UpdateElementEventHandler FlowFrequencyUpdated;
         event FDACache.UpdateElementEventHandler InflowOutflowUpdated;

@@ -377,7 +377,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //there should only ever be 0 or 1 impact area elements
             if (impactAreaElements.Count > 0)
             {
-                ObservableCollection<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)impactAreaElements[0]).ImpactAreaRows;
+                List<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)impactAreaElements[0]).ImpactAreaRows;
 
                 bool nameMatchedImpactArea = false;
                 //does this curve's damage reach equal an existing impact area?

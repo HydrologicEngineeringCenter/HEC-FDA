@@ -114,7 +114,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// </summary>
         private void CreateEmptySpecificIASEditors()
         {
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
+            List<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
             //we don't allow this editor to open unless there are impact areas so this should always be true.
             if (impactAreaRows.Count > 0)
             {
@@ -135,9 +135,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// impact area element in the study. If there is none, then this editor should not be able to open.
         /// </summary>
         /// <returns></returns>
-        private ObservableCollection<ImpactAreaRowItem> GetImpactAreaRowItems()
+        private List<ImpactAreaRowItem> GetImpactAreaRowItems()
         {
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
+            List<ImpactAreaRowItem> impactAreaRows = new List<ImpactAreaRowItem>();
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count > 0)
             {
@@ -174,7 +174,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //this is the list of current impact area rows in the study. They might not match the items
             //that were saved in the db for this IAS. The user might have deleted the old impact area set and brought in 
             //a new one. I think we should only display saved items that still match up.
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
+            List<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
 
             //this is the list that was saved
             List<SpecificIAS> specificIASElements = elem.SpecificIASElements;

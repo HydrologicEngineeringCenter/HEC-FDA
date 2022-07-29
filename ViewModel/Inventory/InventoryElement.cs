@@ -63,8 +63,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
             Actions = localactions;
 
-            TableContainsGeoData = true;
-
         }
         #endregion
         #region Voids

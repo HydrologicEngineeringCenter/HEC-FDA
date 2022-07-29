@@ -19,6 +19,7 @@ using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
+using HEC.FDA.ViewModel.IndexPoints;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -35,6 +36,7 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler RatingAdded;
         public event AddElementEventHandler TerrainAdded;
         public event AddElementEventHandler ImpactAreaAdded;
+        public event AddElementEventHandler IndexPointsAdded;
         public event AddElementEventHandler WaterSurfaceElevationAdded;
         public event AddElementEventHandler FlowFrequencyAdded;
         public event AddElementEventHandler InflowOutflowAdded;
@@ -50,6 +52,7 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler RatingRemoved;
         public event AddElementEventHandler TerrainRemoved;
         public event AddElementEventHandler ImpactAreaRemoved;
+        public event AddElementEventHandler IndexPointsRemoved;
         public event AddElementEventHandler WaterSurfaceElevationRemoved;
         public event AddElementEventHandler FlowFrequencyRemoved;
         public event AddElementEventHandler InflowOutflowRemoved;
@@ -65,6 +68,7 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler RatingUpdated;
         public event UpdateElementEventHandler TerrainUpdated;
         public event UpdateElementEventHandler ImpactAreaUpdated;
+        public event UpdateElementEventHandler IndexPointsUpdated;
         public event UpdateElementEventHandler WaterSurfaceElevationUpdated;
         public event UpdateElementEventHandler FlowFrequencyUpdated;
         public event UpdateElementEventHandler InflowOutflowUpdated;
@@ -82,6 +86,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
+        public List<IndexPointsChildElement> IndexPointsChildElements { get; } = new List<IndexPointsChildElement>();
         public List<HydraulicElement> WaterSurfaceElements { get; } = new List<HydraulicElement>();
         public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
@@ -138,6 +143,11 @@ namespace HEC.FDA.ViewModel.Study
             {
                 RemoveElementFromList(ImpactAreaElements, elem);
                 ImpactAreaRemoved?.Invoke(this, elementAddedEventArgs);
+            }
+            else if(elem.GetType() == typeof(IndexPointsChildElement))
+            {
+                RemoveElementFromList(IndexPointsChildElements, elem);
+                IndexPointsRemoved?.Invoke(this, elementAddedEventArgs);
             }
             else if (elem.GetType() == typeof(HydraulicElement))
             {
@@ -228,6 +238,11 @@ namespace HEC.FDA.ViewModel.Study
                 TerrainElements.Add((TerrainElement)elem);
                 TerrainAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if(elem is IndexPointsChildElement)
+            {
+                IndexPointsChildElements.Add((IndexPointsChildElement)elem);
+                IndexPointsAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
             else if (elem is ImpactAreaElement )
             {
                 ImpactAreaElements.Add((ImpactAreaElement)elem);
@@ -317,6 +332,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateImpactAreaElement( (ImpactAreaElement)newElement);
             }
+            else if (newElement is IndexPointsChildElement)
+            {
+                UpdateIndexPointsElement((IndexPointsChildElement)newElement);
+            }
             else if (newElement is HydraulicElement )
             {
                 UpdateWaterSurfaceElevationElement( (HydraulicElement)newElement);
@@ -394,6 +413,17 @@ namespace HEC.FDA.ViewModel.Study
                 ImpactAreaUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
+
+        public void UpdateIndexPointsElement(IndexPointsChildElement newElement)
+        {
+            int index = IndexPointsChildElements.FindIndex(elem => elem.ID == newElement.ID);
+            if (index != -1)
+            {
+                IndexPointsChildElements[index] = newElement;
+                IndexPointsUpdated?.Invoke(this, new ElementUpdatedEventArgs(newElement));
+            }
+        }
+
         public void UpdateWaterSurfaceElevationElement( HydraulicElement newElement)
         {
             int index = WaterSurfaceElements.FindIndex(elem => elem.ID == newElement.ID);
@@ -513,6 +543,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
+            else if (element is IndexPointsOwnerElement)
+            {
+                retVal.AddRange(IndexPointsChildElements);
+            }
             else if (element is GriddedDataOwnerElement)
             {
                 retVal.AddRange(WaterSurfaceElements);
@@ -631,6 +665,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
+            else if (childElementType == typeof(IndexPointsChildElement))
+            {
+                retVal.AddRange(IndexPointsChildElements);
+            }
             else if (childElementType == typeof(HydraulicElement))
             {
                 retVal.AddRange(WaterSurfaceElements);
@@ -714,7 +752,11 @@ namespace HEC.FDA.ViewModel.Study
             if (childElementType == typeof(ImpactAreaElement))
             {
                 childElem = ImpactAreaElements.Where(elem => elem.ID == ID).FirstOrDefault();    
-            }           
+            }
+            else if (childElementType == typeof(IndexPointsChildElement))
+            {
+                childElem = IndexPointsChildElements.Where(elem => elem.ID == ID).FirstOrDefault();
+            }
             else if (childElementType == typeof(AnalyticalFrequencyElement))
             {
                 childElem = FlowFrequencyElements.Where(elem => elem.ID == ID).FirstOrDefault();  

@@ -1,6 +1,6 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.CS.Collections;
+using HEC.FDA.ViewModel.Editors;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -17,27 +17,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Fields
         private string _Path;
         private List<string> _UniqueFields;
-        private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
-        private bool _IsInEditMode = false;
         private string _SelectedUniqueName;
         #endregion
         #region Properties
-     
-        public bool IsInEditMode
-        {
-            get { return _IsInEditMode; }
-            set { _IsInEditMode = value; NotifyPropertyChanged(); }
-        }
         public string SelectedPath
         {
             get { return _Path; }
             set { _Path = value; LoadUniqueNames();  NotifyPropertyChanged();}
         }
-        public ObservableCollection<ImpactAreaRowItem> ListOfRows
-        {
-            get { return _ListOfRows; }
-            set { _ListOfRows = value; NotifyPropertyChanged(); }
-        }
+        public CustomObservableCollection <ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
+
         public List<string> UniqueFields
         {
             get { return _UniqueFields; }
@@ -52,15 +41,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Constructors
         public ImpactAreaImporterVM(EditorActionManager actionManager):base(actionManager)
         {
-            IsInEditMode = false;
         }
 
-        public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
+        public ImpactAreaImporterVM(ImpactAreaElement element, List<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
         {
             Name = element.Name;
-            ListOfRows = impactAreaRows;
+            ListOfRows.AddRange( impactAreaRows);
             Description = element.Description;
-            IsInEditMode = true;
         }
         #endregion
         #region Voids
@@ -102,7 +89,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 {
                     object[] col = dtv.GetColumn(i);
                     ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], col);
-                    ListOfRows = iauns.RowItems;
+                    ListOfRows.AddRange( iauns.RowItems);
                 }
             }
         }
@@ -122,7 +109,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager();
             int id = GetElementID(Saving.PersistenceFactory.GetImpactAreaManager());
-            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows, SelectedPath, id);
+            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), SelectedPath, id);
             if (IsCreatingNewElement && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);

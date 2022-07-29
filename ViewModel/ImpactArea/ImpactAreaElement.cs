@@ -14,23 +14,23 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        private ObservableCollection<ImpactAreaRowItem> _ImpactAreaRows;
+        private List<ImpactAreaRowItem> _ImpactAreaRows;
         #endregion
         #region Properties
       
         public string SelectedPath { get; set; }
         
-        public ObservableCollection<ImpactAreaRowItem> ImpactAreaRows
+        public List<ImpactAreaRowItem> ImpactAreaRows
         {
             get { return _ImpactAreaRows; }
             set { _ImpactAreaRows = value; NotifyPropertyChanged(); }
         }
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, int id) : this(userdefinedname,description,collectionOfRows, "", id)
+        public ImpactAreaElement(string userdefinedname, string description, List<ImpactAreaRowItem> collectionOfRows, int id) : this(userdefinedname,description,collectionOfRows, "", id)
         {
         }
-        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
+        public ImpactAreaElement(string userdefinedname,string description, List<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
         {
             Name = userdefinedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
@@ -58,7 +58,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             Actions = localactions;
 
-            TableContainsGeoData = true;
         }
 
         private string GetScenariosToDeleteMessage()

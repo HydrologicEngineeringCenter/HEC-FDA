@@ -4,8 +4,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
 {
     public class ImpactAreaUniqueNameSet: BaseViewModel
     {
-        #region Notes
-        #endregion
         #region Fields
         private string _ColumnName;
         private ObservableCollection<ImpactAreaRowItem> _RowItems;
@@ -31,10 +29,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 RowItems.Add(row);
             }          
         }     
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
         #endregion
     }
 }

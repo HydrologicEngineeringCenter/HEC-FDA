@@ -10,12 +10,13 @@ namespace HEC.FDA.ViewModel.Storage
 {
     public sealed class Connection
     {
-        #region Notes
-        #endregion
         #region Fields
-        private static DatabaseManager.SQLiteManager _SqliteReader = null; // consider a list of readers so i can create a reader pool.
-        private const string _TerrainFolderName = "Terrains";
-        private const string _HydraulicsFolderName = "Hydraulic Data";
+        private static DatabaseManager.SQLiteManager _SqliteReader = null;
+        private const string TERRAIN_DIRECTORY = "Terrains";
+        private const string HYDRAULIC_DIRECTORY = "Hydraulic Data";
+        private const string IMPACT_AREA_DIRECTORY = "Impact Areas";
+        private const string INDEX_POINTS_DIRECTORY = "Index Points";
+
         private static string _ProjectDirectory = "";
         #endregion
         #region Properties
@@ -87,7 +88,7 @@ namespace HEC.FDA.ViewModel.Storage
         }
         public string TerrainDirectory
         {
-            get { return _ProjectDirectory + "\\" + _TerrainFolderName; }
+            get { return _ProjectDirectory + "\\" + TERRAIN_DIRECTORY; }
         }
         /// <summary>
         /// Returns the first file in the terrain directory with the name provided. If it can't
@@ -109,7 +110,17 @@ namespace HEC.FDA.ViewModel.Storage
         }
         public string HydraulicsDirectory
         {
-            get { return _ProjectDirectory + "\\" + _HydraulicsFolderName; }
+            get { return _ProjectDirectory + "\\" + HYDRAULIC_DIRECTORY; }
+        }
+        public string ImpactAreaDirectory
+        {
+            get { return _ProjectDirectory + "\\" + IMPACT_AREA_DIRECTORY; }
+
+        }
+        public string IndexPointsDirectory
+        {
+            get { return _ProjectDirectory + "\\" + INDEX_POINTS_DIRECTORY; }
+
         }
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 
