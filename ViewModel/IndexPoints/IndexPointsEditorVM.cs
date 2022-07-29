@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.IndexPoints
@@ -123,7 +121,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
                     {
                         //"Move" is basically the same as a rename of the directory.
                         Directory.Move(originalDirectoryPath, newDirectoryPath);
-
                     }
                     catch (Exception ex)
                     {

@@ -3,9 +3,6 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -15,22 +12,18 @@ namespace HEC.FDA.ViewModel.IndexPoints
     {
         private static String INDEX_POINTS_TAG = "IndexPoints";
 
-
         #region Properties
-        public List<string> IndexPoints { get; } = new List<string>();
-        
+        public List<string> IndexPoints { get; } = new List<string>();      
         #endregion
-        #region Constructors
 
+        #region Constructors
         public IndexPointsChildElement(string name, string description, List<string> indexPoints, int id) : base(id)
         {
             Name = name;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             Description = description;
             IndexPoints = indexPoints;
-
-            AddActions();
-           
+            AddActions();          
         }
 
         public IndexPointsChildElement(string xmlString, int id):base(id)
@@ -80,7 +73,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
         #region Voids
         private void Edit(object arg1, EventArgs arg2)
         {
-            //create an observable collection of all the available paths
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
 
@@ -155,8 +147,5 @@ namespace HEC.FDA.ViewModel.IndexPoints
             return indexPointsElem;
         }
         #endregion
-
-
-
     }
 }
