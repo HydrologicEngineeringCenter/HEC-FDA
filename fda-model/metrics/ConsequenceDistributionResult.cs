@@ -5,9 +5,12 @@ using System.Xml.Linq;
 using System.Runtime.Remoting;
 using System.Reflection;
 using Statistics.Distributions;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Events;
+
 namespace metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
-    public class ConsequenceDistributionResult
+    public class ConsequenceDistributionResult: IReportMessage, IProgressReport
     {
         #region Fields
         //TODO: hard-wiring the bin width is no good
@@ -17,6 +20,9 @@ namespace metrics
         private int _regionID;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
+
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Properties
@@ -62,7 +68,7 @@ namespace metrics
                 return _convergenceCriteria;
             }
         }
-        #endregion
+        #endregion 
 
         #region Constructors
         /// <summary>
@@ -167,6 +173,16 @@ namespace metrics
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ConsequenceDistributionResult(damageCategory, assetCategory, damageHistogram, id);
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
         }
         #endregion
     }

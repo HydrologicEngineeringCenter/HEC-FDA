@@ -13,12 +13,8 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace alternatives
 {
-    public class Alternative: Validation, IReportMessage,IProgressReport
+    public class Alternative: Validation
     {
-        public event MessageReportedEventHandler MessageReport;
-        public event ProgressReportedEventHandler ProgressReport;
-
-
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -33,9 +29,6 @@ namespace alternatives
         public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
             ScenarioResults computedResultsFutureYear)
         {
-            
-          
-
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
             //validation on future year relative to base year 
@@ -43,13 +36,13 @@ namespace alternatives
             analysisYears.Add(baseYear);
             analysisYears.Add(futureYear);
             if (!CanCompute(baseYear,futureYear, periodOfAnalysis))
-            {
-                return new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            {   AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+                MessageEventArgs messageArguments = new MessageEventArgs(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned"));
+                nullAlternativeResults.ReportMessage(nullAlternativeResults, messageArguments);
+                return nullAlternativeResults;
             }
-
-
             AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
-            MessageEventArgs messargs = new MessageEventArgs(new Message("Starting up"));
+            MessageEventArgs messargs = new MessageEventArgs(new Message("Initiating discounting routine."));
             alternativeResults.ReportMessage(alternativeResults, messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
@@ -157,6 +150,13 @@ namespace alternatives
             List<double> resultCollection = new List<double>();
             Int64 iterations = convergenceCriteria.MinIterations;
             bool converged = false;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
+            if (_ExpectedIterations > 100)
+            {
+                progressChunks = _ExpectedIterations / 100;
+            }
             while (!converged)
             {
                 for (int i = 0; i < iterations; i++)
@@ -165,6 +165,12 @@ namespace alternatives
                     double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     resultCollection.Add(aaeqDamage);
+                    _completedIterations++;
+                    if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
+                    {
+                        double percentcomplete = ((double)_completedIterations) / ((double)_ExpectedIterations) * 100;
+                        aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
+                    }
                 }
                 Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
                 converged = histogram.IsHistogramConverged(.95, .05);
@@ -232,16 +238,6 @@ namespace alternatives
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }
             return interpolatedEADs;
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            throw new NotImplementedException();
         }
     }
 }

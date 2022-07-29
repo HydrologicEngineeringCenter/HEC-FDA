@@ -9,7 +9,7 @@ using Statistics.Histograms;
 
 namespace metrics
 {
-    public class AlternativeResults : Validation, IReportMessage
+    public class AlternativeResults : Validation, IReportMessage, IProgressReport
     {
         #region Fields
         private int _alternativeID;
@@ -32,6 +32,8 @@ namespace metrics
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+
         public bool IsNull
         {
             get
@@ -294,6 +296,11 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
         }
 
         #endregion
