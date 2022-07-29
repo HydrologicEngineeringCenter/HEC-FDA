@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>True</UseWPF>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -19,7 +19,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+	  <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
 	</ItemGroup>
 
 	<ItemGroup>
