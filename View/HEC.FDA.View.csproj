@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<OutputPath>C:\Temp\FDA2.0</OutputPath>
+	<OutputPath>..\Build\FDA2.0</OutputPath>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -13,39 +13,6 @@
   <PropertyGroup>
     <StartupObject>HEC.FDA.View.App</StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Inventory\DepthDamageCurves\**" />
-    <Compile Remove="Plans\**" />
-    <EmbeddedResource Remove="Inventory\DepthDamageCurves\**" />
-    <EmbeddedResource Remove="Plans\**" />
-    <EntityDeploy Remove="Inventory\DepthDamageCurves\**" />
-    <EntityDeploy Remove="Plans\**" />
-    <None Remove="Inventory\DepthDamageCurves\**" />
-    <None Remove="Plans\**" />
-    <Page Remove="Inventory\DepthDamageCurves\**" />
-    <Page Remove="Plans\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\AlternativeComparisonReport_20x20.png" />
-    <None Remove="Resources\Alternatives_20x20.png" />
-    <None Remove="Resources\ImpactAreaScenario_20x20.png" />
-    <None Remove="Resources\PanHand.png" />
-    <None Remove="Resources\TrackPlot.png" />
-    <None Remove="Resources\ZoomAll.png" />
-    <None Remove="Resources\ZoomIn.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="GeoTech\FailureFunctionEditor.xaml" />
-    <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
-    <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
-    <Page Remove="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml" />
-    <Page Remove="Study\AnalysisYears.xaml" />
-    <Page Remove="Utilities\MapWindowControl.xaml" />
-    <Page Remove="Utilities\MapWindowWrapper.xaml" />
-  </ItemGroup>
 	
   <ItemGroup>
     <Reference Include="DatabaseManager">
@@ -54,13 +21,6 @@
     </Reference>
     <Reference Include="DataTableViewControl">
       <HintPath>..\lib\DataTableViewControl.dll</HintPath>
-    </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="GenericControlsWPF">
-      <HintPath>..\lib\GenericControlsWPF.dll</HintPath>
     </Reference>
     <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -294,38 +254,20 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-	
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.20.1655" />
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.29.1627" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
-    <PackageReference Include="PresentationFramework" Version="4.6.0" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-21-2156" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
  
   <PropertyGroup>
-    <PostBuildEvent>
-		echo "Copying the GDAL Folder to your output directory"
-		Xcopy %userprofile%\.nuget\packages\gdal-hec\0.0.1\content\GDAL $(TargetDir)GDAL /E /H /C /I /Q /Y
+    <!--<PostBuildEvent>
+		echo "Copying the RasMapperLibDistribution Folder to your output directory"
+		Xcopy "%userprofile%\.nuget\packages\rasmapperlibdistro6.2\0.0.1\contentFiles\6.2 (RasMapperLib Distro)" $(TargetDir)/E /H /C /I /Q 
 		echo "Copied to" $(TargetDir)\GDAL
-
-		echo "unpacking the .dlls from GDAL into your output directory"
-		Xcopy  %userprofile%\.nuget\packages\gdal-hec\0.0.1\content\GDAL\csharp\*  $(TargetDir) /Y
-	</PostBuildEvent>
+	</PostBuildEvent>-->
     <RootNamespace>HEC.FDA.View</RootNamespace>
   </PropertyGroup>
 </Project>

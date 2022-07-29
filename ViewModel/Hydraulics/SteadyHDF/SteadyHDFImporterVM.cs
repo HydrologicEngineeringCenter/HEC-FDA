@@ -173,7 +173,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                     if (!vr.IsValid)
                     {
                         vr.InsertMessage(0, "Some files or subdirectories are being ignored:\n");
-                        MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
+                        System.Windows.MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 else
@@ -226,7 +226,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
             else
             {
-                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -256,7 +256,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
             else
             {
-                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         #endregion
