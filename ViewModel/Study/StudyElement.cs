@@ -225,16 +225,26 @@ namespace HEC.FDA.ViewModel.Study
         {
             if (Connection.Instance.ProjectFile == null || !Connection.Instance.ProjectFile.Equals(path))
             {
-                TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
+                try
+                {
 
-                UpdateRecentStudiesFile(path);
+                    TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
 
-                Connection.Instance.ProjectFile = path;
+                    UpdateRecentStudiesFile(path);
 
-                Name = name;
-                UpdateTreeViewHeader(name);
-                StudyCache = null;
-                AddBaseElements();
+                    Connection.Instance.ProjectFile = path;
+                    StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Connection.Instance.ProjectFile);
+
+                    Name = name;
+                    UpdateTreeViewHeader(name);
+                    StudyCache = null;
+
+                    AddBaseElements();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the study. This might be because another instance of FDA 2.0 has the study open.\n" + ex.Message, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
@@ -265,6 +275,8 @@ namespace HEC.FDA.ViewModel.Study
             string studyName = Path.GetFileNameWithoutExtension(studyPath);
             string studyDirectoryPath = Path.GetDirectoryName(studyPath);
             string logPath = studyDirectoryPath + "\\" + studyName + ".log";
+
+            TextFileMessageSubscriber.Instance.Dispose();
             TextFileMessageSubscriber.Instance.FilePath = logPath;
         }
 
