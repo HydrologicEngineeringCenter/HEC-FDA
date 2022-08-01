@@ -11,10 +11,10 @@ namespace HEC.FDA.ViewModel.IndexPoints
     public class IndexPointsElement:ChildElement
     {
         private static String INDEX_POINTS_TAG = "IndexPoints";
-        private static String NAME_TAG = "IndexPoints";
-        private static String DESCRIPTION_TAG = "IndexPoints";
-        private static String LAST_EDIT_DATE_TAG = "IndexPoints";
-        private static String INDEX_POINT_NAMES_TAG = "IndexPoints";
+        private static String NAME_TAG = "Name";
+        private static String DESCRIPTION_TAG = "Description";
+        private static String LAST_EDIT_DATE_TAG = "LastEditDate";
+        private static String INDEX_POINT_NAMES_TAG = "IndexPointNames";
 
         #region Properties
         public List<string> IndexPoints { get; } = new List<string>();      
