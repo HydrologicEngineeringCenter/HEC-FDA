@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
             }
-            else if(element is IndexPointsChildElement)
+            else if(element is IndexPointsElement)
             {
                 manager = new IndexPointsPersistenceManager(StudyCacheForSaving);
             }

@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         {
         }
 
-        public IndexPointsEditorVM(IndexPointsChildElement element, List<string> indexPoints, EditorActionManager actionManager) : base(element, actionManager)
+        public IndexPointsEditorVM(IndexPointsElement element, List<string> indexPoints, EditorActionManager actionManager) : base(element, actionManager)
         {
             Name = element.Name;
             ListOfRows.AddRange(indexPoints);
@@ -101,7 +101,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         public override void Save()
         {
             int id = GetElementID(Saving.PersistenceFactory.GetIndexPointsPersistenceManager());
-            IndexPointsChildElement elementToSave = new IndexPointsChildElement(Name, Description, ListOfRows.ToList(), id);
+            IndexPointsElement elementToSave = new IndexPointsElement(Name, Description, ListOfRows.ToList(), id);
 
             string newDirectoryPath = Storage.Connection.Instance.IndexPointsDirectory + "\\" + Name;
             string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(SelectedPath);

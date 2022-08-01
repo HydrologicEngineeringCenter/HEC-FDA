@@ -86,7 +86,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
-        public List<IndexPointsChildElement> IndexPointsChildElements { get; } = new List<IndexPointsChildElement>();
+        public List<IndexPointsElement> IndexPointsChildElements { get; } = new List<IndexPointsElement>();
         public List<HydraulicElement> WaterSurfaceElements { get; } = new List<HydraulicElement>();
         public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
@@ -144,7 +144,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(ImpactAreaElements, elem);
                 ImpactAreaRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if(elem.GetType() == typeof(IndexPointsChildElement))
+            else if(elem.GetType() == typeof(IndexPointsElement))
             {
                 RemoveElementFromList(IndexPointsChildElements, elem);
                 IndexPointsRemoved?.Invoke(this, elementAddedEventArgs);
@@ -238,9 +238,9 @@ namespace HEC.FDA.ViewModel.Study
                 TerrainElements.Add((TerrainElement)elem);
                 TerrainAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if(elem is IndexPointsChildElement)
+            else if(elem is IndexPointsElement)
             {
-                IndexPointsChildElements.Add((IndexPointsChildElement)elem);
+                IndexPointsChildElements.Add((IndexPointsElement)elem);
                 IndexPointsAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is ImpactAreaElement )
@@ -332,9 +332,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateImpactAreaElement( (ImpactAreaElement)newElement);
             }
-            else if (newElement is IndexPointsChildElement)
+            else if (newElement is IndexPointsElement)
             {
-                UpdateIndexPointsElement((IndexPointsChildElement)newElement);
+                UpdateIndexPointsElement((IndexPointsElement)newElement);
             }
             else if (newElement is HydraulicElement )
             {
@@ -414,7 +414,7 @@ namespace HEC.FDA.ViewModel.Study
             }
         }
 
-        public void UpdateIndexPointsElement(IndexPointsChildElement newElement)
+        public void UpdateIndexPointsElement(IndexPointsElement newElement)
         {
             int index = IndexPointsChildElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -665,7 +665,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ImpactAreaElements);
             }
-            else if (childElementType == typeof(IndexPointsChildElement))
+            else if (childElementType == typeof(IndexPointsElement))
             {
                 retVal.AddRange(IndexPointsChildElements);
             }
@@ -753,7 +753,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = ImpactAreaElements.Where(elem => elem.ID == ID).FirstOrDefault();    
             }
-            else if (childElementType == typeof(IndexPointsChildElement))
+            else if (childElementType == typeof(IndexPointsElement))
             {
                 childElem = IndexPointsChildElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
