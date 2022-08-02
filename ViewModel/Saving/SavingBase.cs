@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.Saving
             return elems;
         }
 
-        private int GetElementIndexInTable(DataTable tableView, string name, int nameIndexInTheRow)
+        private int GetElementIndexInTable(DataTable tableView, int id)
         {
             if (tableView != null)
             {
@@ -55,7 +55,9 @@ namespace HEC.FDA.ViewModel.Saving
 
                 for (int i = 0; i < rows.Count; i++)
                 {
-                    if (((string)rows[i][nameIndexInTheRow]).Equals(name))
+                    int rowId = Convert.ToInt32(rows[i][0]);
+
+                    if (rowId == id)
                     {
                         return i;
                     }
@@ -63,6 +65,7 @@ namespace HEC.FDA.ViewModel.Saving
             }
             return -1;
         }
+        
         #endregion
 
         public virtual void SaveNew(ChildElement element)
@@ -164,7 +167,7 @@ namespace HEC.FDA.ViewModel.Saving
                 if (parentTableView != null)
                 {
                     DataTable dt = Connection.Instance.GetDataTable(tableName);
-                    int parentTableIndex = GetElementIndexInTable(dt, element.Name, 1);
+                    int parentTableIndex = GetElementIndexInTable(dt, element.ID);
                     if (parentTableIndex != -1)
                     {
                         parentTableView.DeleteRow(parentTableIndex);
@@ -279,44 +282,7 @@ namespace HEC.FDA.ViewModel.Saving
             SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
-        }
-
-        public bool DidParentTableRowValuesChange(ChildElement element, object[] rowData, string oldName, string tableName)
-        {
-            if (!Connection.Instance.IsOpen) { Connection.Instance.Open(); }
-            DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(tableName);
-            DataTable dt = Connection.Instance.GetDataTable(tableName);
-            int rowIndex = GetElementIndexInTable(dt, oldName, 1);
-            if (rowIndex != -1)
-            {
-                //has the name changed
-                if (!oldName.Equals(element.Name))
-                {                
-                    return true;
-                }
-                //has anything else in the row changed
-                return AreListsDifferent(rowData, tableView.GetRow(rowIndex));
-            }
-            return true;
-        }
-
-        private bool AreListsDifferent(object[] a, object[] b)
-        {
-            for (int i = 0; i < a.Length; i++)
-            {
-                //don't evaluate the last edit time which is the second one. - i am getting rid of this which means it will always save because
-                //the conditions (1) is the description.
-                if (a[i] == null)
-                {
-                    a[i] = "";
-                }
-                if (!a[i].ToString().Equals(b[i].ToString()))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        }             
 
         #endregion
 

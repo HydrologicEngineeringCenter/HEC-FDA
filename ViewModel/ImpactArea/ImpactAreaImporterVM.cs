@@ -1,5 +1,6 @@
 ﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,6 +49,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
             Name = element.Name;
             ListOfRows.AddRange( impactAreaRows);
             Description = element.Description;
+            SelectedPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + Name;
+
         }
         #endregion
         #region Voids
@@ -57,18 +60,21 @@ namespace HEC.FDA.ViewModel.ImpactArea
         /// <param name="path"></param>
         public void LoadUniqueNames()
         {
-            if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
+            if (IsCreatingNewElement)
             {
-                MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            else
-            {
-                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
-                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+                if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
+                {
+                    MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
+                    DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-                List<string> uniqueNameList = dtv.ColumnNames.ToList();
+                    List<string> uniqueNameList = dtv.ColumnNames.ToList();
 
-                UniqueFields = uniqueNameList;
+                    UniqueFields = uniqueNameList;
+                }
             }
         }
 
@@ -89,37 +95,54 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 {
                     object[] col = dtv.GetColumn(i);
                     ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], col);
-                    ListOfRows.AddRange( iauns.RowItems);
+                    ListOfRows.Clear();
+                    ListOfRows.AddRange(iauns.RowItems);
                 }
             }
         }
         #endregion
-        #region Functions
-        #endregion
-        public override void AddValidationRules()
-        {
-            base.AddValidationRules();
-        }
 
         public override void Save()
         {
-            if (Description == null) 
-            { 
-                Description = ""; 
-            }
-            Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager();
             int id = GetElementID(Saving.PersistenceFactory.GetImpactAreaManager());
-            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), SelectedPath, id);
-            if (IsCreatingNewElement && HasSaved == false)
+
+            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id);
+
+            string newDirectoryPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + Name;
+
+            string selectedDirectory = Path.GetDirectoryName(SelectedPath);
+            string selectedFileName = Path.GetFileNameWithoutExtension(SelectedPath);
+            string[] filesToImport = Directory.GetFiles(selectedDirectory, selectedFileName + ".*");
+
+            if (IsCreatingNewElement)
             {
-                manager.SaveNew(elementToSave);
-                HasSaved = true;
-                OriginalElement = elementToSave;
+                //handle the shapefile
+                Directory.CreateDirectory(newDirectoryPath);
+                foreach (string file in filesToImport)
+                {
+                    string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(file);
+                    File.Copy(file, newFilePath);
+                }
             }
             else
             {
-                manager.SaveExisting((ImpactAreaElement)OriginalElement, elementToSave);
+                //might have to update the directory name
+                if (!OriginalElement.Name.Equals(Name))
+                {
+                    string originalDirectoryPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + OriginalElement.Name;
+                    try
+                    {
+                        //"Move" is basically the same as a rename of the directory.
+                        Directory.Move(originalDirectoryPath, newDirectoryPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Renaming the impact area directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
             }
+            //this call handles the sqlite data
+            Save(elementToSave);
         }
     }
 }

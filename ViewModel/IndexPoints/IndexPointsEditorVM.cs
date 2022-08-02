@@ -78,21 +78,22 @@ namespace HEC.FDA.ViewModel.IndexPoints
             if (!File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
             {
                 MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
             }
-
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
-            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+            else
             {
-                if (dtv.ColumnNames[i] == SelectedUniqueName)
+                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
+                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                for (int i = 0; i < dtv.ColumnNames.Count(); i++)
                 {
-                    object[] colObjects = dtv.GetColumn(i);
-                    List<string> names = new List<string>();
-                    colObjects.ToList().ForEach(x => names.Add((string)x));
-                    List<string> uniqueNames = names.Distinct().ToList();
-                    ListOfRows.AddRange(uniqueNames);
+                    if (dtv.ColumnNames[i] == SelectedUniqueName)
+                    {
+                        object[] colObjects = dtv.GetColumn(i);
+                        List<string> names = new List<string>();
+                        colObjects.ToList().ForEach(x => names.Add((string)x));
+                        List<string> uniqueNames = names.Distinct().ToList();
+                        ListOfRows.AddRange(uniqueNames);
+                    }
                 }
             }
         }
@@ -104,12 +105,20 @@ namespace HEC.FDA.ViewModel.IndexPoints
             IndexPointsElement elementToSave = new IndexPointsElement(Name, Description, ListOfRows.ToList(), id);
 
             string newDirectoryPath = Storage.Connection.Instance.IndexPointsDirectory + "\\" + Name;
-            string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(SelectedPath);
+
+            string selectedDirectory = Path.GetDirectoryName(SelectedPath);
+            string selectedFileName = Path.GetFileNameWithoutExtension(SelectedPath);
+            string[] filesToImport = Directory.GetFiles(selectedDirectory, selectedFileName + ".*");
+
             if (IsCreatingNewElement)
             {
                 //handle the shapefile
                 Directory.CreateDirectory(newDirectoryPath);
-                File.Copy(SelectedPath, newFilePath);
+                foreach (string file in filesToImport)
+                {
+                    string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(file);
+                    File.Copy(file, newFilePath);
+                }
             }
             else
             {
@@ -124,7 +133,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Renaming the terrain directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Renaming the index points directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }
