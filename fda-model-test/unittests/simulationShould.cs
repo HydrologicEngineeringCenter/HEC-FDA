@@ -295,7 +295,7 @@ namespace fda_model_test.unittests
         }
 
         [Theory]
-        [InlineData(762.5)]
+        [InlineData(875)]
         public void FragilityAndExtIntAreCombinedCorrectly(double expected)
         {
             ContinuousDistribution frequencyFlow = new Uniform(0, 4000, 1000);

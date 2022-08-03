@@ -391,7 +391,7 @@ namespace compute
 
             }
             else
-            {
+            {   //todo is there a reason for the starting underscore? 
                 IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                 IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
@@ -411,7 +411,7 @@ namespace compute
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
                         {
-                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_floodplainstage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                            ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
                         }
                         ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
                     }
@@ -472,10 +472,35 @@ namespace compute
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
                 IPairedData stage_damage_sample = pd.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //here we need to compose with interior exterior 
                 IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(systemResponse);
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                if (giveMeADamageFrequency)
+                {
+                    totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
+                }
+            }
+            if (giveMeADamageFrequency)
+            {
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
+            }
+        }
+        private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, IPairedData exterior_interior, IPairedData frequency_exteriorStage, IPairedData systemResponse, bool giveMeADamageFrequency, Int64 iteration)
+        {
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
+            PairedData totalDamageFrequency = new PairedData(null, null, metadata);
+
+            foreach (UncertainPairedData stageUncertainDamage in _damage_category_stage_damage)
+            {   //TODO: why are we doing this stuff with the underscores? I think this needs to be cleaned up 
+                IPairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                IPairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
+                IPairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(systemResponse);
+                IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_exteriorStage);
+                double eadEstimate = frequency_damage.integrate();
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _impactAreaID, iteration);
                 if (giveMeADamageFrequency)
                 {
                     totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
