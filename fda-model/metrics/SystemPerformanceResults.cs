@@ -132,7 +132,12 @@ namespace metrics
             ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
             return aepHistogram;
         }
-        private ThreadsafeInlineHistogram GetAEPHistogramForMetrics()
+        public ThreadsafeInlineHistogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
+        {
+            ThreadsafeInlineHistogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            return stageHistogram;
+        }
+        internal ThreadsafeInlineHistogram GetAEPHistogramForMetrics()
         {
             ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
