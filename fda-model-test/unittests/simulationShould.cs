@@ -293,5 +293,23 @@ namespace fda_model_test.unittests
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetConsequencesHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
             Assert.Equal(expectedZeroValued, actualHistogramZeroValued);
         }
+
+        [Theory]
+        [InlineData(762.5)]
+        public void FragilityAndExtIntAreCombinedCorrectly(double expected)
+        {
+            ContinuousDistribution frequencyFlow = new Uniform(0, 4000);
+            double[] flowsForRating = new double[] { 0, 1000, 2000, 3000, 4000 };
+            IDistribution[] stagesForRating = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,20),
+                new Uniform(10,30),
+                new Uniform(20,40),
+                new Uniform(30,50)
+            };
+            UncertainPairedData dischargeStage = new UncertainPairedData(flowsForRating, stagesForRating, metaData);
+        }
     }
 }
+;
