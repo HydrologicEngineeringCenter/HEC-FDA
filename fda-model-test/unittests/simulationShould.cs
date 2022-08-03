@@ -298,9 +298,9 @@ namespace fda_model_test.unittests
         [InlineData(762.5)]
         public void FragilityAndExtIntAreCombinedCorrectly(double expected)
         {
-            ContinuousDistribution frequencyFlow = new Uniform(0, 4000);
-            double[] flowsForRating = new double[] { 0, 1000, 2000, 3000, 4000 };
-            IDistribution[] stagesForRating = new IDistribution[]
+            ContinuousDistribution frequencyFlow = new Uniform(0, 4000, 1000);
+            double[] xFlows = new double[] { 0, 1000, 2000, 3000, 4000 };
+            IDistribution[] yStagesRating = new IDistribution[]
             {
                 new Uniform(0,0),
                 new Uniform(0,20),
@@ -308,7 +308,51 @@ namespace fda_model_test.unittests
                 new Uniform(20,40),
                 new Uniform(30,50)
             };
-            UncertainPairedData dischargeStage = new UncertainPairedData(flowsForRating, stagesForRating, metaData);
+            UncertainPairedData dischargeStage = new UncertainPairedData(xFlows, yStagesRating, metaData);
+            double[] xStages = new double[] { 0, 10, 20, 30, 40 };
+            IDistribution[] yStagesInteriorExterior = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(0),
+                new Deterministic(10),
+                new Deterministic(20),
+                new Deterministic(30)
+            };
+            UncertainPairedData exteriorInterior = new UncertainPairedData(xStages, yStagesInteriorExterior, metaData);
+            IDistribution[] yDamage = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,2000),
+                new Uniform(1000,3000),
+                new Uniform(2000,4000),
+                new Uniform(3000,5000)
+            };
+            UncertainPairedData stageDamage = new UncertainPairedData(xStages, yDamage, metaData);
+            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>() { stageDamage };
+            IDistribution[] yFailureProbabilities = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(.25),
+                new Deterministic(.5),
+                new Deterministic(.75),
+                new Deterministic(1)
+            };
+            UncertainPairedData systemResponseCurve = new UncertainPairedData(xStages, yFailureProbabilities, metaData);
+            double leveeElevation = 40;
+            int impactAreaID = 44;
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(frequencyFlow)
+                .withFlowStage(dischargeStage)
+                .withInteriorExterior(exteriorInterior)
+                .withStageDamages(stageDamages)
+                .withLevee(systemResponseCurve, leveeElevation)
+                .build();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider,convergenceCriteria);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            Assert.Equal(expected, actual, 1);
+
         }
     }
 }
