@@ -351,7 +351,10 @@ namespace fda_model_test.unittests
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider,convergenceCriteria);
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
-            Assert.Equal(expected, actual, 1);
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
 
         }
     }
