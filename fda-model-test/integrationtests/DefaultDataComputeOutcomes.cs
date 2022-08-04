@@ -26,9 +26,11 @@ namespace fda_model_test.integrationtests
         private static string name = "Name";
         private static CurveTypesEnum curveType = CurveTypesEnum.MonotonicallyIncreasing;
         private static CurveMetaData generalCurveMetaData = new CurveMetaData(xLabel, yLabel, name, curveType);
-        private static ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 5000000);
         private static int seed = 1234;
         private static RandomProvider randomProvider = new RandomProvider(seed);
+        private static MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+        private static ConvergenceCriteria singleIterationConvergenceCriteria = new ConvergenceCriteria(1, 1);
         //set up exterior-interior relationship 
         private static double[] _ExteriorInteriorXValues = new double[] { 474, 474.1, 474.3, 474.5, 478 };
         private static IDistribution[] _ExteriorInteriorYValues = new IDistribution[]
@@ -177,10 +179,10 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
 
             Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
 
             AlternativeResults alternativeResults = Alternative.AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2);
 
@@ -216,7 +218,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -250,7 +252,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation2);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -278,10 +280,14 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
+            //Note the tolerance: 2.0 results are just under 14% different from the 1.4.3 results 
+            //whereas without the levee, 2.0 is 6% different from 1.4.3
+            //so something about the levee
             double tolerance = 0.10;
             double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
             double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
@@ -305,7 +311,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -333,7 +339,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -359,7 +365,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -384,7 +390,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
             double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
@@ -407,7 +413,7 @@ namespace fda_model_test.integrationtests
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             ImpactAreaScenarioResults impactAreaScenarioResults = scenarioResults.GetResults(impactAreaID1);
 
             bool resultsAreNull = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList.Count == 0;
@@ -434,7 +440,7 @@ namespace fda_model_test.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, defaultConvergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
 
             bool resultsAreNull = scenarioResults.GetResults(impactAreaID1).ConsequenceResults.ConsequenceResultList.Count == 0;
             Assert.True(resultsAreNull);
