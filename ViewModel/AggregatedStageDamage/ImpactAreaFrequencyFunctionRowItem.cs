@@ -177,7 +177,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public XElement WriteToXML()
         {
             XElement impactAreaFrequencyRowElement = new XElement(IMPACT_AREA_FREQUENCY_ROW);
-            impactAreaFrequencyRowElement.SetAttributeValue(IMPACT_AREA_ID, ImpactArea.ID);
+            int impArea = -1;
+            if(ImpactArea != null)
+            {
+                impArea = ImpactArea.ID;
+            }
+            impactAreaFrequencyRowElement.SetAttributeValue(IMPACT_AREA_ID, impArea);
 
             int freqID = -1;
             if(FrequencyFunction != null && FrequencyFunction.Element != null)
@@ -195,6 +200,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             return impactAreaFrequencyRowElement;
         }
+
+
+
 
         public ImpactAreaFrequencyFunctionRowItem Clone()
         {

@@ -32,7 +32,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region constructors
         public AggregatedStageDamageEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
-            IsCreatingNewElement = true;
             HasChanges = true;
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
@@ -45,7 +44,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            IsCreatingNewElement = false;
             AggregatedStageDamageElement element = (AggregatedStageDamageElement)elem;
             Name = element.Name;
             Description = element.Description;
@@ -90,6 +88,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 int wseID = CalculatedVM.SelectedWaterSurfaceElevation.ID;
                 int structID = CalculatedVM.SelectedStructures.ID;
+                int indexPointsID = CalculatedVM.SelectedIndexPoints.ID;
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = 1;
                 if (OriginalElement != null)
@@ -102,7 +101,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
 
                 AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, 
-                    CalculatedVM.GetStageDamageCurves(), CalculatedVM.ImpactAreaFrequencyRows, false, id);              
+                   indexPointsID, CalculatedVM.GetStageDamageCurves(), CalculatedVM.ImpactAreaFrequencyRows, false, id);              
                 base.Save(elemToSave);
             }
             else
@@ -119,7 +118,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = GetElementID();
                 List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1,-1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
                 base.Save(elem);
             }
         }

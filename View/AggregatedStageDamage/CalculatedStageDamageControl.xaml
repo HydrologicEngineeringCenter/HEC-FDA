@@ -38,6 +38,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -49,8 +50,11 @@
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
                 <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
-                
-                <Button Grid.Row="2" Grid.Column="1" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Margin="5" Click="calculate_btn_Click"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Index Points:" HorizontalAlignment="Right"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding IndexPoints}" SelectedItem="{Binding SelectedIndexPoints}" DisplayMemberPath="Name"/>
+
+                    <Button Grid.Row="3" Grid.Column="1" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Margin="5" Click="calculate_btn_Click"/>
             </Grid>
 
                 <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 

@@ -16,8 +16,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         #region Properties
         public bool CanEdit { get; }
-        public int SelectedWSE { get; set; }
-        public int SelectedStructures { get; set; }
+        public int SelectedWSE { get; }
+        public int SelectedStructures { get; }
+        public int SelectedIndexPoints { get; }
         public List<StageDamageCurve> Curves { get; }
         public bool IsManual { get; }
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; }
@@ -26,7 +27,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-            List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(id)
+            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(id)
         {
             ImpactAreaFrequencyRows = impactAreaRows;
             LastEditDate = lastEditDate;
@@ -47,6 +48,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             IsManual = isManual;
             SelectedWSE = selectedWSE;
             SelectedStructures = selectedStructs;
+            SelectedIndexPoints = indexPointsID;
 
             NamedAction editDamageCurve = new NamedAction();
             editDamageCurve.Header = StringConstants.EDIT_STAGE_DAMAGE_MENU;
@@ -78,7 +80,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves,elem.ImpactAreaFrequencyRows, elem.IsManual, elem.ID);
+            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.SelectedIndexPoints, elem.Curves, elem.ImpactAreaFrequencyRows, elem.IsManual, elem.ID);
         }
 
         public void EditDamageCurve(object arg1, EventArgs arg2)

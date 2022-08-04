@@ -1,13 +1,16 @@
 ﻿using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -16,6 +19,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         private HydraulicElement _SelectedWaterSurfaceElevation;
         private InventoryElement _SelectedStructureInventoryElement;
+        private IndexPointsElement _SelectedIndexPointsElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
@@ -61,20 +65,29 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
         }
 
+        public ObservableCollection<IndexPointsElement> IndexPoints { get; } = new ObservableCollection<IndexPointsElement>();
+        public IndexPointsElement SelectedIndexPoints
+        {
+            get { return _SelectedIndexPointsElement; }
+            set { _SelectedIndexPointsElement = value; NotifyPropertyChanged(); }
+        }
+
         public CalculatedStageDamageVM()
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
-            loadStructureInventories();
-            loadDepthGrids();
+            LoadStructureInventories();
+            LoadDepthGrids();
             LoadNewImpactAreaFrequencyRows();
+            LoadIndexPoints();
         }
         
         public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows)
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
-            loadStructureInventories();
+            LoadStructureInventories();
             SelectInventory(inventoryID);
-            loadDepthGrids();
+            LoadDepthGrids();
+            LoadIndexPoints();
             SelectDepthGrid(wseId);
             LoadCurves(curves);
 
@@ -160,7 +173,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 MessageBox.Show("The previously selected hydraulics data set used in the compute of these aggregated stage-damage functions was deleted. Please select a new hydraulics data set and recompute.", "Hydraulogy Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-        private void loadDepthGrids()
+        private void LoadDepthGrids()
         {
             List<HydraulicElement> WSEElements = StudyCache.GetChildElementsOfType<HydraulicElement>();
             foreach (HydraulicElement elem in WSEElements)
@@ -173,7 +186,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private void loadStructureInventories()
+        private void LoadIndexPoints()
+        {
+            List<IndexPointsElement> indexPoints = StudyCache.GetChildElementsOfType<IndexPointsElement>();
+            foreach (IndexPointsElement elem in indexPoints)
+            {
+                IndexPoints.Add(elem);
+            }
+            if (IndexPoints.Count > 0)
+            {
+                SelectedIndexPoints = IndexPoints[0];
+            }
+        }
+
+        private void LoadStructureInventories()
         {
             List<InventoryElement> inventoryElements = StudyCache.GetChildElementsOfType<InventoryElement>();
             foreach(InventoryElement elem in inventoryElements)
@@ -203,6 +229,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
         {
             FdaValidationResult vr = new FdaValidationResult();
+            if(ImpactAreaFrequencyRows.Count == 0)
+            {
+                vr.AddErrorMessage("Impact area table has no rows.");
+            }
+
             foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
                 vr.AddErrorMessage(row.ValidateRow().ErrorMessage);
@@ -210,26 +241,87 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
+
+        private FdaValidationResult DirectoryHasOneFileMatchingPattern(string directoryPath, string pattern)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (Directory.Exists(directoryPath))
+            {
+                string[] files = Directory.GetFiles(directoryPath, pattern);
+                if (files.Length == 0)
+                {
+                    vr.AddErrorMessage("The directory does not contain a file that matches the pattern: " + pattern);
+                }
+                else if(files.Length > 1)
+                {
+                    //more than one shapefile discovered
+                    vr.AddErrorMessage("The directory contains multiple files that matche the pattern: " + pattern);
+                }
+            }
+            else
+            {
+                vr.AddErrorMessage("The directory does not exist: " + directoryPath);
+            }
+            return vr;
+        }
+
+        /// <summary>
+        /// Always validate that this file exists before calling. Use the method above, DirectoryHasOneFileMatchingPattern(). 
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        private string GetFilePath(string directoryPath, string pattern)
+        {
+            return Directory.GetFiles(directoryPath, pattern)[0];
+        }
+
+        private FdaValidationResult DoAllRequiredFilesExist()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            ImpactAreaElement impactAreaElement = impactAreaElements[0];
+            string impactAreaDirectoryPath = Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaElement.Name;
+            FdaValidationResult impactAreaHasOneShapefile = DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp");
+            if (!impactAreaHasOneShapefile.IsValid)
+            {
+                vr.AddErrorMessage(impactAreaHasOneShapefile.ErrorMessage);
+            }
+
+            return vr;
+        }
+
         public void ComputeCurves()
         {
-            //todo Richard will implament this method. I am not sure what all you need. You can grab elements from the study cache
-            //just like i did in the line below to get the impact area elements. You will need to create "CalculatedStageDamageRowItem"s.
-            //These objects basically hold an impact area, damcat, coordinates function. The coordinates function gets created by using
-            //the ICoordinatesFunctionsFactory. To get the curves to show up in the UI you just add them to the "Rows" property.
-            
+           //todo: this is creating dummy curves for now.
 
             FdaValidationResult vr = ValidateForCompute();
             if (vr.IsValid)
             {
                 Rows.Clear();
-                //we know that we have an impact area, we need to verify that we have a structure inventory
+                //we know that we have an impact area. We only allow one, so it will be the first one.
                 List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-
-                //there should only ever be one impact area. To get to this point we know we have an impact area.
                 ImpactAreaElement impactAreaElement = impactAreaElements[0];
+                string impactAreaDirectoryPath = Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaElement.Name;
+                FdaValidationResult impactAreaHasOneShapefile = DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp");
+                //todo: all these validations should go in the Validate for compute method. So if you require a bunch of files to exist,
+                //call those in that validation method. Then in here we can assume they exist.
+
+                if(impactAreaHasOneShapefile.IsValid)
+                {
+                    string impactAreaShapefilePath = GetFilePath(impactAreaDirectoryPath, "*.shp");
+                }
 
                 InventoryElement inventoryElement = SelectedStructures;
+
+
                 HydraulicElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
+                string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + waterSurfaceElevationElement.Name;
+                FdaValidationResult hydroHasOneShapefile = DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp");
+                if (hydroHasOneShapefile.IsValid)
+                {
+                    string hydroShapefilePath = GetFilePath(hydroDirectoryPath, "*.shp");
+                }
 
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
@@ -288,6 +380,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (SelectedStructures == null)
             {
                 vr.AddErrorMessage("A structure inventory must be selected.");
+            }
+            if (SelectedIndexPoints == null)
+            {
+                vr.AddErrorMessage("Index Points must be selected.");
             }
             if (Rows.Count == 0)
             {

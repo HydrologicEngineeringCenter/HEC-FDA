@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
 {
     public class IndexPointsElement:ChildElement
     {
-        private static String INDEX_POINTS_TAG = "IndexPoints";
+        public static String INDEX_POINTS_TAG = "IndexPoints";
         private static String NAME_TAG = "Name";
         private static String DESCRIPTION_TAG = "Description";
         private static String LAST_EDIT_DATE_TAG = "LastEditDate";
@@ -28,14 +28,13 @@ namespace HEC.FDA.ViewModel.IndexPoints
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             Description = description;
             IndexPoints = indexPoints;
-            AddActions();          
+            AddActions();
         }
 
-        public IndexPointsElement(string xmlString, int id):base(id)
+        public IndexPointsElement(XElement itemElem, int id):base(id)
         {
             ID = id;
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(INDEX_POINTS_TAG);
+            
             Name = itemElem.Attribute(NAME_TAG).Value;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
 

@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -35,7 +36,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
             string xmlString = (string)rowData[XML_COL];
-            return new IndexPointsElement(xmlString, id);
+
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(IndexPointsElement.INDEX_POINTS_TAG);
+            return new IndexPointsElement(itemElem, id);
         }
 
 
