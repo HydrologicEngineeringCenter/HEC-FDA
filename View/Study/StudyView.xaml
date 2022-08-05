@@ -4,7 +4,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
              xmlns:VMUtils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"

@@ -34,18 +34,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LifeSimGIS.dll</HintPath>
     </Reference>
-    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
-    </Reference>
+	  <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+		  <SpecificVersion>False</SpecificVersion>
+		  <HintPath>..\lib\OpenGLMapping.dll</HintPath>
+	  </Reference>
+	  <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+		  <SpecificVersion>False</SpecificVersion>
+		  <HintPath>..\lib\OpenTK.dll</HintPath>
+	  </Reference>
+	  <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+		  <SpecificVersion>False</SpecificVersion>
+		  <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
+	  </Reference>
     <Reference Include="OxyPlot">
       <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
@@ -78,9 +78,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="StructureInventoryLibrary">
-      <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
-    </Reference>
+	  <Reference Include="StructureInventoryLibrary">
+		  <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
+	  </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Importer\Importer.csproj" />
