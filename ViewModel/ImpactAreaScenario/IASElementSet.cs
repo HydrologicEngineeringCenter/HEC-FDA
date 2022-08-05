@@ -156,9 +156,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Navigate(tab, false, false);
         }
 
-        private ObservableCollection<ImpactAreaRowItem> GetStudyImpactAreaRowItems()
+        private List<ImpactAreaRowItem> GetStudyImpactAreaRowItems()
         {
-            ObservableCollection<ImpactAreaRowItem> impactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
+            List<ImpactAreaRowItem> impactAreaRows = new List<ImpactAreaRowItem>();
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count > 0)
             {
@@ -173,7 +173,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             if (Results != null)
             {
                 List<string> damCats = Results.GetDamageCategories();
-                ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+                List<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
                 foreach (SpecificIAS ias in SpecificIASElements)
                 {
                     int impactAreaID = ias.ImpactAreaID;
@@ -188,7 +188,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
         }
 
-        private string GetImpactAreaNameFromID(ObservableCollection<ImpactAreaRowItem> rows, int id)
+        private string GetImpactAreaNameFromID(List<ImpactAreaRowItem> rows, int id)
         {
             string rowName = null;
             foreach(ImpactAreaRowItem row in rows)

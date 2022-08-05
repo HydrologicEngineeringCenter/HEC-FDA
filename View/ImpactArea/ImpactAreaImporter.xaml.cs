@@ -16,23 +16,26 @@ namespace HEC.FDA.View.ImpactArea
 
         private void Cmb_UniqueName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
-            vm.LoadTheRows();
+            if (DataContext is ImpactAreaImporterVM vm)
+            {
+                vm.LoadTheRows();
+            }
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ImpactAreaImporterVM vm = (ImpactAreaImporterVM)this.DataContext;
-            if (vm == null) { return; }
-            if (vm.IsInEditMode)
+            if (DataContext is ImpactAreaImporterVM vm)
             {
-                row_SelectPath.Height = new GridLength(0);
-                row_SelectUniqueName.Height = new GridLength(0);
-            }
-            else
-            {
-                row_SelectPath.Height = new GridLength(35);
-                row_SelectUniqueName.Height = new GridLength(35);
+                if (!vm.IsCreatingNewElement)
+                {
+                    row_SelectPath.Height = new GridLength(0);
+                    row_SelectUniqueName.Height = new GridLength(0);
+                }
+                else
+                {
+                    row_SelectPath.Height = new GridLength(35);
+                    row_SelectUniqueName.Height = new GridLength(35);
+                }
             }
         }
 

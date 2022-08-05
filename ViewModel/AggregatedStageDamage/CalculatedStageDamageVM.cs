@@ -94,7 +94,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impAreaElems.Count > 0)
             {
-                ObservableCollection<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
+                List<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
                 List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
                 List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
 
@@ -216,6 +216,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //just like i did in the line below to get the impact area elements. You will need to create "CalculatedStageDamageRowItem"s.
             //These objects basically hold an impact area, damcat, coordinates function. The coordinates function gets created by using
             //the ICoordinatesFunctionsFactory. To get the curves to show up in the UI you just add them to the "Rows" property.
+            
 
             FdaValidationResult vr = ValidateForCompute();
             if (vr.IsValid)

@@ -45,11 +45,6 @@ namespace HEC.FDA.ViewModel
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
 
-        public bool TableContainsGeoData
-        {
-            get { return _TableContainsGeoData; }
-            set { _TableContainsGeoData = value; }
-        }
         /// <summary>
         /// This governs the image and text that is displayed in the main trees.
         /// </summary>

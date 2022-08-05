@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Controls;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -71,7 +72,17 @@ namespace HEC.FDA.ViewModel.Study
                 {
                     OpenStudyFromFilePath(Path.GetFileNameWithoutExtension(filePath), filePath);
                 }
+                else
+                {
+                    //this is the case that the user is trying to open the study that is already open
+                    MessageUserThatStudyIsAlreadyOpen();
+                }
             }
+        }
+
+        private void MessageUserThatStudyIsAlreadyOpen()
+        {
+            MessageBox.Show("This study is already open.", "Already Open", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         /// <summary>
@@ -225,6 +236,11 @@ namespace HEC.FDA.ViewModel.Study
                 StudyCache = null;
                 AddBaseElements();
             }
+            else
+            {
+                //this is the case that the user is trying to open the study that is already open
+                MessageUserThatStudyIsAlreadyOpen();
+            }
         }
 
         public void ImportStudyFromOldFda()
@@ -314,6 +330,7 @@ namespace HEC.FDA.ViewModel.Study
             PersistenceFactory.GetRatingManager().Load();
             PersistenceFactory.GetTerrainManager().Load();
             PersistenceFactory.GetImpactAreaManager().Load();
+            PersistenceFactory.GetIndexPointsPersistenceManager().Load();
             PersistenceFactory.GetWaterSurfaceManager().Load();
             PersistenceFactory.GetFlowFrequencyManager().Load();
             PersistenceFactory.GetInflowOutflowManager().Load();

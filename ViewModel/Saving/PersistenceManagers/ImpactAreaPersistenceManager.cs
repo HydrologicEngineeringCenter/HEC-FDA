@@ -53,14 +53,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string name = (string)rowData[NAME_COL];
-            ObservableCollection<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
+            List<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
             int id = Convert.ToInt32(rowData[ID_COL]);
             return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems, id);
         }
 
-        private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
+        private List<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
         {
-            ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
+            List<ImpactAreaRowItem> items = new List<ImpactAreaRowItem>();
             DataTableView indexTable = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + impactAreaSetName);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows - 1))
             {

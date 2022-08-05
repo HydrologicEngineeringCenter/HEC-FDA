@@ -40,6 +40,9 @@
              xmlns:ImpactAreaView="clr-namespace:HEC.FDA.View.ImpactArea"
              xmlns:ImpactAreaVM="clr-namespace:HEC.FDA.ViewModel.ImpactArea;assembly=HEC.FDA.ViewModel"
              
+             xmlns:IndexPointsView="clr-namespace:HEC.FDA.View.IndexPoints"
+             xmlns:IndexPointsVM="clr-namespace:HEC.FDA.ViewModel.IndexPoints;assembly=HEC.FDA.ViewModel"
+             
              xmlns:InventoryView="clr-namespace:HEC.FDA.View.Inventory"
              xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory;assembly=HEC.FDA.ViewModel"
                           
@@ -157,7 +160,11 @@
         <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
             <ImpactAreaView:ImpactAreaImporter/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type IndexPointsVM:IndexPointsEditorVM }" >
+            <IndexPointsView:IndexPointsEditor/>
+        </DataTemplate>
+
         <!--Occupancy Types Region-->
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
             <OccupancyTypesView:OccupancyTypesEditor/>

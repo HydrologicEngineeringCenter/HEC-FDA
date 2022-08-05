@@ -91,7 +91,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             localactions.Add(renameElement);
 
             Actions = localactions;
-            TableContainsGeoData = true;
         }
 
         #endregion

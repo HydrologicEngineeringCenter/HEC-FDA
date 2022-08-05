@@ -14,6 +14,7 @@ using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.IndexPoints;
 
 namespace HEC.FDA.ViewModel.Saving
 {
@@ -95,8 +96,17 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
             }
+            else if(element is IndexPointsElement)
+            {
+                manager = new IndexPointsPersistenceManager(StudyCacheForSaving);
+            }
            
             return manager;
+        }
+
+        public static IndexPointsPersistenceManager GetIndexPointsPersistenceManager()
+        {
+            return new IndexPointsPersistenceManager(StudyCacheForSaving);
         }
 
         public static RatingElementPersistenceManager GetRatingManager()
