@@ -238,7 +238,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 }
 
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Unsteady, _ID);
-                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
                 manager.SaveExisting(elementToSave, _OriginalFolderName);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
                 HasChanges = false;

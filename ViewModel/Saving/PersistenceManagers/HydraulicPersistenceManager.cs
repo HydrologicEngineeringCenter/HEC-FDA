@@ -9,7 +9,7 @@ using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class WaterSurfaceAreaPersistenceManager : SavingBase
+    public class HydraulicPersistenceManager : SavingBase
     {
         private const string PATH_AND_PROB_TABLE = "hydraulic_data -";
 
@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-        public WaterSurfaceAreaPersistenceManager(Study.FDACache studyCache)
+        public HydraulicPersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }

@@ -31,23 +31,19 @@ namespace HEC.FDA.ViewModel.IndexPoints
             AddActions();
         }
 
-        public IndexPointsElement(XElement itemElem, int id):base(id)
+        public IndexPointsElement(XElement childElem, int id):base(id)
         {
             ID = id;
-            
-            Name = itemElem.Attribute(NAME_TAG).Value;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
+            ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
 
-            Description = itemElem.Attribute(DESCRIPTION_TAG).Value;
-            LastEditDate = itemElem.Attribute(LAST_EDIT_DATE_TAG).Value;
-
-            XElement indexPointsElem = itemElem.Element(INDEX_POINT_NAMES_TAG);
+            XElement indexPointsElem = childElem.Element(INDEX_POINT_NAMES_TAG);
             IEnumerable<XElement> nameElems = indexPointsElem.Elements(NAME_TAG);
             foreach(XElement nameElem in nameElems)
             {
                 IndexPoints.Add(nameElem.Value);
             }
 
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddActions();
         }
 
@@ -164,9 +160,8 @@ namespace HEC.FDA.ViewModel.IndexPoints
         public override XElement ToXML()
         {
             XElement indexPointsElem = new XElement(INDEX_POINTS_TAG);
-            indexPointsElem.SetAttributeValue(NAME_TAG, Name);
-            indexPointsElem.SetAttributeValue(DESCRIPTION_TAG, Description);
-            indexPointsElem.SetAttributeValue(LAST_EDIT_DATE_TAG, LastEditDate);
+
+            indexPointsElem.Add(CreateHeaderElement());
 
             XElement indexPointNames = new XElement(INDEX_POINT_NAMES_TAG);
             foreach(string name in IndexPoints)
@@ -177,6 +172,33 @@ namespace HEC.FDA.ViewModel.IndexPoints
             indexPointsElem.Add(indexPointNames);
 
             return indexPointsElem;
+        }
+
+        public bool Equals(IndexPointsElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (IndexPoints.Count != elem.IndexPoints.Count)
+            {
+                isEqual = false;
+            }
+            else
+            {
+                for (int i = 0; i < IndexPoints.Count; i++)
+                {
+                    if (!IndexPoints[i].Equals(elem.IndexPoints[i]))
+                    {
+                        isEqual = false;
+                        break;
+                    }
+                }
+            }
+            return isEqual;
         }
 
 

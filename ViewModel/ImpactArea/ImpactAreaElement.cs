@@ -16,12 +16,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        private static String IMPACT_AREAS_TAG = "ImpactAreas";
-        private static String NAME_TAG = "Name";
-        private static String DESCRIPTION_TAG = "Description";
-        private static String LAST_EDIT_DATE_TAG = "LastEditDate";
-        private static String IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
-
+        public const String IMPACT_AREAS_TAG = "ImpactAreas";
+        private const String IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
         #endregion
         #region Properties
 
@@ -38,26 +34,38 @@ namespace HEC.FDA.ViewModel.ImpactArea
             AddActions();
         }
 
-        public ImpactAreaElement(XElement xmlString, int id) : base(id)
+        public ImpactAreaElement(XElement impactAreaElement, int id) : base(id)
         {
             ID = id;
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement impactAreaElem = doc.Element(IMPACT_AREAS_TAG);
-            Name = impactAreaElem.Attribute(NAME_TAG).Value;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
+            ReadHeaderXElement(impactAreaElement.Element(HEADER_XML_TAG));
 
-            Description = impactAreaElem.Attribute(DESCRIPTION_TAG).Value;
-            LastEditDate = impactAreaElem.Attribute(LAST_EDIT_DATE_TAG).Value;
-
-            XElement rowsElem = impactAreaElem.Element(IMPACT_AREA_ROWS_TAG);
+            XElement rowsElem = impactAreaElement.Element(IMPACT_AREA_ROWS_TAG);
             IEnumerable<XElement> rowElems = rowsElem.Elements(ImpactAreaRowItem.ROW_ITEM_TAG);
             foreach (XElement nameElem in rowElems)
             {
                 ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
             }
 
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddActions();
         }
+
+        public override XElement ToXML()
+        {
+            XElement impactAreaElem = new XElement(IMPACT_AREAS_TAG);
+            impactAreaElem.Add(CreateHeaderElement());
+
+            XElement impactAreaRows = new XElement(IMPACT_AREA_ROWS_TAG);
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                impactAreaRows.Add(row.ToXML());
+            }
+
+            impactAreaElem.Add(impactAreaRows);
+
+            return impactAreaElem;
+        }
+
 
         private void AddActions()
         {
@@ -210,23 +218,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows, elem.ID);
         }
 
-        public override XElement ToXML()
-        {
-            XElement impactAreaElem = new XElement(IMPACT_AREAS_TAG);
-            impactAreaElem.SetAttributeValue(NAME_TAG, Name);
-            impactAreaElem.SetAttributeValue(DESCRIPTION_TAG, Description);
-            impactAreaElem.SetAttributeValue(LAST_EDIT_DATE_TAG, LastEditDate);
-
-            XElement impactAreaRows = new XElement(IMPACT_AREA_ROWS_TAG);
-            foreach (ImpactAreaRowItem row in ImpactAreaRows)
-            {
-                impactAreaRows.Add(row.ToXML());
-            }
-
-            impactAreaElem.Add(impactAreaRows);
-
-            return impactAreaElem;
-        }
+        
 
         public override void Rename(object sender, EventArgs e)
         {
@@ -257,6 +249,32 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         #endregion
 
+        public bool Equals(ImpactAreaElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (ImpactAreaRows.Count != elem.ImpactAreaRows.Count)
+            {
+                isEqual = false;
+            }
+            else
+            {
+                for(int i = 0;i<ImpactAreaRows.Count;i++)
+                {
+                    if(!ImpactAreaRows[i].Equals( elem.ImpactAreaRows[i]))
+                    {
+                        isEqual = false;
+                        break;
+                    }
+                }
+            }
+            return isEqual;
+        }
 
     }
 }

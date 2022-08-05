@@ -25,11 +25,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            //int id = Convert.ToInt32(rowData[ID_COL]);
-            //string xmlString = (string)rowData[XML_COL];
-            //XDocument doc = XDocument.Parse(xmlString);
-            //XElement itemElem = doc.Element(TerrainElement.TERRAIN_XML_TAG);
-            //return new TerrainElement(itemElem, id);
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(ImpactAreaElement.IMPACT_AREAS_TAG);
+            return new ImpactAreaElement(itemElem, id);
 
             //if (rowData.Length > 2)
             //{

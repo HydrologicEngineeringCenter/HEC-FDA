@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.Saving
             }
             else if (element.GetType() == typeof(HydraulicElement))
             {
-                manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
+                manager = new HydraulicPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
@@ -132,9 +132,9 @@ namespace HEC.FDA.ViewModel.Saving
         {
             return new ImpactAreaPersistenceManager(StudyCacheForSaving);
         }
-        public static WaterSurfaceAreaPersistenceManager GetWaterSurfaceManager( )
+        public static HydraulicPersistenceManager GetWaterSurfaceManager( )
         {
-            return new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
+            return new HydraulicPersistenceManager(StudyCacheForSaving);
         }
         public static FlowFrequencyPersistenceManager GetFlowFrequencyManager( )
         {

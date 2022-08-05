@@ -53,14 +53,34 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             SetConstructorParams(name, description,pathAndProbs, isDepthGrids);
         }
 
-
-
         public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) : base(id)
         {
             HydroType = hydroType;
             HasAssociatedFiles = true;
             SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
         }
+
+        public HydraulicElement(XElement childElement, int id):base(id)
+        {
+            ID = id;
+            ReadHeaderXElement(childElement.Element(HEADER_XML_TAG));
+
+            XElement rowsElem = childElement.Element(IMPACT_AREA_ROWS_TAG);
+            IEnumerable<XElement> rowElems = rowsElem.Elements(childElement.ROW_ITEM_TAG);
+            foreach (XElement nameElem in rowElems)
+            {
+                ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
+            }
+
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
+            AddActions();
+        }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
+
 
         private void SetConstructorParams(string name, string description,List<PathAndProbability> pathAndProbs, bool isDepthGrids)
         {
@@ -156,10 +176,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return new HydraulicElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.HydroType, elem.ID);
         }
 
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
-        }
+
         #endregion
     }
 }

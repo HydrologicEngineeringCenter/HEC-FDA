@@ -235,8 +235,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (vr.IsValid)
             {
                 Rows.Clear();
-                
+
                 //todo: Make a call to the model and pass in the config object.
+                //modelComputeObject obj =  config.CreateModelComputeObject();
+                //someResultsObject = obj.compute();
+                //then i will translate the results into my VM row items to be displayed in the UI
+
 
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
@@ -340,5 +344,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 TableWithPlot.WasModified += TableDataChanged;
             }
         }
+
+        
+
     }
 }
