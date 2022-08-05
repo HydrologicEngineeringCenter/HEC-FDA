@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Xml.Linq;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Storage;
@@ -153,6 +154,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             HydraulicElement elem = (HydraulicElement)elementToClone;
             return new HydraulicElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.HydroType, elem.ID);
+        }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

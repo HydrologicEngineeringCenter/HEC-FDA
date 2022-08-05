@@ -36,7 +36,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
             string xmlString = (string)rowData[XML_COL];
-
             XDocument doc = XDocument.Parse(xmlString);
             XElement itemElem = doc.Element(IndexPointsElement.INDEX_POINTS_TAG);
             return new IndexPointsElement(itemElem, id);

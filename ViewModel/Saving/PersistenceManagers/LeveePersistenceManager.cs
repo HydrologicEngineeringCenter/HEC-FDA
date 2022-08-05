@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -15,22 +16,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int IS_DEFAULT_COL = 5;
         private const int CURVE_COL = 6;
 
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(double), typeof(bool), typeof(string)  }; }
-        }
+
 
         public override string TableName
         {
             get { return "levee_features"; }
-        }
-
-        public override string[] TableColumnNames
-        {
-            get { return new string[] { NAME,LAST_EDIT_DATE, DESCRIPTION, "elevation","is_default", CURVE }; }
         }
 
         public LeveePersistenceManager(Study.FDACache studyCache)
@@ -57,12 +47,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            bool isDefault = Convert.ToBoolean(rowData[IS_DEFAULT_COL]);
-            string curveXML = (string)rowData[CURVE_COL];
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(XElement.Parse(curveXML));
-
             int id = Convert.ToInt32(rowData[ID_COL]);
-            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]), isDefault, computeComponentVM, id);
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(IndexPointsElement.INDEX_POINTS_TAG);
+            return new LeveeFeatureElement(itemElem, id);
+
         }
 
         #endregion

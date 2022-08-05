@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element, TableName);
         }
 
         public void SaveNew(ChildElement element)

@@ -163,15 +163,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     vr.AddErrorMessage("Impact area " + ImpactArea.Name + " does not have a stage discharge assignment which will result in poor estimates. Please define this assignment.");
                 }
             }
-            else if (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow)
+            else if (IsStageDischargeRequired())
             {
-                //then a stage discharge is required
                 if (StageDischargeFunction.Element == null)
                 {
                     vr.AddErrorMessage("Impact area " + ImpactArea.Name + " does not have a stage discharge assignment which will result in poor estimates. Please define this assignment.");
                 }
             }
             return vr;
+        }
+
+        public bool IsStageDischargeRequired()
+        {
+            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow);
         }
 
         public XElement WriteToXML()

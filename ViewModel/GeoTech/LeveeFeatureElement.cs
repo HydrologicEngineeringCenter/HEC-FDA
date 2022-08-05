@@ -6,6 +6,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -81,6 +82,12 @@ namespace HEC.FDA.ViewModel.GeoTech
 
             Actions = localActions;
         }
+
+        public LeveeFeatureElement(XElement element, int id):base(id)
+        {
+
+        }
+
         #endregion
         #region Voids
         public void EditLeveeFeature(object arg1, EventArgs arg2)

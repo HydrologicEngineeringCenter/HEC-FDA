@@ -20,13 +20,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override string TableName { get { return "exterior_interior_curves"; } }
 
         /// <summary>
-        /// Names of the columns in the parent table
-        /// </summary>
-        public override string[] TableColumnNames
-        {
-            get { return new string[] {NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE}; }
-        }
-        /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
         public override Type[] TableColumnTypes
@@ -58,7 +51,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             XElement curveXML =XElement.Parse( (string)rowData[CURVE_COL]);
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(curveXML);
 
-            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL],
+            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0], (string)rowData[LAST_EDIT_DATE_COL],
                 (string)rowData[DESC_COL], computeComponentVM, id);
             return ele;
         }

@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const string SELECTED_INDEX_POINTS_COL_NAME = "selected_indexPoints";
         private const string IMPACT_AREA_FREQ_ROWS_COL_NAME = "impact_area_frequency_rows";
 
-        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves", IMPACT_AREA_FREQ_ROWS_COL_NAME, SELECTED_INDEX_POINTS_COL_NAME };
+        private static readonly string[] TableColNames = { "" };// NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves", IMPACT_AREA_FREQ_ROWS_COL_NAME, SELECTED_INDEX_POINTS_COL_NAME };
     
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int),typeof(int), typeof(string), typeof(string), typeof(int) };
         /// <summary>

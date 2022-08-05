@@ -271,5 +271,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return setElement;
         }
 
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

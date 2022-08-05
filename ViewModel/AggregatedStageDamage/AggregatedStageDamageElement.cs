@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -181,6 +182,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             sw.Write("Created: ");
             sw.WriteLine(propElem.CreatedDate);
+        }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

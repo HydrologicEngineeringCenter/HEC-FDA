@@ -388,5 +388,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
             return new SpecificAltCompReportResultsVM(altResult, baseSummary, futureSummary, aaeqSummary);
         }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

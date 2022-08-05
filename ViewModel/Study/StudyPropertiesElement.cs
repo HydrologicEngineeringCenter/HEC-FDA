@@ -207,6 +207,11 @@ namespace HEC.FDA.ViewModel.Study
             return ConvergenceCriteria.ToConvergenceCriteria();
         }
 
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

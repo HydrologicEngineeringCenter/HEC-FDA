@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -10,13 +11,18 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Fields
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
 
+        public const string HEADER_XML_TAG = "Header";
+        private const string NAME_XML_TAG = "Name";
+        private const string DESCRIPTION_XML_TAG = "Description";
+        private const string LAST_EDIT_DATE_XML_TAG = "LastEditDate";
+
         private string _Description = "";
         private int _FontSize = 14;
         private bool _IsBold = false;
 
         #endregion
         #region Properties
-        public string LastEditDate { get; set; }
+        public string LastEditDate { get; set; } = "";
         public int ID { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 
@@ -45,10 +51,11 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         #endregion
 
+        public abstract XElement ToXML();
+
         public virtual void Rename(object sender, EventArgs e)
         {
             RenameVM renameViewModel = new RenameVM(this, CloneElement);
-
             string header = "Rename";
             DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename",false,false);
             Navigate(tab);
@@ -69,6 +76,44 @@ namespace HEC.FDA.ViewModel.Utilities
         /// <param name="elementToClone"></param>
         /// <returns></returns>
         public abstract ChildElement CloneElement(ChildElement elementToClone);
+
+
+        public XElement CreateHeaderElement()
+        {
+            XElement headerElem = new XElement(HEADER_XML_TAG);
+            headerElem.SetAttributeValue("ID", ID);
+            headerElem.SetAttributeValue(NAME_XML_TAG, Name);
+            headerElem.SetAttributeValue(DESCRIPTION_XML_TAG, Description);
+            headerElem.SetAttributeValue(LAST_EDIT_DATE_XML_TAG, LastEditDate);
+            return headerElem;
+        }
+
+        public void ReadHeaderXElement(XElement headerXML)
+        {
+            //todo: id
+            Name = headerXML.Attribute(NAME_XML_TAG).Value;
+            Description = headerXML.Attribute(DESCRIPTION_XML_TAG).Value;
+            LastEditDate = headerXML.Attribute(LAST_EDIT_DATE_XML_TAG).Value;
+        }
+
+        public bool AreHeaderDataEqual(ChildElement elem)
+        {
+            bool isEqual = true;
+            if(!Name.Equals(elem.Name))
+            {
+                isEqual = false;
+            }
+            if(!Description.Equals(elem.Description))
+            {
+                isEqual = false;
+            }
+            if(!LastEditDate.Equals(elem.LastEditDate))
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
+        }
 
     }
 }

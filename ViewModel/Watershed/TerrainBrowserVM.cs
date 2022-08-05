@@ -140,7 +140,7 @@ namespace HEC.FDA.ViewModel.Watershed
                 TerrainElement t = new TerrainElement(Name, fileName, id, true);
                 StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, fileName, id);
-
+                newElement.LastEditDate = DateTime.Now.ToString("G");
                 manager.SaveNew(TerrainPath, newElement);
                 IsCreatingNewElement = false;
                 HasChanges = false;

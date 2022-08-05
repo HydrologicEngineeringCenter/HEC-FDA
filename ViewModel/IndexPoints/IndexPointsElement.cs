@@ -11,11 +11,11 @@ namespace HEC.FDA.ViewModel.IndexPoints
 {
     public class IndexPointsElement:ChildElement
     {
-        public static String INDEX_POINTS_TAG = "IndexPoints";
-        private static String NAME_TAG = "Name";
-        private static String DESCRIPTION_TAG = "Description";
-        private static String LAST_EDIT_DATE_TAG = "LastEditDate";
-        private static String INDEX_POINT_NAMES_TAG = "IndexPointNames";
+        public const String INDEX_POINTS_TAG = "IndexPoints";
+        private const String NAME_TAG = "Name";
+        private const String DESCRIPTION_TAG = "Description";
+        private const String LAST_EDIT_DATE_TAG = "LastEditDate";
+        private const String INDEX_POINT_NAMES_TAG = "IndexPointNames";
 
         #region Properties
         public List<string> IndexPoints { get; } = new List<string>();      
@@ -161,7 +161,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
             return new IndexPointsElement(elem.Name, elem.Description, elem.IndexPoints, elem.ID);
         }
 
-        public XElement ToXML()
+        public override XElement ToXML()
         {
             XElement indexPointsElem = new XElement(INDEX_POINTS_TAG);
             indexPointsElem.SetAttributeValue(NAME_TAG, Name);
@@ -178,6 +178,8 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
             return indexPointsElem;
         }
+
+
         #endregion
     }
 }

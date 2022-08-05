@@ -22,31 +22,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 2;
         private const int IS_OLD_FDA = 3;
 
-        private const string TABLE_NAME = "structure_inventories";
 
         public override string TableName
         {
-            get { return TABLE_NAME; }
+            get { return "structure_inventories"; }
         }
-
-        public override string[] TableColumnNames
-        {
-            get
-            {
-                return TableColNames;
-            }
-        }
-
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_import_from_oldFDA" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string) };
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
-        }
-
 
         public StructureInventoryPersistenceManager(Study.FDACache studyCache)
         {
@@ -187,10 +167,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element, TableName);
             string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.ID;
             RemoveTable(inventoryTable);
-            RemoveFromGeopackageTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
         }
 

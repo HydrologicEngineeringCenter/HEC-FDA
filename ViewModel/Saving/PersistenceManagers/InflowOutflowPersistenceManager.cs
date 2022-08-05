@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -13,41 +14,23 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESCRIPTION_COL = 3;
         private const int CURVE_COL = 4;
 
-        private const string TABLE_NAME = "inflow_outflow_relationships";
-        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE};
-        public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string) };
+        public override string TableName { get { return "inflow_outflow_relationships"; } }
 
-        public override string TableName { get { return TABLE_NAME; } }
-
-        public override string[] TableColumnNames
-        {
-            get { return TableColNames; }
-        }
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
-        }
         public InflowOutflowPersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(InflowOutflowElement element)
-        {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.ComputeComponentVM.ToXML().ToString() };
-        }
+
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string curveXML = (string)rowData[CURVE_COL];
             int id = Convert.ToInt32(rowData[ID_COL]);
-            ComputeComponentVM computeControlVM = new ComputeComponentVM(XElement.Parse(curveXML));
-            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
-                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], computeControlVM, id);
-            return inout;
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(IndexPointsElement.INDEX_POINTS_TAG);
+            return new InflowOutflowElement(itemElem, id);
+
         }
 
         #endregion

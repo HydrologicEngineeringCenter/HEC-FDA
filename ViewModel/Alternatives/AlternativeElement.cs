@@ -346,5 +346,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             }
             return altElement.ToString();
         }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

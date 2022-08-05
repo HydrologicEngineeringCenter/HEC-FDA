@@ -34,26 +34,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override string TableName { get { return "analytical_frequency_curves"; } }
 
-        public override string[] TableColumnNames
-        {
-            get { return new string[] { NAME, DESCRIPTION, "XML" }; }
-        }
-
-        public override Type[] TableColumnTypes
-        {
-            get { return new Type[] { typeof(string), typeof(string), typeof(string) }; }
-        }
-
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
-        {
-            return new object[] { element.Name, element.Description, WriteFlowFrequencyToXML(element) };
-        }
 
         private string ConvertFlowsToString(List<double> flows)
         {
@@ -74,7 +60,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
-            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], (string)rowData[XML_COL], id);
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(FLOW_FREQUENCY);
+            return new AnalyticalFrequencyElement(itemElem, id);
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -9,6 +10,11 @@ namespace HEC.FDA.ViewModel.Utilities
         }
 
         public ComputeComponentVM ComputeComponentVM { get; set; }
+
+        public override XElement ToXML()
+        {
+            return null;
+        }
 
     }
 }

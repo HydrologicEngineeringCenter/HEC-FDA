@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -12,6 +13,9 @@ namespace HEC.FDA.ViewModel.Watershed
         #region Notes
         #endregion
         #region Fields
+        public const string TERRAIN_XML_TAG = "Terrain";
+        private const string SELECTED_PATH_XML_TAG = "SelectedPath";
+
         private string _FileName;
         #endregion
         #region Properties
@@ -36,21 +40,44 @@ namespace HEC.FDA.ViewModel.Watershed
             else
             {
                 CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
-
-                NamedAction remove = new NamedAction();
-                remove.Header = StringConstants.REMOVE_MENU;
-                remove.Action = RemoveElement;
-
-                NamedAction renameElement = new NamedAction(this);
-                renameElement.Header = StringConstants.RENAME_MENU;
-                renameElement.Action = Rename;
-
-                List<NamedAction> localactions = new List<NamedAction>();
-                localactions.Add(remove);
-                localactions.Add(renameElement);
-
-                Actions = localactions;
+                AddActions();
             }
+        }
+
+        public TerrainElement(XElement terrainElement, int id):base(id)
+        {
+            ID = id;
+            ReadHeaderXElement(terrainElement.Element(HEADER_XML_TAG));
+            FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;           
+
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
+            AddActions();
+        }
+
+        private void AddActions()
+        {
+            NamedAction remove = new NamedAction();
+            remove.Header = StringConstants.REMOVE_MENU;
+            remove.Action = RemoveElement;
+
+            NamedAction renameElement = new NamedAction(this);
+            renameElement.Header = StringConstants.RENAME_MENU;
+            renameElement.Action = Rename;
+
+            List<NamedAction> localactions = new List<NamedAction>();
+            localactions.Add(remove);
+            localactions.Add(renameElement);
+
+            Actions = localactions;
+        }
+
+        public override XElement ToXML()
+        {
+            XElement terrainElement = new XElement(TERRAIN_XML_TAG);
+            terrainElement.Add(CreateHeaderElement());
+            terrainElement.SetAttributeValue(SELECTED_PATH_XML_TAG, FileName);
+
+            return terrainElement;
         }
 
         public override ChildElement CloneElement(ChildElement elementToClone)
@@ -84,6 +111,22 @@ namespace HEC.FDA.ViewModel.Watershed
                     }
                 }
             }
+        }
+
+       public bool Equals(TerrainElement elem)
+        {
+            bool isEqual = true;
+
+            if(!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+            if(FileName != elem.FileName)
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
         }
 
         #endregion

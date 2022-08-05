@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FlowTransforms
 {
@@ -47,6 +48,12 @@ namespace HEC.FDA.ViewModel.FlowTransforms
 
             Actions = localActions;
         }
+
+        public InflowOutflowElement(XElement element, int id):base(id)
+        {
+
+        }
+
         #endregion
         #region Voids
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)

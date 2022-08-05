@@ -16,21 +16,27 @@ namespace HEC.FDA.ViewModel.Saving
         /// </summary>
         public Study.FDACache StudyCacheForSaving { get; set; }
         public abstract string TableName { get; }
-        public const string ID_COL_NAME = "id";
-        public const string NAME = "name";
-        public const string ELEMENT_ID_COL_NAME = "elem_id";
-        public const string LAST_EDIT_DATE = "last_edit_date";
-        public const string DESCRIPTION = "description";
-        public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
-        public const string CURVE_TYPE = "curve_type";
-        public const string CURVE = "curve";
+
+        public const string NAME = "Name";
+        public const string XML = "XML";
+        public const string ID_COL_NAME = "ID";
+        //public const string NAME = "name";
+        //public const string ELEMENT_ID_COL_NAME = "elem_id";
+        //public const string LAST_EDIT_DATE = "last_edit_date";
+        //public const string DESCRIPTION = "description";
+        //public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
+        //public const string CURVE_TYPE = "curve_type";
+        //public const string CURVE = "curve";
 
         public const int ID_COL = 0;
-        public const int NAME_COL = 1;
+        public const int XML_COL = 1;
 
-        public abstract string[] TableColumnNames { get; }
-        public abstract Type[] TableColumnTypes { get; }
-        public abstract object[] GetRowDataFromElement(ChildElement elem);
+        public virtual string[] TableColumnNames { get; } = new string[] {XML};
+        public virtual Type[] TableColumnTypes { get; } = new Type[] {typeof(string)};
+        public virtual object[] GetRowDataFromElement(ChildElement elem)
+        {
+            return new object[] { elem.ToXML() };
+        }
 
         #region Utilities
 
@@ -75,11 +81,11 @@ namespace HEC.FDA.ViewModel.Saving
             string editDate = DateTime.Now.ToString("G");
             element.LastEditDate = editDate;
             //save to parent table
-            SaveNewElementToParentTable(GetRowDataFromElement(element), TableName, TableColumnNames, TableColumnTypes);
+            SaveNewElementToTable(GetRowDataFromElement(element), TableName, TableColumnNames, TableColumnTypes);
             //add the element to the study cache
             StudyCacheForSaving.AddElement(element);
         }
-        public void SaveNewElementToParentTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
+        public void SaveNewElementToTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
             OpenConnection();
             DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(tableName);
@@ -91,7 +97,7 @@ namespace HEC.FDA.ViewModel.Saving
             Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
         }
 
-        public void SaveExisting(ChildElement elementToSave)
+        public virtual void SaveExisting(ChildElement elementToSave)
         {
             OpenConnection();
             string editDate = DateTime.Now.ToString("G");
@@ -153,12 +159,12 @@ namespace HEC.FDA.ViewModel.Saving
                 Connection.Instance.DeleteTable(tableName);                
             }
         }
-        public void RemoveFromGeopackageTable(string tableName)
-        {
-            LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
-            gpw.DeleteFeatures(tableName);
-        }
-        public virtual void RemoveFromParentTable(ChildElement element, string tableName)
+        //public void RemoveFromGeopackageTable(string tableName)
+        //{
+        //    LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
+        //    gpw.DeleteFeatures(tableName);
+        //}
+        public virtual void RemoveElementFromTable(ChildElement element, string tableName)
         {
             OpenConnection();
             if (Connection.Instance.TableNames().Contains(tableName))
@@ -321,9 +327,7 @@ namespace HEC.FDA.ViewModel.Saving
                 retval = -1;
             }
             return retval;
-            //int retval = -1;
             //https://stackoverflow.com/questions/107005/predict-next-auto-inserted-row-id-sqlite#:~:text=Try%20SELECT%20*%20FROM%20SQLITE_SEQUENCE%20WHERE,to%20get%20the%20next%20ID.
-            //return retval;
         }
       
 
@@ -363,10 +367,17 @@ namespace HEC.FDA.ViewModel.Saving
         public virtual void Remove(ChildElement element)
         {
             StudyCacheForSaving.RemoveElement(element);
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element, TableName);
         }
 
-        public abstract void Load();
+        public virtual void Load()
+        {
+            List<ChildElement> childElems = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
+            foreach (ChildElement elem in childElems)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
+        }
 
     }
 }

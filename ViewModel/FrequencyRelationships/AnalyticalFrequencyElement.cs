@@ -56,12 +56,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             AddActions();
         }
         //load from database
-        public AnalyticalFrequencyElement(string name, string description, string xmlString, int id) : base(id)
+        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(id)
         {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
-            Name = name;
-            Description = description;
+            //Name = name;
+            //Description = description;
             LastEditDate = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.LAST_EDIT_DATE);
             IsAnalytical = (bool)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.IS_ANALYTICAL);
 

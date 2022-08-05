@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -49,6 +50,11 @@ namespace HEC.FDA.ViewModel.StageTransforms
             localActions.Add(renameElement);
 
             Actions = localActions;
+        }
+
+        public RatingCurveElement(XElement elem, int id):base(id)
+        {
+
         }
 
         #endregion

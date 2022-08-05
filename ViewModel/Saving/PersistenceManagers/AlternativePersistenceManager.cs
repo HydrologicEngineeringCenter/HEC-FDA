@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((AlternativeElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveNewElementToTable(GetRowDataFromElement((AlternativeElement)element), TableName, TableColumnNames, TableColumnTypes);
                 StudyCacheForSaving.AddElement((AlternativeElement)element);
             }
         }

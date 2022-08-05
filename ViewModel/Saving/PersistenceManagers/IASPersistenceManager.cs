@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,58 +14,22 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class IASPersistenceManager : SavingBase
     {
-        private const int XML_COLUMN = 2;
-
-        private const string TABLE_NAME = "ImpactAreaScenarios";
-        private static readonly string[] ColumnNames = { "Name","XML"};
-
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string)};
-
-
-        /// <summary>
-        /// Column names for the main conditions table.
-        /// </summary>
-        public override string[] TableColumnNames { get { return ColumnNames; } }
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
-        }
         /// <summary>
         /// The table name for the main conditions table.
         /// </summary>
-        public override string TableName { get { return TABLE_NAME; } }
+        public override string TableName { get { return "impact_area_scenarios"; } }
 
         #region constructor
         /// <summary>
         /// The persistence manager for the conditions object. This handles all the interaction between FDA and the database.
         /// </summary>
         /// <param name="studyCache"></param>
-        public IASPersistenceManager(Study.FDACache studyCache)
+        public IASPersistenceManager(FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
         #endregion
-
-        #region utilities
-        /// <summary>
-        /// Gets the row from the element that will go into the main table.
-        /// </summary>
-        /// <param name="elem"></param>
-        /// <returns></returns>
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            object[] retval = null;
-            IASElementSet element = elem as IASElementSet;
-            if (element != null)
-            {
-                retval = new object[] { element.Name, element.WriteToXML() };
-            }
-            return retval;
-        }
 
         /// <summary>
         /// Converts the row in the main table into an actual condition element.
@@ -73,64 +38,21 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string xml = (string)rowData[XML_COLUMN];
             int id = Convert.ToInt32(rowData[ID_COL]);
+            string xml = (string)rowData[XML_COL];
             return new IASElementSet(xml, id);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Saves a new conditions element to the database
-        /// </summary>
-        /// <param name="element"></param>
-        public void SaveNew(ChildElement element)
-        {
-            if (element is IASElementSet iasElem)
-            {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement(iasElem), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement(iasElem);
-            }
-        }
-
-        /// <summary>
-        /// Deletes an element from the parent table.
-        /// </summary>
-        /// <param name="element"></param>
-        public void Remove(ChildElement element)
-        {
-            if (element is IASElementSet iasElem)
-            {
-                //remove from the cache first while you can still get the element's id.
-                StudyCacheForSaving.RemoveElement(iasElem);
-                RemoveFromParentTable(element, TableName);
-            }
         }
 
         /// <summary>
         /// Updates and existing row in the database.
         /// </summary>
         /// <param name="element"></param>
-        public void SaveExisting( ChildElement element)
+        public override void SaveExisting( ChildElement element)
         {
             string tooltip = StringConstants.CreateLastEditTooltip(DateTime.Now.ToString("G"));
             element.UpdateTreeViewHeader(element.Name);
             element.CustomTreeViewHeader.Tooltip = tooltip;
             base.SaveExisting( element);
-        }
-
-        /// <summary>
-        /// Reads the tables and creates all the conditions.
-        /// </summary>
-        public override void Load()
-        {
-            List<ChildElement> iasElems = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
-            foreach (IASElementSet elem in iasElems)
-            {
-                StudyCacheForSaving.AddElement(elem);
-            }
         }
 
         private string WasAnalyticalFrequencyElementModified(IASElementSet iasElems,ChildElement elem, int elemID )

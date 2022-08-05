@@ -11,30 +11,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class WaterSurfaceAreaPersistenceManager : SavingBase
     {
-        private const string TABLE_NAME = "hydraulics";
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids", "hydraulic_type" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool), typeof(string) };
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
-        }
         private const string PATH_AND_PROB_TABLE = "hydraulic_data -";
 
         public override string TableName
         {
-            get { return TABLE_NAME; }
+            get { return "hydraulics"; }
         }
 
-        public override string[] TableColumnNames
-        {
-            get
-            {
-                return TableColNames;
-            }
-        }
 
         public WaterSurfaceAreaPersistenceManager(Study.FDACache studyCache)
         {
@@ -42,10 +25,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(HydraulicElement element)
-        {
-            return new object[] { element.Name, element.Description, element.IsDepthGrids, element.HydroType };
-        }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
@@ -124,7 +103,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
 
-                SaveNewElementToParentTable(GetRowDataFromElement((HydraulicElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveNewElementToTable(GetRowDataFromElement((HydraulicElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SavePathAndProbabilitiesTable((HydraulicElement)element);
                 //save files to the study directory
                 StudyCacheForSaving.AddElement((HydraulicElement)element);
@@ -133,7 +112,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element, TableName);
             RemoveTable(PATH_AND_PROB_TABLE + element.Name);
             //if the wse was imported from old fda, then it won't have associated files.
             HydraulicElement elem = (HydraulicElement)element;

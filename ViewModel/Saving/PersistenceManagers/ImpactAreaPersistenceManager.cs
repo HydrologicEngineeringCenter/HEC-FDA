@@ -4,33 +4,16 @@ using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class ImpactAreaPersistenceManager : SavingBase
     {
-        private static readonly string[] TableColNames = { "xml" };
-        private static readonly Type[] TableColTypes = { typeof(string) };
-
-        private const string TABLE_NAME = "impact_area_set";
-        private const int XML_COL = 1;
 
         public override string TableName
         {
-            get { return TABLE_NAME; }
-        }
-
-        public override string[] TableColumnNames
-        {
-            get{return TableColNames;}
-        }
-
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
+            get { return "impact_area_set"; }
         }
 
         public ImpactAreaPersistenceManager(Study.FDACache studyCache)
@@ -42,19 +25,26 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            if (rowData.Length > 2)
-            {
-                string name = (string)rowData[NAME_COL];
-                List<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
-                int id = Convert.ToInt32(rowData[ID_COL]);
-                return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems, id);
-            }
-            else
-            {
-                int id = Convert.ToInt32(rowData[ID_COL]);
-                string xmlString = (string)rowData[XML_COL];
-                return new ImpactAreaElement(xmlString, id);
-            }
+            //int id = Convert.ToInt32(rowData[ID_COL]);
+            //string xmlString = (string)rowData[XML_COL];
+            //XDocument doc = XDocument.Parse(xmlString);
+            //XElement itemElem = doc.Element(TerrainElement.TERRAIN_XML_TAG);
+            //return new TerrainElement(itemElem, id);
+
+            //if (rowData.Length > 2)
+            //{
+            //    string name = (string)rowData[NAME_COL];
+            //    List<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
+            //    int id = Convert.ToInt32(rowData[ID_COL]);
+            //    return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems, id);
+            //}
+            //else
+            //{
+            //    int id = Convert.ToInt32(rowData[ID_COL]);
+            //    string xmlString = (string)rowData[XML_COL];
+            //    return new ImpactAreaElement(xmlString, id);
+            //}
+            return null;
         }
 
 

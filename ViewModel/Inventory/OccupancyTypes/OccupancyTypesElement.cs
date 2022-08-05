@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -50,5 +51,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             throw new NotImplementedException();       
         }
 
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

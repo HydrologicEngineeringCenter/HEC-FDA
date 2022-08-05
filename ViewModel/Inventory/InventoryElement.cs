@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Utilities;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -91,6 +92,11 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             InventoryElement elem = (InventoryElement)elementToClone;
             return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA, elem.ID);
+        }
+
+        public override XElement ToXML()
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

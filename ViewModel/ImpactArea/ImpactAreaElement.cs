@@ -38,7 +38,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             AddActions();
         }
 
-        public ImpactAreaElement(string xmlString, int id) : base(id)
+        public ImpactAreaElement(XElement xmlString, int id) : base(id)
         {
             ID = id;
             XDocument doc = XDocument.Parse(xmlString);
@@ -210,7 +210,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows, elem.ID);
         }
 
-        public XElement ToXML()
+        public override XElement ToXML()
         {
             XElement impactAreaElem = new XElement(IMPACT_AREAS_TAG);
             impactAreaElem.SetAttributeValue(NAME_TAG, Name);
@@ -256,5 +256,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
 
         #endregion
+
+
     }
 }

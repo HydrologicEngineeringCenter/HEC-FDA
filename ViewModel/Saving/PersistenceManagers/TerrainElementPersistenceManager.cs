@@ -6,24 +6,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class TerrainElementPersistenceManager : SavingBase
     {
-        private const int NAME_COL = 1;
-        private const int DESC_COL = 2;
 
-        private const string TABLE_NAME = "terrains";
-        private static readonly string[] TableColNames = { NAME, "path" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
-
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
+        public override string TableName
         {
-            get { return TableColTypes; }
+            get { return "terrains"; }
         }
 
         public TerrainElementPersistenceManager(Study.FDACache studyCache)
@@ -31,29 +23,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
-        #region utilities
-        public override string TableName
-        {
-            get { return TABLE_NAME; }
-        }
-
-        public override string[] TableColumnNames
-        {
-            get
-            {
-                return TableColNames;
-            }
-        }
-
-        private object[] GetRowDataFromElement(TerrainElement element)
-        {
-              return new object[] { element.Name, element.FileName };
-
-        }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             int id = Convert.ToInt32(rowData[ID_COL]);
-            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement itemElem = doc.Element(TerrainElement.TERRAIN_XML_TAG);
+            return new TerrainElement(itemElem, id);
         }
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
@@ -179,7 +155,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        #endregion
 
         public override void Load()
         {
@@ -192,12 +167,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
-            SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
+            SaveNewElementToTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
             CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
         public override void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element, TableName);
             element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
             {
                 ImageSource = ImageSources.TERRAIN_IMAGE,
@@ -218,11 +193,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
             base.SaveExisting( element);
-        }
-
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            return GetRowDataFromElement((TerrainElement)elem);
         }
     }
 }
