@@ -553,38 +553,45 @@ namespace Statistics.Histograms
 
             if (histograms.Count > 0)
             {
-                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                double min = 0;
-                double max = 0;
-                int binQuantity = 0;
-                double binWidth = 0;
-                foreach (IHistogram histogramToAdd in histograms)
+                if(histograms.Count == 1)
                 {
-                    min += histogramToAdd.Min;
-                    max += histogramToAdd.Max;
-                    binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
-                    binWidth += histogramToAdd.BinWidth;
+                    aggregatedHistogram = histograms[0];
                 }
-                binWidth = binWidth / histograms.Count; //use the average of the binWidths 
-                aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
-                //walk across the probability domain of each histogram at equal probability intervals 
-                for (int i = 0; i < binQuantity; i++)
+                else
                 {
-                    double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
-                    double summedValue = 0;
-                    Int64 summedBinCount = 0;
-
-                    foreach (IHistogram histogramToSample in histograms)
+                    ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
+                    double min = 0;
+                    double max = 0;
+                    int binQuantity = 0;
+                    double binWidth = 0;
+                    foreach (IHistogram histogramToAdd in histograms)
                     {
-                        histogramToSample.ForceDeQueue();
-                        double sampledValue = histogramToSample.InverseCDF(probabilityStep); //what is the value of each histogram at the given probability step
-                        summedValue += sampledValue; //sum those values 
-                        summedBinCount += histogramToSample.FindBinCount(sampledValue, false); //sum their frequencies 
+                        min += histogramToAdd.Min;
+                        max += histogramToAdd.Max;
+                        binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
+                        binWidth += histogramToAdd.BinWidth;
                     }
-                    for (int j = 0; j < summedBinCount; j++)
-                    {//this is a coarse approximation, there is probably a more granular way of doing this 
-                        aggregatedHistogram.AddObservationToHistogram(summedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
-                    } 
+                    binWidth = binWidth / histograms.Count; //use the average of the binWidths 
+                    aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+                    //walk across the probability domain of each histogram at equal probability intervals 
+                    for (int i = 0; i < binQuantity; i++)
+                    {
+                        double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
+                        double summedValue = 0;
+                        Int64 summedBinCount = 0;
+
+                        foreach (IHistogram histogramToSample in histograms)
+                        {
+                            histogramToSample.ForceDeQueue();
+                            double sampledValue = histogramToSample.InverseCDF(probabilityStep); //what is the value of each histogram at the given probability step
+                            summedValue += sampledValue; //sum those values 
+                            summedBinCount += histogramToSample.FindBinCount(sampledValue, false); //sum their frequencies 
+                        }
+                        for (int j = 0; j < summedBinCount; j++)
+                        {//this is a coarse approximation, there is probably a more granular way of doing this 
+                            aggregatedHistogram.AddObservationToHistogram(summedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
+                        }
+                    }
                 }
             }
             else

@@ -35,8 +35,10 @@ namespace fda_model_test.integrationtests
         private static CurveMetaData interiorExteriorMetaData = new CurveMetaData("interior", "exterior", "Muncie Interior Exterior Function", curveType);
         private static CurveMetaData defaultLeveeMetaData = new CurveMetaData("stage", "probability of failure", "Muncie Default Levee No Fragility", curveType);
         private static CurveMetaData failureLeveeMetaData = new CurveMetaData("stage", "probability of failure", "Muncie Levee With Failure", curveType);
-        private static CurveMetaData residentialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Residential Stage Damage", "Residential", "Total");
-        private static CurveMetaData commercialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Commercial Stage Damage", "Commercial", "Total");
+        private static string residentialDamageCategory = "Residential";
+        private static string commercialDamageCategory = "Commercial";
+        private static CurveMetaData residentialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Residential Stage Damage", residentialDamageCategory, "Total");
+        private static CurveMetaData commercialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Commercial Stage Damage", commercialDamageCategory, "Total");
 
 
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
@@ -110,8 +112,8 @@ namespace fda_model_test.integrationtests
 
         private static IDistribution[] CommercialStageDamageYValues()
         {
-            double[] meanDamage = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128.360217, 4468.8739, 59469.291, 156145.883, 214156.12, 333123.004, 612710.635, 1176218.11, 2190460.18, 3190704.36, 4131829.42, 5117499.06, 6155497.61, 7207650.59, 9891031.66, 12025257.4, 14241762.9, 16567845.2, 18816831.2, 20963806.1, 22993727.1, 24959017.8, 26877164.3, 28611110.3, 30053487.1, 31248028.2, 32315917.4 }
-            double[] standardDeviationDamage = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 562.434471, 11199.7019, 52526.3163, 64565.0729, 71871.4852, 214203.97, 548700.336, 824951.013, 1009010.59, 1048443.2, 1041513.53, 1062918.93, 1093154.12, 1133075.73, 1254636.09, 1393258.11, 1514087.28, 1615528.87, 1720088.68, 1830377.22, 1948126.3, 2072579.08, 2192471, 2289973.16, 2370007.84, 2425315.78, 2469413.8 }
+            double[] meanDamage = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128.360217, 4468.8739, 59469.291, 156145.883, 214156.12, 333123.004, 612710.635, 1176218.11, 2190460.18, 3190704.36, 4131829.42, 5117499.06, 6155497.61, 7207650.59, 9891031.66, 12025257.4, 14241762.9, 16567845.2, 18816831.2, 20963806.1, 22993727.1, 24959017.8, 26877164.3, 28611110.3, 30053487.1, 31248028.2, 32315917.4 };
+            double[] standardDeviationDamage = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 562.434471, 11199.7019, 52526.3163, 64565.0729, 71871.4852, 214203.97, 548700.336, 824951.013, 1009010.59, 1048443.2, 1041513.53, 1062918.93, 1093154.12, 1133075.73, 1254636.09, 1393258.11, 1514087.28, 1615528.87, 1720088.68, 1830377.22, 1948126.3, 2072579.08, 2192471, 2289973.16, 2370007.84, 2425315.78, 2469413.8 };
             IDistribution[] normalDistributions = new IDistribution[meanDamage.Length];
             for (int i = 0; i < meanDamage.Length; i++)
             {
@@ -185,10 +187,13 @@ namespace fda_model_test.integrationtests
         private static int futureYear = 2050;
         #endregion
 
+
+
         [Theory]
-        [InlineData(240.5)]
-        public void WithoutAnalyticalExpandedStageDamage_ScenarioResults(double expectedMeanEAD)
+        [InlineData(310937.1,295506.53 )]
+        public void WithoutAnalytical_ScenarioResults(double expectedCommercialMeanEAD, double expectedResidentialMeanEAD)
         {
+            //Arrange 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withFlowStage(stageDischarge)
@@ -199,55 +204,29 @@ namespace fda_model_test.integrationtests
 
             Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-
             Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-
             AlternativeResults alternativeResults = Alternative.AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2);
+            IHistogram eadHistogram = alternativeResults.GetBaseYearEADHistogram(impactAreaID1, commercialDamageCategory);
 
-            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage();
-            double actualMeanEAD = alternativeResults.MeanBaseYearEAD();
+            //Act
+            double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
+            double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
+            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID1,commercialDamageCategory);
+            double actualCommercialMeanEADFromAnotherSource = eadHistogram.Mean;
+            double tolerance = 0.10;
+            double strictTolerance = 0.01;
+            double commercialMeanEADSourcesRelativeDifference = Math.Abs(actualCommercialMeanEAD - actualCommercialMeanEADFromAnotherSource)/actualCommercialMeanEADFromAnotherSource;
+            double commercialEADRelativeDifference = Math.Abs(actualCommercialMeanEAD - expectedCommercialMeanEAD) / expectedCommercialMeanEAD;
+            double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
+            double AAEQRelativeDifference = Math.Abs(actualMeanAAEQ - expectedCommercialMeanEAD) / expectedCommercialMeanEAD; //EAD is constant over POA soq AAEQ = EAD
 
-            double tolerance = 0.061;
-            double EADRelativeDifference = Math.Abs(actualMeanEAD - expectedMeanEAD) / expectedMeanEAD;
-            double AAEQRelativeDifference = Math.Abs(actualMeanAAEQ - expectedMeanEAD) / expectedMeanEAD; //EAD is constant over POA so AAEQ = EAD
 
-            //TODO: Add these three lines to the investigation list. 
-            //the results should be approximately the same but are off by 
-            //about 10%
-
-            IHistogram eadHistogram = alternativeResults.GetBaseYearEADHistogram();
-            double actualMeanEADFromAnotherSource = eadHistogram.Mean;
-            Assert.Equal(actualMeanEAD, actualMeanEADFromAnotherSource, 1);
-
-            Assert.True(EADRelativeDifference < tolerance);
+            //Assert
+            Assert.True(commercialMeanEADSourcesRelativeDifference < strictTolerance);
+            Assert.True(commercialEADRelativeDifference < tolerance);
             Assert.True(AAEQRelativeDifference < tolerance);
-        }
-
-        [Theory]
-        [InlineData(.3591, 120.23)]
-        public void WithoutAnalytical_ScenarioResults(double expectedMeanAEP, double expectedMeanEAD)
-        {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
-
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
-
-            double tolerance = 0.06;
-            double AEPRelativeDifference = Math.Abs(actualMeanAEP - expectedMeanAEP) / expectedMeanAEP;
-            double EADRelativeDifference = Math.Abs(actualMeanEAD - expectedMeanEAD) / expectedMeanEAD;
-
-            Assert.True(AEPRelativeDifference < tolerance);
-            Assert.True(EADRelativeDifference < tolerance);
-
+            Assert.True(residentialEADRelativeDifference < tolerance);
         }
 
         [Theory]
