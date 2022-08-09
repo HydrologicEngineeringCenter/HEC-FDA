@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class TerrainElementPersistenceManager : SavingBase
+    public class TerrainElementPersistenceManager : SavingBase<TerrainElement>
     {
 
         public override string TableName
@@ -18,18 +18,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             get { return "terrains"; }
         }
 
-        public TerrainElementPersistenceManager(Study.FDACache studyCache)
+        public TerrainElementPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
-        }
-
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            int id = Convert.ToInt32(rowData[ID_COL]);
-            string xmlString = (string)rowData[XML_COL];
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(TerrainElement.TERRAIN_XML_TAG);
-            return new TerrainElement(itemElem, id);
         }
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
@@ -156,14 +146,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-        public override void Load()
-        {
-            List<ChildElement> terrains = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
-            foreach (TerrainElement elem in terrains)
-            {
-                StudyCacheForSaving.AddElement(elem);
-            }
-        }
 
         public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
@@ -190,7 +172,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //the path needs to get updated with the new name and set on the new element.
             TerrainElement elem = (TerrainElement)oldElement;
             string originalExtension = Path.GetExtension(elem.FileName);
-            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
+            string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
             base.SaveExisting( element);
         }

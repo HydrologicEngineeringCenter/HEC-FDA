@@ -218,7 +218,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Steady, _ID);
                 Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                manager.SaveExisting(elementToSave, _OriginalFolderName);
+                manager.SaveExisting(elementToSave);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
                 HasChanges = false;
                 HasSaved = true;

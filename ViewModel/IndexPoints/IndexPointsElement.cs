@@ -22,18 +22,14 @@ namespace HEC.FDA.ViewModel.IndexPoints
         #endregion
 
         #region Constructors
-        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(id)
+        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, ImageSources.IMPACT_AREAS_IMAGE, id)
         {
-            Name = name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            Description = description;
             IndexPoints = indexPoints;
-            AddActions();
+            AddDefaultActions(Edit);
         }
 
-        public IndexPointsElement(XElement childElem, int id):base(id)
+        public IndexPointsElement(XElement childElem, int id):base(childElem, id)
         {
-            ID = id;
             ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
 
             XElement indexPointsElem = childElem.Element(INDEX_POINT_NAMES_TAG);
@@ -44,30 +40,10 @@ namespace HEC.FDA.ViewModel.IndexPoints
             }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            AddActions();
+            AddDefaultActions(Edit);
         }
 
-        private void AddActions()
-        {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_INDEX_POINTS_MENU;
-            edit.Action = Edit;
 
-            NamedAction removeElement = new NamedAction();
-            removeElement.Header = StringConstants.REMOVE_MENU;
-            removeElement.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(edit);
-            localactions.Add(removeElement);
-            localactions.Add(renameElement);
-
-            Actions = localactions;
-        }
 
         #endregion
         #region Voids
@@ -151,11 +127,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
         #endregion
         #region Functions 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            IndexPointsElement elem = (IndexPointsElement)elementToClone;
-            return new IndexPointsElement(elem.Name, elem.Description, elem.IndexPoints, elem.ID);
-        }
+
 
         public override XElement ToXML()
         {

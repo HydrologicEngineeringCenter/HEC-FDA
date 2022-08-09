@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows;
-using System.Xml.Linq;
-using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
+﻿using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
-using LifeSimGIS;
-using OpenGLMapping;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
@@ -20,18 +17,19 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         // Created Date: 9/6/2017 9:47:42 AM
         #endregion
         #region Fields
-        private List<PathAndProbability> _RelativePathAndProbability;
+
+        public const string HYDRAULIC_XML_TAG = "HydraulicElement";
+        public const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
+        public const string IS_DEPTH_GRID_XML_TAG = "IsDepthGrid";
+        private const string PATH_AND_PROBS = "PathAndProbabilities";
+
         #endregion
         #region Properties
         public HydraulicType HydroType{get;set;}
         public bool IsDepthGrids { get; set; }
-       
-        public List<PathAndProbability> RelativePathAndProbability
-        {
-            get { return _RelativePathAndProbability; }
-            set { _RelativePathAndProbability = value;  }
-        }
-        public bool HasAssociatedFiles { get; set; }
+
+        public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
+
 
         #endregion
         #region Constructors
@@ -41,10 +39,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
-        public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicType hydroType, int id):base(id)
+        public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicType hydroType, int id)
+            :base(name, "", description,  id)
         {
             HydroType = hydroType;
-            HasAssociatedFiles = false;
             List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
             foreach(double p in probabilites)
             {
@@ -56,44 +54,51 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) : base(id)
         {
             HydroType = hydroType;
-            HasAssociatedFiles = true;
             SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
         }
+
+
 
         public HydraulicElement(XElement childElement, int id):base(id)
         {
             ID = id;
             ReadHeaderXElement(childElement.Element(HEADER_XML_TAG));
+            string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
+            Enum.TryParse(hydroType, out HydraulicType myHydroType);
+            HydroType = myHydroType;
 
-            XElement rowsElem = childElement.Element(IMPACT_AREA_ROWS_TAG);
-            IEnumerable<XElement> rowElems = rowsElem.Elements(childElement.ROW_ITEM_TAG);
-            foreach (XElement nameElem in rowElems)
+            IsDepthGrids = Convert.ToBoolean(childElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
+
+
+            XElement rowsElem = childElement.Element(PATH_AND_PROBS);
+
+
+            IEnumerable<XElement> rowElems = rowsElem.Elements(PathAndProbability.PATH_AND_PROB);
+            foreach (XElement elem in rowElems)
             {
-                ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
+                RelativePathAndProbability.Add(new PathAndProbability(elem));
             }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddActions();
         }
 
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
-        }
+   
 
 
         private void SetConstructorParams(string name, string description,List<PathAndProbability> pathAndProbs, bool isDepthGrids)
         {
-            RelativePathAndProbability = pathAndProbs;
+            RelativePathAndProbability.AddRange( pathAndProbs);
             Name = name;
             Description = description;
-            if (Description == null)
-            {
-                Description = "";
-            }
             IsDepthGrids = isDepthGrids;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.WATER_SURFACE_ELEVATION_IMAGE);
 
+            AddActions();
+        }
+
+        private void AddActions()
+        {
             NamedAction editElement = new NamedAction(this);
             editElement.Header = StringConstants.EDIT_HYDRAULICS_MENU;
             editElement.Action = EditElement;
@@ -162,7 +167,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     Directory.Move(sourceFilePath, destinationFilePath);
 
                     //rename the child table in the DB
-                    Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
+                    //Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
                 }
             }
         }
@@ -176,6 +181,64 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return new HydraulicElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.HydroType, elem.ID);
         }
 
+        public override XElement ToXML()
+        {
+            XElement elem = new XElement(HYDRAULIC_XML_TAG);
+            elem.Add(CreateHeaderElement());
+            elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, HydroType);
+            elem.SetAttributeValue(IS_DEPTH_GRID_XML_TAG, IsDepthGrids);
+
+            //path and probs
+            XElement pathAndProbsElem = new XElement(PATH_AND_PROBS);
+            foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
+            {
+                pathAndProbsElem.Add(pathAndProb.ToXML());
+            }
+
+            elem.Add(pathAndProbsElem);
+
+            return elem;
+        }
+
+
+        public bool Equals(HydraulicElement elem)
+        {
+            /*
+             *         public HydraulicType HydroType{get;set;}
+        public bool IsDepthGrids { get; set; }
+
+        public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
+             */
+
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+            if (HydroType != elem.HydroType)
+            {
+                isEqual = false;
+            }
+            if(IsDepthGrids != elem.IsDepthGrids)
+            {
+                isEqual = false;
+            }
+            if(RelativePathAndProbability.Count != elem.RelativePathAndProbability.Count)
+            {
+                isEqual = false;
+            }
+            for(int i = 0;i<RelativePathAndProbability.Count;i++)
+            {
+                if(!RelativePathAndProbability[i].Equals(elem.RelativePathAndProbability[i]))
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            return isEqual;
+        }
 
         #endregion
     }

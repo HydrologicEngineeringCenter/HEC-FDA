@@ -27,10 +27,8 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(id)
+        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name,"","", ImageSources.TERRAIN_IMAGE, id)
         {
-            //vrt and auxilary files?  hdf5?
-            Name = name;
             _FileName = fileName;
 
             if (isTemporaryNode)
@@ -39,36 +37,15 @@ namespace HEC.FDA.ViewModel.Watershed
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
-                AddActions();
+                AddDefaultActions();
             }
         }
 
-        public TerrainElement(XElement terrainElement, int id):base(id)
+        public TerrainElement(XElement terrainElement, int id):base(terrainElement, id)
         {
-            ID = id;
             ReadHeaderXElement(terrainElement.Element(HEADER_XML_TAG));
             FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;           
-
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            AddActions();
-        }
-
-        private void AddActions()
-        {
-            NamedAction remove = new NamedAction();
-            remove.Header = StringConstants.REMOVE_MENU;
-            remove.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(remove);
-            localactions.Add(renameElement);
-
-            Actions = localactions;
+            AddDefaultActions();
         }
 
         public override XElement ToXML()
@@ -76,14 +53,7 @@ namespace HEC.FDA.ViewModel.Watershed
             XElement terrainElement = new XElement(TERRAIN_XML_TAG);
             terrainElement.Add(CreateHeaderElement());
             terrainElement.SetAttributeValue(SELECTED_PATH_XML_TAG, FileName);
-
             return terrainElement;
-        }
-
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            TerrainElement elem = (TerrainElement)elementToClone;
-            return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
         }
 
         public override void Rename(object sender, EventArgs e)

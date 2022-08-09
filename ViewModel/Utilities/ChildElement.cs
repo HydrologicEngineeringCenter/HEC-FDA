@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -45,11 +46,50 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Constructors
-        public ChildElement(int id)
+        public ChildElement(XElement element, int id)
         {
             ID = id;
         }
+
+        public ChildElement(string name, string lastEditDate, string description, string image, int id)
+        {
+            Name = name;
+            LastEditDate = lastEditDate;
+            Description = description;
+            ID = id;
+            CustomTreeViewHeader = new CustomHeaderVM(name)
+            {
+                ImageSource = image,
+                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
+            };
+        }
         #endregion
+
+        public void AddDefaultActions(Action<object, EventArgs> editAction = null)
+        {
+            List<NamedAction> localActions = new List<NamedAction>();
+
+            if (editAction != null)
+            {
+                NamedAction editInflowOutflowCurve = new NamedAction();
+                editInflowOutflowCurve.Header = StringConstants.EDIT_REG_UNREG_MENU;
+                editInflowOutflowCurve.Action = editAction;
+                localActions.Add(editInflowOutflowCurve);
+            }
+
+            NamedAction removeInflowOutflowCurve = new NamedAction();
+            removeInflowOutflowCurve.Header = StringConstants.REMOVE_MENU;
+            removeInflowOutflowCurve.Action = RemoveElement;
+
+            NamedAction renameInflowOutflowCurve = new NamedAction(this);
+            renameInflowOutflowCurve.Header = StringConstants.RENAME_MENU;
+            renameInflowOutflowCurve.Action = Rename;
+
+            localActions.Add(removeInflowOutflowCurve);
+            localActions.Add(renameInflowOutflowCurve);
+
+            Actions = localActions;
+        }
 
         public abstract XElement ToXML();
 
@@ -75,7 +115,10 @@ namespace HEC.FDA.ViewModel.Utilities
         /// </summary>
         /// <param name="elementToClone"></param>
         /// <returns></returns>
-        public abstract ChildElement CloneElement(ChildElement elementToClone);
+        public ChildElement CloneElement()
+        {
+            return (ChildElement)Activator.CreateInstance(GetType(), ToXML(), ID);
+        }
 
 
         public XElement CreateHeaderElement()

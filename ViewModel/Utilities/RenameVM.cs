@@ -15,12 +15,12 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Properties
         public ChildElement OldElement { get; set; }
         public ChildElement ElementToSave { get; set; }
-        public Func<ChildElement, ChildElement> CreateElementFromEditorAction { get; set; }
+        public Func<ChildElement> CreateElementFromEditorAction { get; set; }
 
         #endregion
         #region Constructors
 
-        public RenameVM( ChildElement element, Func<ChildElement,ChildElement> createElementFromEditorAction) :base(element,null)
+        public RenameVM( ChildElement element, Func<ChildElement> createElementFromEditorAction) :base(element,null)
         {
             Name = element.Name;
             OldElement = element;
@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public override void Save()
         {
-            ElementToSave = CreateElementFromEditorAction(OldElement);
+            ElementToSave = CreateElementFromEditorAction();
             ElementToSave.Name = Name;
             ElementToSave.UpdateTreeViewHeader(Name);
 

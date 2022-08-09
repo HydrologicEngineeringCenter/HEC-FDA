@@ -18,38 +18,29 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #endregion
         #region Constructors
 
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, ComputeComponentVM ratingCurve, int id) : base(id)
+        public RatingCurveElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
+            : base(name, lastEditDate, desc,ratingCurve, ImageSources.RATING_IMAGE, id)
         {
-            LastEditDate = creationDate;
-            Name = userprovidedname;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.RATING_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
+            AddDefaultActions(EditRatingCurve);
 
+            //NamedAction editRatingCurve = new NamedAction();
+            //editRatingCurve.Header = StringConstants.EDIT_STAGE_DISCHARGE_MENU;
+            //editRatingCurve.Action = EditRatingCurve;
 
-            ComputeComponentVM = ratingCurve;
-            Description = desc;
-            if (Description == null) Description = "";
-            NamedAction editRatingCurve = new NamedAction();
-            editRatingCurve.Header = StringConstants.EDIT_STAGE_DISCHARGE_MENU;
-            editRatingCurve.Action = EditRatingCurve;
+            //NamedAction removeRatingCurve = new NamedAction();
+            //removeRatingCurve.Header = StringConstants.REMOVE_MENU;
+            //removeRatingCurve.Action = RemoveElement;
 
-            NamedAction removeRatingCurve = new NamedAction();
-            removeRatingCurve.Header = StringConstants.REMOVE_MENU;
-            removeRatingCurve.Action = RemoveElement;
+            //NamedAction renameElement = new NamedAction(this);
+            //renameElement.Header = StringConstants.RENAME_MENU;
+            //renameElement.Action = Rename;
 
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
+            //List<NamedAction> localActions = new List<NamedAction>();
+            //localActions.Add(editRatingCurve);
+            //localActions.Add(removeRatingCurve);
+            //localActions.Add(renameElement);
 
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editRatingCurve);
-            localActions.Add(removeRatingCurve);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
+            //Actions = localActions;
         }
 
         public RatingCurveElement(XElement elem, int id):base(id)
@@ -59,6 +50,9 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
         #endregion
         #region Voids
+
+        
+
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ChildElement clonedElem = null;

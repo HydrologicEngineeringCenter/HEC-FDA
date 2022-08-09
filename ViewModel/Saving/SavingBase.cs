@@ -6,10 +6,12 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving
 {
-    public abstract class SavingBase : BaseViewModel, IElementManager
+    public abstract class SavingBase <Element> : BaseViewModel, IElementManager
+        where Element : ChildElement
     {
         /// <summary>
         /// The FDACache stores all the elements in memory. 
@@ -33,6 +35,13 @@ namespace HEC.FDA.ViewModel.Saving
 
         public virtual string[] TableColumnNames { get; } = new string[] {XML};
         public virtual Type[] TableColumnTypes { get; } = new Type[] {typeof(string)};
+
+
+        public SavingBase(Study.FDACache studyCache)
+        {
+            StudyCacheForSaving = studyCache;
+        }
+
         public virtual object[] GetRowDataFromElement(ChildElement elem)
         {
             return new object[] { elem.ToXML() };
@@ -71,7 +80,16 @@ namespace HEC.FDA.ViewModel.Saving
             }
             return -1;
         }
-        
+
+        public Element CreateElementFromRowData(object[] rowData)
+        {
+
+            int id = Convert.ToInt32(rowData[ID_COL]);
+            string xmlString = (string)rowData[XML_COL];
+            XDocument doc = XDocument.Parse(xmlString);
+            return (Element)Activator.CreateInstance(typeof(Element), doc.Root, id );
+        }
+
         #endregion
 
         public virtual void SaveNew(ChildElement element)
@@ -291,8 +309,6 @@ namespace HEC.FDA.ViewModel.Saving
         }             
 
         #endregion
-
-        abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
         public int GetNextAvailableId(int idColNumber = 0)
         {

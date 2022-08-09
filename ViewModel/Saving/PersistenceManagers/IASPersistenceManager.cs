@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class IASPersistenceManager : SavingBase
+    public class IASPersistenceManager : SavingBase<IASElementSet>
     {
         /// <summary>
         /// The table name for the main conditions table.
@@ -24,24 +24,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// The persistence manager for the conditions object. This handles all the interaction between FDA and the database.
         /// </summary>
         /// <param name="studyCache"></param>
-        public IASPersistenceManager(FDACache studyCache)
+        public IASPersistenceManager(FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
         }
 
         #endregion
 
-        /// <summary>
-        /// Converts the row in the main table into an actual condition element.
-        /// </summary>
-        /// <param name="rowData"></param>
-        /// <returns></returns>
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            int id = Convert.ToInt32(rowData[ID_COL]);
-            string xml = (string)rowData[XML_COL];
-            return new IASElementSet(xml, id);
-        }
+
 
         /// <summary>
         /// Updates and existing row in the database.

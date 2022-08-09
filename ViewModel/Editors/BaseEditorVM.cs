@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Editors
             Name = elem.Name;
             Description = elem.Description;
             IsCreatingNewElement = false;
-            OriginalElement = elem.CloneElement(elem);
+            OriginalElement = elem.CloneElement();
 
             ActionManager = actionManager;
 

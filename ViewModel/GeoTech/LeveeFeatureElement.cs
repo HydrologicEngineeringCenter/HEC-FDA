@@ -18,6 +18,8 @@ namespace HEC.FDA.ViewModel.GeoTech
         // Created Date: 6/8/2017 1:11:19 PM
         #endregion
         #region Fields
+        public const string CHILD_ELEMENT = "ChildElement";
+
         private double _Elevation;
         #endregion
         #region Properties
@@ -34,22 +36,13 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) : base(id)
+        public LeveeFeatureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
+            : base(name, lastEditDate, description,failureFunction, ImageSources.LEVEE_FEATURE_IMAGE,  id)
         {
-            Name = userProvidedName;
-            LastEditDate = creationDate;
-
             IsDefaultCurveUsed = isDefault;
+            Elevation = elevation;
 
-            if (isDefault)
-            {
-                CustomTreeViewHeader = new CustomHeaderVM(Name)
-                {
-                    ImageSource = ImageSources.LEVEE_FEATURE_IMAGE,
-                    Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-                };    
-            }
-            else
+            if (!isDefault)
             {
                 CustomTreeViewHeader = new CustomHeaderVM(Name)
                 {
@@ -58,32 +51,10 @@ namespace HEC.FDA.ViewModel.GeoTech
                 };
             }
 
-            ComputeComponentVM = failureFunction;
-            Description = description;
-            if (Description == null) Description = "";
-            Elevation = elevation;
-
-            NamedAction editLeveeFeature = new NamedAction();
-            editLeveeFeature.Header = StringConstants.EDIT_LATERAL_STRUCTURES_MENU;
-            editLeveeFeature.Action = EditLeveeFeature;
-
-            NamedAction removeLeveeFeature = new NamedAction();
-            removeLeveeFeature.Header = StringConstants.REMOVE_MENU;
-            removeLeveeFeature.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editLeveeFeature);
-            localActions.Add(removeLeveeFeature);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
+            AddDefaultActions(EditLeveeFeature);
         }
 
-        public LeveeFeatureElement(XElement element, int id):base(id)
+        public LeveeFeatureElement(XElement element, int id):base(element, ImageSources.LEVEE_FEATURE_IMAGE,  id)
         {
 
         }
@@ -112,15 +83,16 @@ namespace HEC.FDA.ViewModel.GeoTech
             return new UncertainPairedData(xs, ys, curveMetaData);
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
+        public override XElement ToXML()
         {
-            ChildElement clonedElem = null;
-            if (elementToClone is LeveeFeatureElement elem)
-            {
-                clonedElem = new LeveeFeatureElement(elem.Name,elem.LastEditDate, elem.Description, elem.Elevation, elem.IsDefaultCurveUsed, elem.ComputeComponentVM, elem.ID);
-            }
-            return clonedElem;
+
+            XElement childElem = base.ToXML();
+            childElem.SetAttributeValue()
+            curveElem.Add(CreateHeaderElement());
+            curveElem.Add(ComputeComponentVM.ToXML());
+            return curveElem;
         }
+
         #endregion
     }
 }

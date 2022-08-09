@@ -7,6 +7,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -53,27 +54,29 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
 
+            PairedData = CreatePairedData();
             AddActions();
         }
         //load from database
         public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(id)
         {
-            //Name = name;
-            //Description = description;
-            LastEditDate = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.LAST_EDIT_DATE);
-            IsAnalytical = (bool)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.IS_ANALYTICAL);
+            ID = id;
+            
+            ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));          
 
-            XElement analyticalElem = flowFreqElem.Element(FlowFrequencyPersistenceManager.ANALYTICAL_DATA);
-            IsStandard = (bool)analyticalElem.Attribute(FlowFrequencyPersistenceManager.USES_MOMENTS);
-            POR = (int)analyticalElem.Attribute(FlowFrequencyPersistenceManager.POR);
+            IsAnalytical = (bool)flowFreqElem.Attribute(IS_ANALYTICAL);
 
-            XElement momentsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.MOMENTS);
-            Mean = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.MEAN);
-            StDev = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.ST_DEV);
-            Skew = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.SKEW);
+            XElement analyticalElem = flowFreqElem.Element(ANALYTICAL_DATA);
+            IsStandard = (bool)analyticalElem.Attribute(USES_MOMENTS);
+            POR = (int)analyticalElem.Attribute(POR_XML_TAG);
 
-            XElement fitToFlowsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.FIT_TO_FLOWS);
-            string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
+            XElement momentsElem = analyticalElem.Element(MOMENTS);
+            Mean = (double)momentsElem.Attribute(MEAN);
+            StDev = (double)momentsElem.Attribute(ST_DEV);
+            Skew = (double)momentsElem.Attribute(SKEW);
+
+            XElement fitToFlowsElem = analyticalElem.Element(FIT_TO_FLOWS);
+            string flows = (string)fitToFlowsElem.Attribute(FLOWS);
             if (!String.IsNullOrEmpty(flows))
             {
                 AnalyticalFlows = ConvertStringToFlows(flows);
@@ -164,8 +167,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
                 string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
                     "The following flow texts were not able to be converted to numeric values: ";
-                string errorVals = string.Join(Environment.NewLine + "\t",badStrings);              
-                MessageBox.Show(msg + Environment.NewLine + "\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorVals = string.Join( "\n\t", badStrings);
+                MessageBox.Show(msg +  "\n\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return flowDoubles;           
         }
@@ -220,6 +223,118 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 frequencyData = CreateGraphicalPairedData();
             }
             return frequencyData;
+        }
+
+        public const string FLOW_FREQUENCY = "FlowFrequency";
+        private const string IS_ANALYTICAL = "IsAnalytical";
+        private const string ANALYTICAL_DATA = "AnalyticalData";
+        private const string USES_MOMENTS = "UsesMoments";
+        private const string POR_XML_TAG = "POR";
+        private const string MOMENTS = "Moments";
+        private const string MEAN = "Mean";
+        private const string ST_DEV = "StDev";
+        private const string SKEW = "Skew";
+        private const string FIT_TO_FLOWS = "FitToFlows";
+        private const string FLOWS = "Flows";
+
+        public override XElement ToXML()
+        {
+            XElement flowFreqElem = new XElement(FLOW_FREQUENCY);
+            flowFreqElem.Add(CreateHeaderElement());
+
+            flowFreqElem.SetAttributeValue(IS_ANALYTICAL, IsAnalytical);
+
+            XElement analyticalElem = new XElement(ANALYTICAL_DATA);
+            flowFreqElem.Add(analyticalElem);
+            analyticalElem.SetAttributeValue(USES_MOMENTS, IsStandard);
+            analyticalElem.SetAttributeValue(POR_XML_TAG, POR);
+
+            XElement momentsElem = new XElement(MOMENTS);
+            analyticalElem.Add(momentsElem);
+            momentsElem.SetAttributeValue(MEAN, Mean);
+            momentsElem.SetAttributeValue(ST_DEV, StDev);
+            momentsElem.SetAttributeValue(SKEW, Skew);
+
+            XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
+            analyticalElem.Add(fitToFlowsElem);
+            fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(AnalyticalFlows));
+
+            XElement graphicalElem = MyGraphicalVM.ToXML();
+            flowFreqElem.Add(graphicalElem);
+
+            return flowFreqElem;
+        }
+
+        private string ConvertFlowsToString(List<double> flows)
+        {
+            if (flows.Count == 0)
+            {
+                return "";
+            }
+            else
+            {
+                return string.Join(",",flows);
+            }
+            
+        }
+
+        public bool Equals(AnalyticalFrequencyElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (POR != elem.POR)
+            {
+                isEqual = false;
+            }
+            if (IsAnalytical != elem.IsAnalytical)
+            {
+                isEqual = false;
+            }
+            if (IsStandard != elem.IsStandard)
+            {
+                isEqual = false;
+            }
+            if (Mean != elem.Mean)
+            {
+                isEqual = false;
+            }
+            if (StDev != elem.StDev)
+            {
+                isEqual = false;
+            }
+            if (Skew != elem.Skew)
+            {
+                isEqual = false;
+            }
+            if (AnalyticalFlows.Count != elem.AnalyticalFlows.Count)
+            {
+                isEqual = false;
+            }
+            for(int i = 0; i < elem.AnalyticalFlows.Count; i++)
+            {
+                if(AnalyticalFlows[i] != elem.AnalyticalFlows[i])
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            if(!PairedData.Equals(elem.PairedData))
+            {
+                isEqual=false;
+            }
+
+            if(!MyGraphicalVM.Equals(elem.MyGraphicalVM))
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
         }
 
     }

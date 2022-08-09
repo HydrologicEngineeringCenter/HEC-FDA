@@ -285,9 +285,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
                 }
 
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);               
                 Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                manager.SaveExisting(elementToSave, _OriginalFolderName);
+                manager.SaveExisting(elementToSave);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
                 HasChanges = false;
                 HasSaved = true;

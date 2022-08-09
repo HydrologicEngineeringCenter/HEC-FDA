@@ -28,23 +28,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(id)
+            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(name, lastEditDate, description, ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE, id)
         {
             ImpactAreaFrequencyRows = impactAreaRows;
-            LastEditDate = lastEditDate;
-            CustomTreeViewHeader = new CustomHeaderVM(name)
-            {
-                ImageSource = ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
-            };
+            
 
-            Description = description;
-            if (Description == null)
-            {
-                Description = "";
-            }
-
-            Name = name;
             Curves = curves;
             IsManual = isManual;
             SelectedWSE = selectedWSE;

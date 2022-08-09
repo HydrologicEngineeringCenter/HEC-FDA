@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        public const String IMPACT_AREAS_TAG = "ImpactAreas";
         private const String IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
         #endregion
         #region Properties
@@ -25,18 +24,15 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, List<ImpactAreaRowItem> collectionOfRows, int id) : base(id)
+        public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id) 
+            : base(name, "", description, ImageSources.IMPACT_AREAS_IMAGE, id)
         {      
-            Name = userdefinedname;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            Description = description;
             ImpactAreaRows = collectionOfRows;
-            AddActions();
+            AddDefaultActions(Edit);
         }
 
-        public ImpactAreaElement(XElement impactAreaElement, int id) : base(id)
+        public ImpactAreaElement(XElement impactAreaElement, int id) : base(impactAreaElement, id)
         {
-            ID = id;
             ReadHeaderXElement(impactAreaElement.Element(HEADER_XML_TAG));
 
             XElement rowsElem = impactAreaElement.Element(IMPACT_AREA_ROWS_TAG);
@@ -47,12 +43,12 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            AddActions();
+            AddDefaultActions(Edit);
         }
 
         public override XElement ToXML()
         {
-            XElement impactAreaElem = new XElement(IMPACT_AREAS_TAG);
+            XElement impactAreaElem = new XElement(StringConstants.ELEMENT_XML_TAG);
             impactAreaElem.Add(CreateHeaderElement());
 
             XElement impactAreaRows = new XElement(IMPACT_AREA_ROWS_TAG);
@@ -64,30 +60,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             impactAreaElem.Add(impactAreaRows);
 
             return impactAreaElem;
-        }
-
-
-        private void AddActions()
-        {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_IMPACT_AREA_SET_MENU;
-            edit.Action = Edit;
-
-            NamedAction removeImpactArea = new NamedAction();
-            removeImpactArea.Header = StringConstants.REMOVE_MENU;
-            removeImpactArea.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(edit);
-            localactions.Add(removeImpactArea);
-            localactions.Add(renameElement);
-
-            Actions = localactions;
-        }
+        }    
 
         private string GetScenariosToDeleteMessage()
         {
@@ -211,12 +184,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
 
         #endregion
-        #region Functions 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            ImpactAreaElement elem = (ImpactAreaElement)elementToClone;
-            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows, elem.ID);
-        }
 
         
 
@@ -246,8 +213,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 }
             }
         }
-
-        #endregion
 
         public bool Equals(ImpactAreaElement elem)
         {

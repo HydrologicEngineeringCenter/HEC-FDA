@@ -1,5 +1,12 @@
-﻿using HEC.FDA.ViewModel.ImpactArea;
+﻿using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -52,6 +59,77 @@ namespace HEC.FDA.ViewModelTest
             XElement impXML = elem1.ToXML();
 
             IndexPointsElement elem2 = new IndexPointsElement(impXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestHydraulicsElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+            List<PathAndProbability> rows = new List<PathAndProbability>();
+            for (int i = 0; i < 10; i++)
+            {
+                rows.Add(new PathAndProbability("path" + i, i));
+            }
+            HydraulicElement elem1 = new HydraulicElement("test", "desc", rows, true, HydraulicType.Gridded, id);
+            XElement elemXML = elem1.ToXML();
+
+            HydraulicElement elem2 = new HydraulicElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestFrequencyElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+            List<double> flows = new List<double>() { 1.0, 2,3,4,5,6};
+            int por = 45;
+            bool isAnalytical = false;
+            bool isStandard = false;
+            double mean = 1;
+            double stDev = 2;
+            double skew = 3;
+            GraphicalVM graphicalVM = new GraphicalVM("graph", "xLabel", "yLabel");
+            ComputeComponentVM compVM = new ComputeComponentVM();
+
+            AnalyticalFrequencyElement elem1 = new AnalyticalFrequencyElement("test","lastEdit", "desc",por,isAnalytical,isStandard,mean,stDev,skew,flows,graphicalVM,compVM, id);
+            XElement elemXML = elem1.ToXML();
+
+            AnalyticalFrequencyElement elem2 = new AnalyticalFrequencyElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestRegulatedUnregulatedElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+
+            InflowOutflowElement elem1 = new InflowOutflowElement("myName", "lastEditDate", "desc", compVM, id);
+            XElement elemXML = elem1.ToXML();
+
+            InflowOutflowElement elem2 = new InflowOutflowElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestExteriorInteriorStageElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+
+            ExteriorInteriorElement elem1 = new ExteriorInteriorElement("myName", "lastEditDate", "desc", compVM, id);
+            XElement elemXML = elem1.ToXML();
+
+            ExteriorInteriorElement elem2 = new ExteriorInteriorElement(elemXML, id);
 
             Assert.True(elem1.Equals(elem2));
         }
