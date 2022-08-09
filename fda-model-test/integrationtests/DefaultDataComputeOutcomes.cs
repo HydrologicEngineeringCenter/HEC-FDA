@@ -303,7 +303,7 @@ namespace fda_model_test.integrationtests
         public void AnalyticalWithLeveeAndExtInt_ScenarioResults(double expectedMeanResidentialEAD, double expectedMeanCommercialEAD)
         {
             ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)

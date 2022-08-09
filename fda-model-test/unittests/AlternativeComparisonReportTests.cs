@@ -34,7 +34,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -197,7 +197,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -331,7 +331,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             double exceedanceProbability = 0.5;
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);

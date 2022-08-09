@@ -59,7 +59,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expected - actual;
@@ -184,7 +184,7 @@ namespace fda_model_test.unittests
                 .withLevee(levee, 100000.0d)
                 .withStageDamages(stageDamageList)
                 .build();
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
@@ -232,7 +232,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement simulationElement = simulation.WriteToXML();
             ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
@@ -348,7 +348,7 @@ namespace fda_model_test.unittests
                 .withLevee(systemResponseCurve, leveeElevation)
                 .build();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider,convergenceCriteria);
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             double difference = Math.Abs(actual - expected);
@@ -364,7 +364,7 @@ namespace fda_model_test.unittests
         {
             //Arrange
             ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
 
             ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
             double[] xFlows = new double[] { 0, 100000 };

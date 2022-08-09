@@ -222,7 +222,7 @@ namespace compute
                 ReportMessage(this, new MessageEventArgs(mess));
 
             }
-            if (randomProvider is MeanRandomProvider)
+            if (randomProvider is MedianRandomProvider)
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
@@ -283,9 +283,9 @@ namespace compute
                 {
                     //check if it is a mean random provider or not
                     interfaces.IProvideRandomNumbers threadlocalRandomProvider;
-                    if (randomProvider is MeanRandomProvider)
+                    if (randomProvider is MedianRandomProvider)
                     {
-                        threadlocalRandomProvider = new MeanRandomProvider();
+                        threadlocalRandomProvider = new MedianRandomProvider();
                     }
                     else
                     {
@@ -581,7 +581,7 @@ namespace compute
 
         private Threshold ComputeDefaultThreshold(ConvergenceCriteria convergenceCriteria, bool computeWithDamage)
         {
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
@@ -670,7 +670,7 @@ namespace compute
         {
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalStageDamage = new PairedData(null, null, metadata);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             foreach (UncertainPairedData uncertainPairedData in listOfUncertainPairedData)
             {
                 IPairedData stageDamageSample = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
@@ -688,7 +688,7 @@ namespace compute
         public ImpactAreaScenarioResults PreviewCompute()
         {
 
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
             return results;

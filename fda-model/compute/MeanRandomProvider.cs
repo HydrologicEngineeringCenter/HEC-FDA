@@ -7,7 +7,7 @@ using interfaces;
 
 namespace compute
 {
-    public class MeanRandomProvider : IProvideRandomNumbers
+    public class MedianRandomProvider : IProvideRandomNumbers
     {
         public int Seed
         {
