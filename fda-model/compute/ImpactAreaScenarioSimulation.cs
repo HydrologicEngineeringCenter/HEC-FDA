@@ -644,11 +644,21 @@ namespace compute
                 {
                     frequencyStage = _frequency_stage.SamplePairedData(meanRandomProvider.NextRandom());
                 }
-
-                IPairedData frequencyDamage = totalStageDamage.compose(frequencyStage);
+                IPairedData frequencyDamage;
+                if (_channelstage_floodplainstage.IsNull)
+                {
+                    frequencyDamage = totalStageDamage.compose(frequencyStage);
+                }
+                else
+                {
+                    IPairedData exteriorInterior = _channelstage_floodplainstage.SamplePairedData(meanRandomProvider.NextRandom());
+                    IPairedData frequencyInteriorStage = exteriorInterior.compose(frequencyStage);
+                    frequencyDamage = totalStageDamage.compose(frequencyInteriorStage);
+                }
                 double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * frequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
                 double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
                 return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, thresholdStage);
+
             }
             else
             {

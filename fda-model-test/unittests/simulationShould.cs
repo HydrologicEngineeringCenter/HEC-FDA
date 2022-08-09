@@ -366,7 +366,7 @@ namespace fda_model_test.unittests
             ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
 
-            ContinuousDistribution flowFrequency = new Uniform(0, 100000);
+            ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
             double[] xFlows = new double[] { 0, 100000 };
             IDistribution[] yStages = new IDistribution[] { new Uniform(5, 15), new Uniform(10, 30) };
             UncertainPairedData stageDischarge = new UncertainPairedData(xFlows, yStages, metaData);
