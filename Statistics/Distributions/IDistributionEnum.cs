@@ -24,34 +24,23 @@ namespace Statistics
         /// <summary>
         /// Triangular distribution.
         /// </summary>
-        Triangular = 4,
-        /// <summary>
-        /// Histogram constructed from recorded data observations.
-        /// </summary>
-        Histogram = 5,
+        Triangular = 3,
         /// <summary>
         /// Log Pearson Type III distribution.
         /// </summary>
-        LogPearsonIII = 6,
+        LogPearsonIII = 4,
         /// <summary>
         /// Log Normal distribution.
         /// </summary>
-        LogNormal = 7,
+        LogNormal = 5,
         /// <summary>
         /// Deterministic Distribution
         /// </summary>
-        Deterministic = 8,
-        /// <summary>
-        /// Graphical Distribution where uncertainty is defined using the Less Simple Method.
-        /// </summary>
-        Graphical = 10,
+        Deterministic = 6,
         /// <summary>
         /// Specific form of a Truncated Normal Distribution with density above or below truncation value(s) reassigned to the truncation value(s). However, the reported measures of central tendency and dispersion continue to be those of the underlying distribution NOT the truncated copy.
         /// </summary>
         TruncatedNormal = 101,
-        /// <summary>
-        /// Specific form of a Truncated Histogram with density above or below truncation value(s) (e.g. typical upper and lower bounds) reassigned to the truncation value(s). However, the reported measures of central tendency and dispersion continue to be those of the underlying distribution NOT the truncated copy.
-        /// </summary>
-        TruncatedHistogram = 50,
+
     }
 }

@@ -6,6 +6,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
+using Statistics.Distributions;
 
 namespace paireddata
 {
@@ -201,6 +202,17 @@ namespace paireddata
                 }
             }
             return true;
+        }
+        public static UncertainPairedData ConvertToDeterministic(UncertainPairedData uncertainPairedData)
+        {
+            Deterministic[] deterministicDistributions = new Deterministic[uncertainPairedData.Xvals.Length];
+            int i = 0;
+            foreach (ContinuousDistribution distribution in uncertainPairedData.Yvals)
+            {
+                deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
+            }
+            UncertainPairedData deterministicUncertainPairedData = new UncertainPairedData(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
+            return deterministicUncertainPairedData;
         }
         public XElement WriteToXML()
         {
