@@ -1,7 +1,6 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FlowTransforms
@@ -38,11 +37,6 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditInflowOutflow" + vm.Name);
             Navigate( tab, false, false);
-        }
-
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            return new InflowOutflowElement(elementToClone.ToXML(), elementToClone.ID);
         }
         
     }

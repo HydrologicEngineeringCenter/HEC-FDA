@@ -27,11 +27,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         #endregion
 
-        public override ChildElement CloneElement()
-        {
-            return new ExteriorInteriorElement(ToXML(), ID);
-        }
-
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {         
             EditorActionManager actionManager = new EditorActionManager()

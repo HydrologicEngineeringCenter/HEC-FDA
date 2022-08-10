@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             ComputeComponentVM = compVM;
         }
-        protected CurveChildElement(XElement childElem, string image, int id) : base(id)
+        protected CurveChildElement(XElement childElem, string image, int id) : base(childElem, id)
         {
             ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
             XElement functionElem = childElem.Element("ComputeComponentVM");

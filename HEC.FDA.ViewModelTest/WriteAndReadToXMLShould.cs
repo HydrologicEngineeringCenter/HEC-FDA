@@ -1,5 +1,7 @@
-﻿using HEC.FDA.ViewModel.FlowTransforms;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -130,6 +132,63 @@ namespace HEC.FDA.ViewModelTest
             XElement elemXML = elem1.ToXML();
 
             ExteriorInteriorElement elem2 = new ExteriorInteriorElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestStageDischargeElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+
+            RatingCurveElement elem1 = new RatingCurveElement("myName", "lastEditDate", "desc", compVM, id);
+            XElement elemXML = elem1.ToXML();
+
+            RatingCurveElement elem2 = new RatingCurveElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestLeveeElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+
+            double elevation = 99;
+
+            LeveeFeatureElement elem1 = new LeveeFeatureElement("myName", "lastEditDate", "desc", elevation,false, compVM, id);
+            XElement elemXML = elem1.ToXML();
+
+            LeveeFeatureElement elem2 = new LeveeFeatureElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
+
+        [Fact]
+        public void TestStageDamageElementWriteThenReadAreEqual()
+        {
+            int id = 9;
+
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+
+            int selectedWSE = 1;
+            int selectedStructs = 2;
+            int selectedIndexPoints = 3;
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            List<ImpactAreaFrequencyFunctionRowItem> functions = new List<ImpactAreaFrequencyFunctionRowItem>();
+
+            AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
+                selectedWSE,selectedStructs, selectedIndexPoints,curves,functions,true, id);
+            XElement elemXML = elem1.ToXML();
+
+            AggregatedStageDamageElement elem2 = new AggregatedStageDamageElement(elemXML, id);
 
             Assert.True(elem1.Equals(elem2));
         }

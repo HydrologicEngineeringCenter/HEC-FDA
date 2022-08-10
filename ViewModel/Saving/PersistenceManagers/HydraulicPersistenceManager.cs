@@ -18,46 +18,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-
-        public HydraulicPersistenceManager(Study.FDACache studyCache)
+        public HydraulicPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
         }
 
-        #region utilities
-
-        //private void SavePathAndProbabilitiesTable(HydraulicElement element)
-        //{
-        //    //gets called if savestotable is true
-        //    if (!Connection.Instance.IsConnectionNull)
-        //    {
-        //        if (Connection.Instance.TableNames().Contains(PATH_AND_PROB_TABLE + element.Name))
-        //        {
-        //            //already exists... delete?
-        //            Connection.Instance.DeleteTable(PATH_AND_PROB_TABLE + element.Name);
-        //        }
-
-        //        string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
-        //        Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
-
-        //        Connection.Instance.CreateTable(PATH_AND_PROB_TABLE + element.Name, colNames, colTypes);
-        //        DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(PATH_AND_PROB_TABLE + element.Name);
-
-        //        object[][] rows = new object[element.RelativePathAndProbability.Count][];
-        //        int i = 0;
-        //        foreach (PathAndProbability p in element.RelativePathAndProbability)
-        //        {
-        //            rows[i] = new object[] { p.Path, p.Probability, DateTime.Now.ToString() };
-        //            i++;
-        //        }
-        //        for (int j = 0; j < rows.Count(); j++)
-        //        {
-        //            tbl.AddRow(rows[j]);
-        //        }
-        //        tbl.ApplyEdits();
-        //    }
-        //}
-
+        
         private void RemoveWaterSurfElevFiles(HydraulicElement element)
         {
             try
@@ -70,7 +35,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }   
         }
 
-        #endregion
 
         //public override void SaveNew(ChildElement element)
         //{

@@ -28,10 +28,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(name, lastEditDate, description, ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE, id)
+            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
+            : base(name, lastEditDate, description, ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE, id)
         {
-            ImpactAreaFrequencyRows = impactAreaRows;
-            
+            ImpactAreaFrequencyRows = impactAreaRows;            
 
             Curves = curves;
             IsManual = isManual;
@@ -39,38 +39,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
             SelectedIndexPoints = indexPointsID;
 
-            NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = StringConstants.EDIT_STAGE_DAMAGE_MENU;
-            editDamageCurve.Action = EditDamageCurve;
-
-            NamedAction removeDamageCurve = new NamedAction();
-            removeDamageCurve.Header = StringConstants.REMOVE_MENU;
-            removeDamageCurve.Action = RemoveElement;
-
-            NamedAction renameDamageCurve = new NamedAction(this);
-            renameDamageCurve.Header = StringConstants.RENAME_MENU;
-            renameDamageCurve.Action = Rename;
+            AddDefaultActions(EditDamageCurve);
 
             NamedAction exportDetails = new NamedAction(this);
             exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
             exportDetails.Action = ExportDetails;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editDamageCurve);
-            localActions.Add(removeDamageCurve);
-            localActions.Add(renameDamageCurve);
-            localActions.Add(exportDetails);
-
-            Actions = localActions;
+            Actions.Add(exportDetails);
         }
+
+        public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
+        {
+            //todo: read the other props?
+        }
+
+ 
 
         #endregion
         #region Voids
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.SelectedIndexPoints, elem.Curves, elem.ImpactAreaFrequencyRows, elem.IsManual, elem.ID);
-        }
+
 
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
@@ -174,9 +160,78 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public override XElement ToXML()
         {
-            throw new NotImplementedException();
+            XElement stageDamageElem = new XElement(StringConstants.ELEMENT_XML_TAG);
+            stageDamageElem.Add(CreateHeaderElement());
+
+            stageDamageElem.SetAttributeValue("CanEdit", CanEdit);
+            stageDamageElem.SetAttributeValue("SelectedStructures", SelectedStructures);
+            stageDamageElem.SetAttributeValue("SelectedIndexPoints", SelectedIndexPoints);
+            stageDamageElem.SetAttributeValue("IsManual", IsManual);
+
+            XElement curveElements = new XElement("StageDamageCurves");
+            foreach (StageDamageCurve curve in Curves)
+            {
+                curveElements.Add(curve.WriteToXML());
+            }
+            stageDamageElem.Add(curveElements);
+
+            XElement impactAreaRowsElem = new XElement("ImpactAreaRows");
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                impactAreaRowsElem.Add(row.WriteToXML());
+            }
+            stageDamageElem.Add(impactAreaRowsElem);
+
+            return stageDamageElem;
         }
 
+        public bool Equals(AggregatedStageDamageElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (CanEdit != elem.CanEdit)
+            {
+                isEqual = false;
+            }
+            if (SelectedStructures != elem.SelectedStructures)
+            {
+                isEqual = false;
+            }
+            if (SelectedIndexPoints != elem.SelectedIndexPoints)
+            {
+                isEqual = false;
+            }
+            if (IsManual != elem.IsManual)
+            {
+                isEqual = false;
+            }
+
+            for(int i = 0;i< Curves.Count; i++)
+            {
+                if (Curves[i].Equals(elem.Curves[i]))
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            for(int i = 0;i< ImpactAreaFrequencyRows.Count;i++)
+            {
+                //todo: I don't want to write this equals method right now
+                //if(!ImpactAreaFrequencyRows[i].Equals(elem.ImpactAreaFrequencyRows[i]))
+                //{
+                //    isEqual = false;
+                //    break;
+                //}
+            }
+
+            return isEqual;
+        }
         #endregion
 
     }

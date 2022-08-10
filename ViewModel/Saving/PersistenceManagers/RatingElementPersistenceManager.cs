@@ -8,43 +8,17 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class RatingElementPersistenceManager : SavingBase
+    public class RatingElementPersistenceManager : SavingBase<RatingCurveElement>
     {
-        private const int LAST_EDIT_DATE_COL = 2;
-        private const int DESC_COL = 3;
-        private const int CURVE_COL = 4;
-
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>
         public override string TableName { get { return "rating_curves"; } }
  
-
         #region constructor
-        public RatingElementPersistenceManager(Study.FDACache studyCache)
+        public RatingElementPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
         }
-
         #endregion
-
-        #region utilities
-       
-        /// <summary>
-        /// Creates an element from the row in the parent table.
-        /// </summary>
-        /// <param name="rowData"></param>
-        /// <returns></returns>
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            int id = Convert.ToInt32(rowData[ID_COL]);
-            string xmlString = (string)rowData[XML_COL];
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(IndexPointsElement.INDEX_POINTS_TAG);
-            return new RatingCurveElement(itemElem, id);
-        }
-
-        #endregion
-
     }
 }

@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.StageTransforms
@@ -10,58 +9,20 @@ namespace HEC.FDA.ViewModel.StageTransforms
     public class RatingCurveElement : CurveChildElement
     {
         
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties
-        #endregion
         #region Constructors
 
         public RatingCurveElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
             : base(name, lastEditDate, desc,ratingCurve, ImageSources.RATING_IMAGE, id)
         {
             AddDefaultActions(EditRatingCurve);
-
-            //NamedAction editRatingCurve = new NamedAction();
-            //editRatingCurve.Header = StringConstants.EDIT_STAGE_DISCHARGE_MENU;
-            //editRatingCurve.Action = EditRatingCurve;
-
-            //NamedAction removeRatingCurve = new NamedAction();
-            //removeRatingCurve.Header = StringConstants.REMOVE_MENU;
-            //removeRatingCurve.Action = RemoveElement;
-
-            //NamedAction renameElement = new NamedAction(this);
-            //renameElement.Header = StringConstants.RENAME_MENU;
-            //renameElement.Action = Rename;
-
-            //List<NamedAction> localActions = new List<NamedAction>();
-            //localActions.Add(editRatingCurve);
-            //localActions.Add(removeRatingCurve);
-            //localActions.Add(renameElement);
-
-            //Actions = localActions;
         }
 
-        public RatingCurveElement(XElement elem, int id):base(id)
+        public RatingCurveElement(XElement elem, int id):base(elem, ImageSources.RATING_IMAGE, id)
         {
-
         }
 
         #endregion
         #region Voids
-
-        
-
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            ChildElement clonedElem = null;
-            if(elementToClone is RatingCurveElement elem)
-            {
-                clonedElem = new RatingCurveElement(elementToClone.Name, elementToClone.LastEditDate, elementToClone.Description, elem.ComputeComponentVM, elem.ID);
-            }
-            return clonedElem;
-        }
 
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {       

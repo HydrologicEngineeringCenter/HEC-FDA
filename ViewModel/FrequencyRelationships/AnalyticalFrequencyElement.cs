@@ -18,6 +18,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Notes
         #endregion
 
+        private const string FLOW_FREQUENCY = "FlowFrequency";
+        private const string IS_ANALYTICAL = "IsAnalytical";
+        private const string ANALYTICAL_DATA = "AnalyticalData";
+        private const string USES_MOMENTS = "UsesMoments";
+        private const string POR_XML_TAG = "POR";
+        private const string MOMENTS = "Moments";
+        private const string MEAN = "Mean";
+        private const string ST_DEV = "StDev";
+        private const string SKEW = "Skew";
+        private const string FIT_TO_FLOWS = "FitToFlows";
+        private const string FLOWS = "Flows";
+
         #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }
@@ -33,7 +45,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         //fresh editor
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) : base(id)
+            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) 
+            : base(name, lastEditDate, desc, function, ImageSources.FREQUENCY_IMAGE, id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -42,26 +55,15 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             StDev = stDev;
             Skew = skew;
             AnalyticalFlows = analyticalFlows;
-            LastEditDate = lastEditDate;
-            Name = name;
-            Description = desc;
-            if (Description == null) Description = "";
-            ComputeComponentVM = function;
+
             MyGraphicalVM = graphicalVM;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
-            };
 
             PairedData = CreatePairedData();
-            AddActions();
+            AddDefaultActions(EditFlowFreq);
         }
         //load from database
-        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(id)
-        {
-            ID = id;
-            
+        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, ImageSources.FREQUENCY_IMAGE, id)
+        {            
             ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));          
 
             IsAnalytical = (bool)flowFreqElem.Attribute(IS_ANALYTICAL);
@@ -82,47 +84,21 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
 
-
             ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
             if(graphiclVMele != null)
             {
                 MyGraphicalVM = new GraphicalVM(graphiclVMele);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
 
             PairedData = CreatePairedData();
 
-            AddActions();
+            AddDefaultActions(EditFlowFreq);
         }
 
         #endregion
         #region Voids
-        private void AddActions()
-        {
-            NamedAction editflowfreq = new NamedAction();
-            editflowfreq.Header = StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU;
-            editflowfreq.Action = EditFlowFreq;
 
-            NamedAction removeflowfreq = new NamedAction();
-            removeflowfreq.Header = StringConstants.REMOVE_MENU;
-            removeflowfreq.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction();
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editflowfreq);
-            localActions.Add(removeflowfreq);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
-        }
 
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
@@ -134,13 +110,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
         }
-
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
-            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.MyGraphicalVM, elem.ComputeComponentVM, elem.ID);
-        }     
+   
         #endregion
 
         List<double> ConvertStringToFlows(string flows)
@@ -225,17 +195,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return frequencyData;
         }
 
-        public const string FLOW_FREQUENCY = "FlowFrequency";
-        private const string IS_ANALYTICAL = "IsAnalytical";
-        private const string ANALYTICAL_DATA = "AnalyticalData";
-        private const string USES_MOMENTS = "UsesMoments";
-        private const string POR_XML_TAG = "POR";
-        private const string MOMENTS = "Moments";
-        private const string MEAN = "Mean";
-        private const string ST_DEV = "StDev";
-        private const string SKEW = "Skew";
-        private const string FIT_TO_FLOWS = "FitToFlows";
-        private const string FLOWS = "Flows";
+
 
         public override XElement ToXML()
         {

@@ -5,7 +5,6 @@ using paireddata;
 using Statistics;
 using Statistics.Distributions;
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.GeoTech
@@ -18,9 +17,10 @@ namespace HEC.FDA.ViewModel.GeoTech
         // Created Date: 6/8/2017 1:11:19 PM
         #endregion
         #region Fields
-        public const string CHILD_ELEMENT = "ChildElement";
-
+        private const string IS_DEFAULT = "IsUsingDefaultCurve";
+        private const string ELEVATION = "Elevation";
         private double _Elevation;
+
         #endregion
         #region Properties
        public bool IsDefaultCurveUsed
@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public LeveeFeatureElement(XElement element, int id):base(element, ImageSources.LEVEE_FEATURE_IMAGE,  id)
         {
-
+            //todo: read the added stuff?
         }
 
         #endregion
@@ -72,8 +72,6 @@ namespace HEC.FDA.ViewModel.GeoTech
             Navigate(tab, false,false);
         }        
         #endregion
-        #region Functions
-
         public UncertainPairedData CreateDefaultCurve()
         {
             double elev = Elevation;
@@ -85,14 +83,32 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override XElement ToXML()
         {
-
             XElement childElem = base.ToXML();
-            childElem.SetAttributeValue()
-            curveElem.Add(CreateHeaderElement());
-            curveElem.Add(ComputeComponentVM.ToXML());
-            return curveElem;
+            childElem.SetAttributeValue(IS_DEFAULT, IsDefaultCurveUsed);
+            childElem.SetAttributeValue(ELEVATION, Elevation);
+            return childElem;
         }
 
-        #endregion
+        public bool Equals(LeveeFeatureElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (IsDefaultCurveUsed != elem.IsDefaultCurveUsed)
+            {
+                isEqual = false;
+            }
+            if (Elevation != elem.Elevation)
+            {
+                isEqual = false;
+            }
+            
+            return isEqual;
+        }
+
     }
 }

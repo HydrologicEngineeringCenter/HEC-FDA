@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public string AssetCategory { get; }
         public StageDamageConstructionType ConstructionType { get; }
 
-        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, 
+        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function,
             string assetCategory, StageDamageConstructionType constructionType)
         {
             ImpArea = impArea;
@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public StageDamageCurve(XElement curveElement)
         {
-            int selectedImpArea = int.Parse( curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
+            int selectedImpArea = int.Parse(curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
             AssetCategory = curveElement.Attribute(ASSET_CATEGORY).Value;
             XElement functionElem = curveElement.Element("ComputeComponentVM");
@@ -63,6 +63,33 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             stageDamageCurveElement.Add(ComputeComponent.ToXML());
 
             return stageDamageCurveElement;
+        }
+
+        public bool Equals(StageDamageCurve elem)
+        {
+            bool isEqual = true;
+            if(ImpArea.ID != elem.ImpArea.ID)
+            {
+                isEqual = false;
+            }
+            if (!DamCat.Equals(elem.DamCat))
+            {
+                isEqual = false;
+            }
+            if (!AssetCategory.Equals(elem.AssetCategory))
+            {
+                isEqual = false;
+            }
+            if (ConstructionType !=elem.ConstructionType)
+            {
+                isEqual = false;
+            }
+            if (ComputeComponent.SelectedItemToPairedData().Equals(elem.ComputeComponent.SelectedItemToPairedData()))
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
         public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicType hydroType, int id)
-            :base(name, "", description,  id)
+            :base(name, "", description, ImageSources.WATER_SURFACE_ELEVATION_IMAGE,  id)
         {
             HydroType = hydroType;
             List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
@@ -48,20 +48,23 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 pathAndProbs.Add(new PathAndProbability("NA", p));
             }
-            SetConstructorParams(name, description,pathAndProbs, isDepthGrids);
+            RelativePathAndProbability.AddRange(pathAndProbs);
+            IsDepthGrids = isDepthGrids;
+            AddDefaultActions(EditElement);
         }
 
-        public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) : base(id)
+        public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) 
+            : base(name, "", description, ImageSources.WATER_SURFACE_ELEVATION_IMAGE, id)
         {
             HydroType = hydroType;
-            SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
+            RelativePathAndProbability.AddRange(relativePathAndProbabilities);
+            IsDepthGrids = isDepthGrids;
+            AddDefaultActions(EditElement);
         }
 
 
-
-        public HydraulicElement(XElement childElement, int id):base(id)
+        public HydraulicElement(XElement childElement, int id):base(childElement, id)
         {
-            ID = id;
             ReadHeaderXElement(childElement.Element(HEADER_XML_TAG));
             string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
             Enum.TryParse(hydroType, out HydraulicType myHydroType);
@@ -69,9 +72,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             IsDepthGrids = Convert.ToBoolean(childElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
 
-
             XElement rowsElem = childElement.Element(PATH_AND_PROBS);
-
 
             IEnumerable<XElement> rowElems = rowsElem.Elements(PathAndProbability.PATH_AND_PROB);
             foreach (XElement elem in rowElems)
@@ -80,43 +81,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            AddActions();
-        }
-
-   
-
-
-        private void SetConstructorParams(string name, string description,List<PathAndProbability> pathAndProbs, bool isDepthGrids)
-        {
-            RelativePathAndProbability.AddRange( pathAndProbs);
-            Name = name;
-            Description = description;
-            IsDepthGrids = isDepthGrids;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.WATER_SURFACE_ELEVATION_IMAGE);
-
-            AddActions();
-        }
-
-        private void AddActions()
-        {
-            NamedAction editElement = new NamedAction(this);
-            editElement.Header = StringConstants.EDIT_HYDRAULICS_MENU;
-            editElement.Action = EditElement;
-
-            NamedAction remove = new NamedAction();
-            remove.Header = StringConstants.REMOVE_MENU;
-            remove.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(editElement);
-            localactions.Add(remove);
-            localactions.Add(renameElement);
-
-            Actions = localactions;
+            AddDefaultActions(EditElement);
         }
 
         #endregion
@@ -175,15 +140,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #endregion
         #region Functions
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            HydraulicElement elem = (HydraulicElement)elementToClone;
-            return new HydraulicElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids, elem.HydroType, elem.ID);
-        }
 
         public override XElement ToXML()
         {
-            XElement elem = new XElement(HYDRAULIC_XML_TAG);
+            XElement elem = new XElement(StringConstants.ELEMENT_XML_TAG);
             elem.Add(CreateHeaderElement());
             elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, HydroType);
             elem.SetAttributeValue(IS_DEPTH_GRID_XML_TAG, IsDepthGrids);
@@ -203,13 +163,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         public bool Equals(HydraulicElement elem)
         {
-            /*
-             *         public HydraulicType HydroType{get;set;}
-        public bool IsDepthGrids { get; set; }
-
-        public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
-             */
-
             bool isEqual = true;
 
             if (!AreHeaderDataEqual(elem))
