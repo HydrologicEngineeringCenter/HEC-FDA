@@ -9,14 +9,8 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Watershed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -82,7 +76,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 image = INFLOW_OUTFLOW_IMAGE;
             }
-            else if (elem.GetType() == typeof(RatingCurveElement))
+            else if (elem.GetType() == typeof(StageDischargeElement))
             {
                 image = RATING_IMAGE;
             }

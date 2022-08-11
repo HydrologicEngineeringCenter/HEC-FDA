@@ -144,10 +144,10 @@ namespace HEC.FDA.ViewModelTest
             ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
             compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
 
-            RatingCurveElement elem1 = new RatingCurveElement("myName", "lastEditDate", "desc", compVM, id);
+            StageDischargeElement elem1 = new StageDischargeElement("myName", "lastEditDate", "desc", compVM, id);
             XElement elemXML = elem1.ToXML();
 
-            RatingCurveElement elem2 = new RatingCurveElement(elemXML, id);
+            StageDischargeElement elem2 = new StageDischargeElement(elemXML, id);
 
             Assert.True(elem1.Equals(elem2));
         }

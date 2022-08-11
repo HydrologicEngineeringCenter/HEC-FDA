@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     /// </summary>
     public class StageDischargeElementWrapper
     {
-        public RatingCurveElement Element { get; }
+        public StageDischargeElement Element { get; }
         public string Name
         {
             get
@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         }
 
-        public StageDischargeElementWrapper(RatingCurveElement elem)
+        public StageDischargeElementWrapper(StageDischargeElement elem)
         {
             Element = elem;
         }

@@ -56,7 +56,9 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public LeveeFeatureElement(XElement element, int id):base(element,  id)
         {
-            //todo: read the added stuff?
+            IsDefaultCurveUsed = Convert.ToBoolean( element.Attribute(IS_DEFAULT).Value);
+            Elevation = Convert.ToDouble( element.Attribute(ELEVATION).Value);
+            AddDefaultActions(EditLeveeFeature);
         }
 
         #endregion

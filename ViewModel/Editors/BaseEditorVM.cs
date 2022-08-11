@@ -208,7 +208,7 @@ namespace HEC.FDA.ViewModel.Editors
                 StudyCache.InflowOutflowAdded += SiblingWasAdded;
                 StudyCache.InflowOutflowUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(RatingCurveElement))
+            if (childElementType == typeof(StageDischargeElement))
             {
                 StudyCache.RatingAdded += SiblingWasAdded;
                 StudyCache.RatingUpdated += SiblingNameChanged;

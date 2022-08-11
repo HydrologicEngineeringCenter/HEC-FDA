@@ -8,15 +8,15 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class RatingElementPersistenceManager : SavingBase<RatingCurveElement>
+    public class StageDischargePersistenceManager : SavingBase<StageDischargeElement>
     {
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>
-        public override string TableName { get { return "rating_curves"; } }
+        public override string TableName { get { return "stage_discharge_relationships"; } }
  
         #region constructor
-        public RatingElementPersistenceManager(Study.FDACache studyCache):base(studyCache)
+        public StageDischargePersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
         }
         #endregion

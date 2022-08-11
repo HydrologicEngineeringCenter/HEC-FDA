@@ -6,19 +6,20 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
-    public class RatingCurveElement : CurveChildElement
+    public class StageDischargeElement : CurveChildElement
     {
         
         #region Constructors
 
-        public RatingCurveElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
+        public StageDischargeElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
             : base(name, lastEditDate, desc,ratingCurve, id)
         {
             AddDefaultActions(EditRatingCurve);
         }
 
-        public RatingCurveElement(XElement elem, int id):base(elem, id)
+        public StageDischargeElement(XElement elem, int id):base(elem, id)
         {
+            AddDefaultActions(EditRatingCurve);
         }
 
         #endregion

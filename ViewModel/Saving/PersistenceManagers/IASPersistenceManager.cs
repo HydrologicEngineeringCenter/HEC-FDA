@@ -103,7 +103,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 msg = WasInflowOutflowModified(iasSet, elemModified, elemID);
             }
-            else if (elemModified is RatingCurveElement)
+            else if (elemModified is StageDischargeElement)
             {
                 msg = WasRatingModified(iasSet, elemModified, elemID);
             }

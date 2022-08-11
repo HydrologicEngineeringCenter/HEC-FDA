@@ -1,4 +1,7 @@
-﻿using HEC.FDA.ViewModel.Storage;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,28 +13,44 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving
 {
-    public abstract class SavingBase <Element> : BaseViewModel, IElementManager
+    public class SavingBase <Element> : BaseViewModel, IElementManager
         where Element : ChildElement
     {
-        /// <summary>
-        /// The FDACache stores all the elements in memory. 
-        /// </summary>
-        public Study.FDACache StudyCacheForSaving { get; set; }
-        public abstract string TableName { get; }
 
         public const string NAME = "Name";
         public const string XML = "XML";
         public const string ID_COL_NAME = "ID";
-        //public const string NAME = "name";
-        //public const string ELEMENT_ID_COL_NAME = "elem_id";
-        //public const string LAST_EDIT_DATE = "last_edit_date";
-        //public const string DESCRIPTION = "description";
-        //public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
-        //public const string CURVE_TYPE = "curve_type";
-        //public const string CURVE = "curve";
 
         public const int ID_COL = 0;
         public const int XML_COL = 1;
+
+        /// <summary>
+        /// The FDACache stores all the elements in memory. 
+        /// </summary>
+        public Study.FDACache StudyCacheForSaving { get; set; }
+        public virtual string TableName 
+        {
+            get
+            {
+                string tableName = "NoTableDefined";
+                if(typeof( Element) == typeof( LeveeFeatureElement))
+                {
+                    tableName = "lateral_structures";
+                }
+                else if(typeof(Element) == typeof(AlternativeComparisonReportElement))
+                {
+                    tableName = "alternative_comparison_reports";
+                }
+                else if (typeof(Element) == typeof(AlternativeElement))
+                {
+                    tableName = "alternatives";
+                }
+
+                return tableName;
+            }
+        }
+
+
 
         public virtual string[] TableColumnNames { get; } = new string[] {XML};
         public virtual Type[] TableColumnTypes { get; } = new Type[] {typeof(string)};
@@ -83,7 +102,6 @@ namespace HEC.FDA.ViewModel.Saving
 
         public Element CreateElementFromRowData(object[] rowData)
         {
-
             int id = Convert.ToInt32(rowData[ID_COL]);
             string xmlString = (string)rowData[XML_COL];
             XDocument doc = XDocument.Parse(xmlString);
@@ -103,6 +121,7 @@ namespace HEC.FDA.ViewModel.Saving
             //add the element to the study cache
             StudyCacheForSaving.AddElement(element);
         }
+
         public void SaveNewElementToTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
             OpenConnection();
@@ -177,11 +196,7 @@ namespace HEC.FDA.ViewModel.Saving
                 Connection.Instance.DeleteTable(tableName);                
             }
         }
-        //public void RemoveFromGeopackageTable(string tableName)
-        //{
-        //    LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
-        //    gpw.DeleteFeatures(tableName);
-        //}
+
         public virtual void RemoveElementFromTable(ChildElement element, string tableName)
         {
             OpenConnection();
@@ -310,7 +325,7 @@ namespace HEC.FDA.ViewModel.Saving
 
         #endregion
 
-        public int GetNextAvailableId(int idColNumber = 0)
+        public int GetNextAvailableId()
         {
             //make sure the table exists
             OpenConnection();

@@ -22,15 +22,15 @@ namespace HEC.FDA.ViewModel.Utilities
     public static class ImportFromFDA1Helper
     {
         #region Stage-Discharge (Rating)
-        public static List<RatingCurveElement> CreateRatingElements(RatingFunctionList ratings)
+        public static List<StageDischargeElement> CreateRatingElements(RatingFunctionList ratings)
         {
-            List<RatingCurveElement> elems = new List<RatingCurveElement>();
+            List<StageDischargeElement> elems = new List<StageDischargeElement>();
             int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
             {
                 int elemID = id + i;
-                RatingCurveElement elem = CreateRatingElement(rat.Value, elemID);
+                StageDischargeElement elem = CreateRatingElement(rat.Value, elemID);
                 if (elem != null)
                 {
                     elems.Add(elem);
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             return elems;
         }
-        private static RatingCurveElement CreateRatingElement(RatingFunction rat, int elemID)
+        private static StageDischargeElement CreateRatingElement(RatingFunction rat, int elemID)
         {
             string description = CreatePYSRDescription(rat);
 
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
             computeComponentVM.SetPairedData(ratingPairedData);
-            RatingCurveElement elem = new RatingCurveElement(rat.Name, rat.CalculationDate, description, computeComponentVM, elemID);
+            StageDischargeElement elem = new StageDischargeElement(rat.Name, rat.CalculationDate, description, computeComponentVM, elemID);
             return elem;
         }
 

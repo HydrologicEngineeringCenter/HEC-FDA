@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <summary>
         /// The name of the parent table that will hold all elements of this type
         /// </summary>
-        public override string TableName { get { return "analytical_frequency_curves"; } }
+        public override string TableName { get { return "analytical_frequency_relationships"; } }
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {

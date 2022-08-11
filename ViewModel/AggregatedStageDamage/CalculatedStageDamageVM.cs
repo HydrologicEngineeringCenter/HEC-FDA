@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 List<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
                 List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-                List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+                List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
                 {

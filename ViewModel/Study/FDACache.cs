@@ -82,7 +82,7 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler AlternativeCompReportUpdated;
 
         #region Properties
-        public List<RatingCurveElement> RatingCurveElements { get; } = new List<RatingCurveElement>();
+        public List<StageDischargeElement> RatingCurveElements { get; } = new List<StageDischargeElement>();
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
@@ -164,7 +164,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(InflowOutflowElements, elem);
                 InflowOutflowRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(RatingCurveElement))
+            else if (elem.GetType() == typeof(StageDischargeElement))
             {
                 RemoveElementFromList(RatingCurveElements, elem);
                 RatingRemoved?.Invoke(this, elementAddedEventArgs);
@@ -263,9 +263,9 @@ namespace HEC.FDA.ViewModel.Study
                 InflowOutflowElements.Add((InflowOutflowElement)elem);
                 InflowOutflowAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is RatingCurveElement )
+            else if (elem is StageDischargeElement )
             {
-                RatingCurveElements.Add((RatingCurveElement)elem);
+                RatingCurveElements.Add((StageDischargeElement)elem);
                 RatingAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is ExteriorInteriorElement )
@@ -324,9 +324,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateTerrain( (TerrainElement)newElement);
             }
-            else if(newElement is RatingCurveElement)
+            else if(newElement is StageDischargeElement)
             {
-                UpdateRatingCurve( (RatingCurveElement)newElement);
+                UpdateRatingCurve( (StageDischargeElement)newElement);
             }
             else if (newElement is ImpactAreaElement )
             {
@@ -395,7 +395,7 @@ namespace HEC.FDA.ViewModel.Study
                 TerrainUpdated?.Invoke(this, new ElementUpdatedEventArgs(newElement));
             }
         }
-        public void UpdateRatingCurve(RatingCurveElement newElement)
+        public void UpdateRatingCurve(StageDischargeElement newElement)
         {
             int index = RatingCurveElements.FindIndex(elem => elem.ID == newElement.ID);
             if(index != -1)
@@ -681,7 +681,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(InflowOutflowElements);
             }
-            else if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            else if (childElementType.IsAssignableFrom(typeof(StageDischargeElement)))
             {
                 retVal.AddRange(RatingCurveElements);
             }
@@ -765,7 +765,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = InflowOutflowElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            else if (childElementType.IsAssignableFrom(typeof(StageDischargeElement)))
             {
                 childElem = RatingCurveElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }

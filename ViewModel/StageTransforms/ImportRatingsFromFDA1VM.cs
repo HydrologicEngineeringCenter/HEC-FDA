@@ -18,8 +18,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         public override void SaveElements()
         {          
-            Saving.PersistenceManagers.RatingElementPersistenceManager manager = Saving.PersistenceFactory.GetRatingManager();
-            foreach(RatingCurveElement elem in ElementsToImport)
+            Saving.PersistenceManagers.StageDischargePersistenceManager manager = Saving.PersistenceFactory.GetRatingManager();
+            foreach(StageDischargeElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(RatingCurveElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(StageDischargeElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {

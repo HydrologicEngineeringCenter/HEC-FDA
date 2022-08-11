@@ -48,9 +48,9 @@ namespace HEC.FDA.ViewModel.Saving
             {
                 manager = new StudyPropertiesPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(RatingCurveElement))
+            else if (element.GetType() == typeof(StageDischargeElement))
             {
-                manager = new RatingElementPersistenceManager(StudyCacheForSaving);
+                manager = new StageDischargePersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ExteriorInteriorElement))
             {
@@ -74,7 +74,7 @@ namespace HEC.FDA.ViewModel.Saving
             }
             else if (element.GetType() == typeof(LeveeFeatureElement))
             {
-                manager = new LeveePersistenceManager(StudyCacheForSaving);
+                manager = new SavingBase<LeveeFeatureElement>(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(InventoryElement))
             {
@@ -109,9 +109,9 @@ namespace HEC.FDA.ViewModel.Saving
             return new IndexPointsPersistenceManager(StudyCacheForSaving);
         }
 
-        public static RatingElementPersistenceManager GetRatingManager()
+        public static StageDischargePersistenceManager GetRatingManager()
         {
-            RatingElementPersistenceManager manager = new RatingElementPersistenceManager(StudyCacheForSaving);
+            StageDischargePersistenceManager manager = new StageDischargePersistenceManager(StudyCacheForSaving);
             return manager;
         }
         public static OccTypePersistenceManager GetOccTypeManager()
@@ -148,9 +148,9 @@ namespace HEC.FDA.ViewModel.Saving
         {
             return new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
         }
-        public static LeveePersistenceManager GetLeveeManager( )
+        public static SavingBase<LeveeFeatureElement> GetLeveeManager( )
         {
-            return new LeveePersistenceManager(StudyCacheForSaving);
+            return new SavingBase<LeveeFeatureElement>(StudyCacheForSaving);
         }
         public static StageDamagePersistenceManager GetStageDamageManager( )
         {

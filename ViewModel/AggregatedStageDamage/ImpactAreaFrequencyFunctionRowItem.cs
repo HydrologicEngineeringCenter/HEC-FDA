@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _StageDischargeFunction = value; NotifyPropertyChanged(); }
         }
 
-        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<RatingCurveElement> stageDischargeFunctions)
+        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<StageDischargeElement> stageDischargeFunctions)
         {
             StageDischargeFunctions = CreateStageDischargeWrappers(stageDischargeFunctions);
             StageDischargeFunction = StageDischargeFunctions[0];
@@ -78,9 +78,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
             }
 
-            List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
-            RatingCurveElement selectedStageDischargeFunction = null;
-            foreach (RatingCurveElement elem in ratingCurveElements)
+            List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
+            StageDischargeElement selectedStageDischargeFunction = null;
+            foreach (StageDischargeElement elem in ratingCurveElements)
             {
                 if(elem.ID == stageDischargeID)
                 {
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
         }
 
-        private void SelectSelectedStageDischargeFunction(RatingCurveElement selectedStageDischargeFunction)
+        private void SelectSelectedStageDischargeFunction(StageDischargeElement selectedStageDischargeFunction)
         {
             if (selectedStageDischargeFunction != null)
             {
@@ -139,12 +139,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return frequencyWrappers;
         }
 
-        private List<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<RatingCurveElement> stageDischargeFunctions)
+        private List<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<StageDischargeElement> stageDischargeFunctions)
         {
             List<StageDischargeElementWrapper> stageDischargeWrappers = new List<StageDischargeElementWrapper>();
             //add blank row
             stageDischargeWrappers.Add(new StageDischargeElementWrapper());
-            foreach (RatingCurveElement elem in stageDischargeFunctions)
+            foreach (StageDischargeElement elem in stageDischargeFunctions)
             {
                 stageDischargeWrappers.Add(new StageDischargeElementWrapper(elem));
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -20,7 +21,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override void SaveElements()
         {
-            LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager();
+            SavingBase<LeveeFeatureElement> manager = PersistenceFactory.GetLeveeManager();
             foreach (LeveeFeatureElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
