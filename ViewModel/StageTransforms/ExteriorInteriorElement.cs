@@ -16,12 +16,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #endregion
         #region Constructors
         public ExteriorInteriorElement(string name,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id)
-            :base(name, lastEditDate, desc, exteriorInteriorCurve, ImageSources.EXTERIOR_INTERIOR_IMAGE, id)
+            :base(name, lastEditDate, desc, exteriorInteriorCurve, id)
         {
             AddDefaultActions(EditExteriorInteriorCurve);
         }
 
-        public ExteriorInteriorElement(XElement element, int id) : base(element, ImageSources.EXTERIOR_INTERIOR_IMAGE, id)
+        public ExteriorInteriorElement(XElement element, int id) : base(element, id)
         {
             AddDefaultActions(EditExteriorInteriorCurve);
         }

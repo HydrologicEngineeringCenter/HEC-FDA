@@ -38,14 +38,10 @@ namespace HEC.FDA.ViewModel.Inventory
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA, int id) : base(id)
+        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA, int id) 
+            : base(structInventoryBaseElement.Name,"", structInventoryBaseElement.Description, id)
         {
             IsImportedFromOldFDA = isImportedFromOldFDA;
-            Name = structInventoryBaseElement.Name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.INVENTORY_ELEMENT_IMAGE);
-
-            Description = structInventoryBaseElement.Description;
-            if(Description == null) { Description = ""; }
 
             StructureInventory = structInventoryBaseElement;
 
@@ -88,11 +84,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
         #region Functions
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            InventoryElement elem = (InventoryElement)elementToClone;
-            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA, elem.ID);
-        }
 
         public override XElement ToXML()
         {

@@ -12,12 +12,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         #region Constructors
 
         public RatingCurveElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
-            : base(name, lastEditDate, desc,ratingCurve, ImageSources.RATING_IMAGE, id)
+            : base(name, lastEditDate, desc,ratingCurve, id)
         {
             AddDefaultActions(EditRatingCurve);
         }
 
-        public RatingCurveElement(XElement elem, int id):base(elem, ImageSources.RATING_IMAGE, id)
+        public RatingCurveElement(XElement elem, int id):base(elem, id)
         {
         }
 

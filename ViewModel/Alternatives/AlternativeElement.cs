@@ -40,17 +40,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(id)
+        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(name, creationDate, description, id)
         {
-            Name = name;
-            Description = description;
             IASElementSets.AddRange(IASElements);
-            LastEditDate = creationDate;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
 
@@ -58,14 +50,8 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// Ctor for loading an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeElement(string xml, int id) : base(id)
+        public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
-            XDocument doc = XDocument.Parse(xml);
-            XElement altElement = doc.Element(ALTERNATIVE);
-            Name = altElement.Attribute(NAME).Value;
-            Description = altElement.Attribute(DESCRIPTION).Value;
-            LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
-
             IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
             foreach (XElement elem in iasElements)
             {
@@ -73,11 +59,6 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSets.Add(iasID);
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
         #endregion
@@ -321,22 +302,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             Navigate(tab, false, true);
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            if (elementToClone is AlternativeElement elem)
-            {
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.LastEditDate, elem.IASElementSets, elem.ID);
-                return elemToReturn;
-            }
-            return null;
-        }
-
-        public string WriteToXML()
+        public override XElement ToXML()
         {
             XElement altElement = new XElement(ALTERNATIVE);
-            altElement.SetAttributeValue(NAME, Name);
-            altElement.SetAttributeValue(DESCRIPTION, Description);
-            altElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
+            altElement.Add(CreateHeaderElement());
 
             foreach (int elemID in IASElementSets)
             {
@@ -344,12 +313,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                 setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
-            return altElement.ToString();
+            return altElement;
         }
 
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

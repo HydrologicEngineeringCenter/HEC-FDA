@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #region Constructors
 
         public IASElementSet(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
-            : base(name, creationDate, description, ImageSources.SCENARIO_IMAGE, id)
+            : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
             SpecificIASElements.AddRange( elems);
@@ -71,15 +71,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="xml"></param>
         public IASElementSet(XElement setElem, int id) : base(setElem,id)
         {
-            //todo: read the header
 
-            //XDocument doc = XDocument.Parse(xml);
-            //XElement setElem = doc.Element(IAS_SET);
-            Name = setElem.Attribute(NAME).Value;
-            Description = setElem.Attribute(DESCRIPTION).Value;
             AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
-            LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             foreach(XElement elem in iasElements)
@@ -93,11 +87,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 Results = ScenarioResults.ReadFromXML(resultsElem);
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
 

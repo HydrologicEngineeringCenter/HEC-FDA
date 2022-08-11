@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
         #region Constructors
 
-        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes, int id):base(id)
+        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes, int id):base(occTypesGroupName,"","", id)
         {
             Name = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;
@@ -45,11 +45,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion       
        
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            //i don't think i need this method but it is required to have it here.
-            throw new NotImplementedException();       
-        }
+
 
         public override XElement ToXML()
         {

@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
         public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicType hydroType, int id)
-            :base(name, "", description, ImageSources.WATER_SURFACE_ELEVATION_IMAGE,  id)
+            :base(name, "", description,  id)
         {
             HydroType = hydroType;
             List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
 
         public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) 
-            : base(name, "", description, ImageSources.WATER_SURFACE_ELEVATION_IMAGE, id)
+            : base(name, "", description, id)
         {
             HydroType = hydroType;
             RelativePathAndProbability.AddRange(relativePathAndProbabilities);

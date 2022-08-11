@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         //fresh editor
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
             double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) 
-            : base(name, lastEditDate, desc, function, ImageSources.FREQUENCY_IMAGE, id)
+            : base(name, lastEditDate, desc, function, id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             AddDefaultActions(EditFlowFreq);
         }
         //load from database
-        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, ImageSources.FREQUENCY_IMAGE, id)
+        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
         {            
             ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));          
 
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
 
-            ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            ComputeComponentVM = new ComputeComponentVM(flowFreqElem.Element("ComputeComponentVM"));
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
             if(graphiclVMele != null)
             {
@@ -199,8 +199,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override XElement ToXML()
         {
-            XElement flowFreqElem = new XElement(FLOW_FREQUENCY);
-            flowFreqElem.Add(CreateHeaderElement());
+            XElement flowFreqElem = base.ToXML();
 
             flowFreqElem.SetAttributeValue(IS_ANALYTICAL, IsAnalytical);
 

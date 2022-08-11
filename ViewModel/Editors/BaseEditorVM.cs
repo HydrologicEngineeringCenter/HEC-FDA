@@ -298,7 +298,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         }
 
-        public int GetElementID(SavingBase persistenceManager)
+        public int GetElementID<T>(SavingBase<T> persistenceManager) where T : ChildElement
         {
             int id;
             if (IsCreatingNewElement)

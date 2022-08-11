@@ -63,7 +63,8 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="studyName"></param>
         /// <param name="studyPath"></param>
         /// <param name="description"></param>
-        public StudyPropertiesElement(string studyName, string studyPath, string description,ConvergenceCriteriaVM convCriteria, int id):base(id)
+        public StudyPropertiesElement(string studyName, string studyPath, string description,ConvergenceCriteriaVM convCriteria, int id)
+            :base(studyName, "", description, id)
         {
             Name = studyName;
             StudyPath = studyPath;
@@ -83,7 +84,8 @@ namespace HEC.FDA.ViewModel.Study
 
         public StudyPropertiesElement(string name, string path, string description, string createdBy, string createdDate, string studyNotes,
             MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, 
-            int periodOfAnalysis, ConvergenceCriteriaVM convCriteria, int id) : base(id)
+            int periodOfAnalysis, ConvergenceCriteriaVM convCriteria, int id) 
+            : base(name, createdDate, description, id)
         {
             Name = name;
             StudyPath = path;
@@ -101,7 +103,7 @@ namespace HEC.FDA.ViewModel.Study
             ConvergenceCriteria = convCriteria;
         }
        
-        public StudyPropertiesElement(StudyPropertiesElement elem, int id):base(id)
+        public StudyPropertiesElement(StudyPropertiesElement elem, int id):base(elem.Name, elem.LastEditDate, elem.Description, id)
         {
             Name = elem.Name;
             StudyPath = elem.StudyPath;
@@ -123,13 +125,9 @@ namespace HEC.FDA.ViewModel.Study
         /// ctor used to create an element from the database
         /// </summary>
         /// <param name="xml"></param>
-        public StudyPropertiesElement(string xml, int id):base(id)
+        public StudyPropertiesElement(XElement studyProperty, int id):base(studyProperty, id)
         {
-            XDocument doc = XDocument.Parse(xml);
-            XElement studyProperty = doc.Element(STUDY_PROPERTIES);
-            Name = studyProperty.Attribute(NAME).Value;
             StudyPath = studyProperty.Attribute(PATH).Value;
-            Description = studyProperty.Attribute(DESCRIPTION).Value;
             CreatedBy = studyProperty.Attribute(CREATED_BY).Value;
             CreatedDate = studyProperty.Attribute(CREATED_DATE).Value;
             StudyNotes = studyProperty.Attribute(STUDY_NOTES).Value;
@@ -170,22 +168,13 @@ namespace HEC.FDA.ViewModel.Study
             PeriodOfAnalysis = Convert.ToInt32(studyProperty.Attribute(PERIOD_OF_ANALYSIS).Value);
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            StudyPropertiesElement newElem = null;
-            if(elementToClone is StudyPropertiesElement elem)
-            {
-                newElem = new StudyPropertiesElement(elem, elem.ID);
-            }
-            return newElem;
-        }
-
-        public string WriteToXML()
+        public override XElement ToXML()
         {
             XElement studyPropsElem = new XElement(STUDY_PROPERTIES);
-            studyPropsElem.SetAttributeValue(NAME, Name);
+
+            studyPropsElem.Add(CreateHeaderElement());
+
             studyPropsElem.SetAttributeValue(PATH, StudyPath);
-            studyPropsElem.SetAttributeValue(DESCRIPTION, Description);
             studyPropsElem.SetAttributeValue(CREATED_BY, CreatedBy);
             studyPropsElem.SetAttributeValue(CREATED_DATE, CreatedDate);
             studyPropsElem.SetAttributeValue(STUDY_NOTES, StudyNotes);
@@ -199,19 +188,13 @@ namespace HEC.FDA.ViewModel.Study
 
             studyPropsElem.Add(ConvergenceCriteria.ToXML());
 
-            return studyPropsElem.ToString();
+            return studyPropsElem;
         }
 
         public ConvergenceCriteria GetStudyConvergenceCriteria()
         {
             return ConvergenceCriteria.ToConvergenceCriteria();
         }
-
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
 }

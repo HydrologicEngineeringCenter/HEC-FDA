@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         #endregion
 
         #region Constructors
-        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, ImageSources.IMPACT_AREAS_IMAGE, id)
+        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, id)
         {
             IndexPoints = indexPoints;
             AddDefaultActions(Edit);

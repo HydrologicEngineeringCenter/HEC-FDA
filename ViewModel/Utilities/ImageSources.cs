@@ -1,4 +1,18 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.Watershed;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,7 +54,69 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static readonly string ADD_IMAGE = IMAGE_PREFIX + "Add.png";
 
+        public static string GetImage(ChildElement elem)
+        {
+            string image = null;
 
+            if (elem.GetType() == typeof(TerrainElement))
+            {
+                image = TERRAIN_IMAGE;
+            }
+            else if (elem.GetType() == typeof(ImpactAreaElement))
+            {
+                image = IMPACT_AREAS_IMAGE;
+            }
+            else if (elem.GetType() == typeof(IndexPointsElement))
+            {
+                image = WATER_SURFACE_ELEVATION_IMAGE;
+            }
+            else if (elem.GetType() == typeof(HydraulicElement))
+            {
+                image = WATER_SURFACE_ELEVATION_IMAGE;
+            }
+            else if (elem.GetType() == typeof(AnalyticalFrequencyElement))
+            {
+                image = FREQUENCY_IMAGE;
+            }
+            else if (elem.GetType() == typeof(InflowOutflowElement))
+            {
+                image = INFLOW_OUTFLOW_IMAGE;
+            }
+            else if (elem.GetType() == typeof(RatingCurveElement))
+            {
+                image = RATING_IMAGE;
+            }
+            else if (elem.GetType() == typeof(ExteriorInteriorElement))
+            {
+                image = EXTERIOR_INTERIOR_IMAGE;
+            }
+            else if (elem.GetType() == typeof(LeveeFeatureElement))
+            {
+                image = LEVEE_FEATURE_IMAGE;
+            }
+            else if (elem.GetType() == typeof(InventoryElement))
+            {
+                image = INVENTORY_ELEMENT_IMAGE;
+            }
+            else if (elem.GetType() == typeof(AggregatedStageDamageElement))
+            {
+                image = AGGREGATED_STAGE_DAMAGE_IMAGE;
+            }
+            else if (elem.GetType() == typeof(IASElementSet))
+            {
+                image = SCENARIO_IMAGE;
+            }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                image = ALTERNATIVE_IMAGE;
+            }
+            else if (elem is AlternativeComparisonReportElement)
+            {
+                image = ALTERNATIVE_COMPARISON_REPORT_IMAGE;
+            }
+
+            return image;
+        }
 
     }
 }

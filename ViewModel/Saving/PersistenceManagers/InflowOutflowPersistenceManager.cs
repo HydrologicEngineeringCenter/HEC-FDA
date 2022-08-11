@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class InflowOutflowPersistenceManager : SavingBase<InflowOutflowElement>
     {
-        public override string TableName { get { return "inflow_outflow_relationships"; } }
+        public override string TableName { get { return "regulated_unregulated_relationships"; } }
 
         public InflowOutflowPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {

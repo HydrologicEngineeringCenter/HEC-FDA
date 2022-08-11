@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.Watershed
                 }
                 else
                 {
-                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
+                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, .hdf, and .flt are supported.");
                 }
             }
             else

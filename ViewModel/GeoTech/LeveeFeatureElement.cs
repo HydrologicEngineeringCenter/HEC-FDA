@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.GeoTech
         #endregion
         #region Constructors
         public LeveeFeatureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
-            : base(name, lastEditDate, description,failureFunction, ImageSources.LEVEE_FEATURE_IMAGE,  id)
+            : base(name, lastEditDate, description,failureFunction,  id)
         {
             IsDefaultCurveUsed = isDefault;
             Elevation = elevation;
@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             AddDefaultActions(EditLeveeFeature);
         }
 
-        public LeveeFeatureElement(XElement element, int id):base(element, ImageSources.LEVEE_FEATURE_IMAGE,  id)
+        public LeveeFeatureElement(XElement element, int id):base(element,  id)
         {
             //todo: read the added stuff?
         }

@@ -8,7 +8,7 @@ using System.Data;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class StructureInventoryPersistenceManager : SavingBase
+    public class StructureInventoryPersistenceManager : SavingBase<InventoryElement>
     {
         public static readonly string STRUCTURE_INVENTORY_TABLE_CONSTANT = "structure_inventory_";
 
@@ -28,9 +28,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             get { return "structure_inventories"; }
         }
 
-        public StructureInventoryPersistenceManager(Study.FDACache studyCache)
+        public StructureInventoryPersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
         }
 
         private string[] ChildTableColumns = new string[] {
@@ -150,7 +149,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new object[] { element.Name, element.Description, element.IsImportedFromOldFDA };
         }
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
+        public ChildElement CreateElementFromRowData(object[] rowData)
         {
             if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
             {

@@ -8,20 +8,16 @@ namespace HEC.FDA.ViewModel.Utilities
         public const string CHILD_ELEMENT = "ChildElement";
         public ComputeComponentVM ComputeComponentVM { get; set; }
 
-        protected CurveChildElement(string name, string lastEditDate, string description, ComputeComponentVM compVM, string image,int id) : base(name, lastEditDate, description,image, id)
+        protected CurveChildElement(string name, string lastEditDate, string description, ComputeComponentVM compVM, int id) : base(name, lastEditDate, description, id)
         {
             ComputeComponentVM = compVM;
         }
-        protected CurveChildElement(XElement childElem, string image, int id) : base(childElem, id)
+
+        protected CurveChildElement(XElement childElem, int id) : base(childElem, id)
         {
             ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
             XElement functionElem = childElem.Element("ComputeComponentVM");
             ComputeComponentVM = new ComputeComponentVM(functionElem);
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = image,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
         }
 
 

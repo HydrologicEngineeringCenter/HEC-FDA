@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name,"","", ImageSources.TERRAIN_IMAGE, id)
+        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name,"","", id)
         {
             _FileName = fileName;
 
@@ -43,7 +43,6 @@ namespace HEC.FDA.ViewModel.Watershed
 
         public TerrainElement(XElement terrainElement, int id):base(terrainElement, id)
         {
-            ReadHeaderXElement(terrainElement.Element(HEADER_XML_TAG));
             FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;           
             AddDefaultActions();
         }

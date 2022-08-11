@@ -219,7 +219,12 @@
 
         public static string CreateLastEditTooltip(string lastEditDate)
         {
-            return "Last edited " + lastEditDate;
+            string tooltip = null;
+            if(lastEditDate != null)
+            {
+                tooltip = "Last edited " + lastEditDate;
+            }
+            return tooltip;
         }
 
     }

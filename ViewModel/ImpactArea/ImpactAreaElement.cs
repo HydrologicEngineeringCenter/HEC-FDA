@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #endregion
         #region Constructors
         public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id) 
-            : base(name, "", description, ImageSources.IMPACT_AREAS_IMAGE, id)
+            : base(name, "", description, id)
         {      
             ImpactAreaRows = collectionOfRows;
             AddDefaultActions(Edit);
@@ -99,7 +99,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             return stageDamageMessage;
         }
 
-        public void RemoveElement(object sender, EventArgs e)
+        public override void RemoveElement(object sender, EventArgs e)
         {
             string scenariosToDeleteMessage = GetScenariosToDeleteMessage();
 

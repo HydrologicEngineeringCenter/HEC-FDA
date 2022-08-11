@@ -1,12 +1,8 @@
-﻿using HEC.FDA.ViewModel.Storage;
+﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Hydraulics;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
-using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -32,7 +28,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             catch (Exception e)
             {
                 throw new NotImplementedException();
-            }   
+            }
         }
 
 
@@ -50,18 +46,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //    }
         //}
 
-        //public override void Remove(ChildElement element)
-        //{
-        //    RemoveElementFromTable(element, TableName);
-        //    RemoveTable(PATH_AND_PROB_TABLE + element.Name);
-        //    //if the wse was imported from old fda, then it won't have associated files.
-        //    HydraulicElement elem = (HydraulicElement)element;
-        //    if (elem.HasAssociatedFiles)
-        //    {
-        //        RemoveWaterSurfElevFiles((HydraulicElement)element);
-        //    }
-        //    StudyCacheForSaving.RemoveElement((HydraulicElement)element);
-        //}
+        public override void Remove(ChildElement element)
+        {
+            RemoveElementFromTable(element, TableName);
+            RemoveWaterSurfElevFiles((HydraulicElement)element);
+            StudyCacheForSaving.RemoveElement((HydraulicElement)element);
+        }
 
         //public void SaveExisting(ChildElement element, string oldName)
         //{

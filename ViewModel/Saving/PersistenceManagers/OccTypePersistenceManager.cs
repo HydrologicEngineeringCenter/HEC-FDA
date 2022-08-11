@@ -12,7 +12,7 @@ using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class OccTypePersistenceManager : SavingBase
+    public class OccTypePersistenceManager : SavingBase<OccupancyTypesElement>
     {
         private const string VALUE_UNCERT_RATIO = "ValueUncertaintyRatio";
         private const string IS_BY_VALUE = "IsByValue";
@@ -36,8 +36,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int VEH_ITEM_COL = 8;
         private const int OTHER_ITEM_COL = 9;
 
-        private const string ParentTableName = "occupancy_type_groups";
-
         private const string PARENT_NAME_FIELD = "Name";
         private const string ITEM_DATA = "OcctypeItem";
         private const string COMP_COMP = "ComputeComponentVM";
@@ -45,87 +43,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private const string IS_ITEM_CHECKED = "IsItemChecked";
 
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
+
+
+        public override string TableName => "occupancy_type_groups";
+
+        public OccTypePersistenceManager(Study.FDACache studyCache):base(studyCache)
         {
-            get { return new Type[] { typeof(string), typeof(bool) }; }
         }
 
-        public override string TableName => ParentTableName;
-
-        public override string[] TableColumnNames => new string[] { PARENT_NAME_FIELD, "IsSelected" };
-
-        public OccTypePersistenceManager(Study.FDACache studyCache)
-        {
-            StudyCacheForSaving = studyCache;
-        }
-
-        public string[] OcctypeColumns
-        {
-            get
-            {
-                return new string[] {"GroupID","OcctypeID", "Name",
-                    "Description", "DamageCategory","FoundHtUncertainty",
-                    "Structures", "Content", "Vehicle", "Other", "OtherParams" };
-            }
-        }
-
-        public Type[] OcctypeTypes
-        {
-            get
-            {
-                return new Type[] {
-                    typeof(int), typeof(int), typeof(string),
-                    typeof(string), typeof(string),  typeof(string),
-                    typeof(string), typeof(string),  typeof(string), 
-                    typeof(string), typeof(string)};
-            }
-        }
-
-        //This method is not used, but it needs to be hear for the abstract
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
-
-        private List<DataRow> GetParentTableRows()
-        {
-            List<DataRow> retval = new List<DataRow>();
-            if (!Connection.Instance.IsConnectionNull)
-            {
-                if (!Connection.Instance.IsOpen)
-                {
-                    Connection.Instance.Open();
-                }
-                if (Connection.Instance.TableNames().Contains(ParentTableName))
-                {
-
-                    DataTable table = Connection.Instance.GetDataTable(ParentTableName);
-                    foreach (DataRow row in table.Rows)
-                    {
-                        retval.Add(row);
-                    }
-                }
-            }
-            return retval;
-        }
-        
-        public override void Load()
-        {
-            foreach (DataRow row in GetParentTableRows())
-            {
-                //each of these is a group
-                int groupId = Convert.ToInt32(row[PARENT_GROUP_ID_COL]);
-                string groupName = (string)row[PARENT_GROUP_NAME_COL];
-
-                //now read the child table and grab all the occtypes with this group id
-                List<IOccupancyType> occtypes = LoadOcctypesFromOccTypeTable(groupId);
-                OccupancyTypesElement elem = new OccupancyTypesElement(groupName, occtypes, groupId);
-                StudyCacheForSaving.AddElement(elem);
-            }
-        }
 
         public void DeleteOcctypeGroup(int groupID)
         {
@@ -208,7 +133,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 string[] columnsToUpdate = new string[] { PARENT_NAME_FIELD };
                 object[] newValues = new object[] { group.Name };
-                UpdateTableRow(ParentTableName, group.ID, "ID", columnsToUpdate, newValues);
+                UpdateTableRow(TableName, group.ID, "ID", columnsToUpdate, newValues);
             }
             UpdateOccTypeGroupsInStudyCache(groups);
         }
@@ -286,29 +211,29 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
         public void SaveModifiedOcctype(IOccupancyType ot)
         {
-            object[] keys = new object[] { ot.GroupID, ot.ID };
-            string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+            //object[] keys = new object[] { ot.GroupID, ot.ID };
+            //string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
-            //update the whole row
-            string[] columnsToUpdate = OcctypeColumns;
-            object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+            ////update the whole row
+            //string[] columnsToUpdate = OcctypeColumns;
+            //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
 
-            UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
-            UpdateOccTypeInCache(ot);
+            //UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
+            //UpdateOccTypeInCache(ot);
         }
 
         public void SaveNewOccType(IOccupancyType ot)
         {
-            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            if (tbl == null)
-            {
-                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-            }
+            //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            //if (tbl == null)
+            //{
+            //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+            //}
 
-            object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
-            Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
+            //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+            //Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
 
-            AddNewOccTypeToCache(ot);
+            //AddNewOccTypeToCache(ot);
         }
 
         /// <summary>
@@ -357,33 +282,34 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public int GetGroupId(string groupName)
         {
-            return GetElementId(ParentTableName, groupName);
+            //return GetElementId(ParentTableName, groupName);
+            return -1;
         }
 
         private void SaveNewToOcctypesTable(ChildElement element)
         {
-            //we should have already saved the element to the parent table so that we can grab the id from that table
-            int elemId = GetElementId(TableName, element.Name);
-            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            if (tbl == null)
-            {
-                Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-                tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            }
+            ////we should have already saved the element to the parent table so that we can grab the id from that table
+            //int elemId = GetElementId(TableName, element.Name);
+            //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            //if (tbl == null)
+            //{
+            //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+            //    tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            //}
 
-            List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
-            string groupName = element.Name;
+            //List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
+            //string groupName = element.Name;
 
-            List<object[]> rows = new List<object[]>();
+            //List<object[]> rows = new List<object[]>();
 
-            int i = 1;
-            foreach (IOccupancyType ot in ListOfOccupancyTypes)
-            {
-                rows.Add(GetOccTypeRowForOccTypesTable(elemId, i, ot).ToArray());
-                i++;
-            }
-            tbl.AddRows(rows);
-            tbl.ApplyEdits();
+            //int i = 1;
+            //foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            //{
+            //    rows.Add(GetOccTypeRowForOccTypesTable(elemId, i, ot).ToArray());
+            //    i++;
+            //}
+            //tbl.AddRows(rows);
+            //tbl.ApplyEdits();
         }
 
         private List<IOccupancyType> LoadOcctypesFromOccTypeTable(int groupId)
@@ -441,29 +367,30 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         private List<object> GetOccTypeRowForOccTypesTable(int elemId, int occtypeId, IOccupancyType ot)
         {
-            object[] rowsList = new object[OcctypeColumns.Length];
+            //object[] rowsList = new object[OcctypeColumns.Length];
 
-            rowsList[GROUP_ID_COL] = elemId;
-            rowsList[OCCTYPE_ID_COL] = occtypeId;
-            rowsList[NAME_COL] = ot.Name;
-            rowsList[DESC_COL] = ot.Description;
-            rowsList[DAM_CAT_COL] = ot.DamageCategory;
+            //rowsList[GROUP_ID_COL] = elemId;
+            //rowsList[OCCTYPE_ID_COL] = occtypeId;
+            //rowsList[NAME_COL] = ot.Name;
+            //rowsList[DESC_COL] = ot.Description;
+            //rowsList[DAM_CAT_COL] = ot.DamageCategory;
 
-            if (ot.FoundationHeightUncertainty == null)
-            {
-                rowsList[FOUND_HT_UNCERTAINTY_COL] = "";
-            }
-            else
-            {
-                rowsList[FOUND_HT_UNCERTAINTY_COL] = ot.FoundationHeightUncertainty.ToXML().ToString();
-            }
+            //if (ot.FoundationHeightUncertainty == null)
+            //{
+            //    rowsList[FOUND_HT_UNCERTAINTY_COL] = "";
+            //}
+            //else
+            //{
+            //    rowsList[FOUND_HT_UNCERTAINTY_COL] = ot.FoundationHeightUncertainty.ToXML().ToString();
+            //}
 
-            rowsList[STRUCT_ITEM_COL] = WriteOccTypeItemToXML(ot.StructureItem);
-            rowsList[CONT_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.ContentItem);
-            rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
-            rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
+            //rowsList[STRUCT_ITEM_COL] = WriteOccTypeItemToXML(ot.StructureItem);
+            //rowsList[CONT_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.ContentItem);
+            //rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
+            //rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
 
-            return rowsList.ToList();
+            //return rowsList.ToList();
+            return new List<object>();
         }
 
         private OccTypeAsset ReadItemFromXML(OcctypeAssetType itemType, string xmlString)

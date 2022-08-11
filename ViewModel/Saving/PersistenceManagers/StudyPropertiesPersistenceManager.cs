@@ -6,38 +6,13 @@ using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class StudyPropertiesPersistenceManager : SavingBase
+    public class StudyPropertiesPersistenceManager : SavingBase<StudyPropertiesElement>
     {
-        private const int XML_COL = 2;
         public override string TableName => "study_properties";
 
-        public override string[] TableColumnNames => new string[] { NAME, "XML" };
 
-        public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
-
-        public StudyPropertiesPersistenceManager(FDACache studyCache)
+        public StudyPropertiesPersistenceManager(FDACache studyCache):base(studyCache)
         {
-            StudyCacheForSaving = studyCache;
-        }
-
-        public override void Load()
-        {
-            //there should only ever be one item in this list.
-            List<ChildElement> studyProperties = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
-            foreach (ChildElement elem in studyProperties)
-            {
-                StudyCacheForSaving.AddElement(elem);
-            }
-        }
-
-        public void Remove(ChildElement element)
-        {
-            RemoveElementFromTable(element, TableName);
-        }
-
-        public void SaveNew(ChildElement element)
-        {
-            base.SaveNew(element);
         }
 
         //todo: how to rename the whole study?
@@ -54,20 +29,5 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            object[] rowData = null;
-            if(elem is StudyPropertiesElement propElem)
-            {
-                rowData = new object[] { propElem.Name, propElem.WriteToXML() };
-            }
-            return rowData;
-        }
-
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            int id = Convert.ToInt32(rowData[ID_COL]);
-            return new StudyPropertiesElement(rowData[XML_COL].ToString(), id);
-        }
     }
 }

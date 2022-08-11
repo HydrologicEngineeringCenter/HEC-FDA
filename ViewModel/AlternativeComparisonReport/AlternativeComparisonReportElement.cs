@@ -35,17 +35,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         #endregion
 
-        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) : base(id)
+        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) 
+            : base(name, creationDate, desc, id)
         {
-            Name = name;
-            Description = desc;
             WithoutProjAltID = withoutProjectAltId;
             WithProjAltIDs = withProjAlternativeIds;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
-            };
             AddActions();
         }
 
@@ -53,14 +47,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         /// The ctor used to load an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeComparisonReportElement(string xml, int id) : base(id)
+        public AlternativeComparisonReportElement(XElement altElement, int id) : base(altElement, id)
         {
-            XDocument doc = XDocument.Parse(xml);
-            XElement altElement = doc.Element(ALTERNATIVE_COMP_REPORT);
-            Name = altElement.Attribute(NAME).Value;
-            Description = altElement.Attribute(DESCRIPTION).Value;
             WithoutProjAltID = int.Parse(altElement.Attribute(WITHOUT_PROJ_ID).Value);
-            LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> altElements = altElement.Elements(WITH_PROJ_ELEM);
             foreach (XElement elem in altElements)
@@ -68,11 +57,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                 WithProjAltIDs.Add(iasID);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_COMPARISON_REPORT_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
 
             AddActions();
         }
@@ -104,24 +88,12 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Actions = localActions;
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            AlternativeComparisonReportElement elemToReturn = null;
-            if (elementToClone is AlternativeComparisonReportElement)
-            {
-                AlternativeComparisonReportElement elem = (AlternativeComparisonReportElement)elementToClone;
-                elemToReturn = new AlternativeComparisonReportElement(elem.Name, elem.Description, elem.LastEditDate, elem.WithoutProjAltID, elem.WithProjAltIDs, elem.ID);
-            }
-            return elemToReturn;
-        }
-
-        public string WriteToXML()
+        public override XElement ToXML()
         {
             XElement altElement = new XElement(ALTERNATIVE_COMP_REPORT);
-            altElement.SetAttributeValue(NAME, Name);
-            altElement.SetAttributeValue(DESCRIPTION, Description);
             altElement.SetAttributeValue(WITHOUT_PROJ_ID, WithoutProjAltID);
-            altElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
+
+            altElement.Add(CreateHeaderElement());
 
             foreach (int elemID in WithProjAltIDs)
             {
@@ -129,7 +101,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
-            return altElement.ToString();
+            return altElement;
         }
 
         public void EditAlternative(object arg1, EventArgs arg2)
@@ -387,11 +359,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, aaeqResult);
 
             return new SpecificAltCompReportResultsVM(altResult, baseSummary, futureSummary, aaeqSummary);
-        }
-
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
         }
     }
 }

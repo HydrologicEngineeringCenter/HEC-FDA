@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
             int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
-            : base(name, lastEditDate, description, ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE, id)
+            : base(name, lastEditDate, description, id)
         {
             ImpactAreaFrequencyRows = impactAreaRows;            
 

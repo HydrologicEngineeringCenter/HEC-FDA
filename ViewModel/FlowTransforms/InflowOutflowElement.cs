@@ -15,12 +15,12 @@ namespace HEC.FDA.ViewModel.FlowTransforms
 
         #region Constructors
         public InflowOutflowElement(string name, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id)
-            :base(name,lastEditDate,description, inflowOutflowCurve, ImageSources.INFLOW_OUTFLOW_IMAGE, id)
+            :base(name,lastEditDate,description, inflowOutflowCurve, id)
         {
             AddDefaultActions(EditInflowOutflowCurve);
         }
 
-        public InflowOutflowElement(XElement element, int id):base(element, ImageSources.INFLOW_OUTFLOW_IMAGE, id)
+        public InflowOutflowElement(XElement element, int id):base(element, id)
         {          
             AddDefaultActions(EditInflowOutflowCurve);
         }
