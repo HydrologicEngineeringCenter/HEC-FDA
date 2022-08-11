@@ -248,7 +248,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                     pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
                 }
 
-                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                int id = GetElementID<HydraulicElement>();
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Steady, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;

@@ -22,6 +22,20 @@
 		<Compile Remove="ImpactAreaScenario\Results\DamageByDamageCategoryVM.cs" />
 	</ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ImpactAreaScenario\Results\DamageByDamageCategoryVM.cs" />
+    <Compile Remove="Saving\PersistenceManagers\AlternativeComparisonReportPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\AlternativePersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\ExteriorInteriorPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\ImpactAreaPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\IndexPointsPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\InflowOutflowPersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\StageDamagePersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\StageDischargePersistenceManager.cs" />
+    <Compile Remove="Saving\PersistenceManagers\StudyPropertiesPersistenceManager.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<Reference Include="DatabaseManager">
 			<HintPath>..\lib\DatabaseManager.dll</HintPath>

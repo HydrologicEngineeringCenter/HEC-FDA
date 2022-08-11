@@ -269,7 +269,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
                 }
 
-                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                int id = GetElementID<HydraulicElement>();
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Unsteady, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;

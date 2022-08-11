@@ -8,5 +8,6 @@ namespace HEC.FDA.ViewModel.Saving
         void Remove(ChildElement element);
         void SaveExisting( ChildElement elementToSave);
         void Load();
+        int GetNextAvailableId();
     }
 }

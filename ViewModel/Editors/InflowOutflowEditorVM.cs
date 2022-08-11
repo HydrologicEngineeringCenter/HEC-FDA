@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetInflowOutflowManager());
+            int id = GetElementID<InflowOutflowElement>();
             InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
             base.Save(elem);
         }

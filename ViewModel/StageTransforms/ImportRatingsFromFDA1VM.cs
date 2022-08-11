@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -18,7 +19,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         public override void SaveElements()
         {          
-            Saving.PersistenceManagers.StageDischargePersistenceManager manager = Saving.PersistenceFactory.GetRatingManager();
+            IElementManager manager = Saving.PersistenceFactory.GetElementManager<StageDischargeElement>();
             foreach(StageDischargeElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);

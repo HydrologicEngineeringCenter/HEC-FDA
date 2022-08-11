@@ -117,7 +117,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         private void DeleteIndexPointsDirectory()
         {
             //this will handle removing the sqlite data
-            Saving.PersistenceFactory.GetIndexPointsPersistenceManager().Remove(this);
+            Saving.PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
             //remove the directory
             if (Directory.Exists(Connection.Instance.IndexPointsDirectory + "\\" + Name))
             {

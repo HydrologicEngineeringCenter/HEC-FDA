@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.FlowTransforms
 {
@@ -20,7 +21,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
 
         public override void SaveElements()
         {
-            InflowOutflowPersistenceManager manager = Saving.PersistenceFactory.GetInflowOutflowManager();
+            IElementManager manager = Saving.PersistenceFactory.GetElementManager<InflowOutflowElement>();
             foreach (InflowOutflowElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);

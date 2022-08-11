@@ -97,7 +97,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 else
                 {
-                    id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                    id = Saving.PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().GetNextAvailableId();
                 }
 
                 AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, 
@@ -140,7 +140,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int id = -1;
             if (IsCreatingNewElement)
             {
-                id = Saving.PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+                id = Saving.PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().GetNextAvailableId();
             }
             else
             {

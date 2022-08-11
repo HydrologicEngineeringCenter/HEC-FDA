@@ -8,13 +8,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class HydraulicPersistenceManager : SavingBase<HydraulicElement>
     {
-        public override string TableName
-        {
-            get { return "hydraulics"; }
-        }
 
-
-        public HydraulicPersistenceManager(Study.FDACache studyCache):base(studyCache)
+        public HydraulicPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }
 
@@ -48,7 +43,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public override void Remove(ChildElement element)
         {
-            RemoveElementFromTable(element, TableName);
+            RemoveElementFromTable(element);
             RemoveWaterSurfElevFiles((HydraulicElement)element);
             StudyCacheForSaving.RemoveElement((HydraulicElement)element);
         }

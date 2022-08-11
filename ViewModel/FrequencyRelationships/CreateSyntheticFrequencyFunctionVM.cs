@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+﻿using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Importer;
@@ -57,7 +58,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
                 AsyncLogger logger = new AsyncLogger();
 
-                FlowFrequencyPersistenceManager freqPersistenceManager = Saving.PersistenceFactory.GetFlowFrequencyManager();
+                IElementManager freqPersistenceManager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
                 int id = freqPersistenceManager.GetNextAvailableId();
                 int numRows = dbr.NumberOfRows;
                 ImportLog += "Reading " + numRows + " rows:\n";

@@ -162,10 +162,10 @@ namespace HEC.FDA.ViewModelTest
 
             double elevation = 99;
 
-            LeveeFeatureElement elem1 = new LeveeFeatureElement("myName", "lastEditDate", "desc", elevation,false, compVM, id);
+            LateralStructureElement elem1 = new LateralStructureElement("myName", "lastEditDate", "desc", elevation,false, compVM, id);
             XElement elemXML = elem1.ToXML();
 
-            LeveeFeatureElement elem2 = new LeveeFeatureElement(elemXML, id);
+            LateralStructureElement elem2 = new LateralStructureElement(elemXML, id);
 
             Assert.True(elem1.Equals(elem2));
         }

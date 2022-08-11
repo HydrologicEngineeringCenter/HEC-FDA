@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 image = EXTERIOR_INTERIOR_IMAGE;
             }
-            else if (elem.GetType() == typeof(LeveeFeatureElement))
+            else if (elem.GetType() == typeof(LateralStructureElement))
             {
                 image = LEVEE_FEATURE_IMAGE;
             }

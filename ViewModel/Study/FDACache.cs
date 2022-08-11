@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; } = new List<ExteriorInteriorElement>();
-        public List<LeveeFeatureElement> LeveeElements { get; } = new List<LeveeFeatureElement>();
+        public List<LateralStructureElement> LeveeElements { get; } = new List<LateralStructureElement>();
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
@@ -174,7 +174,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(ExteriorInteriorElements, elem);
                 ExteriorInteriorRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(LeveeFeatureElement))
+            else if (elem.GetType() == typeof(LateralStructureElement))
             {
                 RemoveElementFromList(LeveeElements, elem);
                 LeveeRemoved?.Invoke(this, elementAddedEventArgs);
@@ -273,9 +273,9 @@ namespace HEC.FDA.ViewModel.Study
                 ExteriorInteriorElements.Add((ExteriorInteriorElement)elem);
                 ExteriorInteriorAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is LeveeFeatureElement )
+            else if (elem is LateralStructureElement )
             {
-                LeveeElements.Add((LeveeFeatureElement)elem);
+                LeveeElements.Add((LateralStructureElement)elem);
                 LeveeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is OccupancyTypesElement )
@@ -352,9 +352,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateExteriorInteriorElement( (ExteriorInteriorElement)newElement);
             }
-            else if (newElement is LeveeFeatureElement)
+            else if (newElement is LateralStructureElement)
             {
-                UpdateLeveeElement( (LeveeFeatureElement)newElement);
+                UpdateLeveeElement( (LateralStructureElement)newElement);
             }
             else if (newElement is AggregatedStageDamageElement )
             {
@@ -460,7 +460,7 @@ namespace HEC.FDA.ViewModel.Study
                 ExteriorInteriorUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateLeveeElement( LeveeFeatureElement newElement)
+        public void UpdateLeveeElement( LateralStructureElement newElement)
         {
             int index = LeveeElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -689,7 +689,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ExteriorInteriorElements);
             }
-            else if (childElementType == typeof(LeveeFeatureElement))
+            else if (childElementType == typeof(LateralStructureElement))
             {
                 retVal.AddRange(LeveeElements);
             }
@@ -773,7 +773,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = ExteriorInteriorElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType == typeof(LeveeFeatureElement))
+            else if (childElementType == typeof(LateralStructureElement))
             {
                 childElem = LeveeElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }

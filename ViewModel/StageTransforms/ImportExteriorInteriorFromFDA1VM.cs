@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -19,7 +20,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         public override void SaveElements()
         {
-            ExteriorInteriorPersistenceManager manager = Saving.PersistenceFactory.GetExteriorInteriorManager();
+            IElementManager manager = PersistenceFactory.GetElementManager<ExteriorInteriorElement>();
             foreach (ExteriorInteriorElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);

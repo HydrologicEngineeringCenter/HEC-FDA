@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -28,27 +29,8 @@ namespace HEC.FDA.ViewModel.Saving
         /// The FDACache stores all the elements in memory. 
         /// </summary>
         public Study.FDACache StudyCacheForSaving { get; set; }
-        public virtual string TableName 
-        {
-            get
-            {
-                string tableName = "NoTableDefined";
-                if(typeof( Element) == typeof( LeveeFeatureElement))
-                {
-                    tableName = "lateral_structures";
-                }
-                else if(typeof(Element) == typeof(AlternativeComparisonReportElement))
-                {
-                    tableName = "alternative_comparison_reports";
-                }
-                else if (typeof(Element) == typeof(AlternativeElement))
-                {
-                    tableName = "alternatives";
-                }
-
-                return tableName;
-            }
-        }
+        private string _TableName;
+     
 
 
 
@@ -56,9 +38,10 @@ namespace HEC.FDA.ViewModel.Saving
         public virtual Type[] TableColumnTypes { get; } = new Type[] {typeof(string)};
 
 
-        public SavingBase(Study.FDACache studyCache)
+        public SavingBase(FDACache studyCache, string tableName)
         {
             StudyCacheForSaving = studyCache;
+            _TableName = tableName;
         }
 
         public virtual object[] GetRowDataFromElement(ChildElement elem)
@@ -68,12 +51,12 @@ namespace HEC.FDA.ViewModel.Saving
 
         #region Utilities
 
-        public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
+        public List<ChildElement> CreateElementsFromRows( Func<object[], ChildElement> createElemsFromRowDataAction)
         {
             OpenConnection();
             List<ChildElement> elems = new List<ChildElement>();
 
-            DataTable table = Connection.Instance.GetDataTable(tableName);
+            DataTable table = Connection.Instance.GetDataTable(_TableName);
             foreach (DataRow row in table.Rows)
             {
                 elems.Add(createElemsFromRowDataAction(row.ItemArray));
@@ -117,21 +100,21 @@ namespace HEC.FDA.ViewModel.Saving
             string editDate = DateTime.Now.ToString("G");
             element.LastEditDate = editDate;
             //save to parent table
-            SaveNewElementToTable(GetRowDataFromElement(element), TableName, TableColumnNames, TableColumnTypes);
+            SaveNewElementToTable(GetRowDataFromElement(element), TableColumnNames, TableColumnTypes);
             //add the element to the study cache
             StudyCacheForSaving.AddElement(element);
         }
 
-        public void SaveNewElementToTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
+        public void SaveNewElementToTable(object[] rowData, string[] TableColumnNames, Type[] TableColumnTypes)
         {
             OpenConnection();
-            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(_TableName);
             if (tbl == null)
             {
-                Connection.Instance.CreateTableWithPrimaryKey(tableName, TableColumnNames, TableColumnTypes);
+                Connection.Instance.CreateTableWithPrimaryKey(_TableName, TableColumnNames, TableColumnTypes);
             }
 
-            Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
+            Connection.Instance.AddRowToTableWithPrimaryKey(rowData, _TableName, TableColumnNames);
         }
 
         public virtual void SaveExisting(ChildElement elementToSave)
@@ -140,9 +123,9 @@ namespace HEC.FDA.ViewModel.Saving
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
-            if(IDExistsInDB(TableName, elementToSave.ID, ID_COL_NAME))
+            if(IDExistsInDB(_TableName, elementToSave.ID, ID_COL_NAME))
             {
-                UpdateTableRow(TableName, elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
+                UpdateTableRow(elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
                 StudyCacheForSaving.UpdateElement( elementToSave);
             }
             else
@@ -197,15 +180,15 @@ namespace HEC.FDA.ViewModel.Saving
             }
         }
 
-        public virtual void RemoveElementFromTable(ChildElement element, string tableName)
+        public virtual void RemoveElementFromTable(ChildElement element)
         {
             OpenConnection();
-            if (Connection.Instance.TableNames().Contains(tableName))
+            if (Connection.Instance.TableNames().Contains(_TableName))
             {
-                DatabaseManager.DataTableView parentTableView = Connection.Instance.GetTable(tableName);
+                DatabaseManager.DataTableView parentTableView = Connection.Instance.GetTable(_TableName);
                 if (parentTableView != null)
                 {
-                    DataTable dt = Connection.Instance.GetDataTable(tableName);
+                    DataTable dt = Connection.Instance.GetDataTable(_TableName);
                     int parentTableIndex = GetElementIndexInTable(dt, element.ID);
                     if (parentTableIndex != -1)
                     {
@@ -237,11 +220,11 @@ namespace HEC.FDA.ViewModel.Saving
         /// <param name="primaryKey">The id of the element. The column that the id is in must be "ID"</param>
         /// <param name="columns">The columns that you want to update</param>
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
-        public void UpdateTableRow(string tableName, int primaryKey, string primaryKeyColName, string[] columns, object[] values)
+        public void UpdateTableRow(int primaryKey, string primaryKeyColName, string[] columns, object[] values)
         {
             OpenConnection();
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
-            StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
+            StringBuilder sb = new StringBuilder("update ").Append(_TableName).Append(" set ");
             for(int i = 0;i<columns.Length;i++)
             {
                 sb.Append(columns[i]).Append(" = '").Append(EscapeSingleQuotes(values[i])).Append("' ").Append(",");
@@ -306,18 +289,18 @@ namespace HEC.FDA.ViewModel.Saving
             command.ExecuteNonQuery();
         }
 
-        public void DeleteRowWithKey(string tableName, int key, string keyColName)
+        public void DeleteRowWithKey( int key, string keyColName)
         {
             //this sql query looks like this:
             //delete from occupancy_types where GroupID = 1
             OpenConnection();
             //if the table doesn't exist, then there is nothing to delete
-            if(Connection.Instance.GetTable(tableName) == null)
+            if(Connection.Instance.GetTable(_TableName) == null)
             {
                 return;
             }
 
-            StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
+            StringBuilder sb = new StringBuilder("delete from ").Append(_TableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
             SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
@@ -329,13 +312,13 @@ namespace HEC.FDA.ViewModel.Saving
         {
             //make sure the table exists
             OpenConnection();
-            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(TableName);
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(_TableName);
             if (tbl == null)
             {
-                Connection.Instance.CreateTableWithPrimaryKey(TableName, TableColumnNames, TableColumnTypes);
+                Connection.Instance.CreateTableWithPrimaryKey(_TableName, TableColumnNames, TableColumnTypes);
             }
             int retval = -1;
-            string tableName = TableName;
+            string tableName = _TableName;
             try
             {
                 //todo: implement
@@ -398,12 +381,12 @@ namespace HEC.FDA.ViewModel.Saving
         public virtual void Remove(ChildElement element)
         {
             StudyCacheForSaving.RemoveElement(element);
-            RemoveElementFromTable(element, TableName);
+            RemoveElementFromTable(element);
         }
 
         public virtual void Load()
         {
-            List<ChildElement> childElems = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
+            List<ChildElement> childElems = CreateElementsFromRows(rowData => CreateElementFromRowData(rowData));
             foreach (ChildElement elem in childElems)
             {
                 StudyCacheForSaving.AddElement(elem);

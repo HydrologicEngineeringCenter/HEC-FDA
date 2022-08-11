@@ -265,9 +265,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     Description = "";
                 }
-
+                //todo: shouldn't this pass the save to base?
                 IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
-                int id = GetElementID(iASPersistenceManager);
+                int id = GetElementID<IASElementSet>();
 
                 IASElementSet elemToSave = new IASElementSet(Name, Description, DateTime.Now.ToString("G"), Year.Value, SelectedStageDamageElement.ChildElement.ID, elementsToSave, id);
 

@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement : CurveChildElement
+    public class LateralStructureElement : CurveChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
+        public LateralStructureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
             : base(name, lastEditDate, description,failureFunction,  id)
         {
             IsDefaultCurveUsed = isDefault;
@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             AddDefaultActions(EditLeveeFeature);
         }
 
-        public LeveeFeatureElement(XElement element, int id):base(element,  id)
+        public LateralStructureElement(XElement element, int id):base(element,  id)
         {
             IsDefaultCurveUsed = Convert.ToBoolean( element.Attribute(IS_DEFAULT).Value);
             Elevation = Convert.ToDouble( element.Attribute(ELEVATION).Value);
@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             return childElem;
         }
 
-        public bool Equals(LeveeFeatureElement elem)
+        public bool Equals(LateralStructureElement elem)
         {
             bool isEqual = true;
 

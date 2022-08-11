@@ -14,17 +14,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class IASPersistenceManager : SavingBase<IASElementSet>
     {
-        /// <summary>
-        /// The table name for the main conditions table.
-        /// </summary>
-        public override string TableName { get { return "impact_area_scenarios"; } }
 
         #region constructor
         /// <summary>
         /// The persistence manager for the conditions object. This handles all the interaction between FDA and the database.
         /// </summary>
         /// <param name="studyCache"></param>
-        public IASPersistenceManager(FDACache studyCache):base(studyCache)
+        public IASPersistenceManager(FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }
 
@@ -107,7 +103,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 msg = WasRatingModified(iasSet, elemModified, elemID);
             }
-            else if (elemModified is LeveeFeatureElement)
+            else if (elemModified is LateralStructureElement)
             {
                 msg = WasLeveeElementModified(iasSet, elemModified, elemID);
             }

@@ -1,4 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -132,7 +134,7 @@ namespace HEC.FDA.ViewModel.Watershed
             FdaValidationResult isValidResult = IsValid();
             if (isValidResult.IsValid)
             {
-                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
+                TerrainElementPersistenceManager manager = PersistenceFactory.GetTerrainManager();
 
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent

@@ -187,7 +187,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             }
             else
             {
-                id = PersistenceFactory.GetAlternativeCompReportManager().GetNextAvailableId();
+                id = PersistenceFactory.GetElementManager<AlternativeComparisonReportElement>().GetNextAvailableId();
             }
             AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, DateTime.Now.ToString("G"), SelectedWithoutProjectAlternative.Alternative.ID, selectedIds, id);
             base.Save(elemToSave);

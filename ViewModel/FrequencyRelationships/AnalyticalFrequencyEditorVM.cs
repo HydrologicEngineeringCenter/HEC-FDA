@@ -350,8 +350,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     analyticalFlows.Add(d.Flow);
                 }
-                int id = GetElementID(Saving.PersistenceFactory.GetFlowFrequencyManager());
-
+                int id = GetElementID<AnalyticalFrequencyElement>();
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, PeriodOfRecord, IsAnalytical, IsStandard, Mean, StandardDeviation, Skew,
                      analyticalFlows, GraphicalTableWithPlotVM.ComputeComponentVM as GraphicalVM, TableWithPlot.ComputeComponentVM, id);
 

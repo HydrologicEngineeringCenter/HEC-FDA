@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel
         /// as well as listen for events where elements are added, removed, or updated
         /// </summary>
         public static IStudyCache StudyCache { get; set; }
-        public static PersistenceFactory PersistenceFactory { get; set; }
+        //public static PersistenceFactory PersistenceFactory { get; set; }
 
         public string LastEditDate { get; set; }
 

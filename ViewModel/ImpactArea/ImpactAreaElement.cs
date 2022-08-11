@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                      + Environment.NewLine + "Do you want to continue with the delete?", "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                    Saving.PersistenceFactory.GetElementManager<ImpactAreaElement>().Remove(this);
                     //remove the directory
                     if(Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))
                     {
@@ -151,7 +151,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             List<AggregatedStageDamageElement> stageDamageElems = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
             foreach (AggregatedStageDamageElement elem in stageDamageElems)
             {
-                Saving.PersistenceFactory.GetStageDamageManager().Remove(elem);
+                Saving.PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Remove(elem);
             }
         }
 
@@ -160,7 +160,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                Saving.PersistenceFactory.GetElementManager<ImpactAreaElement>().Remove(this);
             }
             //remove the directory
             if (Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))

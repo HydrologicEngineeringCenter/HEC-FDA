@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetRatingManager());
+            int id = GetElementID<StageDischargeElement>();
             StageDischargeElement elem = new StageDischargeElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
             base.Save(elem);
         }

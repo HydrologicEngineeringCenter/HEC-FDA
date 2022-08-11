@@ -309,7 +309,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             RatingCurveElements.AddRange(CreateComboItems(childElems));
             SelectedRatingCurveElement = RatingCurveElements.First();
 
-            List<LeveeFeatureElement> leveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
+            List<LateralStructureElement> leveeFeatureElements = StudyCache.GetChildElementsOfType<LateralStructureElement>();
             childElems.Clear();
             childElems.AddRange(leveeFeatureElements);
             LeveeFeatureElements.AddRange(CreateComboItems(childElems));
@@ -470,7 +470,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
-            LeveeFeatureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LeveeFeatureElement;
+            LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
             AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,

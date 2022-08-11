@@ -23,12 +23,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int IS_OLD_FDA = 3;
 
 
-        public override string TableName
-        {
-            get { return "structure_inventories"; }
-        }
-
-        public StructureInventoryPersistenceManager(Study.FDACache studyCache):base(studyCache)
+        public StructureInventoryPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }
 
@@ -166,7 +161,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            RemoveElementFromTable(element, TableName);
+            RemoveElementFromTable(element);
             string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.ID;
             RemoveTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
@@ -186,7 +181,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override void Load()
         {
-            List<ChildElement> structures = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> structures = CreateElementsFromRows( (asdf) => CreateElementFromRowData(asdf));
             foreach (InventoryElement elem in structures)
             {
                 StudyCacheForSaving.AddElement(elem);

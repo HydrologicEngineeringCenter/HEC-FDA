@@ -314,7 +314,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 }
 
-                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                int id = GetElementID<HydraulicElement>();
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;

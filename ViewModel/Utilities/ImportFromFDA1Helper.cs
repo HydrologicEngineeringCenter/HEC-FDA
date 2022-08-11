@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<StageDischargeElement> CreateRatingElements(RatingFunctionList ratings)
         {
             List<StageDischargeElement> elems = new List<StageDischargeElement>();
-            int id = Saving.PersistenceFactory.GetRatingManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<StageDischargeElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
             {
@@ -283,7 +283,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             messages += "\nGrouping stage damage functions by plan and year: \n";
 
-            int id = PersistenceFactory.GetStageDamageManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().GetNextAvailableId();
             int i = 0;
             //now create elements from the groups of curves
             foreach (List<AggregateDamageFunction> funcs in groupedCurves)
@@ -408,7 +408,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
             List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
-            int id = PersistenceFactory.GetFlowFrequencyManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
@@ -480,7 +480,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<InflowOutflowElement> CreateInflowOutflowElements(ProbabilityFunctionList probFuncs)
         {
             List<InflowOutflowElement> elems = new List<InflowOutflowElement>();
-            int id = Saving.PersistenceFactory.GetInflowOutflowManager().GetNextAvailableId();
+            int id = Saving.PersistenceFactory.GetElementManager<InflowOutflowElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
@@ -557,8 +557,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
-            int groupID = Saving.PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            int occtypeID = Saving.PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
+            int groupID = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            int occtypeID = PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
@@ -996,7 +996,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<ChildElement> CreateLeveeElements(LeveeList leveeList, ref string message)
         {
             List<ChildElement> elems = new List<ChildElement>();
-            int id = Saving.PersistenceFactory.GetLeveeManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<LateralStructureElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {
@@ -1044,7 +1044,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
             computeComponentVM.SetPairedData(func);
-            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,elemID);
+            LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,elemID);
             return leveeFeatureElement;
         }
 
@@ -1054,7 +1054,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static List<ChildElement> CreateExteriorInteriors(LeveeList leveeList)
         {
             List<ChildElement> elems = new List<ChildElement>();
-            int id = Saving.PersistenceFactory.GetExteriorInteriorManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<ExteriorInteriorElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
             {

@@ -13,12 +13,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
     public class TerrainElementPersistenceManager : SavingBase<TerrainElement>
     {
 
-        public override string TableName
-        {
-            get { return "terrains"; }
-        }
-
-        public TerrainElementPersistenceManager(Study.FDACache studyCache):base(studyCache)
+        public TerrainElementPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }
 
@@ -149,12 +144,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
-            SaveNewElementToTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
+            SaveNewElementToTable(GetRowDataFromElement((TerrainElement)element), TableColumnNames, TableColumnTypes);
             CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
         public override void Remove(ChildElement element)
         {
-            RemoveElementFromTable(element, TableName);
+            RemoveElementFromTable(element);
             element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
             {
                 ImageSource = ImageSources.TERRAIN_IMAGE,

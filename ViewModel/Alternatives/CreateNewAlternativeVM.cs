@@ -119,7 +119,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                     }
                 }
 
-                int id = PersistenceFactory.GetAlternativeManager().GetNextAvailableId();
+                int id = PersistenceFactory.GetElementManager<AlternativeElement>().GetNextAvailableId();
                 if (!IsCreatingNewElement)
                 {
                     id = OriginalElement.ID;

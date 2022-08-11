@@ -104,7 +104,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetImpactAreaManager());
+            int id = GetElementID<ImpactAreaElement>();
 
             ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id);
 

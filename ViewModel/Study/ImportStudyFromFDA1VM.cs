@@ -155,25 +155,25 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void SaveElements()
         {
-            FlowFrequencyPersistenceManager flowFreqManager = PersistenceFactory.GetFlowFrequencyManager();
+            IElementManager flowFreqManager = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
             foreach (ChildElement elem in _FlowFrequencyElements)
             {
                 flowFreqManager.SaveNew(elem);
             }
 
-            InflowOutflowPersistenceManager inOutManager = PersistenceFactory.GetInflowOutflowManager();
+            IElementManager inOutManager = PersistenceFactory.GetElementManager<InflowOutflowElement>();
             foreach (ChildElement elem in _InflowOutflowElements)
             {
                 inOutManager.SaveNew(elem);
             }
 
-            StageDischargePersistenceManager ratingManager = PersistenceFactory.GetRatingManager();
+            IElementManager ratingManager = PersistenceFactory.GetElementManager<StageDischargeElement>();
             foreach (ChildElement elem in _RatingElements)
             {
                 ratingManager.SaveNew(elem);
             }
-            
-            ExteriorInteriorPersistenceManager extIntManager = PersistenceFactory.GetExteriorInteriorManager();
+
+            IElementManager extIntManager = PersistenceFactory.GetElementManager<ExteriorInteriorElement>();
             foreach (ChildElement elem in _ExteriorInteriorElements)
             {
                 extIntManager.SaveNew(elem);
@@ -181,17 +181,18 @@ namespace HEC.FDA.ViewModel.Study
 
             //we can't import stage damages at this time because an impact area set is required first.
 
-            SavingBase<LeveeFeatureElement> leveeManager = PersistenceFactory.GetLeveeManager();
+            IElementManager leveeManager = PersistenceFactory.GetElementManager<LateralStructureElement>();
             foreach (ChildElement elem in _LeveeElements)
             {
                 leveeManager.SaveNew(elem);
             }
 
-            OccTypePersistenceManager occtypeManager = PersistenceFactory.GetOccTypeManager();
-            foreach (ChildElement elem in _OcctypesElements)
-            {
-                occtypeManager.SaveNew(elem);
-            }
+            //todo: put this back in
+            //IElementManager occtypeManager = PersistenceFactory.GetOccTypeManager();
+            //foreach (ChildElement elem in _OcctypesElements)
+            //{
+            //    occtypeManager.SaveNew(elem);
+            //}
 
         }
 

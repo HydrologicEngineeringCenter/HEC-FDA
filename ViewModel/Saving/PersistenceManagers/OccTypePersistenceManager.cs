@@ -45,9 +45,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
 
 
-        public override string TableName => "occupancy_type_groups";
-
-        public OccTypePersistenceManager(Study.FDACache studyCache):base(studyCache)
+        public OccTypePersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }
 
@@ -55,11 +53,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public void DeleteOcctypeGroup(int groupID)
         {
             //delete the row from the parent table
-            DeleteRowWithKey(TableName, groupID, "ID");
+            DeleteRowWithKey( groupID, "ID");
 
             //delete all the occtypes associated with this group from the occtypes table
             //this one call will delete all the rows with that group id
-            DeleteRowWithKey(OCCTYPES_TABLE_NAME, groupID, "GroupID");
+            DeleteRowWithKey( groupID, "GroupID");
 
             //remove from the study cache
             RemoveElementFromCache(groupID);
@@ -133,7 +131,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 string[] columnsToUpdate = new string[] { PARENT_NAME_FIELD };
                 object[] newValues = new object[] { group.Name };
-                UpdateTableRow(TableName, group.ID, "ID", columnsToUpdate, newValues);
+                UpdateTableRow( group.ID, "ID", columnsToUpdate, newValues);
             }
             UpdateOccTypeGroupsInStudyCache(groups);
         }

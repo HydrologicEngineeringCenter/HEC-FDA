@@ -21,8 +21,8 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override void SaveElements()
         {
-            SavingBase<LeveeFeatureElement> manager = PersistenceFactory.GetLeveeManager();
-            foreach (LeveeFeatureElement elem in ElementsToImport)
+            IElementManager manager = PersistenceFactory.GetElementManager<LateralStructureElement>();
+            foreach (LateralStructureElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LeveeFeatureElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LateralStructureElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {
