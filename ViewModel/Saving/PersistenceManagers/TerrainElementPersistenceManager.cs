@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -139,8 +138,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                
             }
         }
-
-
 
         public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {

@@ -1,7 +1,4 @@
-﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
-using HEC.FDA.ViewModel.Alternatives;
-using HEC.FDA.ViewModel.GeoTech;
-using HEC.FDA.ViewModel.Storage;
+﻿using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -30,13 +27,9 @@ namespace HEC.FDA.ViewModel.Saving
         /// </summary>
         public Study.FDACache StudyCacheForSaving { get; set; }
         private string _TableName;
-     
-
-
 
         public virtual string[] TableColumnNames { get; } = new string[] {XML};
         public virtual Type[] TableColumnTypes { get; } = new Type[] {typeof(string)};
-
 
         public SavingBase(FDACache studyCache, string tableName)
         {
@@ -392,7 +385,6 @@ namespace HEC.FDA.ViewModel.Saving
                 StudyCacheForSaving.AddElement(elem);
             }
         }
-
 
     }
 }
