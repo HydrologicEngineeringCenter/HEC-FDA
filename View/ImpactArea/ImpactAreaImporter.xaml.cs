@@ -22,22 +22,12 @@ namespace HEC.FDA.View.ImpactArea
             }
         }
 
-        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ImpactAreaImporterVM vm)
+            if (DataContext is ImpactAreaImporterVM vm && !vm.IsCreatingNewElement)
             {
-                if (!vm.IsCreatingNewElement)
-                {
-                    row_SelectPath.Height = new GridLength(0);
-                    row_SelectUniqueName.Height = new GridLength(0);
-                }
-                else
-                {
-                    row_SelectPath.Height = new GridLength(35);
-                    row_SelectUniqueName.Height = new GridLength(35);
-                }
+                row_SelectUniqueName.Height = new GridLength(0);
             }
         }
-
     }
 }

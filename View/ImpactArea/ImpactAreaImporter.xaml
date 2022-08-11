@@ -7,7 +7,7 @@
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
              xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d"
-        DataContextChanged="UserControl_DataContextChanged"
+             Loaded="UserControl_Loaded"
         d:DesignHeight="400" d:DesignWidth="350">
     <Grid >
         <Grid.RowDefinitions>
@@ -40,7 +40,7 @@
             <ComboBox ItemsSource="{Binding Path=UniqueFields, Mode=TwoWay}" SelectedItem="{Binding SelectedUniqueName, Mode=TwoWay}"  Margin="5" Name="Cmb_UniqueName"  Grid.Row="3" Grid.Column="1" SelectionChanged="Cmb_UniqueName_SelectionChanged" />
         </Grid>
 
-        <DataGrid Grid.Row="1" Margin="5"  Name="dgrid_ImpactAreasGrid" AutoGenerateColumns="False" CanUserResizeColumns="True" ItemsSource="{Binding ListOfRows}" MinHeight="180" CanUserAddRows="False">
+        <DataGrid Grid.Row="1" Margin="5" IsReadOnly="True"  Name="dgrid_ImpactAreasGrid" AutoGenerateColumns="False" CanUserResizeColumns="True" ItemsSource="{Binding ListOfRows}" MinHeight="180" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="*"  x:Name="Col1" Header="Unique Name" Binding="{Binding Name}"/>
             </DataGrid.Columns>

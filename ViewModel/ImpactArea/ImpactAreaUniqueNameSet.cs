@@ -17,9 +17,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             ColumnName = ColName;
             ObservableCollection<object> tmp = new ObservableCollection<object>();
+            int i = 1;
             foreach(object name in polyNames)
             {
-                tmp.Add(new ImpactAreaRowItem(-1,name.ToString()));
+                tmp.Add(new ImpactAreaRowItem(i,name.ToString()));
+                i++;
             }
 
             RowItems = new ObservableCollection<ImpactAreaRowItem>();

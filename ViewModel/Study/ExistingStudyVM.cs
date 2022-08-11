@@ -27,7 +27,6 @@ namespace HEC.FDA.ViewModel.Study
                     if (System.IO.File.Exists(_Path) && System.IO.Path.GetExtension(_Path).ToLower() == ".sqlite")
                     {
                         StudyName = System.IO.Path.GetFileNameWithoutExtension(Path);
-                        Storage.Connection.Instance.ProjectFile = _Path;
                     }
                 }
             }

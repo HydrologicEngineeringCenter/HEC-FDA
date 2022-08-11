@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Storage;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
 {
     public class IndexPointsElement:ChildElement
     {
-        private static String INDEX_POINTS_TAG = "IndexPoints";
+        public static String INDEX_POINTS_TAG = "IndexPoints";
         private static String NAME_TAG = "Name";
         private static String DESCRIPTION_TAG = "Description";
         private static String LAST_EDIT_DATE_TAG = "LastEditDate";
@@ -27,14 +28,13 @@ namespace HEC.FDA.ViewModel.IndexPoints
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             Description = description;
             IndexPoints = indexPoints;
-            AddActions();          
+            AddActions();
         }
 
-        public IndexPointsElement(string xmlString, int id):base(id)
+        public IndexPointsElement(XElement itemElem, int id):base(id)
         {
             ID = id;
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(INDEX_POINTS_TAG);
+            
             Name = itemElem.Attribute(NAME_TAG).Value;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
 
@@ -113,14 +113,42 @@ namespace HEC.FDA.ViewModel.IndexPoints
             }
         }
 
+        private string GetStageDamageMessage()
+        {
+            //todo: check the stage damages for any that use these index points.
+            List<AggregatedStageDamageElement> iasElems = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
+            return null;
+        }
+
         public override void RemoveElement(object sender, EventArgs e)
         {
-            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
+            string stageDamageMessage = GetStageDamageMessage();
+            if (stageDamageMessage != null)
             {
-                //this will handle removing the sqlite data
-                Saving.PersistenceFactory.GetIndexPointsPersistenceManager().Remove(this);
-                //remove the directory
+                var result = MessageBox.Show(stageDamageMessage, "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    DeleteIndexPointsDirectory();
+                    //todo: delete stage damages with these index points?
+                }
+            }
+            else
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    DeleteIndexPointsDirectory();
+                }
+            }
+        }
+
+        private void DeleteIndexPointsDirectory()
+        {
+            //this will handle removing the sqlite data
+            Saving.PersistenceFactory.GetIndexPointsPersistenceManager().Remove(this);
+            //remove the directory
+            if (Directory.Exists(Connection.Instance.IndexPointsDirectory + "\\" + Name))
+            {
                 Directory.Delete(Connection.Instance.IndexPointsDirectory + "\\" + Name, true);
             }
         }

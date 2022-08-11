@@ -160,7 +160,7 @@ namespace HEC.FDA.ViewModel
             //to report from the child vms
             foreach (BaseViewModel baseVM in _Children)
             {
-                if (baseVM.Error.Length > 0)
+                if (baseVM.Error != null && baseVM.Error.Length > 0)
                 {
                     errors.Add(baseVM.Error);
                 }

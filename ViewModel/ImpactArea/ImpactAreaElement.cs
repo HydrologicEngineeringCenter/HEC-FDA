@@ -1,11 +1,13 @@
 ﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -14,31 +16,51 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        private List<ImpactAreaRowItem> _ImpactAreaRows;
+        private static String IMPACT_AREAS_TAG = "ImpactAreas";
+        private static String NAME_TAG = "Name";
+        private static String DESCRIPTION_TAG = "Description";
+        private static String LAST_EDIT_DATE_TAG = "LastEditDate";
+        private static String IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
+
         #endregion
         #region Properties
-      
-        public string SelectedPath { get; set; }
-        
-        public List<ImpactAreaRowItem> ImpactAreaRows
-        {
-            get { return _ImpactAreaRows; }
-            set { _ImpactAreaRows = value; NotifyPropertyChanged(); }
-        }
+
+        public List<ImpactAreaRowItem> ImpactAreaRows { get; } = new List<ImpactAreaRowItem>();
+
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, List<ImpactAreaRowItem> collectionOfRows, int id) : this(userdefinedname,description,collectionOfRows, "", id)
-        {
-        }
-        public ImpactAreaElement(string userdefinedname,string description, List<ImpactAreaRowItem> collectionOfRows, string selectedPath, int id ) : base(id)
-        {
+        public ImpactAreaElement(string userdefinedname, string description, List<ImpactAreaRowItem> collectionOfRows, int id) : base(id)
+        {      
             Name = userdefinedname;
             CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             Description = description;
             ImpactAreaRows = collectionOfRows;
+            AddActions();
+        }
 
-            SelectedPath = selectedPath;
+        public ImpactAreaElement(string xmlString, int id) : base(id)
+        {
+            ID = id;
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement impactAreaElem = doc.Element(IMPACT_AREAS_TAG);
+            Name = impactAreaElem.Attribute(NAME_TAG).Value;
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
 
+            Description = impactAreaElem.Attribute(DESCRIPTION_TAG).Value;
+            LastEditDate = impactAreaElem.Attribute(LAST_EDIT_DATE_TAG).Value;
+
+            XElement rowsElem = impactAreaElem.Element(IMPACT_AREA_ROWS_TAG);
+            IEnumerable<XElement> rowElems = rowsElem.Elements(ImpactAreaRowItem.ROW_ITEM_TAG);
+            foreach (XElement nameElem in rowElems)
+            {
+                ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
+            }
+
+            AddActions();
+        }
+
+        private void AddActions()
+        {
             NamedAction edit = new NamedAction();
             edit.Header = StringConstants.EDIT_IMPACT_AREA_SET_MENU;
             edit.Action = Edit;
@@ -57,7 +79,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             localactions.Add(renameElement);
 
             Actions = localactions;
-
         }
 
         private string GetScenariosToDeleteMessage()
@@ -126,6 +147,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 if (result == MessageBoxResult.Yes)
                 {
                     Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                    //remove the directory
+                    if(Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))
+                    {
+                        Directory.Delete(Connection.Instance.ImpactAreaDirectory + "\\" + Name, true);
+                    }
                     DeleteAllScenariosAndStageDamages();
                 }
             }
@@ -155,6 +181,11 @@ namespace HEC.FDA.ViewModel.ImpactArea
             {
                 Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
             }
+            //remove the directory
+            if (Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))
+            {
+                Directory.Delete(Connection.Instance.ImpactAreaDirectory + "\\" + Name, true);
+            }
         }
 
         #endregion
@@ -167,7 +198,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
             string header = StringConstants.EDIT_IMPACT_AREA_SET_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header + Name);
             Navigate(tab, false,false);
         }
 
@@ -176,8 +207,54 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ImpactAreaElement elem = (ImpactAreaElement)elementToClone;
-            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath, elem.ID);
+            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows, elem.ID);
         }
+
+        public XElement ToXML()
+        {
+            XElement impactAreaElem = new XElement(IMPACT_AREAS_TAG);
+            impactAreaElem.SetAttributeValue(NAME_TAG, Name);
+            impactAreaElem.SetAttributeValue(DESCRIPTION_TAG, Description);
+            impactAreaElem.SetAttributeValue(LAST_EDIT_DATE_TAG, LastEditDate);
+
+            XElement impactAreaRows = new XElement(IMPACT_AREA_ROWS_TAG);
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                impactAreaRows.Add(row.ToXML());
+            }
+
+            impactAreaElem.Add(impactAreaRows);
+
+            return impactAreaElem;
+        }
+
+        public override void Rename(object sender, EventArgs e)
+        {
+            string originalName = Name;
+            RenameVM renameViewModel = new RenameVM(this, CloneElement);
+            string header = "Rename";
+            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename", false, false);
+            Navigate(tab);
+            if (!renameViewModel.WasCanceled)
+            {
+                string newName = renameViewModel.Name;
+                //rename the folders in the study.
+                if (!originalName.Equals(newName))
+                {
+                    try
+                    {
+                        string sourceFilePath = Connection.Instance.ImpactAreaDirectory + "\\" + originalName;
+                        string destinationFilePath = Connection.Instance.ImpactAreaDirectory + "\\" + newName;
+                        Directory.Move(sourceFilePath, destinationFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Renaming the impact area directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

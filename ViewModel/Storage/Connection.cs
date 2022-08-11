@@ -189,6 +189,24 @@ namespace HEC.FDA.ViewModel.Storage
             command.CommandText = InsertIntoTableText(rowData, tablename, colnames);
             command.ExecuteNonQuery();
         }
+
+        public void AddNewColumnWithValues(string tableName, string colName, string colType, object defaultValue = null)
+        {
+            string cmdText = "";
+            if (defaultValue == null)
+            {
+                cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType;
+
+            }
+            else
+            {
+                cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType + " DEFAULT '" + defaultValue + "'";
+            }
+            SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
+            command.CommandText = cmdText;
+            command.ExecuteNonQuery();
+        }
+
         private string EscapeSingleQuotes(object value)
         {
             string returnValue = null;
