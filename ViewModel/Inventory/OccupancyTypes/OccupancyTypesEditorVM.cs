@@ -261,8 +261,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             if (MessageBox.Show("Do you want to permanently delete this occupancy type?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //then permanently delete it.
-                OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-                manager.DeleteOcctype(SelectedOccType);
+                IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
+                //todo: bring back to life
+                //manager.DeleteOcctype(SelectedOccType);
 
                 int selectedIndex = SelectedOccTypeGroup.Occtypes.IndexOf(SelectedOccType);
                 SelectedOccTypeGroup.Occtypes.Remove(SelectedOccType);
@@ -444,8 +445,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public void SaveAll()
         {
-            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
+            IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
+            //todo: bring this back to life.
+            //manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
 
             List<SaveAllReportGroupVM> warningReports = new List<SaveAllReportGroupVM>();
             List<SaveAllReportGroupVM> fatalErrorReports = new List<SaveAllReportGroupVM>();

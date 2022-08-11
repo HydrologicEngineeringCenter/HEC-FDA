@@ -74,12 +74,10 @@ namespace HEC.FDA.ViewModel.Saving
         {
             return new OccTypePersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(OccupancyTypesElement)]);
         }
-
         public static TerrainElementPersistenceManager GetTerrainManager()
         {
             return new TerrainElementPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(TerrainElement)]);
         }
-
         public static HydraulicPersistenceManager GetWaterSurfaceManager()
         {
             return new HydraulicPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(HydraulicElement)]);
