@@ -119,6 +119,7 @@ namespace paireddata
                 default:
                     break;
             }
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => Xvals.Length == Yvals.Length, "X and Y columns should have the same number of rows but do not", ErrorLevel.Severe));
 
         }
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
