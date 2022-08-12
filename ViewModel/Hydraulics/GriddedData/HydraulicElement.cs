@@ -30,7 +30,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
 
-
         #endregion
         #region Constructors
         /// <summary>
@@ -65,7 +64,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         public HydraulicElement(XElement childElement, int id):base(childElement, id)
         {
-            ReadHeaderXElement(childElement.Element(HEADER_XML_TAG));
             string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
             Enum.TryParse(hydroType, out HydraulicType myHydroType);
             HydroType = myHydroType;
@@ -80,7 +78,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 RelativePathAndProbability.Add(new PathAndProbability(elem));
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddDefaultActions(EditElement);
         }
 
@@ -130,14 +127,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
                     string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
                     Directory.Move(sourceFilePath, destinationFilePath);
-
-                    //rename the child table in the DB
-                    //Saving.PersistenceFactory.GetWaterSurfaceManager().RenamePathAndProbabilitesTableName(originalName, newName);
                 }
             }
         }
-
-
         #endregion
         #region Functions
 
@@ -159,7 +151,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             return elem;
         }
-
 
         public bool Equals(HydraulicElement elem)
         {

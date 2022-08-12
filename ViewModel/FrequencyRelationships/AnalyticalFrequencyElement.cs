@@ -1,5 +1,4 @@
 ﻿using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using paireddata;
@@ -7,7 +6,6 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -18,7 +16,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Notes
         #endregion
 
-        private const string FLOW_FREQUENCY = "FlowFrequency";
         private const string IS_ANALYTICAL = "IsAnalytical";
         private const string ANALYTICAL_DATA = "AnalyticalData";
         private const string USES_MOMENTS = "UsesMoments";
@@ -134,7 +131,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             if(badStrings.Count > 0)
             {
-
                 string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
                     "The following flow texts were not able to be converted to numeric values: ";
                 string errorVals = string.Join( "\n\t", badStrings);
@@ -195,8 +191,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return frequencyData;
         }
 
-
-
         public override XElement ToXML()
         {
             XElement flowFreqElem = base.ToXML();
@@ -233,8 +227,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             else
             {
                 return string.Join(",",flows);
-            }
-            
+            }           
         }
 
         public bool Equals(AnalyticalFrequencyElement elem)
@@ -245,7 +238,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 isEqual = false;
             }
-
             if (POR != elem.POR)
             {
                 isEqual = false;

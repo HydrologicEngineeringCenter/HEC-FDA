@@ -15,7 +15,7 @@ using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
-    public class IASElementSet : ChildElement
+    public class IASElement : ChildElement
     {
         #region Fields
         public const string IAS_SET = "IASSet";
@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
+        public IASElement(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
             : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// The ctor used to load an element set from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public IASElementSet(XElement setElem, int id) : base(setElem,id)
+        public IASElement(XElement setElem, int id) : base(setElem,id)
         {
 
             AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);

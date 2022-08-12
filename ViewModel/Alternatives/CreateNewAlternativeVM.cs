@@ -48,7 +48,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void IASAdded(object sender, ElementAddedEventArgs e)
         {
-            Rows.Add(new AlternativeRowItem((IASElementSet)e.Element));
+            Rows.Add(new AlternativeRowItem((IASElement)e.Element));
         }
 
         private void IASRemoved(object sender, ElementAddedEventArgs e)
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void IASUpdated(object sender, ElementUpdatedEventArgs e)
         {
-            IASElementSet newElement = (IASElementSet)e.NewElement;
+            IASElement newElement = (IASElement)e.NewElement;
             int idToUpdate = newElement.ID;
 
             //find the row with this id and update the row's values;
@@ -91,10 +91,10 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private List<AlternativeRowItem> CreateRowsForIASElementsInStudy()
         {
-            List<IASElementSet> elems = StudyCache.GetChildElementsOfType<IASElementSet>();
+            List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
 
             List<AlternativeRowItem> rows = new List<AlternativeRowItem>();
-            foreach (IASElementSet elem in elems)
+            foreach (IASElement elem in elems)
             {
                 AlternativeRowItem condWrapper = new AlternativeRowItem(elem);
                 rows.Add(condWrapper);

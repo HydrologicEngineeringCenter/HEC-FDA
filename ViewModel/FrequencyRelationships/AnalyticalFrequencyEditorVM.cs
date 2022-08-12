@@ -154,10 +154,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _Skew = elem.Skew;
             _POR = elem.POR;
 
-            if(elem.MyGraphicalVM != null)
-            {
-                elem.MyGraphicalVM = new GraphicalVM(elem.MyGraphicalVM.ToXML());
-            }
+            elem.MyGraphicalVM = new GraphicalVM(elem.MyGraphicalVM.ToXML());
 
             GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
             GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;

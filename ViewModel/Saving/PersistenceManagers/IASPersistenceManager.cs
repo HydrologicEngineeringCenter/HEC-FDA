@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class IASPersistenceManager : SavingBase<IASElementSet>
+    public class IASPersistenceManager : SavingBase<IASElement>
     {
 
         #region constructor
@@ -40,37 +40,37 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             base.SaveExisting( element);
         }
 
-        private string WasAnalyticalFrequencyElementModified(IASElementSet iasElems,ChildElement elem, int elemID )
+        private string WasAnalyticalFrequencyElementModified(IASElement iasElems,ChildElement elem, int elemID )
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FlowFreqID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Analytical Frequency", elem.Name) : null;
         }
 
-        private string WasInflowOutflowModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        private string WasInflowOutflowModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.InflowOutflowID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Inflow-Outflow", elem.Name) : null;
         }
 
-        private string WasRatingModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        private string WasRatingModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.RatingID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Rating", elem.Name) : null;
         }
 
-        private string WasExteriorInteriorModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        private string WasExteriorInteriorModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.ExtIntStageID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Exterior-Interior Stage", elem.Name) : null;
         }
 
-        private string WasStageDamageModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        private string WasStageDamageModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.StageDamageID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Aggregates Stage-Damage", elem.Name) : null;
         }
 
-        private string WasLeveeElementModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        private string WasLeveeElementModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.LeveeFailureID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Levee-Failure", elem.Name) : null;
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="iasSet"></param>
         /// <param name="elemModified"></param>
         /// <param name="elemID"></param>
-        private void CheckIASSetForBaseDataModified(IASElementSet iasSet, ChildElement elemModified, int elemID)
+        private void CheckIASSetForBaseDataModified(IASElement iasSet, ChildElement elemModified, int elemID)
         {
             string msg = null;
 
@@ -129,9 +129,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="originalID">The original id </param>
         public void UpdateIASTooltipsChildElementModified(ChildElement elem, int originalID)
         {
-            List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+            List<IASElement> conditionsElements = StudyCache.GetChildElementsOfType<IASElement>();
 
-            foreach(IASElementSet set in conditionsElements)
+            foreach(IASElement set in conditionsElements)
             {
                 CheckIASSetForBaseDataModified(set, elem, originalID);
             }

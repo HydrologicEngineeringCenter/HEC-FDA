@@ -147,9 +147,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
 
             //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
-            IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
-            //todo: bring the line below back to life.
-            int groupID = -1;// PersistenceFactory.GetOccTypeManager().GetGroupId(group.Name);
+            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            int groupID = manager.GetGroupId(group.Name);
             IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
@@ -262,9 +261,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             if (MessageBox.Show("Do you want to permanently delete this occupancy type?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //then permanently delete it.
-                IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
-                //todo: bring back to life
-                //manager.DeleteOcctype(SelectedOccType);
+                OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+                manager.DeleteOcctype(SelectedOccType);
 
                 int selectedIndex = SelectedOccTypeGroup.Occtypes.IndexOf(SelectedOccType);
                 SelectedOccTypeGroup.Occtypes.Remove(SelectedOccType);
@@ -331,9 +329,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 }
                 OccTypeGroups.Remove(SelectedOccTypeGroup);
 
-                IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
-                //todo: bring this line back to life.
-                //manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
+                OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+                manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
                 //set the selected occtype to be the one before, unless at 0
                 if (selectedIndex > 0)
                 {
@@ -447,9 +444,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public void SaveAll()
         {
-            IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
-            //todo: bring this back to life.
-            //manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
+            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
 
             List<SaveAllReportGroupVM> warningReports = new List<SaveAllReportGroupVM>();
             List<SaveAllReportGroupVM> fatalErrorReports = new List<SaveAllReportGroupVM>();

@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel.Utilities
             ReadHeaderXElement(element.Element(HEADER_XML_TAG));
             CustomTreeViewHeader = new CustomHeaderVM(Name)
             {
-                ImageSource = ImageSources.GetImage(this),
+                ImageSource = ImageSources.GetImage(this.GetType()),
                 Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
             };
         }
@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Utilities
             ID = id;
             CustomTreeViewHeader = new CustomHeaderVM(name)
             {
-                ImageSource = ImageSources.GetImage(this),
+                ImageSource = ImageSources.GetImage(this.GetType()),
                 Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
             };
         }
@@ -125,7 +125,6 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             return (ChildElement)Activator.CreateInstance(GetType(), ToXML(), ID);
         }
-
 
         public XElement CreateHeaderElement()
         {

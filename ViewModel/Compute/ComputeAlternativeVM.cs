@@ -14,12 +14,12 @@ namespace HEC.FDA.ViewModel.Compute
     {
 
 
-        public ComputeAlternativeVM(IASElementSet[] iASElems, int id, AlternativeElement altElem, Action<AlternativeResults> callback) : base()
+        public ComputeAlternativeVM(IASElement[] iASElems, int id, AlternativeElement altElem, Action<AlternativeResults> callback) : base()
         {
             ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
 
-            IASElementSet firstElem = iASElems[0];
-            IASElementSet secondElem = iASElems[1];
+            IASElement firstElem = iASElems[0];
+            IASElement secondElem = iASElems[1];
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;

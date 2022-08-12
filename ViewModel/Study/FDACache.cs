@@ -94,7 +94,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<LateralStructureElement> LeveeElements { get; } = new List<LateralStructureElement>();
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
-        public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
+        public List<IASElement> IASElementSets { get; } = new List<IASElement>();
         public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
         public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
         public StudyPropertiesElement StudyPropertiesElement { get; set; }
@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(StageDamageElements, elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(IASElementSet))
+            else if (elem.GetType() == typeof(IASElement))
             {
                 RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
@@ -293,9 +293,9 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
                 StageDamageAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is IASElementSet )
+            else if (elem is IASElement )
             {
-                IASElementSets.Add((IASElementSet)elem);
+                IASElementSets.Add((IASElement)elem);
                 IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(AlternativeElement))
@@ -360,9 +360,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateStageDamageElement( (AggregatedStageDamageElement)newElement);
             }
-            else if (newElement is IASElementSet )
+            else if (newElement is IASElement )
             {
-                UpdateIASElement( (IASElementSet)newElement);
+                UpdateIASElement( (IASElement)newElement);
             }
             else if (newElement.GetType().Equals(typeof(AlternativeElement)))
             {
@@ -479,7 +479,7 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateIASElement( IASElementSet newElement)
+        public void UpdateIASElement( IASElement newElement)
         {
             int index = IASElementSets.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -705,7 +705,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(StageDamageElements);
             }
-            else if (childElementType == typeof(IASElementSet))
+            else if (childElementType == typeof(IASElement))
             {
                 retVal.AddRange(IASElementSets);
             }
@@ -781,7 +781,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = StageDamageElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType == typeof(IASElementSet))
+            else if (childElementType == typeof(IASElement))
             {
                 childElem = IASElementSets.Where(elem => elem.ID == ID).FirstOrDefault();
             }

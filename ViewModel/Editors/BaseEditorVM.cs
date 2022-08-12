@@ -303,9 +303,9 @@ namespace HEC.FDA.ViewModel.Editors
             int id = -1;
             if (IsCreatingNewElement)
             {
-                ChildElement childElem = (ChildElement)Activator.CreateInstance(typeof(T));
-                IElementManager elementManager = PersistenceFactory.GetElementManager(childElem);
-                if(elementManager != null)
+                IElementManager elementManager = PersistenceFactory.GetElementManager<T>();
+
+                if (elementManager != null)
                 {
                     id = elementManager.GetNextAvailableId();
                 }

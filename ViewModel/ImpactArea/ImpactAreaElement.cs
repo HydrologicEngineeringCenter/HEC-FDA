@@ -33,8 +33,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         public ImpactAreaElement(XElement impactAreaElement, int id) : base(impactAreaElement, id)
         {
-            ReadHeaderXElement(impactAreaElement.Element(HEADER_XML_TAG));
-
             XElement rowsElem = impactAreaElement.Element(IMPACT_AREA_ROWS_TAG);
             IEnumerable<XElement> rowElems = rowsElem.Elements(ImpactAreaRowItem.ROW_ITEM_TAG);
             foreach (XElement nameElem in rowElems)
@@ -42,7 +40,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddDefaultActions(Edit);
         }
 
@@ -64,12 +61,12 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         private string GetScenariosToDeleteMessage()
         {
-            List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
+            List<IASElement> iasElems = StudyCache.GetChildElementsOfType<IASElement>();
             string scenarioMessage = null;
             if (iasElems.Count > 0)
             {
                 List<string> scenarios = new List<string>();
-                foreach (IASElementSet set in iasElems)
+                foreach (IASElement set in iasElems)
                 {
                     scenarios.Add(set.Name);
                 }
@@ -141,8 +138,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
         private void DeleteAllScenariosAndStageDamages()
         {
             //delete the scenarios
-            List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
-            foreach (IASElementSet set in iasElems)
+            List<IASElement> iasElems = StudyCache.GetChildElementsOfType<IASElement>();
+            foreach (IASElement set in iasElems)
             {
                 Saving.PersistenceFactory.GetIASManager().Remove(set);
             }
@@ -184,8 +181,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
 
         #endregion
-
-        
 
         public override void Rename(object sender, EventArgs e)
         {

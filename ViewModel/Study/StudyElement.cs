@@ -23,6 +23,8 @@ using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -63,7 +65,7 @@ namespace HEC.FDA.ViewModel.Study
             PopulateRecentStudies();
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.GetImage(typeof(TerrainElement)));
             _Elements = new ObservableCollection<BaseFdaElement>();
         }
 
@@ -354,12 +356,12 @@ namespace HEC.FDA.ViewModel.Study
             PersistenceFactory.GetElementManager<InflowOutflowElement>().Load(); 
             PersistenceFactory.GetElementManager<ExteriorInteriorElement>().Load(); 
             PersistenceFactory.GetElementManager<LateralStructureElement>().Load(); 
-            PersistenceFactory.GetElementManager<StageDischargeElement>().Load(); 
+            PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Load(); 
             PersistenceFactory.GetElementManager<InventoryElement>().Load(); 
-            PersistenceFactory.GetElementManager<StageDischargeElement>().Load(); 
+            PersistenceFactory.GetElementManager<IASElement>().Load(); 
             PersistenceFactory.GetElementManager<AlternativeElement>().Load(); 
             PersistenceFactory.GetElementManager<AlternativeComparisonReportElement>().Load(); 
-            //PersistenceFactory.GetElementManager<Occtyp>().Load(); //GetOccTypeManager().Load();
+            PersistenceFactory.GetElementManager<OccupancyTypesElement>().Load();
             PersistenceFactory.GetElementManager<StudyPropertiesElement>().Load();
         }
 

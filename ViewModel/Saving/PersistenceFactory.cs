@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Saving
             {typeof(ExteriorInteriorElement), "exterior_interior_relationships" },
             {typeof(AnalyticalFrequencyElement), "analytical_frequency_relationships" },
             {typeof(HydraulicElement), "hydraulics" },
-            {typeof(IASElementSet), "impact_area_scenarios" },
+            {typeof(IASElement), "impact_area_scenarios" },
             {typeof(ImpactAreaElement), "impact_area_set" },
             {typeof(IndexPointsElement), "index_points" },
             {typeof(InflowOutflowElement), "regulated_unregulated_relationships" },
@@ -49,8 +49,6 @@ namespace HEC.FDA.ViewModel.Saving
             {typeof(StageDischargeElement), "stage_discharge_relationships" },
             {typeof(InventoryElement), "structure_inventories"},
             {typeof(StudyPropertiesElement), "study_properties" },
-
-
         };
 
         public static IElementManager GetElementManager<T>()
@@ -93,7 +91,7 @@ namespace HEC.FDA.ViewModel.Saving
         }
         public static IASPersistenceManager GetIASManager()
         {
-            return new IASPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(IASElementSet)]);
+            return new IASPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(IASElement)]);
         }
 
     }

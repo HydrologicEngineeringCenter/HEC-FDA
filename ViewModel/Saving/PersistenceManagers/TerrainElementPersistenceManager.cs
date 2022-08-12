@@ -108,7 +108,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     newElement.Actions.Clear();
                     newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                     {
-                        ImageSource = ImageSources.TERRAIN_IMAGE,
+                        ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                         Tooltip = StringConstants.CreateLastEditTooltip(newElement.LastEditDate),
                         Decoration = " -Renaming File",
                         GifVisible = true
@@ -123,7 +123,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                             
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                             {
-                                ImageSource = ImageSources.TERRAIN_IMAGE,
+                                ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                                 Tooltip = StringConstants.CreateLastEditTooltip(newElement.LastEditDate),
                             };
 
@@ -149,7 +149,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             RemoveElementFromTable(element);
             element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
             {
-                ImageSource = ImageSources.TERRAIN_IMAGE,
+                ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                 Tooltip = StringConstants.CreateLastEditTooltip(element.LastEditDate),
                 Decoration = " -Deleting",
                 GifVisible = true

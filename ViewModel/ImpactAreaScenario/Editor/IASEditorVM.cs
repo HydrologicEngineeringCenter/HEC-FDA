@@ -73,7 +73,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="manager"></param>
-        public IASEditorVM(IASElementSet elem, EditorActionManager manager) : base(elem, manager)
+        public IASEditorVM(IASElement elem, EditorActionManager manager) : base(elem, manager)
         {
             Initialize();
             FillForm(elem);
@@ -165,7 +165,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// that was linked to it will not get added to this editor. If the user saves, it will be gone for good.
         /// </summary>
         /// <param name="elem"></param>
-        private void FillForm(IASElementSet elem)
+        private void FillForm(IASElement elem)
         {
             Name = elem.Name;
             Description = elem.Description;
@@ -267,9 +267,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
                 //todo: shouldn't this pass the save to base?
                 IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
-                int id = GetElementID<IASElementSet>();
+                int id = GetElementID<IASElement>();
 
-                IASElementSet elemToSave = new IASElementSet(Name, Description, DateTime.Now.ToString("G"), Year.Value, SelectedStageDamageElement.ChildElement.ID, elementsToSave, id);
+                IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, SelectedStageDamageElement.ChildElement.ID, elementsToSave, id);
 
                 if (IsCreatingNewElement)
                 {

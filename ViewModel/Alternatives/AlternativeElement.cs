@@ -95,9 +95,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// If the element cannot be found then it will be null.
         /// </summary>
         /// <returns></returns>
-        private IASElementSet[] GetElementsFromID()
+        private IASElement[] GetElementsFromID()
         {
-            IASElementSet[] iASElems = new IASElementSet[] { null, null };
+            IASElement[] iASElems = new IASElement[] { null, null };
 
             bool firstElemFound = false;
             bool secondElemFound = false;
@@ -105,8 +105,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             int firstID = IASElementSets[0];
             int secondID = IASElementSets[1];
             //get the current ias elements in the study
-            List<IASElementSet> currentElementSets = StudyCache.GetChildElementsOfType<IASElementSet>();
-            foreach (IASElementSet set in currentElementSets)
+            List<IASElement> currentElementSets = StudyCache.GetChildElementsOfType<IASElement>();
+            foreach (IASElement set in currentElementSets)
             {
                 int setID = set.ID;
                 if (setID == firstID)
@@ -124,8 +124,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             //put them in the correct order
             if(firstElemFound && secondElemFound)
             {
-                IASElementSet firstElem = iASElems[0];
-                IASElementSet secondElem = iASElems[1];
+                IASElement firstElem = iASElems[0];
+                IASElement secondElem = iASElems[1];
                 int firstYear = firstElem.AnalysisYear;
                 int secondYear = secondElem.AnalysisYear;
                 if(firstYear > secondYear)
@@ -141,9 +141,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            IASElementSet[] iASElems = GetElementsFromID();
-            IASElementSet firstElem = iASElems[0];
-            IASElementSet secondElem = iASElems[1];
+            IASElement[] iASElems = GetElementsFromID();
+            IASElement firstElem = iASElems[0];
+            IASElement secondElem = iASElems[1];
 
             FdaValidationResult scenariosExistResults = DoBothScenariosExist(firstElem, secondElem);
             vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
@@ -156,7 +156,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult DoScenariosHaveResults(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
@@ -181,7 +181,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult AreScenarioYearsDifferent(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult AreScenarioYearsDifferent(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             int firstYear = firstElem.AnalysisYear;
@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult DoBothScenariosExist(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (firstElem == null || secondElem == null)
@@ -231,7 +231,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                IASElementSet[] iASElems = GetElementsFromID();
+                IASElement[] iASElems = GetElementsFromID();
 
                 ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
@@ -246,10 +246,10 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(Action<AlternativeResults> callback)
         {
-            IASElementSet[] iASElems = GetElementsFromID();
+            IASElement[] iASElems = GetElementsFromID();
 
-            IASElementSet firstElem = iASElems[0];
-            IASElementSet secondElem = iASElems[1];
+            IASElement firstElem = iASElems[0];
+            IASElement secondElem = iASElems[1];
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;

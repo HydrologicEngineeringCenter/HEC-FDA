@@ -13,8 +13,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
     {
         public const String INDEX_POINTS_TAG = "IndexPoints";
         private const String NAME_TAG = "Name";
-        private const String DESCRIPTION_TAG = "Description";
-        private const String LAST_EDIT_DATE_TAG = "LastEditDate";
         private const String INDEX_POINT_NAMES_TAG = "IndexPointNames";
 
         #region Properties
@@ -30,8 +28,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
         public IndexPointsElement(XElement childElem, int id):base(childElem, id)
         {
-            ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
-
             XElement indexPointsElem = childElem.Element(INDEX_POINT_NAMES_TAG);
             IEnumerable<XElement> nameElems = indexPointsElem.Elements(NAME_TAG);
             foreach(XElement nameElem in nameElems)
@@ -39,11 +35,8 @@ namespace HEC.FDA.ViewModel.IndexPoints
                 IndexPoints.Add(nameElem.Value);
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
             AddDefaultActions(Edit);
         }
-
-
 
         #endregion
         #region Voids

@@ -1,5 +1,4 @@
-﻿using compute;
-using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
+﻿using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
@@ -7,7 +6,6 @@ using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using metrics;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +17,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
     public class AlternativeComparisonReportElement : ChildElement
     {
         private const string ALTERNATIVE_COMP_REPORT = "AlternativeComparisonReport";
-        private const string NAME = "Name";
-        private const string DESCRIPTION = "Description";
         private const string ID_STRING = "ID";
         private const string WITHOUT_PROJ_ID = "WithoutProjID";
         private const string WITH_PROJ_ELEM = "WithProjectElement";
-        private const string LAST_EDIT_DATE = "LastEditDate";
 
         private AlternativeComparisonReportResults _Results;
 

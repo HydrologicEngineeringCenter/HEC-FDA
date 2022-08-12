@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             get { return _Tooltip; }
             set { _Tooltip = value; NotifyPropertyChanged(); }
         }
-        public AlternativeRowItem(IASElementSet elem)
+        public AlternativeRowItem(IASElement elem)
         {
 
             ID = elem.ID;

@@ -1,28 +1,32 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
 using System.Windows;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Inventory;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Hydraulics;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageElement : ChildElement
     {
+        private const string SELECTED_STRUCTURES = "SelectedStructures";
+        private const string SELECTED_INDEX_POINTS = "SelectedIndexPoints";
+        private const string IS_MANUAL = "IsManual";
+        private const string STAGE_DAMAGE_CURVES = "StageDamageCurves";
+        private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
+
         #region Properties
-        public bool CanEdit { get; }
         public int SelectedWSE { get; }
         public int SelectedStructures { get; }
         public int SelectedIndexPoints { get; }
-        public List<StageDamageCurve> Curves { get; }
+        public List<StageDamageCurve> Curves { get; } = new List<StageDamageCurve>();
         public bool IsManual { get; }
-        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; }
+        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
 
         #endregion
         #region Constructors
@@ -49,15 +53,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
         {
-            //todo: read the other props?
+            SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
+            SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
+            IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
+
+            IEnumerable<XElement> stageDamageCurves = elementXML.Elements(STAGE_DAMAGE_CURVES);
+            foreach (XElement curve in stageDamageCurves)
+            {
+                Curves.Add(new StageDamageCurve(curve));
+            }
+
+            IEnumerable<XElement> impAreaRows = elementXML.Elements(IMPACT_AREA_ROWS);
+            foreach (XElement impAreaRow in impAreaRows)
+            {
+                ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impAreaRow));
+            }
         }
-
- 
-
         #endregion
         #region Voids
-
-
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
             //create action manager
@@ -163,19 +176,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             XElement stageDamageElem = new XElement(StringConstants.ELEMENT_XML_TAG);
             stageDamageElem.Add(CreateHeaderElement());
 
-            stageDamageElem.SetAttributeValue("CanEdit", CanEdit);
-            stageDamageElem.SetAttributeValue("SelectedStructures", SelectedStructures);
-            stageDamageElem.SetAttributeValue("SelectedIndexPoints", SelectedIndexPoints);
-            stageDamageElem.SetAttributeValue("IsManual", IsManual);
+            stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
+            stageDamageElem.SetAttributeValue(SELECTED_INDEX_POINTS, SelectedIndexPoints);
+            stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
 
-            XElement curveElements = new XElement("StageDamageCurves");
+            XElement curveElements = new XElement(STAGE_DAMAGE_CURVES);
             foreach (StageDamageCurve curve in Curves)
             {
                 curveElements.Add(curve.WriteToXML());
             }
             stageDamageElem.Add(curveElements);
 
-            XElement impactAreaRowsElem = new XElement("ImpactAreaRows");
+            XElement impactAreaRowsElem = new XElement(IMPACT_AREA_ROWS);
             foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
                 impactAreaRowsElem.Add(row.WriteToXML());
@@ -190,11 +202,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             bool isEqual = true;
 
             if (!AreHeaderDataEqual(elem))
-            {
-                isEqual = false;
-            }
-
-            if (CanEdit != elem.CanEdit)
             {
                 isEqual = false;
             }
