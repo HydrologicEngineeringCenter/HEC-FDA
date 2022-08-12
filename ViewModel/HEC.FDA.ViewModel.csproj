@@ -1,100 +1,75 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>..\Build\FDA2.0</OutputPath>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <RootNamespace>HEC.FDA.ViewModel</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>..\Build\FDA2.0</OutputPath>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Inventory\DepthDamage\**" />
-    <EmbeddedResource Remove="Inventory\DepthDamage\**" />
-    <EntityDeploy Remove="Inventory\DepthDamage\**" />
-    <None Remove="Inventory\DepthDamage\**" />
-    <Page Remove="Inventory\DepthDamage\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Inventory\DepthDamage\**" />
+		<EmbeddedResource Remove="Inventory\DepthDamage\**" />
+		<EntityDeploy Remove="Inventory\DepthDamage\**" />
+		<None Remove="Inventory\DepthDamage\**" />
+		<Page Remove="Inventory\DepthDamage\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="ImpactAreaScenario\Results\DamageByDamageCategoryVM.cs" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <Reference Include="DatabaseManager">
-      <HintPath>..\lib\DatabaseManager.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="HecCs">
-      <HintPath>..\lib\HecCs.dll</HintPath>
-    </Reference>
-    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot">
-      <HintPath>..\lib\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="PlottingLibrary2D">
-      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
-    </Reference>
-    <Reference Include="PlottingLibraryCore">
-      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Charting3D, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Core, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Data, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Drawing, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="StructureInventoryLibrary">
-      <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Importer\Importer.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.22.2150" />
-    <PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
-    <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
-    <PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-29-2231" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="ImpactAreaScenario\Results\DamageByDamageCategoryVM.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="DatabaseManager">
+			<HintPath>..\lib\DatabaseManager.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+		<Reference Include="HecCs">
+			<HintPath>..\lib\HecCs.dll</HintPath>
+		</Reference>
+		<Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\lib\LifeSimGIS.dll</HintPath>
+		</Reference>
+		<Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\lib\OpenGLMapping.dll</HintPath>
+		</Reference>
+		<Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\lib\OpenTK.dll</HintPath>
+		</Reference>
+		<Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
+		</Reference>
+		<Reference Include="OxyPlot">
+			<HintPath>..\lib\OxyPlot.dll</HintPath>
+		</Reference>
+		<Reference Include="OxyPlot.Wpf">
+			<HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
+		</Reference>
+		<Reference Include="StructureInventoryLibrary">
+			<HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Importer\Importer.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.22.2150" />
+		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
+		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
+		<PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
+		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
+		<PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
+		<PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-29-2231" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs

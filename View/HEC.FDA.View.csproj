@@ -22,60 +22,6 @@
     <Reference Include="DataTableViewControl">
       <HintPath>..\lib\DataTableViewControl.dll</HintPath>
     </Reference>
-    <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\HecCs.dll</HintPath>
-    </Reference>
-    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>..\lib\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl">
-      <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot">
-      <HintPath>..\lib\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="PlottingLibrary2D, Version=1.1.7328.27161, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
-    </Reference>
-    <Reference Include="PlottingLibraryCore, Version=1.1.7328.27159, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickHelp">
-      <HintPath>..\lib\QuickHelp.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Charting3D">
-      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Core, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Data, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="SciChart.Drawing, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
-    </Reference>
   </ItemGroup>
 	
 	
@@ -125,6 +71,10 @@
     </Content>
     <None Update="NLog.xsd">
       <SubType>Designer</SubType>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Update="TableWithPlot\Icons\FDA.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -258,8 +208,19 @@
   <ItemGroup>
     <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.29.1627" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
-    <PackageReference Include="NLog.Config" Version="4.6.6" />
+    <PackageReference Include="NLog.Config" Version="4.6.7" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
+    <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
+    <PackageReference Include="SciChart" Version="6.1.0.13075" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
  
   <PropertyGroup>
