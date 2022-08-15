@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
+using System.Linq;
 using System.Xml.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 
@@ -58,6 +59,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public OccTypeItemWithRatio(XElement assetElem):base(assetElem)
         {
+            IsByValue = Convert.ToBoolean(assetElem.Attribute("ByValue").Value);
+            XElement ratioUncert = assetElem.Element("RatioUncertainty");
+            ContinuousDistribution dist = (ContinuousDistribution)ContinuousDistribution.FromXML(ratioUncert.Descendants().First());
+            _ContentByRatioVM = new OtherValueUncertaintyVM(dist);
             //_IsChecked = Convert.ToBoolean(assetElem.Attribute("IsSelected").Value);
             //_Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
 
@@ -72,6 +77,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _ContentByRatioVM = new OtherValueUncertaintyVM(ratioUncertainty);
             _ContentByRatioVM.WasModified += SomethingChanged;
             IsByValue = isByValue;
+        }
+
+        public override XElement ToXML()
+        {
+            XElement elem = base.ToXML();
+            elem.SetAttributeValue("ByValue", _IsByValue);
+            XElement ratioElem = new XElement("RatioUncertainty");
+            ratioElem.Add(_ContentByRatioVM.CreateOrdinate().ToXML());
+            elem.Add(ratioElem);
+            return elem;
         }
 
         private void UpdateCurrentValueUncertaintyVM()

@@ -120,21 +120,21 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        /// <summary>
-        /// Updates the name of the group in the group table.
-        /// </summary>
-        /// <param name="groups"></param>
-        public void SaveModifiedGroups(List<IOccupancyTypeGroupEditable> groups)
-        {
-            //these get saved to the parent table.
-            foreach (IOccupancyTypeGroupEditable group in groups)
-            {
-                string[] columnsToUpdate = new string[] { PARENT_NAME_FIELD };
-                object[] newValues = new object[] { group.Name };
-                UpdateTableRow( group.ID, "ID", columnsToUpdate, newValues);
-            }
-            UpdateOccTypeGroupsInStudyCache(groups);
-        }
+        ///// <summary>
+        ///// Updates the name of the group in the group table.
+        ///// </summary>
+        ///// <param name="groups"></param>
+        //public void SaveModifiedGroups(List<IOccupancyTypeGroupEditable> groups)
+        //{
+        //    //these get saved to the parent table.
+        //    foreach (IOccupancyTypeGroupEditable group in groups)
+        //    {
+        //        string[] columnsToUpdate = new string[] { PARENT_NAME_FIELD };
+        //        object[] newValues = new object[] { group.Name };
+        //        UpdateTableRow( group.ID, "ID", columnsToUpdate, newValues);
+        //    }
+        //    UpdateOccTypeGroupsInStudyCache(groups);
+        //}
 
         private OccupancyTypesElement GetElementFromGroupID(int groupId)
         {
@@ -149,22 +149,22 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return null;
         }
 
-        private void AddNewOccTypeToCache(IOccupancyType ot)
-        {
-            //Because the study cache and the occtype owner element are hanging on to
-            //the same object. All i have to do is replace the occtype in the list of 
-            //occtypes and it will show up in all places. There is no need to remove
-            //a group and add a new one.
-            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
-            if (group == null)
-            {
-                return;
-            }
-            else
-            {
-                group.ListOfOccupancyTypes.Add(ot);
-            }
-        }
+        //private void AddNewOccTypeToCache(IOccupancyType ot)
+        //{
+        //    //Because the study cache and the occtype owner element are hanging on to
+        //    //the same object. All i have to do is replace the occtype in the list of 
+        //    //occtypes and it will show up in all places. There is no need to remove
+        //    //a group and add a new one.
+        //    OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+        //    if (group == null)
+        //    {
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        group.ListOfOccupancyTypes.Add(ot);
+        //    }
+        //}
         
         /// <summary>
         /// The only way to modify an occtype group is to change its name. This method finds the element
@@ -278,11 +278,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             SaveNewToOcctypesTable(element);
         }
 
-        public int GetGroupId(string groupName)
-        {
-            //return GetElementId(ParentTableName, groupName);
-            return -1;
-        }
+        //public int GetGroupId(string groupName)
+        //{
+        //    //return GetElementId(ParentTableName, groupName);
+        //    return -1;
+        //}
 
         private void SaveNewToOcctypesTable(ChildElement element)
         {

@@ -147,9 +147,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
 
             //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
-            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            int groupID = manager.GetGroupId(group.Name);
-            IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
+            //OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            //int groupID = manager.GetGroupId(group.Name);
+            IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(group.ID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
                 occTypeGroup.Occtypes.Add(CreateDefaultOcctype(group.ID));

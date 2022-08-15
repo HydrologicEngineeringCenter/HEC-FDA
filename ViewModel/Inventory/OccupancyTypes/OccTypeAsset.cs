@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
+using System.Linq;
 using System.Xml.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 
@@ -64,6 +65,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        //todo: get rid of this ctor and call toxml and use that one?
         public OccTypeAsset(OccTypeAsset item)
         {
             ItemType = item.ItemType;
@@ -80,29 +82,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
 
             XElement uncertElem = assetElem.Element("Uncertainty");
-            //write the type of the uncert: founcation, other, etc
-            //check that and then call that specific ctor with the xelement.
-            string uncertType = uncertElem.Attribute("UncertType").Value;
-            //switch (uncertType)
-            //{
-            //    case nameof(FoundationValueUncertaintyVM):
-            //        _ItemValueUncertainty = new FoundationValueUncertaintyVM(uncertType);
-            //        break;
-            //    case nameof(MonetaryValueUncertaintyVM):
-            //        _ItemValueUncertainty = new MonetaryValueUncertaintyVM(uncertType);
-            //        break;
-            //    case nameof(OtherValueUncertaintyVM):
-            //        _ItemValueUncertainty = new OtherValueUncertaintyVM(uncertType);
-            //        break;
-            //}
 
+            ContinuousDistribution dist = (ContinuousDistribution)ContinuousDistribution.FromXML(uncertElem.Descendants().First());
 
+            ValueUncertainty = new MonetaryValueUncertaintyVM(dist);
         }
 
-        public XElement ToXML()
+        public virtual XElement ToXML()
         {
             XElement assetElem = new XElement("Asset");
             assetElem.SetAttributeValue("IsSelected", _IsChecked);
+            assetElem.SetAttributeValue("Type", ItemType);
+
             assetElem.Add(_Curve.ToXML());
             
             assetElem.Add(CreateUncertaintyElement());
@@ -113,18 +104,21 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private XElement CreateUncertaintyElement()
         {
             XElement uncertElem = new XElement("Uncertainty");
-            uncertElem.SetAttributeValue("UncertType", _ItemValueUncertainty.GetType());            
+
+            uncertElem.Add(_ItemValueUncertainty.CreateOrdinate().ToXML());
+
+            //uncertElem.SetAttributeValue("UncertType", _ItemValueUncertainty.GetType());            
          
-            //for the uncertainty type, if deterministic, the currentVM will be null
-            if (_ItemValueUncertainty.CurrentVM == null)
-            {
-                XElement deterministicElem = new XElement("Deterministic");
-                uncertElem.Add(deterministicElem);
-            }
-            else
-            {
-                uncertElem.Add(_ItemValueUncertainty.CurrentVM.CreateOrdinate().ToXML());
-            }
+            ////for the uncertainty type, if deterministic, the currentVM will be null
+            //if (_ItemValueUncertainty.CurrentVM == null)
+            //{
+            //    XElement deterministicElem = new XElement("Deterministic");
+            //    uncertElem.Add(deterministicElem);
+            //}
+            //else
+            //{
+            //    uncertElem.Add(_ItemValueUncertainty.CurrentVM.CreateOrdinate().ToXML());
+            //}
             return uncertElem;
         }
 

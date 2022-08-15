@@ -96,6 +96,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         public abstract XElement ToXML();
+  
 
         public ContinuousDistribution CreateOrdinate()
         {
