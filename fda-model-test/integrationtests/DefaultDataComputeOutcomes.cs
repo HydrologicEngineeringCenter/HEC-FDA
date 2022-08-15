@@ -297,164 +297,158 @@ namespace fda_model_test.integrationtests
 
         }
 
-        [Theory]
-        //[InlineData(277420.38, 249842.3)]//Are these correct?
-        [InlineData(221624.14,195049.06)]
-        public void AnalyticalWithLeveeAndExtInt_ScenarioResults(double expectedMeanResidentialEAD, double expectedMeanCommercialEAD)
-        {
-            //Now need to set up the compute without risk here 
-            ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+        //[Theory]
+        ////[InlineData(277420.38, 249842.3)]//Are these correct?
+        //[InlineData(221624.14,195049.06)]
+        //public void AnalyticalWithLeveeAndExtInt_ScenarioResults(double expectedMeanResidentialEAD, double expectedMeanCommercialEAD)
+        //{
+        //    ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
+        //    MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
 
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFlowFrequency(lp3)
+        //        .withLevee(defaultSystemResponse, defaultLeveeElevation)
+        //        .withFlowStage(stageDischarge)
+        //        .withInteriorExterior(interiorExterior) 
+        //        .withStageDamages(stageDamageList)
+        //        .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
 
-            UncertainPairedData deterministicStageDischarge = UncertainPairedData.ConvertToDeterministic(stageDischarge);
-            List<UncertainPairedData> deterministicStageDamageList = new List<UncertainPairedData>() { UncertainPairedData.ConvertToDeterministic(residentialTotalDamage), UncertainPairedData.ConvertToDeterministic(commercialTotalDamage) };
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withLevee(defaultSystemResponse, defaultLeveeElevation)
-                .withFlowStage(stageDischarge)
-                //.withFlowStage(deterministicStageDischarge)
-                .withInteriorExterior(interiorExterior) 
-                .withStageDamages(stageDamageList)
-                //.withStageDamages(deterministicStageDamageList)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(meanRandomProvider, deterministicConvergenceCriteria);  //(randomProvider, convergenceCriteria);
+        //    double actualMeanResidentialEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1,residentialDamageCategory);
+        //    double actualMeanCommercialEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1,commercialDamageCategory);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(meanRandomProvider, deterministicConvergenceCriteria);  //(randomProvider, convergenceCriteria);
-            double actualMeanResidentialEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1,residentialDamageCategory);
-            double actualMeanCommercialEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1,commercialDamageCategory);
+        //    double tolerance = 0.1;
+        //    double residentialMeanEADRelativeDifference = Math.Abs(actualMeanResidentialEAD - expectedMeanResidentialEAD) / expectedMeanResidentialEAD;
+        //    double commercialMeanEADRelativeDifference = Math.Abs(actualMeanCommercialEAD - expectedMeanCommercialEAD) / expectedMeanCommercialEAD;
 
-            double tolerance = 0.1;
-            double residentialMeanEADRelativeDifference = Math.Abs(actualMeanResidentialEAD - expectedMeanResidentialEAD) / expectedMeanResidentialEAD;
-            double commercialMeanEADRelativeDifference = Math.Abs(actualMeanCommercialEAD - expectedMeanCommercialEAD) / expectedMeanCommercialEAD;
+        //    Assert.True(residentialMeanEADRelativeDifference < tolerance);
+        //    Assert.True(commercialMeanEADRelativeDifference < tolerance);
 
-            Assert.True(residentialMeanEADRelativeDifference < tolerance);
-            Assert.True(commercialMeanEADRelativeDifference < tolerance);
+        //}
 
-        }
+        //[Theory]
+        //[InlineData(.1986, 88.73)]
+        //public void AnalyticalWithLeveeAndFragility_ScenarioResults(double meanAEP, double meanEAD)
+        //{
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFlowFrequency(lp3)
+        //        .withLevee(systemResponse, defaultLeveeElevation)
+        //        .withFlowStage(stageDischarge)
+        //        .withStageDamages(stageDamageList)
+        //        .build();
 
-        [Theory]
-        [InlineData(.1986, 88.73)]
-        public void AnalyticalWithLeveeAndFragility_ScenarioResults(double meanAEP, double meanEAD)
-        {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withLevee(systemResponse, defaultLeveeElevation)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
 
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+        //    double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+        //    double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
+        //    double tolerance = 0.10;
+        //    double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
+        //    double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
 
-            double tolerance = 0.10;
-            double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
-            double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
+        //    Assert.True(AEPRelativeDifference < tolerance);
+        //    Assert.True(EADRelativeDifference < tolerance);
 
-            Assert.True(AEPRelativeDifference < tolerance);
-            Assert.True(EADRelativeDifference < tolerance);
+        //}
 
-        }
+        //[Theory]
+        //[InlineData(.1522, 65.42)]
+        //public void WithoutGraphicalFlow_ScenarioResults(double meanAEP, double meanEAD)
+        //{//TODO: These results are REALLY messed up mathematically 
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFlowFrequency(graphicalFlowFrequency)
+        //        .withFlowStage(stageDischarge)
+        //        .withStageDamages(stageDamageList)
+        //        .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
 
-        [Theory]
-        [InlineData(.1522, 65.42)]
-        public void WithoutGraphicalFlow_ScenarioResults(double meanAEP, double meanEAD)
-        {//TODO: These results are REALLY messed up mathematically 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(graphicalFlowFrequency)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+        //    double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+        //    double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
+        //    double tolerance = 0.10;
+        //    double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
+        //    double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
 
-            double tolerance = 0.10;
-            double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
-            double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
+        //    Assert.True(AEPRelativeDifference < tolerance);
+        //    Assert.True(EADRelativeDifference < tolerance);
 
-            Assert.True(AEPRelativeDifference < tolerance);
-            Assert.True(EADRelativeDifference < tolerance);
+        //}
 
-        }
+        //[Theory]
+        //[InlineData(.1554, 45.36)]
+        //public void WithoutGraphicalStage_ScenarioResults(double meanAEP, double meanEAD)
+        //{//TODO: These results are REALLY messed up mathematically 
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFrequencyStage(graphicalStageFrequency)
+        //        .withStageDamages(stageDamageList)
+        //        .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
 
-        [Theory]
-        [InlineData(.1554, 45.36)]
-        public void WithoutGraphicalStage_ScenarioResults(double meanAEP, double meanEAD)
-        {//TODO: These results are REALLY messed up mathematically 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFrequencyStage(graphicalStageFrequency)
-                .withStageDamages(stageDamageList)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+        //    double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
+        //    double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            double actualMeanAEP = scenarioResults.MeanAEP(impactAreaID1);
-            double actualMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1);
+        //    double tolerance = 0.10;
+        //    double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
+        //    double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
 
-            double tolerance = 0.10;
-            double AEPRelativeDifference = Math.Abs(actualMeanAEP - meanAEP) / meanAEP;
-            double EADRelativeDifference = Math.Abs(actualMeanEAD - meanEAD) / meanEAD;
+        //    Assert.True(AEPRelativeDifference < tolerance);
+        //    Assert.True(EADRelativeDifference < tolerance);
 
-            Assert.True(AEPRelativeDifference < tolerance);
-            Assert.True(EADRelativeDifference < tolerance);
+        //}
+        //[Fact]
+        //public void WithoutGraphicalStageAsFlows_ScenarioResults()
+        //{
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFlowFrequency(graphicalStageAsFlowsFrequency)
+        //        .withFlowStage(stageDischarge)
+        //        .withStageDamages(stageDamageList)
+        //        .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+        //    ImpactAreaScenarioResults impactAreaScenarioResults = scenarioResults.GetResults(impactAreaID1);
 
-        }
-        [Fact]
-        public void WithoutGraphicalStageAsFlows_ScenarioResults()
-        {
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(graphicalStageAsFlowsFrequency)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            ImpactAreaScenarioResults impactAreaScenarioResults = scenarioResults.GetResults(impactAreaID1);
-
-            bool resultsAreNull = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList.Count == 0;
+        //    bool resultsAreNull = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList.Count == 0;
             
-            Assert.True(resultsAreNull);
+        //    Assert.True(resultsAreNull);
 
-        }
-        //The expected values below are not for testing the validity of the compute 
-        //rather, the values are used as part of troubleshooting unhandled exceptions
-        //TODO this objective of this test is to pass in a sample size of zero and return blank results 
-        //The property rule is not working like we expect 
-        //until the property rule works, we need to keep a good sample size here 
-        [Fact]
-        public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException()
-        {
-            ContinuousDistribution lp3 = new LogPearson3(3.3, .254, -.1021, 0);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .withLevee(systemResponse, defaultLeveeElevation)
-                .build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            impactAreaScenarioSimulations.Add(simulation);
+        //}
+        ////The expected values below are not for testing the validity of the compute 
+        ////rather, the values are used as part of troubleshooting unhandled exceptions
+        ////TODO this objective of this test is to pass in a sample size of zero and return blank results 
+        ////The property rule is not working like we expect 
+        ////until the property rule works, we need to keep a good sample size here 
+        //[Fact]
+        //public void AssuranceOfAEPDoesNotHitIndexOutOfBoundsException()
+        //{
+        //    ContinuousDistribution lp3 = new LogPearson3(3.3, .254, -.1021, 0);
+        //    ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
+        //        .withFlowFrequency(lp3)
+        //        .withFlowStage(stageDischarge)
+        //        .withStageDamages(stageDamageList)
+        //        .withLevee(systemResponse, defaultLeveeElevation)
+        //        .build();
+        //    List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+        //    impactAreaScenarioSimulations.Add(simulation);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+        //    Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+        //    ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
 
-            bool resultsAreNull = scenarioResults.GetResults(impactAreaID1).ConsequenceResults.ConsequenceResultList.Count == 0;
-            Assert.True(resultsAreNull);
-        }
+        //    bool resultsAreNull = scenarioResults.GetResults(impactAreaID1).ConsequenceResults.ConsequenceResultList.Count == 0;
+        //    Assert.True(resultsAreNull);
+        //}
     }
 }
