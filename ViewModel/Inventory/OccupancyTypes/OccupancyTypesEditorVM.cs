@@ -331,7 +331,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 OccTypeGroups.Remove(SelectedOccTypeGroup);
 
                 OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-                manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
+               // manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
                 //set the selected occtype to be the one before, unless at 0
                 if (selectedIndex > 0)
                 {

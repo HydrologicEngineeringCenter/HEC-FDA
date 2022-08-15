@@ -224,25 +224,25 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// <returns></returns>
         public void SaveOcctype()
         {
-            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
-            IOccupancyType ot = CreateOccupancyType();
+            //OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            //IOccupancyType ot = CreateOccupancyType();
 
-            if (HasBeenSaved)
-            {
-                manager.SaveModifiedOcctype(ot);
-            }
-            else if (!HasBeenSaved)
-            {
-                //save this as a new occtype
-                //if it has never been saved then we need a new occtype id for it.
-                ot.ID = manager.GetIdForNewOccType(ot.GroupID);
-                manager.SaveNewOccType(ot);
-                HasBeenSaved = true;
-            }
+            //if (HasBeenSaved)
+            //{
+            //    manager.SaveModifiedOcctype(ot);
+            //}
+            //else if (!HasBeenSaved)
+            //{
+            //    //save this as a new occtype
+            //    //if it has never been saved then we need a new occtype id for it.
+            //    ot.ID = manager.GetIdForNewOccType(ot.GroupID);
+            //    manager.SaveNewOccType(ot);
+            //    HasBeenSaved = true;
+            //}
 
-            IsModified = false;
-            //this will disable the save button.
-            HasChanges = false;
+            //IsModified = false;
+            ////this will disable the save button.
+            //HasChanges = false;
         }       
     }
 }

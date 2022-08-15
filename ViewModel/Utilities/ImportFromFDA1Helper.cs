@@ -558,7 +558,8 @@ namespace HEC.FDA.ViewModel.Utilities
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
             int groupID = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            int occtypeID = PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
+            //todo: fix this
+            int occtypeID = -1; // PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
