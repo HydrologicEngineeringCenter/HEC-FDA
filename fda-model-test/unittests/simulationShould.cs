@@ -142,7 +142,10 @@ namespace fda_model_test.unittests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             double actual = results.MeanExpectedAnnualConsequences(id,damCat,assetCat);
-            Assert.Equal(expected, actual, 2);
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
         }
 
         [Theory]
