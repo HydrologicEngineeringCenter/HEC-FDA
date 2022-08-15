@@ -210,6 +210,7 @@ namespace paireddata
             foreach (ContinuousDistribution distribution in uncertainPairedData.Yvals)
             {
                 deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
+                i++;
             }
             UncertainPairedData deterministicUncertainPairedData = new UncertainPairedData(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
             return deterministicUncertainPairedData;

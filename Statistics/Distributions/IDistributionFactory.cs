@@ -22,8 +22,7 @@ namespace Statistics
         {
             switch (type) 
             {
-                case IDistributionEnum.Histogram:
-                    throw new NotImplementedException("Parametrization is not implemented for histograms");
+
                 case IDistributionEnum.LogPearsonIII:
                     return Distributions.LogPearson3.RequiredParameterization(true);
                 case IDistributionEnum.Normal:
@@ -32,7 +31,6 @@ namespace Statistics
                     return Distributions.Triangular.RequiredParameterization(true);
                 case IDistributionEnum.Uniform:
                     return Distributions.Uniform.RequiredParameterization(true);
-                case IDistributionEnum.TruncatedHistogram:
                 case IDistributionEnum.TruncatedNormal:
                     //return Distributions.TruncatedDistribution.RequiredParameterization(true);
                 case IDistributionEnum.NotSupported:

@@ -146,13 +146,13 @@ namespace fda_model_test.integrationtests
         private static IDistribution[] _StageDischargeYValues = StageDischargeYValues();
         private static IDistribution[] StageDischargeYValues()
         {
-            double[] meanStages = new double[] { 929.21, 931.4, 932.6, 933.6, 934.5, 935.2, 935.8, 936.5, 937.1, 937.6, 938.6, 939.7, 940.7, 941.6, 942.1, 943.2, 944.6 };
+            double[] mostLIkely = new double[] { 929.21, 931.4, 932.6, 933.6, 934.5, 935.2, 935.8, 936.5, 937.1, 937.6, 938.6, 939.7, 940.7, 941.6, 942.1, 943.2, 944.6 };
             double[] minStages = new double[] { 928.9, 930.7, 932, 933, 933.8, 934.5, 935, 935.4, 935.9, 936.3, 937.1, 937.9, 938.6, 939.3, 941.2, 942.3, 944.5 };
             double[] maxStages = new double[] { 929.5, 931.9, 933.3, 934.4, 935.3, 936.1, 936.8, 937.6, 938.2, 939, 940.2, 941.4, 942.8, 943.8, 944.25, 946.6, 948.5 };
-            IDistribution[] stageDischarge = new IDistribution[meanStages.Length];  
-            for (int i = 0; i < meanStages.Length; i++)
+            IDistribution[] stageDischarge = new IDistribution[mostLIkely.Length];  
+            for (int i = 0; i < mostLIkely.Length; i++)
             {
-                stageDischarge[i] = new Triangular(minStages[i], meanStages[i], maxStages[i]);
+                stageDischarge[i] = new Triangular(minStages[i], mostLIkely[i], maxStages[i]);
             }
             return stageDischarge;
         }
@@ -302,15 +302,21 @@ namespace fda_model_test.integrationtests
         [InlineData(221624.14,195049.06)]
         public void AnalyticalWithLeveeAndExtInt_ScenarioResults(double expectedMeanResidentialEAD, double expectedMeanCommercialEAD)
         {
+            //Now need to set up the compute without risk here 
             ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
 
+
+            UncertainPairedData deterministicStageDischarge = UncertainPairedData.ConvertToDeterministic(stageDischarge);
+            List<UncertainPairedData> deterministicStageDamageList = new List<UncertainPairedData>() { UncertainPairedData.ConvertToDeterministic(residentialTotalDamage), UncertainPairedData.ConvertToDeterministic(commercialTotalDamage) };
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
                 .withFlowFrequency(lp3)
                 .withLevee(defaultSystemResponse, defaultLeveeElevation)
                 .withFlowStage(stageDischarge)
+                //.withFlowStage(deterministicStageDischarge)
                 .withInteriorExterior(interiorExterior) 
                 .withStageDamages(stageDamageList)
+                //.withStageDamages(deterministicStageDamageList)
                 .build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
