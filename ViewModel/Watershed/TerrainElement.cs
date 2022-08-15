@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
@@ -12,6 +13,9 @@ namespace HEC.FDA.ViewModel.Watershed
         #region Notes
         #endregion
         #region Fields
+        public const string TERRAIN_XML_TAG = "Terrain";
+        private const string SELECTED_PATH_XML_TAG = "SelectedPath";
+
         private string _FileName;
         #endregion
         #region Properties
@@ -23,40 +27,32 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(id)
+        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name,"","", id)
         {
-            //vrt and auxilary files?  hdf5?
-            Name = name;
             _FileName = fileName;
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE, " -Saving", true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.GetImage(typeof(TerrainElement)), " -Saving", true);
             }
             else
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
-
-                NamedAction remove = new NamedAction();
-                remove.Header = StringConstants.REMOVE_MENU;
-                remove.Action = RemoveElement;
-
-                NamedAction renameElement = new NamedAction(this);
-                renameElement.Header = StringConstants.RENAME_MENU;
-                renameElement.Action = Rename;
-
-                List<NamedAction> localactions = new List<NamedAction>();
-                localactions.Add(remove);
-                localactions.Add(renameElement);
-
-                Actions = localactions;
+                AddDefaultActions();
             }
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
+        public TerrainElement(XElement terrainElement, int id):base(terrainElement, id)
         {
-            TerrainElement elem = (TerrainElement)elementToClone;
-            return new TerrainElement(elementToClone.Name, elem.FileName, elem.ID);
+            FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;           
+            AddDefaultActions();
+        }
+
+        public override XElement ToXML()
+        {
+            XElement terrainElement = new XElement(TERRAIN_XML_TAG);
+            terrainElement.Add(CreateHeaderElement());
+            terrainElement.SetAttributeValue(SELECTED_PATH_XML_TAG, FileName);
+            return terrainElement;
         }
 
         public override void Rename(object sender, EventArgs e)
@@ -84,6 +80,22 @@ namespace HEC.FDA.ViewModel.Watershed
                     }
                 }
             }
+        }
+
+       public bool Equals(TerrainElement elem)
+        {
+            bool isEqual = true;
+
+            if(!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+            if(FileName != elem.FileName)
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
         }
 
         #endregion

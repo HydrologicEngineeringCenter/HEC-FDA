@@ -1,4 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -57,7 +59,7 @@ namespace HEC.FDA.ViewModel.Watershed
                 }
                 else
                 {
-                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, and .flt are supported.");
+                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .vrt, .tif, .hdf, and .flt are supported.");
                 }
             }
             else
@@ -132,7 +134,7 @@ namespace HEC.FDA.ViewModel.Watershed
             FdaValidationResult isValidResult = IsValid();
             if (isValidResult.IsValid)
             {
-                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
+                TerrainElementPersistenceManager manager = PersistenceFactory.GetTerrainManager();
 
                 int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
@@ -140,7 +142,7 @@ namespace HEC.FDA.ViewModel.Watershed
                 TerrainElement t = new TerrainElement(Name, fileName, id, true);
                 StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, fileName, id);
-
+                newElement.LastEditDate = DateTime.Now.ToString("G");
                 manager.SaveNew(TerrainPath, newElement);
                 IsCreatingNewElement = false;
                 HasChanges = false;

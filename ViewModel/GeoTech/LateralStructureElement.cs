@@ -5,19 +5,22 @@ using paireddata;
 using Statistics;
 using Statistics.Distributions;
 using System;
-using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement : CurveChildElement
+    public class LateralStructureElement : CurveChildElement
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 6/8/2017 1:11:19 PM
         #endregion
         #region Fields
+        private const string IS_DEFAULT = "IsUsingDefaultCurve";
+        private const string ELEVATION = "Elevation";
         private double _Elevation;
+
         #endregion
         #region Properties
        public bool IsDefaultCurveUsed
@@ -33,22 +36,13 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) : base(id)
+        public LateralStructureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
+            : base(name, lastEditDate, description,failureFunction,  id)
         {
-            Name = userProvidedName;
-            LastEditDate = creationDate;
-
             IsDefaultCurveUsed = isDefault;
+            Elevation = elevation;
 
-            if (isDefault)
-            {
-                CustomTreeViewHeader = new CustomHeaderVM(Name)
-                {
-                    ImageSource = ImageSources.LEVEE_FEATURE_IMAGE,
-                    Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-                };    
-            }
-            else
+            if (!isDefault)
             {
                 CustomTreeViewHeader = new CustomHeaderVM(Name)
                 {
@@ -57,30 +51,16 @@ namespace HEC.FDA.ViewModel.GeoTech
                 };
             }
 
-            ComputeComponentVM = failureFunction;
-            Description = description;
-            if (Description == null) Description = "";
-            Elevation = elevation;
-
-            NamedAction editLeveeFeature = new NamedAction();
-            editLeveeFeature.Header = StringConstants.EDIT_LATERAL_STRUCTURES_MENU;
-            editLeveeFeature.Action = EditLeveeFeature;
-
-            NamedAction removeLeveeFeature = new NamedAction();
-            removeLeveeFeature.Header = StringConstants.REMOVE_MENU;
-            removeLeveeFeature.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editLeveeFeature);
-            localActions.Add(removeLeveeFeature);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
+            AddDefaultActions(EditLeveeFeature);
         }
+
+        public LateralStructureElement(XElement element, int id):base(element,  id)
+        {
+            IsDefaultCurveUsed = Convert.ToBoolean( element.Attribute(IS_DEFAULT).Value);
+            Elevation = Convert.ToDouble( element.Attribute(ELEVATION).Value);
+            AddDefaultActions(EditLeveeFeature);
+        }
+
         #endregion
         #region Voids
         public void EditLeveeFeature(object arg1, EventArgs arg2)
@@ -94,8 +74,6 @@ namespace HEC.FDA.ViewModel.GeoTech
             Navigate(tab, false,false);
         }        
         #endregion
-        #region Functions
-
         public UncertainPairedData CreateDefaultCurve()
         {
             double elev = Elevation;
@@ -105,15 +83,34 @@ namespace HEC.FDA.ViewModel.GeoTech
             return new UncertainPairedData(xs, ys, curveMetaData);
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
+        public override XElement ToXML()
         {
-            ChildElement clonedElem = null;
-            if (elementToClone is LeveeFeatureElement elem)
-            {
-                clonedElem = new LeveeFeatureElement(elem.Name,elem.LastEditDate, elem.Description, elem.Elevation, elem.IsDefaultCurveUsed, elem.ComputeComponentVM, elem.ID);
-            }
-            return clonedElem;
+            XElement childElem = base.ToXML();
+            childElem.SetAttributeValue(IS_DEFAULT, IsDefaultCurveUsed);
+            childElem.SetAttributeValue(ELEVATION, Elevation);
+            return childElem;
         }
-        #endregion
+
+        public bool Equals(LateralStructureElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (IsDefaultCurveUsed != elem.IsDefaultCurveUsed)
+            {
+                isEqual = false;
+            }
+            if (Elevation != elem.Elevation)
+            {
+                isEqual = false;
+            }
+            
+            return isEqual;
+        }
+
     }
 }

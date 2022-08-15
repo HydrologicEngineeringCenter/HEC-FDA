@@ -1,5 +1,4 @@
 ﻿using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using paireddata;
@@ -17,6 +16,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Notes
         #endregion
 
+        private const string IS_ANALYTICAL = "IsAnalytical";
+        private const string ANALYTICAL_DATA = "AnalyticalData";
+        private const string USES_MOMENTS = "UsesMoments";
+        private const string POR_XML_TAG = "POR";
+        private const string MOMENTS = "Moments";
+        private const string MEAN = "Mean";
+        private const string ST_DEV = "StDev";
+        private const string SKEW = "Skew";
+        private const string FIT_TO_FLOWS = "FitToFlows";
+        private const string FLOWS = "Flows";
+
         #region Properties  
         public int POR { get; set; }
         public bool IsAnalytical { get; set; }
@@ -32,7 +42,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         //fresh editor
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) : base(id)
+            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) 
+            : base(name, lastEditDate, desc, function, id)
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -41,87 +52,50 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             StDev = stDev;
             Skew = skew;
             AnalyticalFlows = analyticalFlows;
-            LastEditDate = lastEditDate;
-            Name = name;
-            Description = desc;
-            if (Description == null) Description = "";
-            ComputeComponentVM = function;
-            MyGraphicalVM = graphicalVM;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
-            };
 
-            AddActions();
+            MyGraphicalVM = graphicalVM;
+
+            PairedData = CreatePairedData();
+            AddDefaultActions(EditFlowFreq);
         }
         //load from database
-        public AnalyticalFrequencyElement(string name, string description, string xmlString, int id) : base(id)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement flowFreqElem = doc.Element(FlowFrequencyPersistenceManager.FLOW_FREQUENCY);
-            Name = name;
-            Description = description;
-            LastEditDate = (string)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.LAST_EDIT_DATE);
-            IsAnalytical = (bool)flowFreqElem.Attribute(FlowFrequencyPersistenceManager.IS_ANALYTICAL);
+        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
+        {            
+            ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));          
 
-            XElement analyticalElem = flowFreqElem.Element(FlowFrequencyPersistenceManager.ANALYTICAL_DATA);
-            IsStandard = (bool)analyticalElem.Attribute(FlowFrequencyPersistenceManager.USES_MOMENTS);
-            POR = (int)analyticalElem.Attribute(FlowFrequencyPersistenceManager.POR);
+            IsAnalytical = (bool)flowFreqElem.Attribute(IS_ANALYTICAL);
 
-            XElement momentsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.MOMENTS);
-            Mean = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.MEAN);
-            StDev = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.ST_DEV);
-            Skew = (double)momentsElem.Attribute(FlowFrequencyPersistenceManager.SKEW);
+            XElement analyticalElem = flowFreqElem.Element(ANALYTICAL_DATA);
+            IsStandard = (bool)analyticalElem.Attribute(USES_MOMENTS);
+            POR = (int)analyticalElem.Attribute(POR_XML_TAG);
 
-            XElement fitToFlowsElem = analyticalElem.Element(FlowFrequencyPersistenceManager.FIT_TO_FLOWS);
-            string flows = (string)fitToFlowsElem.Attribute(FlowFrequencyPersistenceManager.FLOWS);
+            XElement momentsElem = analyticalElem.Element(MOMENTS);
+            Mean = (double)momentsElem.Attribute(MEAN);
+            StDev = (double)momentsElem.Attribute(ST_DEV);
+            Skew = (double)momentsElem.Attribute(SKEW);
+
+            XElement fitToFlowsElem = analyticalElem.Element(FIT_TO_FLOWS);
+            string flows = (string)fitToFlowsElem.Attribute(FLOWS);
             if (!String.IsNullOrEmpty(flows))
             {
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
 
-
-            ComputeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            ComputeComponentVM = new ComputeComponentVM(flowFreqElem.Element("ComputeComponentVM"));
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
             if(graphiclVMele != null)
             {
                 MyGraphicalVM = new GraphicalVM(graphiclVMele);
             }
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.FREQUENCY_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
 
             PairedData = CreatePairedData();
 
-            AddActions();
+            AddDefaultActions(EditFlowFreq);
         }
 
         #endregion
         #region Voids
-        private void AddActions()
-        {
-            NamedAction editflowfreq = new NamedAction();
-            editflowfreq.Header = StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU;
-            editflowfreq.Action = EditFlowFreq;
 
-            NamedAction removeflowfreq = new NamedAction();
-            removeflowfreq.Header = StringConstants.REMOVE_MENU;
-            removeflowfreq.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction();
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editflowfreq);
-            localActions.Add(removeflowfreq);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
-        }
 
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
@@ -133,13 +107,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
         }
-
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
-            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.AnalyticalFlows, elem.MyGraphicalVM, elem.ComputeComponentVM, elem.ID);
-        }     
+   
         #endregion
 
         List<double> ConvertStringToFlows(string flows)
@@ -161,13 +129,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     badStrings.Add(flow);
                 }
             }
-            if(badStrings.Count > 0)
+            if (badStrings.Count > 0)
             {
+                //todo: send this to log file? Can't have a message box when unit testing.
 
-                string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
-                    "The following flow texts were not able to be converted to numeric values: ";
-                string errorVals = string.Join(Environment.NewLine + "\t",badStrings);              
-                MessageBox.Show(msg + Environment.NewLine + "\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
+                //    "The following flow texts were not able to be converted to numeric values: ";
+                //string errorVals = string.Join("\n\t", badStrings);
+                //MessageBox.Show(msg + "\n\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return flowDoubles;           
         }
@@ -222,6 +191,103 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 frequencyData = CreateGraphicalPairedData();
             }
             return frequencyData;
+        }
+
+        public override XElement ToXML()
+        {
+            XElement flowFreqElem = base.ToXML();
+
+            flowFreqElem.SetAttributeValue(IS_ANALYTICAL, IsAnalytical);
+
+            XElement analyticalElem = new XElement(ANALYTICAL_DATA);
+            flowFreqElem.Add(analyticalElem);
+            analyticalElem.SetAttributeValue(USES_MOMENTS, IsStandard);
+            analyticalElem.SetAttributeValue(POR_XML_TAG, POR);
+
+            XElement momentsElem = new XElement(MOMENTS);
+            analyticalElem.Add(momentsElem);
+            momentsElem.SetAttributeValue(MEAN, Mean);
+            momentsElem.SetAttributeValue(ST_DEV, StDev);
+            momentsElem.SetAttributeValue(SKEW, Skew);
+
+            XElement fitToFlowsElem = new XElement(FIT_TO_FLOWS);
+            analyticalElem.Add(fitToFlowsElem);
+            fitToFlowsElem.SetAttributeValue(FLOWS, ConvertFlowsToString(AnalyticalFlows));
+
+            XElement graphicalElem = MyGraphicalVM.ToXML();
+            flowFreqElem.Add(graphicalElem);
+
+            return flowFreqElem;
+        }
+
+        private string ConvertFlowsToString(List<double> flows)
+        {
+            if (flows.Count == 0)
+            {
+                return "";
+            }
+            else
+            {
+                return string.Join(",",flows);
+            }           
+        }
+
+        public bool Equals(AnalyticalFrequencyElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+            if (POR != elem.POR)
+            {
+                isEqual = false;
+            }
+            if (IsAnalytical != elem.IsAnalytical)
+            {
+                isEqual = false;
+            }
+            if (IsStandard != elem.IsStandard)
+            {
+                isEqual = false;
+            }
+            if (Mean != elem.Mean)
+            {
+                isEqual = false;
+            }
+            if (StDev != elem.StDev)
+            {
+                isEqual = false;
+            }
+            if (Skew != elem.Skew)
+            {
+                isEqual = false;
+            }
+            if (AnalyticalFlows.Count != elem.AnalyticalFlows.Count)
+            {
+                isEqual = false;
+            }
+            for(int i = 0; i < elem.AnalyticalFlows.Count; i++)
+            {
+                if(AnalyticalFlows[i] != elem.AnalyticalFlows[i])
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            if(!PairedData.Equals(elem.PairedData))
+            {
+                isEqual=false;
+            }
+
+            if(!MyGraphicalVM.Equals(elem.MyGraphicalVM))
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
         }
 
     }

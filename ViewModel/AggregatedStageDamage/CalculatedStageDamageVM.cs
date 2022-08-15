@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 List<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
                 List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-                List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+                List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
                 {
@@ -212,116 +212,35 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private FdaValidationResult ValidateForCompute()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if(SelectedWaterSurfaceElevation == null || SelectedStructures == null)
-            {
-                vr.AddErrorMessage("A hydraulics data set and a structure inventory selection is required to compute.");
-            }
-            else
-            {
-                vr.AddErrorMessage(ValidateImpactAreaFrequencyFunctionTable().ErrorMessage);
-            }
-            return vr;
-        }
-
-        private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if(ImpactAreaFrequencyRows.Count == 0)
-            {
-                vr.AddErrorMessage("Impact area table has no rows.");
-            }
-
-            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
-            {
-                vr.AddErrorMessage(row.ValidateRow().ErrorMessage);
-            }
-            return vr;
-        }
-
-
-        private FdaValidationResult DirectoryHasOneFileMatchingPattern(string directoryPath, string pattern)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (Directory.Exists(directoryPath))
-            {
-                string[] files = Directory.GetFiles(directoryPath, pattern);
-                if (files.Length == 0)
-                {
-                    vr.AddErrorMessage("The directory does not contain a file that matches the pattern: " + pattern);
-                }
-                else if(files.Length > 1)
-                {
-                    //more than one shapefile discovered
-                    vr.AddErrorMessage("The directory contains multiple files that matche the pattern: " + pattern);
-                }
-            }
-            else
-            {
-                vr.AddErrorMessage("The directory does not exist: " + directoryPath);
-            }
-            return vr;
-        }
-
-        /// <summary>
-        /// Always validate that this file exists before calling. Use the method above, DirectoryHasOneFileMatchingPattern(). 
-        /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        private string GetFilePath(string directoryPath, string pattern)
-        {
-            return Directory.GetFiles(directoryPath, pattern)[0];
-        }
-
-        private FdaValidationResult DoAllRequiredFilesExist()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            ImpactAreaElement impactAreaElement = impactAreaElements[0];
-            string impactAreaDirectoryPath = Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaElement.Name;
-            FdaValidationResult impactAreaHasOneShapefile = DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp");
-            if (!impactAreaHasOneShapefile.IsValid)
-            {
-                vr.AddErrorMessage(impactAreaHasOneShapefile.ErrorMessage);
-            }
-
-            return vr;
-        }
+        
+       
 
         public void ComputeCurves()
         {
-           //todo: this is creating dummy curves for now.
+            //todo: this is creating dummy curves for now.
+            //todo: make this a seperate class. StageDamageConfiguration
 
-            FdaValidationResult vr = ValidateForCompute();
+
+
+            //structures: need shapefile and mapping of occtype, the set of occtypes
+            //imp area frequency rows should get dumbed down to just impact area name to UPD curves
+            //we know that we have an impact area. We only allow one, so it will be the first one.
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            ImpactAreaElement impactAreaElement = impactAreaElements[0];
+
+            StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
+                SelectedIndexPoints, ImpactAreaFrequencyRows);
+
+            FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
             {
                 Rows.Clear();
-                //we know that we have an impact area. We only allow one, so it will be the first one.
-                List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-                ImpactAreaElement impactAreaElement = impactAreaElements[0];
-                string impactAreaDirectoryPath = Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaElement.Name;
-                FdaValidationResult impactAreaHasOneShapefile = DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp");
-                //todo: all these validations should go in the Validate for compute method. So if you require a bunch of files to exist,
-                //call those in that validation method. Then in here we can assume they exist.
 
-                if(impactAreaHasOneShapefile.IsValid)
-                {
-                    string impactAreaShapefilePath = GetFilePath(impactAreaDirectoryPath, "*.shp");
-                }
+                //todo: Make a call to the model and pass in the config object.
+                //modelComputeObject obj =  config.CreateModelComputeObject();
+                //someResultsObject = obj.compute();
+                //then i will translate the results into my VM row items to be displayed in the UI
 
-                InventoryElement inventoryElement = SelectedStructures;
-
-
-                HydraulicElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
-                string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + waterSurfaceElevationElement.Name;
-                FdaValidationResult hydroHasOneShapefile = DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp");
-                if (hydroHasOneShapefile.IsValid)
-                {
-                    string hydroShapefilePath = GetFilePath(hydroDirectoryPath, "*.shp");
-                }
 
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
@@ -425,5 +344,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 TableWithPlot.WasModified += TableDataChanged;
             }
         }
+
+        
+
     }
 }

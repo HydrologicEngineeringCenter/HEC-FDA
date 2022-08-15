@@ -82,7 +82,7 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler AlternativeCompReportUpdated;
 
         #region Properties
-        public List<RatingCurveElement> RatingCurveElements { get; } = new List<RatingCurveElement>();
+        public List<StageDischargeElement> RatingCurveElements { get; } = new List<StageDischargeElement>();
         public List<OccupancyTypesElement> OccTypeElements { get; } = new List<OccupancyTypesElement>();
         public List<TerrainElement> TerrainElements { get; } = new List<TerrainElement>();
         public List<ImpactAreaElement> ImpactAreaElements { get; } = new List<ImpactAreaElement>();
@@ -91,10 +91,10 @@ namespace HEC.FDA.ViewModel.Study
         public List<AnalyticalFrequencyElement> FlowFrequencyElements { get; } = new List<AnalyticalFrequencyElement>();
         public List<InflowOutflowElement> InflowOutflowElements { get; } = new List<InflowOutflowElement>();
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; } = new List<ExteriorInteriorElement>();
-        public List<LeveeFeatureElement> LeveeElements { get; } = new List<LeveeFeatureElement>();
+        public List<LateralStructureElement> LeveeElements { get; } = new List<LateralStructureElement>();
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
-        public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
+        public List<IASElement> IASElementSets { get; } = new List<IASElement>();
         public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
         public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
         public StudyPropertiesElement StudyPropertiesElement { get; set; }
@@ -164,7 +164,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(InflowOutflowElements, elem);
                 InflowOutflowRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(RatingCurveElement))
+            else if (elem.GetType() == typeof(StageDischargeElement))
             {
                 RemoveElementFromList(RatingCurveElements, elem);
                 RatingRemoved?.Invoke(this, elementAddedEventArgs);
@@ -174,7 +174,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(ExteriorInteriorElements, elem);
                 ExteriorInteriorRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(LeveeFeatureElement))
+            else if (elem.GetType() == typeof(LateralStructureElement))
             {
                 RemoveElementFromList(LeveeElements, elem);
                 LeveeRemoved?.Invoke(this, elementAddedEventArgs);
@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(StageDamageElements, elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if (elem.GetType() == typeof(IASElementSet))
+            else if (elem.GetType() == typeof(IASElement))
             {
                 RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
@@ -263,9 +263,9 @@ namespace HEC.FDA.ViewModel.Study
                 InflowOutflowElements.Add((InflowOutflowElement)elem);
                 InflowOutflowAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is RatingCurveElement )
+            else if (elem is StageDischargeElement )
             {
-                RatingCurveElements.Add((RatingCurveElement)elem);
+                RatingCurveElements.Add((StageDischargeElement)elem);
                 RatingAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is ExteriorInteriorElement )
@@ -273,9 +273,9 @@ namespace HEC.FDA.ViewModel.Study
                 ExteriorInteriorElements.Add((ExteriorInteriorElement)elem);
                 ExteriorInteriorAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is LeveeFeatureElement )
+            else if (elem is LateralStructureElement )
             {
-                LeveeElements.Add((LeveeFeatureElement)elem);
+                LeveeElements.Add((LateralStructureElement)elem);
                 LeveeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is OccupancyTypesElement )
@@ -293,9 +293,9 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
                 StageDamageAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
-            else if (elem is IASElementSet )
+            else if (elem is IASElement )
             {
-                IASElementSets.Add((IASElementSet)elem);
+                IASElementSets.Add((IASElement)elem);
                 IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(AlternativeElement))
@@ -324,9 +324,9 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateTerrain( (TerrainElement)newElement);
             }
-            else if(newElement is RatingCurveElement)
+            else if(newElement is StageDischargeElement)
             {
-                UpdateRatingCurve( (RatingCurveElement)newElement);
+                UpdateRatingCurve( (StageDischargeElement)newElement);
             }
             else if (newElement is ImpactAreaElement )
             {
@@ -352,17 +352,17 @@ namespace HEC.FDA.ViewModel.Study
             {
                 UpdateExteriorInteriorElement( (ExteriorInteriorElement)newElement);
             }
-            else if (newElement is LeveeFeatureElement)
+            else if (newElement is LateralStructureElement)
             {
-                UpdateLeveeElement( (LeveeFeatureElement)newElement);
+                UpdateLeveeElement( (LateralStructureElement)newElement);
             }
             else if (newElement is AggregatedStageDamageElement )
             {
                 UpdateStageDamageElement( (AggregatedStageDamageElement)newElement);
             }
-            else if (newElement is IASElementSet )
+            else if (newElement is IASElement )
             {
-                UpdateIASElement( (IASElementSet)newElement);
+                UpdateIASElement( (IASElement)newElement);
             }
             else if (newElement.GetType().Equals(typeof(AlternativeElement)))
             {
@@ -395,7 +395,7 @@ namespace HEC.FDA.ViewModel.Study
                 TerrainUpdated?.Invoke(this, new ElementUpdatedEventArgs(newElement));
             }
         }
-        public void UpdateRatingCurve(RatingCurveElement newElement)
+        public void UpdateRatingCurve(StageDischargeElement newElement)
         {
             int index = RatingCurveElements.FindIndex(elem => elem.ID == newElement.ID);
             if(index != -1)
@@ -460,7 +460,7 @@ namespace HEC.FDA.ViewModel.Study
                 ExteriorInteriorUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateLeveeElement( LeveeFeatureElement newElement)
+        public void UpdateLeveeElement( LateralStructureElement newElement)
         {
             int index = LeveeElements.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -479,7 +479,7 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
-        public void UpdateIASElement( IASElementSet newElement)
+        public void UpdateIASElement( IASElement newElement)
         {
             int index = IASElementSets.FindIndex(elem => elem.ID == newElement.ID);
             if (index != -1)
@@ -681,7 +681,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(InflowOutflowElements);
             }
-            else if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            else if (childElementType.IsAssignableFrom(typeof(StageDischargeElement)))
             {
                 retVal.AddRange(RatingCurveElements);
             }
@@ -689,7 +689,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(ExteriorInteriorElements);
             }
-            else if (childElementType == typeof(LeveeFeatureElement))
+            else if (childElementType == typeof(LateralStructureElement))
             {
                 retVal.AddRange(LeveeElements);
             }
@@ -705,7 +705,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(StageDamageElements);
             }
-            else if (childElementType == typeof(IASElementSet))
+            else if (childElementType == typeof(IASElement))
             {
                 retVal.AddRange(IASElementSets);
             }
@@ -765,7 +765,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = InflowOutflowElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            else if (childElementType.IsAssignableFrom(typeof(StageDischargeElement)))
             {
                 childElem = RatingCurveElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
@@ -773,7 +773,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = ExteriorInteriorElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType == typeof(LeveeFeatureElement))
+            else if (childElementType == typeof(LateralStructureElement))
             {
                 childElem = LeveeElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
@@ -781,7 +781,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 childElem = StageDamageElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
-            else if (childElementType == typeof(IASElementSet))
+            else if (childElementType == typeof(IASElement))
             {
                 childElem = IASElementSets.Where(elem => elem.ID == ID).FirstOrDefault();
             }

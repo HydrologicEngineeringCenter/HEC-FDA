@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.StageTransforms
 {
@@ -18,8 +19,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         }
         public override void SaveElements()
         {          
-            Saving.PersistenceManagers.RatingElementPersistenceManager manager = Saving.PersistenceFactory.GetRatingManager();
-            foreach(RatingCurveElement elem in ElementsToImport)
+            IElementManager manager = Saving.PersistenceFactory.GetElementManager<StageDischargeElement>();
+            foreach(StageDischargeElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -32,7 +33,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(RatingCurveElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(StageDischargeElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {

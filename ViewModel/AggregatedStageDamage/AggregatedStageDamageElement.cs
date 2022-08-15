@@ -1,88 +1,78 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
 using System.Windows;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Inventory;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.FDA.ViewModel.Hydraulics;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageElement : ChildElement
     {
+        private const string SELECTED_STRUCTURES = "SelectedStructures";
+        private const string SELECTED_INDEX_POINTS = "SelectedIndexPoints";
+        private const string IS_MANUAL = "IsManual";
+        private const string STAGE_DAMAGE_CURVES = "StageDamageCurves";
+        private const string STAGE_DAMAGE_CURVE = "StageDamageCurve";
+        private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
+
         #region Properties
-        public bool CanEdit { get; }
         public int SelectedWSE { get; }
         public int SelectedStructures { get; }
         public int SelectedIndexPoints { get; }
-        public List<StageDamageCurve> Curves { get; }
+        public List<StageDamageCurve> Curves { get; } = new List<StageDamageCurve>();
         public bool IsManual { get; }
-        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; }
+        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
 
         #endregion
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) : base(id)
+            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
+            : base(name, lastEditDate, description, id)
         {
-            ImpactAreaFrequencyRows = impactAreaRows;
-            LastEditDate = lastEditDate;
-            CustomTreeViewHeader = new CustomHeaderVM(name)
-            {
-                ImageSource = ImageSources.AGGREGATED_STAGE_DAMAGE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(lastEditDate)
-            };
+            ImpactAreaFrequencyRows = impactAreaRows;            
 
-            Description = description;
-            if (Description == null)
-            {
-                Description = "";
-            }
-
-            Name = name;
             Curves = curves;
             IsManual = isManual;
             SelectedWSE = selectedWSE;
             SelectedStructures = selectedStructs;
             SelectedIndexPoints = indexPointsID;
 
-            NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = StringConstants.EDIT_STAGE_DAMAGE_MENU;
-            editDamageCurve.Action = EditDamageCurve;
-
-            NamedAction removeDamageCurve = new NamedAction();
-            removeDamageCurve.Header = StringConstants.REMOVE_MENU;
-            removeDamageCurve.Action = RemoveElement;
-
-            NamedAction renameDamageCurve = new NamedAction(this);
-            renameDamageCurve.Header = StringConstants.RENAME_MENU;
-            renameDamageCurve.Action = Rename;
+            AddDefaultActions(EditDamageCurve);
 
             NamedAction exportDetails = new NamedAction(this);
             exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
             exportDetails.Action = ExportDetails;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editDamageCurve);
-            localActions.Add(removeDamageCurve);
-            localActions.Add(renameDamageCurve);
-            localActions.Add(exportDetails);
-
-            Actions = localActions;
+            Actions.Add(exportDetails);
         }
 
+        public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
+        {
+            SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
+            SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
+            IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
+
+            XElement stageDamageCurves = elementXML.Element(STAGE_DAMAGE_CURVES);
+            IEnumerable<XElement> curves = stageDamageCurves.Elements(STAGE_DAMAGE_CURVE);
+            foreach (XElement curve in curves)
+            {
+                Curves.Add(new StageDamageCurve(curve));
+            }
+
+            IEnumerable<XElement> impAreaRows = elementXML.Elements(IMPACT_AREA_ROWS);
+            foreach (XElement impAreaRow in impAreaRows)
+            {
+                ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impAreaRow));
+            }
+        }
         #endregion
         #region Voids
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.SelectedIndexPoints, elem.Curves, elem.ImpactAreaFrequencyRows, elem.IsManual, elem.ID);
-        }
-
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
             //create action manager
@@ -183,6 +173,74 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             sw.WriteLine(propElem.CreatedDate);
         }
 
+        public override XElement ToXML()
+        {
+            XElement stageDamageElem = new XElement(StringConstants.ELEMENT_XML_TAG);
+            stageDamageElem.Add(CreateHeaderElement());
+
+            stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
+            stageDamageElem.SetAttributeValue(SELECTED_INDEX_POINTS, SelectedIndexPoints);
+            stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
+
+            XElement curveElements = new XElement(STAGE_DAMAGE_CURVES);
+            foreach (StageDamageCurve curve in Curves)
+            {
+                curveElements.Add(curve.WriteToXML());
+            }
+            stageDamageElem.Add(curveElements);
+
+            XElement impactAreaRowsElem = new XElement(IMPACT_AREA_ROWS);
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                impactAreaRowsElem.Add(row.WriteToXML());
+            }
+            stageDamageElem.Add(impactAreaRowsElem);
+
+            return stageDamageElem;
+        }
+
+        public bool Equals(AggregatedStageDamageElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+            if (SelectedStructures != elem.SelectedStructures)
+            {
+                isEqual = false;
+            }
+            if (SelectedIndexPoints != elem.SelectedIndexPoints)
+            {
+                isEqual = false;
+            }
+            if (IsManual != elem.IsManual)
+            {
+                isEqual = false;
+            }
+
+            for(int i = 0;i< Curves.Count; i++)
+            {
+                if (Curves[i].Equals(elem.Curves[i]))
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            for(int i = 0;i< ImpactAreaFrequencyRows.Count;i++)
+            {
+                //todo: I don't want to write this equals method right now
+                //if(!ImpactAreaFrequencyRows[i].Equals(elem.ImpactAreaFrequencyRows[i]))
+                //{
+                //    isEqual = false;
+                //    break;
+                //}
+            }
+
+            return isEqual;
+        }
         #endregion
 
     }

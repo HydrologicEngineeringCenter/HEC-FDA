@@ -210,6 +210,7 @@
         public const string ALTERNATIVE_PROGRESS_LABEL = "Compute progress:";
         public const string ALT_COMP_REPORT_PROGRESS_LABEL = "Compute progress:";
 
+        public const string ELEMENT_XML_TAG = "ElementXML";
 
         public static string ImportFromOldFda(string elementName)
         {
@@ -218,7 +219,12 @@
 
         public static string CreateLastEditTooltip(string lastEditDate)
         {
-            return "Last edited " + lastEditDate;
+            string tooltip = null;
+            if(lastEditDate != null)
+            {
+                tooltip = "Last edited " + lastEditDate;
+            }
+            return tooltip;
         }
 
     }

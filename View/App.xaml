@@ -110,7 +110,7 @@
 
         <!--Editors Region-->
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
-            <StageTransformsView:RatingCurveEditor/>
+            <StageTransformsView:CurveEditor/>
         </DataTemplate>
 
         <!--Aggrgated Region-->

@@ -285,9 +285,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
                 }
 
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);
-                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                manager.SaveExisting(elementToSave, _OriginalFolderName);
+                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, _ID);               
+                Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                manager.SaveExisting(elementToSave);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
                 HasChanges = false;
                 HasSaved = true;
@@ -314,7 +314,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 }
 
-                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                int id = GetElementID<HydraulicElement>();
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;

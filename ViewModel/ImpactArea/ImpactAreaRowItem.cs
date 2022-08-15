@@ -36,5 +36,20 @@ namespace HEC.FDA.ViewModel.ImpactArea
             rowElem.SetAttributeValue(ID_TAG, ID);
             return rowElem;
         }
+
+        public bool Equals(ImpactAreaRowItem rowItem)
+        {
+            bool isEqual = true;
+            if(rowItem.ID != ID)
+            {
+                isEqual = false;
+            }
+            if(Name != rowItem.Name)
+            {
+                isEqual = false;
+            }
+
+            return isEqual;
+        }
     }
 }

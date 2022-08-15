@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.GeoTech
 {
@@ -20,8 +21,8 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override void SaveElements()
         {
-            LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager();
-            foreach (LeveeFeatureElement elem in ElementsToImport)
+            IElementManager manager = PersistenceFactory.GetElementManager<LateralStructureElement>();
+            foreach (LateralStructureElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -35,7 +36,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LeveeFeatureElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(LateralStructureElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {

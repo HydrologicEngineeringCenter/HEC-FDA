@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.Utilities
         public static double CONFIDENCE = 95;
         public static double TOLERANCE = .01;
         public static int MIN = 1000;
-        public static int MAX = 100000;
+        public static int MAX = 500000;
         #endregion
 
         private static List<double> _ExteriorInteriorXValues = new List<double>() {474, 474.1, 474.3, 474.5, 478};

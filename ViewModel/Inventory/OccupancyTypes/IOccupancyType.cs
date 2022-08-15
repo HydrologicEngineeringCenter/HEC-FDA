@@ -1,4 +1,5 @@
 ﻿using Statistics;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -15,6 +16,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         OccTypeAsset VehicleItem { get; set; }
         OccTypeItemWithRatio OtherItem { get; set; }
         ContinuousDistribution FoundationHeightUncertainty { get; set; }
+
+        XElement ToXML();
         
     }
 }

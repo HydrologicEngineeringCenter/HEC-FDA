@@ -9,51 +9,11 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class TerrainElementPersistenceManager : SavingBase
+    public class TerrainElementPersistenceManager : SavingBase<TerrainElement>
     {
-        private const int NAME_COL = 1;
-        private const int DESC_COL = 2;
 
-        private const string TABLE_NAME = "terrains";
-        private static readonly string[] TableColNames = { NAME, "path" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
-
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
+        public TerrainElementPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
-            get { return TableColTypes; }
-        }
-
-        public TerrainElementPersistenceManager(Study.FDACache studyCache)
-        {
-            StudyCacheForSaving = studyCache;
-        }
-
-        #region utilities
-        public override string TableName
-        {
-            get { return TABLE_NAME; }
-        }
-
-        public override string[] TableColumnNames
-        {
-            get
-            {
-                return TableColNames;
-            }
-        }
-
-        private object[] GetRowDataFromElement(TerrainElement element)
-        {
-              return new object[] { element.Name, element.FileName };
-
-        }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            int id = Convert.ToInt32(rowData[ID_COL]);
-            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
         }
 
         private async void CopyFileOnBackgroundThread(string OriginalTerrainPath, TerrainElement element)
@@ -148,7 +108,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     newElement.Actions.Clear();
                     newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                     {
-                        ImageSource = ImageSources.TERRAIN_IMAGE,
+                        ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                         Tooltip = StringConstants.CreateLastEditTooltip(newElement.LastEditDate),
                         Decoration = " -Renaming File",
                         GifVisible = true
@@ -163,7 +123,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                             
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name)
                             {
-                                ImageSource = ImageSources.TERRAIN_IMAGE,
+                                ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                                 Tooltip = StringConstants.CreateLastEditTooltip(newElement.LastEditDate),
                             };
 
@@ -179,28 +139,17 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-        #endregion
-
-        public override void Load()
-        {
-            List<ChildElement> terrains = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
-            foreach (TerrainElement elem in terrains)
-            {
-                StudyCacheForSaving.AddElement(elem);
-            }
-        }
-
         public void SaveNew(string OriginalTerrainPath, ChildElement element)
         {
-            SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
+            SaveNewElementToTable(GetRowDataFromElement((TerrainElement)element), TableColumnNames, TableColumnTypes);
             CopyFileOnBackgroundThread(OriginalTerrainPath,(TerrainElement)element);
         }
         public override void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element);
             element.CustomTreeViewHeader = new CustomHeaderVM(element.Name)
             {
-                ImageSource = ImageSources.TERRAIN_IMAGE,
+                ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                 Tooltip = StringConstants.CreateLastEditTooltip(element.LastEditDate),
                 Decoration = " -Deleting",
                 GifVisible = true
@@ -215,14 +164,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //the path needs to get updated with the new name and set on the new element.
             TerrainElement elem = (TerrainElement)oldElement;
             string originalExtension = Path.GetExtension(elem.FileName);
-            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
+            string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
             ((TerrainElement)element).FileName = destinationFilePath;
             base.SaveExisting( element);
-        }
-
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            return GetRowDataFromElement((TerrainElement)elem);
         }
     }
 }

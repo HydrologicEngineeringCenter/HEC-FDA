@@ -1,8 +1,6 @@
-﻿using HEC.Plotting.SciChart2D.Charts;
-using System;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using System.Windows;
 using System.Windows.Controls;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
 
 namespace HEC.FDA.View.AggregatedStageDamage
 {

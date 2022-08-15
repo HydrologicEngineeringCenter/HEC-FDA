@@ -3,6 +3,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -86,7 +87,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             SelectedDistributionTypeChanged(valueUncertaintyOrdinate.Type);
         }
 
+        public ValueUncertaintyVM(XElement uncertElem)
+        {
+            //read the base xml data
+            ContinuousDistribution cd = new Normal();
+        }
+
         #endregion
+
+        public abstract XElement ToXML();
+  
 
         public ContinuousDistribution CreateOrdinate()
         {

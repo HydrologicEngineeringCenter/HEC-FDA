@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _StageDischargeFunction = value; NotifyPropertyChanged(); }
         }
 
-        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<RatingCurveElement> stageDischargeFunctions)
+        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<StageDischargeElement> stageDischargeFunctions)
         {
             StageDischargeFunctions = CreateStageDischargeWrappers(stageDischargeFunctions);
             StageDischargeFunction = StageDischargeFunctions[0];
@@ -54,49 +54,53 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int stageDischargeID = Convert.ToInt32(rowXML.Attribute(STAGE_DISCHARGE_ELEMENT_ID)?.Value);
 
             //now get the elements from the study cache and match them up
-            List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if (impAreaElems.Count > 0)
+            if (StudyCache != null)
             {
-                foreach(ImpactAreaRowItem row in impAreaElems[0].ImpactAreaRows)
+
+                List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+                if (impAreaElems.Count > 0)
                 {
-                    if(row.ID == impID)
+                    foreach (ImpactAreaRowItem row in impAreaElems[0].ImpactAreaRows)
                     {
-                        ImpactArea = row;
+                        if (row.ID == impID)
+                        {
+                            ImpactArea = row;
+                            break;
+                        }
+                    }
+                    //we should always be able to find the impact area. We delete the stage damages if the user deletes the impact areas.
+                }
+
+                List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+                AnalyticalFrequencyElement selectedFrequencyFunction = null;
+                foreach (AnalyticalFrequencyElement elem in analyticalFrequencyElements)
+                {
+                    if (elem.ID == freqID)
+                    {
+                        selectedFrequencyFunction = elem;
                         break;
                     }
                 }
-                //we should always be able to find the impact area. We delete the stage damages if the user deletes the impact areas.
-            }
-            List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-            AnalyticalFrequencyElement selectedFrequencyFunction = null;
-            foreach (AnalyticalFrequencyElement elem in analyticalFrequencyElements)
-            {
-                if(elem.ID == freqID)
+
+                List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
+                StageDischargeElement selectedStageDischargeFunction = null;
+                foreach (StageDischargeElement elem in ratingCurveElements)
                 {
-                    selectedFrequencyFunction = elem;
-                    break;
+                    if (elem.ID == stageDischargeID)
+                    {
+                        selectedStageDischargeFunction = elem;
+                        break;
+                    }
                 }
+                FrequencyFunctions = CreateFrequencyWrappers(analyticalFrequencyElements);
+                StageDischargeFunctions = CreateStageDischargeWrappers(ratingCurveElements);
+
+                SelectSelectedFrequencyFunction(selectedFrequencyFunction);
+                SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
             }
-
-            List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
-            RatingCurveElement selectedStageDischargeFunction = null;
-            foreach (RatingCurveElement elem in ratingCurveElements)
-            {
-                if(elem.ID == stageDischargeID)
-                {
-                    selectedStageDischargeFunction = elem;
-                    break;
-                }
-            }
-
-            FrequencyFunctions = CreateFrequencyWrappers(analyticalFrequencyElements);
-            StageDischargeFunctions = CreateStageDischargeWrappers(ratingCurveElements);
-
-            SelectSelectedFrequencyFunction(selectedFrequencyFunction);
-            SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
         }
 
-        private void SelectSelectedStageDischargeFunction(RatingCurveElement selectedStageDischargeFunction)
+        private void SelectSelectedStageDischargeFunction(StageDischargeElement selectedStageDischargeFunction)
         {
             if (selectedStageDischargeFunction != null)
             {
@@ -139,12 +143,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return frequencyWrappers;
         }
 
-        private List<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<RatingCurveElement> stageDischargeFunctions)
+        private List<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<StageDischargeElement> stageDischargeFunctions)
         {
             List<StageDischargeElementWrapper> stageDischargeWrappers = new List<StageDischargeElementWrapper>();
             //add blank row
             stageDischargeWrappers.Add(new StageDischargeElementWrapper());
-            foreach (RatingCurveElement elem in stageDischargeFunctions)
+            foreach (StageDischargeElement elem in stageDischargeFunctions)
             {
                 stageDischargeWrappers.Add(new StageDischargeElementWrapper(elem));
             }
@@ -163,15 +167,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     vr.AddErrorMessage("Impact area " + ImpactArea.Name + " does not have a stage discharge assignment which will result in poor estimates. Please define this assignment.");
                 }
             }
-            else if (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow)
+            else if (IsStageDischargeRequired())
             {
-                //then a stage discharge is required
                 if (StageDischargeFunction.Element == null)
                 {
                     vr.AddErrorMessage("Impact area " + ImpactArea.Name + " does not have a stage discharge assignment which will result in poor estimates. Please define this assignment.");
                 }
             }
             return vr;
+        }
+
+        public bool IsStageDischargeRequired()
+        {
+            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow);
         }
 
         public XElement WriteToXML()

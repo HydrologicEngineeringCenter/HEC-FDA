@@ -303,13 +303,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             InflowOutflowElements.AddRange(CreateComboItems(childElems));
             SelectedInflowOutflowElement = InflowOutflowElements.First();
 
-            List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+            List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
             childElems.Clear();
             childElems.AddRange(ratingCurveElements);
             RatingCurveElements.AddRange(CreateComboItems(childElems));
             SelectedRatingCurveElement = RatingCurveElements.First();
 
-            List<LeveeFeatureElement> leveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
+            List<LateralStructureElement> leveeFeatureElements = StudyCache.GetChildElementsOfType<LateralStructureElement>();
             childElems.Clear();
             childElems.AddRange(leveeFeatureElements);
             LeveeFeatureElements.AddRange(CreateComboItems(childElems));
@@ -468,9 +468,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             AnalyticalFrequencyElement freqElem = SelectedFrequencyElement.ChildElement as AnalyticalFrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
-            RatingCurveElement ratElem = SelectedRatingCurveElement.ChildElement as RatingCurveElement;
+            StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
-            LeveeFeatureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LeveeFeatureElement;
+            LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
             AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
 
             SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,

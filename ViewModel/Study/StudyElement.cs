@@ -17,6 +17,14 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows;
+using HEC.FDA.ViewModel.StageTransforms;
+using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -57,7 +65,7 @@ namespace HEC.FDA.ViewModel.Study
             PopulateRecentStudies();
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.TERRAIN_IMAGE);
+            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.GetImage(typeof(TerrainElement)));
             _Elements = new ObservableCollection<BaseFdaElement>();
         }
 
@@ -204,10 +212,10 @@ namespace HEC.FDA.ViewModel.Study
         }
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
-            int id = PersistenceFactory.GetStudyPropertiesManager().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<StudyPropertiesElement>().GetNextAvailableId();
             ConvergenceCriteriaVM convergenceCriteriaVM = new ConvergenceCriteriaVM();
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description, convergenceCriteriaVM, id);
-            PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
+            PersistenceFactory.GetElementManager<StudyPropertiesElement>().SaveNew(elemToSave);
         }
         public void StudyProperties()
         {
@@ -304,13 +312,13 @@ namespace HEC.FDA.ViewModel.Study
                 wse.AddBaseElements(cache);
                 AddElement(wse);
 
-                FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement();
+                FrequencyRelationshipsOwnerElement f = new FrequencyRelationshipsOwnerElement();
                 AddElement(f);
 
                 InflowOutflowOwnerElement io = new InflowOutflowOwnerElement();
                 AddElement(io);
 
-                StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement();
+                StageTransformsOwnerElement s = new StageTransformsOwnerElement();
                 s.AddBaseElements(cache);
                 AddElement(s);
 
@@ -318,14 +326,14 @@ namespace HEC.FDA.ViewModel.Study
                 AddElement(lf);
                 cache.LeveeFeatureParent = lf;
 
-                Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement();
+                InventoryOwnerElement inv = new InventoryOwnerElement();
                 inv.AddBaseElements(cache);
                 AddElement(inv);
 
                 IASOwnerElement c = new IASOwnerElement();
                 AddElement(c);
 
-                Alternatives.AlternativeOwnerElement plans = new Alternatives.AlternativeOwnerElement();
+                AlternativeOwnerElement plans = new AlternativeOwnerElement();
                 AddElement(plans);
 
                 AlternativeComparisonReportOwnerElement altComparisonReportOwner = new AlternativeComparisonReportOwnerElement();
@@ -339,22 +347,22 @@ namespace HEC.FDA.ViewModel.Study
 
         private void LoadElementsFromDB()
         {
-            PersistenceFactory.GetRatingManager().Load();
-            PersistenceFactory.GetTerrainManager().Load();
-            PersistenceFactory.GetImpactAreaManager().Load();
-            PersistenceFactory.GetIndexPointsPersistenceManager().Load();
-            PersistenceFactory.GetWaterSurfaceManager().Load();
-            PersistenceFactory.GetFlowFrequencyManager().Load();
-            PersistenceFactory.GetInflowOutflowManager().Load();
-            PersistenceFactory.GetExteriorInteriorManager().Load();
-            PersistenceFactory.GetLeveeManager().Load();
-            PersistenceFactory.GetStageDamageManager().Load();
-            PersistenceFactory.GetStructureInventoryManager().Load();
-            PersistenceFactory.GetIASManager().Load();
-            PersistenceFactory.GetAlternativeManager().Load();
-            PersistenceFactory.GetAlternativeCompReportManager().Load();
-            PersistenceFactory.GetOccTypeManager().Load();
-            PersistenceFactory.GetStudyPropertiesManager().Load();
+            PersistenceFactory.GetElementManager<StageDischargeElement>().Load(); 
+            PersistenceFactory.GetElementManager<TerrainElement>().Load(); 
+            PersistenceFactory.GetElementManager<ImpactAreaElement>().Load(); 
+            PersistenceFactory.GetElementManager<IndexPointsElement>().Load(); 
+            PersistenceFactory.GetElementManager<HydraulicElement>().Load(); 
+            PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().Load(); 
+            PersistenceFactory.GetElementManager<InflowOutflowElement>().Load(); 
+            PersistenceFactory.GetElementManager<ExteriorInteriorElement>().Load(); 
+            PersistenceFactory.GetElementManager<LateralStructureElement>().Load(); 
+            PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Load(); 
+            PersistenceFactory.GetElementManager<InventoryElement>().Load(); 
+            PersistenceFactory.GetElementManager<IASElement>().Load(); 
+            PersistenceFactory.GetElementManager<AlternativeElement>().Load(); 
+            PersistenceFactory.GetElementManager<AlternativeComparisonReportElement>().Load(); 
+            PersistenceFactory.GetElementManager<OccupancyTypesElement>().Load();
+            PersistenceFactory.GetElementManager<StudyPropertiesElement>().Load();
         }
 
         #endregion

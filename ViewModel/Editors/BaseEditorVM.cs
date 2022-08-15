@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Editors
             Name = elem.Name;
             Description = elem.Description;
             IsCreatingNewElement = false;
-            OriginalElement = elem.CloneElement(elem);
+            OriginalElement = elem.CloneElement();
 
             ActionManager = actionManager;
 
@@ -208,7 +208,7 @@ namespace HEC.FDA.ViewModel.Editors
                 StudyCache.InflowOutflowAdded += SiblingWasAdded;
                 StudyCache.InflowOutflowUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(RatingCurveElement))
+            if (childElementType == typeof(StageDischargeElement))
             {
                 StudyCache.RatingAdded += SiblingWasAdded;
                 StudyCache.RatingUpdated += SiblingNameChanged;
@@ -218,7 +218,7 @@ namespace HEC.FDA.ViewModel.Editors
                 StudyCache.ExteriorInteriorAdded += SiblingWasAdded;
                 StudyCache.ExteriorInteriorUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(LeveeFeatureElement))
+            if (childElementType == typeof(LateralStructureElement))
             {
                 StudyCache.LeveeAdded += SiblingWasAdded;
                 StudyCache.LeveeUpdated += SiblingNameChanged;
@@ -298,12 +298,17 @@ namespace HEC.FDA.ViewModel.Editors
 
         }
 
-        public int GetElementID(SavingBase persistenceManager)
+        public int GetElementID<T>() where T : ChildElement
         {
-            int id;
+            int id = -1;
             if (IsCreatingNewElement)
             {
-                id = persistenceManager.GetNextAvailableId();
+                IElementManager elementManager = PersistenceFactory.GetElementManager<T>();
+
+                if (elementManager != null)
+                {
+                    id = elementManager.GetNextAvailableId();
+                }
             }
             else
             {

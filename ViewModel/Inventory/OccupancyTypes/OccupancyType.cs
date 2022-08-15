@@ -3,6 +3,9 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using Statistics.Distributions;
+using System;
+using System.Linq;
+using System.Xml.Linq;
 using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -22,7 +25,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public int GroupID { get; set; }
         public int ID { get; set; }
         public string Name { get; set; }
-       
+
+        
 
         public OccupancyType(string name, string damCatName, int groupId)
         {
@@ -36,8 +40,58 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             OtherItem = CreateDefaultItemWithRatio(OcctypeAssetType.other, false);
             FoundationHeightUncertainty = new Deterministic(0);
 
-            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            Saving.IElementManager manager = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             ID = manager.GetNextAvailableId();
+        }
+
+        public OccupancyType(XElement occtypeElem)
+        {
+            Name = occtypeElem.Attribute("Name").Value;
+            Description = occtypeElem.Attribute("Description").Value;
+            DamageCategory = occtypeElem.Attribute("DamCat").Value;
+            GroupID = Convert.ToInt32(occtypeElem.Attribute("GroupID").Value);
+            ID = Convert.ToInt32(occtypeElem.Attribute("ID").Value);
+
+            XElement foundUncert = occtypeElem.Element("FoundationUncertainty");
+            FoundationHeightUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(foundUncert.Descendants().First());           
+
+            StructureItem = new OccTypeAsset(occtypeElem.Element("StructureAsset").Element("Asset"));
+            ContentItem = new OccTypeItemWithRatio(occtypeElem.Element("ContentAsset").Element("Asset"));
+            VehicleItem = new OccTypeAsset(occtypeElem.Element("VehicleAsset").Element("Asset"));
+            OtherItem = new OccTypeItemWithRatio(occtypeElem.Element("OtherAsset").Element("Asset"));
+
+        }
+
+        public XElement ToXML()
+        {
+            XElement occtypeElem = new XElement("OccType");
+            occtypeElem.SetAttributeValue("Name", Name);
+            occtypeElem.SetAttributeValue("Description", Description);
+            occtypeElem.SetAttributeValue("DamCat", DamageCategory);
+            occtypeElem.SetAttributeValue("GroupID", GroupID);
+            occtypeElem.SetAttributeValue("ID", ID);
+
+            XElement foundUncert = new XElement("FoundationUncertainty");
+            foundUncert.Add(FoundationHeightUncertainty.ToXML());
+            occtypeElem.Add(foundUncert);
+
+            XElement structElem = new XElement("StructureAsset");
+            structElem.Add(StructureItem.ToXML());
+            occtypeElem.Add(structElem);
+
+            XElement contElem = new XElement("ContentAsset");
+            contElem.Add(ContentItem.ToXML());
+            occtypeElem.Add(contElem);
+
+            XElement vehicleElem = new XElement("VehicleAsset");
+            vehicleElem.Add(VehicleItem.ToXML());
+            occtypeElem.Add(vehicleElem);
+
+            XElement otherElem = new XElement("OtherAsset");
+            otherElem.Add(OtherItem.ToXML());
+            occtypeElem.Add(otherElem);
+
+            return occtypeElem;
         }
 
         public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
@@ -89,5 +143,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             bool isByVal = true;
             return new OccTypeItemWithRatio(itemType, isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
         }
+
+       
     }
 }

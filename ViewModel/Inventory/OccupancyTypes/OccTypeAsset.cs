@@ -2,6 +2,8 @@
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
+using System.Linq;
+using System.Xml.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -19,6 +21,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private TableWithPlotVM _ItemTableWithPlot;
         private ValueUncertaintyVM _ItemValueUncertainty;
  
+        
+
         /// <summary>
         /// This enum is only being used so that i can use it as a string name in any error messages.
         /// </summary>
@@ -61,6 +65,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        //todo: get rid of this ctor and call toxml and use that one?
         public OccTypeAsset(OccTypeAsset item)
         {
             ItemType = item.ItemType;
@@ -69,6 +74,52 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             TableWithPlot = new TableWithPlotVM(Curve);
             TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
+        }
+
+        public OccTypeAsset(XElement assetElem)
+        {
+            _IsChecked = Convert.ToBoolean( assetElem.Attribute("IsSelected").Value);
+            _Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
+
+            XElement uncertElem = assetElem.Element("Uncertainty");
+
+            ContinuousDistribution dist = (ContinuousDistribution)ContinuousDistribution.FromXML(uncertElem.Descendants().First());
+
+            ValueUncertainty = new MonetaryValueUncertaintyVM(dist);
+        }
+
+        public virtual XElement ToXML()
+        {
+            XElement assetElem = new XElement("Asset");
+            assetElem.SetAttributeValue("IsSelected", _IsChecked);
+            assetElem.SetAttributeValue("Type", ItemType);
+
+            assetElem.Add(_Curve.ToXML());
+            
+            assetElem.Add(CreateUncertaintyElement());
+
+            return assetElem;
+        }
+
+        private XElement CreateUncertaintyElement()
+        {
+            XElement uncertElem = new XElement("Uncertainty");
+
+            uncertElem.Add(_ItemValueUncertainty.CreateOrdinate().ToXML());
+
+            //uncertElem.SetAttributeValue("UncertType", _ItemValueUncertainty.GetType());            
+         
+            ////for the uncertainty type, if deterministic, the currentVM will be null
+            //if (_ItemValueUncertainty.CurrentVM == null)
+            //{
+            //    XElement deterministicElem = new XElement("Deterministic");
+            //    uncertElem.Add(deterministicElem);
+            //}
+            //else
+            //{
+            //    uncertElem.Add(_ItemValueUncertainty.CurrentVM.CreateOrdinate().ToXML());
+            //}
+            return uncertElem;
         }
 
         public OccTypeAsset(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty)

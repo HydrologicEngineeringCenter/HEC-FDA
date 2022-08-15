@@ -101,7 +101,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetIndexPointsPersistenceManager());
+            int id = GetElementID<IndexPointsElement>();
             IndexPointsElement elementToSave = new IndexPointsElement(Name, Description, ListOfRows.ToList(), id);
 
             string newDirectoryPath = Storage.Connection.Instance.IndexPointsDirectory + "\\" + Name;

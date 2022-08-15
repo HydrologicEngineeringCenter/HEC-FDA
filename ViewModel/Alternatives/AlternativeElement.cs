@@ -40,17 +40,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(id)
+        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(name, creationDate, description, id)
         {
-            Name = name;
-            Description = description;
             IASElementSets.AddRange(IASElements);
-            LastEditDate = creationDate;
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
 
@@ -58,14 +50,8 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// Ctor for loading an element from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public AlternativeElement(string xml, int id) : base(id)
+        public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
-            XDocument doc = XDocument.Parse(xml);
-            XElement altElement = doc.Element(ALTERNATIVE);
-            Name = altElement.Attribute(NAME).Value;
-            Description = altElement.Attribute(DESCRIPTION).Value;
-            LastEditDate = altElement.Attribute(LAST_EDIT_DATE).Value;
-
             IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
             foreach (XElement elem in iasElements)
             {
@@ -73,11 +59,6 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSets.Add(iasID);
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.ALTERNATIVE_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
         #endregion
@@ -114,9 +95,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// If the element cannot be found then it will be null.
         /// </summary>
         /// <returns></returns>
-        private IASElementSet[] GetElementsFromID()
+        private IASElement[] GetElementsFromID()
         {
-            IASElementSet[] iASElems = new IASElementSet[] { null, null };
+            IASElement[] iASElems = new IASElement[] { null, null };
 
             bool firstElemFound = false;
             bool secondElemFound = false;
@@ -124,8 +105,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             int firstID = IASElementSets[0];
             int secondID = IASElementSets[1];
             //get the current ias elements in the study
-            List<IASElementSet> currentElementSets = StudyCache.GetChildElementsOfType<IASElementSet>();
-            foreach (IASElementSet set in currentElementSets)
+            List<IASElement> currentElementSets = StudyCache.GetChildElementsOfType<IASElement>();
+            foreach (IASElement set in currentElementSets)
             {
                 int setID = set.ID;
                 if (setID == firstID)
@@ -143,8 +124,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             //put them in the correct order
             if(firstElemFound && secondElemFound)
             {
-                IASElementSet firstElem = iASElems[0];
-                IASElementSet secondElem = iASElems[1];
+                IASElement firstElem = iASElems[0];
+                IASElement secondElem = iASElems[1];
                 int firstYear = firstElem.AnalysisYear;
                 int secondYear = secondElem.AnalysisYear;
                 if(firstYear > secondYear)
@@ -160,9 +141,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            IASElementSet[] iASElems = GetElementsFromID();
-            IASElementSet firstElem = iASElems[0];
-            IASElementSet secondElem = iASElems[1];
+            IASElement[] iASElems = GetElementsFromID();
+            IASElement firstElem = iASElems[0];
+            IASElement secondElem = iASElems[1];
 
             FdaValidationResult scenariosExistResults = DoBothScenariosExist(firstElem, secondElem);
             vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
@@ -175,7 +156,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult DoScenariosHaveResults(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             bool firstElemHasResults = false;
@@ -200,7 +181,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult AreScenarioYearsDifferent(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult AreScenarioYearsDifferent(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             int firstYear = firstElem.AnalysisYear;
@@ -213,7 +194,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult DoBothScenariosExist(IASElementSet firstElem, IASElementSet secondElem)
+        private FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (firstElem == null || secondElem == null)
@@ -250,7 +231,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                IASElementSet[] iASElems = GetElementsFromID();
+                IASElement[] iASElems = GetElementsFromID();
 
                 ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
@@ -265,10 +246,10 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(Action<AlternativeResults> callback)
         {
-            IASElementSet[] iASElems = GetElementsFromID();
+            IASElement[] iASElems = GetElementsFromID();
 
-            IASElementSet firstElem = iASElems[0];
-            IASElementSet secondElem = iASElems[1];
+            IASElement firstElem = iASElems[0];
+            IASElement secondElem = iASElems[1];
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;
@@ -321,22 +302,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             Navigate(tab, false, true);
         }
 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            if (elementToClone is AlternativeElement elem)
-            {
-                AlternativeElement elemToReturn = new AlternativeElement(elem.Name, elem.Description, elem.LastEditDate, elem.IASElementSets, elem.ID);
-                return elemToReturn;
-            }
-            return null;
-        }
-
-        public string WriteToXML()
+        public override XElement ToXML()
         {
             XElement altElement = new XElement(ALTERNATIVE);
-            altElement.SetAttributeValue(NAME, Name);
-            altElement.SetAttributeValue(DESCRIPTION, Description);
-            altElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
+            altElement.Add(CreateHeaderElement());
 
             foreach (int elemID in IASElementSets)
             {
@@ -344,7 +313,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                 setElement.SetAttributeValue(ID_STRING, elemID);
                 altElement.Add(setElement);
             }
-            return altElement.ToString();
+            return altElement;
         }
+
     }
 }

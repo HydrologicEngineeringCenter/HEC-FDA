@@ -36,8 +36,8 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         public LeveeFeatureEditorVM(CurveChildElement element, EditorActionManager actionManager) : base(element, actionManager)
         {
-            Elevation = ((LeveeFeatureElement)element).Elevation;
-            IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
+            Elevation = ((LateralStructureElement)element).Elevation;
+            IsUsingDefault = ((LateralStructureElement)element).IsDefaultCurveUsed;
 
             //tell the table that the y values have to be between 0 and 1
             TableWithPlot.ComputeComponentVM.SetMinMaxValues(0, 1);
@@ -46,8 +46,8 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetLeveeManager());
-            LeveeFeatureElement elem = new LeveeFeatureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.ComputeComponentVM, id);
+            int id = GetElementID<LateralStructureElement>();
+            LateralStructureElement elem = new LateralStructureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.ComputeComponentVM, id);
             base.Save(elem);
         }
     }

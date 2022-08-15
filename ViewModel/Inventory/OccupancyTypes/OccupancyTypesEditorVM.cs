@@ -147,8 +147,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
 
             //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
-            int groupID = PersistenceFactory.GetOccTypeManager().GetGroupId(group.Name);
-            IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
+            //OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            //int groupID = manager.GetGroupId(group.Name);
+            IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(group.ID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
                 occTypeGroup.Occtypes.Add(CreateDefaultOcctype(group.ID));
@@ -260,8 +261,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             if (MessageBox.Show("Do you want to permanently delete this occupancy type?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //then permanently delete it.
-                OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-                manager.DeleteOcctype(SelectedOccType);
+                IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
+                //todo: bring back to life
+                //manager.DeleteOcctype(SelectedOccType);
 
                 int selectedIndex = SelectedOccTypeGroup.Occtypes.IndexOf(SelectedOccType);
                 SelectedOccTypeGroup.Occtypes.Remove(SelectedOccType);
@@ -328,8 +330,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 }
                 OccTypeGroups.Remove(SelectedOccTypeGroup);
 
-                OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
-                manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
+                OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+               // manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
                 //set the selected occtype to be the one before, unless at 0
                 if (selectedIndex > 0)
                 {
@@ -366,9 +368,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public void CreateDefaultOccTypeGroup()
         {
-            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             string groupName = "Occupancy Type Group";
-            int groupId = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
+            int groupId = manager.GetNextAvailableId();
             OccupancyTypesElement elem = new OccupancyTypesElement(groupName, new List<IOccupancyType>(), groupId);
             //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
             //if it is open. see AddGroup() in this class.
@@ -439,12 +441,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         /// <summary>
-        /// Saves all modified occupancy types from all of the occupancy type groups.
+        /// This will just save the occupancy type that is selected. It will not save all of the groups or all of the occtypes. To do that see "SaveAll()"
         /// </summary>
-        public void SaveAll()
+        public override void Save()
         {
-            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
+            IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
+            //todo: bring this back to life.
+            //manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);          
 
             List<SaveAllReportGroupVM> warningReports = new List<SaveAllReportGroupVM>();
             List<SaveAllReportGroupVM> fatalErrorReports = new List<SaveAllReportGroupVM>();
@@ -452,11 +455,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
                 SaveAllReportGroupVM saveAllReport = group.SaveAll();
-                if(saveAllReport != null && saveAllReport.HasWarnings)
+                if (saveAllReport != null && saveAllReport.HasWarnings)
                 {
                     warningReports.Add(saveAllReport);
                 }
-                if(saveAllReport != null && saveAllReport.HasFatalErrors)
+                if (saveAllReport != null && saveAllReport.HasFatalErrors)
                 {
                     fatalErrorReports.Add(saveAllReport);
                 }
@@ -469,10 +472,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 SaveAllReportVM report = new SaveAllReportVM(warningReports);
                 string header = "Save Warnings";
-                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport",false,false);
-                Navigate(tab, true, true); 
+                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport", false, false);
+                Navigate(tab, true, true);
             }
-            if(fatalErrorReports.Count > 0)
+            if (fatalErrorReports.Count > 0)
             {
                 OcctypeErrorsReportVM report = new OcctypeErrorsReportVM(fatalErrorReports);
                 string errorHeader = "Occupancy Type Errors";
@@ -482,15 +485,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             //clear the modified groups
             _GroupsToUpdateInParentTable.Clear();
-        }
-
-        /// <summary>
-        /// This will just save the occupancy type that is selected. It will not save all of the groups or all of the occtypes. To do that see "SaveAll()"
-        /// </summary>
-        public override void Save()
-        {
-            //this is the starting point for the save
-            SaveAll();
         }
 
         /// <summary>

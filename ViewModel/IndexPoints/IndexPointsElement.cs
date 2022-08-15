@@ -11,66 +11,31 @@ namespace HEC.FDA.ViewModel.IndexPoints
 {
     public class IndexPointsElement:ChildElement
     {
-        public static String INDEX_POINTS_TAG = "IndexPoints";
-        private static String NAME_TAG = "Name";
-        private static String DESCRIPTION_TAG = "Description";
-        private static String LAST_EDIT_DATE_TAG = "LastEditDate";
-        private static String INDEX_POINT_NAMES_TAG = "IndexPointNames";
+        public const String INDEX_POINTS_TAG = "IndexPoints";
+        private const String NAME_TAG = "Name";
+        private const String INDEX_POINT_NAMES_TAG = "IndexPointNames";
 
         #region Properties
         public List<string> IndexPoints { get; } = new List<string>();      
         #endregion
 
         #region Constructors
-        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(id)
+        public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, id)
         {
-            Name = name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-            Description = description;
             IndexPoints = indexPoints;
-            AddActions();
+            AddDefaultActions(Edit);
         }
 
-        public IndexPointsElement(XElement itemElem, int id):base(id)
+        public IndexPointsElement(XElement childElem, int id):base(childElem, id)
         {
-            ID = id;
-            
-            Name = itemElem.Attribute(NAME_TAG).Value;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.IMPACT_AREAS_IMAGE);
-
-            Description = itemElem.Attribute(DESCRIPTION_TAG).Value;
-            LastEditDate = itemElem.Attribute(LAST_EDIT_DATE_TAG).Value;
-
-            XElement indexPointsElem = itemElem.Element(INDEX_POINT_NAMES_TAG);
+            XElement indexPointsElem = childElem.Element(INDEX_POINT_NAMES_TAG);
             IEnumerable<XElement> nameElems = indexPointsElem.Elements(NAME_TAG);
             foreach(XElement nameElem in nameElems)
             {
                 IndexPoints.Add(nameElem.Value);
             }
 
-            AddActions();
-        }
-
-        private void AddActions()
-        {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_INDEX_POINTS_MENU;
-            edit.Action = Edit;
-
-            NamedAction removeElement = new NamedAction();
-            removeElement.Header = StringConstants.REMOVE_MENU;
-            removeElement.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(edit);
-            localactions.Add(removeElement);
-            localactions.Add(renameElement);
-
-            Actions = localactions;
+            AddDefaultActions(Edit);
         }
 
         #endregion
@@ -145,7 +110,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         private void DeleteIndexPointsDirectory()
         {
             //this will handle removing the sqlite data
-            Saving.PersistenceFactory.GetIndexPointsPersistenceManager().Remove(this);
+            Saving.PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
             //remove the directory
             if (Directory.Exists(Connection.Instance.IndexPointsDirectory + "\\" + Name))
             {
@@ -155,18 +120,13 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
         #endregion
         #region Functions 
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            IndexPointsElement elem = (IndexPointsElement)elementToClone;
-            return new IndexPointsElement(elem.Name, elem.Description, elem.IndexPoints, elem.ID);
-        }
 
-        public XElement ToXML()
+
+        public override XElement ToXML()
         {
             XElement indexPointsElem = new XElement(INDEX_POINTS_TAG);
-            indexPointsElem.SetAttributeValue(NAME_TAG, Name);
-            indexPointsElem.SetAttributeValue(DESCRIPTION_TAG, Description);
-            indexPointsElem.SetAttributeValue(LAST_EDIT_DATE_TAG, LastEditDate);
+
+            indexPointsElem.Add(CreateHeaderElement());
 
             XElement indexPointNames = new XElement(INDEX_POINT_NAMES_TAG);
             foreach(string name in IndexPoints)
@@ -178,6 +138,35 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
             return indexPointsElem;
         }
+
+        public bool Equals(IndexPointsElement elem)
+        {
+            bool isEqual = true;
+
+            if (!AreHeaderDataEqual(elem))
+            {
+                isEqual = false;
+            }
+
+            if (IndexPoints.Count != elem.IndexPoints.Count)
+            {
+                isEqual = false;
+            }
+            else
+            {
+                for (int i = 0; i < IndexPoints.Count; i++)
+                {
+                    if (!IndexPoints[i].Equals(elem.IndexPoints[i]))
+                    {
+                        isEqual = false;
+                        break;
+                    }
+                }
+            }
+            return isEqual;
+        }
+
+
         #endregion
     }
 }

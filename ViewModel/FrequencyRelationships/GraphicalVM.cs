@@ -157,5 +157,24 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             CurveMetaData meta = new CurveMetaData(XLabel, YLabel,Name,"None",CurveTypesEnum.MonotonicallyIncreasing);
            return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta);
         }
+
+        public bool Equals(GraphicalVM elem)
+        {
+            bool isEqual = true;
+
+            if (!MyGraphical.Equals(elem.MyGraphical))
+            {
+                isEqual = false;
+            }
+            if (EquivalentRecordLength != elem.EquivalentRecordLength)
+            {
+                isEqual = false;
+            }
+            if (UseFlow != elem.UseFlow)
+            {
+                isEqual = false;
+            }        
+            return isEqual;
+        }
     }
 }

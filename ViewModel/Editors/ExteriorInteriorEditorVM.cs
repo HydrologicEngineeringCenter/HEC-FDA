@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void Save()
         {
-            int id = GetElementID(Saving.PersistenceFactory.GetExteriorInteriorManager());
+            int id = GetElementID<ExteriorInteriorElement>();
             ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
             base.Save(elem);
         }

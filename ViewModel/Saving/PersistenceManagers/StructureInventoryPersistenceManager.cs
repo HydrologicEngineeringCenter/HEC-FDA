@@ -8,7 +8,7 @@ using System.Data;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
-    public class StructureInventoryPersistenceManager : SavingBase
+    public class StructureInventoryPersistenceManager : SavingBase<InventoryElement>
     {
         public static readonly string STRUCTURE_INVENTORY_TABLE_CONSTANT = "structure_inventory_";
 
@@ -22,35 +22,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int DESC_COL = 2;
         private const int IS_OLD_FDA = 3;
 
-        private const string TABLE_NAME = "structure_inventories";
 
-        public override string TableName
+        public StructureInventoryPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
-            get { return TABLE_NAME; }
-        }
-
-        public override string[] TableColumnNames
-        {
-            get
-            {
-                return TableColNames;
-            }
-        }
-
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_import_from_oldFDA" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string) };
-        /// <summary>
-        /// The types of the columns in the parent table
-        /// </summary>
-        public override Type[] TableColumnTypes
-        {
-            get { return TableColTypes; }
-        }
-
-
-        public StructureInventoryPersistenceManager(Study.FDACache studyCache)
-        {
-            StudyCacheForSaving = studyCache;
         }
 
         private string[] ChildTableColumns = new string[] {
@@ -170,7 +144,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return new object[] { element.Name, element.Description, element.IsImportedFromOldFDA };
         }
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
+        public ChildElement CreateElementFromRowData(object[] rowData)
         {
             if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
             {
@@ -187,10 +161,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
+            RemoveElementFromTable(element);
             string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.ID;
             RemoveTable(inventoryTable);
-            RemoveFromGeopackageTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
         }
 
@@ -208,7 +181,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// </summary>
         public override void Load()
         {
-            List<ChildElement> structures = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> structures = CreateElementsFromRows( (asdf) => CreateElementFromRowData(asdf));
             foreach (InventoryElement elem in structures)
             {
                 StudyCacheForSaving.AddElement(elem);

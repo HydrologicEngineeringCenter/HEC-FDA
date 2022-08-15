@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
+using HEC.FDA.ViewModel.Saving;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -18,7 +19,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override void SaveElements()
         {
-            Saving.PersistenceManagers.FlowFrequencyPersistenceManager manager = Saving.PersistenceFactory.GetFlowFrequencyManager();
+            IElementManager manager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
             foreach (AnalyticalFrequencyElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);

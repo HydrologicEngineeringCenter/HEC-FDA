@@ -154,14 +154,14 @@ namespace HEC.FDA.ViewModel.Storage
 
             }
         }
-        public void RenameGeoPackageTable(string oldName, string newName)
-        {
-            if (_SqliteReader.TableNames.Contains(oldName))
-            {
-                LifeSimGIS.GeoPackageWriter geoWriter = new LifeSimGIS.GeoPackageWriter(_SqliteReader);
-                geoWriter.RenameFeatures(oldName, newName);
-            }
-        }
+        //public void RenameGeoPackageTable(string oldName, string newName)
+        //{
+        //    if (_SqliteReader.TableNames.Contains(oldName))
+        //    {
+        //        LifeSimGIS.GeoPackageWriter geoWriter = new LifeSimGIS.GeoPackageWriter(_SqliteReader);
+        //        geoWriter.RenameFeatures(oldName, newName);
+        //    }
+        //}
         
         public void DeleteTable(string tableName)
         {
@@ -190,22 +190,22 @@ namespace HEC.FDA.ViewModel.Storage
             command.ExecuteNonQuery();
         }
 
-        public void AddNewColumnWithValues(string tableName, string colName, string colType, object defaultValue = null)
-        {
-            string cmdText = "";
-            if (defaultValue == null)
-            {
-                cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType;
+        //public void AddNewColumnWithValues(string tableName, string colName, string colType, object defaultValue = null)
+        //{
+        //    string cmdText = "";
+        //    if (defaultValue == null)
+        //    {
+        //        cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType;
 
-            }
-            else
-            {
-                cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType + " DEFAULT '" + defaultValue + "'";
-            }
-            SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
-            command.CommandText = cmdText;
-            command.ExecuteNonQuery();
-        }
+        //    }
+        //    else
+        //    {
+        //        cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType + " DEFAULT '" + defaultValue + "'";
+        //    }
+        //    SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
+        //    command.CommandText = cmdText;
+        //    command.ExecuteNonQuery();
+        //}
 
         private string EscapeSingleQuotes(object value)
         {
@@ -284,45 +284,6 @@ namespace HEC.FDA.ViewModel.Storage
 
         #endregion
         #region Functions
-
-        public int GetMaxStateIndex(string tableName, int elementId, string elementIdColName, string stateIndexName)
-        {
-            DataTable tab = new DataTable();
-
-            SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
-            command.CommandText = "select MAX(" + stateIndexName + ") AS maxValue from " +
-                tableName + " where " + elementIdColName + " = " + elementId;
-            SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
-            adapter.Fill(tab);
-            if (tab.Rows.Count == 1 && tab.Rows[0].ItemArray[0] != DBNull.Value)
-            {
-                object[] row = tab.Rows[0].ItemArray;
-                return Convert.ToInt32(row[0]);
-            }
-            else
-            {
-                //There is nothing in the db. 
-                return -1;
-            }
-        }
-
-        public DataTable GetRowsWithIDValue(int value, string columnName, string tableName)
-        {
-            if (Connection.Instance.IsOpen != true)
-            {
-                Connection.Instance.Open();
-            }
-            DataTable tab = new DataTable();
-            if (_SqliteReader.TableNames.Contains(tableName))
-            {
-                List<object[]> rows = new List<object[]>();
-                SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
-                command.CommandText = "select * from " + tableName + " where " + columnName + " = " + value;
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
-                adapter.Fill(tab);
-            }
-            return tab;
-        }
 
         public string[] TableNames()
         {

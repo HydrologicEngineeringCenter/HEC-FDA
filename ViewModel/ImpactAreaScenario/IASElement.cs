@@ -15,7 +15,7 @@ using metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
-    public class IASElementSet : ChildElement
+    public class IASElement : ChildElement
     {
         #region Fields
         public const string IAS_SET = "IASSet";
@@ -56,20 +56,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElementSet(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) : base(id)
+        public IASElement(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
+            : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
             SpecificIASElements.AddRange( elems);
-            Name = name;
-            Description = description;
             AnalysisYear = year;
-
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(creationDate)
-            };
-
             AddActions();
         }
 
@@ -77,15 +69,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// The ctor used to load an element set from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public IASElementSet(string xml, int id) : base(id)
+        public IASElement(XElement setElem, int id) : base(setElem,id)
         {
-            XDocument doc = XDocument.Parse(xml);
-            XElement setElem = doc.Element(IAS_SET);
-            Name = setElem.Attribute(NAME).Value;
-            Description = setElem.Attribute(DESCRIPTION).Value;
+
             AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
-            LastEditDate = setElem.Attribute(LAST_EDIT_DATE).Value;
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             foreach(XElement elem in iasElements)
@@ -99,11 +87,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 Results = ScenarioResults.ReadFromXML(resultsElem);
             }
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name)
-            {
-                ImageSource = ImageSources.SCENARIO_IMAGE,
-                Tooltip = StringConstants.CreateLastEditTooltip(LastEditDate)
-            };
             AddActions();
         }
 
@@ -240,23 +223,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }));
         }
         #endregion
-  
-        public override ChildElement CloneElement(ChildElement elementToClone)
-        {
-            IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.LastEditDate, elem.AnalysisYear,elem.StageDamageID, elem.SpecificIASElements, elem.ID);
-            return newElem;
-        }
 
-        public XElement WriteToXML()
+        public override XElement ToXML()
         {
             XElement setElement = new XElement(IAS_SET);
-            setElement.SetAttributeValue(NAME, Name);
-            setElement.SetAttributeValue(DESCRIPTION, Description);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
             setElement.SetAttributeValue(STAGE_DAMAGE_ID, StageDamageID);
 
-            setElement.SetAttributeValue(LAST_EDIT_DATE, LastEditDate);
+            setElement.Add(CreateHeaderElement());
 
             foreach(SpecificIAS elem in SpecificIASElements)
             {

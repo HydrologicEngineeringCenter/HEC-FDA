@@ -1,12 +1,10 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot.Data;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
-using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using paireddata;
 using Statistics;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Remoting;

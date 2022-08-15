@@ -217,8 +217,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 }
 
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Steady, _ID);
-                Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                manager.SaveExisting(elementToSave, _OriginalFolderName);
+                Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
+                manager.SaveExisting(elementToSave);
                 SavingText = "Last Saved: " + elementToSave.LastEditDate;
                 HasChanges = false;
                 HasSaved = true;
@@ -248,7 +248,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                     pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
                 }
 
-                int id = GetElementID(Saving.PersistenceFactory.GetWaterSurfaceManager());
+                int id = GetElementID<HydraulicElement>();
                 HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Steady, id);
                 base.Save(elementToSave);
                 _OriginalFolderName = Name;

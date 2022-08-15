@@ -2,6 +2,7 @@
 using Statistics;
 using Statistics.Distributions;
 using System;
+using System.Xml.Linq;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -66,6 +67,12 @@ namespace ViewModel.Inventory.OccupancyTypes
             }
             UniformControlVM = new UniformControlVM(uniMin, uniMax, "% below inventory value", "% above inventory value");
             UniformControlVM.WasModified += ControlWasModified;
+        }
+
+        public override XElement ToXML()
+        {
+            //todo:
+            throw new NotImplementedException();
         }
     }
 }

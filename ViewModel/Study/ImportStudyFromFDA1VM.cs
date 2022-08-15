@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
@@ -154,25 +155,25 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void SaveElements()
         {
-            FlowFrequencyPersistenceManager flowFreqManager = Saving.PersistenceFactory.GetFlowFrequencyManager();
+            IElementManager flowFreqManager = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
             foreach (ChildElement elem in _FlowFrequencyElements)
             {
                 flowFreqManager.SaveNew(elem);
             }
 
-            InflowOutflowPersistenceManager inOutManager = Saving.PersistenceFactory.GetInflowOutflowManager();
+            IElementManager inOutManager = PersistenceFactory.GetElementManager<InflowOutflowElement>();
             foreach (ChildElement elem in _InflowOutflowElements)
             {
                 inOutManager.SaveNew(elem);
             }
 
-            RatingElementPersistenceManager ratingManager = Saving.PersistenceFactory.GetRatingManager();
+            IElementManager ratingManager = PersistenceFactory.GetElementManager<StageDischargeElement>();
             foreach (ChildElement elem in _RatingElements)
             {
                 ratingManager.SaveNew(elem);
             }
-            
-            ExteriorInteriorPersistenceManager extIntManager = Saving.PersistenceFactory.GetExteriorInteriorManager();
+
+            IElementManager extIntManager = PersistenceFactory.GetElementManager<ExteriorInteriorElement>();
             foreach (ChildElement elem in _ExteriorInteriorElements)
             {
                 extIntManager.SaveNew(elem);
@@ -180,13 +181,13 @@ namespace HEC.FDA.ViewModel.Study
 
             //we can't import stage damages at this time because an impact area set is required first.
 
-            LeveePersistenceManager leveeManager = Saving.PersistenceFactory.GetLeveeManager();
+            IElementManager leveeManager = PersistenceFactory.GetElementManager<LateralStructureElement>();
             foreach (ChildElement elem in _LeveeElements)
             {
                 leveeManager.SaveNew(elem);
             }
 
-            OccTypePersistenceManager occtypeManager = Saving.PersistenceFactory.GetOccTypeManager();
+            IElementManager occtypeManager = PersistenceFactory.GetOccTypeManager();
             foreach (ChildElement elem in _OcctypesElements)
             {
                 occtypeManager.SaveNew(elem);
