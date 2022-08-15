@@ -16,14 +16,10 @@
 		</PackageReference>
 	</ItemGroup>
 
-<<<<<<< HEAD
-  <ItemGroup>
-    <ProjectReference Include="..\fda-model\fda-model.csproj" />
-    <ProjectReference Include="..\Statistics\Statistics.csproj" />
-  </ItemGroup>
-=======
+
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\fda-model.csproj" />
+		<ProjectReference Include="..\Statistics\Statistics.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -32,6 +28,5 @@
 		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.21-beta-g2e34768d8b" />
 		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
 	</ItemGroup>
->>>>>>> main
 
 </Project>
