@@ -15,12 +15,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region Properties
-        /// <summary>
-        /// This bool is to let the editor know which one of the elements to have selected when it opens. There should
-        /// only ever be one element that is turned to "true".
-        /// </summary>
-        public bool IsSelected { get; set; }
-        public List<IOccupancyType> ListOfOccupancyTypes { get; set; }        
+
+        public List<IOccupancyType> ListOfOccupancyTypes { get; set; } = new List<IOccupancyType>();       
 
         #endregion
         #region Constructors
@@ -30,6 +26,28 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Name = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;
         }
+
+        public OccupancyTypesElement(XElement occtypeElem, int id) : base(occtypeElem, id)
+        {
+            ReadHeaderXElement(occtypeElem.Element(HEADER_XML_TAG));
+            IEnumerable<XElement> occtypes = occtypeElem.Elements("OccType");
+            foreach (XElement ot in occtypes)
+            {
+                ListOfOccupancyTypes.Add(new OccupancyType(ot));
+            }
+        }
+        public override XElement ToXML()
+        {
+            XElement occTypeGroup = new XElement("OccTypeGroup");
+            occTypeGroup.Add(CreateHeaderElement());
+            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            {
+                occTypeGroup.Add(ot.ToXML());
+            }
+
+            return occTypeGroup;
+        }
+
         #endregion
 
         #region Functions
@@ -47,9 +65,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
        
 
 
-        public override XElement ToXML()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

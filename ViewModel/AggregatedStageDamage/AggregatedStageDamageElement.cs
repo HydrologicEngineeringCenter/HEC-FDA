@@ -18,6 +18,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const string SELECTED_INDEX_POINTS = "SelectedIndexPoints";
         private const string IS_MANUAL = "IsManual";
         private const string STAGE_DAMAGE_CURVES = "StageDamageCurves";
+        private const string STAGE_DAMAGE_CURVE = "StageDamageCurve";
         private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
 
         #region Properties
@@ -57,8 +58,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
 
-            IEnumerable<XElement> stageDamageCurves = elementXML.Elements(STAGE_DAMAGE_CURVES);
-            foreach (XElement curve in stageDamageCurves)
+            XElement stageDamageCurves = elementXML.Element(STAGE_DAMAGE_CURVES);
+            IEnumerable<XElement> curves = stageDamageCurves.Elements(STAGE_DAMAGE_CURVE);
+            foreach (XElement curve in curves)
             {
                 Curves.Add(new StageDamageCurve(curve));
             }

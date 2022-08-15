@@ -170,29 +170,32 @@ namespace HEC.FDA.ViewModelTest
             Assert.True(elem1.Equals(elem2));
         }
 
-        //this test was failing because it calls code that has a message box.
-        //[Fact]
-        //public void TestStageDamageElementWriteThenReadAreEqual()
-        //{
-        //    int id = 9;
+        [Fact]
+        public void TestStageDamageElementWriteThenReadAreEqual()
+        {
+            int id = 9;
 
-        //    ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
-        //    compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
+            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
 
-        //    int selectedWSE = 1;
-        //    int selectedStructs = 2;
-        //    int selectedIndexPoints = 3;
-        //    List<StageDamageCurve> curves = new List<StageDamageCurve>();
-        //    List<ImpactAreaFrequencyFunctionRowItem> functions = new List<ImpactAreaFrequencyFunctionRowItem>();
+            int selectedWSE = 1;
+            int selectedStructs = 2;
+            int selectedIndexPoints = 3;
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            ImpactAreaRowItem ri = new ImpactAreaRowItem(1, "myImpactArea");
 
-        //    AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
-        //        selectedWSE,selectedStructs, selectedIndexPoints,curves,functions,true, id);
-        //    XElement elemXML = elem1.ToXML();
+            curves.Add(new StageDamageCurve(ri, "damCat", compVM, "assetCat", StageDamageConstructionType.USER));
+            List<ImpactAreaFrequencyFunctionRowItem> functions = new List<ImpactAreaFrequencyFunctionRowItem>();
+            functions.Add(new ImpactAreaFrequencyFunctionRowItem(ri, new List<AnalyticalFrequencyElement>(), new List<StageDischargeElement>()));
 
-        //    AggregatedStageDamageElement elem2 = new AggregatedStageDamageElement(elemXML, id);
+            AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
+                selectedWSE, selectedStructs, selectedIndexPoints, curves, functions, true, id);
+            XElement elemXML = elem1.ToXML();
 
-        //    Assert.True(elem1.Equals(elem2));
-        //}
+            AggregatedStageDamageElement elem2 = new AggregatedStageDamageElement(elemXML, id);
+
+            Assert.True(elem1.Equals(elem2));
+        }
 
     }
 }

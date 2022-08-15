@@ -54,46 +54,50 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int stageDischargeID = Convert.ToInt32(rowXML.Attribute(STAGE_DISCHARGE_ELEMENT_ID)?.Value);
 
             //now get the elements from the study cache and match them up
-            List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if (impAreaElems.Count > 0)
+            if (StudyCache != null)
             {
-                foreach(ImpactAreaRowItem row in impAreaElems[0].ImpactAreaRows)
+
+                List<ImpactAreaElement> impAreaElems = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+                if (impAreaElems.Count > 0)
                 {
-                    if(row.ID == impID)
+                    foreach (ImpactAreaRowItem row in impAreaElems[0].ImpactAreaRows)
                     {
-                        ImpactArea = row;
+                        if (row.ID == impID)
+                        {
+                            ImpactArea = row;
+                            break;
+                        }
+                    }
+                    //we should always be able to find the impact area. We delete the stage damages if the user deletes the impact areas.
+                }
+
+                List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+                AnalyticalFrequencyElement selectedFrequencyFunction = null;
+                foreach (AnalyticalFrequencyElement elem in analyticalFrequencyElements)
+                {
+                    if (elem.ID == freqID)
+                    {
+                        selectedFrequencyFunction = elem;
                         break;
                     }
                 }
-                //we should always be able to find the impact area. We delete the stage damages if the user deletes the impact areas.
-            }
-            List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-            AnalyticalFrequencyElement selectedFrequencyFunction = null;
-            foreach (AnalyticalFrequencyElement elem in analyticalFrequencyElements)
-            {
-                if(elem.ID == freqID)
+
+                List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
+                StageDischargeElement selectedStageDischargeFunction = null;
+                foreach (StageDischargeElement elem in ratingCurveElements)
                 {
-                    selectedFrequencyFunction = elem;
-                    break;
+                    if (elem.ID == stageDischargeID)
+                    {
+                        selectedStageDischargeFunction = elem;
+                        break;
+                    }
                 }
+                FrequencyFunctions = CreateFrequencyWrappers(analyticalFrequencyElements);
+                StageDischargeFunctions = CreateStageDischargeWrappers(ratingCurveElements);
+
+                SelectSelectedFrequencyFunction(selectedFrequencyFunction);
+                SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
             }
-
-            List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
-            StageDischargeElement selectedStageDischargeFunction = null;
-            foreach (StageDischargeElement elem in ratingCurveElements)
-            {
-                if(elem.ID == stageDischargeID)
-                {
-                    selectedStageDischargeFunction = elem;
-                    break;
-                }
-            }
-
-            FrequencyFunctions = CreateFrequencyWrappers(analyticalFrequencyElements);
-            StageDischargeFunctions = CreateStageDischargeWrappers(ratingCurveElements);
-
-            SelectSelectedFrequencyFunction(selectedFrequencyFunction);
-            SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
         }
 
         private void SelectSelectedStageDischargeFunction(StageDischargeElement selectedStageDischargeFunction)

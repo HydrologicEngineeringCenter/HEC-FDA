@@ -470,14 +470,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return valueUncertParentElem;
         }
 
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            OccupancyTypesElement occElem = (OccupancyTypesElement)elem;
-            return new object[]
-            {
-                    occElem.Name,
-                    occElem.IsSelected
-            };
-        }
+        //public override object[] GetRowDataFromElement(ChildElement elem)
+        //{
+        //    OccupancyTypesElement occElem = (OccupancyTypesElement)elem;
+        //    return new object[]
+        //    {
+        //            occElem.Name,
+        //            //occElem.IsSelected
+        //    };
+        //}
     }
 }

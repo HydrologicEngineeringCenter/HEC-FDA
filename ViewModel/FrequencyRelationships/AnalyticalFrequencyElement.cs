@@ -129,12 +129,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                     badStrings.Add(flow);
                 }
             }
-            if(badStrings.Count > 0)
+            if (badStrings.Count > 0)
             {
-                string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
-                    "The following flow texts were not able to be converted to numeric values: ";
-                string errorVals = string.Join( "\n\t", badStrings);
-                MessageBox.Show(msg +  "\n\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //todo: send this to log file? Can't have a message box when unit testing.
+
+                //string msg = "An error occured while creating the frequency relationship '" + Name + "'." + Environment.NewLine +
+                //    "The following flow texts were not able to be converted to numeric values: ";
+                //string errorVals = string.Join("\n\t", badStrings);
+                //MessageBox.Show(msg + "\n\t" + errorVals, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return flowDoubles;           
         }

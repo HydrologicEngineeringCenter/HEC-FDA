@@ -2,6 +2,7 @@
 using Statistics;
 using Statistics.Distributions;
 using System;
+using System.Xml.Linq;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
@@ -9,6 +10,13 @@ namespace ViewModel.Inventory.OccupancyTypes
     {
         public FoundationValueUncertaintyVM(ContinuousDistribution valueUncertaintyOrdinate) : base(valueUncertaintyOrdinate)
         {
+        }
+
+        public override XElement ToXML()
+        {
+            XElement uncertElem = new XElement("asdf");
+
+            return uncertElem;
         }
 
         public override void LoadControlVMs(IDistribution ordinate)

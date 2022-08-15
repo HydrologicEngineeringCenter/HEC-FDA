@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using System;
+using System.Xml.Linq;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
@@ -52,6 +53,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _ContentByRatioVM = new OtherValueUncertaintyVM(item.ContentByRatioVM.Distribution);
             _ContentByRatioVM.WasModified += SomethingChanged;
             IsByValue = item.IsByValue;
+        }
+
+
+        public OccTypeItemWithRatio(XElement assetElem):base(assetElem)
+        {
+            //_IsChecked = Convert.ToBoolean(assetElem.Attribute("IsSelected").Value);
+            //_Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
+
+            //_ItemValueUncertainty = new ValueUncertaintyVM(assetElem.Element("Uncertainty"));
+
+
         }
 
         public OccTypeItemWithRatio(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
