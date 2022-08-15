@@ -45,80 +45,80 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
 
 
-        public OccTypePersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
+        public OccTypePersistenceManager(Study.FDACache studyCache, string tableName) : base(studyCache, tableName)
         {
         }
 
 
-        public void DeleteOcctypeGroup(int groupID)
-        {
-            //delete the row from the parent table
-            DeleteRowWithKey( groupID, "ID");
+        //public void DeleteOcctypeGroup(int groupID)
+        //{
+        //    //delete the row from the parent table
+        //    DeleteRowWithKey( groupID, "ID");
 
-            //delete all the occtypes associated with this group from the occtypes table
-            //this one call will delete all the rows with that group id
-            DeleteRowWithKey( groupID, "GroupID");
+        //    //delete all the occtypes associated with this group from the occtypes table
+        //    //this one call will delete all the rows with that group id
+        //    DeleteRowWithKey( groupID, "GroupID");
 
-            //remove from the study cache
-            RemoveElementFromCache(groupID);
-        }
+        //    //remove from the study cache
+        //    RemoveElementFromCache(groupID);
+        //}
 
         /// <summary>
         /// Removes the specified group from the study cache. This is done when saving the 
         /// occupancy types editor. 
         /// </summary>
         /// <param name="group"></param>
-        private void RemoveElementFromCache(int groupID)
-        {
-            List<OccupancyTypesElement> elems = StudyCacheForSaving.OccTypeElements;
-            int indexToRemove = -1;
-            for (int i = 0; i < elems.Count(); i++)
-            {
-                if (elems[i].ID == groupID)
-                {
-                    indexToRemove = i;
-                    break;
-                }
-            }
-            if (indexToRemove != -1)
-            {
-                StudyCacheForSaving.RemoveElement(elems[indexToRemove]);
-            }
-        }
+        //private void RemoveElementFromCache(int groupID)
+        //{
+        //    List<OccupancyTypesElement> elems = StudyCacheForSaving.OccTypeElements;
+        //    int indexToRemove = -1;
+        //    for (int i = 0; i < elems.Count(); i++)
+        //    {
+        //        if (elems[i].ID == groupID)
+        //        {
+        //            indexToRemove = i;
+        //            break;
+        //        }
+        //    }
+        //    if (indexToRemove != -1)
+        //    {
+        //        StudyCacheForSaving.RemoveElement(elems[indexToRemove]);
+        //    }
+        //}
 
-        public void DeleteOcctype(IOccupancyTypeEditable occtypeToDelete)
-        {
-            //only update the db if this occtype is actually in there.
-            //if the occtype has never been saved then there is nothing to remove.
-            if (occtypeToDelete.HasBeenSaved)
-            {
-                int[] keys = new int[] { occtypeToDelete.GroupID, occtypeToDelete.ID };
-                string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+        //public void DeleteOcctype(IOccupancyTypeEditable occtypeToDelete)
+        //{
+        //    //only update the db if this occtype is actually in there.
+        //    //if the occtype has never been saved then there is nothing to remove.
+        //    if (occtypeToDelete.HasBeenSaved)
+        //    {
+        //        int[] keys = new int[] { occtypeToDelete.GroupID, occtypeToDelete.ID };
+        //        string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
-                DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
-                DeleteOccTypeFromGroupInCache(occtypeToDelete);
-            }
-        }
+        //        DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
+        //        DeleteOccTypeFromGroupInCache(occtypeToDelete);
+        //    }
+        //}
 
-        private void DeleteOccTypeFromGroupInCache(IOccupancyTypeEditable ot)
-        {
-            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
-            if (group == null)
-            {
-                return;
-            }
-            else
-            {
-                foreach (IOccupancyType occtype in group.ListOfOccupancyTypes)
-                {
-                    if (occtype.ID == ot.ID)
-                    {
-                        group.ListOfOccupancyTypes.Remove(occtype);
-                        return;
-                    }
-                }
-            }
-        }
+        //private void DeleteOccTypeFromGroupInCache(IOccupancyTypeEditable ot)
+        //{
+        //    OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+        //    if (group == null)
+        //    {
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        foreach (IOccupancyType occtype in group.ListOfOccupancyTypes)
+        //        {
+        //            if (occtype.ID == ot.ID)
+        //            {
+        //                group.ListOfOccupancyTypes.Remove(occtype);
+        //                return;
+        //            }
+        //        }
+        //    }
+        //}
 
         ///// <summary>
         ///// Updates the name of the group in the group table.
@@ -136,18 +136,18 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //    UpdateOccTypeGroupsInStudyCache(groups);
         //}
 
-        private OccupancyTypesElement GetElementFromGroupID(int groupId)
-        {
-            List<OccupancyTypesElement> occtypeElems = StudyCacheForSaving.OccTypeElements;
-            for (int i = 0; i < occtypeElems.Count; i++)
-            {
-                if (occtypeElems[i].ID == groupId)
-                {
-                    return occtypeElems[i];
-                }
-            }
-            return null;
-        }
+        //private OccupancyTypesElement GetElementFromGroupID(int groupId)
+        //{
+        //    List<OccupancyTypesElement> occtypeElems = StudyCacheForSaving.OccTypeElements;
+        //    for (int i = 0; i < occtypeElems.Count; i++)
+        //    {
+        //        if (occtypeElems[i].ID == groupId)
+        //        {
+        //            return occtypeElems[i];
+        //        }
+        //    }
+        //    return null;
+        //}
 
         //private void AddNewOccTypeToCache(IOccupancyType ot)
         //{
@@ -165,310 +165,310 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //        group.ListOfOccupancyTypes.Add(ot);
         //    }
         //}
-        
+
         /// <summary>
         /// The only way to modify an occtype group is to change its name. This method finds the element
         /// in the cache and updates the name.
         /// </summary>
         /// <param name="groupsToUpdateInCache"></param>
-        public void UpdateOccTypeGroupsInStudyCache(List<IOccupancyTypeGroupEditable> groupsToUpdateInCache)
-        {
-            List<OccupancyTypesElement> occupancyTypesElements = StudyCacheForSaving.GetChildElementsOfType<OccupancyTypesElement>();
-            foreach (IOccupancyTypeGroupEditable group in groupsToUpdateInCache)
-            {
+        //public void UpdateOccTypeGroupsInStudyCache(List<IOccupancyTypeGroupEditable> groupsToUpdateInCache)
+        //{
+        //    List<OccupancyTypesElement> occupancyTypesElements = StudyCacheForSaving.GetChildElementsOfType<OccupancyTypesElement>();
+        //    foreach (IOccupancyTypeGroupEditable group in groupsToUpdateInCache)
+        //    {
 
-                foreach(OccupancyTypesElement elem in occupancyTypesElements)
-                {
-                    if(elem.ID == group.ID)
-                    {
-                        elem.Name = group.Name;
-                    }
-                }
-            }
-        }
+        //        foreach(OccupancyTypesElement elem in occupancyTypesElements)
+        //        {
+        //            if(elem.ID == group.ID)
+        //            {
+        //                elem.Name = group.Name;
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void UpdateOccTypeInCache(IOccupancyType ot)
-        {
-            //Because the study cache and the occtype owner element are hanging on to
-            //the same object. All i have to do is replace the occtype in the list of 
-            //occtypes and it will show up in all places. There is no need to remove
-            //a group and add a new one.
-            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
-            if (group != null)
-            {
-                //now replace the occtype with the new one
-                for (int i = 0; i < group.ListOfOccupancyTypes.Count; i++)
-                {
-                    if (group.ListOfOccupancyTypes[i].ID == ot.ID)
-                    {
-                        group.ListOfOccupancyTypes[i] = ot;
-                        break;
-                    }
-                }
-            }
-        }
-        public void SaveModifiedOcctype(IOccupancyType ot)
-        {
-            //object[] keys = new object[] { ot.GroupID, ot.ID };
-            //string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+        //private void UpdateOccTypeInCache(IOccupancyType ot)
+        //{
+        //    //Because the study cache and the occtype owner element are hanging on to
+        //    //the same object. All i have to do is replace the occtype in the list of 
+        //    //occtypes and it will show up in all places. There is no need to remove
+        //    //a group and add a new one.
+        //    OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+        //    if (group != null)
+        //    {
+        //        //now replace the occtype with the new one
+        //        for (int i = 0; i < group.ListOfOccupancyTypes.Count; i++)
+        //        {
+        //            if (group.ListOfOccupancyTypes[i].ID == ot.ID)
+        //            {
+        //                group.ListOfOccupancyTypes[i] = ot;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        //public void SaveModifiedOcctype(IOccupancyType ot)
+        //{
+        //    //object[] keys = new object[] { ot.GroupID, ot.ID };
+        //    //string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
-            ////update the whole row
-            //string[] columnsToUpdate = OcctypeColumns;
-            //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+        //    ////update the whole row
+        //    //string[] columnsToUpdate = OcctypeColumns;
+        //    //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
 
-            //UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
-            //UpdateOccTypeInCache(ot);
-        }
+        //    //UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
+        //    //UpdateOccTypeInCache(ot);
+        //}
 
-        public void SaveNewOccType(IOccupancyType ot)
-        {
-            //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            //if (tbl == null)
-            //{
-            //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-            //}
+        //public void SaveNewOccType(IOccupancyType ot)
+        //{
+        //    //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+        //    //if (tbl == null)
+        //    //{
+        //    //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+        //    //}
 
-            //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
-            //Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
+        //    //object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+        //    //Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
 
-            //AddNewOccTypeToCache(ot);
-        }
+        //    //AddNewOccTypeToCache(ot);
+        //}
 
         /// <summary>
         /// Looks at all the current occtypes in this group and returns the max ID plus 1.
         /// </summary>
         /// <param name="groupId"></param>
-        public int GetIdForNewOccType(int groupId)
-        {
-            List<IOccupancyType> occtypes = LoadOcctypesFromOccTypeTable(groupId);
-            List<int> occtypeIds = new List<int>();
-            foreach (IOccupancyType ot in occtypes)
-            {
-                occtypeIds.Add(ot.ID);
-            }
-            if (occtypeIds.Count > 0)
-            {
-                return occtypeIds.Max() + 1;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-        public void SaveNew(ChildElement element)
-        { 
-            SavingAction(element);
-        }
-
-        public void SaveNewElements(List<ChildElement> elements)
-        {
-            foreach (ChildElement elem in elements)
-            {
-                SavingAction(elem);
-            }
-        }
-
-        private void SavingAction(ChildElement element)
-        {
-            //this will save to the parent table
-            //and add the element to the study cache
-            base.SaveNew(element);
-
-            //save to the child table
-            SaveNewToOcctypesTable(element);
-        }
-
-        //public int GetGroupId(string groupName)
+        //public int GetIdForNewOccType(int groupId)
         //{
-        //    //return GetElementId(ParentTableName, groupName);
-        //    return -1;
+        //    List<IOccupancyType> occtypes = LoadOcctypesFromOccTypeTable(groupId);
+        //    List<int> occtypeIds = new List<int>();
+        //    foreach (IOccupancyType ot in occtypes)
+        //    {
+        //        occtypeIds.Add(ot.ID);
+        //    }
+        //    if (occtypeIds.Count > 0)
+        //    {
+        //        return occtypeIds.Max() + 1;
+        //    }
+        //    else
+        //    {
+        //        return 1;
+        //    }
+        //}
+        //public void SaveNew(ChildElement element)
+        //{ 
+        //    SavingAction(element);
         //}
 
-        private void SaveNewToOcctypesTable(ChildElement element)
-        {
-            ////we should have already saved the element to the parent table so that we can grab the id from that table
-            //int elemId = GetElementId(TableName, element.Name);
-            //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            //if (tbl == null)
-            //{
-            //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-            //    tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            //}
+        //public void SaveNewElements(List<ChildElement> elements)
+        //{
+        //    foreach (ChildElement elem in elements)
+        //    {
+        //        SavingAction(elem);
+        //    }
+        //}
 
-            //List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
-            //string groupName = element.Name;
+        //private void SavingAction(ChildElement element)
+        //{
+        //    //this will save to the parent table
+        //    //and add the element to the study cache
+        //    base.SaveNew(element);
 
-            //List<object[]> rows = new List<object[]>();
+        //    //save to the child table
+        //    SaveNewToOcctypesTable(element);
+        //}
 
-            //int i = 1;
-            //foreach (IOccupancyType ot in ListOfOccupancyTypes)
-            //{
-            //    rows.Add(GetOccTypeRowForOccTypesTable(elemId, i, ot).ToArray());
-            //    i++;
-            //}
-            //tbl.AddRows(rows);
-            //tbl.ApplyEdits();
-        }
+        ////public int GetGroupId(string groupName)
+        ////{
+        ////    //return GetElementId(ParentTableName, groupName);
+        ////    return -1;
+        ////}
 
-        private List<IOccupancyType> LoadOcctypesFromOccTypeTable(int groupId)
-        {
-            List<IOccupancyType> occtypes = new List<IOccupancyType>();
-            if (Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
-            {
-                DataTable table = Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
+        //private void SaveNewToOcctypesTable(ChildElement element)
+        //{
+        //    ////we should have already saved the element to the parent table so that we can grab the id from that table
+        //    //int elemId = GetElementId(TableName, element.Name);
+        //    //DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+        //    //if (tbl == null)
+        //    //{
+        //    //    Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+        //    //    tbl = Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+        //    //}
 
-                foreach (DataRow row in table.Rows)
-                {
-                    if (Convert.ToInt32(row[GROUP_ID_COL]) == groupId)
-                    {
-                        occtypes.Add(CreateOcctypeFromRow(row.ItemArray));
-                    }
-                }
-            }
-            return occtypes;
-        }
+        //    //List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
+        //    //string groupName = element.Name;
 
-        private IOccupancyType CreateOcctypeFromRow(object[] rowData)
-        {
-            int groupId = Convert.ToInt32(rowData[GROUP_ID_COL]);
-            int occtypId = Convert.ToInt32(rowData[OCCTYPE_ID_COL]);
+        //    //List<object[]> rows = new List<object[]>();
 
-            string name = (string)rowData[NAME_COL];
-            string desc = (string)rowData[DESC_COL];
-            string damCatName = (string)rowData[DAM_CAT_COL];
+        //    //int i = 1;
+        //    //foreach (IOccupancyType ot in ListOfOccupancyTypes)
+        //    //{
+        //    //    rows.Add(GetOccTypeRowForOccTypesTable(elemId, i, ot).ToArray());
+        //    //    i++;
+        //    //}
+        //    //tbl.AddRows(rows);
+        //    //tbl.ApplyEdits();
+        //}
 
-            string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
+        //private List<IOccupancyType> LoadOcctypesFromOccTypeTable(int groupId)
+        //{
+        //    List<IOccupancyType> occtypes = new List<IOccupancyType>();
+        //    if (Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
+        //    {
+        //        DataTable table = Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
 
-            string structureItemXML = (string)rowData[STRUCT_ITEM_COL];
-            string contentItemXML = (string)rowData[CONT_ITEM_COL];
-            string vehicleItemXML = (string)rowData[VEH_ITEM_COL];
-            string otherItemXML = (string)rowData[OTHER_ITEM_COL];
+        //        foreach (DataRow row in table.Rows)
+        //        {
+        //            if (Convert.ToInt32(row[GROUP_ID_COL]) == groupId)
+        //            {
+        //                occtypes.Add(CreateOcctypeFromRow(row.ItemArray));
+        //            }
+        //        }
+        //    }
+        //    return occtypes;
+        //}
 
-            OccTypeAsset structItem = ReadItemFromXML(OcctypeAssetType.structure, structureItemXML);
-            OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeAssetType.content, contentItemXML);
-            OccTypeAsset vehicleItem = ReadItemFromXML(OcctypeAssetType.vehicle, vehicleItemXML);
-            OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeAssetType.other, otherItemXML);
+        //private IOccupancyType CreateOcctypeFromRow(object[] rowData)
+        //{
+        //    int groupId = Convert.ToInt32(rowData[GROUP_ID_COL]);
+        //    int occtypId = Convert.ToInt32(rowData[OCCTYPE_ID_COL]);
 
-            ContinuousDistribution foundHtUncert = (ContinuousDistribution)ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
+        //    string name = (string)rowData[NAME_COL];
+        //    string desc = (string)rowData[DESC_COL];
+        //    string damCatName = (string)rowData[DAM_CAT_COL];
 
-            IOccupancyType occtype = new OccupancyType(name, desc, groupId, damCatName, structItem, contentItem,
-                vehicleItem, otherItem, foundHtUncert, occtypId);
+        //    string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
 
-            return occtype;
-        }
+        //    string structureItemXML = (string)rowData[STRUCT_ITEM_COL];
+        //    string contentItemXML = (string)rowData[CONT_ITEM_COL];
+        //    string vehicleItemXML = (string)rowData[VEH_ITEM_COL];
+        //    string otherItemXML = (string)rowData[OTHER_ITEM_COL];
 
-        /// <summary>
-        /// This method is used to create the row for the parent occtype table. 
-        /// This table has a lot of columns
-        /// </summary>
-        /// <param name="ot"></param>
-        /// <returns></returns>
-        private List<object> GetOccTypeRowForOccTypesTable(int elemId, int occtypeId, IOccupancyType ot)
-        {
-            //object[] rowsList = new object[OcctypeColumns.Length];
+        //    OccTypeAsset structItem = ReadItemFromXML(OcctypeAssetType.structure, structureItemXML);
+        //    OccTypeItemWithRatio contentItem = ReadItemWithRatioFromXML(OcctypeAssetType.content, contentItemXML);
+        //    OccTypeAsset vehicleItem = ReadItemFromXML(OcctypeAssetType.vehicle, vehicleItemXML);
+        //    OccTypeItemWithRatio otherItem = ReadItemWithRatioFromXML(OcctypeAssetType.other, otherItemXML);
 
-            //rowsList[GROUP_ID_COL] = elemId;
-            //rowsList[OCCTYPE_ID_COL] = occtypeId;
-            //rowsList[NAME_COL] = ot.Name;
-            //rowsList[DESC_COL] = ot.Description;
-            //rowsList[DAM_CAT_COL] = ot.DamageCategory;
+        //    ContinuousDistribution foundHtUncert = (ContinuousDistribution)ContinuousDistribution.FromXML(XElement.Parse(foundHtUncertaintyXML));
 
-            //if (ot.FoundationHeightUncertainty == null)
-            //{
-            //    rowsList[FOUND_HT_UNCERTAINTY_COL] = "";
-            //}
-            //else
-            //{
-            //    rowsList[FOUND_HT_UNCERTAINTY_COL] = ot.FoundationHeightUncertainty.ToXML().ToString();
-            //}
+        //    IOccupancyType occtype = new OccupancyType(name, desc, groupId, damCatName, structItem, contentItem,
+        //        vehicleItem, otherItem, foundHtUncert, occtypId);
 
-            //rowsList[STRUCT_ITEM_COL] = WriteOccTypeItemToXML(ot.StructureItem);
-            //rowsList[CONT_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.ContentItem);
-            //rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
-            //rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
+        //    return occtype;
+        //}
 
-            //return rowsList.ToList();
-            return new List<object>();
-        }
+        ///// <summary>
+        ///// This method is used to create the row for the parent occtype table. 
+        ///// This table has a lot of columns
+        ///// </summary>
+        ///// <param name="ot"></param>
+        ///// <returns></returns>
+        //private List<object> GetOccTypeRowForOccTypesTable(int elemId, int occtypeId, IOccupancyType ot)
+        //{
+        //    //object[] rowsList = new object[OcctypeColumns.Length];
 
-        private OccTypeAsset ReadItemFromXML(OcctypeAssetType itemType, string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(ITEM_DATA);
-            bool isChecked = Convert.ToBoolean( itemElem.Attribute(IS_ITEM_CHECKED).Value);
+        //    //rowsList[GROUP_ID_COL] = elemId;
+        //    //rowsList[OCCTYPE_ID_COL] = occtypeId;
+        //    //rowsList[NAME_COL] = ot.Name;
+        //    //rowsList[DESC_COL] = ot.Description;
+        //    //rowsList[DAM_CAT_COL] = ot.DamageCategory;
 
-            XElement curveElem = itemElem.Element(COMP_COMP); 
-            ComputeComponentVM comp = new ComputeComponentVM(curveElem);
+        //    //if (ot.FoundationHeightUncertainty == null)
+        //    //{
+        //    //    rowsList[FOUND_HT_UNCERTAINTY_COL] = "";
+        //    //}
+        //    //else
+        //    //{
+        //    //    rowsList[FOUND_HT_UNCERTAINTY_COL] = ot.FoundationHeightUncertainty.ToXML().ToString();
+        //    //}
 
-            XElement valueUncertParent = itemElem.Element(VALUE_UNCERT);
-            XElement valueUncert = valueUncertParent.Elements().First();
-            ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
+        //    //rowsList[STRUCT_ITEM_COL] = WriteOccTypeItemToXML(ot.StructureItem);
+        //    //rowsList[CONT_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.ContentItem);
+        //    //rowsList[VEH_ITEM_COL] = WriteOccTypeItemToXML(ot.VehicleItem);
+        //    //rowsList[OTHER_ITEM_COL] = WriteOccTypeItemWithRatioToXML(ot.OtherItem);
 
-            return new OccTypeAsset(itemType, isChecked, comp, valueUncertainty);
-        }
+        //    //return rowsList.ToList();
+        //    return new List<object>();
+        //}
 
-        private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeAssetType itemType, string xmlString)
-        {
-            XDocument doc = XDocument.Parse(xmlString);
-            XElement itemElem = doc.Element(ITEM_DATA);
-            bool isChecked = Convert.ToBoolean(itemElem.Attribute(IS_ITEM_CHECKED).Value);
-            bool isByVal = Convert.ToBoolean(itemElem.Attribute(IS_BY_VALUE).Value);
+        //private OccTypeAsset ReadItemFromXML(OcctypeAssetType itemType, string xmlString)
+        //{
+        //    XDocument doc = XDocument.Parse(xmlString);
+        //    XElement itemElem = doc.Element(ITEM_DATA);
+        //    bool isChecked = Convert.ToBoolean( itemElem.Attribute(IS_ITEM_CHECKED).Value);
 
-            XElement curveElem = itemElem.Element(COMP_COMP);
-            ComputeComponentVM comp = new ComputeComponentVM(curveElem);
+        //    XElement curveElem = itemElem.Element(COMP_COMP); 
+        //    ComputeComponentVM comp = new ComputeComponentVM(curveElem);
 
-            XElement valueUncertParent = itemElem.Element(VALUE_UNCERT);
-            XElement valueUncert = valueUncertParent.Elements().First();
-            ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
+        //    XElement valueUncertParent = itemElem.Element(VALUE_UNCERT);
+        //    XElement valueUncert = valueUncertParent.Elements().First();
+        //    ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
 
-            XElement valueUncertRatioParent = itemElem.Element(VALUE_UNCERT_RATIO);
-            XElement valueUncertRatio = valueUncertRatioParent.Elements().First();
-            ContinuousDistribution valueUncertaintyRatio = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncertRatio);
+        //    return new OccTypeAsset(itemType, isChecked, comp, valueUncertainty);
+        //}
 
-            return new OccTypeItemWithRatio(itemType, isChecked, comp, valueUncertainty, valueUncertaintyRatio, isByVal);
-        }
+        //private OccTypeItemWithRatio ReadItemWithRatioFromXML(OcctypeAssetType itemType, string xmlString)
+        //{
+        //    XDocument doc = XDocument.Parse(xmlString);
+        //    XElement itemElem = doc.Element(ITEM_DATA);
+        //    bool isChecked = Convert.ToBoolean(itemElem.Attribute(IS_ITEM_CHECKED).Value);
+        //    bool isByVal = Convert.ToBoolean(itemElem.Attribute(IS_BY_VALUE).Value);
 
-        private string WriteOccTypeItemToXML(OccTypeAsset item)
-        {
-            XElement itemElem = new XElement(ITEM_DATA);
-            itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
+        //    XElement curveElem = itemElem.Element(COMP_COMP);
+        //    ComputeComponentVM comp = new ComputeComponentVM(curveElem);
 
-            XElement curveElem = item.Curve.ToXML();
-            itemElem.Add(curveElem);
+        //    XElement valueUncertParent = itemElem.Element(VALUE_UNCERT);
+        //    XElement valueUncert = valueUncertParent.Elements().First();
+        //    ContinuousDistribution valueUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncert);
 
-            itemElem.Add(WriteContinuousDistToXML(item.ValueUncertainty.Distribution));
+        //    XElement valueUncertRatioParent = itemElem.Element(VALUE_UNCERT_RATIO);
+        //    XElement valueUncertRatio = valueUncertRatioParent.Elements().First();
+        //    ContinuousDistribution valueUncertaintyRatio = (ContinuousDistribution)ContinuousDistribution.FromXML(valueUncertRatio);
 
-            return itemElem.ToString();
-        }
+        //    return new OccTypeItemWithRatio(itemType, isChecked, comp, valueUncertainty, valueUncertaintyRatio, isByVal);
+        //}
 
-        private string WriteOccTypeItemWithRatioToXML(OccTypeItemWithRatio item)
-        {
-            XElement itemElem = new XElement(ITEM_DATA);
-            itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
-            itemElem.SetAttributeValue(IS_BY_VALUE, item.IsByValue);
+        //private string WriteOccTypeItemToXML(OccTypeAsset item)
+        //{
+        //    XElement itemElem = new XElement(ITEM_DATA);
+        //    itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
 
-            XElement curveElem = item.Curve.ToXML();
-            itemElem.Add(curveElem);
+        //    XElement curveElem = item.Curve.ToXML();
+        //    itemElem.Add(curveElem);
 
-            itemElem.Add(WriteContinuousDistToXML(item.ValueUncertainty.Distribution));
-            itemElem.Add(WriteContinuousDistRatioToXML(item.ContentByRatioVM.Distribution));
-            return itemElem.ToString();
-        }
+        //    itemElem.Add(WriteContinuousDistToXML(item.ValueUncertainty.Distribution));
 
-        private XElement WriteContinuousDistToXML(ContinuousDistribution cd)
-        {
-            XElement valueUncertParentElem = new XElement(VALUE_UNCERT);
-            XElement valueUncertElem = cd.ToXML();
-            valueUncertParentElem.Add(valueUncertElem);
-            return valueUncertParentElem;
-        }
-        private XElement WriteContinuousDistRatioToXML(ContinuousDistribution cd)
-        {
-            XElement valueUncertParentElem = new XElement(VALUE_UNCERT_RATIO);
-            XElement valueUncertElem = cd.ToXML();
-            valueUncertParentElem.Add(valueUncertElem);
-            return valueUncertParentElem;
-        }
+        //    return itemElem.ToString();
+        //}
+
+        //private string WriteOccTypeItemWithRatioToXML(OccTypeItemWithRatio item)
+        //{
+        //    XElement itemElem = new XElement(ITEM_DATA);
+        //    itemElem.SetAttributeValue(IS_ITEM_CHECKED, item.IsChecked);
+        //    itemElem.SetAttributeValue(IS_BY_VALUE, item.IsByValue);
+
+        //    XElement curveElem = item.Curve.ToXML();
+        //    itemElem.Add(curveElem);
+
+        //    itemElem.Add(WriteContinuousDistToXML(item.ValueUncertainty.Distribution));
+        //    itemElem.Add(WriteContinuousDistRatioToXML(item.ContentByRatioVM.Distribution));
+        //    return itemElem.ToString();
+        //}
+
+        //private XElement WriteContinuousDistToXML(ContinuousDistribution cd)
+        //{
+        //    XElement valueUncertParentElem = new XElement(VALUE_UNCERT);
+        //    XElement valueUncertElem = cd.ToXML();
+        //    valueUncertParentElem.Add(valueUncertElem);
+        //    return valueUncertParentElem;
+        //}
+        //private XElement WriteContinuousDistRatioToXML(ContinuousDistribution cd)
+        //{
+        //    XElement valueUncertParentElem = new XElement(VALUE_UNCERT_RATIO);
+        //    XElement valueUncertElem = cd.ToXML();
+        //    valueUncertParentElem.Add(valueUncertElem);
+        //    return valueUncertParentElem;
+        //}
 
         //public override object[] GetRowDataFromElement(ChildElement elem)
         //{

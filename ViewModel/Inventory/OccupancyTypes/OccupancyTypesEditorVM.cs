@@ -441,9 +441,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         /// <summary>
-        /// Saves all modified occupancy types from all of the occupancy type groups.
+        /// This will just save the occupancy type that is selected. It will not save all of the groups or all of the occtypes. To do that see "SaveAll()"
         /// </summary>
-        public void SaveAll()
+        public override void Save()
         {
             IElementManager manager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             //todo: bring this back to life.
@@ -455,11 +455,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
                 SaveAllReportGroupVM saveAllReport = group.SaveAll();
-                if(saveAllReport != null && saveAllReport.HasWarnings)
+                if (saveAllReport != null && saveAllReport.HasWarnings)
                 {
                     warningReports.Add(saveAllReport);
                 }
-                if(saveAllReport != null && saveAllReport.HasFatalErrors)
+                if (saveAllReport != null && saveAllReport.HasFatalErrors)
                 {
                     fatalErrorReports.Add(saveAllReport);
                 }
@@ -472,10 +472,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 SaveAllReportVM report = new SaveAllReportVM(warningReports);
                 string header = "Save Warnings";
-                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport",false,false);
-                Navigate(tab, true, true); 
+                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport", false, false);
+                Navigate(tab, true, true);
             }
-            if(fatalErrorReports.Count > 0)
+            if (fatalErrorReports.Count > 0)
             {
                 OcctypeErrorsReportVM report = new OcctypeErrorsReportVM(fatalErrorReports);
                 string errorHeader = "Occupancy Type Errors";
@@ -485,15 +485,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             //clear the modified groups
             _GroupsToUpdateInParentTable.Clear();
-        }
-
-        /// <summary>
-        /// This will just save the occupancy type that is selected. It will not save all of the groups or all of the occtypes. To do that see "SaveAll()"
-        /// </summary>
-        public override void Save()
-        {
-            //this is the starting point for the save
-            SaveAll();
         }
 
         /// <summary>
