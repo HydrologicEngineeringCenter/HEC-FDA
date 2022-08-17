@@ -575,7 +575,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
             }
 
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, fda2Occtypes, groupID);
+            string lastEditDate = DateTime.Now.ToString("G");
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName,lastEditDate,"", fda2Occtypes, groupID);
             return elem;
         }
 

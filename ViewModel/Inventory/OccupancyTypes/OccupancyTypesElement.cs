@@ -21,10 +21,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
         #region Constructors
 
-        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes, int id):base(occTypesGroupName,"","", id)
+        public OccupancyTypesElement( string name, string lastEditDate, string description,  List<IOccupancyType> listOfOccTypes, int id):base(name, lastEditDate, description, id)
         {
-            Name = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;
+            AddDefaultActions(EditOccupancyTypes);
         }
 
         public OccupancyTypesElement(XElement occtypeElem, int id) : base(occtypeElem, id)
@@ -35,6 +35,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 ListOfOccupancyTypes.Add(new OccupancyType(ot));
             }
+            AddDefaultActions(EditOccupancyTypes);
+
         }
         public override XElement ToXML()
         {
@@ -50,7 +52,20 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
 
-        #region Functions
+        private void EditOccupancyTypes(object arg1, EventArgs arg2)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this);
+
+            OccupancyTypesEditorVM _OccTypeEditor = new OccupancyTypesEditorVM(this, actionManager);
+            _OccTypeEditor.RequestNavigation += Navigate;
+            string header = StringConstants.EDIT_OCCTYPE_HEADER + ": " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, header, true, false);
+            //tab.RemoveTabEvent += Tab_RemoveTabEvent;
+            //tab.RemoveWindowEvent += Tab_RemoveTabEvent;
+            Navigate(tab, false, false);
+        }
+
         public List<String> getUniqueDamageCategories()
         {
             HashSet<String> dams = new HashSet<String>();
@@ -61,7 +76,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return dams.ToList<String>();
         }
 
-        #endregion       
+      
        
 
 

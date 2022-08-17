@@ -37,5 +37,12 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             }
         }
 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(DataContext is OccupancyTypeEditable vm)
+            {
+                vm.RefreshPlots();
+            }
+        }
     }
 }

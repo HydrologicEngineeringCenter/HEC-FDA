@@ -58,25 +58,35 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 Utilities.FdaValidationResult warningsResult = otEditable.HasWarnings();
                 Utilities.FdaValidationResult fatalErrorsResult = otEditable.HasFatalErrors(GetOcctypeNames());
-                
-                if(warningsResult.IsValid && fatalErrorsResult.IsValid)
+
+                if (warningsResult.IsValid && fatalErrorsResult.IsValid)
                 {
-                    otEditable.SaveOcctype();
+                    //otEditable.SaveOcctype();
                 }
-                else if(!warningsResult.IsValid && fatalErrorsResult.IsValid)
+                else if (!warningsResult.IsValid && fatalErrorsResult.IsValid)
                 {
                     //it only has warnings
                     occtypesWithWarningsAndNoFatalErrors.Add(new TableErrorsReport(otEditable, warningsResult.ErrorMessage));
                 }
-                else if(!fatalErrorsResult.IsValid)
+                else if (!fatalErrorsResult.IsValid)
                 {
                     occtypesWithFatalErrors.Add(new TableErrorsReport(otEditable, fatalErrorsResult.ErrorMessage));
                 }
-   
+
                 saveAllGroup = new SaveAllReportGroupVM(Name, occtypesWithWarningsAndNoFatalErrors, occtypesWithFatalErrors);
             }
 
             return saveAllGroup;
+        }
+
+        public List<IOccupancyType> CreateOcctypes()
+        {
+            List<IOccupancyType> occtypes = new List<IOccupancyType>();
+            foreach (IOccupancyTypeEditable ot in Occtypes)
+            {
+                occtypes.Add(ot.CreateOccupancyType());
+            }
+            return occtypes;
         }
 
     }

@@ -105,7 +105,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             //clone the occtype so that changes to it will not go into effect unless the user saves.
-            IOccupancyType clonedOcctype = new OccupancyType(occtype);
+            IOccupancyType clonedOcctype = new OccupancyType(occtype.ToXML());
 
             StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
             ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
@@ -133,6 +133,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             HasChanges = false;
             IsModified = false;
+        }
+
+        public void RefreshPlots()
+        {
+            StructureItem.TableWithPlot.InitModel();
+            ContentItem.TableWithPlot.InitModel();
+            VehicleItem.TableWithPlot.InitModel();
+            OtherItem.TableWithPlot.InitModel();
+
         }
 
         private void OcctypeItemDataModified(object sender, EventArgs e)

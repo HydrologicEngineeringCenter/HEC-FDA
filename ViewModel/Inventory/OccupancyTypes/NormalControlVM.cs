@@ -1,32 +1,37 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics;
 using Statistics.Distributions;
 using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    public class NormalControlVM : IValueUncertainty
+    public class NormalControlVM : ValidatingBaseViewModel, IValueUncertainty
     {
+        private Normal _Normal;
+
         public event EventHandler WasModified;
-        private double _StDev;
-        private double _Mean;
 
         public bool DisplayMean { get; set; }
-        public double StDev
+        public double StandardDeviation
         {
-            get { return _StDev; }
+            get { return _Normal.StandardDeviation; }
             set
             {
-                _StDev = value;
+                _Normal.StandardDeviation = value;
+                NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
         public double Mean
         {
-            get { return _Mean; }
+            get { return _Normal.Mean; }
             set
             {
-                _Mean = value;
+                _Normal.Mean = value;
+                NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
@@ -36,19 +41,22 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             DisplayMean = displayMean;
             LabelString = labelString;
-            Mean = mean;
-            StDev = stDev;
+            _Normal = new Normal(mean, stDev);
+            foreach (KeyValuePair<string, IPropertyRule> r in _Normal.RuleMap)
+            {
+                RuleMap.Add(r.Key, r.Value);
+            }
         }
 
         public ContinuousDistribution CreateOrdinate()
         {
-            return new Normal(Mean, StDev);
+            return _Normal;
         }
 
         public FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (StDev<0)
+            if (StandardDeviation < 0)
             {
                 vr.AddErrorMessage("Normal distribution standard deviation value cannot be less than 0");
             }

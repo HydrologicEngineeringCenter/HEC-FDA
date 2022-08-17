@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -99,6 +100,9 @@ namespace HEC.FDA.ViewModel.Inventory
             }
         }
 
+        /// <summary>
+        /// These are the rows that correspond to the different radio button options.
+        /// </summary>
         private void LoadRows()
         {
             FirstFloorElevationRows.Add(_StructureIDRow);
@@ -125,6 +129,13 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
             OptionalRows.Add(_NumberOfStructuresRow);
+        }
+
+        public XElement ToXML()
+        {
+            //todo
+            XElement siAttributes = new XElement("SIAttributes");
+            return siAttributes;
         }
 
         private void PathChanged()
@@ -220,6 +231,8 @@ namespace HEC.FDA.ViewModel.Inventory
             }
             return dtv;
         }
+
+        #region Validation
 
         /// <summary>
         /// Uses the terrain file and the structures shapefile to get elevations for each structure.
@@ -423,6 +436,8 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
+        #endregion
+
         /// <summary>
         /// Creates the data table that will be saved to the database.
         /// </summary>
@@ -478,45 +493,45 @@ namespace HEC.FDA.ViewModel.Inventory
         private void AssignValuesToRow(DataRow row,  DataTableView dataTableView, int i, OccTypeDisplayName selectedOcctype)
         {
             //id
-            row[StructureInventoryPersistenceManager.STRUCTURE_ID] = GetValueForRow(dataTableView, i, _StructureIDRow);
+            //row[StructureInventoryPersistenceManager.STRUCTURE_ID] = GetValueForRow(dataTableView, i, _StructureIDRow);
 
-            //occtypes and damcats
-            row[StructureInventoryBaseElement.OccupancyTypeField] = selectedOcctype.OccType.ID;
-            row[StructureInventoryBaseElement.OccupancyTypeGroup] = selectedOcctype.GroupID;
-            row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory;
+            ////occtypes and damcats
+            //row[StructureInventoryBaseElement.OccupancyTypeField] = selectedOcctype.OccType.ID;
+            //row[StructureInventoryBaseElement.OccupancyTypeGroup] = selectedOcctype.GroupID;
+            //row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory;
 
-            //foundation and elevation
-            if (FirstFloorElevationIsSelected)
-            {
-                row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
-            }
-            else
-            {
-                row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
-                if (FromTerrainFileIsSelected)
-                {
-                    row[StructureInventoryBaseElement.GroundElevationField] = _StructureElevations[i];
+            ////foundation and elevation
+            //if (FirstFloorElevationIsSelected)
+            //{
+            //    row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
+            //}
+            //else
+            //{
+            //    row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
+            //    if (FromTerrainFileIsSelected)
+            //    {
+            //        row[StructureInventoryBaseElement.GroundElevationField] = _StructureElevations[i];
 
-                }
-                else
-                {
-                    row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
-                }
+            //    }
+            //    else
+            //    {
+            //        row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
+            //    }
 
-            }
+            //}
 
-            //asset values
-            row[StructureInventoryBaseElement.StructureValueField] = GetValueForRow(dataTableView, i, _StructureValueRow);
-            row[StructureInventoryBaseElement.ContentValueField] = GetValueForRow(dataTableView, i, _ContentValueRow);
-            row[StructureInventoryBaseElement.OtherValueField] = GetValueForRow(dataTableView, i, _OtherValueRow);
-            row[StructureInventoryBaseElement.VehicleValueField] = GetValueForRow(dataTableView, i, _VehicleValueRow);
+            ////asset values
+            //row[StructureInventoryBaseElement.StructureValueField] = GetValueForRow(dataTableView, i, _StructureValueRow);
+            //row[StructureInventoryBaseElement.ContentValueField] = GetValueForRow(dataTableView, i, _ContentValueRow);
+            //row[StructureInventoryBaseElement.OtherValueField] = GetValueForRow(dataTableView, i, _OtherValueRow);
+            //row[StructureInventoryBaseElement.VehicleValueField] = GetValueForRow(dataTableView, i, _VehicleValueRow);
 
-            //optional fields
-            row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
-            row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
-            row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);
-            row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _NotesRow);
-            row[StructureInventoryPersistenceManager.NumberOfStructures] = GetValueForRow(dataTableView, i, _NumberOfStructuresRow);
+            ////optional fields
+            //row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
+            //row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
+            //row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);
+            //row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _NotesRow);
+            //row[StructureInventoryPersistenceManager.NumberOfStructures] = GetValueForRow(dataTableView, i, _NumberOfStructuresRow);
         }
 
         /// <summary>

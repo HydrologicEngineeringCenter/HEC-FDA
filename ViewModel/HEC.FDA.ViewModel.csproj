@@ -52,9 +52,6 @@
 		<Reference Include="OxyPlot.Wpf">
 			<HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
 		</Reference>
-		<Reference Include="StructureInventoryLibrary">
-			<HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Importer\Importer.csproj" />

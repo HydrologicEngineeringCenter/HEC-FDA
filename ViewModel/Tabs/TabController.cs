@@ -207,6 +207,7 @@ namespace HEC.FDA.ViewModel.Tabs
             SelectedDynamicTabIndex = Tabs.Count - 1;
             if (tabToPopIn.BaseVM is AnalyticalFrequencyEditorVM vm)
             {
+                //todo: is this doing anything?
                 vm.InitializePlotModel();
             }
             else if (tabToPopIn.BaseVM is CurveEditorVM curveEditorVM)

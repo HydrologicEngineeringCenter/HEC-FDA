@@ -199,8 +199,6 @@ namespace HEC.FDA.ViewModel.Study
         {
             //create the sqlite database for this study
             _StudyElement.CreateNewStudy(_StudyName, _FolderPath, _Description);
-
-            StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
         }
 
         #endregion

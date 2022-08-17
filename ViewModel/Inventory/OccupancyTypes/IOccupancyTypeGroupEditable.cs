@@ -10,5 +10,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         List<IOccupancyTypeEditable> ModifiedOcctypes { get; }
          int ID { get; }
         SaveAllReportGroupVM SaveAll();
+        List<IOccupancyType> CreateOcctypes();
     }
 }

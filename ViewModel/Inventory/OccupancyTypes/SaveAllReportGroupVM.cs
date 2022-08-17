@@ -25,10 +25,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public void SaveOcctypes()
         {
-            foreach(TableErrorsReport report in OcctypesWithWarnings)
-            {
-                report.OccType.SaveOcctype();
-            }
+            //foreach(TableErrorsReport report in OcctypesWithWarnings)
+            //{
+            //    report.OccType.SaveOcctype();
+            //}
         }
 
     }

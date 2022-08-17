@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         bool HasBeenSaved { get; }
         FdaValidationResult HasWarnings();
         FdaValidationResult HasFatalErrors(List<string> occtypeNames);
-        void SaveOcctype();
+        //void SaveOcctype();
         IOccupancyType CreateOccupancyType();
     }
 }

@@ -15,30 +15,19 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created Date: 12/1/2016 2:21:18 PM
         #endregion
         #region Fields
-        private string _TableConstant = Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT;
-
-        private StructureInventoryBaseElement _StructureInventory;
 
         #endregion
         #region Properties
         public bool IsInMapWindow { get; set; }
         public bool IsImportedFromOldFDA { get; set; }
         public DefineSIAttributesVM DefineSIAttributes { get; set; }
-       
-        public StructureInventoryBaseElement StructureInventory
-        {
-            get { return _StructureInventory; }
-            set { _StructureInventory = value; NotifyPropertyChanged(); }
-        }
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA, int id) 
-            : base(structInventoryBaseElement.Name,"", structInventoryBaseElement.Description, id)
+        public InventoryElement(string name, string description, bool isImportedFromOldFDA, int id) 
+            : base(name,"", description, id)
         {
             IsImportedFromOldFDA = isImportedFromOldFDA;
-
-            StructureInventory = structInventoryBaseElement;
 
             List<NamedAction> localactions = new List<NamedAction>();
 

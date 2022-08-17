@@ -1,41 +1,47 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics;
 using Statistics.Distributions;
 using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    public class TriangularControlVM : IValueUncertainty
+    public class TriangularControlVM : ValidatingBaseViewModel, IValueUncertainty
     {
         public event EventHandler WasModified;
-        private double _Min;
-        private double _Max;
-        private double _MostLikely;
+        private Triangular _Triangular;
         
         public double Min
         {
-            get { return _Min; }
+            get { return _Triangular.Min; }
             set
             {
-                _Min = value;
+                _Triangular.Min = value;
+                UpdateMostLikely();
+                NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
         public double Max
         {
-            get { return _Max; }
+            get { return _Triangular.Max; }
             set
             {
-                _Max = value;
+                _Triangular.Max = value;
+                UpdateMostLikely();
+                NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
         public double MostLikely
         {
-            get { return _MostLikely; }
+            get { return _Triangular.MostLikely; }
             set
             {
-                _MostLikely = value;
+                _Triangular.MostLikely = value;
+                NotifyPropertyChanged(nameof(Min));
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
@@ -45,17 +51,20 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public TriangularControlVM(double mode, double min, double max, string minLabelString, string maxLabelString, bool displayMostLikely = false)
         {
+            _Triangular = new Triangular(min, mode, max);
             DisplayMostLikely = displayMostLikely;
             MinLabelString = minLabelString;
             MaxLabelString = maxLabelString;
-            MostLikely = mode;
-            Min = min;
-            Max = max;
+
+            foreach (KeyValuePair<string, IPropertyRule> r in _Triangular.RuleMap)
+            {
+                RuleMap.Add(r.Key, r.Value);
+            }
         }
 
         public ContinuousDistribution CreateOrdinate()
         {
-            return new Triangular(Min, MostLikely, Max);
+            return _Triangular;
         }
 
         public FdaValidationResult IsValid()
@@ -65,15 +74,25 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 vr.AddErrorMessage("Triangular distribution max cannot be less than min");
             }
-            if (Max < MostLikely)
-            {
-                vr.AddErrorMessage("Triangular distribution max cannot be less than most likely");
-            }
-            if (Min > MostLikely)
-            {
-                vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
-            }
+            //if (Max < MostLikely)
+            //{
+            //    vr.AddErrorMessage("Triangular distribution max cannot be less than most likely");
+            //}
+            //if (Min > MostLikely)
+            //{
+            //    vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
+            //}
             return vr;
+        }
+
+        //Sometimes we don't use the most likely. The most likely will be the inventory value. We only care about the min and max.
+        //In order to not hit the property rules for most likely, i put it between the max and min.
+        private void UpdateMostLikely()
+        {
+            if(!DisplayMostLikely)
+            {
+                _Triangular.MostLikely = _Triangular.Min + ( (_Triangular.Max - _Triangular.Min)/2);
+            }
         }
     }
 }

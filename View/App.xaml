@@ -1,4 +1,4 @@
-﻿<Application x:Class="HEC.FDA.View.App"
+﻿<Application x:Class="HEC.FDA.View.App"                
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
                      
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -84,6 +84,7 @@
         <Style TargetType="Control" x:Key="defaultErrorTemplate">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

@@ -141,28 +141,28 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             }
         }
 
-        private void CreateNewOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is OccupancyTypesEditorVM vm)
-            {
-                vm.LaunchImportNewOccTypeGroup();
-            }
-        }
+        //private void CreateNewOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (DataContext is OccupancyTypesEditorVM vm)
+        //    {
+        //        vm.LaunchImportNewOccTypeGroup();
+        //    }
+        //}
 
-        private void RenameOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is OccupancyTypesEditorVM vm)
-            {
-                vm.LaunchRenameOcctypeGroup();
-            }
-        }
+        //private void RenameOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (DataContext is OccupancyTypesEditorVM vm)
+        //    {
+        //        vm.LaunchRenameOcctypeGroup();
+        //    }
+        //}
 
-        private void DeleteOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is OccupancyTypesEditorVM vm)
-            {
-                vm.DeleteOccTypeGroup();
-            }
-        }
+        //private void DeleteOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (DataContext is OccupancyTypesEditorVM vm)
+        //    {
+        //        vm.DeleteOccTypeGroup();
+        //    }
+        //}
     }
 }

@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Watershed;
 using System;
@@ -37,6 +38,8 @@ namespace HEC.FDA.ViewModel.Utilities
             {typeof(AggregatedStageDamageElement), IMAGE_PREFIX + "StageDamage.png" },
             {typeof(StageDischargeElement), IMAGE_PREFIX + "RatingCurve.png" },
             {typeof(InventoryElement), IMAGE_PREFIX + "StructureInventory.png"},
+            {typeof(OccupancyTypesElement), IMAGE_PREFIX + "StructureInventory.png"},
+
         };
 
         public static readonly string FAILURE_IMAGE = IMAGE_PREFIX + "FailureFunction.png";
