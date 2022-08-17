@@ -41,7 +41,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
         {
             if(DataContext is OccupancyTypeEditable vm)
             {
-                vm.RefreshPlots();
+                //vm.RefreshPlots();
             }
         }
     }

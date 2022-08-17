@@ -135,14 +135,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsModified = false;
         }
 
-        public void RefreshPlots()
-        {
-            StructureItem.TableWithPlot.InitModel();
-            ContentItem.TableWithPlot.InitModel();
-            VehicleItem.TableWithPlot.InitModel();
-            OtherItem.TableWithPlot.InitModel();
+        //public void RefreshPlots()
+        //{
+        //    StructureItem.TableWithPlot.InitModel();
+        //    ContentItem.TableWithPlot.InitModel();
+        //    VehicleItem.TableWithPlot.InitModel();
+        //    OtherItem.TableWithPlot.InitModel();
 
-        }
+        //}
 
         private void OcctypeItemDataModified(object sender, EventArgs e)
         {

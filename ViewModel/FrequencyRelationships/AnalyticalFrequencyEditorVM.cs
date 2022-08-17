@@ -35,11 +35,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private string _FitToFlowSkew = SKEW + "N/A";
         private string _FitToFlowRecordLength = RECORD_LENGTH + "N/A";
         private int _POR;
-        private PlotModel _plotModel;
+        private ViewResolvingPlotModel _plotModel;
         private int _StandardPOR;
         #endregion
         #region Properties
-        public PlotModel PlotModel
+        public ViewResolvingPlotModel PlotModel
         {
             get { return _plotModel; }
             set
@@ -180,7 +180,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public void InitializePlotModel()
         {
-            _plotModel = new PlotModel();
+            _plotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
             _plotModel.LegendPosition = LegendPosition.BottomRight;
 
