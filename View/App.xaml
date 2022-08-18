@@ -174,12 +174,7 @@
         <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
             <UtilitiesView:ImportFromFDA1/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportVM }" >
-            <OccupancyTypesView:SaveAllReport/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:OcctypeErrorsReportVM }" >
-            <OccupancyTypesView:OcctypeErrorsReport/>
-        </DataTemplate>
+
         <!--Occupancy Types Controls Region-->
 
         <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }" >
