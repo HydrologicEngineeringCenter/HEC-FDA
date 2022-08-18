@@ -187,7 +187,7 @@ namespace HEC.FDA.ViewModel.Study
                 leveeManager.SaveNew(elem);
             }
 
-            IElementManager occtypeManager = PersistenceFactory.GetOccTypeManager();
+            IElementManager occtypeManager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             foreach (ChildElement elem in _OcctypesElements)
             {
                 occtypeManager.SaveNew(elem);

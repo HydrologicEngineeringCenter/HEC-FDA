@@ -21,16 +21,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             OccTypeEditorControl.ListViewNeedsUpdating += new EventHandler(UpdateTheListView);
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // I wanted the editor to open up with a group and occtype selected. This gets the first group and the first occtype.
-            if(DataContext is OccupancyTypesEditorVM vm)
-            {
-                vm.CloseEditor += Vm_CloseEditor;
-                UpdateTheListView(sender, e);
-            }
-        }
-
         /// <summary>
         /// This gets called if there are no occtype groups left and the user says that they want to close the editor.
         /// </summary>
@@ -51,8 +41,8 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
                     return; 
                 }
 
-                ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
-                foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+                ObservableCollection<OccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<OccupancyTypeEditable>();
+                foreach (OccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
                 {
                     collectionOfOccTypes.Add(ot);
                 }
@@ -74,8 +64,8 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
                 //load the list view
                 if (vm.SelectedOccTypeGroup == null) { return; }
 
-                ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
-                foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
+                ObservableCollection<OccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<OccupancyTypeEditable>();
+                foreach (OccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
                 {
                     collectionOfOccTypes.Add(ot);
                 }

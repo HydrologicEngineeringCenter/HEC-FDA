@@ -8,7 +8,6 @@
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d" 
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
-             Loaded="UserControl_Loaded"
              d:DesignHeight="1000" d:DesignWidth="1000" >
     <UserControl.Resources>
         <Utils:BoolToModifiedConverter x:Key="boolToModifiedConverter"/>
@@ -99,7 +98,7 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="30,0,0,0" Text="{Binding Name, Mode=TwoWay}"/>
-                            <TextBlock Margin="0,0,0,0" Text="{Binding IsModified, Converter={StaticResource boolToModifiedConverter},Mode=TwoWay}"/>
+                            <TextBlock Margin="0,0,0,0" Text="{Binding HasChanges, Converter={StaticResource boolToModifiedConverter},Mode=TwoWay}"/>
                         </StackPanel>
 
                     </DataTemplate>

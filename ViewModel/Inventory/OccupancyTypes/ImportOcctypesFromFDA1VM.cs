@@ -19,7 +19,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
         public override void SaveElements()
         {
-            //OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
             Saving.IElementManager manager = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             foreach (OccupancyTypesElement elem in ElementsToImport)
             {

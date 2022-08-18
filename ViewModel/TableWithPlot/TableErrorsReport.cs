@@ -6,9 +6,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
     {
         public string Errors { get; }
         public string Name { get; }
-        public IOccupancyTypeEditable OccType { get; }
+        public OccupancyTypeEditable OccType { get; }
      
-        public TableErrorsReport(IOccupancyTypeEditable ot, string errors)
+        public TableErrorsReport(OccupancyTypeEditable ot, string errors)
         {
             OccType = ot;
             Name = ot.Name;
