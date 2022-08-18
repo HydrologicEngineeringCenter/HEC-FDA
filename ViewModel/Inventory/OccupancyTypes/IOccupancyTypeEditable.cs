@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// </summary>
     public interface IOccupancyTypeEditable
     {
-        event EventHandler UpdateMessagesEvent;
+        //event EventHandler UpdateMessagesEvent;
 
         string Name { get; set; }
         int ID { get; set; }
@@ -26,8 +26,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// If false, then this occtype was created during the editing process
         /// and has never been saved.
         /// </summary>
-        bool HasBeenSaved { get; }
-        FdaValidationResult HasWarnings();
+        //bool HasBeenSaved { get; }
+        //FdaValidationResult HasWarnings();
         FdaValidationResult HasFatalErrors(List<string> occtypeNames);
         IOccupancyType CreateOccupancyType();
     }

@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created Date: 7/14/2017 1:55:50 PM
         #endregion
         #region Fields
-        private List<string> _DamageCategoriesList = new List<string>();
+        ObservableCollection<string> _DamageCategoriesList = new ObservableCollection<string>();
         #endregion
         #region Properties
 
@@ -38,11 +38,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 NotifyPropertyChanged();
             }
         }
-       
-        public List<string> DamageCategoriesList
+
+        public ObservableCollection<string> DamageCategoriesList
         {
             get { return _DamageCategoriesList; }
-            set { _DamageCategoriesList = value; NotifyPropertyChanged(); }
         }
 
         public IOccupancyTypeGroupEditable SelectedOccTypeGroup
@@ -55,37 +54,26 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public OccupancyTypesEditorVM(OccupancyTypesElement elem, EditorActionManager manager) : base(elem, manager)
         {
+            LoadDamageCategories(elem.ListOfOccupancyTypes);
             SelectedOccTypeGroup = CreateEditableGroup(elem);
             SelectedOccType = SelectedOccTypeGroup.Occtypes.FirstOrDefault();
-            LoadDamageCategoriesList();
             ClearAllModifiedLists();
         }
 
         #endregion
         #region Voids
 
-        #region create editable occtype objects
-        //todo: am i still using this?
-        //group id to list of dam cat names
-        private Dictionary<int, ObservableCollection<string>> _GroupsToDamcats = new Dictionary<int, ObservableCollection<string>>();
-
-
         private IOccupancyTypeGroupEditable CreateEditableGroup(OccupancyTypesElement group)
         {
-            ObservableCollection<string> uniqueDamCatsForGroup = GetDamageCategoriesList(group);
-            _GroupsToDamcats.Add(group.ID, uniqueDamCatsForGroup);
             List<IOccupancyTypeEditable> editableOcctypes = new List<IOccupancyTypeEditable>();
 
             foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
             {
-                OccupancyTypeEditable otEdit = new OccupancyTypeEditable(ot, ref uniqueDamCatsForGroup);
+                OccupancyTypeEditable otEdit = new OccupancyTypeEditable(ot, ref _DamageCategoriesList);
                 otEdit.RequestNavigation += this.Navigate;
                 editableOcctypes.Add(otEdit);
             }
 
-            //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
-            //OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            //int groupID = manager.GetGroupId(group.Name);
             IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(group.ID, group.Name, editableOcctypes);
             if (occTypeGroup.Occtypes.Count == 0)
             {
@@ -93,28 +81,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
             return occTypeGroup;
         }
-        private ObservableCollection<string> GetDamageCategoriesList(OccupancyTypesElement group)
-        {
-            ObservableCollection<string> uniqueDamCats = new ObservableCollection<string>();
-            foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
-            {
-                if (!uniqueDamCats.Contains(ot.DamageCategory))
-                {
-                    uniqueDamCats.Add(ot.DamageCategory);
-                }
-            }
-            return uniqueDamCats;
-        }
-
-        #endregion
 
         private List<string> GetAllOccTypeNames()
         {
             List<string> occtypeNames = new List<string>();
-            if (SelectedOccTypeGroup == null) { return occtypeNames; }
-            foreach (IOccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
+            if (SelectedOccTypeGroup != null)
             {
-                occtypeNames.Add(ot.Name);
+                foreach (IOccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
+                {
+                    occtypeNames.Add(ot.Name);
+                }
             }
             return occtypeNames;
         }
@@ -122,8 +98,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             //we want a new occtype. If there is an occtype and occtype group then we can use
             //some of that data. We don't want to just copy the other occtype, however, that is
-            //another option. It seems to me that if there is no occtype group, a user shouldn't be
-            //allowed to create an occtype. The user is able to delete all groups and/or all occtypes.
+            //another option. 
 
             if (SelectedOccTypeGroup == null)
             {
@@ -139,17 +114,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 if (!vm.HasFatalError)
                 {
-                    ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
                     string damCatName = "";
                     if (SelectedOccType != null)
                     {
                         damCatName = SelectedOccType.DamageCategory;
-                        damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
 
                     //create the new occupancy type
                     IOccupancyType newOT = new OccupancyType(vm.Name, damCatName, SelectedOccTypeGroup.ID);
-                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
+                    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref _DamageCategoriesList, false);
                     otEditable.RequestNavigation += this.Navigate;
 
                     //add the occtype to the list and select it
@@ -175,8 +148,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     if (vm.HasFatalError == false)
                     {
                         newOT.Name = vm.Name;
-                        ObservableCollection<string> damcats = _GroupsToDamcats[newOT.GroupID];
-                        OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damcats, false);
+                        OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref _DamageCategoriesList, false);
                         otEditable.RequestNavigation += this.Navigate;
 
                         SelectedOccTypeGroup.Occtypes.Add(otEditable);
@@ -220,7 +192,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                         if (MessageBox.Show("This is the last occupancy type in this group. Do you want to permanently delete the group?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                         {
                             //delete the group
-                            DeleteOccTypeGroup();
+                            //DeleteOccTypeGroup();
                         }
                         else
                         {
@@ -249,69 +221,23 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
             otEditable.RequestNavigation += this.Navigate;
             return otEditable;
-        }
+        }      
 
-        private void DeleteOccTypeGroup()
+        private void LoadDamageCategories(List<IOccupancyType> occtypes)
         {
-            //if (SelectedOccTypeGroup == null)
-            //{
-            //    return;
-            //}
-
-            //if (MessageBox.Show("Do you want to permanently delete this occupancy type group?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            //{
-            //    int selectedIndex = OccTypeGroups.IndexOf(SelectedOccTypeGroup);
-            //    if (_GroupsToDamcats.ContainsKey(SelectedOccTypeGroup.ID))
-            //    {
-            //        _GroupsToDamcats.Remove(SelectedOccTypeGroup.ID);
-            //    }
-            //    OccTypeGroups.Remove(SelectedOccTypeGroup);
-
-            //    OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
-            //    // manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
-            //    //set the selected occtype to be the one before, unless at 0
-            //    if (selectedIndex > 0)
-            //    {
-            //        SelectedOccTypeGroup = OccTypeGroups[selectedIndex - 1];
-            //    }
-            //    else //we just deleted the zeroth item
-            //    {
-            //        if (OccTypeGroups.Count > 0)
-            //        {
-            //            SelectedOccTypeGroup = OccTypeGroups[0];
-            //        }
-            //        else //there are no more occtype groups
-            //        {
-            //            //if no, then create a new default group? If yes, then exit?
-            //            if (MessageBox.Show("There are no more occtype groups. Do you want to exit the editor.", "Confirm",
-            //                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            //            {
-            //                CloseEditor?.Invoke(this, new EventArgs());
-            //            }
-            //            else
-            //            {
-            //                //create a default occtype group?
-            //                CreateDefaultOccTypeGroup();
-            //            }
-            //        }
-            //    }
-            //}
-        }
-
-        private void LoadDamageCategoriesList()
-        {
-
-            List<string> uniqueDamCats = new List<string>();
-            foreach (IOccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
+            foreach (IOccupancyType ot in occtypes)
             {
-                if (!uniqueDamCats.Contains(ot.DamageCategory))
+                if (!DamageCategoriesList.Contains(ot.DamageCategory))
                 {
-                    uniqueDamCats.Add(ot.DamageCategory);
+                    DamageCategoriesList.Add(ot.DamageCategory);
                 }
             }
-            DamageCategoriesList = uniqueDamCats;
         }
 
+        /// <summary>
+        /// Currently the only errors that will prevent a save are repeat occtype names or a blank occtype name.
+        /// </summary>
+        /// <returns></returns>
         private FdaValidationResult Validate()
         {
             FdaValidationResult validationResult = new FdaValidationResult();
@@ -341,63 +267,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 MessageBox.Show(vr.UniqueErrorMessage(), "Errors Preventing Save", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-
-
-
-
-            //manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);
-
-            //List<SaveAllReportGroupVM> warningReports = new List<SaveAllReportGroupVM>();
-            //List<SaveAllReportGroupVM> fatalErrorReports = new List<SaveAllReportGroupVM>();
-
-
-            //SaveAllReportGroupVM saveAllReport = SelectedOccTypeGroup.SaveAll();
-            //if (saveAllReport != null && saveAllReport.HasWarnings)
-            //{
-            //    warningReports.Add(saveAllReport);
-            //}
-            //if (saveAllReport != null && saveAllReport.HasFatalErrors)
-            //{
-            //    fatalErrorReports.Add(saveAllReport);
-            //}
-            ////SavingText = "Last Saved: " + lastEditDate;
-
-
-            ////we only want to show the save report if there are occtypes that did not save
-            //if (warningReports.Count > 0)
-            //{
-            //    SaveAllReportVM report = new SaveAllReportVM(warningReports);
-            //    string header = "Save Warnings";
-            //    DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport", false, false);
-            //    Navigate(tab, true, true);
-            //}
-            //if (fatalErrorReports.Count > 0)
-            //{
-            //    OcctypeErrorsReportVM report = new OcctypeErrorsReportVM(fatalErrorReports);
-            //    string errorHeader = "Occupancy Type Errors";
-            //    DynamicTabVM errorTab = new DynamicTabVM(errorHeader, report, "ErrorReport");
-            //    Navigate(errorTab, true, true);
-            //}
-
-            ////clear the modified groups
-            //_GroupsToUpdateInParentTable.Clear();
         }
 
         /// <summary>
         /// Sets all the "IsModified" flags back to false and clears all the newly created lists.
         /// </summary>
-        public void ClearAllModifiedLists()
+        private void ClearAllModifiedLists()
         {
-            SelectedOccTypeGroup.IsModified = false;
             foreach (IOccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
             {
-                //todo: do i need this check? seems like i should just set it to false.
-                if (ot.HasBeenSaved)
-                {
-                    ot.IsModified = false;
-                }
+                    ot.IsModified = false;               
             }
-
         }
 
         #endregion
@@ -407,10 +287,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             bool areUnsavedChanges = false;
             //also need to check that the group names have been saved
-            if(_GroupsToUpdateInParentTable.Count>0)
-            {
-                areUnsavedChanges = true;
-            }
+            //if(_GroupsToUpdateInParentTable.Count>0)
+            //{
+            //    areUnsavedChanges = true;
+            //}
 
                 if(SelectedOccTypeGroup.ModifiedOcctypes.Count>0)
                 {

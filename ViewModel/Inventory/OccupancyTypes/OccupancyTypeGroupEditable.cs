@@ -6,7 +6,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     class OccupancyTypeGroupEditable : NameValidatingVM, IOccupancyTypeGroupEditable
     {
-        private bool _IsModified;
         public List<IOccupancyTypeEditable> Occtypes { get; set; }
         public List<IOccupancyTypeEditable> ModifiedOcctypes
         {
@@ -22,15 +21,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 }
                 return retval;
             }
-        }       
+        }
 
         public int ID { get; }
 
-        public bool IsModified
-        {
-            get { return _IsModified; }
-            set { _IsModified = value; NotifyPropertyChanged(); }
-        }
+        //public bool IsModified
+        //{
+        //    get { return _IsModified; }
+        //    set { _IsModified = value; NotifyPropertyChanged(); }
+        //}
         public OccupancyTypeGroupEditable(int id, string name, List<IOccupancyTypeEditable> occtypes)
         {
             ID = id;
@@ -38,46 +37,46 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Occtypes = occtypes;
         }
 
-        private List<string> GetOcctypeNames()
-        {
-            List<string> names = new List<string>();
-            foreach(IOccupancyTypeEditable ot in Occtypes)
-            {
-                names.Add(ot.Name);
-            }
-            return names;
-        }
-        public SaveAllReportGroupVM  SaveAll()
-        {
-            List<TableErrorsReport> occtypesWithWarningsAndNoFatalErrors = new List<TableErrorsReport>();
-            List<TableErrorsReport> occtypesWithFatalErrors = new List<TableErrorsReport>();
+        //private List<string> GetOcctypeNames()
+        //{
+        //    List<string> names = new List<string>();
+        //    foreach(IOccupancyTypeEditable ot in Occtypes)
+        //    {
+        //        names.Add(ot.Name);
+        //    }
+        //    return names;
+        //}
+        //public SaveAllReportGroupVM  SaveAll()
+        //{
+        //    List<TableErrorsReport> occtypesWithWarningsAndNoFatalErrors = new List<TableErrorsReport>();
+        //    List<TableErrorsReport> occtypesWithFatalErrors = new List<TableErrorsReport>();
 
-            SaveAllReportGroupVM saveAllGroup = null;
+        //    SaveAllReportGroupVM saveAllGroup = null;
 
-            foreach (IOccupancyTypeEditable otEditable in ModifiedOcctypes)
-            {
-                Utilities.FdaValidationResult warningsResult = otEditable.HasWarnings();
-                Utilities.FdaValidationResult fatalErrorsResult = otEditable.HasFatalErrors(GetOcctypeNames());
+        //    foreach (IOccupancyTypeEditable otEditable in ModifiedOcctypes)
+        //    {
+        //        Utilities.FdaValidationResult warningsResult = otEditable.HasWarnings();
+        //        Utilities.FdaValidationResult fatalErrorsResult = otEditable.HasFatalErrors(GetOcctypeNames());
 
-                if (warningsResult.IsValid && fatalErrorsResult.IsValid)
-                {
-                    //otEditable.SaveOcctype();
-                }
-                else if (!warningsResult.IsValid && fatalErrorsResult.IsValid)
-                {
-                    //it only has warnings
-                    occtypesWithWarningsAndNoFatalErrors.Add(new TableErrorsReport(otEditable, warningsResult.ErrorMessage));
-                }
-                else if (!fatalErrorsResult.IsValid)
-                {
-                    occtypesWithFatalErrors.Add(new TableErrorsReport(otEditable, fatalErrorsResult.ErrorMessage));
-                }
+        //        if (warningsResult.IsValid && fatalErrorsResult.IsValid)
+        //        {
+        //            //otEditable.SaveOcctype();
+        //        }
+        //        else if (!warningsResult.IsValid && fatalErrorsResult.IsValid)
+        //        {
+        //            //it only has warnings
+        //            occtypesWithWarningsAndNoFatalErrors.Add(new TableErrorsReport(otEditable, warningsResult.ErrorMessage));
+        //        }
+        //        else if (!fatalErrorsResult.IsValid)
+        //        {
+        //            occtypesWithFatalErrors.Add(new TableErrorsReport(otEditable, fatalErrorsResult.ErrorMessage));
+        //        }
 
-                saveAllGroup = new SaveAllReportGroupVM(Name, occtypesWithWarningsAndNoFatalErrors, occtypesWithFatalErrors);
-            }
+        //        saveAllGroup = new SaveAllReportGroupVM(Name, occtypesWithWarningsAndNoFatalErrors, occtypesWithFatalErrors);
+        //    }
 
-            return saveAllGroup;
-        }
+        //    return saveAllGroup;
+        //}
 
         public List<IOccupancyType> CreateOcctypes()
         {

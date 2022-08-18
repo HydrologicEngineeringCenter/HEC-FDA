@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     public class OccupancyTypeEditable : BaseViewModel, IOccupancyTypeEditable
     {
         #region Fields
-        public event EventHandler UpdateMessagesEvent;
+        //public event EventHandler UpdateMessagesEvent;
 
         private string _Name;
         private string _Description;
@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set
             {
                 _Name = value;
-                NotifyPropertyChanged();
+                NotifyPropertyChanged();              
                 IsModified = true;
             }
         }
