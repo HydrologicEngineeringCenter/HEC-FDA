@@ -75,14 +75,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 vr.AddErrorMessage("Triangular distribution max cannot be less than min");
             }
-            //if (Max < MostLikely)
-            //{
-            //    vr.AddErrorMessage("Triangular distribution max cannot be less than most likely");
-            //}
-            //if (Min > MostLikely)
-            //{
-            //    vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
-            //}
+            if (Max < MostLikely)
+            {
+                vr.AddErrorMessage("Triangular distribution max cannot be less than most likely");
+            }
+            if (Min > MostLikely)
+            {
+                vr.AddErrorMessage("Triangular distribution most likely cannot be less than min");
+            }
             return vr;
         }
 

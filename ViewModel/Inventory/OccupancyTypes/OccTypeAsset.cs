@@ -136,7 +136,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DataModified?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual FdaValidationResult IsItemValid()
+        //todo: I don't think that any of these validation methods in the occtype editor are being used anymore
+        //I am going to leave them in because i think that we might want them to go to the log file.
+        public virtual FdaValidationResult IsAssetValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
 

@@ -62,7 +62,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FdaValidationResult vr = new FdaValidationResult();           
             if (Min > Max)
             {
-                //todo: should I just validate the _Uniform or even get rid of this?
                 vr.AddErrorMessage("Uniform distribution max value cannot be less than min");
             }
             return vr;

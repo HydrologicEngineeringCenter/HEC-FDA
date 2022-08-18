@@ -78,7 +78,6 @@ namespace HEC.FDA.ViewModel.Utilities
             if (editAction != null)
             {
                 NamedAction editInflowOutflowCurve = new NamedAction();
-                //todo: header name
                 editInflowOutflowCurve.Header = actionHeader;
                 editInflowOutflowCurve.Action = editAction;
                 localActions.Add(editInflowOutflowCurve);

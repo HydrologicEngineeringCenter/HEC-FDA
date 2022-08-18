@@ -100,6 +100,7 @@ namespace HEC.FDA.View.TableWithPlot
                     Grid childGrid = child as Grid;
                     if (childGrid != null)
                     {
+                        //TODO: commenting out for now because of exception. Moving toolbar to the right of the plot in the future.
                         //childGrid.Children.Add(_expandableToolsPanel);
                         break;
                     }
