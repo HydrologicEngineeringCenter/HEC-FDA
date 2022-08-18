@@ -14,12 +14,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public StageDischargeElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
             : base(name, lastEditDate, desc,ratingCurve, id)
         {
-            AddDefaultActions(EditRatingCurve);
+            AddDefaultActions(EditRatingCurve, StringConstants.EDIT_STAGE_DISCHARGE_MENU);
         }
 
         public StageDischargeElement(XElement elem, int id):base(elem, id)
         {
-            AddDefaultActions(EditRatingCurve);
+            AddDefaultActions(EditRatingCurve, StringConstants.EDIT_STAGE_DISCHARGE_MENU);
         }
 
         #endregion

@@ -71,7 +71,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         #endregion
 
-        public void AddDefaultActions(Action<object, EventArgs> editAction = null)
+        public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "")
         {
             List<NamedAction> localActions = new List<NamedAction>();
 
@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 NamedAction editInflowOutflowCurve = new NamedAction();
                 //todo: header name
-                editInflowOutflowCurve.Header = StringConstants.EDIT_REG_UNREG_MENU;
+                editInflowOutflowCurve.Header = actionHeader;
                 editInflowOutflowCurve.Action = editAction;
                 localActions.Add(editInflowOutflowCurve);
             }

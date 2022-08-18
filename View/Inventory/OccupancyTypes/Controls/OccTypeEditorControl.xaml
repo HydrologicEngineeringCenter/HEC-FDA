@@ -49,7 +49,7 @@
             <local:ValueUncertaintyControl DataContext="{Binding FoundationHeightUncertainty}" />
         </GroupBox>
 
-        <util:TabControlNoReload Grid.Row="2" Grid.Column="0" Margin="0" SelectionChanged="TabControl_SelectionChanged">
+        <TabControl Grid.Row="2" Grid.Column="0" Margin="0" >
             <TabItem Name="StructureDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -153,6 +153,6 @@
                 </Grid>
             </TabItem>
 
-        </util:TabControlNoReload>
+        </TabControl>
     </Grid>
 </UserControl>

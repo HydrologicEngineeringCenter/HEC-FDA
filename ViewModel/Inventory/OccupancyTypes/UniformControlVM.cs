@@ -37,16 +37,19 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public string MinLabelString { get; set; }
         public string MaxLabelString { get; set; }
 
-        public UniformControlVM(double min, double max, string minLabelString, string maxLabelString)
+        public UniformControlVM(double min, double max, string minLabelString, string maxLabelString, bool usePropertyRules = false)
         {
             _Uniform = new Uniform(min, max);
             MinLabelString = minLabelString;
             MaxLabelString = maxLabelString;
 
-            foreach(KeyValuePair<string, IPropertyRule> r in _Uniform.RuleMap)
+            if (usePropertyRules)
             {
-                RuleMap.Add(r.Key, r.Value);
-            }          
+                foreach (KeyValuePair<string, IPropertyRule> r in _Uniform.RuleMap)
+                {
+                    RuleMap.Add(r.Key, r.Value);
+                }
+            }
         }
 
         public ContinuousDistribution CreateOrdinate()

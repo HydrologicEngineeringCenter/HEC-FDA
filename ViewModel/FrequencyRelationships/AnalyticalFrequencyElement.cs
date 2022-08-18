@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             MyGraphicalVM = graphicalVM;
 
             PairedData = CreatePairedData();
-            AddDefaultActions(EditFlowFreq);
+            AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
         }
         //load from database
         public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
@@ -90,7 +90,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             PairedData = CreatePairedData();
 
-            AddDefaultActions(EditFlowFreq);
+            AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
         }
 
         #endregion

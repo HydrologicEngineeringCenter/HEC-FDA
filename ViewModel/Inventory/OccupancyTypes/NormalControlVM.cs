@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics;
@@ -46,6 +47,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 RuleMap.Add(r.Key, r.Value);
             }
+            if(displayMean)
+            {
+                AddSinglePropertyRule(nameof(Mean), new Rule(() => { return Mean >= 0; }, "Mean must be greater than or equal to 0.", MVVMFramework.Base.Enumerations.ErrorLevel.Severe));
+            }
+
         }
 
         public ContinuousDistribution CreateOrdinate()

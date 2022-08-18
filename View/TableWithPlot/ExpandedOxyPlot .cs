@@ -85,7 +85,7 @@ namespace HEC.FDA.View.TableWithPlot
                 }
             };
             this.Loaded += ExpandedOxyPlot_Loaded;
-
+            
             // 
             _selectButton.IsChecked = true;
             SelectButton_Click(null, null);
@@ -100,7 +100,7 @@ namespace HEC.FDA.View.TableWithPlot
                     Grid childGrid = child as Grid;
                     if (childGrid != null)
                     {
-                        childGrid.Children.Add(_expandableToolsPanel);
+                        //childGrid.Children.Add(_expandableToolsPanel);
                         break;
                     }
                 }

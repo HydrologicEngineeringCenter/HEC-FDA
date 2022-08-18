@@ -51,14 +51,14 @@ namespace HEC.FDA.ViewModel.GeoTech
                 };
             }
 
-            AddDefaultActions(EditLeveeFeature);
+            AddDefaultActions(EditLeveeFeature, StringConstants.EDIT_LATERAL_STRUCTURES_MENU);
         }
 
         public LateralStructureElement(XElement element, int id):base(element,  id)
         {
             IsDefaultCurveUsed = Convert.ToBoolean( element.Attribute(IS_DEFAULT).Value);
             Elevation = Convert.ToDouble( element.Attribute(ELEVATION).Value);
-            AddDefaultActions(EditLeveeFeature);
+            AddDefaultActions(EditLeveeFeature, StringConstants.EDIT_LATERAL_STRUCTURES_MENU);
         }
 
         #endregion

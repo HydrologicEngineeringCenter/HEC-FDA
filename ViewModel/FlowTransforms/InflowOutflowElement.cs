@@ -17,12 +17,12 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         public InflowOutflowElement(string name, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id)
             :base(name,lastEditDate,description, inflowOutflowCurve, id)
         {
-            AddDefaultActions(EditInflowOutflowCurve);
+            AddDefaultActions(EditInflowOutflowCurve, StringConstants.EDIT_REG_UNREG_MENU);
         }
 
         public InflowOutflowElement(XElement element, int id):base(element, id)
         {          
-            AddDefaultActions(EditInflowOutflowCurve);
+            AddDefaultActions(EditInflowOutflowCurve, StringConstants.EDIT_REG_UNREG_MENU);
         }
 
         #endregion

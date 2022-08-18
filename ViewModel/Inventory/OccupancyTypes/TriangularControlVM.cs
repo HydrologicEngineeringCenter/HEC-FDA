@@ -19,7 +19,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set
             {
                 _Triangular.Min = value;
-                UpdateMostLikely();
                 NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
@@ -30,7 +29,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set
             {
                 _Triangular.Max = value;
-                UpdateMostLikely();
                 NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
@@ -56,9 +54,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             MinLabelString = minLabelString;
             MaxLabelString = maxLabelString;
 
-            foreach (KeyValuePair<string, IPropertyRule> r in _Triangular.RuleMap)
+            if (displayMostLikely)
             {
-                RuleMap.Add(r.Key, r.Value);
+                foreach (KeyValuePair<string, IPropertyRule> r in _Triangular.RuleMap)
+                {
+                    RuleMap.Add(r.Key, r.Value);
+                }
             }
         }
 
@@ -85,14 +86,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return vr;
         }
 
-        //Sometimes we don't use the most likely. The most likely will be the inventory value. We only care about the min and max.
-        //In order to not hit the property rules for most likely, i put it between the max and min.
-        private void UpdateMostLikely()
-        {
-            if(!DisplayMostLikely)
-            {
-                _Triangular.MostLikely = _Triangular.Min + ( (_Triangular.Max - _Triangular.Min)/2);
-            }
-        }
     }
 }

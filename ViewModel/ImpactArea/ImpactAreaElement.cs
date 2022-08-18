@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             : base(name, "", description, id)
         {      
             ImpactAreaRows = collectionOfRows;
-            AddDefaultActions(Edit);
+            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU);
         }
 
         public ImpactAreaElement(XElement impactAreaElement, int id) : base(impactAreaElement, id)
@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
             }
 
-            AddDefaultActions(Edit);
+            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU);
         }
 
         public override XElement ToXML()

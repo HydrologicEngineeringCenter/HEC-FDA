@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
             SelectedIndexPoints = indexPointsID;
 
-            AddDefaultActions(EditDamageCurve);
+            AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
 
             NamedAction exportDetails = new NamedAction(this);
             exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;

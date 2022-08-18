@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
             RelativePathAndProbability.AddRange(pathAndProbs);
             IsDepthGrids = isDepthGrids;
-            AddDefaultActions(EditElement);
+            AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) 
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             HydroType = hydroType;
             RelativePathAndProbability.AddRange(relativePathAndProbabilities);
             IsDepthGrids = isDepthGrids;
-            AddDefaultActions(EditElement);
+            AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
 
@@ -78,7 +78,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 RelativePathAndProbability.Add(new PathAndProbability(elem));
             }
 
-            AddDefaultActions(EditElement);
+            AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         #endregion

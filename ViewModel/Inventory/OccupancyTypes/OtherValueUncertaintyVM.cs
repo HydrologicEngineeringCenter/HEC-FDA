@@ -64,7 +64,7 @@ namespace ViewModel.Inventory.OccupancyTypes
                 uniMin = ((Uniform)ordinate).Min;
                 uniMax = ((Uniform)ordinate).Max;
             }
-            UniformControlVM = new UniformControlVM(uniMin, uniMax, "%", "%");
+            UniformControlVM = new UniformControlVM(uniMin, uniMax, "%", "%", true);
             UniformControlVM.WasModified += ControlWasModified;
         }
 
