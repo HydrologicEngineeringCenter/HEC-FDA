@@ -27,7 +27,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public string Name { get; set; }
 
         
-
         public OccupancyType(string name, string damCatName, int groupId)
         {
             Name = name;
@@ -42,6 +41,21 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             Saving.IElementManager manager = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             ID = manager.GetNextAvailableId();
+        } 
+
+        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
+            OccTypeItemWithRatio contentItem, OccTypeAsset vehicleItem, OccTypeItemWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
+        {
+            Name = name;
+            Description = description;
+            GroupID = groupID;
+            DamageCategory = damageCategory;
+            StructureItem = structureItem;
+            ContentItem = contentItem;
+            VehicleItem = vehicleItem;
+            OtherItem = otherItem;
+            FoundationHeightUncertainty = foundationHtUncertainty;
+            ID = id;
         }
 
         public OccupancyType(XElement occtypeElem)
@@ -53,13 +67,28 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ID = Convert.ToInt32(occtypeElem.Attribute("ID").Value);
 
             XElement foundUncert = occtypeElem.Element("FoundationUncertainty");
-            FoundationHeightUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(foundUncert.Descendants().First());           
+            FoundationHeightUncertainty = (ContinuousDistribution)ContinuousDistribution.FromXML(foundUncert.Descendants().First());
 
             StructureItem = new OccTypeAsset(occtypeElem.Element("StructureAsset").Element("Asset"));
             ContentItem = new OccTypeItemWithRatio(occtypeElem.Element("ContentAsset").Element("Asset"));
             VehicleItem = new OccTypeAsset(occtypeElem.Element("VehicleAsset").Element("Asset"));
             OtherItem = new OccTypeItemWithRatio(occtypeElem.Element("OtherAsset").Element("Asset"));
+        }
 
+        private OccTypeAsset CreateDefaultAsset(OcctypeAssetType assetType, bool isSelected)
+        {
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            ContinuousDistribution structValueUncert = new Deterministic(0);
+            return new OccTypeAsset(assetType,  isSelected, structureCurve, structValueUncert);
+        }
+
+        private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeAssetType itemType, bool isSelected)
+        {
+            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            ContinuousDistribution structValueUncert = new Deterministic(0);
+            ContinuousDistribution structValueUncertRatio = new Deterministic(0);
+            bool isByVal = true;
+            return new OccTypeItemWithRatio(itemType, isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
         }
 
         public XElement ToXML()
@@ -94,56 +123,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return occtypeElem;
         }
 
-        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
-            OccTypeItemWithRatio contentItem, OccTypeAsset vehicleItem, OccTypeItemWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
-        {
-            Name = name;
-            Description = description;
-            GroupID = groupID;
-            DamageCategory = damageCategory;
-            StructureItem = structureItem;
-            ContentItem = contentItem;
-            VehicleItem = vehicleItem;
-            OtherItem = otherItem;
-            FoundationHeightUncertainty = foundationHtUncertainty;
-            ID = id;
-        }
-        public OccupancyType(string name, string damageCategoryName)
-        {
-            Name = name;
-            DamageCategory = damageCategoryName;
-        }
-
-        public OccupancyType(IOccupancyType ot)
-        {
-            Name = ot.Name;
-            Description = ot.Description;
-            DamageCategory = ot.DamageCategory;
-            FoundationHeightUncertainty = ot.FoundationHeightUncertainty;
-            StructureItem = new OccTypeAsset( ot.StructureItem);
-            ContentItem = new OccTypeItemWithRatio( ot.ContentItem);
-            VehicleItem = new OccTypeAsset( ot.VehicleItem);
-            OtherItem = new OccTypeItemWithRatio( ot.OtherItem);
-            GroupID = ot.GroupID;
-            ID = ot.ID;        
-        }
-
-        private OccTypeAsset CreateDefaultAsset(OcctypeAssetType assetType, bool isSelected)
-        {
-            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
-            ContinuousDistribution structValueUncert = new Deterministic(0);
-            return new OccTypeAsset(assetType,  isSelected, structureCurve, structValueUncert);
-        }
-
-        private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeAssetType itemType, bool isSelected)
-        {
-            ComputeComponentVM structureCurve = new ComputeComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
-            ContinuousDistribution structValueUncert = new Deterministic(0);
-            ContinuousDistribution structValueUncertRatio = new Deterministic(0);
-            bool isByVal = true;
-            return new OccTypeItemWithRatio(itemType, isSelected, structureCurve, structValueUncert, structValueUncertRatio, isByVal);
-        }
-
-       
     }
 }

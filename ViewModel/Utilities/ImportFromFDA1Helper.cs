@@ -557,10 +557,9 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
-            int groupID = PersistenceFactory.GetOccTypeManager().GetNextAvailableId();
-            //todo: fix this
-            int occtypeID = -1; // PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupID);
+            int groupID = PersistenceFactory.GetElementManager<OccupancyTypesElement>().GetNextAvailableId();
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+            int occtypeID = 1; 
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
                 try
@@ -575,7 +574,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
             }
 
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, fda2Occtypes, groupID);
+            string lastEditDate = DateTime.Now.ToString("G");
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName,lastEditDate,"", fda2Occtypes, groupID);
             return elem;
         }
 

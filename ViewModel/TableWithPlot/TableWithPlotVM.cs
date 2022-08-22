@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public event EventHandler WasModified;
 
         #region Backing Fields
-        private PlotModel _plotModel = new PlotModel();
+        private ViewResolvingPlotModel _plotModel = new ViewResolvingPlotModel();
         private ComputeComponentVM _computeComponentVM;
         private bool _plotExtended = true;
         private bool _tableExtended = true;
@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
         public void InitModel()
         {
-            _plotModel = new PlotModel();
+            _plotModel = new ViewResolvingPlotModel();
             InitPlotModel(_plotModel);
             SelectedItemToPlotModel();
         }

@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, id)
         {
             IndexPoints = indexPoints;
-            AddDefaultActions(Edit);
+            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU);
         }
 
         public IndexPointsElement(XElement childElem, int id):base(childElem, id)
@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
                 IndexPoints.Add(nameElem.Value);
             }
 
-            AddDefaultActions(Edit);
+            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU);
         }
 
         #endregion

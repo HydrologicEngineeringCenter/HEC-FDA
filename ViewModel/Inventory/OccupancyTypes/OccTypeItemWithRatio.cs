@@ -101,10 +101,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public override FdaValidationResult IsItemValid()
+        public override FdaValidationResult IsAssetValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            vr.AddErrorMessage(base.IsItemValid().ErrorMessage);
+            vr.AddErrorMessage(base.IsAssetValid().ErrorMessage);
             FdaValidationResult valueUncertVR = ContentByRatioVM.IsValueUncertaintyValid();
             if (!valueUncertVR.IsValid)
             {

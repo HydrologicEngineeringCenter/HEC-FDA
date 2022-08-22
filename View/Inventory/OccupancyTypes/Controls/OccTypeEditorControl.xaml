@@ -49,7 +49,7 @@
             <local:ValueUncertaintyControl DataContext="{Binding FoundationHeightUncertainty}" />
         </GroupBox>
 
-        <TabControl Grid.Row="2" Grid.Column="0" Margin="0">
+        <TabControl Grid.Row="2" Grid.Column="0" Margin="0" >
             <TabItem Name="StructureDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -152,7 +152,7 @@
                     <twp:TableWithPlotControl DataContext="{Binding OtherItem.TableWithPlot}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
                 </Grid>
             </TabItem>
-                        
+
         </TabControl>
     </Grid>
 </UserControl>

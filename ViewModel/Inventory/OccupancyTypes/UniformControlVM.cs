@@ -1,49 +1,60 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.ViewModel.Implementations;
+using HEC.MVVMFramework.ViewModel.Validation;
 using Statistics;
 using Statistics.Distributions;
 using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    public class UniformControlVM : IValueUncertainty
+    public class UniformControlVM : ValidatingBaseViewModel, IValueUncertainty
     {
         public event EventHandler WasModified;
-        private double _Min;
-        private double _Max;
+        private Uniform _Uniform;
 
         public double Min
         {
-            get { return _Min; }
+            get { return _Uniform.Min; }
             set
             {
-                _Min = value;
+                _Uniform.Min = value;
+                NotifyPropertyChanged();                             
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
         public double Max
         {
-            get { return _Max; }
+            get { return _Uniform.Max; }
             set
             {
-                _Max = value;
+                _Uniform.Max = value;
+                NotifyPropertyChanged();
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
         public string MinLabelString { get; set; }
         public string MaxLabelString { get; set; }
 
-        public UniformControlVM(double min, double max, string minLabelString, string maxLabelString)
+        public UniformControlVM(double min, double max, string minLabelString, string maxLabelString, bool usePropertyRules = false)
         {
+            _Uniform = new Uniform(min, max);
             MinLabelString = minLabelString;
             MaxLabelString = maxLabelString;
-            Min = min;
-            Max = max;
+
+            if (usePropertyRules)
+            {
+                foreach (KeyValuePair<string, IPropertyRule> r in _Uniform.RuleMap)
+                {
+                    RuleMap.Add(r.Key, r.Value);
+                }
+            }
         }
 
         public ContinuousDistribution CreateOrdinate()
         {
-            //min should be 0 - 100
-            return new Uniform(Min, Max);
+            return _Uniform;
         }
 
         public FdaValidationResult IsValid()

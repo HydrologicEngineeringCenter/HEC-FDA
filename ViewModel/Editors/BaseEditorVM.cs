@@ -83,11 +83,11 @@ namespace HEC.FDA.ViewModel.Editors
         {
             if (ActionManager.HasSiblingRules)
             {
-                if(ActionManager.SiblingElement.GetType().BaseType == typeof(ChildElement))
+                if(ActionManager.SiblingElement is ChildElement)
                 {
                     AddSiblingRules((ChildElement)ActionManager.SiblingElement);
                 }
-                else if(ActionManager.SiblingElement.GetType().BaseType == typeof(ParentElement))
+                else if(ActionManager.SiblingElement is ParentElement)
                 {
                     AddSiblingRules((ParentElement)ActionManager.SiblingElement);
                 }

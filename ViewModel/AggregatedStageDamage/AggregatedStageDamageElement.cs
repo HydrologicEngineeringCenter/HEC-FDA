@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
             SelectedIndexPoints = indexPointsID;
 
-            AddDefaultActions(EditDamageCurve);
+            AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
 
             NamedAction exportDetails = new NamedAction(this);
             exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
@@ -82,7 +82,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, actionManager);
 
             string title = "Edit " + vm.Name;
-            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name,true, false);
+            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
             Navigate(tab, false, true);
         }
 

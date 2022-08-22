@@ -17,13 +17,13 @@
 
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding DisplayMean, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Mean: "/>
-            <TextBox Text="{Binding Mean}"  Width="60" Height="22" TextAlignment="Center"/>
+            <TextBox Text="{Binding Mean, ValidatesOnDataErrors=True}"  Width="60" Height="22" TextAlignment="Center"/>
             <Label Content="{Binding LabelString}" />
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
             <Label Content="Standard Deviation:" />
-            <TextBox x:Name="txt_StandDeviation" Text="{Binding StDev, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
+            <TextBox x:Name="txt_StandDeviation" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Width="60" Height="22" TextAlignment="Center"/>
             <Label Content="{Binding LabelString}" />
         </StackPanel>
     </Grid>

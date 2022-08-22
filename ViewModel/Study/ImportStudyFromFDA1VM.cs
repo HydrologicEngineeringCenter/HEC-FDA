@@ -187,7 +187,7 @@ namespace HEC.FDA.ViewModel.Study
                 leveeManager.SaveNew(elem);
             }
 
-            IElementManager occtypeManager = PersistenceFactory.GetOccTypeManager();
+            IElementManager occtypeManager = PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             foreach (ChildElement elem in _OcctypesElements)
             {
                 occtypeManager.SaveNew(elem);
@@ -199,8 +199,6 @@ namespace HEC.FDA.ViewModel.Study
         {
             //create the sqlite database for this study
             _StudyElement.CreateNewStudy(_StudyName, _FolderPath, _Description);
-
-            StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
         }
 
         #endregion

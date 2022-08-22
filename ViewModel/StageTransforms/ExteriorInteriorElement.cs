@@ -18,12 +18,12 @@ namespace HEC.FDA.ViewModel.StageTransforms
         public ExteriorInteriorElement(string name,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id)
             :base(name, lastEditDate, desc, exteriorInteriorCurve, id)
         {
-            AddDefaultActions(EditExteriorInteriorCurve);
+            AddDefaultActions(EditExteriorInteriorCurve, StringConstants.EDIT_EXT_INT_MENU);
         }
 
         public ExteriorInteriorElement(XElement element, int id) : base(element, id)
         {
-            AddDefaultActions(EditExteriorInteriorCurve);
+            AddDefaultActions(EditExteriorInteriorCurve, StringConstants.EDIT_EXT_INT_MENU);
         }
         #endregion
 

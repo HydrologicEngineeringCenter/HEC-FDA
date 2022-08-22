@@ -1,7 +1,4 @@
-﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.ViewModel.Validation;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,15 +12,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// This represents an IOccupancyType while it is in the occupancy type editor. All the values can be edited.
     /// If the user saves, then a new occupancy type based off of these values will replace the original.
     /// </summary>
-    public class OccupancyTypeEditable : BaseViewModel, IOccupancyTypeEditable
+    public class OccupancyTypeEditable : BaseViewModel
     {
         #region Fields
-        public event EventHandler UpdateMessagesEvent;
 
         private string _Name;
         private string _Description;
         private string _DamageCategory;
-        private bool _IsModified;
         private ObservableCollection<string> _DamageCategoriesList = new ObservableCollection<string>();
         private ValueUncertaintyVM _FoundationHeightUncertainty;
 
@@ -42,27 +37,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set
             {
                 _Name = value;
-                NotifyPropertyChanged();
-                IsModified = true;
+                NotifyPropertyChanged();              
+                HasChanges = true;
             }
         }
-        public int ID { get; set; }
-        public int GroupID { get; set; }
+        public int ID { get;}
+        public int GroupID { get;  }
 
-        /// <summary>
-        /// This is used by the occtype editor to determine if this occtype
-        /// was edited. This value should be set to false every time the editor
-        /// is opened.
-        /// </summary>
-        public bool IsModified
-        {
-            get {return _IsModified;}
-            set{ _IsModified = value; NotifyPropertyChanged();}
-        }
         public string Description
         {
             get { return _Description; }
-            set { _Description = value; IsModified = true; }
+            set { _Description = value; HasChanges = true; }
         }
 
         public string DamageCategory
@@ -72,7 +57,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 _DamageCategory = value;
                 NotifyPropertyChanged();
-                IsModified = true;
+                HasChanges = true;
             }
         }
 
@@ -83,7 +68,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 _FoundationHeightUncertainty = value;
                 _FoundationHeightUncertainty.WasModified += SomethingChanged;
-                IsModified = true;
+                HasChanges = true;
             }
         }
 
@@ -105,7 +90,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             //clone the occtype so that changes to it will not go into effect unless the user saves.
-            IOccupancyType clonedOcctype = new OccupancyType(occtype);
+            IOccupancyType clonedOcctype = new OccupancyType(occtype.ToXML());
 
             StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
             ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
@@ -132,12 +117,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FoundationHeightUncertainty = new FoundationValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty);
 
             HasChanges = false;
-            IsModified = false;
         }
 
         private void OcctypeItemDataModified(object sender, EventArgs e)
         {
-            IsModified = true;
+            HasChanges = true;
         }
 
         #endregion
@@ -151,7 +135,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 if (!vm.HasFatalError)
                 {
-                    //store the new damage category
                     DamageCategory = vm.Name;
                     _DamageCategoriesList.Add(vm.Name);
                 }
@@ -160,24 +143,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private void SomethingChanged(object sender, EventArgs e)
         {
-            IsModified = true;
+            HasChanges = true;
         }
 
         public override void AddValidationRules()
         {
             AddRule(nameof(Name), () => !string.IsNullOrWhiteSpace(Name), "Name cannot be blank or whitespace.");
-        }
-
-        public FdaValidationResult HasWarnings()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            vr.AddErrorMessage(IsValueUncertaintyConstructable(FoundationHeightUncertainty, "foundation height uncertainty").ErrorMessage);
-            vr.AddErrorMessage(StructureItem.IsItemValid().ErrorMessage);
-            vr.AddErrorMessage(ContentItem.IsItemValid().ErrorMessage);
-            vr.AddErrorMessage(VehicleItem.IsItemValid().ErrorMessage);
-            vr.AddErrorMessage(OtherItem.IsItemValid().ErrorMessage);
-
-            return vr;
         }
 
         public FdaValidationResult HasFatalErrors(List<string> occtypeNames)
@@ -201,48 +172,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return vr;
         }
 
-        private FdaValidationResult IsValueUncertaintyConstructable(ValueUncertaintyVM uncertaintyVM, string uncertaintyName)
-        {
-            FdaValidationResult uncertaintyVR = uncertaintyVM.IsValueUncertaintyValid();
-            if (!uncertaintyVR.IsValid)
-            {
-                uncertaintyVR.InsertMessage(0, "Foundation Height Uncertainty:");
-            }
-            return uncertaintyVR;
-        }
-
         public IOccupancyType CreateOccupancyType()
         {
             return new OccupancyType(Name, Description, GroupID, DamageCategory, StructureItem, ContentItem, VehicleItem, OtherItem,
                 FoundationHeightUncertainty.CreateOrdinate(), ID);
         }
-
-        /// <summary>
-        /// Tries to save the occtype. If the occtype was not constructable, then a list of errors
-        /// is returned and the occtype didn't save.
-        /// </summary>
-        /// <returns></returns>
-        public void SaveOcctype()
-        {
-            //OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
-            //IOccupancyType ot = CreateOccupancyType();
-
-            //if (HasBeenSaved)
-            //{
-            //    manager.SaveModifiedOcctype(ot);
-            //}
-            //else if (!HasBeenSaved)
-            //{
-            //    //save this as a new occtype
-            //    //if it has never been saved then we need a new occtype id for it.
-            //    ot.ID = manager.GetIdForNewOccType(ot.GroupID);
-            //    manager.SaveNewOccType(ot);
-            //    HasBeenSaved = true;
-            //}
-
-            //IsModified = false;
-            ////this will disable the save button.
-            //HasChanges = false;
-        }       
+      
     }
 }

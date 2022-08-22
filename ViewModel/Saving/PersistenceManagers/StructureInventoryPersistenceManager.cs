@@ -27,21 +27,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
         }
 
-        private string[] ChildTableColumns = new string[] {
-        StructureInventoryBaseElement.fidField,
-        StructureInventoryBaseElement.geomField,
-        StructureInventoryBaseElement.OccupancyTypeField,
-        StructureInventoryBaseElement.damCatField,
-        StructureInventoryBaseElement.OccupancyTypeGroup,
-        StructureInventoryBaseElement.FoundationHeightField,
-        StructureInventoryBaseElement.StructureValueField,
-        StructureInventoryBaseElement.ContentValueField,
-        StructureInventoryBaseElement.OtherValueField,
-        StructureInventoryBaseElement.VehicleValueField,
-        StructureInventoryBaseElement.FirstFloorElevationField,
-        StructureInventoryBaseElement.GroundElevationField,
-        StructureInventoryBaseElement.ModuleField
-        };
 
         private Type[] ChildTableTypes = new Type[] {typeof(int), typeof(string),
         typeof(int),
@@ -66,21 +51,21 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
             newStructureTable.Columns.Add(STRUCTURE_ID, typeof(string));
 
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.fidField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.geomField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.fidField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.geomField, typeof(string));
 
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeField, typeof(int));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.damCatField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeField, typeof(int));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.damCatField, typeof(string));
 
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeGroup, typeof(int));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.FoundationHeightField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.StructureValueField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.ContentValueField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.OtherValueField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.VehicleValueField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.FirstFloorElevationField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.GroundElevationField, typeof(string));
-            newStructureTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeGroup, typeof(int));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.FoundationHeightField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.StructureValueField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.ContentValueField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.OtherValueField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.VehicleValueField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.FirstFloorElevationField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.GroundElevationField, typeof(string));
+            //newStructureTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
 
             newStructureTable.Columns.Add(BEG_DAM_DEPTH, typeof(string));
             newStructureTable.Columns.Add(YEAR_IN_CONSTRUCTION, typeof(string));
@@ -102,12 +87,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             DataTableView myDTView = myInMemoryReader.GetTableManager(id.ToString());
 
             //create the geo package writer that will write the data out
-            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+            //LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-            string tableConst = STRUCTURE_INVENTORY_TABLE_CONSTANT;
-            myGeoPackWriter.AddFeatures(STRUCTURE_INVENTORY_TABLE_CONSTANT + id, features, myDTView);
+            //string tableConst = STRUCTURE_INVENTORY_TABLE_CONSTANT;
+            //myGeoPackWriter.AddFeatures(STRUCTURE_INVENTORY_TABLE_CONSTANT + id, features, myDTView);
         }
 
         /// <summary>
@@ -146,15 +131,15 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public ChildElement CreateElementFromRowData(object[] rowData)
         {
-            if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
-            {
-                StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
-            }
+            //if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
+            //{
+            //    StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Connection.Instance.ProjectFile);
+            //}
             int id = Convert.ToInt32(rowData[ID_COL]);
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
+            //StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], id);
             bool isImportedFromOldFDA = Convert.ToBoolean( rowData[IS_OLD_FDA]);
 
-            InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA, id);
+            InventoryElement invEle = new InventoryElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], isImportedFromOldFDA, id);
             return invEle;
         }
         #endregion

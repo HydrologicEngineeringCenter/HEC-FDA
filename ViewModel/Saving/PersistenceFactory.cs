@@ -69,11 +69,6 @@ namespace HEC.FDA.ViewModel.Saving
             return (IElementManager)Activator.CreateInstance(realType, StudyCacheForSaving, tableName);
         }
 
- 
-        public static OccTypePersistenceManager GetOccTypeManager()
-        {
-            return new OccTypePersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(OccupancyTypesElement)]);
-        }
         public static TerrainElementPersistenceManager GetTerrainManager()
         {
             return new TerrainElementPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(TerrainElement)]);

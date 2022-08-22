@@ -241,7 +241,6 @@ namespace HEC.FDA.ViewModel.Study
                     UpdateRecentStudiesFile(path);
 
                     Connection.Instance.ProjectFile = path;
-                    StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Connection.Instance.ProjectFile);
 
                     Name = name;
                     UpdateTreeViewHeader(name);

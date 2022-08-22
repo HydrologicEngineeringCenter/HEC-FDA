@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -49,6 +50,16 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 _Errors.Add(msg);
             }
+        }
+
+        /// <summary>
+        /// Creates a unique list of error messages. 
+        /// </summary>
+        /// <returns></returns>
+        public string UniqueErrorMessage()
+        {
+            List<string> errors = _Errors.Distinct().ToList();
+            return string.Join(Environment.NewLine, errors);
         }
     }
 }

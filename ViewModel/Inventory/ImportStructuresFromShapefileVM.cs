@@ -141,21 +141,6 @@ namespace HEC.FDA.ViewModel.Inventory
             return missingValues;
         }
 
-        private void SaveStructureInventory()
-        {
-            StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
-            int id = manager.GetNextAvailableId();
-
-            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
-
-            LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
-
-            DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
-            //this line will create the child table in the database.
-            manager.Save(newStructureTable, id, myReader.ToFeatures());
-            //this line will add it to the parent table.
-            Save();
-        }
 
         private void SwitchToAttributeLinkingList()
         {
@@ -196,7 +181,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 FdaValidationResult rowsValidResult = _AttributeLinkingList.AreRowsValid();
                 if (rowsValidResult.IsValid)
                 {
-                    SaveStructureInventory();
+                    Save();
                     isValid = true;
                 }
                 else
@@ -207,21 +192,26 @@ namespace HEC.FDA.ViewModel.Inventory
             return isValid;
         }
 
-        /// <summary>
-        /// This method saves a new occtype group for this structure.
-        /// It also creates the SI element and saves it to the parent table.
-        /// </summary>
+
         public override void Save()
         {
-            int id = PersistenceFactory.GetStructureInventoryManager().GetNextAvailableId();
-            StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description, id);
-            InventoryElement elementToSave = new InventoryElement(SIBase, false, id);
+            //copy shapefile
+            //create mapping object and pass into the ctor of the inventory element, then write it all to xml
 
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
+            int id = manager.GetNextAvailableId();
+
+            //LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
+
+            //DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
+            //this line will create the child table in the database.
+            //manager.Save(newStructureTable, id, myReader.ToFeatures());
+            //this line will add it to the parent table.
+           
+            InventoryElement elementToSave = new InventoryElement(Name, Description, false, id);
+
             if (IsCreatingNewElement && HasSaved == false)
             {
-                OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();
-
                 manager.SaveNew(elementToSave);
                 HasSaved = true;
                 OriginalElement = elementToSave;

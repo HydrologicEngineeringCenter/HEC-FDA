@@ -89,7 +89,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM( actionManager);
                 string header = StringConstants.CREATE_NEW_STAGE_DAMAGE_HEADER;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, header, true,false);
+                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
                 Navigate(tab, false, true);
             }
         }
