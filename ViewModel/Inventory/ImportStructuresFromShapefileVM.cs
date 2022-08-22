@@ -193,16 +193,22 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public override void Save()
         {
-            //copy shapefile
-            //create mapping object and pass into the ctor of the inventory element, then write it all to xml
-
-            StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
-            int id = manager.GetNextAvailableId();
-
+            //the validation before saving is done in the NextButtonClicked() method.
+            int id = GetElementID<InventoryElement>();
             InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections, _OcctypeLinking.CreateOcctypeMapping());
             InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, false, id);
-            Save(elementToSave);
 
+            if (IsCreatingNewElement)
+            {
+                StudyFilesManager.CopyFilesWithSameName(SelectedPath, Name, elementToSave.GetType());
+            }
+            else
+            {
+                StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());
+            }
+
+
+            Save(elementToSave);
         }
 
         #endregion

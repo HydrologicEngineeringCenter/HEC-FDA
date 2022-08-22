@@ -1,4 +1,6 @@
 ﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -9,7 +11,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.IndexPoints
 {
-    public class IndexPointsElement:ChildElement
+    public class IndexPointsElement:ChildElement, IHaveStudyFiles
     {
         public const String INDEX_POINTS_TAG = "IndexPoints";
         private const String NAME_TAG = "Name";
@@ -51,33 +53,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
             Navigate(tab, false, false);
         }
 
-        public override void Rename(object sender, EventArgs e)
-        {
-            string originalName = Name;
-            RenameVM renameViewModel = new RenameVM(this, CloneElement);
-            string header = "Rename";
-            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename", false, false);
-            Navigate(tab);
-            if (!renameViewModel.WasCanceled)
-            {
-                string newName = renameViewModel.Name;
-                //rename the folders in the study.
-                if (!originalName.Equals(newName))
-                {
-                    try
-                    {
-                        string sourceFilePath = Connection.Instance.IndexPointsDirectory + "\\" + originalName;
-                        string destinationFilePath = Connection.Instance.IndexPointsDirectory + "\\" + newName;
-                        Directory.Move(sourceFilePath, destinationFilePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Renaming the index points directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-            }
-        }
-
         private string GetStageDamageMessage()
         {
             //todo: check the stage damages for any that use these index points.
@@ -93,7 +68,8 @@ namespace HEC.FDA.ViewModel.IndexPoints
                 var result = MessageBox.Show(stageDamageMessage, "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    DeleteIndexPointsDirectory();
+                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
+                    StudyFilesManager.DeleteDirectory(Name, GetType());
                     //todo: delete stage damages with these index points?
                 }
             }
@@ -102,19 +78,9 @@ namespace HEC.FDA.ViewModel.IndexPoints
                 MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
-                    DeleteIndexPointsDirectory();
+                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
+                    StudyFilesManager.DeleteDirectory(Name, GetType());
                 }
-            }
-        }
-
-        private void DeleteIndexPointsDirectory()
-        {
-            //this will handle removing the sqlite data
-            Saving.PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-            //remove the directory
-            if (Directory.Exists(Connection.Instance.IndexPointsDirectory + "\\" + Name))
-            {
-                Directory.Delete(Connection.Instance.IndexPointsDirectory + "\\" + Name, true);
             }
         }
 

@@ -15,6 +15,7 @@ namespace HEC.FDA.ViewModel.Storage
         private const string TERRAIN_DIRECTORY = "Terrains";
         private const string HYDRAULIC_DIRECTORY = "Hydraulic Data";
         private const string IMPACT_AREA_DIRECTORY = "Impact Areas";
+        private const string INVENTORY_DIRECTORY = "Structure Inventories";
         private const string INDEX_POINTS_DIRECTORY = "Index Points";
 
         private static string _ProjectDirectory = "";
@@ -115,12 +116,14 @@ namespace HEC.FDA.ViewModel.Storage
         public string ImpactAreaDirectory
         {
             get { return _ProjectDirectory + "\\" + IMPACT_AREA_DIRECTORY; }
-
+        }
+        public string InventoryDirectory
+        {
+            get { return _ProjectDirectory + "\\" + INVENTORY_DIRECTORY; }
         }
         public string IndexPointsDirectory
         {
             get { return _ProjectDirectory + "\\" + INDEX_POINTS_DIRECTORY; }
-
         }
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 

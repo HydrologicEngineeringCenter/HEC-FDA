@@ -1,5 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
@@ -26,22 +28,31 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-        private static string GetStudyElementDirectoryPath<T>() where T : ChildElement
+        private static string GetStudyElementDirectoryPath(Type T)
         {
             string newDirectoryPath = null;
-            if (typeof(T) == typeof(HydraulicElement))
+            if (T == typeof(HydraulicElement))
             {
+                newDirectoryPath = Connection.Instance.HydraulicsDirectory;
             }
-            else if (typeof(T) == typeof(IndexPointsElement))
+            else if (T == typeof(InventoryElement))
+            {
+                newDirectoryPath = Connection.Instance.InventoryDirectory;
+            }
+            else if (T == typeof(ImpactAreaElement))
+            {
+                newDirectoryPath = Connection.Instance.ImpactAreaDirectory;
+            }
+            else if (T == typeof(IndexPointsElement))
             {
                 newDirectoryPath = Connection.Instance.IndexPointsDirectory;
             }
             return newDirectoryPath;
         }
 
-        public static void CopyShapeFile<T>(string sourcePath, string newDirectoryName) where T : ChildElement
+        public static void CopyFilesWithSameName(string sourcePath, string newDirectoryName, Type childElementType) 
         {
-            string newDirectoryPath = GetStudyElementDirectoryPath<T>() + "\\" + newDirectoryName;
+            string newDirectoryPath = GetStudyElementDirectoryPath(childElementType) + "\\" + newDirectoryName;
 
             string selectedDirectory = Path.GetDirectoryName(sourcePath);
             string selectedFileName = Path.GetFileNameWithoutExtension(sourcePath);
@@ -56,12 +67,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         }
 
-        public static void RenameDirectory<T>(string originalName, string newName) where T : ChildElement
+        public static void RenameDirectory(string originalName, string newName, Type childElementType)
         {
             if (!originalName.Equals(newName))
             {
-                string originalDirectoryPath = GetStudyElementDirectoryPath<T>() + "\\" + originalName;
-                string newDirectoryPath = GetStudyElementDirectoryPath<T>() + "\\" + newName;
+                string originalDirectoryPath = GetStudyElementDirectoryPath(childElementType) + "\\" + originalName;
+                string newDirectoryPath = GetStudyElementDirectoryPath(childElementType) + "\\" + newName;
 
                 try
                 {
@@ -76,38 +87,50 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
 
-        //private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
-        //{
-        //    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
-        //    Copy(path, destinationFilePath);
-        //}
+        public static void DeleteDirectory(string directoryName, Type childElementType)
+        {
+            if (Directory.Exists(GetStudyElementDirectoryPath(childElementType) + "\\" + directoryName))
+            {
+                Directory.Delete(GetStudyElementDirectoryPath(childElementType) + "\\" + directoryName, true);
+            }
+        }
 
-        //public void CopyDirectoryContents(string sourceDirectory, string targetDirectory)
-        //{
-        //    DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-        //    DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-        //    CopyAll(diSource, diTarget);
-        //}
+            //private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
+            //{
+            //    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
+            //    Copy(path, destinationFilePath);
+            //}
 
-        //private void CopyAll(DirectoryInfo source, DirectoryInfo target)
-        //{
-        //    Directory.CreateDirectory(target.FullName);
+            //public void CopyDirectoryContents(string sourceDirectory, string targetDirectory)
+            //{
+            //    DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+            //    DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+            //    CopyAll(diSource, diTarget);
+            //}
 
-        //    // Copy each file into the new directory.
-        //    foreach (FileInfo fi in source.GetFiles())
-        //    {
-        //        string newPath = Path.Combine(target.FullName, fi.Name);
-        //        fi.CopyTo(newPath, true);
-        //    }
+            //private void CopyAll(DirectoryInfo source, DirectoryInfo target)
+            //{
+            //    Directory.CreateDirectory(target.FullName);
 
-        //    // Copy each subdirectory using recursion.
-        //    foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-        //    {
-        //        DirectoryInfo nextTargetSubDir =
-        //            target.CreateSubdirectory(diSourceSubDir.Name);
-        //        CopyAll(diSourceSubDir, nextTargetSubDir);
-        //    }
-        //}
+            //    // Copy each file into the new directory.
+            //    foreach (FileInfo fi in source.GetFiles())
+            //    {
+            //        string newPath = Path.Combine(target.FullName, fi.Name);
+            //        fi.CopyTo(newPath, true);
+            //    }
 
-    }
+            //    // Copy each subdirectory using recursion.
+            //    foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            //    {
+            //        DirectoryInfo nextTargetSubDir =
+            //            target.CreateSubdirectory(diSourceSubDir.Name);
+            //        CopyAll(diSourceSubDir, nextTargetSubDir);
+            //    }
+            //}
+
+        //importing files rules:
+        //Index points:
+        //User has to select a shapefile. The shapefile has to have a *.dbf file next to the shapefile with the same name.
+
+        }
 }

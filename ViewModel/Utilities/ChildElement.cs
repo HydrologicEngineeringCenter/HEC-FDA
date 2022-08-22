@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
@@ -112,7 +114,11 @@ namespace HEC.FDA.ViewModel.Utilities
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if(messageBoxResult == MessageBoxResult.Yes)
             {
-                Saving.PersistenceFactory.GetElementManager(this).Remove(this);
+                if(this is IHaveStudyFiles)
+                {
+                    StudyFilesManager.DeleteDirectory(Name, GetType());
+                }
+                PersistenceFactory.GetElementManager(this).Remove(this);
             }
         }
 

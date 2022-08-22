@@ -107,11 +107,11 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
             if (IsCreatingNewElement)
             {
-                StudyFilesManager.CopyShapeFile<IndexPointsElement>(SelectedPath, Name);
+                StudyFilesManager.CopyFilesWithSameName(SelectedPath, Name, elementToSave.GetType());
             }
             else
             {
-                StudyFilesManager.RenameDirectory<IndexPointsElement>(OriginalElement.Name, Name);
+                StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());
             }
             //this call handles the sqlite data
             Save(elementToSave);

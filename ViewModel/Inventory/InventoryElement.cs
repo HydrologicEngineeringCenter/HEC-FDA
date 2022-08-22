@@ -1,13 +1,11 @@
-﻿using OpenGLMapping;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using HEC.FDA.ViewModel.Utilities;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
     //[Author(q0heccdm, 12 / 1 / 2016 2:21:18 PM)]
-    public class InventoryElement : ChildElement
+    public class InventoryElement : ChildElement, IHaveStudyFiles
     {
 
         #region Notes
@@ -15,6 +13,7 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created Date: 12/1/2016 2:21:18 PM
         #endregion
         #region Fields
+        private const string IMPORTED_FROM_OLD_FDA = "ImportedFromOldFDA";
 
         #endregion
         #region Properties
@@ -43,10 +42,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
 
-        #region Functions
-
-        private const string IMPORTED_FROM_OLD_FDA = "ImportedFromOldFDA";
-
         public override XElement ToXML()
         {
             XElement inventoryElem = new XElement(StringConstants.ELEMENT_XML_TAG);
@@ -55,7 +50,7 @@ namespace HEC.FDA.ViewModel.Inventory
             inventoryElem.Add(SelectionMappings.ToXML());
             return inventoryElem;
         }
-        #endregion
+     
 
     }
 }
