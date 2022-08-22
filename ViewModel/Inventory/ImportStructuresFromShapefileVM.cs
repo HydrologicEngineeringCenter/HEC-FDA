@@ -21,8 +21,8 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Fields
         private string _SelectedPath;
         private BaseViewModel _CurrentView;
-        private DefineSIAttributesVM _DefineSIAttributes;
-        private AttributeLinkingListVM _AttributeLinkingList;
+        private InventoryColumnSelectionsVM _ColumnSelections;
+        private InventoryOcctypeLinkingVM _OcctypeLinking;
         private bool _CurrentViewIsEnabled;
 
         #endregion
@@ -50,10 +50,10 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Constructors
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
-            _DefineSIAttributes = new DefineSIAttributesVM();
-            _DefineSIAttributes.RequestNavigation += Navigate;
+            _ColumnSelections = new InventoryColumnSelectionsVM();
+            _ColumnSelections.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;
-            CurrentView = _DefineSIAttributes;
+            CurrentView = _ColumnSelections;
         }
 
         #endregion
@@ -62,16 +62,16 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             //the selected file has changed. I set the second page to null
             //so that it will grab everything fresh.
-            _AttributeLinkingList = null;
+            _OcctypeLinking = null;
             if (File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
             {
-                _DefineSIAttributes.Path = SelectedPath;
+                _ColumnSelections.Path = SelectedPath;
             }
         }
 
         public void PreviousButtonClicked()
         {
-            CurrentView = _DefineSIAttributes;
+            CurrentView = _ColumnSelections;
         }
 
         #region Next Button Click
@@ -89,7 +89,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private FdaValidationResult ValidateTerrainFileExists()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (!_DefineSIAttributes.FirstFloorElevationIsSelected && _DefineSIAttributes.FromTerrainFileIsSelected)
+            if (!_ColumnSelections.FirstFloorElevationIsSelected && _ColumnSelections.FromTerrainFileIsSelected)
             {
                 //then the user wants to use the terrain file to get elevations. Validate that the terrain file exists.
                 List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
@@ -112,7 +112,7 @@ namespace HEC.FDA.ViewModel.Inventory
             }
 
             //validate that all the required selections have been made.
-            FdaValidationResult selectionsResult = _DefineSIAttributes.ValidateSelectionsMade();
+            FdaValidationResult selectionsResult = _ColumnSelections.ValidateSelectionsMade();
             if (!selectionsResult.IsValid)
             {
                 vr.AddErrorMessage(selectionsResult.ErrorMessage);
@@ -130,10 +130,10 @@ namespace HEC.FDA.ViewModel.Inventory
         private bool CheckForMissingValues()
         {
             bool missingValues = false;
-            StructuresMissingDataManager missingDataManager = _DefineSIAttributes.Validate();
+            StructuresMissingDataManager missingDataManager = _ColumnSelections.Validate();
             if (missingDataManager.GetRows().Count > 0)
             {
-                StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsSelected, _DefineSIAttributes.FromTerrainFileIsSelected);
+                StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _ColumnSelections.FirstFloorElevationIsSelected, _ColumnSelections.FromTerrainFileIsSelected);
                 DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData");
                 Navigate(tab);
                 missingValues = true;
@@ -144,21 +144,19 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void SwitchToAttributeLinkingList()
         {
-            if(_AttributeLinkingList == null)
+            if(_OcctypeLinking == null)
             {
-                List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
-                _AttributeLinkingList = new AttributeLinkingListVM(occtypes);
+                List<string> occtypes = _ColumnSelections.GetUniqueOccupancyTypes();
+                _OcctypeLinking = new InventoryOcctypeLinkingVM(occtypes);
             }
 
-            CurrentView = _AttributeLinkingList;
+            CurrentView = _OcctypeLinking;
         }
 
         public bool NextButtonClicked()
         {
             bool isValid = false;
-            //todo: the point of this boolean is so that the code behind and make some changes in the view. Ideally
-            //this would get changed to use binding and we could get rid of this boolean.
-            if (CurrentView is DefineSIAttributesVM)
+            if (CurrentView is InventoryColumnSelectionsVM)
             {
                 //Run validation before moving on to the next screen
                 FdaValidationResult defineSIResults = ValidateDefineSIAttributes();
@@ -176,9 +174,9 @@ namespace HEC.FDA.ViewModel.Inventory
                     MessageBox.Show(defineSIResults.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            else if (CurrentView is AttributeLinkingListVM)
+            else if (CurrentView is InventoryOcctypeLinkingVM)
             {
-                FdaValidationResult rowsValidResult = _AttributeLinkingList.AreRowsValid();
+                FdaValidationResult rowsValidResult = _OcctypeLinking.AreRowsValid();
                 if (rowsValidResult.IsValid)
                 {
                     Save();
@@ -201,21 +199,10 @@ namespace HEC.FDA.ViewModel.Inventory
             StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
             int id = manager.GetNextAvailableId();
 
-            //LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
+            InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections, _OcctypeLinking.CreateOcctypeMapping());
+            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, false, id);
+            Save(elementToSave);
 
-            //DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
-            //this line will create the child table in the database.
-            //manager.Save(newStructureTable, id, myReader.ToFeatures());
-            //this line will add it to the parent table.
-           
-            InventoryElement elementToSave = new InventoryElement(Name, Description, false, id);
-
-            if (IsCreatingNewElement && HasSaved == false)
-            {
-                manager.SaveNew(elementToSave);
-                HasSaved = true;
-                OriginalElement = elementToSave;
-            }
         }
 
         #endregion

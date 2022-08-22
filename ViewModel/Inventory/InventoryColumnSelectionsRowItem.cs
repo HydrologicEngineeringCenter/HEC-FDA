@@ -2,7 +2,7 @@
 
 namespace HEC.FDA.ViewModel.Inventory
 {
-    public class DefineSIAttributesRowItem
+    public class InventoryColumnSelectionsRowItem
     {
         public string Name { get; set; }
 
@@ -13,9 +13,9 @@ namespace HEC.FDA.ViewModel.Inventory
         /// <summary>
         /// The selected value from the combobox
         /// </summary>
-        public string SelectedItem { get; set; }
+        public string SelectedItem { get; set; } = "";
 
-        public DefineSIAttributesRowItem(string name)
+        public InventoryColumnSelectionsRowItem(string name)
         {
             Name = name;
         }

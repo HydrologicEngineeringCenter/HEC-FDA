@@ -207,11 +207,11 @@
         
         <!--Inventory Region-->      
         
-        <DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
-            <InventoryView:AttributeLinkingList/>
+        <DataTemplate DataType="{x:Type InventoryVM:InventoryOcctypeLinkingVM }" >
+            <InventoryView:InventoryOcctypeLinking/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
-            <InventoryView:DefineSIAttributes/>
+        <DataTemplate DataType="{x:Type InventoryVM:InventoryColumnSelectionsVM }" >
+            <InventoryView:InventoryColumnSelections/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type InventoryVM:StructureMissingElevationEditorVM }" >

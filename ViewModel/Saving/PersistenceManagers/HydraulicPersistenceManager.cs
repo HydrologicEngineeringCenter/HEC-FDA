@@ -8,7 +8,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public class HydraulicPersistenceManager : SavingBase<HydraulicElement>
     {
-
+        
         public HydraulicPersistenceManager(Study.FDACache studyCache, string tableName):base(studyCache, tableName)
         {
         }

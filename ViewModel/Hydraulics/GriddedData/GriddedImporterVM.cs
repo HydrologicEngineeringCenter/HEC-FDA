@@ -73,37 +73,37 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #region copy files
 
-        private void Copy(string sourceDirectory, string targetDirectory)
-        {
-            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-            CopyAll(diSource, diTarget);
-        }
+        //private void Copy(string sourceDirectory, string targetDirectory)
+        //{
+        //    DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+        //    DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+        //    CopyAll(diSource, diTarget);
+        //}
 
-        private void CopyAll(DirectoryInfo source, DirectoryInfo target)
-        {
-            Directory.CreateDirectory(target.FullName);
+        //private void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        //{
+        //    Directory.CreateDirectory(target.FullName);
 
-            // Copy each file into the new directory.
-            foreach (FileInfo fi in source.GetFiles())
-            {
-                string newPath = Path.Combine(target.FullName, fi.Name);
-                fi.CopyTo(newPath, true);
-            }
+        //    // Copy each file into the new directory.
+        //    foreach (FileInfo fi in source.GetFiles())
+        //    {
+        //        string newPath = Path.Combine(target.FullName, fi.Name);
+        //        fi.CopyTo(newPath, true);
+        //    }
 
-            // Copy each subdirectory using recursion.
-            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            {
-                DirectoryInfo nextTargetSubDir =
-                    target.CreateSubdirectory(diSourceSubDir.Name);
-                CopyAll(diSourceSubDir, nextTargetSubDir);
-            }
-        }
+        //    // Copy each subdirectory using recursion.
+        //    foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+        //    {
+        //        DirectoryInfo nextTargetSubDir =
+        //            target.CreateSubdirectory(diSourceSubDir.Name);
+        //        CopyAll(diSourceSubDir, nextTargetSubDir);
+        //    }
+        //}
 
         private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
         {
-            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
-            Copy(path, destinationFilePath);
+            //string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
+            //Copy(path, destinationFilePath);
         }
         #endregion
 
