@@ -37,11 +37,13 @@ namespace metrics
             ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID,true);
             _resultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
+            MessageHub.Register(this);
         }
         public ScenarioResults(int year)
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();
             AnalysisYear = year;
+            MessageHub.Register(this);
         }
         #endregion
 

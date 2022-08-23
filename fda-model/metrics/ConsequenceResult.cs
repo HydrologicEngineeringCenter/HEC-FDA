@@ -81,10 +81,26 @@ namespace metrics
         {
             _consequenceResult += increment;
         }
+
         internal bool Equals(ConsequenceResult damageResult)
         {
             bool valuesMatch = _consequenceResult.Equals(damageResult.Consequence);
             if (!valuesMatch)
+            {
+                return false;
+            }
+            bool damageCategoriesMatch = _damageCategory.Equals(damageResult.DamageCategory);
+            if (!damageCategoriesMatch)
+            {
+                return false;
+            }
+            bool assetCategoriesMatch = _assetCategory.Equals(damageResult.AssetCategory);
+            if (!assetCategoriesMatch)
+            {
+                return false;
+            }
+            bool regionIDMatch = _regionID.Equals(damageResult.RegionID);
+            if (!regionIDMatch)
             {
                 return false;
             }

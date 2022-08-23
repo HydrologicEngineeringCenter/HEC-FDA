@@ -67,7 +67,7 @@ namespace metrics
         }
         public ThreadsafeInlineHistogram GetAEPHistogram(int thresholdID)
         {
-            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogram();
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForMetrics();
         }
         public double LongTermExceedanceProbability(int thresholdID, int years)
         {

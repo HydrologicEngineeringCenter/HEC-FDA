@@ -122,7 +122,7 @@ namespace fda_model_test.unittests
             impactAreaScenarioSimulations.Add(simulation2);
             Scenario scenario = new Scenario(year, impactAreaScenarioSimulations);
 
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ScenarioResults scenarioResults = scenario.Compute(meanRandomProvider, convergenceCriteria);
             XElement element = scenarioResults.WriteToXML();
             ScenarioResults scenarioResultsFromXML = ScenarioResults.ReadFromXML(element);

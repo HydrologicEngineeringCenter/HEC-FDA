@@ -16,8 +16,10 @@
 		</PackageReference>
 	</ItemGroup>
 
+
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\fda-model.csproj" />
+		<ProjectReference Include="..\Statistics\Statistics.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -52,22 +52,26 @@ namespace metrics
             ConsequenceDistributionResult dummyConsequenceDistributionResult = new ConsequenceDistributionResult();
             _consequenceResultList.Add(dummyConsequenceDistributionResult);
             _isNull = true;
+            MessageHub.Register(this);
         }
         internal ConsequenceDistributionResults(bool isNull)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = isNull;
+            MessageHub.Register(this);
         }
         internal ConsequenceDistributionResults(int alternativeID)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _alternativeID = alternativeID;
             _isNull = false;
+            MessageHub.Register(this);
         }
         private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
             _consequenceResultList = damageResults;
             _isNull = false;
+            MessageHub.Register(this);
 
         }
         #endregion

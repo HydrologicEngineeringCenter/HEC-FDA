@@ -34,6 +34,7 @@ namespace compute
         private int _impactAreaID;
         private ImpactAreaScenarioResults _impactAreaScenarioResults;
         private bool _leveeIsValid = false;
+        private double[] _RequiredExceedanceProbabilities = { 0.99900, 0.99000, 0.95000, 0.90000, 0.85000, 0.80000, 0.75000, 0.70000, 0.65000, 0.60000, 0.55000, 0.50000, 0.47500, 0.45000, 0.42500, 0.40000, 0.37500, 0.35000, 0.32500, 0.30000, 0.29000, 0.28000, 0.27000, 0.26000, 0.25000, 0.24000, 0.23000, 0.22000, 0.21000, 0.20000, 0.19500, 0.19000, 0.18500, 0.18000, 0.17500, 0.17000, 0.16500, 0.16000, 0.15500, 0.15000, 0.14500, 0.14000, 0.13500, 0.13000, 0.12500, 0.12000, 0.11500, 0.11000, 0.10500, 0.10000, 0.09500, 0.09000, 0.08500, 0.08000, 0.07500, 0.07000, 0.06500, 0.06000, 0.05900, 0.05800, 0.05700, 0.05600, 0.05500, 0.05400, 0.05300, 0.05200, 0.05100, 0.05000, 0.04900, 0.04800, 0.04700, 0.04600, 0.04500, 0.04400, 0.04300, 0.04200, 0.04100, 0.04000, 0.03900, 0.03800, 0.03700, 0.03600, 0.03500, 0.03400, 0.03300, 0.03200, 0.03100, 0.03000, 0.02900, 0.02800, 0.02700, 0.02600, 0.02500, 0.02400, 0.02300, 0.02200, 0.02100, 0.02000, 0.01950, 0.01900, 0.01850, 0.01800, 0.01750, 0.01700, 0.01650, 0.01600, 0.01550, 0.01500, 0.01450, 0.01400, 0.01350, 0.01300, 0.01250, 0.01200, 0.01150, 0.01100, 0.01050, 0.01000, 0.00950, 0.00900, 0.00850, 0.00800, 0.00750, 0.00700, 0.00650, 0.00600, 0.00550, 0.00500, 0.00490, 0.00450, 0.00400, 0.00350, 0.00300, 0.00250, 0.00200, 0.00195, 0.00190, 0.00185, 0.00180, 0.00175, 0.00170, 0.00165, 0.00160, 0.00155, 0.00150, 0.00145, 0.00140, 0.00135, 0.00130, 0.00125, 0.00120, 0.00115, 0.00110, 0.00105, 0.00100, 0.00095, 0.00090, 0.00085, 0.00080, 0.00075, 0.00070, 0.00065, 0.00060, 0.00055, 0.00050, 0.00045, 0.00040, 0.00035, 0.00030, 0.00025, 0.00020, 0.00015, 0.00010 };
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -63,6 +64,7 @@ namespace compute
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
             _impactAreaID = impactAreaID;
             _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
+            MessageHub.Register(this);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
@@ -100,8 +102,12 @@ namespace compute
                 _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
             CreateHistogramsForAssuranceOfThresholds();
+            MessageEventArgs beginComputeMessageArgs = new  MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has been initiated"));
+            ReportMessage(this, beginComputeMessageArgs);
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
             _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has completed"));
+            ReportMessage(this, endComputeMessageArgs);
             return _impactAreaScenarioResults;
         }
 
@@ -217,7 +223,7 @@ namespace compute
                 ReportMessage(this, new MessageEventArgs(mess));
 
             }
-            if (randomProvider is MeanRandomProvider)
+            if (randomProvider is MedianRandomProvider)
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
@@ -278,9 +284,9 @@ namespace compute
                 {
                     //check if it is a mean random provider or not
                     interfaces.IProvideRandomNumbers threadlocalRandomProvider;
-                    if (randomProvider is MeanRandomProvider)
+                    if (randomProvider is MedianRandomProvider)
                     {
-                        threadlocalRandomProvider = new MeanRandomProvider();
+                        threadlocalRandomProvider = new MedianRandomProvider();
                     }
                     else
                     {
@@ -386,7 +392,7 @@ namespace compute
 
             }
             else
-            {
+            {   //todo is there a reason for the starting underscore? 
                 IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                 IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
@@ -406,7 +412,7 @@ namespace compute
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
                         {
-                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_floodplainstage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                            ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
                         }
                         ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
                     }
@@ -419,13 +425,12 @@ namespace compute
         {
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
-            double[] x = new double[ordinates];
-            double[] y = new double[ordinates];
-            for (int i = 0; i < ordinates; i++)
+            double[] x = new double[_RequiredExceedanceProbabilities.Length];
+            double[] y = new double[_RequiredExceedanceProbabilities.Length];
+            for (int i = 0; i < _RequiredExceedanceProbabilities.Length; i++)
             {
-                double val = (double)i + .5;
-                //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                double prob = (val) / ((double)ordinates);
+                //same exceedance probs as graphical and as 1.4.3
+                double prob = 1-_RequiredExceedanceProbabilities[i];
                 x[i] = prob;
 
                 //y values in increasing order 
@@ -467,10 +472,35 @@ namespace compute
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
                 IPairedData stage_damage_sample = pd.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //here we need to compose with interior exterior 
                 IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(systemResponse);
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                if (giveMeADamageFrequency)
+                {
+                    totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
+                }
+            }
+            if (giveMeADamageFrequency)
+            {
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
+            }
+        }
+        private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, IPairedData exterior_interior, IPairedData frequency_exteriorStage, IPairedData systemResponse, bool giveMeADamageFrequency, Int64 iteration)
+        {
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
+            PairedData totalDamageFrequency = new PairedData(null, null, metadata);
+
+            foreach (UncertainPairedData stageUncertainDamage in _damage_category_stage_damage)
+            {   //TODO: why are we doing this stuff with the underscores? I think this needs to be cleaned up 
+                IPairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                IPairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
+                IPairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(systemResponse);
+                IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_exteriorStage);
+                double eadEstimate = frequency_damage.integrate();
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _impactAreaID, iteration);
                 if (giveMeADamageFrequency)
                 {
                     totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
@@ -551,7 +581,7 @@ namespace compute
 
         private Threshold ComputeDefaultThreshold(ConvergenceCriteria convergenceCriteria, bool computeWithDamage)
         {
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
@@ -614,11 +644,21 @@ namespace compute
                 {
                     frequencyStage = _frequency_stage.SamplePairedData(meanRandomProvider.NextRandom());
                 }
-
-                IPairedData frequencyDamage = totalStageDamage.compose(frequencyStage);
+                IPairedData frequencyDamage;
+                if (_channelstage_floodplainstage.IsNull)
+                {
+                    frequencyDamage = totalStageDamage.compose(frequencyStage);
+                }
+                else
+                {
+                    IPairedData exteriorInterior = _channelstage_floodplainstage.SamplePairedData(meanRandomProvider.NextRandom());
+                    IPairedData frequencyInteriorStage = exteriorInterior.compose(frequencyStage);
+                    frequencyDamage = totalStageDamage.compose(frequencyInteriorStage);
+                }
                 double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * frequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
                 double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
                 return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, thresholdStage);
+
             }
             else
             {
@@ -630,7 +670,7 @@ namespace compute
         {
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalStageDamage = new PairedData(null, null, metadata);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             foreach (UncertainPairedData uncertainPairedData in listOfUncertainPairedData)
             {
                 IPairedData stageDamageSample = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
@@ -648,7 +688,7 @@ namespace compute
         public ImpactAreaScenarioResults PreviewCompute()
         {
 
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
             return results;
@@ -851,7 +891,7 @@ namespace compute
         private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
         {
             bool curvesOverlap = true;
-            double overlapThreshold = 0.9;
+            double overlapThreshold = 0.95;
             double rangeOfF = maxOfF - minOfF;
             double rangeOfG = maxOfF - minOfG;
             double minDifference = Math.Abs(minOfG - minOfF);

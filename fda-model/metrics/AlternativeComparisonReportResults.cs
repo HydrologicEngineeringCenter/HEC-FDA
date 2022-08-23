@@ -51,6 +51,7 @@ namespace metrics
             _futureYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
             ConsequenceDistributionResults dummyFutureYearResults = new ConsequenceDistributionResults();
             _futureYearEADReducedResultsList.Add(dummyFutureYearResults);
+            MessageHub.Register(this);
         }
         internal AlternativeComparisonReportResults(List<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<ConsequenceDistributionResults> aaeqResults, List<ConsequenceDistributionResults> baseYearEADResults, List<ConsequenceDistributionResults> futureYearEADResults)
         {
@@ -59,6 +60,7 @@ namespace metrics
             _aaeqReducedResultsList = aaeqResults;
             _baseYearEADReducedResultsList = baseYearEADResults;
             _futureYearEADReducedResultsList = futureYearEADResults;
+            MessageHub.Register(this);
         }
         #endregion
 

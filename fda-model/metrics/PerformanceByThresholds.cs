@@ -43,7 +43,8 @@ namespace metrics
         public PerformanceByThresholds()
         {
             _Thresholds = new List<Threshold>();
-                   
+            MessageHub.Register(this);
+
         }
         public PerformanceByThresholds(bool isNull)
         {
@@ -51,11 +52,13 @@ namespace metrics
             Threshold dummyThreshold = new Threshold();
             _Thresholds.Add(dummyThreshold);
             _IsNull = isNull;
+            MessageHub.Register(this);
 
         }
         private PerformanceByThresholds(List<Threshold> thresholds)
         {
             _Thresholds = thresholds;
+            MessageHub.Register(this);
         }
         #endregion
         #region Methods 

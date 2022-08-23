@@ -6,6 +6,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
+using Statistics.Distributions;
 
 namespace paireddata
 {
@@ -69,6 +70,7 @@ namespace paireddata
         {
             _metadata = new CurveMetaData();
             AddRules();
+            MessageHub.Register(this);
 
 
         }
@@ -79,6 +81,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel,ylabel,name);
             AddRules();
+            MessageHub.Register(this);
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
@@ -87,6 +90,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = new CurveMetaData(xlabel, ylabel, name, category);
             AddRules();
+            MessageHub.Register(this);
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
@@ -94,6 +98,7 @@ namespace paireddata
             _yvals = ys;
             _metadata = metadata;
             AddRules();
+            MessageHub.Register(this);
         }
         #endregion
 
@@ -115,6 +120,7 @@ namespace paireddata
                 default:
                     break;
             }
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => Xvals.Length == Yvals.Length, "X and Y columns should have the same number of rows but do not", ErrorLevel.Severe));
 
         }
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
@@ -197,6 +203,18 @@ namespace paireddata
                 }
             }
             return true;
+        }
+        public static UncertainPairedData ConvertToDeterministic(UncertainPairedData uncertainPairedData)
+        {
+            Deterministic[] deterministicDistributions = new Deterministic[uncertainPairedData.Xvals.Length];
+            int i = 0;
+            foreach (ContinuousDistribution distribution in uncertainPairedData.Yvals)
+            {
+                deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
+                i++;
+            }
+            UncertainPairedData deterministicUncertainPairedData = new UncertainPairedData(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
+            return deterministicUncertainPairedData;
         }
         public XElement WriteToXML()
         {

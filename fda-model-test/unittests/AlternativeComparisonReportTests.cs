@@ -34,7 +34,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -174,7 +174,7 @@ namespace fda_model_test.unittests
                 eadErrorFutureDamCat2 = differenceFutureYearEADReducedDamCat2 / expectedEADReducedFutureYearDamCat2;
             }
 
-            double tolerance = 0.05;
+            double tolerance = 0.11;
             Assert.True(eadErrorBaseDamCat1 < tolerance);
             Assert.True(eadErrorFutureDamCat1 < tolerance);
             Assert.True(eadErrorBaseDamCat2 < tolerance);
@@ -197,7 +197,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -331,7 +331,7 @@ namespace fda_model_test.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             double exceedanceProbability = 0.5;
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -442,7 +442,7 @@ namespace fda_model_test.unittests
             double differenceEADReducedFutureYear = Math.Abs(actualFutureYearEADReduced - expectedEADReducedFutureYear);
             double eadErrorFuture = differenceEADReducedFutureYear / expectedEADReducedFutureYear;
 
-            double tolerance = 0.05;
+            double tolerance = 0.11;
             Assert.True(aaeqError < tolerance);
             Assert.True(eadErrorBase < tolerance);
             Assert.True(eadErrorFuture < tolerance);

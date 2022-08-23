@@ -59,7 +59,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expected - actual;
@@ -142,7 +142,10 @@ namespace fda_model_test.unittests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             double actual = results.MeanExpectedAnnualConsequences(id,damCat,assetCat);
-            Assert.Equal(expected, actual, 2);
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
         }
 
         [Theory]
@@ -184,7 +187,7 @@ namespace fda_model_test.unittests
                 .withLevee(levee, 100000.0d)
                 .withStageDamages(stageDamageList)
                 .build();
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
@@ -232,7 +235,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement simulationElement = simulation.WriteToXML();
             ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
@@ -293,5 +296,108 @@ namespace fda_model_test.unittests
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetConsequencesHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
             Assert.Equal(expectedZeroValued, actualHistogramZeroValued);
         }
+
+        [Theory]
+        [InlineData(875)]
+        public void FragilityAndExtIntAreCombinedCorrectly(double expected)
+        {
+            ContinuousDistribution frequencyFlow = new Uniform(0, 4000, 1000);
+            double[] xFlows = new double[] { 0, 1000, 2000, 3000, 4000 };
+            IDistribution[] yStagesRating = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,20),
+                new Uniform(10,30),
+                new Uniform(20,40),
+                new Uniform(30,50)
+            };
+            UncertainPairedData dischargeStage = new UncertainPairedData(xFlows, yStagesRating, metaData);
+            double[] xStages = new double[] { 0, 10, 20, 30, 40 };
+            IDistribution[] yStagesInteriorExterior = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(0),
+                new Deterministic(10),
+                new Deterministic(20),
+                new Deterministic(30)
+            };
+            UncertainPairedData exteriorInterior = new UncertainPairedData(xStages, yStagesInteriorExterior, metaData);
+            IDistribution[] yDamage = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,2000),
+                new Uniform(1000,3000),
+                new Uniform(2000,4000),
+                new Uniform(3000,5000)
+            };
+            UncertainPairedData stageDamage = new UncertainPairedData(xStages, yDamage, metaData);
+            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>() { stageDamage };
+            IDistribution[] yFailureProbabilities = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(.25),
+                new Deterministic(.5),
+                new Deterministic(.75),
+                new Deterministic(1)
+            };
+            UncertainPairedData systemResponseCurve = new UncertainPairedData(xStages, yFailureProbabilities, metaData);
+            double leveeElevation = 40;
+            int impactAreaID = 44;
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(frequencyFlow)
+                .withFlowStage(dischargeStage)
+                .withInteriorExterior(exteriorInterior)
+                .withStageDamages(stageDamages)
+                .withLevee(systemResponseCurve, leveeElevation)
+                .build();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider,convergenceCriteria);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
+
+        }
+
+        [Theory]
+        [InlineData(100)]
+        public void SimulationWithInteriorExteriorWorksCorrectly(double expected)
+        {
+            //Arrange
+            ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+
+            ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
+            double[] xFlows = new double[] { 0, 100000 };
+            IDistribution[] yStages = new IDistribution[] { new Uniform(5, 15), new Uniform(10, 30) };
+            UncertainPairedData stageDischarge = new UncertainPairedData(xFlows, yStages, metaData);
+            double[] xExteriorStages = new double[] { 10, 20, 30 };
+            IDistribution[] yInteriorStages = new IDistribution[] { new Uniform(0, 10), new Uniform(10, 20), new Uniform(30,30) };
+            UncertainPairedData interiorExterior = new UncertainPairedData(xExteriorStages, yInteriorStages, metaData);
+            double[] xInteriorStages = new double[] { 5, 15, 30 };
+            IDistribution[] yDamage = new IDistribution[] { new Uniform(0, 0), new Uniform(100, 300), new Uniform(100, 300) };
+            UncertainPairedData stageDamage = new UncertainPairedData(xInteriorStages,yDamage,metaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
+
+            int impactAreaID = 899;
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(flowFrequency)
+                .withFlowStage(stageDischarge)
+                .withInteriorExterior(interiorExterior)
+                .withStageDamages(stageDamageList)
+                .build();
+
+            //Act 
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, deterministicConvergenceCriteria);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            double relativeDifference = Math.Abs(actual - expected) / expected;
+            double tolerance = 0.05;
+
+            //Assert
+            Assert.True(relativeDifference < tolerance);
+        }
     }
 }
+;

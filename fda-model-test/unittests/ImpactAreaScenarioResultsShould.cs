@@ -55,7 +55,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(stageDamageList)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement resultsElement = results.WriteToXml();
             ImpactAreaScenarioResults resultsFromXML = ImpactAreaScenarioResults.ReadFromXML(resultsElement);

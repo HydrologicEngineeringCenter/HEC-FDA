@@ -9,7 +9,7 @@ using Statistics.Histograms;
 
 namespace metrics
 {
-    public class AlternativeResults : Validation, IReportMessage
+    public class AlternativeResults : Validation, IReportMessage, IProgressReport
     {
         #region Fields
         private int _alternativeID;
@@ -32,6 +32,8 @@ namespace metrics
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+
         public bool IsNull
         {
             get
@@ -54,6 +56,7 @@ namespace metrics
             AnalysisYears = new List<int>() { 2030, 2049 };
             PeriodOfAnalysis = 50;
             AddRules();
+            MessageHub.Register(this);
         }
 
 
@@ -66,6 +69,7 @@ namespace metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
+            MessageHub.Register(this);
         }
         internal AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
@@ -75,6 +79,7 @@ namespace metrics
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
             AddRules();
+            MessageHub.Register(this);
         }
         private AlternativeResults(int id, ConsequenceDistributionResults consequenceResults, List<int> analysisYears, int periodOfAnalysis)
         {
@@ -84,6 +89,7 @@ namespace metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
+            MessageHub.Register(this);
 
         }
         #endregion
@@ -290,6 +296,11 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
         }
 
         #endregion

@@ -24,7 +24,10 @@ namespace alternatives
         /// <param name="computedResultsBaseYear"<>/param> Previously computed Scenario results for the base year. Optionally, leave null and run scenario compute.  
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
-        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
+        /// 
+
+        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
+            ScenarioResults computedResultsFutureYear)
         {
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
@@ -33,10 +36,15 @@ namespace alternatives
             analysisYears.Add(baseYear);
             analysisYears.Add(futureYear);
             if (!CanCompute(baseYear,futureYear, periodOfAnalysis))
-            {
-                return new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            {   AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+                MessageEventArgs messageArguments = new MessageEventArgs(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned"));
+                nullAlternativeResults.ReportMessage(nullAlternativeResults, messageArguments);
+                return nullAlternativeResults;
             }
             AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
+            MessageEventArgs messargs = new MessageEventArgs(new Message("Initiating discounting routine."));
+            alternativeResults.ReportMessage(alternativeResults, messargs);
+
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
@@ -134,14 +142,25 @@ namespace alternatives
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated."));
+                mlfYearDamageResult.ReportMessage(mlfYearDamageResult, beginComputeMessageArgs);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
+                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated."));
+                baseYearDamageResult.ReportMessage(baseYearDamageResult, beginComputeMessageArgs);
             }
             List<double> resultCollection = new List<double>();
             Int64 iterations = convergenceCriteria.MinIterations;
             bool converged = false;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
+            if (_ExpectedIterations > 100)
+            {
+                progressChunks = _ExpectedIterations / 100;
+            }
             while (!converged)
             {
                 for (int i = 0; i < iterations; i++)
@@ -150,6 +169,12 @@ namespace alternatives
                     double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(randomProvider.NextRandom());
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     resultCollection.Add(aaeqDamage);
+                    _completedIterations++;
+                    if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
+                    {
+                        double percentcomplete = ((double)_completedIterations) / ((double)_ExpectedIterations) * 100;
+                        aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
+                    }
                 }
                 Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
                 converged = histogram.IsHistogramConverged(.95, .05);
@@ -163,6 +188,7 @@ namespace alternatives
                     if (iterateOnFutureYear)
                     {
                         aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, histogram, mlfYearDamageResult.RegionID);
+
                     }
                     else
                     {
@@ -171,6 +197,8 @@ namespace alternatives
                     break;
                 }
             }
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed."));
+            aaeqResult.ReportMessage(aaeqResult, endComputeMessageArgs);
             return aaeqResult;
         }
 
@@ -218,8 +246,5 @@ namespace alternatives
             }
             return interpolatedEADs;
         }
-
-
-
     }
 }

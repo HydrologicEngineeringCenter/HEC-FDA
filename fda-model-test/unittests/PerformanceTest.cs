@@ -70,7 +70,7 @@ namespace fda_model_test.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
  
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
 
             double actualAEP = results.MeanAEP(thresholdID); 
@@ -122,7 +122,7 @@ namespace fda_model_test.unittests
                 .withLevee(leveeCurve,thresholdValue)
                 .build();
 
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
             double actual = results.MeanAEP(thresholdID);
             Assert.Equal(expected,actual,2);
