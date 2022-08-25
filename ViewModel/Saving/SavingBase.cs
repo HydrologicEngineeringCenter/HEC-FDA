@@ -164,14 +164,6 @@ namespace HEC.FDA.ViewModel.Saving
         }
 
         #region Remove element
-        //public void RemoveTable(string tableName)
-        //{
-        //    OpenConnection();
-        //    if (Connection.Instance.TableNames().Contains(tableName))
-        //    {
-        //        Connection.Instance.DeleteTable(tableName);                
-        //    }
-        //}
 
         public virtual void RemoveElementFromTable(ChildElement element)
         {

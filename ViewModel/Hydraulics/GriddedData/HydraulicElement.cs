@@ -1,10 +1,8 @@
 ﻿using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
-using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
@@ -110,26 +108,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
         }            
-
-        //public override void Rename(object sender, EventArgs e)
-        //{
-        //    string originalName = Name;
-        //    RenameVM renameViewModel = new RenameVM(this, CloneElement);
-        //    string header = "Rename";
-        //    DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
-        //    Navigate(tab);
-        //    if (!renameViewModel.WasCanceled)
-        //    {
-        //        string newName = renameViewModel.Name;
-        //        //rename the folders in the study.
-        //        if (!originalName.Equals(newName))
-        //        {
-        //            string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
-        //            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
-        //            Directory.Move(sourceFilePath, destinationFilePath);
-        //        }
-        //    }
-        //}
         #endregion
         #region Functions
 

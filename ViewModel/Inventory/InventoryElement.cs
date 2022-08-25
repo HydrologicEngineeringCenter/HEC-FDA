@@ -51,6 +51,5 @@ namespace HEC.FDA.ViewModel.Inventory
             return inventoryElem;
         }
      
-
     }
 }

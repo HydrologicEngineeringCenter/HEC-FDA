@@ -67,11 +67,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             ListOfRows.Add(newRow);
         }
 
-        #region copy files
-     
-        
-        #endregion
-
         #region validation
         private FdaValidationResult ValidateImporter()
         {
@@ -261,20 +256,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, OriginalElement.ID);
-            base.Save(elementToSave);
-
-            //Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-            //    manager.SaveExisting(elementToSave);
-            //    SavingText = "Last Saved: " + elementToSave.LastEditDate;
-            //    HasChanges = false;
-            //    HasSaved = true;            
+            base.Save(elementToSave);          
         }
-
-        //private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
-        //{
-        //    //string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
-        //    //Copy(path, destinationFilePath);
-        //}
 
         private void SaveNew()
         {
@@ -287,7 +270,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 string directoryName = Path.GetFileName(row.Name);
                 pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
 
-                //CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name);
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 

@@ -97,8 +97,6 @@ namespace HEC.FDA.ViewModel.Inventory
             UpdateRowsWithSelectedGroups();
         }
 
- 
-
         #endregion
         #region Functions
 
