@@ -2,14 +2,11 @@
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
@@ -18,11 +15,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
     {
         #region Fields
         private bool _IsDepthGridChecked;
-        private int _ID;
-        private List<string> _OriginalFolderNames = new List<string>();
-        private string _OriginalFolderName;
+        private List<string> _OriginalFileNames = new List<string>();
         private string _SelectedPath;
-
         #endregion
         #region Properties
         public string SelectedPath
@@ -41,6 +35,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         #region Constructors
         public UnsteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
+            AddRule(nameof(ListOfRows), () => ListOfRows.Count > 0, "Invalid directory selected.");
         }
         /// <summary>
         /// Constructor used when editing an existing child node.
@@ -50,16 +45,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         public UnsteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            _ID = elem.ID;
-            Name = elem.Name;
-            _OriginalFolderName = elem.Name;
-            Description = elem.Description;
             IsDepthGridChecked = elem.IsDepthGrids;
             foreach (PathAndProbability pp in elem.RelativePathAndProbability)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
                 string folderName = Path.GetFileName(pp.Path);
-                _OriginalFolderNames.Add(folderName);
+                _OriginalFileNames.Add(folderName);
                 AddRow(folderName, path, pp.Probability, false);
             }
         }
@@ -147,7 +138,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
         public void FileSelected(string fullpath)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vrErrors = new FdaValidationResult();
+            FdaValidationResult vrWarnings = new FdaValidationResult();
+
             if (fullpath != null && IsCreatingNewElement)
             {
                 ListOfRows.Clear();
@@ -163,7 +156,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     }
                     else
                     {
-                        vr.AddErrorMessage(fileValidResult.ErrorMessage);
+                        vrWarnings.AddErrorMessage(fileValidResult.ErrorMessage);
                     }
                 }
 
@@ -171,12 +164,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 string[] directories = Directory.GetDirectories(fullpath);
                 if(directories.Length > 0)
                 {
-                    vr.AddErrorMessage("Ignoring subdirectories.");
+                    vrWarnings.AddErrorMessage("Ignoring subdirectories.");
                 }
 
                 if (validFiles.Count == 0)
                 {
-                    vr.AddErrorMessage("No valid hdf files were detected. Files must match pattern '*.p##.hdf'.");
+                    vrErrors.AddErrorMessage("No valid hdf files were detected. You must select a directory that contains files that match pattern '*.p##.hdf'.");
                 }     
                 else
                 {
@@ -186,24 +179,45 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                         prob += .1;
                         AddRow(Path.GetFileName(file), Path.GetFullPath(file), prob);
                     }
-                    if (!vr.IsValid)
-                    {
-                        vr.InsertMessage(0, "Some files or subdirectories are being ignored:\n");
-                        MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                }
+                if(!vrWarnings.IsValid)
+                {
+                    MessageBox.Show(vrWarnings.ErrorMessage, "Warnings", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                if (!vrErrors.IsValid)
+                {
+                    MessageBox.Show(vrErrors.ErrorMessage, "Errors", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         public override void Save()
         {
-            if (IsCreatingNewElement)
+            FdaValidationResult validResult = ValidateImporter();
+            if (validResult.IsValid)
             {
-                SaveNew();
+                if (IsCreatingNewElement)
+                {
+                    SaveNew();
+                }
+                else
+                {
+                    SaveExisting();
+                }
             }
             else
             {
-                SaveExisting();
+                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RenameDirectoryInStudy()
+        {
+            if (!Name.Equals(OriginalElement.Name))
+            {
+                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + OriginalElement.Name;
+                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+                Directory.Move(sourceFilePath, destinationFilePath);
             }
         }
 
@@ -211,74 +225,46 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         {
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
-            FdaValidationResult validResult = ValidateImporter();
-            if (validResult.IsValid)
-            {
-                InTheProcessOfSaving = true;
-                if (!Name.Equals(_OriginalFolderName))
-                {
-                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + _OriginalFolderName;
-                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
-                    Directory.Move(sourceFilePath, destinationFilePath);
-                }
-                //might have to rename the sub folders.
-                List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
-                for (int i = 0; i < ListOfRows.Count; i++)
-                {
-                    string newName = ListOfRows[i].Name;
-                    string originalName = _OriginalFolderNames[i];
-                    if (!newName.Equals(originalName))
-                    {
-                        string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                        string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
-                        Directory.Move(sourceFilePath, destinationFilePath);
-                        _OriginalFolderNames[i] = newName;
-                    }
-                    newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
-                }
 
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Unsteady, _ID);
-                Saving.PersistenceManagers.HydraulicPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
-                manager.SaveExisting(elementToSave);
-                SavingText = "Last Saved: " + elementToSave.LastEditDate;
-                HasChanges = false;
-                HasSaved = true;
-                _OriginalFolderName = Name;
-            }
-            else
+            RenameDirectoryInStudy();
+            //might have to rename the sub folders.
+            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            for (int i = 0; i < ListOfRows.Count; i++)
             {
-                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
+                string newName = ListOfRows[i].Name;
+                string originalName = _OriginalFileNames[i];
+                if (!newName.Equals(originalName))
+                {
+                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
+                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
+                    Directory.Move(sourceFilePath, destinationFilePath);
+                    _OriginalFileNames[i] = newName;
+                }
+                newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
             }
+
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Unsteady, OriginalElement.ID);
+            base.Save(elementToSave);
         }
 
         private void SaveNew()
         {
-            FdaValidationResult validResult = ValidateImporter();
-            if (validResult.IsValid)
+            string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+            Directory.CreateDirectory(destinationDirectory);
+
+            List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
-                Directory.CreateDirectory(destinationDirectory);
+                _OriginalFileNames.Add(row.Name);
+                string directoryName = Path.GetFileName(row.Name);
+                pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
 
-                List<PathAndProbability> pathProbs = new List<PathAndProbability>();
-                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                {
-                    _OriginalFolderNames.Add(row.Name);
-                    string directoryName = Path.GetFileName(row.Name);
-                    pathProbs.Add(new PathAndProbability(directoryName, row.Probability));                    
-
-                    File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
-                }
-
-                int id = GetElementID<HydraulicElement>();
-                HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Unsteady, id);
-                base.Save(elementToSave);
-                _OriginalFolderName = Name;
-                _ID = id;
+                File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
             }
-            else
-            {
-                MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            int id = GetElementID<HydraulicElement>();
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Unsteady, id);
+            base.Save(elementToSave);
         }
         #endregion
     }

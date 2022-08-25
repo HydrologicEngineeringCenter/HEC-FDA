@@ -3,30 +3,16 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
-using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
     public static class StudyFilesManager
     {
-
-
-        //todo: validate shapefile?
-        public static FdaValidationResult ValidateShapefile()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-                return vr;
-        }
-
 
         private static string GetStudyElementDirectoryPath(Type T)
         {
@@ -47,7 +33,26 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 newDirectoryPath = Connection.Instance.IndexPointsDirectory;
             }
+            else if (T == typeof(TerrainElement))
+            {
+                newDirectoryPath = Connection.Instance.TerrainDirectory;
+            }
             return newDirectoryPath;
+        }
+
+        public static void CopyFile(string sourcePath, string newDirectoryName, Type childElementType)
+        {
+            string newDirectoryPath = GetStudyElementDirectoryPath(childElementType) + "\\" + newDirectoryName;
+            Directory.CreateDirectory(newDirectoryPath);
+            string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(sourcePath);
+            File.Copy(sourcePath, newFilePath);
+        }
+
+        public static void CopyDirectory(string sourceDirectoryPath, string newDirectoryName, string targetDirectoryPath)
+        {
+            Directory.CreateDirectory(targetDirectoryPath);
+            string newDirectoryPath = targetDirectoryPath + "\\" + newDirectoryName;
+            CopyDirectoryContents(sourceDirectoryPath, newDirectoryPath);
         }
 
         public static void CopyFilesWithSameName(string sourcePath, string newDirectoryName, Type childElementType) 
@@ -95,42 +100,54 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-            //private void CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension)
-            //{
-            //    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + nameWithExtension;
-            //    Copy(path, destinationFilePath);
-            //}
+        private static void CopyDirectoryContents(string sourceDirectory, string targetDirectory)
+        {
+            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+            CopyAll(diSource, diTarget);
+        }
 
-            //public void CopyDirectoryContents(string sourceDirectory, string targetDirectory)
-            //{
-            //    DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            //    DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-            //    CopyAll(diSource, diTarget);
-            //}
+        private static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        {
+            Directory.CreateDirectory(target.FullName);
 
-            //private void CopyAll(DirectoryInfo source, DirectoryInfo target)
-            //{
-            //    Directory.CreateDirectory(target.FullName);
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                string newPath = Path.Combine(target.FullName, fi.Name);
+                fi.CopyTo(newPath, true);
+            }
 
-            //    // Copy each file into the new directory.
-            //    foreach (FileInfo fi in source.GetFiles())
-            //    {
-            //        string newPath = Path.Combine(target.FullName, fi.Name);
-            //        fi.CopyTo(newPath, true);
-            //    }
-
-            //    // Copy each subdirectory using recursion.
-            //    foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            //    {
-            //        DirectoryInfo nextTargetSubDir =
-            //            target.CreateSubdirectory(diSourceSubDir.Name);
-            //        CopyAll(diSourceSubDir, nextTargetSubDir);
-            //    }
-            //}
+            // Copy each subdirectory using recursion.
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir =
+                    target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyAll(diSourceSubDir, nextTargetSubDir);
+            }
+        }
 
         //importing files rules:
+
         //Index points:
         //User has to select a shapefile. The shapefile has to have a *.dbf file next to the shapefile with the same name.
 
-        }
+        //Terrains:
+        //If a .vrt is selected then copy all the vrt and tif files
+        //if hdf is selected then copy all files at that level
+        //if tif or flt, copy just those files.
+
+        //hydraulics:
+
+        //Gridded:
+        //User selects directory, 8 folders are required
+        //each sub directory must have one vrt file and N number of tif files.
+
+        //Unsteady:
+        //user selects directory. We grab every file that matches pattern: "*.p??.hdf". At least 1 hdf file has to exist.
+
+        //Steady:
+        //User selects hdf file. It must match the pattern: "*.p??.hdf".
+
+    }
 }

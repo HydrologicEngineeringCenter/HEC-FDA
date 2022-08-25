@@ -87,10 +87,7 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory; }
         }
-        public string TerrainDirectory
-        {
-            get { return _ProjectDirectory + "\\" + TERRAIN_DIRECTORY; }
-        }
+       
         /// <summary>
         /// Returns the first file in the terrain directory with the name provided. If it can't
         /// find it, it returns null;
@@ -109,6 +106,10 @@ namespace HEC.FDA.ViewModel.Storage
                 return null;
             }
         }
+        public string TerrainDirectory
+        {
+            get { return _ProjectDirectory + "\\" + TERRAIN_DIRECTORY; }
+        }
         public string HydraulicsDirectory
         {
             get { return _ProjectDirectory + "\\" + HYDRAULIC_DIRECTORY; }
@@ -125,6 +126,8 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory + "\\" + INDEX_POINTS_DIRECTORY; }
         }
+ 
+
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 
         public bool IsConnectionNull

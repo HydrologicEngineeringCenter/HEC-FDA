@@ -79,22 +79,22 @@ namespace HEC.FDA.ViewModel.Utilities
 
             if (editAction != null)
             {
-                NamedAction editInflowOutflowCurve = new NamedAction();
-                editInflowOutflowCurve.Header = actionHeader;
-                editInflowOutflowCurve.Action = editAction;
-                localActions.Add(editInflowOutflowCurve);
+                NamedAction editElement = new NamedAction();
+                editElement.Header = actionHeader;
+                editElement.Action = editAction;
+                localActions.Add(editElement);
             }
 
-            NamedAction removeInflowOutflowCurve = new NamedAction();
-            removeInflowOutflowCurve.Header = StringConstants.REMOVE_MENU;
-            removeInflowOutflowCurve.Action = RemoveElement;
+            NamedAction removeElement = new NamedAction();
+            removeElement.Header = StringConstants.REMOVE_MENU;
+            removeElement.Action = RemoveElement;
 
-            NamedAction renameInflowOutflowCurve = new NamedAction(this);
-            renameInflowOutflowCurve.Header = StringConstants.RENAME_MENU;
-            renameInflowOutflowCurve.Action = Rename;
+            NamedAction renameElement = new NamedAction(this);
+            renameElement.Header = StringConstants.RENAME_MENU;
+            renameElement.Action = Rename;
 
-            localActions.Add(removeInflowOutflowCurve);
-            localActions.Add(renameInflowOutflowCurve);
+            localActions.Add(removeElement);
+            localActions.Add(renameElement);
 
             Actions = localActions;
         }

@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 6 / 2017 9:47:42 AM)]
-    public class HydraulicElement : ChildElement
+    public class HydraulicElement : ChildElement, IHaveStudyFiles
     {
         #region Notes
         // Created By: q0heccdm
@@ -111,25 +111,25 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         }            
 
-        public override void Rename(object sender, EventArgs e)
-        {
-            string originalName = Name;
-            RenameVM renameViewModel = new RenameVM(this, CloneElement);
-            string header = "Rename";
-            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
-            Navigate(tab);
-            if (!renameViewModel.WasCanceled)
-            {
-                string newName = renameViewModel.Name;
-                //rename the folders in the study.
-                if (!originalName.Equals(newName))
-                {
-                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
-                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
-                    Directory.Move(sourceFilePath, destinationFilePath);
-                }
-            }
-        }
+        //public override void Rename(object sender, EventArgs e)
+        //{
+        //    string originalName = Name;
+        //    RenameVM renameViewModel = new RenameVM(this, CloneElement);
+        //    string header = "Rename";
+        //    DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename");
+        //    Navigate(tab);
+        //    if (!renameViewModel.WasCanceled)
+        //    {
+        //        string newName = renameViewModel.Name;
+        //        //rename the folders in the study.
+        //        if (!originalName.Equals(newName))
+        //        {
+        //            string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + originalName;
+        //            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + newName;
+        //            Directory.Move(sourceFilePath, destinationFilePath);
+        //        }
+        //    }
+        //}
         #endregion
         #region Functions
 
