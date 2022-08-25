@@ -134,27 +134,20 @@ namespace HEC.FDA.ViewModel.Watershed
             FdaValidationResult isValidResult = IsValid();
             if (isValidResult.IsValid)
             {
-                //TerrainElementPersistenceManager manager = PersistenceFactory.GetTerrainManager();
-                //int id = PersistenceFactory.GetTerrainManager().GetNextAvailableId();
+                TerrainElementPersistenceManager manager = PersistenceFactory.GetTerrainManager();
 
-                int id = PersistenceFactory.GetElementManager<TerrainElement>().GetNextAvailableId();
-
+                int id = PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
                 string fileName = Path.GetFileName(TerrainPath);
                 TerrainElement t = new TerrainElement(Name, fileName, id, true);
-                //StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
+                StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, fileName, id);
                 newElement.LastEditDate = DateTime.Now.ToString("G");
-
-                StudyFilesManager.CopyFile(TerrainPath, Name, typeof(TerrainElement));
-
-                Save(newElement);
-
-                //manager.SaveNew(TerrainPath, newElement);
-                //IsCreatingNewElement = false;
-                //HasChanges = false;
-                //HasSaved = true;
-                //OriginalElement = newElement;
+                manager.SaveNew(TerrainPath, newElement);
+                IsCreatingNewElement = false;
+                HasChanges = false;
+                HasSaved = true;
+                OriginalElement = newElement;
             }
             else
             {
