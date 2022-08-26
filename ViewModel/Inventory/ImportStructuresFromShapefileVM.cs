@@ -1,12 +1,8 @@
-﻿using DatabaseManager;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using HEC.FDA.ViewModel.Saving;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Windows;
 
@@ -51,8 +47,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
             _ColumnSelections = new InventoryColumnSelectionsVM();
-            //todo: is this needed?
-            _ColumnSelections.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
@@ -62,9 +56,7 @@ namespace HEC.FDA.ViewModel.Inventory
             InventoryElement inventoryElement = elem as InventoryElement;
             _SelectedPath = inventoryElement.GetFilePath(".shp");
             _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
-            //List<string> occtypes = _ColumnSelections.GetUniqueOccupancyTypes();
             _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.SelectionMappings.OcctypesDictionary);
-            // _ColumnSelections.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
@@ -155,7 +147,6 @@ namespace HEC.FDA.ViewModel.Inventory
             return missingValues;
         }
 
-
         private void SwitchToOcctypeLinkingVM()
         {
             if(_OcctypeLinking == null)
@@ -221,7 +212,6 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());
             }
-
 
             Save(elementToSave);
         }

@@ -75,8 +75,6 @@ namespace HEC.FDA.ViewModel.Inventory
             RequiredRows.AddRange(FirstFloorElevationRows);
             Path = inventoryShpPath;
 
-            //
-
             FromTerrainFileIsSelected = mappings.IsUsingTerrainFile;
             FirstFloorElevationIsSelected = mappings.IsUsingFirstFloorElevation;
 
