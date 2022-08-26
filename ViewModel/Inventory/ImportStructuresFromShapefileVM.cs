@@ -51,12 +51,26 @@ namespace HEC.FDA.ViewModel.Inventory
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
             _ColumnSelections = new InventoryColumnSelectionsVM();
+            //todo: is this needed?
             _ColumnSelections.RequestNavigation += Navigate;
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
 
+        public ImportStructuresFromShapefileVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        {
+            InventoryElement inventoryElement = elem as InventoryElement;
+            _SelectedPath = inventoryElement.GetFilePath(".shp");
+            _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
+            //List<string> occtypes = _ColumnSelections.GetUniqueOccupancyTypes();
+            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.SelectionMappings.OcctypesDictionary);
+            // _ColumnSelections.RequestNavigation += Navigate;
+            CurrentViewIsEnabled = true;
+            CurrentView = _ColumnSelections;
+        }
+
         #endregion
+
         #region Voids
         private void SelectedPathChanged()
         {
@@ -142,14 +156,15 @@ namespace HEC.FDA.ViewModel.Inventory
         }
 
 
-        private void SwitchToAttributeLinkingList()
+        private void SwitchToOcctypeLinkingVM()
         {
             if(_OcctypeLinking == null)
             {
-                List<string> occtypes = _ColumnSelections.GetUniqueOccupancyTypes();
-                _OcctypeLinking = new InventoryOcctypeLinkingVM(occtypes);
+                _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections._OccupancyTypeRow.SelectedItem);
             }
-
+            //when we switch to the occtype linking vm, we need to check if the user has switched the occtype column name.
+            //if it is the same as it was before, then this call won't do anything.
+            _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections._OccupancyTypeRow.SelectedItem);
             CurrentView = _OcctypeLinking;
         }
 
@@ -165,7 +180,7 @@ namespace HEC.FDA.ViewModel.Inventory
                     bool missingValues = CheckForMissingValues();
                     if (!missingValues)
                     {
-                        SwitchToAttributeLinkingList();
+                        SwitchToOcctypeLinkingVM();
                         isValid = true;
                     }
                 }  

@@ -1,15 +1,11 @@
 ﻿using DatabaseManager;
 using HEC.CS.Collections;
-using LifeSimGIS;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Utilities;
-using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -73,10 +69,16 @@ namespace HEC.FDA.ViewModel.Inventory
             FirstFloorElevationIsSelected = true;
         }
 
-        public InventoryColumnSelectionsVM(InventorySelectionMapping mappings)
+        public InventoryColumnSelectionsVM(InventorySelectionMapping mappings, string inventoryShpPath)
         {
-            _FirstFloorElevationIsSelected = mappings.IsUsingFirstFloorElevation;
-            _FromTerrainFileIsSelected = mappings.IsUsingTerrainFile;
+            LoadRows();
+            RequiredRows.AddRange(FirstFloorElevationRows);
+            Path = inventoryShpPath;
+
+            //
+
+            FromTerrainFileIsSelected = mappings.IsUsingTerrainFile;
+            FirstFloorElevationIsSelected = mappings.IsUsingFirstFloorElevation;
 
             _StructureIDRow.SelectedItem = mappings.StructureIDCol;
             _OccupancyTypeRow.SelectedItem = mappings.OccTypeCol;
@@ -204,25 +206,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
         #region Functions
-        /// <summary>
-        /// Reads the dbf file and loops over all the structures and creates a list of unique occtypes.
-        /// This is reading the column in the dbf file that corresponds to the user selected occtype header.
-        /// </summary>
-        /// <returns></returns>
-        public List<string> GetUniqueOccupancyTypes()
-        {
-            List<string> uniqueList = new List<string>();
-            DataTableView dtv = GetStructureInventoryTable();
-            if (dtv != null)
-            {
-                object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
-                foreach (object o in occtypesFromFile)
-                {
-                    uniqueList.Add(o.ToString());
-                }
-            }
-            return uniqueList.Distinct().ToList();
-        }
+        
 
         private object[] GetStructureNames()
         {

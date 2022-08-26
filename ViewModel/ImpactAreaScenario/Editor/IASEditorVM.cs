@@ -167,8 +167,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// <param name="elem"></param>
         private void FillForm(IASElement elem)
         {
-            Name = elem.Name;
-            Description = elem.Description;
             Year = elem.AnalysisYear;
 
             //this is the list of current impact area rows in the study. They might not match the items

@@ -140,6 +140,8 @@
         public const string STRUCTURE_INVENTORIES = "Structure Inventories";
         public const string IMPORT_STRUCTURE_INVENTORIES_MENU = "Import From Shapefile...";
         public const string IMPORT_STRUCTURE_INVENTORIES_HEADER = "Import Structure Inventory";
+        public const string EDIT_STRUCTURES_MENU = "Edit Structure Inventory...";
+
 
         public const string AGGREGATED_STAGE_DAMAGE_FUNCTIONS = "Aggregated Stage-Damage Functions";
         public const string CREATE_NEW_STAGE_DAMAGE_MENU = "Create New Stage-Damage Functions...";
