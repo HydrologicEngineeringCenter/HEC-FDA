@@ -1,12 +1,8 @@
-﻿using DatabaseManager;
-using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using HEC.FDA.ViewModel.Saving;
+﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Windows;
 
@@ -51,12 +47,22 @@ namespace HEC.FDA.ViewModel.Inventory
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
         {
             _ColumnSelections = new InventoryColumnSelectionsVM();
-            _ColumnSelections.RequestNavigation += Navigate;
+            CurrentViewIsEnabled = true;
+            CurrentView = _ColumnSelections;
+        }
+
+        public ImportStructuresFromShapefileVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        {
+            InventoryElement inventoryElement = elem as InventoryElement;
+            _SelectedPath = inventoryElement.GetFilePath(".shp");
+            _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
+            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.SelectionMappings.OcctypesDictionary);
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
 
         #endregion
+
         #region Voids
         private void SelectedPathChanged()
         {
@@ -141,15 +147,15 @@ namespace HEC.FDA.ViewModel.Inventory
             return missingValues;
         }
 
-
-        private void SwitchToAttributeLinkingList()
+        private void SwitchToOcctypeLinkingVM()
         {
             if(_OcctypeLinking == null)
             {
-                List<string> occtypes = _ColumnSelections.GetUniqueOccupancyTypes();
-                _OcctypeLinking = new InventoryOcctypeLinkingVM(occtypes);
+                _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections._OccupancyTypeRow.SelectedItem);
             }
-
+            //when we switch to the occtype linking vm, we need to check if the user has switched the occtype column name.
+            //if it is the same as it was before, then this call won't do anything.
+            _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections._OccupancyTypeRow.SelectedItem);
             CurrentView = _OcctypeLinking;
         }
 
@@ -165,7 +171,7 @@ namespace HEC.FDA.ViewModel.Inventory
                     bool missingValues = CheckForMissingValues();
                     if (!missingValues)
                     {
-                        SwitchToAttributeLinkingList();
+                        SwitchToOcctypeLinkingVM();
                         isValid = true;
                     }
                 }  
@@ -206,7 +212,6 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());
             }
-
 
             Save(elementToSave);
         }

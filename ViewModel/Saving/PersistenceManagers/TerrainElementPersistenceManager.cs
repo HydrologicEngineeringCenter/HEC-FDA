@@ -96,8 +96,9 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             if (!newElement.Name.Equals(oldElement.Name))
             {
-                string oldFilePath = Connection.Instance.GetTerrainFile(oldElement.Name);
-                if(oldFilePath != null)
+                TerrainElement oldElem = (TerrainElement)oldElement;
+                string oldFilePath = Connection.Instance.TerrainDirectory + "\\" + oldElem.Name + "\\" + oldElem.FileName;
+                if(File.Exists(oldFilePath))
                 {
                     // at least one matching file exists
                     List<NamedAction> actions = new List<NamedAction>();

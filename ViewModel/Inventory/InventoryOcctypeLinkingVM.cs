@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
+using System.Windows;
+using DatabaseManager;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
     public class InventoryOcctypeLinkingVM : BaseViewModel
     {
         #region Fields
+        private string _Path;
+        private string _SelectedOcctypeName;
         private List<string> _OccupancyTypesInFile;
         #endregion
         #region Properties
@@ -25,18 +30,13 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Constructors
 
-        public InventoryOcctypeLinkingVM(List<string> occtypeNames)
+        public InventoryOcctypeLinkingVM(string filePath, string selectedOcctypeName)
         {
-            OccupancyTypesInFile = occtypeNames;
-            List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
-
-            foreach (OccupancyTypesElement elem in occupancyTypesElements)
-            {
-                OcctypeGroupRowItem row = new OcctypeGroupRowItem(elem);
-                row.OcctypeGroupSelectionChanged += OcctypeGroupSelectionChanged;
-                OccTypeGroups.Add(row);
-            }
-
+            //get the list of occtype names yourself, don't pass them in.
+            _Path = filePath;
+            OccupancyTypesInFile = GetUniqueOccupancyTypes();
+            _SelectedOcctypeName = selectedOcctypeName;
+            LoadOcctypeGroups();
             LoadRows();
 
             //select the first group
@@ -45,7 +45,100 @@ namespace HEC.FDA.ViewModel.Inventory
                 OccTypeGroups[0].IsSelected = true;
                 UpdateRowsWithSelectedGroups();
             }
+        }
 
+        /// <summary>
+        /// Loading this from an existing inventory element. We are in edit mode.
+        /// </summary>
+        /// <param name="occtypeNames">The occtypes that are in the inventory shapefile.</param>
+        /// <param name="occtypeMappings">The saved occtype mappings from fda occtypes to the inventory shapefile occtypes stored on the inventory element.</param>
+        public InventoryOcctypeLinkingVM(string filePath, string selectedOcctypeName, Dictionary<string, OcctypeReference> occtypeMappings)
+        {
+            _Path = filePath;
+            _SelectedOcctypeName = selectedOcctypeName;
+            OccupancyTypesInFile = GetUniqueOccupancyTypes();
+
+            LoadOcctypeGroups();
+            LoadRows();
+            SelectRequiredOcctypeGroups(occtypeMappings);
+            SelectOcctypesInRows(occtypeMappings);
+        }
+
+        private void SelectOcctypesInRows(Dictionary<string, OcctypeReference> occtypeMappings)
+        {
+            foreach(OccTypeSelectionRowItem row in Rows)
+            {
+                string shapefileOcctypeName = row.OccTypeName;
+                if(occtypeMappings.ContainsKey(shapefileOcctypeName))
+                {
+                    SelectOcctypeInRow(row, occtypeMappings[shapefileOcctypeName]);
+                }
+                else
+                {
+                    //we couldn't find the occtype. I guess we don't need to do anything. The row will probably just have a blank combobox.
+                }
+            }
+        }
+
+        private void SelectOcctypeInRow(OccTypeSelectionRowItem row, OcctypeReference otRef)
+        {
+            foreach(OccTypeDisplayName ot in row.PossibleOccTypes)
+            {
+                if(ot.GroupID == otRef.GroupID && ot.OccType.ID == otRef.ID)
+                {
+                    row.SelectedOccType = ot;
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Loop over all our stored occtypes and select any groups that those occtypes belong to.
+        /// </summary>
+        private void SelectRequiredOcctypeGroups(Dictionary<string, OcctypeReference> occtypeMappings)
+        {
+            HashSet<int> uniqueGroupIDs = new HashSet<int>();
+            foreach(KeyValuePair<string, OcctypeReference> kvp in occtypeMappings)
+            {
+                OcctypeReference otRef = kvp.Value;
+                uniqueGroupIDs.Add(otRef.GroupID);
+            }
+
+            foreach (int i in uniqueGroupIDs)
+            {
+                bool groupSelected = SelectGroupWithID(i);
+                if(!groupSelected)
+                {
+                    MessageBox.Show("Saved occtypes belonged to a group that no longer exists.", "Failed To Find Occupancy Type Group", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+
+        }
+        private bool SelectGroupWithID(int id)
+        {
+            bool foundGroup = false;
+            foreach (OcctypeGroupRowItem groupRow in OccTypeGroups)
+            {
+                if(id == groupRow.GroupElement.ID)
+                {
+                    groupRow.IsSelected = true;
+                    foundGroup = true;
+                    break;
+                }
+            }
+            return foundGroup;
+        }
+
+        private void LoadOcctypeGroups()
+        {
+            List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
+
+            foreach (OccupancyTypesElement elem in occupancyTypesElements)
+            {
+                OcctypeGroupRowItem row = new OcctypeGroupRowItem(elem);
+                row.OcctypeGroupSelectionChanged += OcctypeGroupSelectionChanged;
+                OccTypeGroups.Add(row);
+            } 
         }
 
         /// <summary>
@@ -53,6 +146,7 @@ namespace HEC.FDA.ViewModel.Inventory
         /// </summary>
         private void LoadRows()
         {
+            Rows.Clear();
             foreach(string occtypeName in OccupancyTypesInFile)
             {
                 Rows.Add(new OccTypeSelectionRowItem(occtypeName));
@@ -126,10 +220,52 @@ namespace HEC.FDA.ViewModel.Inventory
             Dictionary<string, OcctypeReference> dict = new Dictionary<string, OcctypeReference>();
             foreach (OccTypeSelectionRowItem row in Rows)
             {
-                OcctypeReference otRef = new OcctypeReference(row.SelectedOccType.OccType.GroupID, row.SelectedOccType.OccType.ID);
+                OcctypeReference otRef = new OcctypeReference(row.SelectedOccType.GroupID, row.SelectedOccType.OccType.ID);
                 dict.Add(row.OccTypeName, otRef);
             }
             return dict;
+        }
+
+        /// <summary>
+        /// Reads the dbf file and loops over all the structures and creates a list of unique occtypes.
+        /// This is reading the column in the dbf file that corresponds to the user selected occtype header.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetUniqueOccupancyTypes()
+        {
+            List<string> uniqueList = new List<string>();
+            DataTableView dtv = GetStructureInventoryTable();
+            if (dtv != null)
+            {
+                object[] occtypesFromFile = dtv.GetColumn(_SelectedOcctypeName);
+                foreach (object o in occtypesFromFile)
+                {
+                    uniqueList.Add(o.ToString());
+                }
+            }
+            return uniqueList.Distinct().ToList();
+        }
+        private DataTableView GetStructureInventoryTable()
+        {
+            DataTableView dtv = null;
+            string dbfPath = Path.ChangeExtension(_Path, "dbf");
+            if (File.Exists(dbfPath))
+            {
+                DbfReader dbf = new DbfReader(dbfPath);
+                dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+            }
+            return dtv;
+        }
+
+        public void UpdateOcctypeColumnSelectionName(string occtypeColName)
+        {
+            if(!_SelectedOcctypeName.Equals(occtypeColName))
+            {
+                _SelectedOcctypeName = occtypeColName;
+                OccupancyTypesInFile = GetUniqueOccupancyTypes();
+                LoadRows();
+                UpdateRowsWithSelectedGroups();
+            }
         }
 
         #endregion

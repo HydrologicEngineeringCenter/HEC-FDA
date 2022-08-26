@@ -87,25 +87,7 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory; }
         }
-       
-        /// <summary>
-        /// Returns the first file in the terrain directory with the name provided. If it can't
-        /// find it, it returns null;
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public string GetTerrainFile(string name)
-        {
-            string[] files = Directory.GetFiles(Connection.Instance.TerrainDirectory, name + ".*");
-            if (files.Length > 0)
-            {
-                return files[0];
-            }
-            else
-            {
-                return null;
-            }
-        }
+
         public string TerrainDirectory
         {
             get { return _ProjectDirectory + "\\" + TERRAIN_DIRECTORY; }

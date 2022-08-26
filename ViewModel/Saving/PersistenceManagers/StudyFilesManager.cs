@@ -149,5 +149,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         //Steady:
         //User selects hdf file. It must match the pattern: "*.p??.hdf".
 
+        //Impact areas
+
+
+        //inventories
+
     }
 }

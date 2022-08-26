@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Watershed;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -48,10 +49,12 @@ namespace HEC.FDA.ViewModel.Inventory
             List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
             if (terrainElements.Count > 0)
             {
-                string firstTerrainName = terrainElements[0].Name;
-                string filePath = Storage.Connection.Instance.GetTerrainFile(firstTerrainName);
-                if (filePath != null)
+                //there can only be one terrain in the study
+                TerrainElement elem = terrainElements[0];
+                string filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
+                if (File.Exists(filePath))
                 {
+                    //todo: is this going to work with the different file types? vrt, hdf, tif, flt
                     RasterFeatures terrainRasters = GetTerrainRasterFeatures(filePath);
                     if (terrainRasters != null)
                     {
@@ -81,7 +84,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 }
                 else
                 {
-                    errorMessage = "A terrain file exists in the study but the file could not be found in the study directory with the name of: " + firstTerrainName;
+                    errorMessage = "A terrain file exists in the study but the file could not be found in the study directory with the name of: " + elem.Name;
                 }
             }
             else

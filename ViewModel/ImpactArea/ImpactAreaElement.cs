@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
-    public class ImpactAreaElement : ChildElement
+    public class ImpactAreaElement : ChildElement, IHaveStudyFiles
     {
         #region Notes
         #endregion

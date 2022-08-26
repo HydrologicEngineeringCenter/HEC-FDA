@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
 using System;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
@@ -27,7 +28,7 @@ namespace HEC.FDA.ViewModel.Inventory
             SelectionMappings = selections;
             IsImportedFromOldFDA = isImportedFromOldFDA;
 
-            AddDefaultActions();
+            AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU);
         }
 
         public InventoryElement(XElement inventoryElem, int id)
@@ -37,10 +38,21 @@ namespace HEC.FDA.ViewModel.Inventory
             SelectionMappings = new InventorySelectionMapping(inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS));
 
 
-            AddDefaultActions();
+            AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
         #endregion
+
+        public void EditElement(object sender, EventArgs e)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               .WithSiblingRules(this);
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(this, actionManager);
+            string header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER);
+            Navigate(tab, false, false);
+
+        }
 
         public override XElement ToXML()
         {
@@ -49,6 +61,26 @@ namespace HEC.FDA.ViewModel.Inventory
             inventoryElem.SetAttributeValue(IMPORTED_FROM_OLD_FDA, IsImportedFromOldFDA);
             inventoryElem.Add(SelectionMappings.ToXML());
             return inventoryElem;
+        }
+
+        /// <summary>
+        /// Gets a file from this inventory elements folder in the study directory.
+        /// </summary>
+        /// <param name="extension">the extension needs to include the period. ie: ".dbf"</param>
+        /// <returns></returns>
+        public string GetFilePath(string extension)
+        {
+            string path = null;
+            string[] files = Directory.GetFiles(Storage.Connection.Instance.InventoryDirectory + "\\" + Name);
+            foreach (string file in files)
+            {
+                if(Path.GetExtension(file).Equals(extension))
+                {
+                    path = file;
+                    break;
+                }
+            }
+            return path;
         }
      
     }
