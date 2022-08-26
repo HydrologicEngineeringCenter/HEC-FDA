@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
-    public class DefineSIAttributesVM : BaseViewModel
+    public class InventoryColumnSelectionsVM : BaseViewModel
     {
         #region Fields
         private string _Path;
@@ -22,22 +22,22 @@ namespace HEC.FDA.ViewModel.Inventory
         private readonly List<float> _StructureElevations = new List<float>();
 
         //required rows
-        private DefineSIAttributesRowItem _StructureIDRow = new DefineSIAttributesRowItem("Structure ID:");
-        private DefineSIAttributesRowItem _OccupancyTypeRow = new DefineSIAttributesRowItem("Occupancy Type:");
-        private DefineSIAttributesRowItem _FirstFloorElevRow = new DefineSIAttributesRowItem("First Floor Elevation Value:");
-        private DefineSIAttributesRowItem _StructureValueRow = new DefineSIAttributesRowItem("Structure Value:");
-        private DefineSIAttributesRowItem _FoundationHeightRow = new DefineSIAttributesRowItem("Foundation Height:");
-        private DefineSIAttributesRowItem _GroundElevRow = new DefineSIAttributesRowItem("Ground Elevation Value:");
+        public InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:");
+        public InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:");
+        public InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:");
+        public InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:");
+        public InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:");
+        public InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:");
 
         //optional rows
-        private DefineSIAttributesRowItem _ContentValueRow = new DefineSIAttributesRowItem("Content Value:");
-        private DefineSIAttributesRowItem _OtherValueRow = new DefineSIAttributesRowItem("Other Value:");
-        private DefineSIAttributesRowItem _VehicleValueRow = new DefineSIAttributesRowItem("Vehicle Value:");
-        private DefineSIAttributesRowItem _ModuleRow = new DefineSIAttributesRowItem("Module:");
-        private DefineSIAttributesRowItem _BegDamDepthRow = new DefineSIAttributesRowItem("Beginning Damage Depth:");
-        private DefineSIAttributesRowItem _YearInConstructionRow = new DefineSIAttributesRowItem("Year In Construction:");
-        private DefineSIAttributesRowItem _NotesRow = new DefineSIAttributesRowItem("Notes/Metadata:");
-        private DefineSIAttributesRowItem _NumberOfStructuresRow = new DefineSIAttributesRowItem("Number Of Structures:");
+        public InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
+        public InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem("Other Value:");
+        public InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem("Vehicle Value:");
+        public InventoryColumnSelectionsRowItem _ModuleRow = new InventoryColumnSelectionsRowItem("Module:");
+        public InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
+        public InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
+        public InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
+        public InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem("Number Of Structures:");
         #endregion
         #region Properties
         public string Path
@@ -57,20 +57,42 @@ namespace HEC.FDA.ViewModel.Inventory
             set { _FromTerrainFileIsSelected = value; FromTerrainFileSelectionChanged(); }
         }
 
-        public CustomObservableCollection<DefineSIAttributesRowItem> RequiredRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
-        public CustomObservableCollection<DefineSIAttributesRowItem> OptionalRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
+        public CustomObservableCollection<InventoryColumnSelectionsRowItem> RequiredRows { get; } = new CustomObservableCollection<InventoryColumnSelectionsRowItem>();
+        public CustomObservableCollection<InventoryColumnSelectionsRowItem> OptionalRows { get; } = new CustomObservableCollection<InventoryColumnSelectionsRowItem>();
 
-        public List<DefineSIAttributesRowItem> FirstFloorElevationRows { get; } = new List<DefineSIAttributesRowItem>();
-        public List<DefineSIAttributesRowItem> GroundElevationRows { get; } = new List<DefineSIAttributesRowItem>();
-        public List<DefineSIAttributesRowItem> TerrainElevationRows { get; } = new List<DefineSIAttributesRowItem>();
+        public List<InventoryColumnSelectionsRowItem> FirstFloorElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
+        public List<InventoryColumnSelectionsRowItem> GroundElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
+        public List<InventoryColumnSelectionsRowItem> TerrainElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
 
         #endregion
         #region Constructors
-        public DefineSIAttributesVM() : base()
+        public InventoryColumnSelectionsVM()
         {
             LoadRows();
             RequiredRows.AddRange(FirstFloorElevationRows);
             FirstFloorElevationIsSelected = true;
+        }
+
+        public InventoryColumnSelectionsVM(InventorySelectionMapping mappings)
+        {
+            _FirstFloorElevationIsSelected = mappings.IsUsingFirstFloorElevation;
+            _FromTerrainFileIsSelected = mappings.IsUsingTerrainFile;
+
+            _StructureIDRow.SelectedItem = mappings.StructureIDCol;
+            _OccupancyTypeRow.SelectedItem = mappings.OccTypeCol;
+            _FirstFloorElevRow.SelectedItem = mappings.FirstFloorElevCol;
+            _StructureValueRow.SelectedItem = mappings.StructureValueCol;
+            _FoundationHeightRow.SelectedItem = mappings.FoundationHeightCol;
+            _GroundElevRow.SelectedItem = mappings.GroundElevCol;
+
+            _ContentValueRow.SelectedItem = mappings.ContentValueCol;
+            _OtherValueRow.SelectedItem = mappings.OtherValueCol;
+            _VehicleValueRow.SelectedItem = mappings.VehicleValueCol;
+            _ModuleRow.SelectedItem = mappings.ModuleCol;
+            _BegDamDepthRow.SelectedItem = mappings.BeginningDamageDepthCol;
+            _YearInConstructionRow.SelectedItem = mappings.YearInConstructionCol;
+            _NotesRow.SelectedItem = mappings.NotesCol;
+            _NumberOfStructuresRow.SelectedItem = mappings.NumberOfStructuresCol;            
         }
 
         #endregion
@@ -129,14 +151,7 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
             OptionalRows.Add(_NumberOfStructuresRow);
-        }
-
-        public XElement ToXML()
-        {
-            //todo
-            XElement siAttributes = new XElement("SIAttributes");
-            return siAttributes;
-        }
+        }      
 
         private void PathChanged()
         {
@@ -361,7 +376,7 @@ namespace HEC.FDA.ViewModel.Inventory
         /// <param name="row"></param>
         /// <param name="missingType"></param>
         /// <returns></returns>
-        private List<StructureMissingDataRowItem> AreAllStructureValuesDefinedForRow(DefineSIAttributesRowItem row, MissingDataType missingType)
+        private List<StructureMissingDataRowItem> AreAllStructureValuesDefinedForRow(InventoryColumnSelectionsRowItem row, MissingDataType missingType)
         {
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
 
@@ -403,7 +418,6 @@ namespace HEC.FDA.ViewModel.Inventory
                 vr.AddErrorMessage("An occupancy type selection is required.");
             }
            
-
             if (FirstFloorElevationIsSelected)
             {
                 //first floor elevation
@@ -436,121 +450,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        #endregion
-
-        /// <summary>
-        /// Creates the data table that will be saved to the database.
-        /// </summary>
-        /// <param name="shapefilePath"></param>
-        /// <param name="occtypeSelectionRows"></param>
-        /// <returns></returns>
-        public DataTable CreateStructureTable(string shapefilePath, CustomObservableCollection<OccTypeSelectionRowItem> occtypeSelectionRows)
-        {
-            StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
-            DataTable table = manager.CreateEmptyStructuresTable();
-
-            ShapefileReader myReader = new ShapefileReader(shapefilePath);
-            DataTableView attributeTableFromFile = myReader.GetAttributeTable();
-
-            //todo: what is this? is this necessary? 
-            if (attributeTableFromFile.ParentDatabase.DataBaseOpen == false)
-            {
-                attributeTableFromFile.ParentDatabase.Open();
-            }
-
-            //loop over all structures and grab the values that we want to store in our database from the 
-            //structure inventory table.
-            for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
-            {
-                DataRow row = table.NewRow();
-                string structureOcctypeName = GetValueForRow(attributeTableFromFile, i, _OccupancyTypeRow);
-                OccTypeDisplayName occTypeDisplayName = GetOccTypeDisplayObject(structureOcctypeName, occtypeSelectionRows);
-
-                AssignValuesToRow(row, attributeTableFromFile, i, occTypeDisplayName);
-                table.Rows.Add(row);
-            }
-
-            return table;
-        }
-
-        /// <summary>
-        /// This grabs the "existing" occtype object that the user has assigned to the "structure" occtype.
-        /// </summary>
-        /// <param name="occTypeName"></param>
-        /// <param name="occtypeSelectionRows"></param>
-        /// <returns></returns>
-        private OccTypeDisplayName GetOccTypeDisplayObject(string occTypeName, CustomObservableCollection<OccTypeSelectionRowItem> occtypeSelectionRows)
-        {
-            OccTypeDisplayName selectedOccTypeObject = null;
-            OccTypeSelectionRowItem rowForThisOcctype = occtypeSelectionRows.Where(row => row.OccTypeName.Equals(occTypeName)).FirstOrDefault();
-            if(rowForThisOcctype != null)
-            {
-                selectedOccTypeObject = rowForThisOcctype.SelectedOccType;
-            }
-            return selectedOccTypeObject;
-        }
-
-        private void AssignValuesToRow(DataRow row,  DataTableView dataTableView, int i, OccTypeDisplayName selectedOcctype)
-        {
-            //id
-            //row[StructureInventoryPersistenceManager.STRUCTURE_ID] = GetValueForRow(dataTableView, i, _StructureIDRow);
-
-            ////occtypes and damcats
-            //row[StructureInventoryBaseElement.OccupancyTypeField] = selectedOcctype.OccType.ID;
-            //row[StructureInventoryBaseElement.OccupancyTypeGroup] = selectedOcctype.GroupID;
-            //row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory;
-
-            ////foundation and elevation
-            //if (FirstFloorElevationIsSelected)
-            //{
-            //    row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
-            //}
-            //else
-            //{
-            //    row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
-            //    if (FromTerrainFileIsSelected)
-            //    {
-            //        row[StructureInventoryBaseElement.GroundElevationField] = _StructureElevations[i];
-
-            //    }
-            //    else
-            //    {
-            //        row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
-            //    }
-
-            //}
-
-            ////asset values
-            //row[StructureInventoryBaseElement.StructureValueField] = GetValueForRow(dataTableView, i, _StructureValueRow);
-            //row[StructureInventoryBaseElement.ContentValueField] = GetValueForRow(dataTableView, i, _ContentValueRow);
-            //row[StructureInventoryBaseElement.OtherValueField] = GetValueForRow(dataTableView, i, _OtherValueRow);
-            //row[StructureInventoryBaseElement.VehicleValueField] = GetValueForRow(dataTableView, i, _VehicleValueRow);
-
-            ////optional fields
-            //row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
-            //row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
-            //row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);
-            //row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _NotesRow);
-            //row[StructureInventoryPersistenceManager.NumberOfStructures] = GetValueForRow(dataTableView, i, _NumberOfStructuresRow);
-        }
-
-        /// <summary>
-        /// This will either use the default value the user defined or will grab the correct value from the attribute table.
-        /// </summary>
-        /// <param name="attributeTableFromFile"></param>
-        /// <param name="i"></param>
-        /// <param name="row"></param>
-        /// <returns></returns>
-        private string GetValueForRow(DataTableView attributeTableFromFile, int i, DefineSIAttributesRowItem row)
-        {
-            string value = null;
-            if(row.SelectedItem != null)
-            {
-                value = attributeTableFromFile.GetCell(row.SelectedItem, i).ToString();
-            }
-            return value;
-        }
-
+        #endregion  
         #endregion
     }
 }

@@ -1,14 +1,9 @@
-﻿using HEC.FDA.ViewModel.Storage;
-using HEC.FDA.ViewModel.Utilities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
-    public class TerrainElement : ChildElement
+    public class TerrainElement : ChildElement, IHaveStudyFiles
     {
         #region Notes
         #endregion
@@ -53,33 +48,6 @@ namespace HEC.FDA.ViewModel.Watershed
             terrainElement.Add(CreateHeaderElement());
             terrainElement.SetAttributeValue(SELECTED_PATH_XML_TAG, FileName);
             return terrainElement;
-        }
-
-        public override void Rename(object sender, EventArgs e)
-        {
-            string originalName = Name;
-            RenameVM renameViewModel = new RenameVM(this, CloneElement);
-            string header = "Rename";
-            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename",false, false);
-            Navigate(tab);
-            if (!renameViewModel.WasCanceled)
-            {
-                string newName = renameViewModel.Name;
-                //rename the folders in the study.
-                if (!originalName.Equals(newName))
-                {
-                    try
-                    {
-                        string sourceFilePath = Connection.Instance.TerrainDirectory + "\\" + originalName;
-                        string destinationFilePath = Connection.Instance.TerrainDirectory + "\\" + newName;
-                        Directory.Move(sourceFilePath, destinationFilePath);
-                    }
-                    catch(Exception ex)
-                    {
-                        MessageBox.Show("Renaming the terrain directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-            }
         }
 
        public bool Equals(TerrainElement elem)

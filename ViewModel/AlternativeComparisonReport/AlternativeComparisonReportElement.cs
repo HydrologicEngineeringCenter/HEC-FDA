@@ -35,7 +35,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         {
             WithoutProjAltID = withoutProjectAltId;
             WithProjAltIDs = withProjAlternativeIds;
-            AddActions();
+
+            AddDefaultActions(EditAlternative);
+
+            NamedAction viewResults = new NamedAction();
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
+            viewResults.Action = ComputeAltCompReport;
+
+            Actions.Insert(1, viewResults);
         }
 
         /// <summary>
@@ -53,35 +60,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 WithProjAltIDs.Add(iasID);
             }
 
-            AddActions();
-        }
-
-        private void AddActions()
-        {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_ALTERNATIVE_COMP_REPORTS_MENU;
-            edit.Action = EditAlternative;
+            AddDefaultActions(EditAlternative);
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ComputeAltCompReport;
 
-            NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = StringConstants.REMOVE_MENU;
-            removeCondition.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(edit);
-            localActions.Add(viewResults);
-            localActions.Add(removeCondition);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
-        }
+            Actions.Insert(1, viewResults);
+        }    
 
         public override XElement ToXML()
         {
@@ -141,7 +127,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public void ViewResults()
         {
-
             if (_Results != null)
             {
                 AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());

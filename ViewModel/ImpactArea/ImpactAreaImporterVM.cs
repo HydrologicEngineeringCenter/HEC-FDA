@@ -1,5 +1,6 @@
 ﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -108,38 +109,13 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id);
 
-            string newDirectoryPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + Name;
-
-            string selectedDirectory = Path.GetDirectoryName(SelectedPath);
-            string selectedFileName = Path.GetFileNameWithoutExtension(SelectedPath);
-            string[] filesToImport = Directory.GetFiles(selectedDirectory, selectedFileName + ".*");
-
             if (IsCreatingNewElement)
             {
-                //handle the shapefile
-                Directory.CreateDirectory(newDirectoryPath);
-                foreach (string file in filesToImport)
-                {
-                    string newFilePath = newDirectoryPath + "\\" + Path.GetFileName(file);
-                    File.Copy(file, newFilePath);
-                }
+                StudyFilesManager.CopyFilesWithSameName(SelectedPath, Name, elementToSave.GetType());
             }
             else
             {
-                //might have to update the directory name
-                if (!OriginalElement.Name.Equals(Name))
-                {
-                    string originalDirectoryPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + OriginalElement.Name;
-                    try
-                    {
-                        //"Move" is basically the same as a rename of the directory.
-                        Directory.Move(originalDirectoryPath, newDirectoryPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Renaming the impact area directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
+                StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());     
             }
             //this call handles the sqlite data
             Save(elementToSave);

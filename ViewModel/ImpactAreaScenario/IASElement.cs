@@ -62,6 +62,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StageDamageID = stageDamageElementID;
             SpecificIASElements.AddRange( elems);
             AnalysisYear = year;
+
             AddActions();
         }
 
@@ -92,34 +93,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void AddActions()
         {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_SCENARIO_MENU;
-            edit.Action = EditIASSet;
-
+            AddDefaultActions(EditIASSet);
             NamedAction compute = new NamedAction();
             compute.Header = StringConstants.COMPUTE_SCENARIO_MENU;
             compute.Action = ComputeScenario;
-
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
-
-            NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = StringConstants.REMOVE_MENU;
-            removeCondition.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(edit);
-            localActions.Add(compute);
-            localActions.Add(viewResults);
-            localActions.Add(removeCondition);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
+            Actions.Insert(1, viewResults);
+            Actions.Insert(1, compute);
         }
 
         /// <summary>

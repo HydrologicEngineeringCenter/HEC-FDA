@@ -136,7 +136,7 @@ namespace HEC.FDA.ViewModel.Watershed
             {
                 TerrainElementPersistenceManager manager = PersistenceFactory.GetTerrainManager();
 
-                int id = Saving.PersistenceFactory.GetTerrainManager().GetNextAvailableId();
+                int id = PersistenceFactory.GetTerrainManager().GetNextAvailableId();
                 //add a dummy element to the parent
                 string fileName = Path.GetFileName(TerrainPath);
                 TerrainElement t = new TerrainElement(Name, fileName, id, true);

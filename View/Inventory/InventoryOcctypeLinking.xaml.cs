@@ -5,9 +5,9 @@ namespace HEC.FDA.View.Inventory
     /// <summary>
     /// Interaction logic for AttributeLinkingList.xaml
     /// </summary>
-    public partial class AttributeLinkingList : UserControl
+    public partial class InventoryOcctypeLinking : UserControl
     {
-        public AttributeLinkingList()
+        public InventoryOcctypeLinking()
         {
             InitializeComponent();
         }    

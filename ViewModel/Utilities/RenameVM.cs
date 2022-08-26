@@ -1,5 +1,6 @@
 ﻿using System;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -38,6 +39,11 @@ namespace HEC.FDA.ViewModel.Utilities
             Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
+                if(ElementToSave is IHaveStudyFiles)
+                {
+                    StudyFilesManager.RenameDirectory(OldElement.Name, Name, ElementToSave.GetType());
+                }
+
                 savingManager.SaveExisting(ElementToSave);
             }
         }

@@ -116,10 +116,10 @@ namespace HEC.FDA.ViewModel.Saving
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
-            if(IDExistsInDB(_TableName, elementToSave.ID, ID_COL_NAME))
+            if (IDExistsInDB(_TableName, elementToSave.ID, ID_COL_NAME))
             {
                 UpdateTableRow(elementToSave.ID, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
-                StudyCacheForSaving.UpdateElement( elementToSave);
+                StudyCacheForSaving.UpdateElement(elementToSave);
             }
             else
             {
@@ -164,14 +164,6 @@ namespace HEC.FDA.ViewModel.Saving
         }
 
         #region Remove element
-        public void RemoveTable(string tableName)
-        {
-            OpenConnection();
-            if (Connection.Instance.TableNames().Contains(tableName))
-            {
-                Connection.Instance.DeleteTable(tableName);                
-            }
-        }
 
         public virtual void RemoveElementFromTable(ChildElement element)
         {

@@ -43,7 +43,12 @@ namespace HEC.FDA.ViewModel.Alternatives
         public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(name, creationDate, description, id)
         {
             IASElementSets.AddRange(IASElements);
-            AddActions();
+
+            AddDefaultActions(EditAlternative);
+            NamedAction viewResults = new NamedAction();
+            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
+            viewResults.Action = ComputeAlternative;
+            Actions.Insert(1, viewResults);
         }
 
         /// <summary>
@@ -59,36 +64,13 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSets.Add(iasID);
             }
 
-            AddActions();
-        }
-        #endregion
-
-        private void AddActions()
-        {
-            NamedAction edit = new NamedAction();
-            edit.Header = StringConstants.EDIT_ALTERNATIVE_MENU;
-            edit.Action = EditAlternative;
-
+            AddDefaultActions(EditAlternative);
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ComputeAlternative;
-
-            NamedAction removeCondition = new NamedAction();
-            removeCondition.Header = StringConstants.REMOVE_MENU;
-            removeCondition.Action = RemoveElement;
-
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(edit);
-            localActions.Add(viewResults);
-            localActions.Add(removeCondition);
-            localActions.Add(renameElement);
-
-            Actions = localActions;
-        }       
+            Actions.Insert(1, viewResults);
+        }
+        #endregion       
 
         /// <summary>
         /// These elements will be returned in year order. The lower year will be the first element.

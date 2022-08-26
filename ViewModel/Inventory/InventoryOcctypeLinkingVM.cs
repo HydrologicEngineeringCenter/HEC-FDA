@@ -7,7 +7,7 @@ using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
-    public class AttributeLinkingListVM : BaseViewModel
+    public class InventoryOcctypeLinkingVM : BaseViewModel
     {
         #region Fields
         private List<string> _OccupancyTypesInFile;
@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Constructors
 
-        public AttributeLinkingListVM(List<string> occtypeNames)
+        public InventoryOcctypeLinkingVM(List<string> occtypeNames)
         {
             OccupancyTypesInFile = occtypeNames;
             List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
@@ -97,8 +97,6 @@ namespace HEC.FDA.ViewModel.Inventory
             UpdateRowsWithSelectedGroups();
         }
 
- 
-
         #endregion
         #region Functions
 
@@ -116,6 +114,22 @@ namespace HEC.FDA.ViewModel.Inventory
                 vr.AddErrorMessage("A selection must be made for each occupancy type.");
             }
             return vr;
+        }
+
+        /// <summary>
+        /// The key is the occtype name in the structures shapefile. The value is the selected occtype
+        /// from this study's occtypes.
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, OcctypeReference> CreateOcctypeMapping()
+        {
+            Dictionary<string, OcctypeReference> dict = new Dictionary<string, OcctypeReference>();
+            foreach (OccTypeSelectionRowItem row in Rows)
+            {
+                OcctypeReference otRef = new OcctypeReference(row.SelectedOccType.OccType.GroupID, row.SelectedOccType.OccType.ID);
+                dict.Add(row.OccTypeName, otRef);
+            }
+            return dict;
         }
 
         #endregion

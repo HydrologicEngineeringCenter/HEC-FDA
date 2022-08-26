@@ -73,15 +73,7 @@ namespace HEC.FDA.ViewModel.Saving
         {
             return new TerrainElementPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(TerrainElement)]);
         }
-        public static HydraulicPersistenceManager GetWaterSurfaceManager()
-        {
-            return new HydraulicPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(HydraulicElement)]);
-        }
         
-        public static StructureInventoryPersistenceManager GetStructureInventoryManager()
-        {
-            return new StructureInventoryPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(InventoryElement)]);
-        }
         public static IASPersistenceManager GetIASManager()
         {
             return new IASPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(IASElement)]);
