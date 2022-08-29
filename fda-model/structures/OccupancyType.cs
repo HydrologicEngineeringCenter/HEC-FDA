@@ -12,10 +12,10 @@ namespace structures
         private string damcat;
 
         //damage functions
-        private UncertainPairedData _structureDamageFunction;
-        private UncertainPairedData _contentDamageFunction;
-        private UncertainPairedData _vehicleDamageFunction;
-        private UncertainPairedData _OtherDamageFunction;
+        private UncertainPairedData _structurePercentDamageFunction;
+        private UncertainPairedData _contentPercentDamageFunction;
+        private UncertainPairedData _vehiclePercentDamageFunction;
+        private UncertainPairedData _OtherPercentDamageFunction;
 
         //error distributions - Assuming these are all %s
         private ContinuousDistribution _foundationHeightError;
@@ -33,10 +33,10 @@ namespace structures
         {
             this.name = name;
             this.damcat = damcat;
-            _structureDamageFunction = structureDamageFunction;
-            _contentDamageFunction = contentDamageFunction;
-            _vehicleDamageFunction = vehicleDamageFunction;
-            _OtherDamageFunction = otherDamageFunction;
+            _structurePercentDamageFunction = structureDamageFunction;
+            _contentPercentDamageFunction = contentDamageFunction;
+            _vehiclePercentDamageFunction = vehicleDamageFunction;
+            _OtherPercentDamageFunction = otherDamageFunction;
             _foundationHeightError = foundationHeightError;
             _structureValueError = structureValueError;
             _contentValueError = contentValueError;
@@ -51,10 +51,10 @@ namespace structures
         {
             Random random = new Random(seed);
             //damage functions
-            IPairedData structDamagePairedData = _structureDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData contentDamagePairedData = _contentDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData vehicleDamagePairedData = _vehicleDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData otherDamagePairedData = _OtherDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData structDamagePairedData = _structurePercentDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData contentDamagePairedData = _contentPercentDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData vehicleDamagePairedData = _vehiclePercentDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData otherDamagePairedData = _OtherPercentDamageFunction.SamplePairedData(random.NextDouble());
 
             //errors
             double foundationHeightError = _foundationHeightError.InverseCDF(random.NextDouble());
