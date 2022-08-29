@@ -44,18 +44,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = selectedStructs;
             SelectedIndexPoints = indexPointsID;
 
-            AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
-
-            NamedAction exportDetails = new NamedAction(this);
-            exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
-            exportDetails.Action = ExportDetails;
-            Actions.Add(exportDetails);
+            AddActions();
         }
 
         public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
         {
             SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
             SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
+            SelectedWSE = Convert.ToInt16(elementXML.Attribute(selected))
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
 
             XElement stageDamageCurves = elementXML.Element(STAGE_DAMAGE_CURVES);
@@ -70,9 +66,21 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impAreaRow));
             }
+
+            AddActions();
         }
         #endregion
         #region Voids
+        private void AddActions()
+        {
+            AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
+
+            NamedAction exportDetails = new NamedAction(this);
+            exportDetails.Header = StringConstants.EXPORT_STAGE_DAMAGE_MENU;
+            exportDetails.Action = ExportDetails;
+            Actions.Add(exportDetails);
+        }
+
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {    
             //create action manager
@@ -180,6 +188,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
             stageDamageElem.SetAttributeValue(SELECTED_INDEX_POINTS, SelectedIndexPoints);
+            //todo: save the selected wse
             stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
 
             XElement curveElements = new XElement(STAGE_DAMAGE_CURVES);

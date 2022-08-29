@@ -77,7 +77,8 @@
              
              xmlns:SteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel"
              xmlns:UnsteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;assembly=HEC.FDA.ViewModel"
-
+             
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
                           
              StartupUri="ViewWindow.xaml">
     <Application.Resources>
@@ -90,6 +91,8 @@
         </Style>
         <Style TargetType="TextBox" BasedOn="{StaticResource defaultErrorTemplate}" />
         <Style TargetType="CheckBox" BasedOn="{StaticResource defaultErrorTemplate}" />
+        <Style TargetType="frameworkControls:TextBoxFileBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
+        <Style TargetType="frameworkControls:TextBoxFolderBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
         <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">

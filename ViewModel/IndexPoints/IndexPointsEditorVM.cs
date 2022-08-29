@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
                     {
                         object[] colObjects = dtv.GetColumn(i);
                         List<string> names = new List<string>();
-                        colObjects.ToList().ForEach(x => names.Add((string)x));
+                        colObjects.ToList().ForEach(x => names.Add(x.ToString()));
                         List<string> uniqueNames = names.Distinct().ToList();
                         ListOfRows.AddRange(uniqueNames);
                     }
