@@ -9,6 +9,8 @@ using System;
 using System.Xml.Linq;
 using Statistics.Distributions;
 using metrics;
+using Statistics.Histograms;
+using interfaces;
 
 namespace fda_model_test.unittests
 {
@@ -16,7 +18,7 @@ namespace fda_model_test.unittests
     public class SimulationShould
     {//TODO: Access the requisite logic through ScenarioREsults 
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 150000 };
+        static double[] Stages = { 0, 150000, 300000 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -24,6 +26,8 @@ namespace fda_model_test.unittests
         static string assetCat = "Structure";
         CurveMetaData metaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
         static int id = 1;
+        private int seed =  3456;
+
         [Theory]
         [InlineData(150000)]
         public void ComputeEAD(double expected)
@@ -38,11 +42,12 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000*i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
@@ -54,7 +59,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp,convergenceCriteria); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expected - actual;
@@ -76,27 +81,26 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-
             Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);
-            //TODO: I think that we need to take convergence criteria out of the threshold constructor. convergence criteria should come in through one place only. 
-            //otherwise we have different convergence criterias for one compute and that is causing problems 
-            
             ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
+
             metrics.ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
+
             double difference = expectedEAD - actual;
             double relativeDifference = Math.Abs(difference / expectedEAD);
             Assert.True(relativeDifference < .01);
@@ -120,11 +124,12 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
@@ -137,7 +142,10 @@ namespace fda_model_test.unittests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             double actual = results.MeanExpectedAnnualConsequences(id,damCat,assetCat);
-            Assert.Equal(expected, actual, 2);
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
         }
 
         [Theory]
@@ -164,11 +172,12 @@ namespace fda_model_test.unittests
             leveefailprobs[2] = new Deterministic(1);
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
@@ -178,7 +187,7 @@ namespace fda_model_test.unittests
                 .withLevee(levee, 100000.0d)
                 .withStageDamages(stageDamageList)
                 .build();
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
@@ -209,11 +218,12 @@ namespace fda_model_test.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
-            IDistribution[] damages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            IDistribution[] damages = new IDistribution[3]
             {
-                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
-            }
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
@@ -225,7 +235,7 @@ namespace fda_model_test.unittests
                 .withStageDamages(upd)
                 .withAdditionalThreshold(threshold)
                 .build();
-            MeanRandomProvider mrp = new MeanRandomProvider();
+            MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement simulationElement = simulation.WriteToXML();
             ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
@@ -233,5 +243,161 @@ namespace fda_model_test.unittests
             Assert.True(simulationMatches);
         }
 
+        [Theory]
+        [InlineData(0,true)]
+        public void ComputeShouldReturnBlankResultsIfNoDamages(double expectedEAD, bool expectedZeroValued)
+        {
+            int impactAreaID = 1;
+            int erl = 50;
+            double[] exceedanceProabilities = new double[] { .5, .2, .1, .04, .02, .01, .005, .002 };
+            double[] stagesForFrequency = new double[] { .001, .002, .003, .004, .005, .006, .007, .553 };
+            CurveMetaData metaDataDefault = new CurveMetaData("x", "y", "name", damCat, assetCat);
+            GraphicalUncertainPairedData graphicalUncertain = new GraphicalUncertainPairedData(exceedanceProabilities, stagesForFrequency, erl, metaDataDefault);
+            double[] stagesForDamage = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1 };
+
+            IDistribution[] zeroDamageDistributions = new IDistribution[]
+            {
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                                new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0),
+                    new Normal(0,0)
+            };
+            UncertainPairedData zeroStageDamage = new UncertainPairedData(stagesForDamage, zeroDamageDistributions, metaDataDefault);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(zeroStageDamage);
+
+            int seed = 1234;
+            RandomProvider randomProvider = new RandomProvider(seed);
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFrequencyStage(graphicalUncertain)
+                .withStageDamages(stageDamageList)
+                .build();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            Assert.Equal(expectedEAD, actualMeanEAD);
+            bool actualHistogramZeroValued = impactAreaScenarioResults.GetConsequencesHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
+            Assert.Equal(expectedZeroValued, actualHistogramZeroValued);
+        }
+
+        [Theory]
+        [InlineData(875)]
+        public void FragilityAndExtIntAreCombinedCorrectly(double expected)
+        {
+            ContinuousDistribution frequencyFlow = new Uniform(0, 4000, 1000);
+            double[] xFlows = new double[] { 0, 1000, 2000, 3000, 4000 };
+            IDistribution[] yStagesRating = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,20),
+                new Uniform(10,30),
+                new Uniform(20,40),
+                new Uniform(30,50)
+            };
+            UncertainPairedData dischargeStage = new UncertainPairedData(xFlows, yStagesRating, metaData);
+            double[] xStages = new double[] { 0, 10, 20, 30, 40 };
+            IDistribution[] yStagesInteriorExterior = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(0),
+                new Deterministic(10),
+                new Deterministic(20),
+                new Deterministic(30)
+            };
+            UncertainPairedData exteriorInterior = new UncertainPairedData(xStages, yStagesInteriorExterior, metaData);
+            IDistribution[] yDamage = new IDistribution[]
+            {
+                new Uniform(0,0),
+                new Uniform(0,2000),
+                new Uniform(1000,3000),
+                new Uniform(2000,4000),
+                new Uniform(3000,5000)
+            };
+            UncertainPairedData stageDamage = new UncertainPairedData(xStages, yDamage, metaData);
+            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>() { stageDamage };
+            IDistribution[] yFailureProbabilities = new IDistribution[]
+            {
+                new Deterministic(0),
+                new Deterministic(.25),
+                new Deterministic(.5),
+                new Deterministic(.75),
+                new Deterministic(1)
+            };
+            UncertainPairedData systemResponseCurve = new UncertainPairedData(xStages, yFailureProbabilities, metaData);
+            double leveeElevation = 40;
+            int impactAreaID = 44;
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(frequencyFlow)
+                .withFlowStage(dischargeStage)
+                .withInteriorExterior(exteriorInterior)
+                .withStageDamages(stageDamages)
+                .withLevee(systemResponseCurve, leveeElevation)
+                .build();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider,convergenceCriteria);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            double difference = Math.Abs(actual - expected);
+            double relativeDifference = difference / expected;
+            double tolerance = 0.05;
+            Assert.True(relativeDifference < tolerance);
+
+        }
+
+        [Theory]
+        [InlineData(100)]
+        public void SimulationWithInteriorExteriorWorksCorrectly(double expected)
+        {
+            //Arrange
+            ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+
+            ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
+            double[] xFlows = new double[] { 0, 100000 };
+            IDistribution[] yStages = new IDistribution[] { new Uniform(5, 15), new Uniform(10, 30) };
+            UncertainPairedData stageDischarge = new UncertainPairedData(xFlows, yStages, metaData);
+            double[] xExteriorStages = new double[] { 10, 20, 30 };
+            IDistribution[] yInteriorStages = new IDistribution[] { new Uniform(0, 10), new Uniform(10, 20), new Uniform(30,30) };
+            UncertainPairedData interiorExterior = new UncertainPairedData(xExteriorStages, yInteriorStages, metaData);
+            double[] xInteriorStages = new double[] { 5, 15, 30 };
+            IDistribution[] yDamage = new IDistribution[] { new Uniform(0, 0), new Uniform(100, 300), new Uniform(100, 300) };
+            UncertainPairedData stageDamage = new UncertainPairedData(xInteriorStages,yDamage,metaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
+
+            int impactAreaID = 899;
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                .withFlowFrequency(flowFrequency)
+                .withFlowStage(stageDischarge)
+                .withInteriorExterior(interiorExterior)
+                .withStageDamages(stageDamageList)
+                .build();
+
+            //Act 
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, deterministicConvergenceCriteria);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
+            double relativeDifference = Math.Abs(actual - expected) / expected;
+            double tolerance = 0.05;
+
+            //Assert
+            Assert.True(relativeDifference < tolerance);
+        }
     }
 }
+;

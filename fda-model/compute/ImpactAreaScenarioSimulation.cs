@@ -13,13 +13,14 @@ using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Text;
 
 namespace compute
 {
     public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
-        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
+        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
         private ContinuousDistribution _frequency_discharge;
         private GraphicalUncertainPairedData _frequency_discharge_graphical;
@@ -33,6 +34,7 @@ namespace compute
         private int _impactAreaID;
         private ImpactAreaScenarioResults _impactAreaScenarioResults;
         private bool _leveeIsValid = false;
+        private double[] _RequiredExceedanceProbabilities = { 0.99900, 0.99000, 0.95000, 0.90000, 0.85000, 0.80000, 0.75000, 0.70000, 0.65000, 0.60000, 0.55000, 0.50000, 0.47500, 0.45000, 0.42500, 0.40000, 0.37500, 0.35000, 0.32500, 0.30000, 0.29000, 0.28000, 0.27000, 0.26000, 0.25000, 0.24000, 0.23000, 0.22000, 0.21000, 0.20000, 0.19500, 0.19000, 0.18500, 0.18000, 0.17500, 0.17000, 0.16500, 0.16000, 0.15500, 0.15000, 0.14500, 0.14000, 0.13500, 0.13000, 0.12500, 0.12000, 0.11500, 0.11000, 0.10500, 0.10000, 0.09500, 0.09000, 0.08500, 0.08000, 0.07500, 0.07000, 0.06500, 0.06000, 0.05900, 0.05800, 0.05700, 0.05600, 0.05500, 0.05400, 0.05300, 0.05200, 0.05100, 0.05000, 0.04900, 0.04800, 0.04700, 0.04600, 0.04500, 0.04400, 0.04300, 0.04200, 0.04100, 0.04000, 0.03900, 0.03800, 0.03700, 0.03600, 0.03500, 0.03400, 0.03300, 0.03200, 0.03100, 0.03000, 0.02900, 0.02800, 0.02700, 0.02600, 0.02500, 0.02400, 0.02300, 0.02200, 0.02100, 0.02000, 0.01950, 0.01900, 0.01850, 0.01800, 0.01750, 0.01700, 0.01650, 0.01600, 0.01550, 0.01500, 0.01450, 0.01400, 0.01350, 0.01300, 0.01250, 0.01200, 0.01150, 0.01100, 0.01050, 0.01000, 0.00950, 0.00900, 0.00850, 0.00800, 0.00750, 0.00700, 0.00650, 0.00600, 0.00550, 0.00500, 0.00490, 0.00450, 0.00400, 0.00350, 0.00300, 0.00250, 0.00200, 0.00195, 0.00190, 0.00185, 0.00180, 0.00175, 0.00170, 0.00165, 0.00160, 0.00155, 0.00150, 0.00145, 0.00140, 0.00135, 0.00130, 0.00125, 0.00120, 0.00115, 0.00110, 0.00105, 0.00100, 0.00095, 0.00090, 0.00085, 0.00080, 0.00075, 0.00070, 0.00065, 0.00060, 0.00055, 0.00050, 0.00045, 0.00040, 0.00035, 0.00030, 0.00025, 0.00020, 0.00015, 0.00010 };
 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -43,7 +45,13 @@ namespace compute
                 return !_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull;
             }
         }
-
+        public int ImpactAreaID
+        {
+            get
+            {
+                return _impactAreaID;
+            }
+        }
         internal ImpactAreaScenarioSimulation(int impactAreaID)
         {
             _frequency_discharge = null;
@@ -56,6 +64,7 @@ namespace compute
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
             _impactAreaID = impactAreaID;
             _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
+            MessageHub.Register(this);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
@@ -64,11 +73,12 @@ namespace compute
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public ImpactAreaScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //Validate();
-            if (!CanCompute(convergenceCriteria,randomProvider))
+            if (!CanCompute(convergenceCriteria, randomProvider))
             {
+                _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID,true);
                 return _impactAreaScenarioResults;
             }
             int masterseed = 0;
@@ -79,32 +89,44 @@ namespace compute
             //TODO: levee is valid is not used
             _leveeIsValid = true;
             bool computeWithDamage = true;
-            if(_damage_category_stage_damage.Count==0)
+            if (_damage_category_stage_damage.Count == 0)
             {
                 computeWithDamage = false;
             }
             else
             {
-                AddEADKeys(convergenceCriteria);
+                CreateEADHistograms(convergenceCriteria);
             }
             if (computeDefaultThreshold == true)
             {//I am not sure if there is a better way to add the default threshold
                 _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage));
             }
-            SetStageForNonExceedanceProbability();
+            CreateHistogramsForAssuranceOfThresholds();
+            MessageEventArgs beginComputeMessageArgs = new  MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has been initiated"));
+            ReportMessage(this, beginComputeMessageArgs);
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency);
-            _impactAreaScenarioResults.ParalellTestForConvergence(.95, .05);
+            _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has completed"));
+            ReportMessage(this, endComputeMessageArgs);
             return _impactAreaScenarioResults;
         }
 
-        private void AddEADKeys(ConvergenceCriteria convergenceCriteria)
+        private void CreateEADHistograms(ConvergenceCriteria convergenceCriteria)
         {
             foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
             {
-                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID);
+                bool histogramIsZeroValued = false;
+                double largeProbability = 0.999;
+                double highPercentile = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(largeProbability);
+                if(highPercentile == 0)
+                {
+                    histogramIsZeroValued = true;
+                }
+                _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(uncertainPairedData.CurveMetaData.DamageCategory, uncertainPairedData.CurveMetaData.AssetCategory, convergenceCriteria, _impactAreaID, histogramIsZeroValued);
             }
-            _impactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject("Total", "Total", convergenceCriteria, _impactAreaID);
         }
+
+
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, interfaces.IProvideRandomNumbers randomProvider)
         {
@@ -112,39 +134,137 @@ namespace compute
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains errors. The compute has been aborted.")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                     return false;
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation contains warnings")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
                 }
                 //enumerate what the errors and warnings are 
+                StringBuilder errors = new StringBuilder();
+                if (_frequency_discharge != null && _frequency_discharge.HasErrors)
+                {
+                    errors.AppendLine(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _frequency_discharge.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_frequency_discharge_graphical.IsNull && _frequency_discharge_graphical.HasErrors)
+                {
+                    errors.AppendLine(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _frequency_discharge_graphical.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_unregulated_regulated.IsNull && _unregulated_regulated.HasErrors)
+                {
+                    errors.AppendLine(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _unregulated_regulated.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_discharge_stage.IsNull && _discharge_stage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _discharge_stage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_frequency_stage.IsNull && _frequency_stage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _frequency_stage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_channelstage_floodplainstage.IsNull && _channelstage_floodplainstage.HasErrors)
+                {
+                    errors.AppendLine(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _channelstage_floodplainstage.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                if (!_systemResponseFunction_stage_failureProbability.IsNull && _systemResponseFunction_stage_failureProbability.HasErrors)
+                {
+                    errors.AppendLine(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                    foreach (string s in _systemResponseFunction_stage_failureProbability.GetErrors())
+                    {
+                        errors.AppendLine(s);
+                    }
+
+                }
+                foreach(UncertainPairedData relationship in _damage_category_stage_damage)
+                {
+                    if (!relationship.IsNull && relationship.HasErrors)
+                    {
+                        errors.AppendLine(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " +"has the following messages");
+                        foreach (string s in relationship.GetErrors())
+                        {
+                            errors.AppendLine(s);
+                        }
+
+                    }
+                }
+               
+                Message mess = new Message(errors.ToString());
+                ReportMessage(this, new MessageEventArgs(mess));
+
             }
-            if (randomProvider is MeanRandomProvider)
+            if (randomProvider is MedianRandomProvider)
             {
                 if (convergenceCriteria.MaxIterations != 1)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a mean estimate, but asked for more than one iteration.")));
-                    return false;
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+
                 }
             }
             else
             {
                 if (convergenceCriteria.MinIterations < 100)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("This simulation was requested to provide a random estimate, but asked for a minimum of one iteration.")));
-                    return false;
+                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+
                 }
+            }
+            //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
+            //Nor is there relevant messaging 
+            bool curvesOverlap = SimulationCurvesHaveOverlap();
+            if(!curvesOverlap)
+            {
+                return false;
+            }
+            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
+            //nor is there relevant messaging
+            convergenceCriteria.Validate();
+            if(convergenceCriteria.HasErrors)
+            {
+                return false;
             }
             return true;
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency)
         {
-            int progressChunks = 1;
-            int _completedIterations = 0;
-            int _ExpectedIterations = convergenceCriteria.MaxIterations;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -155,7 +275,7 @@ namespace compute
             {
                 seeds[i] = masterSeedList.Next();
             }
-            int iterations = convergenceCriteria.MinIterations;
+            Int64 iterations = convergenceCriteria.MinIterations;
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
 
             while (!_impactAreaScenarioResults.IsConverged(computeWithDamage))
@@ -164,9 +284,9 @@ namespace compute
                 {
                     //check if it is a mean random provider or not
                     interfaces.IProvideRandomNumbers threadlocalRandomProvider;
-                    if (randomProvider is MeanRandomProvider)
+                    if (randomProvider is MedianRandomProvider)
                     {
-                        threadlocalRandomProvider = new MeanRandomProvider();
+                        threadlocalRandomProvider = new MedianRandomProvider();
                     }
                     else
                     {
@@ -174,11 +294,18 @@ namespace compute
                     }
                     if (_frequency_stage.CurveMetaData.IsNull)
                     {
+                        if (_discharge_stage.CurveMetaData.IsNull)
+                        {
+                            //complain loudly
+                            string message = $"A stage-discharge function must accompany a discharge-frequency function but was not found for the impact area with ID {_impactAreaID}. Compute aborted." + Environment.NewLine;
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage));
+                            return;
+                        }
                         IPairedData frequencyDischarge;
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
                             frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
-
                         }
                         else
                         {
@@ -188,36 +315,17 @@ namespace compute
                         //check if flow transform exists, and use it here
                         if (_unregulated_regulated.CurveMetaData.IsNull)
                         {
-                            if (_discharge_stage.CurveMetaData.IsNull)
-                            {
-                                //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
-                                return; //_results;
-                            }
-                            else
-                            {
-                                IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                                IPairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
-                            }
-
+                             IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                             IPairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
+                             ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                         }
                         else
                         {
                             IPairedData inflow_outflow_sample = _unregulated_regulated.SamplePairedData(threadlocalRandomProvider.NextRandom()); //should be a random number
                             IPairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                            if (_discharge_stage.CurveMetaData.IsNull)
-                            {
-                                //complain loudly
-                                ReportMessage(this, new MessageEventArgs(new Message("Flow stage is Null!!!")));
-                                return;// _results;
-                            }
-                            else
-                            {
-                                IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
-                                IPairedData frequency_stage = discharge_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
-                            }
+                            IPairedData discharge_stage_sample = _discharge_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());//needs to be a random number
+                            IPairedData frequency_stage = discharge_stage_sample.compose(transformff);
+                            ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, giveMeADamageFrequency, i, computeWithDamage);
                         }
 
                     }
@@ -234,7 +342,7 @@ namespace compute
                     }
 
                 });
-                if (!_impactAreaScenarioResults.TestResultsForConvergence(.95, .05, computeWithDamage))
+                if (!_impactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
                 {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
                     iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
                     _ExpectedIterations = _completedIterations + iterations;
@@ -242,6 +350,7 @@ namespace compute
                 }
                 else
                 {
+                    ReportMessage(this, new MessageEventArgs(new ComputeCompleteMessage(_completedIterations, _impactAreaID)));
                     iterations = 0;
                     break;
                 }
@@ -250,7 +359,7 @@ namespace compute
             _impactAreaScenarioResults.ForceDeQueue();
         }
 
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration, bool computeWithDamage)
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration, bool computeWithDamage)
         {
 
             //interior exterior
@@ -269,9 +378,10 @@ namespace compute
                 {
                     if (_leveeIsValid)
                     {
+                        //TODO: why commented out and why still exists
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-                        if(computeWithDamage)
+                        if (computeWithDamage)
                         {
                             ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
                         }
@@ -282,13 +392,13 @@ namespace compute
 
             }
             else
-            {
+            {   //todo is there a reason for the starting underscore? 
                 IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                 IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
                 if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
                 {
-                    if(computeWithDamage)
+                    if (computeWithDamage)
                     {
                         ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, giveMeADamageFrequency, iteration);
                     }
@@ -297,12 +407,12 @@ namespace compute
                 else
                 {
                     if (_leveeIsValid)
-                    {
+                    {//TODO: why commented out and why still exists
                         IPairedData systemResponse_sample = _systemResponseFunction_stage_failureProbability.SamplePairedData(randomProvider.NextRandom()); //needs to be a random number
                         //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
                         {
-                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_floodplainstage, systemResponse_sample, giveMeADamageFrequency, iteration);
+                            ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration);
                         }
                         ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
                     }
@@ -313,89 +423,96 @@ namespace compute
         }
         private IPairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
         {
-
             double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
-            //for (int i = 0; i < dist.SampleSize; i++) samples[i] = Math.Log10(dist.InverseCDF(samples[i]));
-            //ISampleStatistics ss = new SampleStatistics(samples);
-            double[] x = new double[ordinates];
-            double[] y = new double[ordinates];
-            //double skewdividedbysix = ss.Skewness / 6.0;
-            //double twodividedbyskew = 2.0 / ss.Skewness;
-            //double sd = ss.StandardDeviation;
-            for (int i = 0; i < ordinates; i++)
+            double[] x = new double[_RequiredExceedanceProbabilities.Length];
+            double[] y = new double[_RequiredExceedanceProbabilities.Length];
+            for (int i = 0; i < _RequiredExceedanceProbabilities.Length; i++)
             {
-                double val = (double)i + .5;
-                //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                double prob = (val) / ((double)ordinates);
+                //same exceedance probs as graphical and as 1.4.3
+                double prob = 1-_RequiredExceedanceProbabilities[i];
                 x[i] = prob;
 
                 //y values in increasing order 
                 y[i] = bootstrap.InverseCDF(prob);
-                //y[i] =LogPearson3.FastInverseCDF(ss.Mean, sd , ss.Skewness, skewdividedbysix, twodividedbyskew, prob);
-
             }
-
             return new PairedData(x, y);
 
         }
-        private void ComputeDamagesFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, int iteration)
+        private void ComputeDamagesFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, Int64 iteration)
         {
-            double totalEAD = 0.0;
-            CurveMetaData metadata = new CurveMetaData("Total");
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
-            foreach (UncertainPairedData pairedData in _damage_category_stage_damage)
+            foreach (UncertainPairedData stageDamageWithUncertainty in _damage_category_stage_damage)
             {
-                IPairedData _stage_damage_sample = pairedData.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //TODO: here we need to check if stage damage is zero 
+                //if so, then skip this stuff and just add 0 to consequenceResults
+                IPairedData _stage_damage_sample = stageDamageWithUncertainty.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
                 IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                totalEAD += eadEstimate;
-                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pairedData.CurveMetaData.DamageCategory, pairedData.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageDamageWithUncertainty.CurveMetaData.DamageCategory, stageDamageWithUncertainty.CurveMetaData.AssetCategory, _impactAreaID, iteration);
 
                 if (giveMeADamageFrequency)
                 {
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
                 }
             }
-            _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID, iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories" + totalDamageFrequency.CurveMetaData.DamageCategory + "and" + totalDamageFrequency.CurveMetaData.AssetCategory)));
-
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, int iteration)
+        private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, IPairedData systemResponse, bool giveMeADamageFrequency, Int64 iteration)
         {
-            double totalEAD = 0.0;
-            CurveMetaData metadata = new CurveMetaData("Total");
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalDamageFrequency = new PairedData(null, null, metadata);
+
             foreach (UncertainPairedData pd in _damage_category_stage_damage)
             {
                 IPairedData stage_damage_sample = pd.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                //here we need to compose with interior exterior 
                 IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(systemResponse);
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                totalEAD += eadEstimate;
                 _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, pd.CurveMetaData.DamageCategory, pd.CurveMetaData.AssetCategory, _impactAreaID, iteration);
                 if (giveMeADamageFrequency)
                 {
-                    ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
-                    ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage((PairedData)frequency_damage, "Damage-frequency function for damage and asset categories" + frequency_damage.CurveMetaData.DamageCategory + "and" + frequency_damage.CurveMetaData.AssetCategory)));
+                    totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
                 }
-
             }
-            _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(totalEAD, "Total", "Total", _impactAreaID,iteration);
-            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
             if (giveMeADamageFrequency)
             {
-                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency, "Damage-frequency function for damage and asset categories "+totalDamageFrequency.CurveMetaData.DamageCategory+" and "+totalDamageFrequency.CurveMetaData.AssetCategory)));
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
+            }
+        }
+        private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, IPairedData exterior_interior, IPairedData frequency_exteriorStage, IPairedData systemResponse, bool giveMeADamageFrequency, Int64 iteration)
+        {
+            //TODO "Total" could be represented as public static const string TOTAL = "Total";
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
+            PairedData totalDamageFrequency = new PairedData(null, null, metadata);
 
+            foreach (UncertainPairedData stageUncertainDamage in _damage_category_stage_damage)
+            {   //TODO: why are we doing this stuff with the underscores? I think this needs to be cleaned up 
+                IPairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom());//needs to be a random number
+                IPairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
+                IPairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(systemResponse);
+                IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_exteriorStage);
+                double eadEstimate = frequency_damage.integrate();
+                _impactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _impactAreaID, iteration);
+                if (giveMeADamageFrequency)
+                {
+                    totalDamageFrequency = ComputeTotalDamageFrequency(totalDamageFrequency, (PairedData)frequency_damage);
+                }
+            }
+            if (giveMeADamageFrequency)
+            {
+                ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(totalDamageFrequency)));
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
-        public void ComputePerformance(IPairedData frequency_stage, int iteration)
+        public void ComputePerformance(IPairedData frequency_stage, Int64 iteration)
         {
 
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
@@ -407,7 +524,8 @@ namespace compute
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, int iteration)
+        //TODO why is this here but levee CNP is in system performance results?
+        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, Int64 iteration)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
@@ -437,19 +555,18 @@ namespace compute
 
         }
 
-        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, int iteration)
-        {
-            double[] stageOfEvent = new double[5];
-            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
-            for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
+        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, Int64 iteration)
+        {//TODO: Get rid of these hard coded doubles 
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
+            foreach (double nonExceedanceProbability in er101RequiredNonExceedanceProbabilities)
             {
-                stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
-                threshold.SystemPerformanceResults.AddStageForAssurance(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i], iteration);
+                double stageOfEvent = frequency_stage.f(nonExceedanceProbability);
+                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, iteration);
             }
         }
-        public void SetStageForNonExceedanceProbability()
-        {
-            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+        public void CreateHistogramsForAssuranceOfThresholds()
+        {//TODO: get rid of these hard-coded doubles 
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
@@ -464,20 +581,17 @@ namespace compute
 
         private Threshold ComputeDefaultThreshold(ConvergenceCriteria convergenceCriteria, bool computeWithDamage)
         {
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             IPairedData frequencyStage = new PairedData(null, null);
-            CurveMetaData metadata = new CurveMetaData("Total");
-            IPairedData frequencyDamage = new PairedData(null, null, metadata);
             IPairedData totalStageDamage = ComputeTotalStageDamage(_damage_category_stage_damage);
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull)
             {
-                if(_damage_category_stage_damage.Count == 0)
+                if (_damage_category_stage_damage.Count == 0)
                 {
-                    double badThresholdStage = 0;
-                    string message = "A valid default threshold cannot be calculated. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics";
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                    string message = $"A valid default threshold cannot be calculated for the impact area with ID {_impactAreaID} because no stage-damage functions were found. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
-                    return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, badThresholdStage);
+                    return new Threshold();
                 }
 
                 if (_frequency_stage.CurveMetaData.IsNull)
@@ -485,7 +599,7 @@ namespace compute
                     IPairedData frequencyFlow;
                     if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
-                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 1000);
+                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 200);
                     }
                     else
                     {
@@ -495,7 +609,11 @@ namespace compute
                     {
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
-                            throw new Exception("A rating curve must accompany a flow-frequency function");
+                            string message = $"A stage-discharge function must accompany a discharge-frequency function but was not found for the impact area with ID {_impactAreaID}. An arbitrary threshold is being used." + Environment.NewLine;
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                            return new Threshold();
+
                         }
                         else
                         {
@@ -509,7 +627,10 @@ namespace compute
                         IPairedData transformFlowFrequency = inflowOutflowSample.compose(frequencyFlow);
                         if (_discharge_stage.CurveMetaData.IsNull)
                         {
-                            throw new Exception("A rating curve must accompany a flow-frequency function");
+                            string message = $"A stage-discharge function must accompany a discharge-frequency function but was not found for the impact area with ID {_impactAreaID}. An arbitrary threshold is being used." + Environment.NewLine;
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage));
+                            return new Threshold();
                         }
                         else
                         {
@@ -523,11 +644,21 @@ namespace compute
                 {
                     frequencyStage = _frequency_stage.SamplePairedData(meanRandomProvider.NextRandom());
                 }
-
-                frequencyDamage = totalStageDamage.compose(frequencyStage);
+                IPairedData frequencyDamage;
+                if (_channelstage_floodplainstage.IsNull)
+                {
+                    frequencyDamage = totalStageDamage.compose(frequencyStage);
+                }
+                else
+                {
+                    IPairedData exteriorInterior = _channelstage_floodplainstage.SamplePairedData(meanRandomProvider.NextRandom());
+                    IPairedData frequencyInteriorStage = exteriorInterior.compose(frequencyStage);
+                    frequencyDamage = totalStageDamage.compose(frequencyInteriorStage);
+                }
                 double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * frequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
                 double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
                 return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, thresholdStage);
+
             }
             else
             {
@@ -537,9 +668,9 @@ namespace compute
 
         internal PairedData ComputeTotalStageDamage(List<UncertainPairedData> listOfUncertainPairedData)
         {
-            CurveMetaData metadata = new CurveMetaData("Total");
+            CurveMetaData metadata = new CurveMetaData("Total", "Total");
             PairedData totalStageDamage = new PairedData(null, null, metadata);
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             foreach (UncertainPairedData uncertainPairedData in listOfUncertainPairedData)
             {
                 IPairedData stageDamageSample = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
@@ -557,7 +688,7 @@ namespace compute
         public ImpactAreaScenarioResults PreviewCompute()
         {
 
-            MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = this.Compute(meanRandomProvider, convergenceCriteria, false, true);
             return results;
@@ -572,8 +703,8 @@ namespace compute
             if (_systemResponseFunction_stage_failureProbability.CurveMetaData.IsNull) return false;
             if (_systemResponseFunction_stage_failureProbability.Yvals.Last().Type != IDistributionEnum.Deterministic)
             {
-                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                string message = $"There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution but was not found for the impact area with ID {_impactAreaID}" + Environment.NewLine;
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 return false;
             }
@@ -581,8 +712,8 @@ namespace compute
             { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
               //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
               //this has been communicated 
-                string message = "There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution";
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                string message = $"There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution for the impact area with ID {_impactAreaID}" + Environment.NewLine;
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
             }
             else
@@ -601,18 +732,183 @@ namespace compute
             {
                 if (_systemResponseFunction_stage_failureProbability.Yvals[index].InverseCDF(0.5) != 1)
                 {//top of levee elevation has some probability other than 1
-                    string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
-                    ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                    string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have certain probability of failure specified as a deterministic distribution for the impact area with ID {_impactAreaID}" + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                 }
             }
             else
             {   //top of levee elevation is not included in the fragility curve
-                string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function certain probability of failure specified as a deterministic distribution";
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
+                string message = $"The top of levee elevation of {_topOfLeveeElevation} in the fragility function does not have a certain probability of failure specified as a deterministic distribution for the impact area with ID {_impactAreaID}" + Environment.NewLine;
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
+        //TODO: Add messaging to indicate which curves do not overlap
+        private bool SimulationCurvesHaveOverlap()
+        {
+            bool allCurvesHaveOverlap = true;
+            if (_frequency_stage.CurveMetaData.IsNull)
+            {
+                if (_discharge_stage.CurveMetaData.IsNull)
+                {
+                    string message = $"A stage-discharge function must accompany a discharge-frequency function but was not found for the impact area with ID {_impactAreaID}. Compute aborted." + Environment.NewLine;
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                    ReportMessage(this, new MessageEventArgs(errorMessage));
+                    allCurvesHaveOverlap = false;
+                }
+                if (_frequency_discharge_graphical.CurveMetaData.IsNull)
+                {
+                    bool firstTwoCurvesOverlap = true;
+                    bool nextTwoCurvesOverlap = true;
+                    if (_unregulated_regulated.CurveMetaData.IsNull)
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _frequency_discharge);
+                    }
+                    else
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_unregulated_regulated, _frequency_discharge);
+                        nextTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _unregulated_regulated);
+                    }
+                    if (!firstTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
+                    }
+                    if (!nextTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
+                    }
+                } else
+                {
+                    bool firstTwoCurvesOverlap = true;
+                    bool nextTwoCurvesOverlap = true;
+                    if (_unregulated_regulated.CurveMetaData.IsNull)
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _frequency_discharge_graphical);
+                    }
+                    else
+                    {
+                        firstTwoCurvesOverlap = CurvesHaveOverlap(_unregulated_regulated, _frequency_discharge_graphical);
+                        nextTwoCurvesOverlap = CurvesHaveOverlap(_discharge_stage, _unregulated_regulated);
+                    }
+                    if (!firstTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
+                    }
+                    if (!nextTwoCurvesOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
+                    }
+                }
+                if (_channelstage_floodplainstage.CurveMetaData.IsNull)
+                {
+                    foreach (UncertainPairedData uncertainPairedData in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertainPairedData, _discharge_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
+                {
+                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_channelstage_floodplainstage, _discharge_stage);
+                    if (!nextTwoCurvesHaveOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!_channelstage_floodplainstage.CurveMetaData.IsNull)
+                {
+                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_channelstage_floodplainstage, _frequency_stage);
+                    if (!nextTwoCurvesHaveOverlap)
+                    {
+                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
+                    }
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _channelstage_floodplainstage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                } else
+                {
+                    foreach (UncertainPairedData uncertain in _damage_category_stage_damage)
+                    {
+                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _frequency_stage);
+                        if (!stageDamageOverlaps)
+                        {
+                            allCurvesHaveOverlap = stageDamageOverlaps;
+                        }
+                    }
+                }
+            }
+            return allCurvesHaveOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Yvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
+            double maxOfG = uncertainPairedData_g.Yvals[uncertainPairedData_g.Yvals.Length - 1].InverseCDF(.999);
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            return curvesOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = uncertainPairedData_g.InputFlowOrStageValues[0];
+            double maxOfG = uncertainPairedData_g.InputFlowOrStageValues[uncertainPairedData_g.InputFlowOrStageValues.Length - 1];
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            return curvesOverlap;
+        }
+        private bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Xvals.Length - 1];
+            double minOfF = uncertainPairedData_f.Xvals[0];
+            double minOfG = continuousDistribution_g.InverseCDF(.001);
+            double maxOfG = continuousDistribution_g.InverseCDF(.75);
+
+            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+             return curvesOverlap;
+        }
+        private bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
+        {
+            bool curvesOverlap = true;
+            double overlapThreshold = 0.95;
+            double rangeOfF = maxOfF - minOfF;
+            double rangeOfG = maxOfF - minOfG;
+            double minDifference = Math.Abs(minOfG - minOfF);
+            double maxDifference = Math.Abs(maxOfG - maxOfF);
+            double minDiffRelativeToF = minDifference / rangeOfF;
+            double minDiffRelativeToG = minDifference / rangeOfG;
+            double maxDiffRelativeToF = maxDifference / rangeOfF;
+            double maxDiffRelativeToG = maxDifference / rangeOfG;
+
+            if (minDiffRelativeToF > overlapThreshold || minDiffRelativeToG > overlapThreshold || maxDiffRelativeToF > overlapThreshold || maxDiffRelativeToG > overlapThreshold)
+            {
+                curvesOverlap = false;
+            }
+
+            return curvesOverlap;
+        }
+
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
@@ -686,7 +982,7 @@ namespace compute
                     if ((stageDamage.CurveMetaData.DamageCategory.Equals(incomingStageDamage.CurveMetaData.DamageCategory)) && (stageDamage.CurveMetaData.AssetCategory.Equals(incomingStageDamage.CurveMetaData.AssetCategory)))
                     {
                         bool stageDamagesMatch = stageDamage.Equals(incomingStageDamage);
-                        if(!stageDamagesMatch)
+                        if (!stageDamagesMatch)
                         {
                             return false;
                         }
@@ -774,7 +1070,7 @@ namespace compute
             double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
 
-            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
+            ImpactAreaScenarioSimulation impactAreaScenarioSimulation = builder(impactAreaID)
                 .withFlowFrequency(frequencyDischarge)
                 .withFlowFrequency(frequencyDischargeGraphical)
                 .withInflowOutflow(regulatedUnregulated)
@@ -798,15 +1094,17 @@ namespace compute
             }
             public ImpactAreaScenarioSimulation build()
             {
+                //TODO: The validation below is not very helpful. We only see that "XX has errors" but 
+                //we are not informing the user what the errors are 
+                //somehow we need to add the error messages of the object being validated to the error messages of the impact area scenario simulation 
                 _sim.Validate();
-
                 //add validation here to test ranges and domains.
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(ContinuousDistribution continuousDistribution)
-            {
+            {   //TODO: I do not think the sample size validation works
                 _sim._frequency_discharge = continuousDistribution;
-                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, _sim._frequency_discharge.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, String.Join(Environment.NewLine, _sim._frequency_discharge.GetErrors())));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
@@ -817,32 +1115,37 @@ namespace compute
             public SimulationBuilder withInflowOutflow(UncertainPairedData uncertainPairedData)
             {
                 _sim._unregulated_regulated = uncertainPairedData;
-                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, _sim._unregulated_regulated.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, $"Inflow-Outflow has errors for the impact area with ID {_sim._impactAreaID}."));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData uncertainPairedData)
             {
                 _sim._discharge_stage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, _sim._discharge_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, $"Flow-Stage has errors  for the impact area with ID {_sim._impactAreaID}."));
 
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
                 _sim._frequency_stage = graphicalUncertainPairedData;
-                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, _sim._frequency_stage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, $"Frequency-Stage has errors  for the impact area with ID {_sim._impactAreaID}."));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData uncertainPairedData)
             {
                 _sim._channelstage_floodplainstage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() => { _sim._channelstage_floodplainstage.Validate(); return !_sim._channelstage_floodplainstage.HasErrors; }, _sim._channelstage_floodplainstage.GetErrors().ToString()));
+                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() =>
+                {
+                    _sim._channelstage_floodplainstage.Validate();
+                    return !_sim._channelstage_floodplainstage.HasErrors;
+                }
+                , $"There are errors in the InteriorExterior relationship for the impact area with ID {_sim._impactAreaID}."));
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(UncertainPairedData uncertainPairedData, double topOfLeveeElevation)
             {
-                _sim.AddSinglePropertyRule("levee", new Rule(() => _sim.LeveeIsValid(), "Levee is invalid."));
+                _sim.AddSinglePropertyRule("levee", new Rule(() => _sim.LeveeIsValid(), $"The levee is invalid  for the impact area with ID {_sim._impactAreaID}."));
                 _sim._systemResponseFunction_stage_failureProbability = uncertainPairedData;
                 _sim._topOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_sim);
@@ -852,7 +1155,7 @@ namespace compute
                 _sim._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
                 {
-                    _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, uncertainPairedData.GetErrors().ToString()));
+                    _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_sim._impactAreaID}:" + uncertainPairedData.GetErrors().ToString()));
                 }
                 return new SimulationBuilder(_sim);
             }

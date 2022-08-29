@@ -42,7 +42,7 @@ namespace Statistics.Distributions
 
             addRules();
         }
-        public TruncatedLogNormal(double mean, double sd, double minValue, double maxValue, int sampleSize = int.MaxValue)
+        public TruncatedLogNormal(double mean, double sd, double minValue, double maxValue, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = sd;

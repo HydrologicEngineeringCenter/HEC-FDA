@@ -6,6 +6,10 @@ using Statistics;
 using Statistics.Histograms;
 using Xunit;
 using Utilities;
+using Statistics.Distributions;
+using System.Xml.Linq;
+using System.Diagnostics;
+using System.Threading;
 
 namespace StatisticsTests.Histograms
 {
@@ -171,27 +175,108 @@ namespace StatisticsTests.Histograms
         }
         */
         [Theory]
-        [InlineData(10000, .1, .80, 1.96, .975)]
-        public void NormallyDistributed_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
+        [InlineData(1000, 10000, .1, .80, 1.96, .975)]
+        public void NormallyDistributed_Histogram_Convergence(int minIter, int maxiter, double binWidth, double quantile, double value, double expected)
+        {
+            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            var rand = new Random(1234);
+            double z = stdNormal.InverseCDF(.5 + .5 * .85);
+            var convergencecriteria = new ConvergenceCriteria(minIterations:minIter, maxIterations: maxiter, tolerance: 1, zAlpha: z);
+            Histogram histogram = new Histogram(0, binWidth, convergencecriteria);
+            while(!histogram.IsConverged)
+            {
+                histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
+                if (histogram.SampleSize%1000 == 0){
+                    histogram.IsHistogramConverged(quantile,1-quantile);
+                }
+            }
+            double actual = histogram.CDF(value);
+            double err = Math.Abs((expected - actual) / expected);
+            double errTol = 0.01;
+            Assert.True(histogram.ConvergedIteration <= maxiter);
+            Assert.True(err < errTol);
+        }
+        //TODO: This test does not pass for distributions which have a non-negligible share below zero
+        [Fact]
+        public void HistogramsShouldAddCorrectly()
+        {
+                Normal normal1 = new Normal(300, 10);
+                Normal normal2 = new Normal(400, 20);
+                Normal normal3 = new Normal(200, 9);
+                double[] probabilities = new double[] {.25, .5, .75};
+                double[] expected = new double[probabilities.Length];
+                for (int i = 0; i < probabilities.Length; i++)
+                {
+                    expected[i] = normal1.InverseCDF(probabilities[i]);
+                    expected[i] += normal2.InverseCDF(probabilities[i]);
+                    expected[i] += normal3.InverseCDF(probabilities[i]);
+                }
+
+                double reallySmallProbability = 0.0001;
+                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+                double binWidth = 0.01;
+                double min1 = normal1.InverseCDF(reallySmallProbability);
+                double min2 = normal2.InverseCDF(reallySmallProbability);
+                double min3 = normal3.InverseCDF(reallySmallProbability);
+
+                Histogram histogram1 = new Histogram(min1, binWidth, convergenceCriteria);
+                Histogram histogram2 = new Histogram(min2, binWidth, convergenceCriteria);
+                Histogram histogram3 = new Histogram(min3, binWidth, convergenceCriteria);
+
+                int seed = 8305;
+                Random random = new Random(seed);
+                int iterations = 10000;
+                for (int i = 0; i < iterations; i++)
+                {
+                    histogram1.AddObservationToHistogram(normal1.InverseCDF(random.NextDouble()));
+                    histogram2.AddObservationToHistogram(normal2.InverseCDF(random.NextDouble()));
+                    histogram3.AddObservationToHistogram(normal3.InverseCDF(random.NextDouble()));
+                }
+
+                    List<IHistogram> histograms = new List<IHistogram>();
+                    histograms.Add(histogram1);
+                    histograms.Add(histogram2);
+                    histograms.Add(histogram3);
+                    IHistogram histogramAddedUp = Histogram.AddHistograms(histograms);
+
+                    double[] actual = new double[probabilities.Length];
+                    for (int i = 0; i < probabilities.Length; i++)
+                    {
+                        actual[i] = histogramAddedUp.InverseCDF(probabilities[i]);
+                    }
+
+                    double tolerance = 0.05;
+                    for (int i = 0; i < probabilities.Length; i++)
+                    {
+                        double error = Math.Abs((actual[i] - expected[i]) / expected[i]);
+                        Assert.True(error < tolerance);
+                    }
+         
+        }
+        [Theory]
+        [InlineData(10000, .1, .80)]
+        public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile)
         {
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: 1, zAlpha: z);
             Histogram histogram = new Histogram(0, binWidth, convergencecriteria);
-            while(!histogram.IsConverged)
+            while (!histogram.IsConverged)
             {
                 histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
-                if (histogram.SampleSize%1000 == 0){
-                    histogram.TestForConvergence(quantile,1-quantile);
+                if (histogram.SampleSize % 1000 == 0)
+                {
+                    histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
-            double actual = histogram.CDF(value);
-            double err = Math.Abs((expected - actual) / expected);
-            double errTol = 0.01;
-            Assert.True(histogram.ConvergedIteration < maxiter);
-            Assert.True(err < errTol);
+            XElement xElement = histogram.WriteToXML();
+            Histogram histogramFromXML = Histogram.ReadFromXML(xElement);
+            bool histogramsAreTheSame = histogram.Equals(histogramFromXML);
+            Assert.True(histogramsAreTheSame);
         }
+
+
         /*
          * TODO this test is left commented out because it takes a long time to run. 
          * We should move this test to integration tests
@@ -221,5 +306,137 @@ namespace StatisticsTests.Histograms
 
         }
         */
+
+        [Fact]
+        public void AddingHistograms()
+        {
+            Normal normal1 = new Normal(3, 1);
+            Normal normal2 = new Normal(4, 2);
+            Normal normal3 = new Normal(2, 5);
+            double[] probabilities = new double[] { .25, .5, .75 };
+            double[] expected = new double[probabilities.Length];
+            for (int i = 0; i < probabilities.Length; i++)
+            {
+                expected[i] = normal1.InverseCDF(probabilities[i]);
+                expected[i] += normal2.InverseCDF(probabilities[i]);
+                expected[i] += normal3.InverseCDF(probabilities[i]);
+            }
+
+            double reallySmallProbability = 0.0001;
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            double binWidth = 0.01;
+            double min1 = normal1.InverseCDF(reallySmallProbability);
+            double min2 = normal2.InverseCDF(reallySmallProbability);
+            double min3 = normal3.InverseCDF(reallySmallProbability);
+
+            Histogram histogram1 = new Histogram(min1, binWidth, convergenceCriteria);
+            Histogram histogram2 = new Histogram(min2, binWidth, convergenceCriteria);
+            Histogram histogram3 = new Histogram(min3, binWidth, convergenceCriteria);
+
+            int seed = 8305;
+            Random random = new Random(seed);
+            int iterations = 10000;
+            for (int i = 0; i < iterations; i++)
+            {
+                histogram1.AddObservationToHistogram(normal1.InverseCDF(random.NextDouble()));
+                histogram2.AddObservationToHistogram(normal2.InverseCDF(random.NextDouble()));
+                histogram3.AddObservationToHistogram(normal3.InverseCDF(random.NextDouble()));
+            }
+
+            List<IHistogram> histograms = new List<IHistogram>();
+            histograms.Add(histogram1);
+            histograms.Add(histogram2);
+            histograms.Add(histogram3);
+
+
+
+
+
+            //IHistogram histogramAddedUp = Histogram.AddHistograms(histograms);
+
+            double min = 0;
+            double max = 0;
+            Int64 sampleSize = 0;
+            foreach (IHistogram histogramToAdd in histograms)
+            {
+                min += histogramToAdd.Min;
+                max += histogramToAdd.Max;
+                sampleSize += histogramToAdd.SampleSize;
+            }
+            double range = max - min;
+            double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
+            double aggregatedbinWidth = range / binQuantity;
+
+            Histogram aggregatedHistogram = new Histogram(min, aggregatedbinWidth, convergenceCriteria);
+
+            for (int i = 0; i < iterations; i++)
+            {
+                double probabilityStep = (i + 0.5) / iterations;
+                double summedValue = 0;
+                Int64 summedBinCount = 0;
+
+                foreach (IHistogram histogramToSample in histograms)
+                {
+                    double sampledValue = histogramToSample.InverseCDF(probabilityStep);
+                    summedValue += sampledValue;
+                    summedBinCount += histogramToSample.FindBinCount(sampledValue, false);
+                }
+                for (int j = 0; j < summedBinCount; j++)
+                {
+                    aggregatedHistogram.AddObservationToHistogram(summedValue, j);
+                }
+            }
+
+            Histogram aggregatedHistogramAltStyle = new Histogram(min, aggregatedbinWidth, convergenceCriteria);
+            for (int i = 0; i < iterations; i++)
+            {
+                double obs1 = histogram1.InverseCDF(random.NextDouble());
+                double obs2 = histogram2.InverseCDF(random.NextDouble());
+                double obs3 = histogram3.InverseCDF(random.NextDouble());
+                double summedObservation = obs1 + obs2 + obs3;
+                aggregatedHistogramAltStyle.AddObservationToHistogram(summedObservation);
+            }
+
+            double[] actualFromAddingMethod = new double[probabilities.Length];
+            for (int i = 0; i < probabilities.Length; i++)
+            {
+                actualFromAddingMethod[i] = aggregatedHistogram.InverseCDF(probabilities[i]);
+            }
+
+            double[] actualFromAltMethod = new double[probabilities.Length];
+            for (int i = 0; i < probabilities.Length; i++)
+            {
+                actualFromAltMethod[i] = aggregatedHistogramAltStyle.InverseCDF(probabilities[i]);
+            }
+            double tolerance = 0.05;
+            for (int i = 0; i < probabilities.Length; i++)
+            {
+                double error = Math.Abs((actualFromAddingMethod[i] - actualFromAltMethod[i]) / actualFromAltMethod[i]);
+                Assert.True(error < tolerance);
+            }
+
+        }
+
+        [Theory]
+        [InlineData(1.96)]
+        public void HistogramConstructsCorrectly(double expected)
+        {
+            int iterations = 10000;
+            Normal normal = new Normal();
+            Random random = new Random();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            List<double> data = new List<double>();
+            for (int i=0; i<iterations; i++)
+            {
+                double randomObservation = normal.InverseCDF(random.NextDouble());
+                data.Add(randomObservation);
+            }
+
+            Histogram histogram = new Histogram(data,convergenceCriteria);
+            double actual = histogram.InverseCDF(.975);
+
+            Assert.Equal(expected, actual, 1);
+
+        }
     }
 }

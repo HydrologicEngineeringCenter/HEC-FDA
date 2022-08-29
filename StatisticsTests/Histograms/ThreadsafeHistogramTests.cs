@@ -141,12 +141,12 @@ namespace StatisticsTests.Histograms
             Assert.Equal(expected, actual, 5);//this gives much more meaningful error reporting
         }
         [Theory]
-        [InlineData(1, 0.4, 2.25)]
+        [InlineData(1, 0.375, 2.33)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
-            double[] data = new double[14] { 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4 };
+            double[] data = new double[] { 0, 1, 1, 2, 2, 3, 3, 4 };
             ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, new ConvergenceCriteria());
-            histogram.SetIterationSize(14);
+            histogram.SetIterationSize(8);
             int i = 0;
             foreach (double observation in data)
             {
@@ -244,7 +244,7 @@ namespace StatisticsTests.Histograms
                 iter++;
                 if (iter % 10000 == 0)
                 {
-                    histogram.TestForConvergence(quantile, 1 - quantile);
+                    histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
             double actual = histogram.CDF(value);
@@ -269,7 +269,7 @@ namespace StatisticsTests.Histograms
                  {
                     histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()), index);
                  });
-                histogram.TestForConvergence(quantile, 1 - quantile);
+                histogram.IsHistogramConverged(quantile, 1 - quantile);
             }
             double actual = histogram.CDF(value);
             double err = Math.Abs((expected - actual) / expected);
@@ -286,7 +286,7 @@ namespace StatisticsTests.Histograms
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: .1, zAlpha: z);
             ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(convergencecriteria);
-            int iterations = convergencecriteria.MinIterations;
+            Int64 iterations = convergencecriteria.MinIterations;
             object whilelock = new object();
             while (!histogram.IsConverged)
             {
@@ -298,7 +298,7 @@ namespace StatisticsTests.Histograms
                         histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()), index);
                     });
                 }
-                histogram.TestForConvergence(quantile, 1 - quantile);
+                histogram.IsHistogramConverged(quantile, 1 - quantile);
                 iterations = histogram.EstimateIterationsRemaining(quantile, 1 - quantile);
             }
             double actual = histogram.CDF(value);
@@ -333,8 +333,8 @@ namespace StatisticsTests.Histograms
             histogram.ForceDeQueue();
             XElement xElement = histogram.WriteToXML();
             ThreadsafeInlineHistogram histogramFromXML = ThreadsafeInlineHistogram.ReadFromXML(xElement);
-            int[] expectedBinCounts = histogram.BinCounts;
-            int[] actualBinCounts = histogramFromXML.BinCounts;
+            Int64[] expectedBinCounts = histogram.BinCounts;
+            Int64[] actualBinCounts = histogramFromXML.BinCounts;
             Assert.Equal(expectedBinCounts, actualBinCounts);
         }
     }

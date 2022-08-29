@@ -1,27 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace Statistics.Histograms
 {
-    public class ThreadsafeInlineHistogram
+    public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
-        private Int32[] _BinCounts = new Int32[] { };
+        private bool _HistogramIsZeroValued = false;
+        private Int64[] _BinCounts = new Int64[] { };
         private double _SampleMean;
         private double _SampleVariance;
         private double _Min;
         private double _Max;
         private double _SampleMin;
         private double _SampleMax;
-        private int _SampleSize;
+        private Int64 _SampleSize;
         private double _BinWidth;
         private bool _Converged = false;
-        private int _ConvergedIterations = int.MinValue;
+        private Int64 _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private int _maxQueueCount = 1000; //TODO: what does this represent?
@@ -32,9 +32,42 @@ namespace Statistics.Histograms
         private static int _dequeue; //TODO: what does this represent?
         private System.ComponentModel.BackgroundWorker _backgroundWorker;
         private System.Collections.Concurrent.ConcurrentQueue<double> _observations;
+        private const string _type = "ThreadsafeInlineHistogram";
         #endregion
         #region Properties
-
+        public event MessageReportedEventHandler MessageReport;
+        public bool HistogramIsZeroValued
+        {
+            get
+            {
+                return _HistogramIsZeroValued;
+            }
+            set
+            {
+                _HistogramIsZeroValued = value;
+            }
+        }
+        public bool HistogramIsSingleValued
+        {
+            get
+            {
+                if (_BinCounts.Length == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public string MyType
+        {
+            get
+            {
+                return _type;
+            }
+        }
         public bool IsConverged
         {
             get
@@ -43,7 +76,7 @@ namespace Statistics.Histograms
                 return _Converged;
             }
         }
-        public int ConvergedIteration
+        public Int64 ConvergedIteration
         {
             get
             {
@@ -73,7 +106,7 @@ namespace Statistics.Histograms
                 return _BinWidth;
             }
         }
-        public Int32[] BinCounts
+        public Int64[] BinCounts
         {
             get
             {
@@ -133,7 +166,7 @@ namespace Statistics.Histograms
                 return Math.Pow(Variance, 0.5);
             }
         }
-        public int SampleSize
+        public Int64 SampleSize
         {
             get
             {
@@ -147,14 +180,29 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Constructor
+        public ThreadsafeInlineHistogram()
+        {
+            _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
+            _ConvergenceCriteria = new ConvergenceCriteria();
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += _bw_DoWork;
+            _HistogramIsZeroValued = true;
+            for (int i = 0; i < 10; i++)
+            {
+                AddObservationToHistogram(0,i);
+            }
+            MessageHub.Register(this);
+        }
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _ConvergenceCriteria = c;
+            _maxQueueCount = c.MinIterations;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
+            MessageHub.Register(this);
         }
-        public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 1000, int postqueueSize = 100)
+        public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 10000, int postqueueSize = 100)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             _BinWidth = binWidth;
@@ -163,8 +211,9 @@ namespace Statistics.Histograms
             _backgroundWorker.DoWork += _bw_DoWork;
             _maxQueueCount = startqueueSize;
             _postQueueCount = postqueueSize;
+            MessageHub.Register(this);
         }
-        private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int32[] binCounts, ConvergenceCriteria convergenceCriteria)
+        private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             Min = min;
@@ -180,8 +229,15 @@ namespace Statistics.Histograms
             _ConvergenceCriteria = convergenceCriteria;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
+            MessageHub.Register(this);
         }
         #endregion
+
+        #region Methods
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             DeQueue();
@@ -215,7 +271,6 @@ namespace Statistics.Histograms
             double variance = _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             return deviation3 / _SampleSize / Math.Pow(variance, 3 / 2);
         }
-        #region Methods
         public double HistogramMean()
         {
             ForceDeQueue();
@@ -266,12 +321,12 @@ namespace Statistics.Histograms
             //force dequeue is triggered in histogram variance.
             return Math.Sqrt(HistogramVariance());
         }
-        public void SetIterationSize(int iterationSize)
+        public void SetIterationSize(Int64 iterationSize)
         {
             //_observations = new double[iterationSize];
             //_maxQueueCount = iterationSize;
         }
-        public void AddObservationToHistogram(double observation, int index)
+        public void AddObservationToHistogram(double observation, Int64 index)
         {
             _observations.Enqueue(observation);
             Interlocked.Increment(ref _enqueue);
@@ -340,11 +395,15 @@ namespace Statistics.Histograms
                     }
                     else
                     {
-                        _BinWidth = range / (1.0 + 3.322 * Math.Log(size));
+                        _BinWidth = range / (1.0 + 3.322 * Math.Log10(size));
                     }
                 }
-
-                _BinCounts = new int[] { 0 };
+                else
+                {
+                    double temporaryBinWidth = range / (1.0 + 3.322 * Math.Log10(size));
+                    _BinWidth = Math.Min(_BinWidth, temporaryBinWidth);
+                }
+                _BinCounts = new Int64[] { 0 };
                 _Max = _Min + _BinWidth;
                 _maxQueueCount = _postQueueCount;
 
@@ -375,7 +434,7 @@ namespace Statistics.Histograms
                 if (observation < _Min)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((_Min - observation) / _BinWidth));
-                    Int32[] newBinCounts = new Int32[quantityAdditionalBins + _BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
 
                     for (int i = _BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
                     {
@@ -390,7 +449,7 @@ namespace Statistics.Histograms
                 else if (observation > _Max)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - _Max + _BinWidth) / _BinWidth));
-                    Int32[] newBinCounts = new Int32[quantityAdditionalBins + _BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
                     for (int i = 0; i < _BinCounts.Length; i++)
                     {
                         newBinCounts[i] = _BinCounts[i];
@@ -410,7 +469,7 @@ namespace Statistics.Histograms
                     if (observation == _Max)
                     {
                         quantityAdditionalBins = 1;
-                        Int32[] newBinCounts = new Int32[quantityAdditionalBins + _BinCounts.Length];
+                        Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
                         for (int i = 0; i < _BinCounts.Length; i++)
                         {
                             newBinCounts[i] = _BinCounts[i];
@@ -433,12 +492,27 @@ namespace Statistics.Histograms
                 AddObservationToHistogram(x,1);
             }
         }
-        private double FindBinCount(double x, bool cumulative = true)
+        public Int64 FindBinCount(double x, bool cumulative = true)
         {
+            if(x > Max)
+            {
+                if (cumulative)
+                {
+                    return SampleSize;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            if (x < Min)
+            {
+                return 0;
+            }
             int obsIndex = Convert.ToInt32(Math.Floor((x - _Min) / _BinWidth));
             if (cumulative)
             {
-                double sum = 0;
+                Int64 sum = 0;
                 for (int i = 0; i < obsIndex + 1; i++)
                 {
                     sum += _BinCounts[i];
@@ -508,6 +582,10 @@ namespace Statistics.Histograms
             if (p >= 1) return _Max;
             else
             {
+                if (_HistogramIsZeroValued)
+                {
+                    return 0.0;
+                }
                 if (_SampleSize == 0)
                 {
                     return double.NaN;
@@ -569,62 +647,26 @@ namespace Statistics.Histograms
             }
         }
 
-        public static ThreadsafeInlineHistogram AddHistograms(List<ThreadsafeInlineHistogram> histograms)
-        {
-            ConvergenceCriteria defaultConvergenceCriteria = new ConvergenceCriteria();
-            ThreadsafeInlineHistogram threadsafeInlineHistogramToReturn = new ThreadsafeInlineHistogram(defaultConvergenceCriteria);
-
-            if (histograms.Count > 0)
-            {
-                ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                double min = 0;
-                double max = 0;
-                int sampleSize = 0;
-                foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
-                {
-                    double newMin = Math.Min(min, threadsafeInlineHistogram.Min);
-                    min = newMin;
-                    double newMax = Math.Max(max, threadsafeInlineHistogram.Max);
-                    max = newMax;
-                    int newSampleSize = Math.Max(sampleSize, (int)threadsafeInlineHistogram.SampleSize);
-                    sampleSize = newSampleSize;
-                }
-                double range = max - min;
-                double binQuantity = 1 + 3.322 * Math.Log(sampleSize); //sturges rule 
-                double binWidth = range / sampleSize;
-                ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
-                int seed = 1234;
-                Random random = new Random(seed);
-                for (int i = 0; i < sampleSize; i++)
-                {
-                    double prob = (i + .5) / sampleSize;
-                    double summedValue = 0;
-                    foreach (ThreadsafeInlineHistogram threadsafeInlineHistogram in histograms)
-                    {
-                        double value = threadsafeInlineHistogram.InverseCDF(prob);
-                        summedValue += value;
-                    }
-                    histogram.AddObservationToHistogram(summedValue, i);
-                }
-                threadsafeInlineHistogramToReturn = histogram;
-            }
-            return threadsafeInlineHistogramToReturn;
-        }
+ 
 
         public XElement WriteToXML()
         {
             ForceDeQueue();
             XElement masterElem = new XElement("Histogram");
-            masterElem.SetAttributeValue("Min", Min);
-            masterElem.SetAttributeValue("Max", Max);
+            masterElem.SetAttributeValue("Min", _Min);
+            masterElem.SetAttributeValue("Max", _Max);
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
-            masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
+            masterElem.SetAttributeValue("Sample_Size", SampleSize);
+            masterElem.SetAttributeValue("Sample_Mean", _SampleMean);
+            masterElem.SetAttributeValue("Sample_Variance", _SampleVariance);
+            masterElem.SetAttributeValue("Sample_Min", _SampleMin);
+            masterElem.SetAttributeValue("Sample_Max", _SampleMax);
             masterElem.SetAttributeValue("Bin_Quantity", _BinCounts.Length);
+            masterElem.SetAttributeValue("Converged", _Converged);
+            masterElem.SetAttributeValue("Converged_Iterations", _ConvergedIterations);
+            masterElem.SetAttributeValue("Converged_On_Max", _ConvergedOnMax);
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                //XElement rowElement = new XElement("Coordinate");
-                //rowElement.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
-                //masterElem.Add(rowElement);
                 masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
             }
             XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
@@ -640,19 +682,42 @@ namespace Statistics.Histograms
             double max = Convert.ToDouble(maxString);
             string binWidthString = element.Attribute("Bin_Width").Value;
             double binWidth = Convert.ToDouble(binWidthString);
-            string sampleSizeString = element.Attribute("Ordinate_Count").Value;
+            string sampleSizeString = element.Attribute("Sample_Size").Value;
             int sampleSize = Convert.ToInt32(sampleSizeString);
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
-            Int32[] binCounts = new Int32[binQuantity];
+            Int64[] binCounts = new Int64[binQuantity];
             for (int i = 0; i < binQuantity; i++)
             {
-                binCounts[i] = Convert.ToInt32(element.Attribute($"Bin_Counts_{i}").Value);
+                binCounts[i] = Convert.ToInt64(element.Attribute($"Bin_Counts_{i}").Value);
             }
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
-            return new ThreadsafeInlineHistogram(min, max, binWidth, binCounts, convergenceCriteria);
+            string sampleMeanString = element.Attribute("Sample_Mean").Value;
+            double sampleMean = Convert.ToDouble(sampleMeanString);
+            string sampleVarianceString = element.Attribute("Sample_Variance").Value;
+            double sampleVariance = Convert.ToDouble(sampleVarianceString);
+            string sampleMinString = element.Attribute("Sample_Min").Value;
+            double sampleMin = Convert.ToDouble(sampleMinString);
+            string sampleMaxString = element.Attribute("Sample_Max").Value;
+            double sampleMax = Convert.ToDouble(sampleMaxString);
+            string convergedString = element.Attribute("Converged").Value;
+            bool converged = Convert.ToBoolean(convergedString);
+            string convergedIterationsString = element.Attribute("Converged_Iterations").Value;
+            int convergedIterations = Convert.ToInt32(convergedIterationsString);
+            string convergedOnMaxString = element.Attribute("Converged_On_Max").Value;
+            bool convergedOnMax = Convert.ToBoolean(convergedOnMaxString);
+            ThreadsafeInlineHistogram histogram = new ThreadsafeInlineHistogram(min, max, binWidth, binCounts, convergenceCriteria);
+            histogram._SampleSize = sampleSize;
+            histogram._SampleMean = sampleMean;
+            histogram._SampleVariance = sampleVariance;
+            histogram._SampleMin = sampleMin;
+            histogram._SampleMax = sampleMax;
+            histogram._Converged = converged;
+            histogram._ConvergedIterations = convergedIterations;
+            histogram._ConvergedOnMax = convergedOnMax;
+            return histogram;
         }
-        public bool TestForConvergence(double upperq, double lowerq)
+        public bool IsHistogramConverged(double upperq, double lowerq)
         {
             ForceDeQueue();
             if (_Converged) { return true; }
@@ -664,6 +729,8 @@ namespace Statistics.Histograms
                 _ConvergedOnMax = true;
                 return true;
             }
+            //TODO: it appears that this logic is similar or the same to that which is below. 
+            //consider extraction and build on this nomenclature 
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
             double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
@@ -688,54 +755,101 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
-        public int EstimateIterationsRemaining(double upperq, double lowerq)
+        public Int64 EstimateIterationsRemaining(double upperProbability, double lowerProbability)
         {
-            //TODO: WHAT DO THE BELOW VARIABLES EVEN MEAN??????????
-            //PLEASE PROVIDE VARIABLE NAMES IN ENGLISH thank you so much 
             if (_Converged) return 0;
-            double up = upperq;
-            double val = up * (1 - up);
-            double uz2 = 2 * _ConvergenceCriteria.ZAlpha;
-            double uxp = InverseCDF(up);
-            double ufxp = PDF(uxp);
-            int upperestimate = _ConvergenceCriteria.MaxIterations;
-            if (ufxp > 0.0 & uxp !=0 )
+            double upperProb = upperProbability;
+            double valueOfSomethingNotClear = upperProb * (1 - upperProb); //this is probably a part of a variance equation? 
+            double zAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha;
+            double upperValueAtUpperProb = InverseCDF(upperProb);
+            double probOfUpperValue = PDF(upperValueAtUpperProb);
+            Int64 upperEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            if (probOfUpperValue > 0.0 & upperValueAtUpperProb !=0 )
             {
-                upperestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((uz2 / (uxp * _ConvergenceCriteria.Tolerance * ufxp)), 2.0))));
+                double bottomTerm = upperValueAtUpperProb * _ConvergenceCriteria.Tolerance * probOfUpperValue;
+                double anotherTerm = (zAlphaDoubled / (bottomTerm));
+                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double productTerm = valueOfSomethingNotClear * anotherTermSquared;
+                if (productTerm > int.MaxValue - 1)
+                {
+                    upperEstimateIterationsRemaining = int.MaxValue - 1;
+                }
+                else
+                {
+                    Int64 productTermToInt = (Int64)Math.Ceiling(productTerm);
+                    upperEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                }
             }
-            double lp = lowerq;
-            double lval = lp * (1 - lp);
-            double lz2 = 2 * _ConvergenceCriteria.ZAlpha;
-            double lxp = InverseCDF(lp);
-            double lfxp = PDF(lxp);
-            int lowerestimate = _ConvergenceCriteria.MaxIterations;
-            if (lfxp > 0.0 & uxp != 0)
+            double lowerProb = lowerProbability;
+            double lowerValueOfSomethingNotClear = lowerProb * (1 - lowerProb);
+            double lowerZAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha; //this need not be negative?
+            double lowerValueAtLowerProb = InverseCDF(lowerProb);
+            double probOfLowerValue = PDF(lowerValueAtLowerProb);
+            Int64 lowerEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            if (probOfLowerValue > 0.0 & upperValueAtUpperProb != 0)
             {
-                lowerestimate = Math.Abs((int)Math.Ceiling(val * (Math.Pow((lz2 / (lxp * _ConvergenceCriteria.Tolerance * lfxp)), 2.0))));
+                double bottomTerm = lowerValueAtLowerProb * _ConvergenceCriteria.Tolerance * probOfLowerValue;
+                double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
+                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double productTerm = lowerValueOfSomethingNotClear * anotherTermSquared;
+                if (productTerm > int.MaxValue - 1)
+                {
+                    lowerEstimateIterationsRemaining = int.MaxValue - 1;
+                }
+                else
+                {
+                    Int64 productTermToInt = (Int64)Math.Ceiling(productTerm);
+                lowerEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                }
             }
-            int biggestGuess = Math.Max(upperestimate, lowerestimate);
-            int remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
-            return Convert.ToInt32(Math.Min(remainingIters, biggestGuess));
+            Int64 biggestGuessIterationsRemaining = Math.Max(upperEstimateIterationsRemaining, lowerEstimateIterationsRemaining);
+            Int64 remainingIterations = _ConvergenceCriteria.MaxIterations - _SampleSize;
+            return Convert.ToInt64(Math.Min(remainingIterations, biggestGuessIterationsRemaining));
         }
-        public bool Equals(ThreadsafeInlineHistogram threadsafeInlineHistogram)
+        public bool Equals(IHistogram histogramToCompare)
         {
-            bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(threadsafeInlineHistogram.ConvergenceCriteria);
+            bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(histogramToCompare.ConvergenceCriteria);
             if (!convergenceCriteriaAreEqual)
-            { 
-                return false; 
+            {
+                return false;
             }
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                bool binCountsAreEqual = _BinCounts[i].Equals(threadsafeInlineHistogram.BinCounts[i]);
+                bool binCountsAreEqual = _BinCounts[i].Equals(histogramToCompare.BinCounts[i]);
                 if (!binCountsAreEqual)
                 {
                     return false;
                 }
             }
-            bool minAreEqual = _Min.Equals(threadsafeInlineHistogram.Min);
+            bool minAreEqual = _Min.Equals(histogramToCompare.Min);
             if (!minAreEqual)
-            { 
-                return false; 
+            {
+                return false;
+            }
+            bool binWidthsAreEqual = _BinWidth.Equals(histogramToCompare.BinWidth);
+            if (!binWidthsAreEqual)
+            {
+                return false;
+            }
+            bool sampleSizesAreEqual = _SampleSize.Equals(histogramToCompare.SampleSize);
+            if (!sampleSizesAreEqual)
+            {
+                return false;
+            }
+            bool maxesAreEqual = _Max.Equals(histogramToCompare.Max);
+            if (!maxesAreEqual)
+            {
+                return false;
+            }
+            bool bothConverged = IsConverged.Equals(histogramToCompare.IsConverged);
+            if (!bothConverged)
+            {
+                return false;
+            }
+            bool convergedIterationsAreEqual = ConvergedIteration.Equals(histogramToCompare.ConvergedIteration);
+            if (!convergedIterationsAreEqual)
+            {
+                return false;
             }
             return true; 
 

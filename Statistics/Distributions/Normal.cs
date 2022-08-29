@@ -30,7 +30,7 @@ namespace Statistics.Distributions
             StandardDeviation = 1.0;
             addRules();
         }
-        public Normal(double mean, double sd, int sampleSize = int.MaxValue)
+        public Normal(double mean, double sd, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = sd;

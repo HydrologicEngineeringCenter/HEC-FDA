@@ -7,10 +7,17 @@ using paireddata;
 
 namespace compute
 {
-    public class FrequencyDamageMessage : HEC.MVVMFramework.Base.Implementations.Message
-{
-        private PairedData _frequencyDamage;
-
+    public class FrequencyDamageMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
+    {
+    private PairedData _frequencyDamage;
+    
+    public string Message
+        {
+            get
+            {
+                return $"FrequencyDamage";
+            }
+        }
     public PairedData FrequencyDamage
         {
             get
@@ -18,7 +25,7 @@ namespace compute
                 return _frequencyDamage;
             }
         }
-    public FrequencyDamageMessage(PairedData frequencyDamage, string message): base(message)
+    public FrequencyDamageMessage(PairedData frequencyDamage)
     {
             _frequencyDamage = frequencyDamage;
     }

@@ -33,7 +33,7 @@ namespace Statistics.Distributions
             SampleSize = 0;
             addRules();
         }
-        public Triangular(double min, double mode, double max, int sampleSize = int.MaxValue)
+        public Triangular(double min, double mode, double max, int sampleSize = 1)
         {
             Min = min;
             Max = max;

@@ -10,6 +10,7 @@ namespace Statistics.Distributions
         private double _twoDividedBySkew = 0;
         private double _skewDividedBySix = 0;
         private double _skew;
+        private bool _successfullyLoggedData = true;
 
         #region Properties
         public override IDistributionEnum Type => IDistributionEnum.LogPearsonIII;
@@ -56,9 +57,7 @@ namespace Statistics.Distributions
         }
         /// <summary>
         /// LP# Dist
-        /// TODO: we need a good default sample size. int.max will result in a system.OutOfMemoryException.
-        /// The default value of 1000 is a placeholder
-        /// Still seems larger than any typical sample size ... I don't think anyone has been taking records of river flows for 1000 years 
+        /// Default sample size is 1. 
         /// </summary>
         /// <param name="mean"></param>
         /// <param name="standardDeviation"></param>
@@ -74,8 +73,27 @@ namespace Statistics.Distributions
             IsNull = false;
             
         }
+        private LogPearson3(bool successfullyLoggedData)
+        {
+            //for reflection;
+            Mean = 0.1;
+            StandardDeviation = .01;
+            Skewness = .01;
+            SampleSize = 1;
+            _successfullyLoggedData = successfullyLoggedData;
+            addRules();
+            IsNull = true;
+
+        }
         private void addRules()
         {
+            AddSinglePropertyRule(nameof(_successfullyLoggedData),
+                new Rule(() =>
+                {
+                    return _successfullyLoggedData == true;
+                },
+                "Input flow values cannot be negative",
+                ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StandardDeviation),
                 new Rule(() => {
                     return StandardDeviation > 0;
@@ -216,7 +234,13 @@ namespace Statistics.Distributions
 
         public override IDistribution Fit(double[] sample)
         {
-            for(int i = 0; i<sample.Count(); i++) {
+
+            for(int i = 0; i<sample.Count(); i++) 
+            {   
+                if (sample[i] <= 0)
+                {
+                    return new LogPearson3(successfullyLoggedData: false);
+                }
                 sample[i] = Math.Log10(sample[i]);
             }
             ISampleStatistics stats = new SampleStatistics(sample);

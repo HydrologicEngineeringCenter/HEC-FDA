@@ -23,10 +23,17 @@ namespace paireddata
         private bool _UsingStagesNotFlows;
         private double _MaximumProbability;
         private double _MinimumProbability;
-
+        private double[] _inputFlowOrStageValues;
         #endregion
 
         #region Properties
+        internal double[] InputFlowOrStageValues
+        {
+            get
+            {
+                return _inputFlowOrStageValues;
+            }
+        }
 
         public string XLabel
         {
@@ -93,10 +100,12 @@ namespace paireddata
         {
             _metaData = new CurveMetaData();
             AddRules();
+            MessageHub.Register(this);
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -109,10 +118,12 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
             AddRules();
+            MessageHub.Register(this);
 
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -125,10 +136,12 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
+            MessageHub.Register(this);
 
         }
-        private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
+            _inputFlowOrStageValues = inputFlowsOrStages;
             _UsingStagesNotFlows = usingStagesNotFlows;
             _MaximumProbability = maximumProbability;
             _MinimumProbability = minimumProbability;
@@ -138,6 +151,7 @@ namespace paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
+            MessageHub.Register(this);
         }
         #endregion
 
@@ -152,7 +166,7 @@ namespace paireddata
             switch (_metaData.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), "X must be strictly monotonically decreasing"));
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
                     break;
                 default:
                     break;
@@ -195,11 +209,11 @@ namespace paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new Message("Sampled Y Values were not monotonically increasing as required and were forced to be monotonic")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"Sampled Y Values were not monotonically increasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message("X values are not monotonically decreasing as required")));
+                    ReportMessage(this, new MessageEventArgs(new Message($"X values are not monotonically decreasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)
@@ -243,7 +257,7 @@ namespace paireddata
             XElement curveMetaDataElement = CurveMetaData.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
-            if(CurveMetaData.IsNull)
+            if (CurveMetaData.IsNull)
             {
                 return masterElement;
             }
@@ -266,6 +280,14 @@ namespace paireddata
                     pairedDataElement.Add(rowElement);
                 }
                 masterElement.Add(pairedDataElement);
+                XElement inputFlowOrStageValues = new XElement("InputFlowOrStage");
+                for (int i = 0; i < _inputFlowOrStageValues.Length; i++)
+                {
+                    XElement valueElement = new XElement("FlowOrStageValue");
+                    valueElement.SetAttributeValue("Value", _inputFlowOrStageValues[i]);
+                    inputFlowOrStageValues.Add(valueElement);
+                }
+                masterElement.Add(inputFlowOrStageValues);
                 return masterElement;
             }
 
@@ -303,7 +325,13 @@ namespace paireddata
                     }
                     i++;
                 }
-                return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability);
+                List<double> inputFlowOrStageValues = new List<double>();
+                foreach(XElement valueElement in xElement.Element("InputFlowOrStage").Elements())
+                {
+                    double value = Convert.ToDouble(valueElement.Attribute("Value").Value);
+                    inputFlowOrStageValues.Add(value);
+                }
+                return new GraphicalUncertainPairedData(exceedanceProbabilities, stageOrFlowDistributions, inputFlowOrStageValues.ToArray(), equivalentRecordLength, metaData, usingStagesNotFlows, maximumProbability, minimumProbability);
             }
 
         }
