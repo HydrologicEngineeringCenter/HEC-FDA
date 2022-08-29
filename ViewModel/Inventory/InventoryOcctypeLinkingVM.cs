@@ -34,8 +34,8 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             //get the list of occtype names yourself, don't pass them in.
             _Path = filePath;
-            OccupancyTypesInFile = GetUniqueOccupancyTypes();
             _SelectedOcctypeName = selectedOcctypeName;
+            OccupancyTypesInFile = GetUniqueOccupancyTypes();
             LoadOcctypeGroups();
             LoadRows();
 

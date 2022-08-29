@@ -23,7 +23,10 @@ namespace HEC.FDA.ViewModel.Watershed
             add.Action = AddNew;
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(add);
-            Actions = localactions;
+            if(!StringConstants.IS_BETA_RELEASE)
+            {
+                Actions = localactions;
+            }
             StudyCache.TerrainAdded += AddTerrainElement;
             StudyCache.TerrainRemoved += RemoveTerrainElement;
             StudyCache.TerrainUpdated += UpdateTerrainElement;

@@ -214,6 +214,8 @@
 
         public const string ELEMENT_XML_TAG = "ElementXML";
 
+        public const bool IS_BETA_RELEASE = true;
+
         public static string ImportFromOldFda(string elementName)
         {
             return "Import " + elementName + " From HEC-FDA Version 1.4.3...";
