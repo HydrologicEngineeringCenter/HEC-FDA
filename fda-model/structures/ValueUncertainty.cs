@@ -21,10 +21,7 @@ namespace structures
         {
             _distributionType = distributionType;
             _percentOfInventoryValueStandardDeviationOrMin = percentOfInventoryValueStandardDeviationOrMin;
-            if (_distributionType == IDistributionEnum.Triangular || _distributionType == IDistributionEnum.Uniform)
-            {
-                _percentOfInventoryValueMax = percentOfInventoryMax;
-            }
+            _percentOfInventoryValueMax = percentOfInventoryMax;
 
         }
         #endregion
@@ -70,6 +67,7 @@ namespace structures
             }
             return sampledValue;
         }
+        #endregion
 
     }
 }

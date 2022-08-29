@@ -21,11 +21,7 @@ namespace structures
         {
             _distributionType = distributionEnum;
             _standardDeviationFromOrFeetBelowInventoryValue = standardDeviationOrMinimum;
-
-            if(_distributionType == IDistributionEnum.Triangular || _distributionType == IDistributionEnum.Uniform)
-            {
-                _feetAboveInventoryValue = maximum;
-            }
+            _feetAboveInventoryValue = maximum;
         }
 
         public double Sample(double inventoriedFirstFloorElevation, double randomProbability)
