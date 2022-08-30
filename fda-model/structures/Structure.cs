@@ -12,7 +12,7 @@ namespace structures
         private List<double> _computeStages;
         public int Fid { get; }
         public PointM Point { get; }
-        public double FoundationHeightMean { get; }
+        public double FirstFloorElevation { get; }
         public double ValueStructureMean { get; }
         public double ValueContentMean { get; internal set; }
         public double ValueVehicleMean { get; }
@@ -22,11 +22,10 @@ namespace structures
         public int ImpactAreaID { get; }
         public string Cbfips { get; }
 
-        public Structure(int fid, PointM point, double found_ht, double val_struct, double val_cont, double val_vehic, double val_other, string st_damcat, string occtype, int impactAreaID, string cbfips)
+        public Structure(int fid, PointM point, double found_ht,  double groundElevation, double val_struct, double val_cont, double val_vehic, double val_other, string st_damcat, string occtype, int impactAreaID, string cbfips)
         {
             Fid = fid;
             Point = point;
-            FoundationHeightMean = found_ht;
             ValueStructureMean = val_struct;
             ValueContentMean = val_cont;
             ValueVehicleMean = val_vehic;
@@ -35,20 +34,26 @@ namespace structures
             OccTypeName = occtype;
             ImpactAreaID = impactAreaID;
             Cbfips = cbfips;
+            FirstFloorElevation = found_ht + groundElevation;
         }
-
-        public DeterministicStructure Sample(int seed, SampledStructureParameters occtype)
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, double val_cont, double val_vehic, double val_other, string st_damcat, string occtype, int impactAreaID, string cbfips)
+        {
+            Fid = fid;
+            Point = point;
+            ValueStructureMean = val_struct;
+            ValueContentMean = val_cont;
+            ValueVehicleMean = val_vehic;
+            ValueOtherMean = val_other;
+            DamageCatagory = st_damcat;
+            OccTypeName = occtype;
+            ImpactAreaID = impactAreaID;
+            Cbfips = cbfips;
+            FirstFloorElevation = firstFloorElevation;
+ 
+        }
+        public DeterministicStructure Sample(int seed, OccupancyType occtype)
         {
             Random random = new Random(seed);
-
-            if(ValueContentMean == Double.NaN)
-            {
-                ValueContentMean = ValueStructureMean * occtype.ContentToStructureValueRatio;
-            }
-            if(ValueOtherMean == Double.NaN)
-            {
-                ValueOtherMean = ValueOtherMean * occtype.OtherToStructureValueRatio;
-            }
 
             double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightSampled;
             double structValueSample = ValueStructureMean * occtype.StructureValueSampled;
