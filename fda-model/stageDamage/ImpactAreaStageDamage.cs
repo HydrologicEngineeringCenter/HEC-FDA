@@ -32,8 +32,20 @@ namespace stageDamage
         #region Methods
         public ImpactAreaStageDamageFunction Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, List<double> stages, Inventory inventory, List<OccupancyType> occupancyType)
         {
+            //I think we are going to have a list of ImpactAreaStageDamageFUnctions - one for each damage category 
             ImpactAreaStageDamageFunction results = new ImpactAreaStageDamageFunction();
             //This is where the meat of the compute lives 
+
+            //Step 1: Find the min and max of stages 
+            //Step 2: Find the deltas 
+
+            //Step 3 compute damage by iterating over stages. 
+            //One iteration gets 
+            //Then we iterate between the min and the most frequent event in the hydraulic data set 
+            //Then iterate from most frequent event to least frequent event 
+            //Then iterate from least frequent event to the max 
+
+            return results;
         }
 
 
