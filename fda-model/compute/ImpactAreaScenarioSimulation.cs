@@ -1087,93 +1087,93 @@ namespace compute
         }
         public class SimulationBuilder
         {
-            private ImpactAreaScenarioSimulation _sim;
+            private ImpactAreaScenarioSimulation _simulation;
             internal SimulationBuilder(ImpactAreaScenarioSimulation sim)
             {
-                _sim = sim;
+                _simulation = sim;
             }
             public ImpactAreaScenarioSimulation build()
             {
                 //TODO: The validation below is not very helpful. We only see that "XX has errors" but 
                 //we are not informing the user what the errors are 
                 //somehow we need to add the error messages of the object being validated to the error messages of the impact area scenario simulation 
-                _sim.Validate();
+                _simulation.Validate();
                 //add validation here to test ranges and domains.
-                return _sim;
+                return _simulation;
             }
             public SimulationBuilder withFlowFrequency(ContinuousDistribution continuousDistribution)
             {   //TODO: I do not think the sample size validation works
-                _sim._frequency_discharge = continuousDistribution;
-                _sim.AddSinglePropertyRule("flow frequency", new Rule(() => { _sim._frequency_discharge.Validate(); return !_sim._frequency_discharge.HasErrors; }, String.Join(Environment.NewLine, _sim._frequency_discharge.GetErrors())));
-                return new SimulationBuilder(_sim);
+                _simulation._frequency_discharge = continuousDistribution;
+                _simulation.AddSinglePropertyRule("flow frequency", new Rule(() => { _simulation._frequency_discharge.Validate(); return !_simulation._frequency_discharge.HasErrors; }, String.Join(Environment.NewLine, _simulation._frequency_discharge.GetErrors())));
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
-                _sim._frequency_discharge_graphical = graphicalUncertainPairedData;
-                return new SimulationBuilder(_sim);
+                _simulation._frequency_discharge_graphical = graphicalUncertainPairedData;
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withInflowOutflow(UncertainPairedData uncertainPairedData)
             {
-                _sim._unregulated_regulated = uncertainPairedData;
-                _sim.AddSinglePropertyRule("inflow outflow", new Rule(() => { _sim._unregulated_regulated.Validate(); return !_sim._unregulated_regulated.HasErrors; }, $"Inflow-Outflow has errors for the impact area with ID {_sim._impactAreaID}."));
+                _simulation._unregulated_regulated = uncertainPairedData;
+                _simulation.AddSinglePropertyRule("inflow outflow", new Rule(() => { _simulation._unregulated_regulated.Validate(); return !_simulation._unregulated_regulated.HasErrors; }, $"Inflow-Outflow has errors for the impact area with ID {_simulation._impactAreaID}."));
 
-                return new SimulationBuilder(_sim);
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withFlowStage(UncertainPairedData uncertainPairedData)
             {
-                _sim._discharge_stage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("flow stage", new Rule(() => { _sim._discharge_stage.Validate(); return !_sim._discharge_stage.HasErrors; }, $"Flow-Stage has errors  for the impact area with ID {_sim._impactAreaID}."));
+                _simulation._discharge_stage = uncertainPairedData;
+                _simulation.AddSinglePropertyRule("flow stage", new Rule(() => { _simulation._discharge_stage.Validate(); return !_simulation._discharge_stage.HasErrors; }, $"Flow-Stage has errors  for the impact area with ID {_simulation._impactAreaID}."));
 
-                return new SimulationBuilder(_sim);
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
-                _sim._frequency_stage = graphicalUncertainPairedData;
-                _sim.AddSinglePropertyRule("frequency_stage", new Rule(() => { _sim._frequency_stage.Validate(); return !_sim._frequency_stage.HasErrors; }, $"Frequency-Stage has errors  for the impact area with ID {_sim._impactAreaID}."));
-                return new SimulationBuilder(_sim);
+                _simulation._frequency_stage = graphicalUncertainPairedData;
+                _simulation.AddSinglePropertyRule("frequency_stage", new Rule(() => { _simulation._frequency_stage.Validate(); return !_simulation._frequency_stage.HasErrors; }, $"Frequency-Stage has errors  for the impact area with ID {_simulation._impactAreaID}."));
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withInteriorExterior(UncertainPairedData uncertainPairedData)
             {
-                _sim._channelstage_floodplainstage = uncertainPairedData;
-                _sim.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() =>
+                _simulation._channelstage_floodplainstage = uncertainPairedData;
+                _simulation.AddSinglePropertyRule("channelstage_floodplainstage", new Rule(() =>
                 {
-                    _sim._channelstage_floodplainstage.Validate();
-                    return !_sim._channelstage_floodplainstage.HasErrors;
+                    _simulation._channelstage_floodplainstage.Validate();
+                    return !_simulation._channelstage_floodplainstage.HasErrors;
                 }
-                , $"There are errors in the InteriorExterior relationship for the impact area with ID {_sim._impactAreaID}."));
-                return new SimulationBuilder(_sim);
+                , $"There are errors in the InteriorExterior relationship for the impact area with ID {_simulation._impactAreaID}."));
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withLevee(UncertainPairedData uncertainPairedData, double topOfLeveeElevation)
             {
-                _sim.AddSinglePropertyRule("levee", new Rule(() => _sim.LeveeIsValid(), $"The levee is invalid  for the impact area with ID {_sim._impactAreaID}."));
-                _sim._systemResponseFunction_stage_failureProbability = uncertainPairedData;
-                _sim._topOfLeveeElevation = topOfLeveeElevation;
-                return new SimulationBuilder(_sim);
+                _simulation.AddSinglePropertyRule("levee", new Rule(() => _simulation.LeveeIsValid(), $"The levee is invalid  for the impact area with ID {_simulation._impactAreaID}."));
+                _simulation._systemResponseFunction_stage_failureProbability = uncertainPairedData;
+                _simulation._topOfLeveeElevation = topOfLeveeElevation;
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withStageDamages(List<UncertainPairedData> uncertainPairedDataList)
             {
-                _sim._damage_category_stage_damage = uncertainPairedDataList;
-                foreach (UncertainPairedData uncertainPairedData in _sim._damage_category_stage_damage)
+                _simulation._damage_category_stage_damage = uncertainPairedDataList;
+                foreach (UncertainPairedData uncertainPairedData in _simulation._damage_category_stage_damage)
                 {
-                    _sim.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_sim._impactAreaID}:" + uncertainPairedData.GetErrors().ToString()));
+                    _simulation.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_simulation._impactAreaID}:" + uncertainPairedData.GetErrors().ToString()));
                 }
-                return new SimulationBuilder(_sim);
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withPerformanceMetrics(ImpactAreaScenarioResults results)
             {
-                _sim._impactAreaScenarioResults = results;
-                return new SimulationBuilder(_sim);
+                _simulation._impactAreaScenarioResults = results;
+                return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withAdditionalThreshold(Threshold threshold)
             {
-                _sim._impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(threshold);
-                return new SimulationBuilder(_sim);
+                _simulation._impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(threshold);
+                return new SimulationBuilder(_simulation);
             }
 
             public SimulationBuilder forImpactArea(int impactAreaID)
             {
-                _sim._impactAreaID = impactAreaID;
-                return new SimulationBuilder(_sim);
+                _simulation._impactAreaID = impactAreaID;
+                return new SimulationBuilder(_simulation);
             }
         }
 

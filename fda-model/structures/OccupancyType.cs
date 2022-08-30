@@ -70,5 +70,20 @@ namespace structures
             return new DeterministicOccupancyType(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError, contentToStructureValueRatio, otherToStructureValueRatio);
         }
         #endregion
+
+        public class OccupancyTypeBuilder
+        {
+            private OccupancyType _occupancyType; 
+            internal OccupancyTypeBuilder(OccupancyType occupancyType)
+            {
+                _occupancyType = occupancyType;
+            }
+            public OccupancyType build()
+            {
+                //validate
+                return _occupancyType;
+            }
+
+        }
     }
 }

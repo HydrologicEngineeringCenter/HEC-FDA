@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace structures
 {
-    internal class ValueRatioUncertainty
+    internal class ValueRatioWithUncertainty
 {
         #region Fields
         private double _standardDeviationOrMin;
@@ -18,7 +18,7 @@ namespace structures
         #endregion
 
         #region Constructor 
-        public ValueRatioUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = 0)
+        public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = 0)
         {
             _distributionType = distributionEnum;
             _standardDeviationOrMin = standardDeviationOrMin;

@@ -37,8 +37,7 @@ namespace structures
                     Normal normal = new Normal(inventoryValue, standardDeviation);
                     sampledValue = normal.InverseCDF(randomProbability);
                     break;
-                    //I am not sure if this math makes sense 
-                    //percent of the log of inventory value?
+
                 case IDistributionEnum.LogNormal:
                     double logStandardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;
                     LogNormal logNormal = new LogNormal(inventoryValue, logStandardDeviation);
