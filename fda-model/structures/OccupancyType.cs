@@ -88,7 +88,7 @@ namespace structures
         }
         #endregion
         #region Methods
-        public DeterministicOccupancyType Sample(int seed)
+        public SampledStructureParameters Sample(int seed)
         {
             Random random = new Random(seed);
             //damage functions
@@ -108,7 +108,7 @@ namespace structures
             double contentToStructureValueRatio = _contentToStructureValueRatio.InverseCDF(random.NextDouble());
             double otherToStructureValueRatio = _otherToStructureValueRatio.InverseCDF(random.NextDouble());
             
-            return new DeterministicOccupancyType(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError, contentToStructureValueRatio, otherToStructureValueRatio);
+            return new SampledStructureParameters(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError, contentToStructureValueRatio, otherToStructureValueRatio);
         }
         #endregion
 

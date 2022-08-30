@@ -11,9 +11,9 @@
         public double VehicleValueSample { get; }
         public double OtherValueSample { get; }
         public string DamageCatagory { get; }
-        public DeterministicOccupancyType OccupancyType { get; }
+        public SampledStructureParameters OccupancyType { get; }
 
-        public DeterministicStructure(int fid, int impactAreaID, string damageCatagory, DeterministicOccupancyType occupancyType, double foundHeightSample, double structValueSample, double contentValueSample, double vehicleValueSample, double otherValueSample)
+        public DeterministicStructure(int fid, int impactAreaID, string damageCatagory, SampledStructureParameters occupancyType, double foundHeightSample, double structValueSample, double contentValueSample, double vehicleValueSample, double otherValueSample)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;

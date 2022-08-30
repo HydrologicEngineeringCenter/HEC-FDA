@@ -7,12 +7,14 @@ namespace structures
     public class OccupancyTypeSet
     {
         private IList<OccupancyType> _occtypes;
-        public List<DeterministicOccupancyType> Sample(int seed)
+        public List<SampledStructureParameters> Sample(int seed)
         {
             Random random = new Random(seed);
-            List<DeterministicOccupancyType> sample = new List<DeterministicOccupancyType>();
+            List<SampledStructureParameters> sample = new List<SampledStructureParameters>();
             foreach (OccupancyType oc in _occtypes)
             {
+                //TODO 
+                //This approach does not work for the FDA algorithm 
                 sample.Add(oc.Sample(random.Next()));
             }
             return sample;

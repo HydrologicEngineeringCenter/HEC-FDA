@@ -130,11 +130,11 @@ namespace structures
         {
             Random random = new Random(seed);
 
-            List<DeterministicOccupancyType> _OcctypesSample = _Occtypes.Sample(random.Next());
+            List<SampledStructureParameters> _OcctypesSample = _Occtypes.Sample(random.Next());
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in _structures)
             {
-                foreach (DeterministicOccupancyType deterministicOccupancyType in _OcctypesSample)
+                foreach (SampledStructureParameters deterministicOccupancyType in _OcctypesSample)
                 {
                     if (structure.DamageCatagory.Equals(deterministicOccupancyType.DamageCatagory))
                     {

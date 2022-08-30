@@ -37,7 +37,7 @@ namespace structures
             Cbfips = cbfips;
         }
 
-        public DeterministicStructure Sample(int seed, DeterministicOccupancyType occtype)
+        public DeterministicStructure Sample(int seed, SampledStructureParameters occtype)
         {
             Random random = new Random(seed);
 
@@ -50,11 +50,11 @@ namespace structures
                 ValueOtherMean = ValueOtherMean * occtype.OtherToStructureValueRatio;
             }
 
-            double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightError;
-            double structValueSample = ValueStructureMean * occtype.StructureValueError;
-            double contentValueSample = ValueContentMean * occtype.ContentValueError;
-            double vehicleValueSample = ValueVehicleMean * occtype.VehicleValueError;
-            double otherValueSample = ValueOtherMean * occtype.OtherValueError;
+            double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightSampled;
+            double structValueSample = ValueStructureMean * occtype.StructureValueSampled;
+            double contentValueSample = ValueContentMean * occtype.ContentValueSampled;
+            double vehicleValueSample = ValueVehicleMean * occtype.VehicleValueSampled;
+            double otherValueSample = ValueOtherMean * occtype.OtherValueSampled;
 
             //load up the deterministic structure
             return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,occtype, foundHeightSample,structValueSample,contentValueSample,vehicleValueSample,otherValueSample);
