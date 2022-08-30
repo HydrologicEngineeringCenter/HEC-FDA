@@ -9,6 +9,7 @@ namespace structures
 {
     public class Structure
     {
+        //TODO: How are we going to handle missing data?
         private List<double> _computeStages;
         public int Fid { get; }
         public PointM Point { get; }
@@ -54,15 +55,9 @@ namespace structures
         public DeterministicStructure Sample(int seed, OccupancyType occtype)
         {
             Random random = new Random(seed);
-
-            double foundHeightSample = FoundationHeightMean * occtype.FoundationHeightSampled;
-            double structValueSample = ValueStructureMean * occtype.StructureValueSampled;
-            double contentValueSample = ValueContentMean * occtype.ContentValueSampled;
-            double vehicleValueSample = ValueVehicleMean * occtype.VehicleValueSampled;
-            double otherValueSample = ValueOtherMean * occtype.OtherValueSampled;
-
+            SampledStructureParameters sampledStructureParameters = occtype.Sample(seed, ValueStructureMean, FirstFloorElevation, ValueContentMean, ValueOtherMean, ValueVehicleMean);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,occtype, foundHeightSample,structValueSample,contentValueSample,vehicleValueSample,otherValueSample);
+            return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,sampledStructureParameters);
         }
 
 

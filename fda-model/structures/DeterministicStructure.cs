@@ -32,6 +32,7 @@
         }
         #endregion
 
+        //TODO: We do not want to return a new structure damage result every time 
         #region Methods
         public StructureDamageResult ComputeDamage(float waterSurfaceElevation)
         {

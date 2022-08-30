@@ -69,6 +69,14 @@ namespace structures
         {
             get { return _computeVehicleDamage; }
         }
+        public string DamageCategory
+        {
+            get { return damcat; }
+        }
+        public string Name
+        {
+            get { return name; }
+        }
 
         #endregion
         #region Constructor

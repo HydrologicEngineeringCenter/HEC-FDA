@@ -10,7 +10,7 @@ namespace structures
     public class Inventory
     {
         private List<Structure> _structures;
-        private OccupancyTypeSet _Occtypes;
+        private List<OccupancyType> _Occtypes;
         public List<Structure> Structures { get; set; }
         public List<string> ImpactAreas
         {
@@ -80,7 +80,7 @@ namespace structures
         // Will need a constructor/load from Database ; 
 
 
-        public Inventory(List<Structure> structures, OccupancyTypeSet occTypes)
+        public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
             _structures = structures;
             _Occtypes = occTypes;
@@ -130,17 +130,16 @@ namespace structures
         {
             Random random = new Random(seed);
 
-            List<SampledStructureParameters> _OcctypesSample = _Occtypes.Sample(random.Next());
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in _structures)
             {
-                foreach (SampledStructureParameters deterministicOccupancyType in _OcctypesSample)
+                foreach (OccupancyType occupancyType in _Occtypes)
                 {
-                    if (structure.DamageCatagory.Equals(deterministicOccupancyType.DamageCatagory))
+                    if (structure.DamageCatagory.Equals(occupancyType.DamageCategory))
                     {
-                        if (structure.OccTypeName.Equals(deterministicOccupancyType.Name))
+                        if (structure.OccTypeName.Equals(occupancyType.Name))
                         {
-                            inventorySample.Add(structure.Sample(random.Next(), deterministicOccupancyType));
+                            inventorySample.Add(structure.Sample(random.Next(), occupancyType));
                             break;
                         }
                     }

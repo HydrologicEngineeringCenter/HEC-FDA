@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace structures
+namespace paireddata
 {
-    public interface IParameterUncertainty
+    public interface IUncertainPairedData
 {
 
 }

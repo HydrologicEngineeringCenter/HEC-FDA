@@ -20,7 +20,7 @@ namespace structures
             VehicleDamage = vehicleDamage;
             OtherDamage = otherDamage;
         }
-
+        
         public void AddResult(StructureDamageResult structureDamageResult)
         {
             StructDamage += structureDamageResult.StructDamage;
