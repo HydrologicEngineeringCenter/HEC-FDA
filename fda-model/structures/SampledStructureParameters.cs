@@ -19,7 +19,7 @@ namespace structures
         public double OtherValueSampled { get; }
 
 
-        public SampledStructureParameters(string name, string damcat, IPairedData structPercentDamagePairedData, IPairedData contentPercentDamagePairedData, IPairedData vehiclePercentDamagePairedData, IPairedData otherPercentDamagePairedData, double sampledFoundationHeight, double sampledStructureValue, double sampledContentValue, double sampledVehicleValue, double sampledOtherValue)
+        public SampledStructureParameters(string name, string damcat, IPairedData structPercentDamagePairedData, IPairedData contentPercentDamagePairedData, IPairedData vehiclePercentDamagePairedData, IPairedData otherPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, double sampledContentValue, double sampledVehicleValue, double sampledOtherValue)
         {
             //TODO: Sampling the depth percent damage functions for each structure individually seems a bit overkill 
             Name = name;
@@ -28,7 +28,7 @@ namespace structures
             ContentDamagePairedData = contentPercentDamagePairedData;
             VehicleDamagePairedData = vehiclePercentDamagePairedData;
             OtherDamagePairedData = otherPercentDamagePairedData;
-            FoundationHeightSampled = sampledFoundationHeight;
+            FoundationHeightSampled = sampledFirstFloorElevation;
             StructureValueSampled = sampledStructureValue;
             ContentValueSampled = sampledContentValue;
             VehicleValueSampled = sampledVehicleValue;

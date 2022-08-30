@@ -27,7 +27,7 @@ namespace structures
         private UncertainPairedData _OtherDepthPercentDamageFunction;
 
         //error parameters
-        private FirstFloorElevationUncertainty _foundationHeightError;
+        private FirstFloorElevationUncertainty _firstFloorElevationError;
         private ValueUncertainty _structureValueError;
         private ValueUncertainty _contentValueError;
         private ValueUncertainty _vehicleValueError;
@@ -78,7 +78,7 @@ namespace structures
             _contentDepthPercentDamageFunction = new UncertainPairedData(); 
             _vehicleDepthPercentDamageFunction= new UncertainPairedData();
             _OtherDepthPercentDamageFunction = new UncertainPairedData();
-            _foundationHeightError = new FirstFloorElevationUncertainty();
+            _firstFloorElevationError = new FirstFloorElevationUncertainty();
             _structureValueError = new ValueUncertainty();
             _contentValueError = new ValueUncertainty();
             _vehicleValueError = new ValueUncertainty();
@@ -88,7 +88,7 @@ namespace structures
         }
         #endregion
         #region Methods
-        public SampledStructureParameters Sample(int seed)
+        public SampledStructureParameters Sample(int seed, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999)
         {
             Random random = new Random(seed);
             //damage functions
@@ -97,18 +97,51 @@ namespace structures
             IPairedData vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
             IPairedData otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
 
-            //errors
-            double foundationHeightError = _foundationHeightError.InverseCDF(random.NextDouble());
-            double structureValueError = _structureValueError.InverseCDF(random.NextDouble());
-            double contentValueError = _contentValueError.InverseCDF(random.NextDouble());
-            double vehicleValueError = _vehicleValueError.InverseCDF(random.NextDouble());
-            double otherValueError = _otherValueError.InverseCDF(random.NextDouble());
-
-            //ratios
-            double contentToStructureValueRatio = _contentToStructureValueRatio.InverseCDF(random.NextDouble());
-            double otherToStructureValueRatio = _otherToStructureValueRatio.InverseCDF(random.NextDouble());
+            //parameters
+            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation,random.NextDouble());
+            double structureValueSampled = _structureValueError.Sample(structureValue, random.NextDouble());
+            double contentValueSampled;
+            if (_computeContentDamage)
+            {
+                if (_useContentToStructureValueRatio)
+                {
+                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(random.NextDouble());
+                }
+                else
+                {
+                    contentValueSampled = _contentValueError.Sample(contentValue, random.NextDouble());
+                }
+            } else
+            {
+                contentValueSampled = contentValue;
+            }
+            double otherValueSampled;
+            if (_computeOtherDamage)
+            {
+                if (_useOtherToStructureValueRatio)
+                {
+                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(random.NextDouble());
+                }
+                else
+                {
+                    otherValueSampled = _otherValueError.Sample(otherValue, random.NextDouble());
+                }
+            }
+            else
+            {
+                otherValueSampled = otherValue;
+            }
+            double vehicleValueSampled;
+            if (_computeVehicleDamage)
+            {
+                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, random.NextDouble());
+            }
+            else
+            {
+                vehicleValueSampled = vehicleValue;
+            }
             
-            return new SampledStructureParameters(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, foundationHeightError, structureValueError, contentValueError, vehicleValueError, otherValueError, contentToStructureValueRatio, otherToStructureValueRatio);
+            return new SampledStructureParameters(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, contentValueSampled, _computeVehicleDamage, vehicleValueSampled, _computeOtherDamage, otherValueSampled);
         }
         #endregion
 
