@@ -73,7 +73,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             FdaValidationResult vr = new FdaValidationResult();
             if (ListOfRows.Count != 8)
             {
-                vr.AddErrorMessage("Eight hydraulic directories are required to import.");
+                vr.AddErrorMessage("Eight subdirectories with hydraulic modeling for 8 events, one event in each subdirectory, are required to import.");
             }
             List<double> probs = new List<double>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)

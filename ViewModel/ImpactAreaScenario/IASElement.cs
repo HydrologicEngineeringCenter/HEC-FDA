@@ -93,7 +93,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void AddActions()
         {
-            AddDefaultActions(EditIASSet);
+            AddDefaultActions(EditIASSet, StringConstants.EDIT_SCENARIO_MENU);
             NamedAction compute = new NamedAction();
             compute.Header = StringConstants.COMPUTE_SCENARIO_MENU;
             compute.Action = ComputeScenario;

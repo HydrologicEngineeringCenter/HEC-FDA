@@ -160,9 +160,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             }
 
-            vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp").ErrorMessage);
+            //todo: these lines no longer work. Hydros can come in different forms now: gridded, steady, unsteady
+            //vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp").ErrorMessage);
             //todo: do we need to check that a dbf exists?
-            vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.dbf").ErrorMessage);
+            //vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.dbf").ErrorMessage);
 
             return vr;
         }

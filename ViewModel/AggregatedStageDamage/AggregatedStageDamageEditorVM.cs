@@ -8,7 +8,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class AggregatedStageDamageEditorVM : BaseEditorVM
     {
-        private bool _IsManualRadioSelected = false;
+        private bool _IsManualRadioSelected = true;
         private BaseViewModel _CurrentVM;
 
         #region properties
@@ -39,7 +39,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //and prompt the user if they want to save when closing
             RegisterChildViewModel(ManualVM);
             RegisterChildViewModel(CalculatedVM);
-            CurrentVM = CalculatedVM;
+            if(StringConstants.IS_BETA_RELEASE)
+            {
+                //Note that I also disabled the "Computed" radio button in the xaml class.
+                //At the top of this class i also set _IsManualRadioSelected to true. It was originally set to false.
+                //I also added a tooltip on the "Computed" that says "This option is not currently supported". 
+                CurrentVM = ManualVM;
+            }
+            else
+            {
+                CurrentVM = CalculatedVM;
+            }
         }
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
