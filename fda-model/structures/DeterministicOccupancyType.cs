@@ -35,6 +35,49 @@ namespace structures
             ContentToStructureValueRatio = contentToStructureValueRatio;
             OtherToStructureValueRatio = otherToStructureValueRatio;
 
+            var x = VehicleDamagePairedData?.compose(null);
         }
+    }
+}
+
+public class EmptyPD : IPairedData
+{
+
+    public static EmptyPD Instance = new();
+
+    public double[] Xvals => throw new System.NotImplementedException();
+
+    public double[] Yvals => throw new System.NotImplementedException();
+
+    public CurveMetaData CurveMetaData => throw new System.NotImplementedException();
+
+    public IPairedData compose(IPairedData g)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public double f(double x)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public double f_inverse(double y)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public double integrate()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public IPairedData multiply(IPairedData g)
+    {
+        throw new System.NotImplementedException();
     }
 }

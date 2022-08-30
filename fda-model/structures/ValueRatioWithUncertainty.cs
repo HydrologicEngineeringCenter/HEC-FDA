@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace structures
 {
-    internal class ValueRatioWithUncertainty
+    public class ValueRatioWithUncertainty
 {
         #region Fields
         private double _standardDeviationOrMin;
@@ -18,12 +18,26 @@ namespace structures
         #endregion
 
         #region Constructor 
+        public ValueRatioWithUncertainty()
+        {
+            _standardDeviationOrMin = 0;
+            _centralTendency = 0;
+            _max = 0;
+            _distributionType = IDistributionEnum.Deterministic;
+        }
         public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = 0)
         {
             _distributionType = distributionEnum;
             _standardDeviationOrMin = standardDeviationOrMin;
             _centralTendency = centralTendency;
             _max = max;
+        }
+        public ValueRatioWithUncertainty(double deterministicValueRatio)
+        {
+            _centralTendency = deterministicValueRatio;
+            _standardDeviationOrMin = 0;
+            _max = 0;
+            _distributionType = IDistributionEnum.Deterministic;
         }
         #endregion
 
@@ -50,7 +64,7 @@ namespace structures
                     sampledValueRatio = uniform.InverseCDF(randomProbability);
                     break;
                 default:
-                    sampledValueRatio = 1;
+                    sampledValueRatio = _centralTendency;
                     break;
             }
             //do not allow for negative value ratios

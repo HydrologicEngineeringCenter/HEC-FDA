@@ -17,6 +17,12 @@ namespace structures
         #endregion
 
         #region Contructor 
+        public FirstFloorElevationUncertainty()
+        {
+            _feetAboveInventoryValue = 0;
+            _standardDeviationFromOrFeetBelowInventoryValue = 0;
+            _distributionType = IDistributionEnum.Deterministic;
+        }
         public FirstFloorElevationUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMinimum, double maximum = 0)
         {
             _distributionType = distributionEnum;

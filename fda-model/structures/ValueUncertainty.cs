@@ -17,6 +17,12 @@ namespace structures
         #endregion
 
         #region Constructor 
+        public ValueUncertainty()
+        {
+            _percentOfInventoryValueMax = 0;
+            _percentOfInventoryValueStandardDeviationOrMin = 0;
+            _distributionType = IDistributionEnum.Deterministic;
+        }
         public ValueUncertainty(IDistributionEnum distributionType, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax = 0)
         {
             _distributionType = distributionType;
