@@ -10,7 +10,7 @@ namespace Statistics
     {   
         public abstract IDistributionEnum Type { get; }
         [Stored(Name = "SampleSize", type = typeof(Int32))]
-        public int SampleSize { get; protected set; }
+        public Int64 SampleSize { get; protected set; }
         [Stored(Name = "Truncated", type = typeof(bool))]
         public bool Truncated { get; protected set; }
         public abstract double CDF(double x);

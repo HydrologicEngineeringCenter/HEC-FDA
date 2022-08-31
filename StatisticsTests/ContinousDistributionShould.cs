@@ -25,7 +25,7 @@ namespace StatisticsTests
             double value = bootstrap.InverseCDF(.5);
             Assert.Equal(7.04066080278019, value, 6);
         }
-        private double[] NextRandomSequence(int size, int seed)
+        private double[] NextRandomSequence(Int64 size, int seed)
         {
             Random _rng = new Random(seed);
             double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
@@ -35,7 +35,7 @@ namespace StatisticsTests
             }
             return randyPacket;
         }
-        private double[] NextNonRandomSequence(int size)
+        private double[] NextNonRandomSequence(Int64 size)
         {
             double[] randyPacket = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < size; i++)

@@ -270,7 +270,7 @@ namespace StatisticsTests.Histograms
                     histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
-            XElement xElement = histogram.WriteToXML();
+            XElement xElement = histogram.ToXML();
             Histogram histogramFromXML = Histogram.ReadFromXML(xElement);
             bool histogramsAreTheSame = histogram.Equals(histogramFromXML);
             Assert.True(histogramsAreTheSame);

@@ -50,7 +50,7 @@ namespace Statistics.Distributions
             _Constructed = true;
 
         }
-        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, int sampleSize = 1)
+        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, Int64 sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = standardDeviation;
@@ -212,7 +212,7 @@ namespace Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
 
-        internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
+        internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {Convert.ToDouble(n).Print()})";
         internal static string RequiredParameterization(bool printNotes = true)
         {
             string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";

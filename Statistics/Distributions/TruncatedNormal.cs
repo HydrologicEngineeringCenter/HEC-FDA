@@ -46,7 +46,7 @@ namespace Statistics.Distributions
             //Messages = msgs;
             addRules();
         }
-        public TruncatedNormal(double mean, double sd, double minValue, double maxValue, int sampleSize = 1)
+        public TruncatedNormal(double mean, double sd, double minValue, double maxValue, Int64 sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = sd;

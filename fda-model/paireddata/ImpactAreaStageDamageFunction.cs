@@ -11,6 +11,7 @@ namespace paireddata
         private IHistogram[] _Histograms;
         private string _DamageCategory;
         private int _ImpactAreaID;
+        #endregion
 
     }
 }

@@ -151,8 +151,8 @@ namespace metrics
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("ConsequenceResult");
-            masterElement.SetAttributeValue("Type", _consequenceHistogram.MyType);
-            XElement histogramElement = _consequenceHistogram.WriteToXML();
+            masterElement.SetAttributeValue("Type", _consequenceHistogram.TypeOfIHistogram);
+            XElement histogramElement = _consequenceHistogram.ToXML();
             histogramElement.Name = "DamageHistogram";
             masterElement.Add(histogramElement);
             masterElement.SetAttributeValue("DamageCategory", _damageCategory);

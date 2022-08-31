@@ -78,7 +78,7 @@ namespace Statistics.Histograms
             }
         }
 
-        public string MyType
+        public string TypeOfIHistogram
         {
             get
             {
@@ -158,7 +158,23 @@ namespace Statistics.Histograms
                 _SampleSize = value;
             }
         }
-        #endregion      
+
+        public IDistributionEnum Type
+        {
+            get
+            {
+                return IDistributionEnum.IHistogram;
+            }
+        }
+        //TODO: We can do more on this if we actually implement truncation. Until then, it is accurate to return false. 
+        public bool Truncated
+        {
+            get
+            {
+                return false;
+            }
+        }
+        #endregion
         #region Constructor
         public Histogram()
         {
@@ -600,7 +616,7 @@ namespace Statistics.Histograms
             }
             return aggregatedHistogram;
         }
-        public XElement WriteToXML()
+        public XElement ToXML()
         {
             XElement masterElem = new XElement("Histogram");
             masterElem.SetAttributeValue("Min", _Min);
@@ -704,8 +720,17 @@ namespace Statistics.Histograms
             }
             return _Converged;
         }
-        public bool Equals(IHistogram histogramToCompare)
+        public bool Equals(IDistribution distribution)
         {
+            if (distribution == null)
+            {
+                return false;
+            }
+            if (distribution.Type != IDistributionEnum.IHistogram)
+            {
+                return false;
+            }
+            IHistogram histogramToCompare = (IHistogram)distribution;
             bool convergenceCriteriaAreEqual = _ConvergenceCriteria.Equals(histogramToCompare.ConvergenceCriteria);
             if (!convergenceCriteriaAreEqual)
             {
@@ -797,6 +822,35 @@ namespace Statistics.Histograms
             Int64 biggestGuess = Math.Max(upperestimate, lowerestimate);
             Int64 remainingIters = _ConvergenceCriteria.MaxIterations - _SampleSize;
             return Convert.ToInt64(Math.Min(remainingIters, biggestGuess));
+        }
+
+        public string Print(bool round = false)
+        {
+            string histogram = $"This histogram consists of the following bin starts and bin counts:" + Environment.NewLine;
+            for (int i = 0; i < BinCounts.Length; i++)
+            {
+                histogram += $"Bin Start: {Min + BinWidth*i}, Bin Count: {BinCounts[i]}" + Environment.NewLine;
+            }
+            return histogram;
+        }
+
+        public string Requirements(bool printNotes)
+        {
+            string message = "The histogram minimally requires a bin width or a list of observations and convergence criteria.";
+            return message;
+        }
+
+        public IDistribution Sample(double[] packetOfRandomNumbers)
+        {
+            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
+            double[] samples = new double[SampleSize];
+            for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
+            return this.Fit(samples);
+        }
+
+        public IDistribution Fit(double[] data)
+        {
+            return new Histogram(data.ToList(), this.ConvergenceCriteria);
         }
 
         #endregion

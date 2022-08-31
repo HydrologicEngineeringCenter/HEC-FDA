@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace Statistics
 {
@@ -12,12 +13,12 @@ namespace Statistics
         /// The type of the statistical distribution (e.g. Normal, Triangular, etc.). 
         /// Supported distributions are listed in <see cref="IDistributionEnum"/> set of enumerated values.
         /// </summary>
-        IDistributionEnum Type { get; } 
+        IDistributionEnum Type { get; }
         /// <summary>
         /// The sample size used to fit the distribution.
         /// </summary>
         /// <remarks> If the distribution was not fit from a sample use the desired length of samples or <see cref="int.MaxValue"/> if the distribution is assumed to be a population distribution. </remarks>
-        int SampleSize { get; }
+        Int64 SampleSize { get; }
         bool Truncated { get; }
         #endregion
         #region Voids

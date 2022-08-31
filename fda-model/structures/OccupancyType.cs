@@ -26,14 +26,12 @@ namespace structures
         private UncertainPairedData _vehicleDepthPercentDamageFunction;
         private UncertainPairedData _OtherDepthPercentDamageFunction;
 
-        //error parameters
         private FirstFloorElevationUncertainty _firstFloorElevationError;
         private ValueUncertainty _structureValueError;
         private ValueUncertainty _contentValueError;
         private ValueUncertainty _vehicleValueError;
         private ValueUncertainty _otherValueError;
 
-        //value ratios
         private ValueRatioWithUncertainty _contentToStructureValueRatio;
         private ValueRatioWithUncertainty _otherToStructureValueRatio;
         #endregion
