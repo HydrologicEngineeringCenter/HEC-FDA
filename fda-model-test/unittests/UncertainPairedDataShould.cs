@@ -7,6 +7,7 @@ using System;
 using Statistics.Distributions;
 using System.Runtime.Remoting;
 using System.Threading.Tasks;
+using Statistics.Histograms;
 
 namespace fda_model_test.unittests
 {
@@ -120,7 +121,7 @@ namespace fda_model_test.unittests
             IDistribution[] yvalsTriangular = new IDistribution[countByOnes.Length];
             for (int i = 0; i < countByOnes.Length; i++)
             {
-                yvalsTriangular[i] = new Triangular(countByOnes[i] * minSlope,countByOnes[i] * minSlope * 1.5, countByOnes[i] * maxSlope, 10);
+                yvalsTriangular[i] = new Triangular(countByOnes[i] * minSlope, countByOnes[i] * minSlope * 1.5, countByOnes[i] * maxSlope, 10);
             }
 
             IDistribution[] yvalsNormal = new IDistribution[countByOnes.Length];
@@ -131,7 +132,7 @@ namespace fda_model_test.unittests
 
             IEnumerable<IDistribution[]> list = new List<IDistribution[]>() { yvalsDeterministic, yvalsNormal, yvalsTriangular, yvalsUniform };
 
-            foreach(IDistribution[] yvals in list)
+            foreach (IDistribution[] yvals in list)
             {
                 UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, curveMetaData);
                 XElement ele = upd.WriteToXML();
@@ -159,5 +160,56 @@ namespace fda_model_test.unittests
 
             }
         }
+            [Fact]
+            public void HistogramUncertaintyShouldSampleCorrectly()
+            {
+            //Arrange
+            int computePoints = 10;
+            Histogram[] histograms = new Histogram[computePoints];
+            double[] stages = new double[computePoints];
+            double[] expectedMeans = new double[computePoints];
+            for (int i = 0; i < computePoints; i++)
+            {
+                stages[i] = i * 10;
+                histograms[i] = FillHistogram(i);
+                expectedMeans[i] = i+.5;
+            }
+            UncertainPairedData uncertainPairedData = new UncertainPairedData(stages, histograms, curveMetaData);
+            double medianProbability = 0.5;
+
+            //Act
+            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability);
+            double tolerance = 0.05;
+
+            //Assert
+            for (int i = 0; i < computePoints; i++)
+            {
+                double mean = pairedData.Yvals[i];
+                double expectedMean = expectedMeans[i];
+                double difference = Math.Abs(mean - expectedMean);
+                double relativeDifference = difference / expectedMean;
+                Assert.True(relativeDifference < tolerance);
+            }
+            
+            }
+
+
+            private Histogram FillHistogram(int mean)
+            {
+                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+                int seed = 1234;
+                int iterations = 1000;
+                List<double> data = new List<double>();
+                Normal normal = new Normal(mean + .5, mean / 2);
+                Random random = new Random(seed);
+                for (int i = 0; i < iterations; i++)
+                {
+                    double sampledValue = normal.InverseCDF(random.NextDouble());
+                    data.Add(sampledValue);
+                }
+                Histogram histogram = new Histogram(data, convergenceCriteria);
+                return histogram;
+            }
+        
     }
 }
