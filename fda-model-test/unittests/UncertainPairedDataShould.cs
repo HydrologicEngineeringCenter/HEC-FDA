@@ -20,6 +20,7 @@ namespace fda_model_test.unittests
         static string yLabel = "y label";
         static string name = "name";
         static int id = 1;
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name);
 
         [Theory]
         [InlineData(1.0, 2.0, .5, 1.5)]
@@ -32,7 +33,7 @@ namespace fda_model_test.unittests
             {
                 yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name);
+            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, curveMetaData);
             IPairedData pd = upd.SamplePairedData(probability);
             double actual = pd.Yvals[0] / pd.Xvals[0];
             Assert.Equal(expectedSlope, actual);
@@ -49,7 +50,7 @@ namespace fda_model_test.unittests
             {
                 yvals[i] = new Uniform(countByOnes[i]*minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, xLabel, yLabel, name);
+            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, curveMetaData);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
@@ -77,7 +78,7 @@ namespace fda_model_test.unittests
             {
                 yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, xLabel, yLabel, name);
+            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, curveMetaData);
             int arraySize = 1000;
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
@@ -132,7 +133,7 @@ namespace fda_model_test.unittests
 
             foreach(IDistribution[] yvals in list)
             {
-                UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name);
+                UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, curveMetaData);
                 XElement ele = upd.WriteToXML();
                 UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
 
