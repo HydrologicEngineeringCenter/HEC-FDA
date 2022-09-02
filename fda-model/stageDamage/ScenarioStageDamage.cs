@@ -31,15 +31,18 @@ namespace stageDamage
         #endregion
 
         #region Methods 
-        public ScenarioStageDamageResults Compute(RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria)
+        public List<UncertainPairedData> Compute(RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria)
         {
-            List<ImpactAreaStageDamageFunction> scenarioStageDamageResults = new List<ImpactAreaStageDamageFunction>();
+            List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
             foreach(ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
-                ImpactAreaStageDamageFunction impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider, convergenceCriteria, _Stages, _Inventory, _OccupancyType);
-                scenarioStageDamageResults.Add(impactAreaStageDamageResults);
+                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider, convergenceCriteria, _Stages, _Inventory, _OccupancyType);
+                foreach(UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
+                {
+                    scenarioStageDamageResults.Add(uncertainPairedData);
+                }
             }
-            return new ScenarioStageDamageResults(scenarioStageDamageResults);
+            return scenarioStageDamageResults;
         }
 
         #endregion
