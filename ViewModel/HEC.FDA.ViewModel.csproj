@@ -59,7 +59,6 @@
 	<ItemGroup>
 		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.22.2150" />
 		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
-		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
 		<PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
