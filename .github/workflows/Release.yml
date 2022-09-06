@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
     - name: Publish
-      run: dotnet publish HEC.FDA.View.csproj
+      run: dotnet publish View/HEC.FDA.View.csproj
 
     - name: upload artifact to release
       uses: actions/upload-release-asset@v1
