@@ -13,7 +13,7 @@
   <PropertyGroup>
     <StartupObject>HEC.FDA.View.App</StartupObject>
   </PropertyGroup>
-	
+
   <ItemGroup>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
@@ -65,13 +65,6 @@
     <Resource Include="UI_RES\Title_top_left.png" />
     <Resource Include="UI_RES\Title_top_middle.png" />
     <Resource Include="UI_RES\Title_top_right.png" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <None Update="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -208,7 +201,6 @@
   <ItemGroup>
     <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.29.1627" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
-    <PackageReference Include="NLog.Config" Version="4.6.7" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
     <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
     <PackageReference Include="SciChart" Version="6.1.0.13075" />
