@@ -92,13 +92,19 @@ namespace HEC.FDA.View.Study
 
         private void QuickStartGuide_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://www.hec.usace.army.mil/confluence/display/FDAQSG/HEC-FDA+Quick+Start+Guide"));
+            string quickStartLink = "https://www.hec.usace.army.mil/confluence/display/FDAQSG/HEC-FDA+Quick+Start+Guide";
+            ProcessStartInfo startInfo = new ProcessStartInfo(quickStartLink);
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo);
             e.Handled = true;
         }
 
         private void Discourse_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://discourse.hecdev.net/c/fda/33"));
+            string discourseLink = "https://discourse.hecdev.net/c/fda/33";
+            ProcessStartInfo startInfo = new ProcessStartInfo(discourseLink);
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo); 
             e.Handled = true;
         }
 
