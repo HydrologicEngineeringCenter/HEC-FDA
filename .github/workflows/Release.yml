@@ -34,7 +34,7 @@ jobs:
       run: dotnet publish View/HEC.FDA.View.csproj
 
     - name: Zip
-      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\
+      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
 
     - name: upload artifact to release
       uses: actions/upload-release-asset@v1
