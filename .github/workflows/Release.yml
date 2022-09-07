@@ -1,41 +1,41 @@
-name: Release
+#name: Release
 
-on:
-  release:
-    types: [ created ]
+#on:
+#  release:
+#    types: [ created ]
 
-jobs:
-  Build:
-    runs-on: windows-latest      
-    permissions:
-        contents: write
-    env:
-      Solution_Name: Fda.sln                                  
+#jobs:
+#  Build:
+#    runs-on: windows-latest      
+#    permissions:
+#        contents: write
+#    env:
+#      Solution_Name: Fda.sln                                  
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v2
+#      with:
+#        fetch-depth: 0
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+#    - name: Setup MSBuild.exe
+#      uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Add Source
-      run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+#    - name: Add Source
+#      run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
 
-    - name: Publish
-      run: dotnet publish View/HEC.FDA.View.csproj
+#    - name: Publish
+#      run: dotnet publish View/HEC.FDA.View.csproj
 
-    - name: Zip
-      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
+#    - name: Zip
+#      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
 
-    - name: upload artifact to release
-      uses: actions/upload-release-asset@v1
-      env:
-            GITHUB_TOKEN: ${{ github.token }}
-      with:
-         upload_url: github.event.release.upload_url
-         asset_path: HEC-FDA.7z
-         asset_name: HEC-FDA.7z
-         asset_content_type: application/zip
+#    - name: upload artifact to release
+#      uses: actions/upload-release-asset@v1
+#      env:
+#            GITHUB_TOKEN: ${{ github.token }}
+#      with:
+#         upload_url: github.event.release.upload_url
+#         asset_path: HEC-FDA.7z
+#         asset_name: HEC-FDA.7z
+#         asset_content_type: application/zip
