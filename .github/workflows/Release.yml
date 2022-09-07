@@ -34,7 +34,7 @@ jobs:
       run: dotnet publish View/HEC.FDA.View.csproj
 
     - name: WorkingDir
-      run: echo ${{GITHUB_WORKSPACE}}
+      run: echo ${{github.GITHUB_WORKSPACE}}
 
     - name: Zip
       run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\
