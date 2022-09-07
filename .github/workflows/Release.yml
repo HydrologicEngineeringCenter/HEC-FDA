@@ -34,7 +34,7 @@ jobs:
       run: dotnet publish View/HEC.FDA.View.csproj
 
     - name: Zip
-      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\
+      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
 
     - name: upload artifact to release
       uses: actions/upload-release-asset@v1
@@ -42,6 +42,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
       with:
          upload_url:  ${{ steps.get_release.outputs.upload_url }}
-         asset_path: D:\a\HEC-FDA\HEC-FDA\Build\publish\HEC-FDA.7z
+         asset_path: D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\HEC-FDA.7z
          asset_name: HEC-FDA.7z
          asset_content_type: application/zip
