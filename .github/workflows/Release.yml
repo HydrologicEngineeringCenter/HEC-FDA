@@ -33,5 +33,5 @@ jobs:
     - name: upload artifact to release
       uses: shogo82148/actions-upload-release-asset@v1.6.2
       with:
-         upload_url: github.event.release.upload_url
+         upload_url: ${{ github.event.release.upload_url }}
          asset_path: HEC-FDA.7z
