@@ -3,7 +3,7 @@ using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
 
-namespace fda_hydro.hydraulics
+namespace fda_model.hydraulics
 {
     public class HydraulicProfile:IComparable
     {
