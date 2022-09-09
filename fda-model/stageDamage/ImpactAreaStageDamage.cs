@@ -17,7 +17,7 @@ using fda_model.hydraulics;
 
 namespace stageDamage
 {
-    public class ImpactAreaStageDamage : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    public class ImpactAreaStageDamage : Validation, IReportMessage
     {
         #region Fields 
         private const double MIN_PROBABILITY = 0.0001;
@@ -26,7 +26,6 @@ namespace stageDamage
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
-        private HydraulicDataset hydraulicDataset;
 
         #endregion
 
@@ -34,14 +33,13 @@ namespace stageDamage
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, HydraulicDataset hydraulic)
+        public ImpactAreaStageDamage(int impactAreaID, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null)
         {
             //TODO: Validate provided functions here
             _AnalyticalFlowFrequency = analyticalFlowFrequency;
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-            hydraulicDataset = hydraulic;
 
         }
         #endregion
@@ -50,7 +48,7 @@ namespace stageDamage
         //TODO: This compute produces the uncertain paired data
         //That means that we need to have all hydraulic profiles available 
         //The list of stages to me appears to mean that we won't 
-        public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, List<double> stages, Inventory inventory, List<OccupancyType> occupancyType)
+        public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, List<double> stages, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
         {
             List<string> damageCategories = inventory.GetUniqueDamageCatagories();
             //I think we are going to have a list of ImpactAreaStageDamageFUnctions - one for each damage category 
