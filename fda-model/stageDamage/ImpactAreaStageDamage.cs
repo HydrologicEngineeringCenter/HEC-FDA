@@ -57,6 +57,8 @@ namespace stageDamage
             //Find the min stage and max stage for the impact area index location 
             double minStage;
             double maxStage;
+            //TODO we need a stage-frequency function to reference for the compute below. 
+
             if(_AnalyticalFlowFrequency != null)
             {
                 if (_DischargeStage != null)
@@ -115,8 +117,17 @@ namespace stageDamage
                 return results;
             }
 
-  
+
             //Step 2: Find the deltas 
+
+            //have to get water
+            //this will consist of a hydraulic profile that will have info on terrain, WSEs, we need to give set of points, 
+            //will spit back list of double indexed to given points
+            //we'll need to identify the AEP 
+            //because we want the most frequent for the first part of this algorithm
+
+            List<double> depths = inventory.getWater(water);
+            
 
             //Step 3 compute damage by iterating over stages. 
             //One iteration gets 
