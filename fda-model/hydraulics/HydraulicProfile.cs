@@ -1,10 +1,11 @@
 ﻿using fda_model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
+using System;
 
 namespace fda_hydro.hydraulics
 {
-    public class HydraulicProfile
+    public class HydraulicProfile:IComparable
     {
         public double Probability { get; set; }
         public string FilePath { get; set; }
@@ -69,6 +70,22 @@ namespace fda_hydro.hydraulics
             }
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref depthVals);
             return depthVals;
+        }
+        /// <summary>
+        /// allows for sorting based on probability of the profile.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+
+            HydraulicProfile otherProfile = obj as HydraulicProfile;
+            if (otherProfile != null)
+                return this.Probability.CompareTo(otherProfile.Probability);
+            else
+                throw new ArgumentException("Object is not a Temperature");
         }
     }
 }
