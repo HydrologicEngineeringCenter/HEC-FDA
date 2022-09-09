@@ -13,6 +13,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
+using fda_model.hydraulics;
 
 namespace stageDamage
 {
@@ -25,6 +26,7 @@ namespace stageDamage
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
+        private HydraulicDataset hydraulicDataset;
 
         #endregion
 
@@ -32,13 +34,14 @@ namespace stageDamage
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null)
+        public ImpactAreaStageDamage(int impactAreaID, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, HydraulicDataset hydraulic)
         {
             //TODO: Validate provided functions here
             _AnalyticalFlowFrequency = analyticalFlowFrequency;
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
+            hydraulicDataset = hydraulic;
 
         }
         #endregion
