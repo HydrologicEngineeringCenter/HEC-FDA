@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace fda_hydro.hydraulics
+namespace fda_model.hydraulics
 {
     public class HydraulicDataset
     {
