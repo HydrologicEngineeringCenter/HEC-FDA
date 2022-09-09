@@ -52,7 +52,7 @@ namespace Statistics
         {           
             string name = xElement.Name.ToString();
             string libraryName = "Statistics";//this libraries name and the appropriate namespace.
-            ObjectHandle objectHandle = System.Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
+            ObjectHandle objectHandle = Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
             IDistribution iDistribution = objectHandle.Unwrap() as IDistribution;
   
                 PropertyInfo[] propertyList = iDistribution.GetType().GetProperties();
