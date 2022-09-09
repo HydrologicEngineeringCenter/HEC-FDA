@@ -37,6 +37,10 @@ namespace HEC.FDA.View.Alternatives.Results
             Grid.SetColumn(_chart, 1);
 
             vm.PlotHistogram();
+            if(!vm.HistogramVisible)
+            {
+                _chart.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -50,6 +54,10 @@ namespace HEC.FDA.View.Alternatives.Results
                 if (_chart != null)
                 {
                     _chart.DataContext = vm.ChartViewModel;
+                    if (!vm.HistogramVisible)
+                    {
+                        _chart.Visibility = Visibility.Collapsed;
+                    }
                 }
                 frequency_textblock.Text = vm.ProbabilityExceedsValueLabel;
             }          

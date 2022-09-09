@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     {
         private HistogramData2D _data;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
+        public bool HistogramVisible { get; set; } = true;
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
@@ -118,11 +119,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     break;
             }
 
-            double[] binValues = histogram.BinCounts.Select(binCount => (double)binCount/histogram.SampleSize).ToArray();
+            CreateHistogramData(histogram);
 
-            _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-            HistogramColor.SetHistogramColor(_data);
-            ChartViewModel.LineData.Add(_data);
         }
 
         private void LoadHistogramData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
@@ -142,12 +140,28 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     break;
             }
 
+            CreateHistogramData(histogram);
+        }
+
+        private void CreateHistogramData(IHistogram histogram)
+        {
             if (histogram != null)
             {
-                double[] binValues = histogram.BinCounts.Select(i => (double)i/histogram.SampleSize).ToArray();
-                _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-                HistogramColor.SetHistogramColor(_data);
-                ChartViewModel.LineData.Add(_data);
+                double[] binValues = histogram.BinCounts.Select(i => (double)i / histogram.SampleSize).ToArray();
+                if (binValues.Length == 0 || binValues.Length == 1)
+                {
+                    HistogramVisible = false;
+                }
+                else
+                {
+                    _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+                    HistogramColor.SetHistogramColor(_data);
+                    ChartViewModel.LineData.Add(_data);
+                }
+            }
+            else
+            {
+                HistogramVisible = false;
             }
         }
 

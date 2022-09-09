@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             WithoutProjAltID = withoutProjectAltId;
             WithProjAltIDs = withProjAlternativeIds;
 
-            AddDefaultActions(EditAlternative);
+            AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_COMP_REPORTS_MENU);
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
@@ -60,7 +60,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 WithProjAltIDs.Add(iasID);
             }
 
-            AddDefaultActions(EditAlternative);
+            AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_COMP_REPORTS_MENU);
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;

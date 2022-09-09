@@ -57,13 +57,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult IsStageDamageValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            //stage damages
-            List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
-            if (stageDamageCurves.Count == 0)
+            if (_StageDamageElem == null)
             {
-                //todo: maybe get the impact area name for this message?
-                vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
-                    "with the impact area.");
+                vr.AddErrorMessage("The selected aggregated stage damage element no longer exists. Edit the senario and select a new one.");
+            }
+            else
+            {
+                List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+                if (stageDamageCurves.Count == 0)
+                {
+                    //todo: maybe get the impact area name for this message?
+                    vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
+                        "with the impact area.");
+                }
             }
             return vr;
         }
@@ -118,7 +124,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private List<StageDamageCurve> GetStageDamageCurves()
         {
-            List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+            List<StageDamageCurve> stageDamageCurves = new List<StageDamageCurve>();
+            if (_StageDamageElem != null)
+            {
+                stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+            }
             return stageDamageCurves;
         }
 
