@@ -12,6 +12,7 @@ namespace fda_model.hydraulics
         public HydraulicDataset(List<HydraulicProfile> profiles)
         {
             profiles.Sort();
+            profiles.Reverse();
             HydraulicProfiles = profiles;
         }
         

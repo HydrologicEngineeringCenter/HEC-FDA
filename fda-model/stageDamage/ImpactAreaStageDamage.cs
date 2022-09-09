@@ -48,7 +48,7 @@ namespace stageDamage
         //TODO: This compute produces the uncertain paired data
         //That means that we need to have all hydraulic profiles available 
         //The list of stages to me appears to mean that we won't 
-        public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, List<double> stages, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
+        public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
         {
             List<string> damageCategories = inventory.GetUniqueDamageCatagories();
             //I think we are going to have a list of ImpactAreaStageDamageFUnctions - one for each damage category 
@@ -127,7 +127,10 @@ namespace stageDamage
             //we'll need to identify the AEP 
             //because we want the most frequent for the first part of this algorithm
 
-            List<double> depths = inventory.getWater(water);
+            //Hydraulic profiles will be sorted. need to verify the order with a unit test. Should be descending probability. 
+            List < HydraulicProfile > profileList = hydraulicDataset.HydraulicProfiles;
+            HydraulicProfile lowestProfile = profileList[0];
+            float[] depths = lowestProfile.GetDepths(inventory.GetPointMs());
             
 
             //Step 3 compute damage by iterating over stages. 
