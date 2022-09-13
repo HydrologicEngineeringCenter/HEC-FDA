@@ -60,6 +60,8 @@ namespace stageDamage
             double maxStage;
             //TODO we need a stage-frequency function to reference for the compute below. 
 
+            PairedData stageFrequency;
+
             if(_AnalyticalFlowFrequency != null)
             {
                 if (_DischargeStage != null)
@@ -71,6 +73,10 @@ namespace stageDamage
                     double maxFLow = _AnalyticalFlowFrequency.InverseCDF(MAX_PROBABILITY);
                     IPairedData maxStagesOnRating = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
                     maxStage = maxStagesOnRating.f(maxFLow);
+
+                    Tuple<double[],double[]>  flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates();
+                    PairedData flowFrequencyPairedData = new PairedData(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
+                    stageFrequency = _DischargeStage.SamplePairedData(0.5).compose(flowFrequencyPairedData) as PairedData;
                 }
                 else
                 {
@@ -87,10 +93,14 @@ namespace stageDamage
                     minStage = minStages.Yvals[0];
                     IPairedData maxStages = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
                     maxStage = maxStages.Yvals[maxStages.Yvals.Length - 1];
+                    stageFrequency = _GraphicalFrequency.SamplePairedData(0.5) as PairedData;
                 } else
                 {
                     if (_DischargeStage != null)
                     {
+                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(0.5) as PairedData;
+                        stageFrequency = _DischargeStage.SamplePairedData(0.5).compose(flowFrequencyPairedData) as PairedData;
+
                         IPairedData minFlows = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
                         double minFlow = minFlows.Yvals[0];
                         IPairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
@@ -131,6 +141,7 @@ namespace stageDamage
             List < HydraulicProfile > profileList = hydraulicDataset.HydraulicProfiles;
             HydraulicProfile lowestProfile = profileList[0];
             float[] depths = lowestProfile.GetDepths(inventory.GetPointMs());
+
             
 
             //Step 3 compute damage by iterating over stages. 
