@@ -23,10 +23,8 @@ namespace fda_model.hydraulics
         }
         public float[] GetDepths(PointMs pts)
         {
-            // Terrain is going to get sampled every time unnecessarily. This is an opportunity for refactor
-            //create feature layers for the standard inputs
+            
             TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
-            // get terrain elevations
             float[] terrainElevs = terrain.ComputePointElevations(pts);
             // Construct a result from the given filename.
 
@@ -71,6 +69,8 @@ namespace fda_model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref depthVals);
             return depthVals;
         }
+
+
         /// <summary>
         /// allows for sorting based on probability of the profile.
         /// </summary>
