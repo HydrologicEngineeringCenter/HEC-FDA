@@ -12,13 +12,15 @@ namespace structures
         public double StructDamage { get; set; }
         public double ContentDamage { get; set; }
         public double VehicleDamage { get; set; }
+        public string DamageCategory { get; set; }
         //TODO we probably want some other constructor so that all we do is add result iteratively and not worry about constructing with initial conditions 
-        public StructureDamageResult(double structDamage, double contentDamage, double vehicleDamage, double otherDamage)
+        public StructureDamageResult(double structDamage, double contentDamage, double vehicleDamage, double otherDamage, string damageCategory)
         {
             StructDamage = structDamage;
             ContentDamage = contentDamage;
             VehicleDamage = vehicleDamage;
             OtherDamage = otherDamage;
+            DamageCategory = damageCategory;
         }
         
         public void AddResult(StructureDamageResult structureDamageResult)

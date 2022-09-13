@@ -140,8 +140,30 @@ namespace stageDamage
             //Hydraulic profiles will be sorted. need to verify the order with a unit test. Should be descending probability. 
             List < HydraulicProfile > profileList = hydraulicDataset.HydraulicProfiles;
             HydraulicProfile lowestProfile = profileList[0];
-            float[] depths = lowestProfile.GetDepths(inventory.GetPointMs());
+            float[] depthsAtLowest = lowestProfile.GetDepths(inventory.GetPointMs());
 
+            double stageAtLowestProfile = stageFrequency.f(lowestProfile.Probability);
+
+            float maxDelta = (float)(stageAtLowestProfile - minStage); 
+            int numIntermediateStagesToCompute = 15; //TODO: make this number meaningful.
+            float interval = maxDelta/ numIntermediateStagesToCompute;
+            float[] stagesToCompute = new float[numIntermediateStagesToCompute];
+            for(int i = 0; i < numIntermediateStagesToCompute; i++)
+            {
+                stagesToCompute[i] = maxDelta + interval*i;
+            }
+
+
+            for (int i = 0; i < numIntermediateStagesToCompute; i++) 
+            {
+                float[] depths = new float[depthsAtLowest.Length];
+                int count = 0;
+                foreach(float depth in depthsAtLowest)
+                {
+                    depths[count]=depthsAtLowest[i] - maxDelta;
+                }
+                
+            }
             
 
             //Step 3 compute damage by iterating over stages. 
