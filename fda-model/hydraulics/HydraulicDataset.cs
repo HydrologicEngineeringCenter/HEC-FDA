@@ -15,7 +15,5 @@ namespace fda_model.hydraulics
             profiles.Reverse();
             HydraulicProfiles = profiles;
         }
-        
-        //TODO: correct depths in profiles to be -2 and -9 for dry. 
     }
 }
