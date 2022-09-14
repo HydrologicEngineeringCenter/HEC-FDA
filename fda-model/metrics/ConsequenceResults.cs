@@ -80,11 +80,10 @@ namespace metrics
             {
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
-        }
-        public void IncrementConsequenceRealization(string damageCategory, int impactAreaID, double structureDamage, double contentDamage = 0, double otherDamage = 0, double vehicleDamage = 0)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, impactAreaID);
-            damageResult.IncrementConsequence(structureDamage, contentDamage, vehicleDamage, otherDamage);
+            else
+            {
+                consequenceResult.IncrementConsequence(consequenceResultToAdd.StructureDamage, consequenceResultToAdd.ContentDamage, consequenceResultToAdd.VehicleDamage, consequenceResultToAdd.OtherDamage);
+            }
         }
 
         /// <summary>
