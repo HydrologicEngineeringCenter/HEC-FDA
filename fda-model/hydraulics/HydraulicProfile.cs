@@ -48,7 +48,7 @@ namespace fda_model.hydraulics
         {
             var rasResult = new RASResults(FilePath);
             var rasGeometry = rasResult.Geometry;
-            var rasWSMap = new RASResultsMap(rasResult, MapTypes.Depth);
+            var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
             // Sample the geometry for the given points loaded from the shapefile.
             // If the geometry is the same for all of the results, we can actually reuse this object.
