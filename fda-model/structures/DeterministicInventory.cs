@@ -19,13 +19,6 @@ namespace structures
         {
             //assume each structure has a corresponding index to the depth
             ConsequenceResults consequenceResults = new ConsequenceResults();
-            foreach (int impactArea in _ImpactAreaIDs)
-            {
-                foreach (string damageCategory in _DamageCategories)
-                {
-                    consequenceResults.AddNewConsequenceResultObject(damageCategory, impactArea);
-                }
-            }
             for (int i = 0; i < Inventory.Count; i++)
             {
                 float depth = depths[i];
@@ -33,11 +26,6 @@ namespace structures
                 {
                     consequenceResults.AddExistingConsequenceResultObject(Inventory[i].ComputeDamage(depth));
                 }
-                else
-                {
-                    consequenceResults.AddExistingConsequenceResultObject(new ConsequenceResult());
-                }
-
             }
             return consequenceResults;
         }
