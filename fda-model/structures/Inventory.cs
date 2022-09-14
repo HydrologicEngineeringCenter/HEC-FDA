@@ -1,5 +1,4 @@
 ﻿using RasMapperLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,11 +35,13 @@ namespace structures
             _structures = new List<Structure>();
             for (int i = 0; i < structureInventory.FeatureCount(); i++)
             {
-
+                //TODO: check behavior when header does not exist
+                //TODO: Check RAS Mapper behavior on pulling rows from shapefiles. 
                 PointM point = pointMs[i];
                 var row = structureInventory.FeatureRow(i);
                 int fid = (int)row["fd_id"];
                 double found_ht = (double)row["found_ht"];
+                double ground_elev = (double)row["ground_elev"];
                 double val_struct = (double)row["val_struct"];
                 double val_cont = (double)row["val_cont"];
                 double val_vehic = (double)row["val_vehic"];
@@ -48,6 +49,11 @@ namespace structures
                 string st_damcat = (string)row["st_damcat"];
                 string occtype = (string)row["occtype"];
                 string cbfips = (string)row["cbfips"];
+                double ff_elev = (double)row["ff_elev"];
+                if(ff_elev == null)
+                {
+                    ff_elev = ground_elev + found_ht;
+                }
                 int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
                 _structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
             }
