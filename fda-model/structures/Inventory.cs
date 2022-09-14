@@ -11,43 +11,18 @@ namespace structures
     {
         private List<Structure> _structures;
         private List<OccupancyType> _Occtypes;
+        private List<string> _damageCategories;
+        private List<int> _impactAreaIDs; 
         public List<Structure> Structures { get; set; }
-        public List<string> ImpactAreas
+        public List<int> ImpactAreas
         {
-            get
-            {
-                List<string> impactAreas = new List<string>();
-                foreach (var structure in Structures)
-                {
-                    if (!impactAreas.Contains(structure.ImpactAreaID.ToString()))
-                    {
-                        impactAreas.Add(structure.ImpactAreaID.ToString());
-                    }
-                }
-                return impactAreas;
-            }
+            get { return _impactAreaIDs; }
+        }
+        public List<string> DamageCategories
+        {
+            get { return _damageCategories; }
         }
 
-        /// <summary>
-        /// Loops through entire inventory and reports back a list of all the unique damage catagories associated with the structures
-        /// </summary>
-        /// <returns></returns>
-        public List<string> GetUniqueDamageCatagories()
-        {
-            List<string> damageCatagories = new List<string>();
-            foreach (Structure structure in Structures)
-            {
-                if (damageCatagories.Contains(structure.DamageCatagory))
-                {
-                    continue;
-                }
-                else
-                {
-                    damageCatagories.Add(structure.DamageCatagory);
-                }
-            }
-            return damageCatagories;
-        }
 
 
         /// <summary>
@@ -76,6 +51,8 @@ namespace structures
                 int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
                 _structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
             }
+            GetUniqueImpactAreas();
+            GetUniqueDamageCatagories();
         }
         // Will need a constructor/load from Database ; 
 
@@ -84,8 +61,41 @@ namespace structures
         {
             _structures = structures;
             _Occtypes = occTypes;
+            GetUniqueImpactAreas();
+            GetUniqueDamageCatagories();
         }
-
+        private void GetUniqueImpactAreas()
+        {
+            List<int> impactAreas = new List<int>();
+            foreach (var structure in Structures)
+            {
+                if (!impactAreas.Contains(structure.ImpactAreaID))
+                {
+                    impactAreas.Add(structure.ImpactAreaID);
+                }
+            }
+            _impactAreaIDs = impactAreas;
+        }
+        /// <summary>
+        /// Loops through entire inventory and reports back a list of all the unique damage catagories associated with the structures
+        /// </summary>
+        /// <returns></returns>
+        private void GetUniqueDamageCatagories()
+        {
+            List<string> damageCatagories = new List<string>();
+            foreach (Structure structure in Structures)
+            {
+                if (damageCatagories.Contains(structure.DamageCatagory))
+                {
+                    continue;
+                }
+                else
+                {
+                    damageCatagories.Add(structure.DamageCatagory);
+                }
+            }
+            _damageCategories = damageCatagories;
+        }
         public Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
         {
             List<Structure> filteredStructureList = new List<Structure>();
@@ -146,7 +156,7 @@ namespace structures
                 }
                 //it is possible that if an occupancy type doesnt exist a structure wont get added...
             }
-            return new DeterministicInventory(inventorySample);
+            return new DeterministicInventory(inventorySample, _impactAreaIDs, _damageCategories);
         }
     }
 }

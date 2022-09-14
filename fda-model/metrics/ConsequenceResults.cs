@@ -42,7 +42,15 @@ namespace metrics
             _consequenceResultList = new List<ConsequenceResult>();
             ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
             _consequenceResultList.Add(dummyConsequenceResult);
-            _isNull = true;
+            _isNull = false;
+            MessageHub.Register(this);
+        }
+        internal ConsequenceResults(bool isNull)
+        {
+            _consequenceResultList = new List<ConsequenceResult>();
+            ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
+            _consequenceResultList.Add(dummyConsequenceResult);
+            _isNull = isNull;
             MessageHub.Register(this);
         }
         private ConsequenceResults(List<ConsequenceResult> damageResults)

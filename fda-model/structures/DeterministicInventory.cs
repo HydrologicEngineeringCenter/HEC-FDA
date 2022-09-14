@@ -1,34 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using metrics;
+using System.Collections.Generic;
 
 namespace structures
 {
     public class DeterministicInventory
     {
+        private List<int> _ImpactAreaIDs;
+        private List<string> _DamageCategories;
         public IList<DeterministicStructure> Inventory;
 
-        public DeterministicInventory(IList<DeterministicStructure> inventorySample)
+        public DeterministicInventory(IList<DeterministicStructure> inventorySample, List<int> impactAreaIDs, List<string> damageCategories)
         {
             Inventory = inventorySample;
+            _ImpactAreaIDs = impactAreaIDs;
+            _DamageCategories = damageCategories;
         }
-        public List<StructureDamageResult> ComputeDamages(float[] depths)
+        public ConsequenceResults ComputeDamages(float[] depths)
         {
             //assume each structure has a corresponding index to the depth
-            List<StructureDamageResult> results = new List<StructureDamageResult>();
-            StructureDamageResult nodamage = new StructureDamageResult(0, 0, 0, 0);
+            ConsequenceResults consequenceResults = new ConsequenceResults();
+            foreach (int impactArea in _ImpactAreaIDs)
+            {
+                foreach (string damageCategory in _DamageCategories)
+                {
+                    consequenceResults.AddNewConsequenceResultObject(damageCategory, impactArea);
+                }
+            }
             for (int i = 0; i < Inventory.Count; i++)
             {
                 float depth = depths[i];
                 if (depth != -9999)
                 {
-                    results.Add(Inventory[i].ComputeDamage(depth));
+                    consequenceResults.AddExistingConsequenceResultObject(Inventory[i].ComputeDamage(depth));
                 }
                 else
                 {
-                    results.Add(nodamage);
+                    consequenceResults.AddExistingConsequenceResultObject(new ConsequenceResult());
                 }
 
             }
-            return results;
+            return consequenceResults;
         }
     }
 }

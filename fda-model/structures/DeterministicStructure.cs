@@ -1,4 +1,6 @@
-﻿namespace structures
+﻿using metrics;
+
+namespace structures
 {
     public class DeterministicStructure
     {//TODO: How are we going to handle parameters that are not being used?
@@ -34,7 +36,7 @@
 
         //TODO: We do not want to return a new structure damage result every time 
         #region Methods
-        public StructureDamageResult ComputeDamage(float waterSurfaceElevation)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation)
         {
             double depthabovefoundHeight = waterSurfaceElevation - FirstFloorElevation;
 
@@ -54,7 +56,10 @@
             double otherDamagePercent = _sampledStructureParameters.OtherDamagePairedData.f(depthabovefoundHeight);
             double otherDamage = otherDamagePercent * OtherValueSample;
 
-            return new StructureDamageResult(structDamage, contDamage, vehicleDamage, otherDamage);
+
+            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
+            consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
+            return consequenceResult;
         }
         #endregion
     }
