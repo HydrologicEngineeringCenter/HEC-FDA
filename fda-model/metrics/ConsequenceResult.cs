@@ -6,7 +6,6 @@ namespace metrics
     {
         #region Fields
         private string _damageCategory;
-        private string _assetCategory;
         private int _regionID;
         private double _otherDamage = 0;
         private double _structureDamage = 0;
@@ -21,13 +20,6 @@ namespace metrics
             get
             {
                 return _damageCategory;
-            }
-        }
-        public string AssetCategory
-        {
-            get
-            {
-                return _assetCategory;
             }
         }
         public int RegionID
@@ -67,16 +59,14 @@ namespace metrics
         public ConsequenceResult()
         {
             _damageCategory = "unassigned";
-            _assetCategory = "unassigned";
             _regionID = 0;
             _isNull = true;
             
         }
 
-        internal ConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
+        internal ConsequenceResult(string damageCategory, int impactAreaID)
         {
             _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
             _regionID = impactAreaID;
             _isNull = false;
         }        
@@ -115,11 +105,6 @@ namespace metrics
             }
             bool damageCategoriesMatch = _damageCategory.Equals(damageResult.DamageCategory);
             if (!damageCategoriesMatch)
-            {
-                return false;
-            }
-            bool assetCategoriesMatch = _assetCategory.Equals(damageResult.AssetCategory);
-            if (!assetCategoriesMatch)
             {
                 return false;
             }
