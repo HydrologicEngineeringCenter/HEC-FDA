@@ -14,6 +14,8 @@ using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
 using fda_model.hydraulics;
+using metrics;
+using compute;
 
 namespace stageDamage
 {
@@ -173,6 +175,24 @@ namespace stageDamage
             //Then iterate from least frequent event to the max 
 
             return results;
+        }
+
+        //public for testing
+        //assume that the inventory has already been trimmed 
+        public ConsequenceDistributionResults ComputeDamageOneCoordinate(int seed, RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, int impactAreaID, float[] depths)
+        {
+            double lowerProb = 0.025;
+            double upperProb = .975;
+            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(convergenceCriteria);
+            Int64 iteration = 0;
+            while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
+            {
+                DeterministicInventory deterministicInventory = inventory.Sample(seed);
+                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(depths);
+                consequenceDistributionResults.AddConsequenceRealization(consequenceResults,impactAreaID,iteration);
+                iteration++;
+            }
+            return consequenceDistributionResults;
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)
