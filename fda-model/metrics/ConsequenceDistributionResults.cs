@@ -13,7 +13,12 @@ namespace metrics
     public class ConsequenceDistributionResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
-        private int _alternativeID; 
+        private string STRUCTURE_ASSET_CATEGORY = "Structure";
+        private string CONTENT_ASSET_CATEGORY = "Content";
+        private string OTHER_ASSET_CATEGORY = "Other";
+        private string VEHICLE_ASSET_CATEGRY = "Vehicle";
+        private int _alternativeID;
+        private ConvergenceCriteria _ConvergenceCriteria;
         private List<ConsequenceDistributionResult> _consequenceResultList;
         //impact area to be string?
         private bool _isNull;
@@ -67,6 +72,12 @@ namespace metrics
             _isNull = false;
             MessageHub.Register(this);
         }
+        internal ConsequenceDistributionResults(ConvergenceCriteria convergenceCriteria)
+        {
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _isNull = false;
+            _ConvergenceCriteria = convergenceCriteria;
+        }
         private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
             _consequenceResultList = damageResults;
@@ -100,6 +111,30 @@ namespace metrics
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
+        }
+        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, Int64 iteration)
+        {
+            foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
+            {
+                AddConsequenceRealizationByAssetCategory(consequenceResult.StructureDamage, consequenceResult.DamageCategory, STRUCTURE_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.ContentDamage, consequenceResult.DamageCategory, CONTENT_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.OtherDamage, consequenceResult.DamageCategory, OTHER_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.VehicleDamage, consequenceResult.DamageCategory, VEHICLE_ASSET_CATEGRY, consequenceResult.RegionID, iteration);
+            }
+        }
+        private void AddConsequenceRealizationByAssetCategory(double consequenceRealization, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        {
+            ConsequenceDistributionResult structureConsequenceDistributionResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            if (structureConsequenceDistributionResult.IsNull)
+            {
+                ConsequenceDistributionResult newStructureDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, _ConvergenceCriteria, impactAreaID);
+                newStructureDamageResult.AddConsequenceRealization(consequenceRealization, iteration);
+                _consequenceResultList.Add(newStructureDamageResult);
+            }
+            else
+            {
+                structureConsequenceDistributionResult.AddConsequenceRealization(consequenceRealization, iteration);
+            }
         }
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
