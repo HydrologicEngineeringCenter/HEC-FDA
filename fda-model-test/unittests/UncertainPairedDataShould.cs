@@ -49,7 +49,7 @@ namespace fda_model_test.unittests
             IDistribution[] yvals = new IDistribution[countByOnes.Length];
             for (int i = 0; i < countByOnes.Length; i++)
             {
-                yvals[i] = new Uniform(countByOnes[i]*minSlope, countByOnes[i] * maxSlope, 10);
+                yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
             UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, curveMetaData);
             int arraySize = 1000;
@@ -59,7 +59,7 @@ namespace fda_model_test.unittests
                 arrayOfProbabilities[i] = (((double)i + 0.5)) / ((double)arraySize);
             }
             double cumulativeArea = 0;
-            for (int i = 0; i < arraySize; i ++)
+            for (int i = 0; i < arraySize; i++)
             {
 
                 IPairedData pairedData = upd.SamplePairedData(arrayOfProbabilities[i]);
@@ -92,7 +92,7 @@ namespace fda_model_test.unittests
            {
                IPairedData pairedData = upd.SamplePairedData(arrayOfProbabilities[i]);
                double area = pairedData.integrate();
-               lock(areaLock)
+               lock (areaLock)
                {
                    cumulativeArea += area;
                }
@@ -160,9 +160,9 @@ namespace fda_model_test.unittests
 
             }
         }
-            [Fact]
-            public void HistogramUncertaintyShouldSampleCorrectly()
-            {
+        [Fact]
+        public void HistogramUncertaintyShouldSampleCorrectly()
+        {
             //Arrange
             int computePoints = 10;
             Histogram[] histograms = new Histogram[computePoints];
@@ -172,7 +172,7 @@ namespace fda_model_test.unittests
             {
                 stages[i] = i * 10;
                 histograms[i] = FillHistogram(i);
-                expectedMeans[i] = i+.5;
+                expectedMeans[i] = i + .5;
             }
             UncertainPairedData uncertainPairedData = new UncertainPairedData(stages, histograms, curveMetaData);
             double medianProbability = 0.5;
@@ -190,26 +190,25 @@ namespace fda_model_test.unittests
                 double relativeDifference = difference / expectedMean;
                 Assert.True(relativeDifference < tolerance);
             }
-            
-            }
 
+        }
 
-            private Histogram FillHistogram(int mean)
+        private Histogram FillHistogram(int mean)
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            int seed = 1234;
+            int iterations = 1000;
+            List<double> data = new List<double>();
+            Normal normal = new Normal(mean + .5, mean / 2);
+            Random random = new Random(seed);
+            for (int i = 0; i < iterations; i++)
             {
-                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-                int seed = 1234;
-                int iterations = 1000;
-                List<double> data = new List<double>();
-                Normal normal = new Normal(mean + .5, mean / 2);
-                Random random = new Random(seed);
-                for (int i = 0; i < iterations; i++)
-                {
-                    double sampledValue = normal.InverseCDF(random.NextDouble());
-                    data.Add(sampledValue);
-                }
-                Histogram histogram = new Histogram(data, convergenceCriteria);
-                return histogram;
+                double sampledValue = normal.InverseCDF(random.NextDouble());
+                data.Add(sampledValue);
             }
-        
+            Histogram histogram = new Histogram(data, convergenceCriteria);
+            return histogram;
+        }
+
     }
 }

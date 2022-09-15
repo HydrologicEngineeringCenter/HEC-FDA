@@ -73,7 +73,8 @@ namespace metrics
             _isNull = false;
             MessageHub.Register(this);
         }
-        internal ConsequenceDistributionResults(ConvergenceCriteria convergenceCriteria)
+        //public for testing
+        public ConsequenceDistributionResults(ConvergenceCriteria convergenceCriteria)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = false;
@@ -99,7 +100,8 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        internal void AddExistingConsequenceResultObject(ConsequenceDistributionResult consequenceResultToAdd)
+        //public for testing purposes
+        public void AddExistingConsequenceResultObject(ConsequenceDistributionResult consequenceResultToAdd)
         {
             ConsequenceDistributionResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
@@ -432,7 +434,7 @@ namespace metrics
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             List<int> impactAreas = yValues[yValues.Count - 1].GetImpactAreas();
             List<string> damageCategories = yValues[yValues.Count - 1].GetDamageCategories();
-            List<string> assetCategories = new List<string>() { STRUCTURE_ASSET_CATEGORY, CONTENT_ASSET_CATEGORY, OTHER_ASSET_CATEGORY, VEHICLE_ASSET_CATEGRY };
+            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories(); ;
             foreach (int impactAreaID in impactAreas)
             {
                 foreach (string damageCategory in damageCategories)
@@ -451,6 +453,19 @@ namespace metrics
                 }
             }
             return uncertainPairedDataList;
+        }
+
+        private List<string> GetAssetCategories()
+        {
+            List<string> assetCategories = new List<string>();
+            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                if (!assetCategories.Contains(consequenceDistributionResult.AssetCategory))
+                {
+                    assetCategories.Add(consequenceDistributionResult.AssetCategory);
+                }
+            }
+            return assetCategories;
         }
 
         private List<int> GetImpactAreas()
