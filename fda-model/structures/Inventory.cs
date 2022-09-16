@@ -63,41 +63,41 @@ namespace structures
         /// <param name="pointShapefilePath"></param>
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath)
         {
-            string[] columnHeaders = new string[] { "fd_id", "found_ht", "ground_elv", "val_struct", "val_cont", "val_vehic", "st_damcat", "occtype", "cbfips", "ff_elev" };
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             Structures = new List<Structure>();
-            for (int i = 0; i < structureInventory.FeatureCount(); i++)
+            try
             {
-                //TODO: check behavior when header does not exist
-                //TODO: Check RAS Mapper behavior on pulling rows from shapefiles. 
-                // if cell is empty, we'll get dbnull 
-                // if column header doesn't exist. Null - test this. 
-                PointM point = pointMs[i];
-                var row = structureInventory.FeatureRow(i);
-                int fid = TryGet<int>(row["fd_id"]);
-                double found_ht = TryGet<double>(row["found_ht"],-9999);
-                double ground_elv = TryGet<double>(row["ground_elv"]);
-                double val_struct = TryGet<double>(row["val_struct"]);
-                double val_cont = TryGet<double>(row["val_cont"]);
-                double val_vehic = TryGet<double>(row["val_vehic"]);
-                double val_other = TryGet<double>(row["val_vehic"]);
-                string st_damcat = TryGetObj<string>(row["st_damcat"]);
-                string occtype = TryGetObj<string>(row["occtype"]);
-                string cbfips = TryGetObj<string>(row["cbfips"]);
-                double ff_elev = TryGet<double>(row["ff_elev"]);
-                if(row["ff_elev"] == System.DBNull.Value)
+                for (int i = 0; i < structureInventory.FeatureCount(); i++)
                 {
-                    ff_elev = ground_elv + found_ht;
+                    PointM point = pointMs[i];
+                    var row = structureInventory.FeatureRow(i);
+                    int fid = TryGet<int>(row["fd_id"]);
+                    double found_ht = TryGet<double>(row["found_ht"]);
+                    double ground_elv = TryGet<double>(row["ground_elv"]);
+                    double val_struct = TryGet<double>(row["val_struct"]);
+                    double val_cont = TryGet<double>(row["val_cont"]);
+                    double val_vehic = TryGet<double>(row["val_vehic"]);
+                    double val_other = TryGet<double>(row["val_vehic"]);
+                    string st_damcat = TryGetObj<string>(row["st_damcat"]);
+                    string occtype = TryGetObj<string>(row["occtype"]);
+                    string cbfips = TryGetObj<string>(row["cbfips"]);
+                    double ff_elev = TryGet<double>(row["ff_elev"]);
+                    if (row["ff_elev"] == System.DBNull.Value)
+                    {
+                        ff_elev = ground_elv + found_ht;
+                    }
+                    int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
+                    Structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
                 }
-                int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
-                Structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
         }
-        // Will need a constructor/load from Database ; 
-
 
         public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
