@@ -29,8 +29,4 @@
 		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Resources\" />
-	</ItemGroup>
-
 </Project>
