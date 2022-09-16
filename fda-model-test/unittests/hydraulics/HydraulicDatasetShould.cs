@@ -25,7 +25,7 @@ namespace fda_model_test.unittests.hydraulics
             double[] probs = new double[] { 0.5, 0.99, 0.01 };
             foreach(double prob in probs)
             {
-                profiles.Add(new HydraulicProfile(prob,"","", HydraulicDataSource.UnsteadyHDF,null));
+                profiles.Add(new HydraulicProfile(prob,"", HydraulicDataSource.UnsteadyHDF,""));
             }
             HydraulicDataset dataset = new HydraulicDataset(profiles);
 
