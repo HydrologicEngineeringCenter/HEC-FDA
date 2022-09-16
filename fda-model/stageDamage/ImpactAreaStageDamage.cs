@@ -143,7 +143,7 @@ namespace stageDamage
 
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = profileList[0];
-            float[] depthsAtLowest = lowestProfile.GetDepths(inventory.GetPointMs());
+            float[] WSEAtLowest = lowestProfile.GetWSE(inventory.GetPointMs());
             double stageAtProbabilityOfLowestProfile = stageFrequency.f(lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - minStage); 
@@ -153,8 +153,8 @@ namespace stageDamage
             //Collect damage for first part of function 
             for(int i = 0; i < numIntermediateStagesToCompute; i++)
             {
-                float[] depthsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(depthsAtLowest, interval, i, numIntermediateStagesToCompute);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, depthsParallelToIndexLocation);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, numIntermediateStagesToCompute);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(minStage + i * interval);
             }
@@ -166,22 +166,22 @@ namespace stageDamage
             foreach (HydraulicProfile hydraulicProfile in profileList)
             {
                 double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
-                float[] stages = hydraulicProfile.GetDepths(inventory.GetPointMs());
+                float[] stages = hydraulicProfile.GetWSE(inventory.GetPointMs());
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
 
             //Part 3: Stages between the highest profile 
-            float[] stagesAtHighestProfile = profileList[profileList.Count-1].GetDepths(inventory.GetPointMs());
+            float[] stagesAtHighestProfile = profileList[profileList.Count-1].GetWSE(inventory.GetPointMs());
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count-1].Probability);
             float indexStationUpperStageDelta = (float)(maxStage - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
 
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
-                float[] depthsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtHighestProfile, upperInterval, i, numIntermediateStagesToCompute);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, i, depthsParallelToIndexLocation);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtHighestProfile, upperInterval, i, numIntermediateStagesToCompute);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, i, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(maxStage - upperInterval * (numIntermediateStagesToCompute - i));
             }
@@ -199,10 +199,10 @@ namespace stageDamage
             return extrapolatedStages;
         }
 
-        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] depthsAtLowest, float interval, int i, int numIntermediateStagesToCompute)
+        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numIntermediateStagesToCompute)
         {
-            float[] extrapolatedStages = new float[depthsAtLowest.Length];
-            foreach (float stage in depthsAtLowest)
+            float[] extrapolatedStages = new float[WSEsAtLowest.Length];
+            foreach (float stage in WSEsAtLowest)
             {
                 extrapolatedStages[i] = stage - interval*(numIntermediateStagesToCompute-i);
             }
@@ -211,7 +211,7 @@ namespace stageDamage
 
         //public for testing
         //assume that the inventory has already been trimmed 
-        public ConsequenceDistributionResults ComputeDamageOneCoordinate(int seed, RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, int impactAreaID, float[] depths)
+        public ConsequenceDistributionResults ComputeDamageOneCoordinate(int seed, RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, int impactAreaID, float[] wses)
         {
             double lowerProb = 0.025;
             double upperProb = .975;
@@ -220,7 +220,7 @@ namespace stageDamage
             while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
             {
                 DeterministicInventory deterministicInventory = inventory.Sample(seed);
-                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(depths);
+                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
                 consequenceDistributionResults.AddConsequenceRealization(consequenceResults,impactAreaID,iteration);
                 iteration++;
             }

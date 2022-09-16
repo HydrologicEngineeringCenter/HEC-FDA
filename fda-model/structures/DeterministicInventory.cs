@@ -15,16 +15,16 @@ namespace structures
             _ImpactAreaIDs = impactAreaIDs;
             _DamageCategories = damageCategories;
         }
-        public ConsequenceResults ComputeDamages(float[] depths)
+        public ConsequenceResults ComputeDamages(float[] wses)
         {
             //assume each structure has a corresponding index to the depth
             ConsequenceResults consequenceResults = new ConsequenceResults();
             for (int i = 0; i < Inventory.Count; i++)
             {
-                float depth = depths[i];
-                if (depth != -9999)
+                float wse = wses[i];
+                if (wse != -9999)
                 {
-                    consequenceResults.AddExistingConsequenceResultObject(Inventory[i].ComputeDamage(depth));
+                    consequenceResults.AddExistingConsequenceResultObject(Inventory[i].ComputeDamage(wse));
                 }
             }
             return consequenceResults;
