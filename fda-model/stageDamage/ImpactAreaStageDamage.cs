@@ -57,7 +57,8 @@ namespace stageDamage
             //the list of stages makes up the x values of the stage damage UPD
             List<double> allStagesAtIndexLocation = new List<double>();
             //the list of consequence distribution results will be paired with the list of stages to produce a list of UPD
-            List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
+            List<UncertainPairedData> results = new List<UncertainPairedData>();
+            List <ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
 
             //Find the min stage and max stage for the impact area index location 
             double minStage;
@@ -184,7 +185,7 @@ namespace stageDamage
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(maxStage - upperInterval * (numIntermediateStagesToCompute - i));
             }
-            List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
+            results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
 
