@@ -9,7 +9,6 @@ namespace structures
     //TODO: Figure out how to set Occupany Type Set
     public class Inventory
     {
-        private List<Structure> _structures;
         private List<OccupancyType> _Occtypes;
         private List<string> _damageCategories;
         private List<int> _impactAreaIDs; 
@@ -101,7 +100,7 @@ namespace structures
 
         public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
-            _structures = structures;
+            Structures = structures;
             _Occtypes = occTypes;
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
@@ -142,7 +141,7 @@ namespace structures
         {
             List<Structure> filteredStructureList = new List<Structure>();
 
-            foreach (Structure structure in _structures)
+            foreach (Structure structure in Structures)
             {
                 if (impactArea.Contains(structure.Point))
                 {
@@ -155,7 +154,7 @@ namespace structures
         public PointMs GetPointMs()
         {
             PointMs points = new PointMs();
-            foreach (Structure structure in _structures)
+            foreach (Structure structure in Structures)
             {
                 points.Add(structure.Point);
             }
@@ -183,7 +182,7 @@ namespace structures
             Random random = new Random(seed);
 
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
-            foreach (Structure structure in _structures)
+            foreach (Structure structure in Structures)
             {
                 foreach (OccupancyType occupancyType in _Occtypes)
                 {
