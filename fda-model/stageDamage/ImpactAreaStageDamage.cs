@@ -50,7 +50,6 @@ namespace stageDamage
         //The list of stages to me appears to mean that we won't 
         public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
         {
-            List<string> damageCategories = inventory.GetUniqueDamageCatagories();
             //I think we are going to have a list of ImpactAreaStageDamageFUnctions - one for each damage category 
             List<UncertainPairedData> results = new List<UncertainPairedData>();
             //This is where the meat of the compute lives 
