@@ -10,7 +10,6 @@ namespace fda_model.hydraulics.enums
     {
         UnsteadyHDF,
         SteadyHDF,
-        DepthGrid,
         WSEGrid
 
     }
