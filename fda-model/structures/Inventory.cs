@@ -122,7 +122,7 @@ namespace structures
         /// Loops through entire inventory and reports back a list of all the unique damage catagories associated with the structures
         /// </summary>
         /// <returns></returns>
-        private void GetUniqueDamageCatagories()
+        internal void GetUniqueDamageCatagories()
         {
             List<string> damageCatagories = new List<string>();
             foreach (Structure structure in Structures)

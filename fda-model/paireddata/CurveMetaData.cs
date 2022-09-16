@@ -9,6 +9,7 @@ namespace paireddata
 {
     public class CurveMetaData
     {
+        private int _ImpactAreaID = 0;
         public string XLabel { get; }
         public string YLabel { get; }
         public string Name { get; }
@@ -16,6 +17,13 @@ namespace paireddata
         public string AssetCategory { get; }
         public bool IsNull { get; set; }
         public CurveTypesEnum CurveType {get;}
+        public int ImpactAreaID
+        {
+            get
+            {
+                return _ImpactAreaID;
+            }
+        }
         public CurveMetaData()
         {
             CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
@@ -87,7 +95,17 @@ namespace paireddata
             AssetCategory = "unassigned";
             IsNull = false;
         }
-
+        public CurveMetaData(string xlabel, string ylabel, string name, string damageCategory, CurveTypesEnum curveType, int impactAreaID, string assetCategory = "unassigned")
+        {
+            CurveType = curveType;
+            XLabel = xlabel;
+            YLabel = ylabel;
+            Name = name;
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            IsNull = false;
+            _ImpactAreaID = impactAreaID;
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Curve_Metadata");

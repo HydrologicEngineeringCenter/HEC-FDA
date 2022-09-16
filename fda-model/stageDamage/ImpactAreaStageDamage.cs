@@ -14,6 +14,8 @@ using interfaces;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
 using fda_model.hydraulics;
+using metrics;
+using compute;
 
 namespace stageDamage
 {
@@ -50,9 +52,12 @@ namespace stageDamage
         //The list of stages to me appears to mean that we won't 
         public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
         {
-            //I think we are going to have a list of ImpactAreaStageDamageFUnctions - one for each damage category 
-            List<UncertainPairedData> results = new List<UncertainPairedData>();
-            //This is where the meat of the compute lives 
+            int seed = 1234;
+
+            //the list of stages makes up the x values of the stage damage UPD
+            List<double> allStagesAtIndexLocation = new List<double>();
+            //the list of consequence distribution results will be paired with the list of stages to produce a list of UPD
+            List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
 
             //Find the min stage and max stage for the impact area index location 
             double minStage;
@@ -127,51 +132,98 @@ namespace stageDamage
                 return results;
             }
 
+            //TODO: Where do the results from the boundary profiles get computed?
+            //that is, which step?
 
-            //Step 2: Find the deltas 
-
-            //have to get water
-            //this will consist of a hydraulic profile that will have info on terrain, WSEs, we need to give set of points, 
-            //will spit back list of double indexed to given points
-            //we'll need to identify the AEP 
-            //because we want the most frequent for the first part of this algorithm
 
             //Hydraulic profiles will be sorted. need to verify the order with a unit test. Should be descending probability. 
             List < HydraulicProfile > profileList = hydraulicDataset.HydraulicProfiles;
+
+
+            //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = profileList[0];
             float[] depthsAtLowest = lowestProfile.GetDepths(inventory.GetPointMs());
-
-            double stageAtLowestProfile = stageFrequency.f(lowestProfile.Probability);
-
-            float maxDelta = (float)(stageAtLowestProfile - minStage); 
+            double stageAtProbabilityOfLowestProfile = stageFrequency.f(lowestProfile.Probability);
+            //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
+            float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - minStage); 
             int numIntermediateStagesToCompute = 15; //TODO: make this number meaningful.
-            float interval = maxDelta/ numIntermediateStagesToCompute;
-            float[] stagesToCompute = new float[numIntermediateStagesToCompute];
+            //this interval defines the interval in stages by which we'll compute damage 
+            float interval = indexStationLowerStageDelta/ numIntermediateStagesToCompute;
+            //Collect damage for first part of function 
             for(int i = 0; i < numIntermediateStagesToCompute; i++)
             {
-                stagesToCompute[i] = maxDelta + interval*i;
+                float[] depthsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(depthsAtLowest, interval, i, numIntermediateStagesToCompute);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, depthsParallelToIndexLocation);
+                consequenceDistributionResults.Add(damageOrdinate);
+                allStagesAtIndexLocation.Add(minStage + i * interval);
             }
 
+            //Part 2: Stages between the lowest profile and highest profile 
+            //I think we do the 8 profiles for now 
+            //then figure out how to interpolate later 
 
-            for (int i = 0; i < numIntermediateStagesToCompute; i++) 
+            foreach (HydraulicProfile hydraulicProfile in profileList)
             {
-                float[] depths = new float[depthsAtLowest.Length];
-                int count = 0;
-                foreach(float depth in depthsAtLowest)
-                {
-                    depths[count]=depthsAtLowest[i] - maxDelta;
-                }
-                
+                double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
+                float[] stages = hydraulicProfile.GetDepths(inventory.GetPointMs());
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, stages);
+                consequenceDistributionResults.Add(damageOrdinate);
+                allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
-            
 
-            //Step 3 compute damage by iterating over stages. 
-            //One iteration gets 
-            //Then we iterate between the min and the most frequent event in the hydraulic data set 
-            //Then iterate from most frequent event to least frequent event 
-            //Then iterate from least frequent event to the max 
+            //Part 3: Stages between the highest profile 
+            float[] stagesAtHighestProfile = profileList[profileList.Count-1].GetDepths(inventory.GetPointMs());
+            double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count-1].Probability);
+            float indexStationUpperStageDelta = (float)(maxStage - stageAtProbabilityOfHighestProfile);
+            float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
 
+            for (int i = 0; i < numIntermediateStagesToCompute; i++)
+            {
+                float[] depthsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtHighestProfile, upperInterval, i, numIntermediateStagesToCompute);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, i, depthsParallelToIndexLocation);
+                consequenceDistributionResults.Add(damageOrdinate);
+                allStagesAtIndexLocation.Add(maxStage - upperInterval * (numIntermediateStagesToCompute - i));
+            }
+            List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
+        }
+
+        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtHighestProfile, float upperInterval, int i, int numIntermediateStagesToCompute)
+        {
+            float[] extrapolatedStages = new float[stagesAtHighestProfile.Length];
+            foreach (float stage in stagesAtHighestProfile)
+            {
+                extrapolatedStages[i] = stage + upperInterval*i;
+            }
+            return extrapolatedStages;
+        }
+
+        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] depthsAtLowest, float interval, int i, int numIntermediateStagesToCompute)
+        {
+            float[] extrapolatedStages = new float[depthsAtLowest.Length];
+            foreach (float stage in depthsAtLowest)
+            {
+                extrapolatedStages[i] = stage - interval*(numIntermediateStagesToCompute-i);
+            }
+            return extrapolatedStages;
+        }
+
+        //public for testing
+        //assume that the inventory has already been trimmed 
+        public ConsequenceDistributionResults ComputeDamageOneCoordinate(int seed, RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, int impactAreaID, float[] depths)
+        {
+            double lowerProb = 0.025;
+            double upperProb = .975;
+            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(convergenceCriteria);
+            Int64 iteration = 0;
+            while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
+            {
+                DeterministicInventory deterministicInventory = inventory.Sample(seed);
+                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(depths);
+                consequenceDistributionResults.AddConsequenceRealization(consequenceResults,impactAreaID,iteration);
+                iteration++;
+            }
+            return consequenceDistributionResults;
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)
