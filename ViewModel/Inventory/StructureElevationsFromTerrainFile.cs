@@ -1,5 +1,4 @@
-﻿using LifeSimGIS;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Watershed;
 using System.IO;
@@ -13,39 +12,39 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             _Path = path;
         }
-        private RasterFeatures GetTerrainRasterFeatures(string filePath)
-        {
-            RasterFeatures terrainRasterFeatures = null;
-            try
-            {
-                return new RasterFeatures(filePath);
-            }
-            catch (Exception ex)
-            {
-                //todo: do what?
-                return terrainRasterFeatures;
-            }
-        }
+        //private RasterFeatures GetTerrainRasterFeatures(string filePath)
+        //{
+        //    //RasterFeatures terrainRasterFeatures = null;
+        //    //try
+        //    //{
+        //    //    return new RasterFeatures(filePath);
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    //todo: do what?
+        //    //    return terrainRasterFeatures;
+        //    //}
+        //}
 
-        private PointD[] GetStructurePoints()
-        {
-            PointD[] pointDs = null;
-            try
-            {
-                ShapefileReader myReader = new ShapefileReader(_Path);
-                PointFeatures pointFeatures = (PointFeatures)myReader.ToFeatures();
-                pointDs = pointFeatures.GetPointsArray();
-            }
-            catch (Exception ex)
-            {
-                //todo: do what?
-            }
-            return pointDs;
-        }
+        //private PointD[] GetStructurePoints()
+        //{
+        //    PointD[] pointDs = null;
+        //    try
+        //    {
+        //        ShapefileReader myReader = new ShapefileReader(_Path);
+        //        PointFeatures pointFeatures = (PointFeatures)myReader.ToFeatures();
+        //        pointDs = pointFeatures.GetPointsArray();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //todo: do what?
+        //    }
+        //    return pointDs;
+        //}
 
         public List<float> GetStructureElevationsFromTerrainFile(ref string errorMessage)
         {
-            List<float> elevations = new List<float>();
+            /*List<float> elevations = new List<float>();
             List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
             if (terrainElements.Count > 0)
             {
@@ -91,7 +90,8 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 errorMessage = "You have selected to get structure elevations using a terrain file. A terrain file does not exist in this study. Import one and try again.";
             }
-            return elevations;
+            return elevations;*/
+            return null;
         }
     }
 }
