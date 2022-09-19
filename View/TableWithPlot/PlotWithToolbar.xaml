@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
-             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:oxy="http://oxyplot.org/wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -12,10 +12,9 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
-        <fdaView:ExpandedOxyPlot x:Name="oxyPlot" Grid.Column="0" Model="{Binding Path= PlotModel, Mode=OneTime}" />
+        <oxy:PlotView x:Name="oxyPlot" Grid.Column="0" Model="{Binding Path= PlotModel, Mode=OneTime}" />
 
-        <DockPanel Grid.Column="1">
-            <ToolBarTray DockPanel.Dock="Right" Orientation="Vertical" Margin="0,40,0,0" >
+            <ToolBarTray DockPanel.Dock="Right" Grid.Column="1" Orientation="Vertical" Margin="0,40,0,0" >
                 <ToolBar Grid.Column="1"   >
 
                     <RadioButton Height="22" ToolTip="Track Data" Checked="SelectButton_Checked" >
@@ -36,6 +35,6 @@
 
                 </ToolBar>
             </ToolBarTray>
-        </DockPanel>
+        
     </Grid>
 </UserControl>

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
-             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              MinWidth="200"
              MinHeight="200"
@@ -34,7 +33,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" Visibility="{Binding Path=PlotExtended, Converter={StaticResource VisibileIfTrueConverter}}" MinWidth="200">
-                <fdaView:ExpandedOxyPlot Model="{Binding Path= PlotModel, Mode=OneTime}" />
+                <local:PlotWithToolbar />
             </Grid>
         </Grid>
     </Grid>
