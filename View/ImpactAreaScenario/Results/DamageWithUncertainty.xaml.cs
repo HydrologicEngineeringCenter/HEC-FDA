@@ -33,6 +33,10 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
                 Grid.SetRow(_chart, 0);
                 Grid.SetRowSpan(_chart, 2);
                 Grid.SetColumn(_chart, 1);
+                if (!vm.HistogramVisible)
+                {
+                    _chart.Visibility = Visibility.Collapsed;
+                }
             }
 
         }
@@ -42,6 +46,10 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
             if (e.NewValue is DamageWithUncertaintyVM vm && _chart != null)
             {
                 _chart.DataContext = vm.ChartViewModel;
+                if (!vm.HistogramVisible)
+                {
+                    _chart.Visibility = Visibility.Collapsed;
+                }
             }
         }
     }

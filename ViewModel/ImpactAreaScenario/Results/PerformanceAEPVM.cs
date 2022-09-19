@@ -14,6 +14,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
         public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
+        public bool HistogramVisible { get; set; } = true;
 
         public PerformanceAEPVM(ScenarioResults iasResult, int impactAreaID, List<ThresholdComboItem> thresholdComboItems)
         {
@@ -55,9 +56,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             long[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();
 
-            HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
-            HistogramColor.SetHistogramColor(data);
-            HistogramData.Add(threshold, data);
+            if (binsAsDoubles.Length == 0 || binsAsDoubles.Length == 1)
+            {
+                HistogramVisible = false;
+            }
+            else
+            {
+                HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
+                HistogramColor.SetHistogramColor(data);
+                HistogramData.Add(threshold, data);
+            }
         }
 
         public override void UpdateHistogram(ThresholdComboItem metric)

@@ -8,8 +8,8 @@ using scenarios;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Compute
 {
@@ -29,33 +29,54 @@ namespace HEC.FDA.ViewModel.Compute
 
             LoadImpactAreaNames(iasElems);
 
+            FdaValidationResult canComputeVr = new FdaValidationResult();
             foreach (SpecificIAS ias in iasElems)
             {
-                ImpactAreaScenarioSimulation sim = ias.CreateSimulation();             
-                MessageHub.Register(sim);
-                sim.ProgressReport += Sim_ProgressReport;
-                sims.Add(sim);
+                FdaValidationResult canComputeScenario = ias.CanComputeScenario();
+                if (canComputeScenario.IsValid)
+                {
 
-                MessageVM.InstanceHash.Add( sim.GetHashCode());
+                    ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
+                    if (sim != null)
+                    {
+                        MessageHub.Register(sim);
+                        sim.ProgressReport += Sim_ProgressReport;
+                        sims.Add(sim);
+
+                        MessageVM.InstanceHash.Add(sim.GetHashCode());
+                    }
+                }
+                else
+                {
+                    canComputeVr.AddErrorMessage( canComputeScenario.ErrorMessage);
+                }
             }
 
-            Scenario scenario = new Scenario(analysisYear, sims);
-
-            int seed = 1234;
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-
-            Task.Run(() =>
+            if (canComputeVr.IsValid)
             {
-                ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);                    
+                Scenario scenario = new Scenario(analysisYear, sims);
 
-                foreach(ImpactAreaScenarioSimulation sim in sims)
+                int seed = 1234;
+                RandomProvider randomProvider = new RandomProvider(seed);
+                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
+
+                Task.Run(() =>
                 {
-                    MessageHub.Unregister(sim);
-                }
+                    ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc);
+
+                    foreach (ImpactAreaScenarioSimulation sim in sims)
+                    {
+                        MessageHub.Unregister(sim);
+                    }
                 //Event for when everything has been computed.
                 callback?.Invoke(scenarioResults);
-            });
+                });
+            }
+            else
+            {
+                canComputeVr.AddErrorMessage("Edit the scenario to resolve the issue.");             
+                MessageBox.Show(canComputeVr.ErrorMessage, "Cannot Compute Scenario", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void LoadImpactAreaNames(List<SpecificIAS> iasElems)

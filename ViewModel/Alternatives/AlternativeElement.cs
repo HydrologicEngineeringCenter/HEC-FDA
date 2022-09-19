@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             IASElementSets.AddRange(IASElements);
 
-            AddDefaultActions(EditAlternative);
+            AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ComputeAlternative;
@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 IASElementSets.Add(iasID);
             }
 
-            AddDefaultActions(EditAlternative);
+            AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ComputeAlternative;

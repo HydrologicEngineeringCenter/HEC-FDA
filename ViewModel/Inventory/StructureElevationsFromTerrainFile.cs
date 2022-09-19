@@ -53,33 +53,33 @@ namespace HEC.FDA.ViewModel.Inventory
                 string filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
                 if (File.Exists(filePath))
                 {
-                    //todo: is this going to work with the different file types? vrt, hdf, tif, flt
-                    RasterFeatures terrainRasters = GetTerrainRasterFeatures(filePath);
-                    if (terrainRasters != null)
-                    {
-                        PointD[] structPoints = GetStructurePoints();
-                        if (structPoints != null)
-                        {
-                            //todo: i can pass in a default value for missing data
-                            float[] elevs = terrainRasters.GridReader.SampleValues(structPoints);
-                            if(elevs!= null && elevs.Length>0)
-                            {
-                                elevations.AddRange(elevs);
-                            }
-                            else
-                            {
-                                errorMessage = "No elevations were calculated for the structures.";
-                            }
-                        }
-                        else
-                        {
-                            errorMessage = "Exception thrown when reading structure file and converting to points.";
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
-                    }
+                    //todo: pass the file (vrt, hdf, tif, flt) to the model and let it get the rasters?
+                    //RasterFeatures terrainRasters = GetTerrainRasterFeatures(filePath);
+                    //if (terrainRasters != null)
+                    //{
+                    //    PointD[] structPoints = GetStructurePoints();
+                    //    if (structPoints != null)
+                    //    {
+                    //        //todo: i can pass in a default value for missing data
+                    //        float[] elevs = terrainRasters.GridReader.SampleValues(structPoints);
+                    //        if(elevs!= null && elevs.Length>0)
+                    //        {
+                    //            elevations.AddRange(elevs);
+                    //        }
+                    //        else
+                    //        {
+                    //            errorMessage = "No elevations were calculated for the structures.";
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        errorMessage = "Exception thrown when reading structure file and converting to points.";
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
+                    //}
                 }
                 else
                 {

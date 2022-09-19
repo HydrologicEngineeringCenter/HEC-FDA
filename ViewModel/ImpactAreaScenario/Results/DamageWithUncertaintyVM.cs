@@ -11,8 +11,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-        private readonly HistogramData2D _data;
+        private HistogramData2D _data;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Damage Uncertainty");
+        public bool HistogramVisible { get; set; } = true;
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
@@ -20,12 +21,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             int impactAreaID = iasResult.ImpactAreaID;
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
-            IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: impactAreaID);
-            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x/totalHistogram.SampleSize).ToArray();
 
-            _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-            HistogramColor.SetHistogramColor(_data);
-            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+            LoadHistogram(iasResult);
 
             List<double> qValues = new List<double>();
             qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
@@ -33,6 +30,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID));
 
             loadTableValues(qValues);
+        }
+
+        private void LoadHistogram(ImpactAreaScenarioResults iasResult)
+        {
+            IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: iasResult.ImpactAreaID);
+            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x / totalHistogram.SampleSize).ToArray();
+            if (binsAsDoubles.Length == 0 || binsAsDoubles.Length == 1)
+            {
+                HistogramVisible = false;
+            }
+            else
+            {
+                _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+                HistogramColor.SetHistogramColor(_data);
+                ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+            }
         }
 
         private void loadTableValues(List<double> qValues)

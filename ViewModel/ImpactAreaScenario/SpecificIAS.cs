@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
@@ -10,7 +11,7 @@ using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Windows;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
@@ -119,6 +120,109 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         #endregion
 
+        private string CreateElementDoesntExistMessage(string elemName)
+        {
+            return "The selected " + elemName + " no longer exists.";
+        }
+
+        private string GetSpecificImpactAreaName()
+        {
+            string name = "";
+            ImpactAreaElement impactAreaElem = (ImpactAreaElement)StudyCache.GetChildElementsOfType(typeof(ImpactAreaElement))[0];
+            foreach(ImpactAreaRowItem row in impactAreaElem.ImpactAreaRows)
+            {
+                if(row.ID == ImpactAreaID)
+                {
+                    name = row.Name;
+                }
+            }
+            return name;
+        }
+
+        public FdaValidationResult CanComputeScenario()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            vr.AddErrorMessage(DoesScenarioChildElementsStillExist().ErrorMessage);
+            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
+            //insert the name of the impact area if not valid
+            if(!vr.IsValid)
+            {
+                vr.InsertMessage(0, "Cannot compute scenario configuration for impact area: " + GetSpecificImpactAreaName());
+            }
+            return vr;
+        }
+
+        private FdaValidationResult DoesScenarioChildElementsStillExist()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            //required elems
+            AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
+            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+
+            if(InflowOutflowID != -1)
+            {
+                InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
+                if (inOutElem == null)
+                {
+                    vr.AddErrorMessage(CreateElementDoesntExistMessage("regulated-unregulated element"));
+                }
+            }
+            if (RatingID != -1)
+            {
+                StageDischargeElement ratElem = (StageDischargeElement)StudyCache.GetChildElementOfType(typeof(StageDischargeElement), RatingID);
+                if (ratElem == null)
+                {
+                    vr.AddErrorMessage(CreateElementDoesntExistMessage("stage-discharge element"));
+                }
+            }
+            if (ExtIntStageID != -1)
+            {
+                ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
+                if (extIntElem == null)
+                {
+                    vr.AddErrorMessage(CreateElementDoesntExistMessage("exterior-interior element"));
+                }
+            }
+            if (LeveeFailureID != -1)
+            {
+                LateralStructureElement leveeElem = (LateralStructureElement)StudyCache.GetChildElementOfType(typeof(LateralStructureElement), LeveeFailureID);
+                if (leveeElem == null)
+                {
+                    vr.AddErrorMessage(CreateElementDoesntExistMessage("lateral structure element"));
+                }
+            }
+
+            if(freqElem == null)
+            {
+                vr.AddErrorMessage(CreateElementDoesntExistMessage("frequency element"));
+            }
+            if (stageDamageElem == null)
+            {
+                vr.AddErrorMessage(CreateElementDoesntExistMessage("stage damage element"));
+            }
+
+        
+            return vr;
+        }
+
+        private FdaValidationResult IsStageDamageValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+
+            if (stageDamageElem != null)
+            {
+                List<StageDamageCurve> stageDamageCurves = stageDamageElem.Curves.Where(curve => curve.ImpArea.ID == ImpactAreaID).ToList();
+                if (stageDamageCurves.Count == 0)
+                {
+                    //todo: maybe get the impact area name for this message?
+                    vr.AddErrorMessage("The aggregated stage damage element '" + stageDamageElem.Name + "' did not contain any curves that are associated " +
+                        "with the impact area.");
+                }
+            }
+            return vr;
+        }
+
         private SimulationCreator GetSimulationCreator()
         {
             AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
@@ -128,8 +232,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             LateralStructureElement leveeElem = (LateralStructureElement)StudyCache.GetChildElementOfType(typeof(LateralStructureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
-            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
-                stageDamageElem, ImpactAreaID);
+            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID);
 
             int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
@@ -144,23 +247,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 sc.WithAdditionalThreshold(threshold);
                 thresholdIndex++;
             }
+
             return sc;
-        }      
+        }
 
         public ImpactAreaScenarioSimulation CreateSimulation()
         {
             ImpactAreaScenarioSimulation simulation = null;
-
             SimulationCreator sc = GetSimulationCreator();
-            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
-            if (configurationValidationResult.IsValid)
-            {
-                simulation = sc.BuildSimulation();
-            }
-            else
-            {
-                MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
+            simulation = sc.BuildSimulation();
             return simulation;
         }
 
