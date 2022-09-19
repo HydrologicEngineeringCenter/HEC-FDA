@@ -16,6 +16,7 @@
 			<Private>true</Private>
 		</Reference>
 	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Importer\Importer.csproj" />
 	</ItemGroup>
