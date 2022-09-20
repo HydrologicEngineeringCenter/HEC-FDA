@@ -22,8 +22,8 @@ namespace fda_model_test.unittests.hydraulics
         void SortHydrulicProfilesbyDescendingProbability()
         {
             List<HydraulicProfile> profiles = new List<HydraulicProfile>();
-            double[] probs = new double[] { 0.5, 0.99, 0.01 };
-            foreach(double prob in probs)
+            double[] ExceedenceProbs = new double[] { 0.5, 0.99, 0.01 };
+            foreach(double prob in ExceedenceProbs)
             {
                 profiles.Add(new HydraulicProfile(prob,"", HydraulicDataSource.UnsteadyHDF,""));
             }
