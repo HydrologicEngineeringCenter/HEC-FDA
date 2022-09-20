@@ -88,7 +88,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 int wseID = CalculatedVM.SelectedWaterSurfaceElevation.ID;
                 int structID = CalculatedVM.SelectedStructures.ID;
-                int indexPointsID = CalculatedVM.SelectedIndexPoints.ID;
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = 1;
                 if (OriginalElement != null)
@@ -101,7 +100,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
 
                 AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, 
-                   indexPointsID, CalculatedVM.GetStageDamageCurves(), CalculatedVM.ImpactAreaFrequencyRows, false, id);              
+                   CalculatedVM.GetStageDamageCurves(), CalculatedVM.ImpactAreaFrequencyRows, false, id);              
                 base.Save(elemToSave);
             }
             else
@@ -118,7 +117,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 string lastEditDate = DateTime.Now.ToString("G");
                 int id = GetElementID();
                 List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1,-1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), impAreaFrequencyRows, true, id);
                 base.Save(elem);
             }
         }

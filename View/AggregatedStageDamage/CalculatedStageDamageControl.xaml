@@ -46,14 +46,11 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
 
-                <Label Grid.Row="1" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
-
-                    <Label Grid.Row="2" Grid.Column="0" Content="Index Points:" HorizontalAlignment="Right"/>
-                    <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding IndexPoints}" SelectedItem="{Binding SelectedIndexPoints}" DisplayMemberPath="Name"/>
-
+                    <Label Grid.Row="1" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
+            
                     <Button Grid.Row="3" Grid.Column="1" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Margin="5" Click="calculate_btn_Click"/>
             </Grid>
 

@@ -54,64 +54,14 @@ namespace HEC.FDA.ViewModel.IndexPoints
             Navigate(tab, false, false);
         }
 
-        private FdaValidationResult DoStageDamagesDependOnMe()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            List<AggregatedStageDamageElement> stageDamageElems = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-            List<string> stageDamageNames = new List<string>();
-            foreach(AggregatedStageDamageElement elem in stageDamageElems)
-            {
-                if(!elem.IsManual && elem.SelectedIndexPoints == this.ID)
-                {
-                    stageDamageNames.Add(elem.Name);
-                }
-            }
-
-            if(stageDamageNames.Count == 1)
-            {
-                vr.AddErrorMessage("The aggregated stage damage function '" + stageDamageNames[0] + "' uses this index points element and will also be deleted.");
-            }
-            else if(stageDamageNames.Count > 1)
-            {
-                vr.AddErrorMessage("The following aggregated stage damage functions use this index points element and will also be deleted: " + string.Join(", ", stageDamageNames));
-            }
-
-            return vr;
-        }
-
-        private void DeleteStageDamagesWithThisIndexPointID()
-        {
-            List<AggregatedStageDamageElement> iasElems = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-            foreach (AggregatedStageDamageElement elem in iasElems)
-            {
-                if (!elem.IsManual && elem.SelectedIndexPoints == this.ID)
-                {
-                    PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Remove(elem);
-                }
-            }
-        }
 
         public override void RemoveElement(object sender, EventArgs e)
         {
-            FdaValidationResult areStageDamagesDependingOnThis = DoStageDamagesDependOnMe();
-            if (!areStageDamagesDependingOnThis.IsValid)
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var result = MessageBox.Show(areStageDamagesDependingOnThis.ErrorMessage, "Do You Want to Continue?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    DeleteStageDamagesWithThisIndexPointID();
-                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                    StudyFilesManager.DeleteDirectory(Name, GetType());
-                }
-            }
-            else
-            {
-                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                    StudyFilesManager.DeleteDirectory(Name, GetType());
-                }
+                PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
+                StudyFilesManager.DeleteDirectory(Name, GetType());
             }
         }
 

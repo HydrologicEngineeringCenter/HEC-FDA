@@ -135,7 +135,7 @@
         public const string EDIT_OCCTYPE_MENU = "Edit Occupancy Types...";
         public const string EDIT_OCCTYPE_HEADER = "Edit Occupancy Types";
         public const string IMPORT_OCCTYPE_FROM_OLD_NAME = "Occupancy Types";
-        public const string IMPORT_OCCTYPE_FROM_OLD_HEADER = "Import Lateral Structures From HEC-FDA 1.4.3";
+        public const string IMPORT_OCCTYPE_FROM_OLD_HEADER = "Import Occupancy Types From HEC-FDA 1.4.3";
 
         public const string STRUCTURE_INVENTORIES = "Structure Inventories";
         public const string IMPORT_STRUCTURE_INVENTORIES_MENU = "Import From Shapefile...";
