@@ -1,7 +1,6 @@
 ﻿using Importer;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using static Importer.AsciiImport;
 using HEC.FDA.ViewModel.Saving;
@@ -21,7 +20,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         public override void SaveElements()
         {
-            IElementManager manager = Saving.PersistenceFactory.GetElementManager<AggregatedStageDamageElement>();
+            IElementManager manager = PersistenceFactory.GetElementManager<AggregatedStageDamageElement>();
             foreach (AggregatedStageDamageElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);

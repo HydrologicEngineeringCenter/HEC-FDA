@@ -598,7 +598,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 UncertainPairedData damageFrequencyCurve = getDamageFrequencyFunction();
                 if (damageFrequencyCurve != null)
                 {
-
                     PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
 
                     PlotControlVM.Plot();

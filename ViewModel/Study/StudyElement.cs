@@ -270,6 +270,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public void OpenStudyMenuItemClicked()
         {
+            throw new NotImplementedException();
             ExistingStudyVM ESVM = new ExistingStudyVM(this);
             string header = "Open Study";
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");

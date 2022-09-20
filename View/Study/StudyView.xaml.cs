@@ -108,7 +108,16 @@ namespace HEC.FDA.View.Study
             e.Handled = true;
         }
 
- 
-
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //throw new System.Exception("test exception");
+            if (DataContext is FdaStudyVM study)
+            {
+                if (study.CurrentStudyElement != null)
+                {
+                    study.CurrentStudyElement.OpenStudyMenuItemClicked();
+                }
+            }
+        }
     }
 }
