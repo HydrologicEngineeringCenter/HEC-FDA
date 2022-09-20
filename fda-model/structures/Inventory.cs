@@ -1,4 +1,5 @@
-﻿using RasMapperLib;
+﻿using fda_model.structures;
+using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace structures
         private List<OccupancyType> _Occtypes;
         private List<string> _damageCategories;
         private List<int> _impactAreaIDs; 
-        public List<Structure> Structures { get; set; }
+        public List<Structure> Structures { get; }
         public List<int> ImpactAreas
         {
             get { return _impactAreaIDs; }
@@ -60,7 +61,7 @@ namespace structures
         /// Constructor to create a SI from a shapefile. Gonna need to do this from database potentially as well
         /// </summary>
         /// <param name="pointShapefilePath"></param>
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath)
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map)
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
@@ -71,18 +72,18 @@ namespace structures
                 {
                     PointM point = pointMs[i];
                     var row = structureInventory.FeatureRow(i);
-                    int fid = TryGet<int>(row["fd_id"]);
-                    double found_ht = TryGet<double>(row["found_ht"]);
-                    double ground_elv = TryGet<double>(row["ground_elv"]);
-                    double val_struct = TryGet<double>(row["val_struct"]);
-                    double val_cont = TryGet<double>(row["val_cont"]);
-                    double val_vehic = TryGet<double>(row["val_vehic"]);
-                    double val_other = TryGet<double>(row["val_vehic"]);
-                    string st_damcat = TryGetObj<string>(row["st_damcat"]);
-                    string occtype = TryGetObj<string>(row["occtype"]);
-                    string cbfips = TryGetObj<string>(row["cbfips"]);
-                    double ff_elev = TryGet<double>(row["ff_elev"]);
-                    if (row["ff_elev"] == System.DBNull.Value)
+                    int fid = TryGet<int>(row[map.StructureID]);
+                    double found_ht = TryGet<double>(row[map.FoundationHeight]);
+                    double ground_elv = TryGet<double>(row[map.GroundElev]);
+                    double val_struct = TryGet<double>(row[map.StructureValue]);
+                    double val_cont = TryGet<double>(row[map.ContentValue]);
+                    double val_vehic = TryGet<double>(row[map.VehicalValue]);
+                    double val_other = TryGet<double>(row[map.OtherValue]);
+                    string st_damcat = TryGetObj<string>(row[map.DamageCatagory]);
+                    string occtype = TryGetObj<string>(row[map.OccupancyType]);
+                    string cbfips = TryGetObj<string>(row[map.CBFips]);
+                    double ff_elev = TryGet<double>(row[map.FirstFloorElev]);
+                    if (row[map.FirstFloorElev] == DBNull.Value)
                     {
                         ff_elev = ground_elv + found_ht;
                     }
@@ -150,7 +151,6 @@ namespace structures
             }
             return new Inventory(filteredStructureList, _Occtypes);
         }
-
         public PointMs GetPointMs()
         {
             PointMs points = new PointMs();
@@ -160,7 +160,6 @@ namespace structures
             }
             return points;
         }
-
         private int GetImpactAreaID(PointM point, string polygonShapefilePath)
         {
             PolygonFeatureLayer polygonFeatureLayer = new PolygonFeatureLayer("impactAreas", polygonShapefilePath);
@@ -176,7 +175,6 @@ namespace structures
             }
             return -9999;
         }
-
         public DeterministicInventory Sample(int seed)
         {
             Random random = new Random(seed);
