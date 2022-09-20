@@ -41,7 +41,7 @@
 
         <StackPanel Grid.Row="2" Margin="5" Orientation="Horizontal">
             <RadioButton Content="Manual" IsChecked="{Binding IsManualRadioSelected}" Margin="5,0,0,0"/>
-            <RadioButton Content="Computed" ToolTipService.ShowOnDisabled="True" IsEnabled="false" ToolTip="This option is not currently supported" IsChecked="{Binding IsManualRadioSelected,Converter={StaticResource InverseBooleanConverter}}" Margin="5,0,0,0"/>
+            <RadioButton Content="Computed" IsChecked="{Binding IsManualRadioSelected,Converter={StaticResource InverseBooleanConverter}}" Margin="5,0,0,0"/>
             <TextBlock Grid.Row="2" Text="{Binding CalculatedVM.CurvesEditedLabel}" Margin="55,0,0,0" HorizontalAlignment="Right" />
         </StackPanel>
         

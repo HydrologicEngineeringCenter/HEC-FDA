@@ -70,7 +70,6 @@
             <MenuItem Header="_Help" >
                 <MenuItem Header="Quick Start Guide" Click="QuickStartGuide_Click"/>
                 <MenuItem Header="Discourse" Click="Discourse_Click" />
-                <MenuItem Header="Throw Exception" Click="MenuItem_Click"/>
             </MenuItem>
         </Menu>
 
