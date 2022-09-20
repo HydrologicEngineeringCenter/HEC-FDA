@@ -27,17 +27,6 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="DatabaseManager">
-      <HintPath>..\lib\DatabaseManager.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="DataTableViewControl">
-      <HintPath>..\lib\DataTableViewControl.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-	
-	
-  <ItemGroup>
     <Resource Include="Resources\AlternativeComparisonReport_20x20.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
