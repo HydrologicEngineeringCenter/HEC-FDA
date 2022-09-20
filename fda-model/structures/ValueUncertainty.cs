@@ -33,7 +33,7 @@ namespace structures
         #endregion
 
         #region Methods
-        public double Sample(double inventoryValue, double randomProbability)
+        public double Sample(double inventoryValue, double probability)
         {
             double sampledValue;
             switch(_distributionType)
@@ -41,25 +41,25 @@ namespace structures
                 case IDistributionEnum.Normal:
                     double standardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;
                     Normal normal = new Normal(inventoryValue, standardDeviation);
-                    sampledValue = normal.InverseCDF(randomProbability);
+                    sampledValue = normal.InverseCDF(probability);
                     break;
 
                 case IDistributionEnum.LogNormal:
                     double logStandardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;
                     LogNormal logNormal = new LogNormal(inventoryValue, logStandardDeviation);
-                    sampledValue = logNormal.InverseCDF(randomProbability);
+                    sampledValue = logNormal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Triangular:
                     double min = (1 - _percentOfInventoryValueStandardDeviationOrMin) * inventoryValue;
                     double max = (1 + _percentOfInventoryValueMax) * inventoryValue;
                     Triangular triangular = new Triangular(min, inventoryValue, max);
-                    sampledValue = triangular.InverseCDF(randomProbability);
+                    sampledValue = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
                     double minUniform = (1 - _percentOfInventoryValueStandardDeviationOrMin) * inventoryValue;
                     double maxUniform = (1 + _percentOfInventoryValueMax) * inventoryValue;
                     Uniform uniform = new Uniform(minUniform, maxUniform);
-                    sampledValue = uniform.InverseCDF(randomProbability);
+                    sampledValue = uniform.InverseCDF(probability);
                     break;
                 default:
                     sampledValue = inventoryValue;
