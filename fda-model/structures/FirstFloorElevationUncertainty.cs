@@ -30,26 +30,26 @@ namespace structures
             _feetAboveInventoryValue = maximum;
         }
 
-        public double Sample(double inventoriedFirstFloorElevation, double randomProbability)
+        public double Sample(double inventoriedFirstFloorElevation, double probability)
         {
             double sampledFirstFloorElevation;
             switch(_distributionType)
             {
                 case IDistributionEnum.Normal:
                     Normal normal = new Normal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
-                    sampledFirstFloorElevation = normal.InverseCDF(randomProbability);
+                    sampledFirstFloorElevation = normal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.LogNormal:
                     LogNormal logNormal = new LogNormal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
-                    sampledFirstFloorElevation = logNormal.InverseCDF(randomProbability);
+                    sampledFirstFloorElevation = logNormal.InverseCDF(probability);
                     break ;
                 case IDistributionEnum.Triangular:
                     Triangular triangular = new Triangular(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
-                    sampledFirstFloorElevation = triangular.InverseCDF(randomProbability);
+                    sampledFirstFloorElevation = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform: 
                     Uniform uniform = new Uniform(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
-                    sampledFirstFloorElevation = uniform.InverseCDF(randomProbability);
+                    sampledFirstFloorElevation = uniform.InverseCDF(probability);
                     break;
                 default:
                     sampledFirstFloorElevation = inventoriedFirstFloorElevation;

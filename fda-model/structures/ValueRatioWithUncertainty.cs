@@ -42,26 +42,26 @@ namespace structures
         #endregion
 
         #region Methods
-        public double Sample(double randomProbability)
+        public double Sample(double probability)
         {
             double sampledValueRatio;
             switch(_distributionType)
             {
                 case IDistributionEnum.Normal:
                     Normal normal = new Normal(_centralTendency, _standardDeviationOrMin);
-                    sampledValueRatio = normal.InverseCDF(randomProbability);
+                    sampledValueRatio = normal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.LogNormal:
                     LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
-                    sampledValueRatio = logNormal.InverseCDF(randomProbability);
+                    sampledValueRatio = logNormal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Triangular:
                     Triangular triangular = new Triangular(_standardDeviationOrMin, _centralTendency, _max);
-                    sampledValueRatio = triangular.InverseCDF(randomProbability);
+                    sampledValueRatio = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
                     Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
-                    sampledValueRatio = uniform.InverseCDF(randomProbability);
+                    sampledValueRatio = uniform.InverseCDF(probability);
                     break;
                 default:
                     sampledValueRatio = _centralTendency;
