@@ -26,11 +26,8 @@ namespace HEC.FDA.ViewModel.Inventory
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addStructureInventory);
+            Actions = localActions;
 
-            if (!StringConstants.IS_BETA_RELEASE)
-            {
-                Actions = localActions;
-            }
             StudyCache.StructureInventoryAdded += AddStructureInventoryElement;
             StudyCache.StructureInventoryRemoved += RemoveStructureInventoryElement;
             StudyCache.StructureInventoryUpdated += UpdateStructureInventoryElement;

@@ -19,10 +19,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(import);
-            if(!StringConstants.IS_BETA_RELEASE)
-            {
-                Actions = localActions;
-            }
+            Actions = localActions;
 
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
