@@ -7,7 +7,7 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:fdaView="clr-namespace:HEC.FDA.View.TableWithPlot" 
+             xmlns:plot="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:frequencyrelationships="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
@@ -141,7 +141,7 @@
                     </Grid>
                 </Grid>
 
-                <fdaView:ExpandedOxyPlot Grid.Column="2" Grid.Row="4" Model="{Binding Path= PlotModel}"/>
+                <plot:PlotWithToolbar Grid.Column="2" Grid.Row="4" />
 
             </Grid>
         </GroupBox>

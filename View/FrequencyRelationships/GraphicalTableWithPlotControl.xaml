@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              xmlns:frequencyrelationships="clr-namespace:HEC.FDA.View.FrequencyRelationships"
-             xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:plot="clr-namespace:HEC.FDA.View.TableWithPlot"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -13,6 +13,6 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <frequencyrelationships:GraphicalControl DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
-        <oxy:PlotView Model="{Binding Path= PlotModel}" Grid.Column="1"/>
+        <plot:PlotWithToolbar Grid.Column="1"/>
     </Grid>
 </UserControl>
