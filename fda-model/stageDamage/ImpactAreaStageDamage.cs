@@ -31,8 +31,6 @@ namespace stageDamage
         private double _minStageForArea;
         private double _maxStageForArea;
 
-        
-        private RandomProvider randomProvider;
         private ConvergenceCriteria convergenceCriteria;
 
         private int seed = 1234;
@@ -43,8 +41,7 @@ namespace stageDamage
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, List<OccupancyType> occupancyTypes, HydraulicDataset hydraulicDataset,
-            RandomProvider random, ConvergenceCriteria convergence, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null,
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, List<OccupancyType> occupancyTypes, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null,
             UncertainPairedData dischargeStage = null)
         {
             //TODO: Validate provided functions here
@@ -55,7 +52,6 @@ namespace stageDamage
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             _occupancyTypes = occupancyTypes;
-            randomProvider = random;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
