@@ -184,12 +184,12 @@ namespace stageDamage
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
-            for (int i = 0; i < numIntermediateStagesToCompute; i++)
+            for (int stepCount = 0; stepCount < numIntermediateStagesToCompute; stepCount++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, i, WSEsParallelToIndexLocation);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
-                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - i));
+                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount));
             }
         }
         public List<UncertainPairedData> Compute()
@@ -205,12 +205,12 @@ namespace stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int i)
+        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
-            foreach (float stage in stagesAtStructuresHighestProfile)
+            foreach (float structureStage in stagesAtStructuresHighestProfile)
             {
-                extrapolatedStages[i] = stage + upperInterval*i;
+                extrapolatedStages[stepCount] = structureStage + upperInterval*stepCount;
             }
             return extrapolatedStages;
         }
