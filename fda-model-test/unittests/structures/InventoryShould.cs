@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Xunit;
+using fda_model.structures;
 
 namespace fda_model_test.unittests.structures
 {
@@ -12,7 +13,9 @@ namespace fda_model_test.unittests.structures
         {
             string pathToNSIShapefile = @"..\..\..\Resources\MuncieNSI\MuncieNSI.shp";
             string pathToIAShapefile = @"..\..\..\Resources\MuncieImpactAreas\ImpactAreas.shp";
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile);
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap();
+
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map);
 
             Assert.NotNull(inventory);
             Assert.Equal(3, inventory.ImpactAreas.Count);

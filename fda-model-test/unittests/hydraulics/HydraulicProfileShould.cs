@@ -2,6 +2,7 @@
 using fda_model.hydraulics;
 using fda_model.hydraulics.enums;
 using structures;
+using fda_model.structures;
 
 namespace fda_model_test.unittests
 {
@@ -15,8 +16,9 @@ namespace fda_model_test.unittests
         [Fact]
         public void GetWSEFromHDF()
         {
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap();
             HydraulicProfile profile = new HydraulicProfile(.01, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max", pathToTerrain);
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map);
             float[] wses = profile.GetWSE(inventory.GetPointMs());
             Assert.Equal(696, wses.Length);
         }
