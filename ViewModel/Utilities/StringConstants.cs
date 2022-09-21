@@ -218,7 +218,7 @@
 
         public static string ImportFromOldFda(string elementName)
         {
-            return "Import " + elementName + " From HEC-FDA Version 1.4.3...";
+            return "Import " + elementName + " From Tab Delimited...";
         }
 
         public static string CreateLastEditTooltip(string lastEditDate)
