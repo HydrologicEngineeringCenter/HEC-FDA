@@ -25,12 +25,10 @@ namespace stageDamage
         private int _ImpactAreaID;
 
         private Inventory _inventory;
-        private List<OccupancyType> _occupancyTypes;
         private HydraulicDataset _hydraulicDataset;
 
         private double _minStageForArea;
         private double _maxStageForArea;
-
         private ConvergenceCriteria convergenceCriteria;
 
         private int seed = 1234;
@@ -41,7 +39,7 @@ namespace stageDamage
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, List<OccupancyType> occupancyTypes, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null,
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null,
             UncertainPairedData dischargeStage = null)
         {
             //TODO: Validate provided functions here
@@ -51,7 +49,6 @@ namespace stageDamage
             _ImpactAreaID = impactAreaID;
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
-            _occupancyTypes = occupancyTypes;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
@@ -187,7 +184,6 @@ namespace stageDamage
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
-
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, i);
