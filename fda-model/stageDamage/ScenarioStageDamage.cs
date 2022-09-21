@@ -14,19 +14,12 @@ namespace stageDamage
     public class ScenarioStageDamage
     {
         #region Fields 
-        //TODO: This needs to be the set of water surface elevation events 
-        private HydraulicDataset _hydraulics;
-        private Inventory _Inventory;
-        private List<OccupancyType> _OccupancyType;
         private List<ImpactAreaStageDamage> _ImpactAreaStageDamage;
         #endregion
 
         #region Constructor 
-        public ScenarioStageDamage(HydraulicDataset hydro, Inventory inventory, List<OccupancyType> occupancyTypes, List<ImpactAreaStageDamage> impactAreaStageDamages)
+        public ScenarioStageDamage(List<ImpactAreaStageDamage> impactAreaStageDamages)
         {
-            _hydraulics = hydro;
-            _Inventory = inventory;
-            _OccupancyType = occupancyTypes;
             _ImpactAreaStageDamage = impactAreaStageDamages;
         }
         #endregion
@@ -37,7 +30,7 @@ namespace stageDamage
             List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
             foreach(ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
-                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider, convergenceCriteria, _Inventory, _OccupancyType, _hydraulics);
+                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute();
                 foreach(UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
                 {
                     scenarioStageDamageResults.Add(uncertainPairedData);
