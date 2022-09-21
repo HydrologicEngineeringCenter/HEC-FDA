@@ -1,64 +1,61 @@
 ﻿using fda_model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
+using System;
 
-namespace fda_hydro.hydraulics
+namespace fda_model.hydraulics
 {
-    public class HydraulicProfile
+    public class HydraulicProfile:IComparable
     {
         public double Probability { get; set; }
         public string FilePath { get; set; }
         public string TerrainPath { get; set; }
-        public HydraulicDataSource dataSourceFormat { get; set; }
+        public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, string terrainFile, HydraulicDataSource dataSource)
+        public HydraulicProfile(double probability, string filepath,  HydraulicDataSource dataSource, string profileName, string terrainFile = null)
         {
             Probability = probability;
             FilePath = filepath;
             TerrainPath = terrainFile;
-            dataSourceFormat = dataSource;
+            DataSourceFormat = dataSource;
+            ProfileName = profileName;
         }
-        public float[] GetDepths(PointMs pts)
+        public float[] GetWSE(PointMs pts)
         {
-            // Terrain is going to get sampled every time unnecessarily. This is an opportunity for refactor
-            //create feature layers for the standard inputs
+            
             TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
-            // get terrain elevations
             float[] terrainElevs = terrain.ComputePointElevations(pts);
-            // Construct a result from the given filename.
 
-            if (dataSourceFormat == HydraulicDataSource.UnsteadyHDF || dataSourceFormat == HydraulicDataSource.SteadyHDF)
+            if (DataSourceFormat == HydraulicDataSource.WSEGrid)
             {
-                return GetDepthsFromHDF(pts, terrainElevs);
+                return GetWSEFromGrids(pts, terrainElevs);
             }
             else
             {
-                return GetDepthsFromGrid(pts, terrainElevs);
+                return GetWSEFromHDF(pts, terrainElevs);
             }
         }
 
-        private float[] GetDepthsFromGrid(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromGrids(PointMs pts, float[] terrainElevs)
         {
             //TODO Sample off grids
             return null;
         }
 
-        private float[] GetDepthsFromHDF(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromHDF(PointMs pts, float[] terrainElevs)
         {
             var rasResult = new RASResults(FilePath);
             var rasGeometry = rasResult.Geometry;
-            var rasWSMap = new RASResultsMap(rasResult, MapTypes.Depth);
+            var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
             // Sample the geometry for the given points loaded from the shapefile.
-            // If the geometry is the same for all of the results, we can actually reuse this object.
-            // (It's pretty fast to recompute though, so I wouldn't bother)
             RASGeometryMapPoints mapPixels = rasGeometry.MapPixels(pts);
-            // This will produce -9999 for NoData values.
-            float[] depthVals = null;
+
+            float[] WSE = null;
 
             int profileIndex;
-            if (dataSourceFormat == HydraulicDataSource.UnsteadyHDF)
+            if (DataSourceFormat == HydraulicDataSource.UnsteadyHDF)
             {
                 profileIndex = RASResultsMap.MaxProfileIndex;
             }
@@ -66,8 +63,27 @@ namespace fda_hydro.hydraulics
             {
                 profileIndex = rasResult.ProfileIndex(ProfileName);
             }
-            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref depthVals);
-            return depthVals;
+            // This will produce -9999 for NoData values.
+            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref WSE);
+            return WSE;
+        }
+
+
+        /// <summary>
+        /// allows for sorting based on probability of the profile.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+
+            HydraulicProfile otherProfile = obj as HydraulicProfile;
+            if (otherProfile != null)
+                return this.Probability.CompareTo(otherProfile.Probability);
+            else
+                throw new ArgumentException("Object is not a Temperature");
         }
     }
 }

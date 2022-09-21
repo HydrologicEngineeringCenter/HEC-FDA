@@ -16,9 +16,9 @@ namespace Statistics.Distributions
         public double Mean { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public int SampleSize { get; }
+        public Int64 SampleSize { get; }
 
-        public PearsonIII(double mean, double sd, double skew, int n = 1)
+        public PearsonIII(double mean, double sd, double skew, Int64 n = 1)
         {
             Mean = mean;
             StandardDeviation = sd;

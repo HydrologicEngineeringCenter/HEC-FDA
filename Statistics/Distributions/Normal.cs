@@ -179,6 +179,7 @@ namespace Statistics.Distributions
             return (x * 1.0);
 
         }
+        //TODO: It looks to me that this method does the same exact thing independent of the bool value 
         public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
         public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution)
@@ -201,7 +202,7 @@ namespace Statistics.Distributions
         }
         #endregion
 
-        internal static string Print(double mean, double sd, int n) => $"Normal(mean: {mean}, sd: {sd}, sample size: {n})";
+        internal static string Print(double mean, double sd, Int64 n) => $"Normal(mean: {mean}, sd: {sd}, sample size: {n})";
         public static string RequiredParameterization(bool printNotes = false) => $"The Normal distribution requires the following parameterization: {Parameterization()}.";
         internal static string Parameterization() => $"Normal(mean: [{double.MinValue}, {double.MaxValue}], sd: [{double.MinValue}, {double.MaxValue}], sample size: > 0)";
         public override IDistribution Fit(double[] sample)

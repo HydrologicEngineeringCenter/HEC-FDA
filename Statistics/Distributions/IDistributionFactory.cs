@@ -91,7 +91,7 @@ namespace Statistics
         /// <param name="max"> The upper (maximum) truncation value. </param>
         /// <param name="sampleSize"> An optional sample size parameter. If a population rather than sample distribution is intended leave this parameter blank. Set to <see cref="int.MaxValue"/> by default. </param>
         /// <returns> A new <see cref="IDistribution"/>. </returns>
-        public static IDistribution FactoryTruncatedNormal(double mean, double stDev, double min, double max, int sampleSize = int.MaxValue)
+        public static IDistribution FactoryTruncatedNormal(double mean, double stDev, double min, double max, Int64 sampleSize = int.MaxValue)
         {
             IDistribution normal = new Distributions.TruncatedNormal(mean, stDev, min, max, sampleSize);
             return normal;

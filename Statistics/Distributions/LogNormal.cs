@@ -97,7 +97,7 @@ namespace Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0;
         #endregion
 
-        internal static string Print(double mean, double sd, int n) => $"LogNormal(mean: {mean}, sd: {sd}, sample size: {n})";
+        internal static string Print(double mean, double sd, Int64 n) => $"LogNormal(mean: {mean}, sd: {sd}, sample size: {n})";
         public static string RequiredParameterization(bool printNotes)
         {
             string msg = $"The Log Normal distribution requires the following parameterization: {Parameterization()}.";

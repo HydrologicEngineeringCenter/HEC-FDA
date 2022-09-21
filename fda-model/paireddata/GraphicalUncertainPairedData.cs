@@ -91,6 +91,13 @@ namespace paireddata
             }
 
         }
+        public bool UsesStagesNotFlows
+        {
+            get
+            {
+                return _UsingStagesNotFlows;
+            }
+        }
         public event MessageReportedEventHandler MessageReport;
 
         #endregion

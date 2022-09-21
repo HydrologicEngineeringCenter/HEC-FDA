@@ -331,7 +331,7 @@ namespace StatisticsTests.Histograms
                 i++;
             }
             histogram.ForceDeQueue();
-            XElement xElement = histogram.WriteToXML();
+            XElement xElement = histogram.ToXML();
             ThreadsafeInlineHistogram histogramFromXML = ThreadsafeInlineHistogram.ReadFromXML(xElement);
             Int64[] expectedBinCounts = histogram.BinCounts;
             Int64[] actualBinCounts = histogramFromXML.BinCounts;

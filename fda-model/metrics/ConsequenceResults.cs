@@ -42,7 +42,15 @@ namespace metrics
             _consequenceResultList = new List<ConsequenceResult>();
             ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
             _consequenceResultList.Add(dummyConsequenceResult);
-            _isNull = true;
+            _isNull = false;
+            MessageHub.Register(this);
+        }
+        internal ConsequenceResults(bool isNull)
+        {
+            _consequenceResultList = new List<ConsequenceResult>();
+            ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
+            _consequenceResultList.Add(dummyConsequenceResult);
+            _isNull = isNull;
             MessageHub.Register(this);
         }
         private ConsequenceResults(List<ConsequenceResult> damageResults)
@@ -55,37 +63,36 @@ namespace metrics
         #endregion
 
         #region Methods 
-        public void AddNewConsequenceResultObject(string damageCategory, string assetCategory, int impactAreaID)
+        public void AddNewConsequenceResultObject(string damageCategory, int impactAreaID, double structureDamage = 0, double contentDamage = 0, double otherDamage = 0, double vehicleDamage = 0)
         {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, impactAreaID);
             if (damageResult.IsNull)
             {
-                ConsequenceResult newDamageResult = new ConsequenceResult(damageCategory, assetCategory, impactAreaID);
+                ConsequenceResult newDamageResult = new ConsequenceResult(damageCategory, impactAreaID);
+                newDamageResult.IncrementConsequence(structureDamage, contentDamage, vehicleDamage, otherDamage);
                 _consequenceResultList.Add(newDamageResult);
             }
         }
         public void AddExistingConsequenceResultObject(ConsequenceResult consequenceResultToAdd)
         {
-            ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
             {
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
-        }
-        public void IncrementConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            damageResult.IncrementConsequence(damageEstimate);
+            else
+            {
+                consequenceResult.IncrementConsequence(consequenceResultToAdd.StructureDamage, consequenceResultToAdd.ContentDamage, consequenceResultToAdd.VehicleDamage, consequenceResultToAdd.OtherDamage);
+            }
         }
 
         /// <summary>
         /// This method returns a consequence result for the given damage category, asset category, and impact area 
         /// </summary>
         /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public ConsequenceResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
+        public ConsequenceResult GetConsequenceResult(string damageCategory, int impactAreaID)
         {
             foreach (ConsequenceResult damageResult in _consequenceResultList)
             {
@@ -94,14 +101,11 @@ namespace metrics
                 {
                     if (damageResult.DamageCategory.Equals(damageCategory))
                     {
-                        if (damageResult.AssetCategory.Equals(assetCategory))
-                        {
-                            return damageResult;
-                        }
+                        return damageResult;
                     }
                 }
             }
-            string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+            string message = "The requested damage category - impact area combination could not be found. An arbitrary object is being returned";
             ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             ConsequenceResult dummyResult = new ConsequenceResult();
@@ -112,7 +116,7 @@ namespace metrics
         {
             foreach (ConsequenceResult damageResult in _consequenceResultList)
             {
-                ConsequenceResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
+                ConsequenceResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.RegionID);
                 bool resultsMatch = damageResult.Equals(inputDamageResult);
                 if (!resultsMatch)
                 {
@@ -124,28 +128,6 @@ namespace metrics
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
-        }
-
-        public XElement WriteToXML()
-        {
-            XElement masterElem = new XElement("EAD_Results");
-            foreach (ConsequenceResult damageResult in _consequenceResultList)
-            {
-                XElement damageResultElement = damageResult.WriteToXML();
-                damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
-                masterElem.Add(damageResultElement);
-            }
-            return masterElem;
-        }
-
-        public static ConsequenceResults ReadFromXML(XElement xElement)
-        {
-            List<ConsequenceResult> damageResults = new List<ConsequenceResult>();
-            foreach (XElement histogramElement in xElement.Elements())
-            {
-                damageResults.Add(ConsequenceResult.ReadFromXML(histogramElement));
-            }
-            return new ConsequenceResults(damageResults);
         }
 
         #endregion

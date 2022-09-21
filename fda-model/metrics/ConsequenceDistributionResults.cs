@@ -7,13 +7,19 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
+using paireddata;
 
 namespace metrics
 { 
     public class ConsequenceDistributionResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
     {
         #region Fields
-        private int _alternativeID; 
+        private static string STRUCTURE_ASSET_CATEGORY = "Structure";
+        private static string CONTENT_ASSET_CATEGORY = "Content";
+        private static string OTHER_ASSET_CATEGORY = "Other";
+        private static string VEHICLE_ASSET_CATEGRY = "Vehicle";
+        private int _alternativeID;
+        private ConvergenceCriteria _ConvergenceCriteria;
         private List<ConsequenceDistributionResult> _consequenceResultList;
         //impact area to be string?
         private bool _isNull;
@@ -67,6 +73,13 @@ namespace metrics
             _isNull = false;
             MessageHub.Register(this);
         }
+        //public for testing
+        public ConsequenceDistributionResults(ConvergenceCriteria convergenceCriteria)
+        {
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _isNull = false;
+            _ConvergenceCriteria = convergenceCriteria;
+        }
         private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
             _consequenceResultList = damageResults;
@@ -87,7 +100,8 @@ namespace metrics
                 _consequenceResultList.Add(newDamageResult);
             }
         }
-        internal void AddExistingConsequenceResultObject(ConsequenceDistributionResult consequenceResultToAdd)
+        //public for testing purposes
+        public void AddExistingConsequenceResultObject(ConsequenceDistributionResult consequenceResultToAdd)
         {
             ConsequenceDistributionResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
@@ -100,6 +114,30 @@ namespace metrics
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
+        }
+        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, Int64 iteration)
+        {
+            foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
+            {
+                AddConsequenceRealizationByAssetCategory(consequenceResult.StructureDamage, consequenceResult.DamageCategory, STRUCTURE_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.ContentDamage, consequenceResult.DamageCategory, CONTENT_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.OtherDamage, consequenceResult.DamageCategory, OTHER_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
+                AddConsequenceRealizationByAssetCategory(consequenceResult.VehicleDamage, consequenceResult.DamageCategory, VEHICLE_ASSET_CATEGRY, consequenceResult.RegionID, iteration);
+            }
+        }
+        private void AddConsequenceRealizationByAssetCategory(double consequenceRealization, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        {
+            ConsequenceDistributionResult structureConsequenceDistributionResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            if (structureConsequenceDistributionResult.IsNull)
+            {
+                ConsequenceDistributionResult newStructureDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, _ConvergenceCriteria, impactAreaID);
+                newStructureDamageResult.AddConsequenceRealization(consequenceRealization, iteration);
+                _consequenceResultList.Add(newStructureDamageResult);
+            }
+            else
+            {
+                structureConsequenceDistributionResult.AddConsequenceRealization(consequenceRealization, iteration);
+            }
         }
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
@@ -376,7 +414,86 @@ namespace metrics
             return aggregateHistogram;
 
         }
-      
+
+        public bool ResultsAreConverged(double upperConfidenceLimit, double lowerConfidenceLimit)
+        {
+            bool allHistogramsAreConverged = true;
+            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                bool histogramIsConverged = consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimit, lowerConfidenceLimit);
+                if (!histogramIsConverged)
+                {
+                    allHistogramsAreConverged = false;
+                    break;
+                }
+            }
+            return allHistogramsAreConverged;
+        }
+        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<ConsequenceDistributionResults> yValues)
+        {
+            List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
+            List<int> impactAreas = yValues[yValues.Count - 1].GetImpactAreas();
+            List<string> damageCategories = yValues[yValues.Count - 1].GetDamageCategories();
+            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories(); ;
+            foreach (int impactAreaID in impactAreas)
+            {
+                foreach (string damageCategory in damageCategories)
+                {
+                    foreach (string assetCategory in assetCategories)
+                    {
+                        CurveMetaData curveMetaData = new CurveMetaData("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory,CurveTypesEnum.MonotonicallyIncreasing, impactAreaID, assetCategory);
+                        List<IHistogram> histograms = new List<IHistogram>();
+                        foreach (ConsequenceDistributionResults consequenceDistributions in yValues)
+                        {
+                            histograms.Add(consequenceDistributions.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID));
+                        }
+                        UncertainPairedData uncertainPairedData = new UncertainPairedData(xValues.ToArray(), histograms.ToArray(), curveMetaData);
+                        uncertainPairedDataList.Add(uncertainPairedData);
+                    }
+                }
+            }
+            return uncertainPairedDataList;
+        }
+
+        private List<string> GetAssetCategories()
+        {
+            List<string> assetCategories = new List<string>();
+            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                if (!assetCategories.Contains(consequenceDistributionResult.AssetCategory))
+                {
+                    assetCategories.Add(consequenceDistributionResult.AssetCategory);
+                }
+            }
+            return assetCategories;
+        }
+
+        private List<int> GetImpactAreas()
+        {
+            List<int> impactAreas = new List<int>();
+            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                if(!impactAreas.Contains(consequenceDistributionResult.RegionID))
+                {
+                    impactAreas.Add(consequenceDistributionResult.RegionID);
+                }
+            }
+            return impactAreas;
+        }
+
+        private List<string> GetDamageCategories()
+        {
+            List<string> damageCategories = new List<string>();
+            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                if (!damageCategories.Contains(consequenceDistributionResult.DamageCategory))
+                {
+                    damageCategories.Add(consequenceDistributionResult.DamageCategory);
+                }
+            }
+            return damageCategories;
+        }
+
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement("EAD_Results");

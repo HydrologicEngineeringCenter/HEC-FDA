@@ -222,7 +222,7 @@ namespace Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
 
-        internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean}, sd: {sd}, skew: {skew}, sample size: {n})";
+        internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean}, sd: {sd}, skew: {skew}, sample size: {n})";
         internal static string RequiredParameterization(bool printNotes = true)
         {
             string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";

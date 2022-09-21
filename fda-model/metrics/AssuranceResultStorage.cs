@@ -93,7 +93,7 @@ public class AssuranceResultStorage
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Assurance");
-            XElement histogramElement = _assurance.WriteToXML();
+            XElement histogramElement = _assurance.ToXML();
             histogramElement.Name = "Histogram";
             masterElement.Add(histogramElement);
             masterElement.SetAttributeValue("Type", _type);

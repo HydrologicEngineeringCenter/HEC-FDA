@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace fda_hydro.hydraulics
+namespace fda_model.hydraulics
 {
     public class HydraulicDataset
     {
-        public IList<HydraulicProfile> HydraulicProfiles { get; set; }
-        public HydraulicDataset(IList<HydraulicProfile> profiles)
+        public List<HydraulicProfile> HydraulicProfiles { get; set; }
+        public HydraulicDataset(List<HydraulicProfile> profiles)
         {
+            profiles.Sort();
+            profiles.Reverse();
             HydraulicProfiles = profiles;
         }
-        //TODO: correct depths in profiles to be -2 and -9 for dry. 
     }
 }

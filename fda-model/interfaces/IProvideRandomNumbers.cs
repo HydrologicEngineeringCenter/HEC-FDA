@@ -10,7 +10,7 @@ namespace interfaces
     public interface IProvideRandomNumbers
 {
         double NextRandom();
-        double[] NextRandomSequence(int size);
+        double[] NextRandomSequence(Int64 size);
         int Seed { get; }
 }
 }
