@@ -2,16 +2,11 @@
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using structures;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
-using interfaces;
-using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
 using fda_model.hydraulics;
 using metrics;
@@ -169,7 +164,7 @@ namespace stageDamage
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, _ImpactAreaID, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, _ImpactAreaID, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -183,7 +178,7 @@ namespace stageDamage
             {
                 double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
                 float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs());
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, _ImpactAreaID, stages);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, _ImpactAreaID, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
@@ -192,23 +187,19 @@ namespace stageDamage
         {
             //Part 3: Stages between the highest profile 
             List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
-
-            float[] stagesAtHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs());
+            float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs());
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
 
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtHighestProfile, upperInterval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, i, WSEsParallelToIndexLocation);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, i);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, i, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - i));
             }
-           
-            
         }
-
         public List<UncertainPairedData> Compute()
         {
             List<double> allStagesAtIndexLocation = new List<double>();
@@ -222,10 +213,10 @@ namespace stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtHighestProfile, float upperInterval, int i)
+        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int i)
         {
-            float[] extrapolatedStages = new float[stagesAtHighestProfile.Length];
-            foreach (float stage in stagesAtHighestProfile)
+            float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
+            foreach (float stage in stagesAtStructuresHighestProfile)
             {
                 extrapolatedStages[i] = stage + upperInterval*i;
             }
@@ -240,12 +231,9 @@ namespace stageDamage
             }
             return extrapolatedStages;
         }
-
-
-
         //public for testing
         //assume that the inventory has already been trimmed 
-        public ConsequenceDistributionResults ComputeDamageOneCoordinate(int seed, RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, int impactAreaID, float[] wses)
+        public ConsequenceDistributionResults ComputeDamageOneCoordinate(ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
         {
             double lowerProb = 0.025;
             double upperProb = .975;
@@ -265,6 +253,5 @@ namespace stageDamage
             MessageReport?.Invoke(sender, e);
         }
         #endregion
-
     }
 }
