@@ -22,7 +22,9 @@ namespace fda_model.structures
         public string YearInConstruction { get; }
         public string CBFips { get; }
 
-        public StructureInventoryColumnMap(string structureID, string occupancyType,string damageCatagory, string firstFloorElev, string sructureValue, string foundationHeight, string groundElev, string contentValue, string otherValue, string vehicalValue, string begDamDepth, string yearInConstruction, string cbfips)
+        public StructureInventoryColumnMap(string structureID = "fd_id", string occupancyType = "occtype",string damageCatagory = "st_damcat", string firstFloorElev = "ff_elev",
+            string sructureValue = "val_struct", string foundationHeight = "found_ht", string groundElev = "ground_elv", string contentValue = "val_cont", string otherValue = "val_other", 
+            string vehicalValue = "val_vehic", string begDamDepth = "begDamDepth", string yearInConstruction= "yrbuilt", string cbfips = "cbfips")
         {
             StructureID = structureID;
             OccupancyType = occupancyType;
