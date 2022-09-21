@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d"  
+             DataContextChanged="UserControl_DataContextChanged"
+             Loaded="UserControl_Loaded"
              xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              d:DesignHeight="580" d:DesignWidth="700">

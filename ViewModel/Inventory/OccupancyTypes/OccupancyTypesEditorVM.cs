@@ -21,6 +21,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
         #region Properties
 
+        
+
         public OccupancyTypeEditable SelectedOccType
         {
             get { return _SelectedOccType; }
@@ -47,6 +49,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
+        public OccupancyTypesEditorVM( EditorActionManager manager) : base( manager)
+        {
+            SelectedOccTypeGroup = CreateDefaultEditableGroup();
+            SelectedOccType = SelectedOccTypeGroup.Occtypes.FirstOrDefault();
+            //registering the child vm's allows the "HasChanges" to bubble up and change this VM's "HasChanges".
+            RegisterChildViewModel(SelectedOccTypeGroup);
+            foreach (OccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
+            {
+                RegisterChildViewModel(ot);
+                ot.HasChanges = true;
+            }
+        }
 
         public OccupancyTypesEditorVM(OccupancyTypesElement elem, EditorActionManager manager) : base(elem, manager)
         {
@@ -65,6 +79,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
         #region Voids
 
+        private OccupancyTypeGroupEditable CreateDefaultEditableGroup()
+        {
+            List<OccupancyTypeEditable> editableOcctypes = new List<OccupancyTypeEditable>();       
+            OccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(-1, "Default Occtype Group", editableOcctypes);
+            
+            return occTypeGroup;
+        }
         private OccupancyTypeGroupEditable CreateEditableGroup(OccupancyTypesElement group)
         {
             List<OccupancyTypeEditable> editableOcctypes = new List<OccupancyTypeEditable>();
@@ -127,6 +148,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     SelectedOccTypeGroup.Occtypes.Add(otEditable);
                     SelectedOccType = otEditable;
                     otEditable.HasChanges = true;
+                    RegisterChildViewModel(otEditable);
                     HasChanges = true;
                 }
             }
@@ -153,6 +175,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                         SelectedOccTypeGroup.Occtypes.Add(otEditable);
                         SelectedOccType = otEditable;
                         otEditable.HasChanges = true;
+                        RegisterChildViewModel(otEditable);
                         HasChanges = true;
                     }
                 }
@@ -198,6 +221,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
             OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
             otEditable.RequestNavigation += this.Navigate;
+            otEditable.HasChanges = true;
             return otEditable;
         }      
 
@@ -219,6 +243,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private FdaValidationResult ValidateEditor()
         {
             FdaValidationResult validationResult = new FdaValidationResult();
+            if(SelectedOccTypeGroup.Occtypes.Count == 0)
+            {
+                validationResult.AddErrorMessage("At least one occupancy type is required to save.");
+            }
+
             List<string> allOTNames = GetAllOccTypeNames();
             foreach(OccupancyTypeEditable ot in SelectedOccTypeGroup.Occtypes)
             {
@@ -236,6 +265,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             if(vr.IsValid)
             {
                 OccupancyTypesElement elemToSave = new OccupancyTypesElement(Name, DateTime.Now.ToString("G"), Description, SelectedOccTypeGroup.CreateOcctypes(), SelectedOccTypeGroup.ID);
+                if(elemToSave.ID == -1)
+                {
+                    //the id will be -1 if the user is creating a new one.
+                    int newID = GetElementID<OccupancyTypesElement>();
+                    elemToSave.ID = newID;
+                    SelectedOccTypeGroup.ID = newID;
+                }
+                
                 Save(elemToSave);
             }
             else
