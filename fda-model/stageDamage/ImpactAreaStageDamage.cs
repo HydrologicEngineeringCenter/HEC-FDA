@@ -29,20 +29,28 @@ namespace stageDamage
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
 
+        private Inventory _inventory;
+        private List<OccupancyType> _occupancyTypes;
+        private HydraulicDataset _hydraulicDataset;
+
+
         #endregion
 
         #region Properties 
         public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null)
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, List<OccupancyType> occupancyTypes, HydraulicDataset hydraulicDataset,
+            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null)
         {
             //TODO: Validate provided functions here
             _AnalyticalFlowFrequency = analyticalFlowFrequency;
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-
+            _inventory = inventory;
+            _hydraulicDataset = hydraulicDataset;
+            _occupancyTypes = occupancyTypes;
         }
         #endregion
 
@@ -50,7 +58,7 @@ namespace stageDamage
         //TODO: This compute produces the uncertain paired data
         //That means that we need to have all hydraulic profiles available 
         //The list of stages to me appears to mean that we won't 
-        public List<UncertainPairedData> Compute(compute.RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, List<OccupancyType> occupancyType, HydraulicDataset hydraulicDataset)
+        public List<UncertainPairedData> Compute(RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             int seed = 1234;
 
@@ -137,13 +145,13 @@ namespace stageDamage
             //that is, which step?
 
 
-            //Hydraulic profiles will be sorted. need to verify the order with a unit test. Should be descending probability. 
-            List < HydraulicProfile > profileList = hydraulicDataset.HydraulicProfiles;
+            //Hydraulic profiles will be sorted in descending exceedence probability (smallest profile is index 0) 
+            List < HydraulicProfile > profileList = _hydraulicDataset.HydraulicProfiles;
 
 
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = profileList[0];
-            float[] WSEAtLowest = lowestProfile.GetWSE(inventory.GetPointMs());
+            float[] WSEAtLowest = lowestProfile.GetWSE(_inventory.GetPointMs());
             double stageAtProbabilityOfLowestProfile = stageFrequency.f(lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - minStage); 
@@ -154,7 +162,7 @@ namespace stageDamage
             for(int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, numIntermediateStagesToCompute);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, _ImpactAreaID, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(minStage + i * interval);
             }
@@ -166,14 +174,14 @@ namespace stageDamage
             foreach (HydraulicProfile hydraulicProfile in profileList)
             {
                 double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
-                float[] stages = hydraulicProfile.GetWSE(inventory.GetPointMs());
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, _ImpactAreaID, stages);
+                float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs());
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, _ImpactAreaID, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
 
             //Part 3: Stages between the highest profile 
-            float[] stagesAtHighestProfile = profileList[profileList.Count-1].GetWSE(inventory.GetPointMs());
+            float[] stagesAtHighestProfile = profileList[profileList.Count-1].GetWSE(_inventory.GetPointMs());
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count-1].Probability);
             float indexStationUpperStageDelta = (float)(maxStage - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
@@ -181,7 +189,7 @@ namespace stageDamage
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtHighestProfile, upperInterval, i, numIntermediateStagesToCompute);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, inventory, occupancyType, i, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(seed, randomProvider, convergenceCriteria, _inventory, _occupancyTypes, i, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(maxStage - upperInterval * (numIntermediateStagesToCompute - i));
             }
@@ -227,6 +235,10 @@ namespace stageDamage
             return consequenceDistributionResults;
         }
 
+        private void step1()
+        {
+
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
