@@ -18,13 +18,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             return ImportOptions.ImportStageDamages;
         }
-        public override void SaveElements()
+        public override void Save()
         {
             IElementManager manager = PersistenceFactory.GetElementManager<AggregatedStageDamageElement>();
             foreach (AggregatedStageDamageElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)

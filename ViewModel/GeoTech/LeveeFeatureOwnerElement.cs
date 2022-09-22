@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             add.Action = AddNewLeveeFeature;
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
+            importFromFile.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
             importFromFile.Action = ImportFromFile;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -57,8 +57,8 @@ namespace HEC.FDA.ViewModel.GeoTech
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportLeveeElementFromFDA1VM();
-            string header = StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
+            string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

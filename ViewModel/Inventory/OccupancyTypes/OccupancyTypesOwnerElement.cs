@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction importFromFile = new NamedAction();
-            importFromFile.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_OCCTYPE_FROM_OLD_NAME);
+            importFromFile.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_OCCTYPE_FROM_OLD_NAME);
             importFromFile.Action = ImportFromFile;
 
             NamedAction createNew = new NamedAction();
@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportOcctypesFromFDA1VM();
-            string header = StringConstants.IMPORT_OCCTYPE_FROM_OLD_HEADER;
+            string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_OCCTYPE_FROM_OLD_NAME);
             DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }

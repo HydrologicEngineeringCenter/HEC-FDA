@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             addRatingCurve.Action = AddNewRatingCurve;
 
             NamedAction ImportRatingCurve = new NamedAction();
-            ImportRatingCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_NAME);
+            ImportRatingCurve.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_NAME);
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -54,8 +54,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM();
-            string header = StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_HEADER);
+            string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_STAGE_DISCHARGE_FROM_OLD_NAME);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

@@ -17,13 +17,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return ImportOptions.ImportFrequency;
         }
 
-        public override void SaveElements()
+        public override void Save()
         {
             IElementManager manager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
             foreach (AnalyticalFrequencyElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)

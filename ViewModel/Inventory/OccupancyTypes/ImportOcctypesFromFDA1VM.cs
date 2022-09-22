@@ -17,13 +17,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             return ImportOptions.ImportOcctypes;
         }
-        public override void SaveElements()
+        public override void Save()
         {
             Saving.IElementManager manager = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>();
             foreach (OccupancyTypesElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)

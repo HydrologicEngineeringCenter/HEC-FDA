@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
             addExteriorInterior.Action = CreateNewExteriorInteriorCurve;
 
            NamedAction ImportFromAscii = new NamedAction();
-            ImportFromAscii.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_EXT_INT_FROM_OLD_NAME);
+            ImportFromAscii.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_EXT_INT_FROM_OLD_NAME);
             ImportFromAscii.Action = ImportFromASCII;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -52,8 +52,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportExteriorInteriorFromFDA1VM();
-            string header = StringConstants.IMPORT_EXT_INT_FROM_OLD_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_EXT_INT_FROM_OLD_HEADER);
+            string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_EXT_INT_FROM_OLD_NAME);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

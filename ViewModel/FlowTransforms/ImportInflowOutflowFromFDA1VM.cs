@@ -19,13 +19,14 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             return ImportOptions.ImportInflowOutflow;
         }
 
-        public override void SaveElements()
+        public override void Save()
         {
             IElementManager manager = Saving.PersistenceFactory.GetElementManager<InflowOutflowElement>();
             foreach (InflowOutflowElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)
