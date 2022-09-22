@@ -99,6 +99,26 @@ namespace structures
             GetUniqueDamageCatagories();
         }
 
+        /// <summary>
+        /// Updates a point shapefile with ground elevations sampled off a RAS terrain at their location. Requires a RAS HDF terrain, and modifies the file in place. 
+        /// </summary>
+        /// <param name="pointShapefilePath"></param>
+        /// <param name="TerrainPath"></param>
+        /// <param name="GroundElevColumnHeader"></param>
+        public static void GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath, string GroundElevColumnHeader )
+        {
+            PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
+            PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
+            TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
+            var groundElevs = terrain.ComputePointElevations(pointMs);
+
+            for (int i = 0; i < structureInventory.FeatureCount(); i++)
+            {
+                var row = structureInventory.FeatureRow(i);
+                row[GroundElevColumnHeader] = groundElevs[i];
+            }
+            structureInventory.Save();
+        }
         public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
             Structures = structures;
