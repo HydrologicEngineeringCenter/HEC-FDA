@@ -57,10 +57,6 @@ namespace structures
         }
 
 
-        /// <summary>
-        /// Constructor to create a SI from a shapefile. Gonna need to do this from database potentially as well
-        /// </summary>
-        /// <param name="pointShapefilePath"></param>
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map)
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
