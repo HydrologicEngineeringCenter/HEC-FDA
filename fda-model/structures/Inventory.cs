@@ -101,7 +101,7 @@ namespace structures
         /// <param name="pointShapefilePath"></param>
         /// <param name="TerrainPath"></param>
         /// <param name="GroundElevColumnHeader"></param>
-        public static void GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath, string GroundElevColumnHeader )
+        public static void SaveGroundElevationFromTerrainToShapefile(string pointShapefilePath, string TerrainPath, string GroundElevColumnHeader = "ground_elv" )
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
