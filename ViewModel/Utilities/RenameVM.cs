@@ -39,12 +39,20 @@ namespace HEC.FDA.ViewModel.Utilities
             Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
-                if(ElementToSave is IHaveStudyFiles)
+                if (ElementToSave is IHaveStudyFiles)
                 {
-                    StudyFilesManager.RenameDirectory(OldElement.Name, Name, ElementToSave.GetType());
+                    //this is sometimes failing when renaming terrains (Cody's LCC tif)
+                    bool success = StudyFilesManager.RenameDirectory(OldElement.Name, Name, ElementToSave.GetType());
+                    if(success)
+                    {
+                        savingManager.SaveExisting(ElementToSave);
+                    }
+                }
+                else
+                {
+                    savingManager.SaveExisting(ElementToSave);
                 }
 
-                savingManager.SaveExisting(ElementToSave);
             }
         }
     }

@@ -51,7 +51,7 @@ namespace HEC.FDA.ViewModel.Watershed
             if (terrainElems.Count == 0)
             {
 
-                Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                EditorActionManager actionManager = new EditorActionManager()
                     .WithSiblingRules(this);
 
                 TerrainBrowserVM vm = new TerrainBrowserVM(actionManager);
