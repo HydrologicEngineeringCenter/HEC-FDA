@@ -19,7 +19,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         private HydraulicElement _SelectedWaterSurfaceElevation;
         private InventoryElement _SelectedStructureInventoryElement;
-        private IndexPointsElement _SelectedIndexPointsElement;
         private CalculatedStageDamageRowItem _SelectedRow;
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
@@ -65,20 +64,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<IndexPointsElement> IndexPoints { get; } = new ObservableCollection<IndexPointsElement>();
-        public IndexPointsElement SelectedIndexPoints
-        {
-            get { return _SelectedIndexPointsElement; }
-            set { _SelectedIndexPointsElement = value; NotifyPropertyChanged(); }
-        }
-
         public CalculatedStageDamageVM()
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
             LoadDepthGrids();
             LoadNewImpactAreaFrequencyRows();
-            LoadIndexPoints();
         }
         
         public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows)
@@ -87,7 +78,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             LoadStructureInventories();
             SelectInventory(inventoryID);
             LoadDepthGrids();
-            LoadIndexPoints();
             SelectDepthGrid(wseId);
             LoadCurves(curves);
 
@@ -186,19 +176,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private void LoadIndexPoints()
-        {
-            List<IndexPointsElement> indexPoints = StudyCache.GetChildElementsOfType<IndexPointsElement>();
-            foreach (IndexPointsElement elem in indexPoints)
-            {
-                IndexPoints.Add(elem);
-            }
-            if (IndexPoints.Count > 0)
-            {
-                SelectedIndexPoints = IndexPoints[0];
-            }
-        }
-
         private void LoadStructureInventories()
         {
             List<InventoryElement> inventoryElements = StudyCache.GetChildElementsOfType<InventoryElement>();
@@ -229,7 +206,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
 
             StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
-                SelectedIndexPoints, ImpactAreaFrequencyRows);
+                ImpactAreaFrequencyRows);
 
             FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
@@ -299,10 +276,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (SelectedStructures == null)
             {
                 vr.AddErrorMessage("A structure inventory must be selected.");
-            }
-            if (SelectedIndexPoints == null)
-            {
-                vr.AddErrorMessage("Index Points must be selected.");
             }
             if (Rows.Count == 0)
             {

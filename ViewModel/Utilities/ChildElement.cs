@@ -116,9 +116,16 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 if(this is IHaveStudyFiles)
                 {
-                    StudyFilesManager.DeleteDirectory(Name, GetType());
+                    bool success = StudyFilesManager.DeleteDirectory(Name, GetType());
+                    if(success)
+                    {
+                        PersistenceFactory.GetElementManager(this).Remove(this);
+                    }
                 }
-                PersistenceFactory.GetElementManager(this).Remove(this);
+                else
+                {
+                    PersistenceFactory.GetElementManager(this).Remove(this);
+                }
             }
         }
 

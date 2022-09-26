@@ -6,7 +6,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     public class OccupancyTypeGroupEditable : NameValidatingVM
     {
         public List<OccupancyTypeEditable> Occtypes { get; set; }
-        public int ID { get; }
+        public int ID { get; set; }
         public List<OccupancyTypeEditable> ModifiedOcctypes
         {
             get

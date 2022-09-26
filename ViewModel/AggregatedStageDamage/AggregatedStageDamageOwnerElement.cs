@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             addDamageCurve.Action = AddNewStageDamageCurveSet;
 
             NamedAction importDamageCurve = new NamedAction();
-            importDamageCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
+            importDamageCurve.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
             importDamageCurve.Action = ImportNewStageDamageCurveSet;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (impactAreaElements.Count > 0)
             {
                 ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM();
-                string header = StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_HEADER;
+                string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
                 DynamicTabVM tab = new DynamicTabVM(header, vm, header);
                 Navigate(tab, false, true);
             }

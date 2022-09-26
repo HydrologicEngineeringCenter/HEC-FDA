@@ -1,4 +1,5 @@
 ﻿using HEC.CS.Threading;
+using HEC.FDA.ViewModel.Editors;
 using Importer;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
-    public abstract class ImportFromFDA1VM : BaseViewModel
+    public abstract class ImportFromFDA1VM : BaseEditorVM
     {
         private string _ImportLog = "";
         private string _Path;
@@ -28,14 +29,11 @@ namespace HEC.FDA.ViewModel.Utilities
             get { return _Path; }
             set { _Path = value; NotifyPropertyChanged(); }
         }
-        public ImportFromFDA1VM()
+        public ImportFromFDA1VM():base(null)
         {
-
             AddRule(nameof(Path), () => !string.IsNullOrWhiteSpace(Path), "Import file path cannot be blank or whitespace.");
             Validate();
         }
-
-        public abstract void SaveElements();
 
         public abstract void CreateElements(bool checkForNameConflict = true);
         public abstract ImportOptions GetImportOptions();
@@ -61,9 +59,17 @@ namespace HEC.FDA.ViewModel.Utilities
 
                 CreateElements();
 
+                //prepend the name and description
+                foreach (ChildElement elem in ElementsToImport)
+                {
+                    elem.Name = Name + " " + elem.Name;
+                    elem.Description = Description + " " + elem.Description;
+                    elem.UpdateTreeViewHeader(elem.Name);
+                }
+
                 dispatcher.Invoke(new Action(() =>
                 {
-                    SaveElements();
+                    Save();
                 }));
             });
         }

@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
             addInflowOutflow.Action = AddInflowOutflow;
 
             NamedAction importInflowOutflow = new NamedAction();
-            importInflowOutflow.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_REG_UNREG_FROM_OLD_NAME);
+            importInflowOutflow.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_REG_UNREG_FROM_OLD_NAME);
             importInflowOutflow.Action = ImportInflowOutflow;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -51,8 +51,8 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         public void ImportInflowOutflow(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportInflowOutflowFromFDA1VM();
-            string header = StringConstants.IMPORT_REG_UNREG_FROM_OLD_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_REG_UNREG_FROM_OLD_HEADER);
+            string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_REG_UNREG_FROM_OLD_NAME);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

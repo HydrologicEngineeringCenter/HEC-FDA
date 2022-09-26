@@ -37,5 +37,25 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             }
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null)
+            {
+                Visibility = Visibility.Collapsed;
+            }
+          
+        }
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (DataContext == null)
+            {
+                Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Visibility = Visibility.Visible;
+            }
+        }
     }
 }

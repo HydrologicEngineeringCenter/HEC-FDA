@@ -92,18 +92,15 @@
 
         public const string FREQUENCY_FUNCTIONS = "Frequency Functions";
         public const string CREATE_FREQUENCY_FUNCTIONS_MENU = "Create New Frequency Function...";
-        public const string CREATE_SYNTHETIC_FREQUENCY_FUNCTIONS_MENU = "Import Synthetic Analytical Frequency Function from HEC-FDA Version 1.4.3 DBF...";
         public const string EDIT_FREQUENCY_FUNCTIONS_MENU = "Edit Frequency Function...";
         public const string CREATE_FREQUENCY_HEADER = "Create Frequency Function";
         public const string IMPORT_FREQUENCY_FROM_OLD_NAME = "Frequency Function";
-        public const string IMPORT_FREQUENCY_FROM_OLD_HEADER = "Import Frequency Functions From HEC-FDA 1.4.3";
 
         public const string REG_UNREG_TRANSFORM_FUNCTIONS = "Regulated-Unregulated Transform Functions";
         public const string CREATE_REG_UNREG_MENU = "Create New Regulated-Unregulated Relationship...";
         public const string EDIT_REG_UNREG_MENU = "Edit Regulated-Unregulated Relationship...";
         public const string CREATE_REG_UNREG_HEADER = "Create New Regulated-Unregulated Relationship";
         public const string IMPORT_REG_UNREG_FROM_OLD_NAME = "Regulated-Unregulated";
-        public const string IMPORT_REG_UNREG_FROM_OLD_HEADER = "Import Regulated-Unregulated From HEC-FDA 1.4.3";
 
         public const string STAGE_TRANSFORM_FUNCTIONS = "Stage Transform Functions";
 
@@ -113,21 +110,18 @@
         public const string CREATE_STAGE_DISCHARGE_HEADER = "Create New Stage-Discharge Relationship";
 
         public const string IMPORT_STAGE_DISCHARGE_FROM_OLD_NAME = "Stage-Discharge";
-        public const string IMPORT_STAGE_DISCHARGE_FROM_OLD_HEADER = "Import Stage-Discharge From HEC-FDA 1.4.3";
 
         public const string EXTERIOR_INTERIOR_FUNCTIONS = "Exterior-Interior Functions";
         public const string CREATE_EXT_INT_MENU = "Create New Exterior-Interior Relationship...";
         public const string EDIT_EXT_INT_MENU = "Edit Exterior-Interior Relationship...";
         public const string CREATE_EXT_INT_HEADER = "Create New Exterior-Interior Relationship";
         public const string IMPORT_EXT_INT_FROM_OLD_NAME = "Exterior-Interior Relationship";
-        public const string IMPORT_EXT_INT_FROM_OLD_HEADER = "Import Exterior-Interior Relationship From HEC-FDA 1.4.3";
 
         public const string LATERAL_STRUCTURES = "Lateral Structures";
         public const string CREATE_LATERAL_STRUCTURES_MENU = "Create New Lateral Structure...";
         public const string EDIT_LATERAL_STRUCTURES_MENU = "Edit Lateral Structure...";
         public const string CREATE_LATERAL_STRUCTURES_HEADER = "Create New Lateral Structure";
         public const string IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME = "Lateral Structures";
-        public const string IMPORT_LATERAL_STRUCTURES_FROM_OLD_HEADER = "Import Lateral Structures From HEC-FDA 1.4.3";
 
         public const string ECONOMICS = "Economics";
 
@@ -135,7 +129,8 @@
         public const string EDIT_OCCTYPE_MENU = "Edit Occupancy Types...";
         public const string EDIT_OCCTYPE_HEADER = "Edit Occupancy Types";
         public const string IMPORT_OCCTYPE_FROM_OLD_NAME = "Occupancy Types";
-        public const string IMPORT_OCCTYPE_FROM_OLD_HEADER = "Import Lateral Structures From HEC-FDA 1.4.3";
+        public const string CREATE_NEW_OCCTYPE_MENU = "Create New Occupancy Types...";
+        public const string CREATE_NEW_OCCTYPE_HEADER = "Create New Occupancy Types";
 
         public const string STRUCTURE_INVENTORIES = "Structure Inventories";
         public const string IMPORT_STRUCTURE_INVENTORIES_MENU = "Import From Shapefile...";
@@ -149,8 +144,7 @@
         public const string EDIT_STAGE_DAMAGE_MENU = "Edit Stage-Damage Functions...";
         public const string EXPORT_STAGE_DAMAGE_MENU = "Export Structure Detail...";
 
-        public const string IMPORT_STAGE_DAMAGE_FROM_OLD_NAME = "Stage-Damage";
-        public const string IMPORT_STAGE_DAMAGE_FROM_OLD_HEADER = "Import Stage-Damage Functions From HEC-FDA 1.4.3";
+        public const string IMPORT_STAGE_DAMAGE_FROM_OLD_NAME = "Stage-Damage Functions";
 
         public const string SCENARIOS = "Scenarios";
         public const string CREATE_NEW_SCENARIO_MENU = "Create New Scenario...";
@@ -197,8 +191,6 @@
 
         public const string FDA_VERSION = "FDA 2.0";
 
-        public const string IMPORT_FROM_OLD_FDA = "Import Study From HEC-FDA 1.4.3";
-
         public const string DEFAULT_UNIT_FORMAT = "N2";
         public const string DETAILED_DECIMAL_FORMAT = "N4";
 
@@ -214,11 +206,17 @@
 
         public const string ELEMENT_XML_TAG = "ElementXML";
 
-        public const bool IS_BETA_RELEASE = true;
+        public const string TAB_DELIMITED = "Tab-Delimited Text File";
 
-        public static string ImportFromOldFda(string elementName)
+        public static string CreateImportFromFileMenuString(string elementName)
         {
-            return "Import " + elementName + " From HEC-FDA Version 1.4.3...";
+            return "Import " + elementName + " From " + TAB_DELIMITED + "...";
+        }
+
+        public static string CreateImportHeader(string elementName)
+        {
+            return "Import " + elementName + " From " + TAB_DELIMITED;
+
         }
 
         public static string CreateLastEditTooltip(string lastEditDate)

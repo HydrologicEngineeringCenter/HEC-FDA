@@ -153,7 +153,7 @@ namespace HEC.FDA.ViewModel.Study
             ImportLog += occtypesVM.ImportLog;
         }
 
-        public override void SaveElements()
+        public override void Save()
         {
             IElementManager flowFreqManager = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
             foreach (ChildElement elem in _FlowFrequencyElements)
@@ -192,7 +192,7 @@ namespace HEC.FDA.ViewModel.Study
             {
                 occtypeManager.SaveNew(elem);
             }
-
+            HasChanges = false;
         }
 
         public void RunSetupLogic()

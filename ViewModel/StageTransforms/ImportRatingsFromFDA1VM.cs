@@ -17,13 +17,14 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             return ImportOptions.ImportRatings;
         }
-        public override void SaveElements()
+        public override void Save()
         {          
-            IElementManager manager = Saving.PersistenceFactory.GetElementManager<StageDischargeElement>();
+            IElementManager manager = PersistenceFactory.GetElementManager<StageDischargeElement>();
             foreach(StageDischargeElement elem in ElementsToImport)
-            {
+            {               
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)

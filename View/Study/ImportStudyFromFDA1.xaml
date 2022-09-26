@@ -34,7 +34,7 @@
             <Label Content="Study Name" Grid.Row="0" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
             <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=StudyName, ValidatesOnDataErrors=True}" />
 
-            <Label Content="HEC-FDA 1.4.3 Import File" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
+            <Label Content="Tab Delimited Import File" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Grid.Row="1" Grid.Column="1" Path="{Binding Path, ValidatesOnDataErrors=True}"  Margin="5" Filter="txt (*.txt) |*.txt|All files (*.*) |*.*"   />
 
             <Label Content="Study Path" Grid.Row="2" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>

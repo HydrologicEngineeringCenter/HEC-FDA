@@ -18,13 +18,14 @@ namespace HEC.FDA.ViewModel.StageTransforms
         {
             return ImportOptions.ImportExteriorInterior;
         }
-        public override void SaveElements()
+        public override void Save()
         {
             IElementManager manager = PersistenceFactory.GetElementManager<ExteriorInteriorElement>();
             foreach (ExteriorInteriorElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
+            HasChanges = false;
         }
 
         public override void CreateElements(bool checkForNameConflict = true)

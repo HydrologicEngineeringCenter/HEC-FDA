@@ -16,16 +16,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         private const string SELECTED_STRUCTURES = "SelectedStructures";
         private const string SELECTED_HYDRO = "SelectedHydraulics";
-        private const string SELECTED_INDEX_POINTS = "SelectedIndexPoints";
         private const string IS_MANUAL = "IsManual";
         private const string STAGE_DAMAGE_CURVES = "StageDamageCurves";
         private const string STAGE_DAMAGE_CURVE = "StageDamageCurve";
         private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
+        private const string IMPACT_AREA_FREQUENCY_ROWS = "ImpactAreaFrequencyRow";
 
         #region Properties
         public int SelectedWSE { get; }
         public int SelectedStructures { get; }
-        public int SelectedIndexPoints { get; }
         public List<StageDamageCurve> Curves { get; } = new List<StageDamageCurve>();
         public bool IsManual { get; }
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
@@ -34,7 +33,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-            int indexPointsID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
+             List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
             : base(name, lastEditDate, description, id)
         {
             ImpactAreaFrequencyRows = impactAreaRows;            
@@ -43,7 +42,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             IsManual = isManual;
             SelectedWSE = selectedWSE;
             SelectedStructures = selectedStructs;
-            SelectedIndexPoints = indexPointsID;
 
             AddActions();
         }
@@ -51,7 +49,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
         {
             SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
-            SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
             SelectedWSE = Convert.ToInt16(elementXML.Attribute(SELECTED_HYDRO).Value);
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
 
@@ -62,8 +59,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Curves.Add(new StageDamageCurve(curve));
             }
 
-            IEnumerable<XElement> impAreaRows = elementXML.Elements(IMPACT_AREA_ROWS);
-            foreach (XElement impAreaRow in impAreaRows)
+            XElement impAreaRows = elementXML.Element(IMPACT_AREA_ROWS);
+            IEnumerable<XElement> freqRows = impAreaRows.Elements(IMPACT_AREA_FREQUENCY_ROWS);
+            foreach (XElement impAreaRow in freqRows)
             {
                 ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impAreaRow));
             }
@@ -188,7 +186,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             stageDamageElem.Add(CreateHeaderElement());
 
             stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
-            stageDamageElem.SetAttributeValue(SELECTED_INDEX_POINTS, SelectedIndexPoints);
             stageDamageElem.SetAttributeValue(SELECTED_HYDRO, SelectedWSE);
             //todo: save the selected wse
             stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
@@ -219,10 +216,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 isEqual = false;
             }
             if (SelectedStructures != elem.SelectedStructures)
-            {
-                isEqual = false;
-            }
-            if (SelectedIndexPoints != elem.SelectedIndexPoints)
             {
                 isEqual = false;
             }

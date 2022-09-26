@@ -18,11 +18,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             createNew.Action = AddNewFlowFrequencyCurve;
 
             NamedAction importFlowFreq = new NamedAction();
-            importFlowFreq.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_FREQUENCY_FROM_OLD_NAME);
+            importFlowFreq.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_FREQUENCY_FROM_OLD_NAME);
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             NamedAction importSyntheticFreq = new NamedAction();
-            importSyntheticFreq.Header = StringConstants.CREATE_SYNTHETIC_FREQUENCY_FUNCTIONS_MENU;
+            importSyntheticFreq.Header = StringConstants.CreateImportFromFileMenuString("Synthetic Analytical Frequency Function");
             importSyntheticFreq.Action = CreateSyntheticFreqFromDBF;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -62,8 +62,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)
         {
             ImportFromFDA1VM vm = new ImportFrequencyFromFDA1VM();
-            string header = StringConstants.IMPORT_FREQUENCY_FROM_OLD_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_FREQUENCY_FROM_OLD_HEADER);
+            string header = StringConstants.CreateImportHeader(StringConstants.FREQUENCY_FUNCTIONS);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
 

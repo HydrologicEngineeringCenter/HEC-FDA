@@ -96,9 +96,28 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Navigate(tab, false, true);
         }
 
+        private FdaValidationResult GetValidationResult()
+        {
+            FdaValidationResult doAlternativesExistResult = DoAlternativesStillExistResult();
+            if (!doAlternativesExistResult.IsValid)
+            {
+                MessageBox.Show(doAlternativesExistResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else
+            {
+                FdaValidationResult canComputeValidationResult = GetCanComputeResults();
+                if (!canComputeValidationResult.IsValid)
+                {
+                    MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+                doAlternativesExistResult.AddErrorMessage(canComputeValidationResult.ErrorMessage);
+            }
+            return doAlternativesExistResult;
+        }
+
         public void ComputeAltCompReport(object arg1, EventArgs arg2)
         {
-            FdaValidationResult canComputeValidationResult = GetCanComputeResults();
+            FdaValidationResult canComputeValidationResult = GetValidationResult();
             if (canComputeValidationResult.IsValid)
             {
                 AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
@@ -108,11 +127,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 string header = "Compute Log For Alternative Comp Report: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, compVM, "ComputeLogAltCompReport" + Name);
                 Navigate(tab, false, false);
-            }
-            else
-            {
-                MessageBox.Show(canComputeValidationResult.ErrorMessage, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
+            }       
         }
 
         private void ComputeCompleted(AlternativeComparisonReportResults results)
@@ -269,32 +284,41 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return alt;
         }
 
-        private FdaValidationResult GetCanComputeResults()
+        private FdaValidationResult DoAlternativesStillExistResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            
+
             AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
             List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
-            if(withoutAlt == null)
+            if (withoutAlt == null)
             {
                 vr.AddErrorMessage("The without project alternative no longer exists.");
             }
 
-            if(withProjAlts.Count==0)
+            if (withProjAlts.Count == 0)
             {
                 vr.AddErrorMessage("There are no longer any with project alternatives.");
             }
 
-            foreach(int altID in WithProjAltIDs)
+            foreach (int altID in WithProjAltIDs)
             {
                 bool foundAlt = withProjAlts.Where(alt => alt.ID == altID).Any();
-                if(!foundAlt)
+                if (!foundAlt)
                 {
                     vr.AddErrorMessage("An alternative has been removed. Edit this alternative comparison report and try again.");
                     break;
                 }
             }
+            return vr;
+        }
+
+        private FdaValidationResult GetCanComputeResults()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            AlternativeElement withoutAlt = GetAlternativeElementFromID(WithoutProjAltID);
+            List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
             FdaValidationResult withoutAltValidationResult = withoutAlt.RunPreComputeValidation();
             if(!withoutAltValidationResult.IsValid)

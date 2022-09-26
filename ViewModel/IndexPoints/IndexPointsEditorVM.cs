@@ -82,6 +82,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
             }
             else
             {
+                ListOfRows.Clear();
                 DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
                 DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 

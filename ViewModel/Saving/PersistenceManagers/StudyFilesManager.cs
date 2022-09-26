@@ -72,7 +72,14 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         }
 
-        public static void RenameDirectory(string originalName, string newName, Type childElementType)
+        /// <summary>
+        /// Returns true if it renamed the directory successfully
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        /// <param name="childElementType"></param>
+        /// <returns></returns>
+        public static bool RenameDirectory(string originalName, string newName, Type childElementType)
         {
             if (!originalName.Equals(newName))
             {
@@ -87,17 +94,28 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 catch (Exception ex)
                 {
                     MessageBox.Show("Renaming the directory failed.\n" + ex.Message, "Rename Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
                 }
             }
+            return true;
         }
 
 
-        public static void DeleteDirectory(string directoryName, Type childElementType)
+        public static bool DeleteDirectory(string directoryName, Type childElementType)
         {
             if (Directory.Exists(GetStudyElementDirectoryPath(childElementType) + "\\" + directoryName))
             {
-                Directory.Delete(GetStudyElementDirectoryPath(childElementType) + "\\" + directoryName, true);
+                try
+                {
+                    Directory.Delete(GetStudyElementDirectoryPath(childElementType) + "\\" + directoryName, true);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Deleting the directory failed.\n" + ex.Message, "Delete Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
             }
+            return true;
         }
 
         private static void CopyDirectoryContents(string sourceDirectory, string targetDirectory)

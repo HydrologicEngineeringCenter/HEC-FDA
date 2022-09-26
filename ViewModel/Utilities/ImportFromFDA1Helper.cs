@@ -324,7 +324,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (curves.Count > 0)
                 {
                     List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1,-1, curves, impAreaFrequencyRows,true, elemID);
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows,true, elemID);
                 }
                 else
                 {

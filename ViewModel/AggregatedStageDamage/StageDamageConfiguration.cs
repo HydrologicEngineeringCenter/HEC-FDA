@@ -20,15 +20,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public InventoryElement SelectedStructures { get; }
         public HydraulicElement SelectedHydraulics { get; }
-        public IndexPointsElement SelectedIndexPoints { get; }
         public ImpactAreaElement SelectedImpactArea { get; }
 
         public StageDamageConfiguration(ImpactAreaElement impAreaElem, HydraulicElement hydroElem, InventoryElement inventoryElem,
-            IndexPointsElement indexPointsElem, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows)
+             List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows)
         {
             SelectedImpactArea = impAreaElem;
             SelectedStructures = inventoryElem;
-            SelectedIndexPoints = indexPointsElem;
             SelectedHydraulics = hydroElem;
             ImpactAreaFrequencyRows = impactAreaRows;
         }
@@ -57,10 +55,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (SelectedStructures == null)
             {
                 vr.AddErrorMessage("A structure inventory selection is required to compute.");
-            }
-            if (SelectedIndexPoints == null)
-            {
-                vr.AddErrorMessage("An index points selection is required to compute.");
             }
 
             vr.AddErrorMessage(ValidateImpactAreaFrequencyFunctionTable().ErrorMessage);
@@ -134,7 +128,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             vr.AddErrorMessage(GetImpactAreaFilesValidResult().ErrorMessage);
             vr.AddErrorMessage(GetHydroFilesValidResult().ErrorMessage);
-            vr.AddErrorMessage(GetIndexPointsFilesValidResult().ErrorMessage);
             //todo: others?
 
 
@@ -180,18 +173,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
-        private FdaValidationResult GetIndexPointsFilesValidResult()
-        {
-            //impact areas will only be of type *.shp
-            FdaValidationResult vr = new FdaValidationResult();
-            string indexPointsDirectoryPath = GetIndexPointsDirectory();
-            vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(indexPointsDirectoryPath, "*.shp").ErrorMessage);
-            //todo: do we need to check that a dbf exists?
-            vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(indexPointsDirectoryPath, "*.dbf").ErrorMessage);
-
-            return vr;
-        }
-
         #endregion
 
 
@@ -203,16 +184,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public string GetImpactAreaShapefile()
         {
             return Directory.GetFiles(GetImpactAreaDirectory(), "*.shp")[0];
-        }
-
-        public string GetIndexPointsDirectory()
-        {
-            return Connection.Instance.IndexPointsDirectory + "\\" + SelectedIndexPoints.Name;
-        }
-
-        public string GetIndexPointsShapefile()
-        {
-            return Directory.GetFiles(GetIndexPointsDirectory(), "*.shp")[0];
         }
 
         public string GetHydraulicsDirectory()

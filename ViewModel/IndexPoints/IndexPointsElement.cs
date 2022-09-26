@@ -6,6 +6,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -53,34 +54,14 @@ namespace HEC.FDA.ViewModel.IndexPoints
             Navigate(tab, false, false);
         }
 
-        private string GetStageDamageMessage()
-        {
-            //todo: check the stage damages for any that use these index points.
-            List<AggregatedStageDamageElement> iasElems = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-            return null;
-        }
 
         public override void RemoveElement(object sender, EventArgs e)
         {
-            string stageDamageMessage = GetStageDamageMessage();
-            if (stageDamageMessage != null)
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var result = MessageBox.Show(stageDamageMessage, "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                    StudyFilesManager.DeleteDirectory(Name, GetType());
-                    //todo: delete stage damages with these index points?
-                }
-            }
-            else
-            {
-                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                    StudyFilesManager.DeleteDirectory(Name, GetType());
-                }
+                PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
+                StudyFilesManager.DeleteDirectory(Name, GetType());
             }
         }
 

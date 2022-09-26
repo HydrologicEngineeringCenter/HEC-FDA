@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             addRatingCurve.Action = AddNewRatingCurve;
 
             NamedAction ImportRatingCurve = new NamedAction();
-            ImportRatingCurve.Header = StringConstants.ImportFromOldFda(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
+            ImportRatingCurve.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
             ImportRatingCurve.Action = ImportRatingCurvefromAscii;
 
             List<NamedAction> localActions = new List<NamedAction>();

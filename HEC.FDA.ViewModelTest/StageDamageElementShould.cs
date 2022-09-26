@@ -24,7 +24,6 @@ namespace HEC.FDA.ViewModelTest
 
             int selectedWSE = 1;
             int selectedStructs = 2;
-            int selectedIndexPoints = 3;
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
             ImpactAreaRowItem ri = new ImpactAreaRowItem(1, "myImpactArea");
 
@@ -33,7 +32,7 @@ namespace HEC.FDA.ViewModelTest
             functions.Add(new ImpactAreaFrequencyFunctionRowItem(ri, new List<AnalyticalFrequencyElement>(), new List<StageDischargeElement>()));
 
             AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
-                selectedWSE, selectedStructs, selectedIndexPoints, curves, functions, true, id);
+                selectedWSE, selectedStructs, curves, functions, true, id);
             XElement elemXML = elem1.ToXML();
 
             AggregatedStageDamageElement elem2 = new AggregatedStageDamageElement(elemXML, id);

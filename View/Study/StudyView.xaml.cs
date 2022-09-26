@@ -108,7 +108,5 @@ namespace HEC.FDA.View.Study
             e.Handled = true;
         }
 
- 
-
     }
 }
