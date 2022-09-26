@@ -13,8 +13,11 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace alternatives
 {
-    public class Alternative: Validation
+    public class Alternative: Validation, IReportMessage, IProgressReport
     {
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -26,9 +29,11 @@ namespace alternatives
         /// <returns></returns>
         /// 
 
-        public static AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
             ScenarioResults computedResultsFutureYear)
         {
+            ReportProgress(this, new ProgressReportEventArgs(55));
+
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
             //validation on future year relative to base year 
@@ -245,6 +250,16 @@ namespace alternatives
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }
             return interpolatedEADs;
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
         }
     }
 }

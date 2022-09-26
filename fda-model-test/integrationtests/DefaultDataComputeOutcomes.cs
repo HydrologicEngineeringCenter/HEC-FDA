@@ -208,7 +208,7 @@ namespace fda_model_test.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-            AlternativeResults alternativeResults = Alternative.AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2);
             IHistogram eadHistogram = alternativeResults.GetBaseYearEADHistogram(impactAreaID1, commercialDamageCategory);
 
             //Act

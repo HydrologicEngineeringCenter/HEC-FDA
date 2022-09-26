@@ -87,7 +87,7 @@ namespace fda_model_test.unittests
                 Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
                 ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-                AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+                AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
                 double tolerance = 0.05;
 
                 double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
@@ -189,7 +189,7 @@ namespace fda_model_test.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
 
-            AlternativeResults alternativeResults = Alternative.AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };
             bool testPasses = true;
