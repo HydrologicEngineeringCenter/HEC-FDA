@@ -3,6 +3,7 @@ using fda_model.hydraulics;
 using fda_model.hydraulics.enums;
 using structures;
 using fda_model.structures;
+using System.Linq;
 
 namespace fda_model_test.unittests
 {
@@ -20,7 +21,9 @@ namespace fda_model_test.unittests
             HydraulicProfile profile = new HydraulicProfile(.01, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max", pathToTerrain);
             Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map);
             float[] wses = profile.GetWSE(inventory.GetPointMs());
-            Assert.Equal(696, wses.Length);
+            Assert.Equal(696, wses.Length); // All structures have a value
+            Assert.Equal(947.244446, wses[0]); // first structure has correct WSE
+            Assert.Equal(-9999, wses[1]); // second structure is dry and reports -9999
         }
     }
 }
