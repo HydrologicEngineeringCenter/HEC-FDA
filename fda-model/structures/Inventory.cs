@@ -57,7 +57,7 @@ namespace structures
         }
 
 
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map)
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes)
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
@@ -91,6 +91,7 @@ namespace structures
             {
                 Console.WriteLine(ex);
             }
+            _Occtypes = occTypes;
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
         }
