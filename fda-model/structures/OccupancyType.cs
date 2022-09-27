@@ -78,7 +78,7 @@ namespace structures
 
         #endregion
         #region Constructor
-        internal OccupancyType()
+        public OccupancyType()
         {
             _structureDepthPercentDamageFunction = new UncertainPairedData();
             _contentDepthPercentDamageFunction = new UncertainPairedData(); 

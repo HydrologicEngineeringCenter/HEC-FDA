@@ -16,8 +16,10 @@ namespace fda_model_test.unittests.structures
             string pathToNSIShapefile = @"..\..\..\Resources\MuncieNSI\MuncieNSI.shp";
             string pathToIAShapefile = @"..\..\..\Resources\MuncieImpactAreas\ImpactAreas.shp";
             StructureInventoryColumnMap map = new StructureInventoryColumnMap();
-
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map);
+            //Empty (default) occupancy types
+            OccupancyType occupancyType = new OccupancyType();
+            List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes);
 
             Assert.NotNull(inventory);
             Assert.Equal(3, inventory.ImpactAreas.Count);
