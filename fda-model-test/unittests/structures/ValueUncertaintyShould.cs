@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using structures;
 using Statistics;
 
 namespace fda_model_test.unittests.structures
 {
-    public class ValueUncertaintyTests
+    public class ValueUncertaintyShould
     {
         //test deterministic and test a negative value 
         [Theory]
@@ -19,7 +14,7 @@ namespace fda_model_test.unittests.structures
         [InlineData(IDistributionEnum.Uniform, .2, .3, 200, .05, 165)]
         [InlineData(IDistributionEnum.Deterministic, .98349, .2343, 10, .593497, 10)] //deterministic should only return the inventory value
         [InlineData(IDistributionEnum.Normal, 1.5, 0, 100, .01, 0)] //if value sampled is negative, return 0 
-        public void ValueUncertaintySampleShould(IDistributionEnum distributionEnum, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax, double inventoryValue, double probability, double expected)
+        public void ValueUncertaintyShouldSampleCorrectly(IDistributionEnum distributionEnum, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax, double inventoryValue, double probability, double expected)
         {
             ValueUncertainty valueUncertainty = new ValueUncertainty(distributionEnum, percentOfInventoryValueStandardDeviationOrMin, percentOfInventoryMax);
             double actual = valueUncertainty.Sample(inventoryValue, probability);
