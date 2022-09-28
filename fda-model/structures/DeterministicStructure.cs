@@ -41,19 +41,19 @@ namespace structures
             double depthabovefoundHeight = waterSurfaceElevation - FirstFloorElevation;
 
             //Structure
-            double structDamagepercent = _sampledStructureParameters.StructDamagePairedData.f(depthabovefoundHeight);
+            double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
             double structDamage = structDamagepercent * StructValueSample;
 
             //Content
-            double contentDamagePercent = _sampledStructureParameters.ContentDamagePairedData.f(depthabovefoundHeight);
+            double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
             double contDamage = contentDamagePercent * ContentValueSample;
 
             //Vehicle
-            double vehicleDamagePercent = _sampledStructureParameters.VehicleDamagePairedData.f(depthabovefoundHeight);
+            double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
             double vehicleDamage = vehicleDamagePercent * VehicleValueSample;
 
             //Other
-            double otherDamagePercent = _sampledStructureParameters.OtherDamagePairedData.f(depthabovefoundHeight);
+            double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
             double otherDamage = otherDamagePercent * OtherValueSample;
 
 

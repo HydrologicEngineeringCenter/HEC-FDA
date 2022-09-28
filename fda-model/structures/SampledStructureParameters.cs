@@ -6,10 +6,10 @@ namespace structures
     {
         public string Name { get; }
         public string DamageCatagory { get; }
-        public IPairedData StructDamagePairedData { get; }
-        public IPairedData ContentDamagePairedData { get; }
-        public IPairedData VehicleDamagePairedData { get; }
-        public IPairedData OtherDamagePairedData { get; }
+        public IPairedData StructPercentDamagePairedData { get; }
+        public IPairedData ContentPercentDamagePairedData { get; }
+        public IPairedData VehiclePercentDamagePairedData { get; }
+        public IPairedData OtherPercentDamagePairedData { get; }
         public double FirstFloorElevationSampled { get; }
         public double StructureValueSampled { get; }
         //this will be set either using the content value or the content to structure value ratio
@@ -24,10 +24,10 @@ namespace structures
             //TODO: Sampling the depth percent damage functions for each structure individually seems a bit overkill 
             Name = name;
             DamageCatagory = damcat;
-            StructDamagePairedData = structPercentDamagePairedData;
-            ContentDamagePairedData = contentPercentDamagePairedData;
-            VehicleDamagePairedData = vehiclePercentDamagePairedData;
-            OtherDamagePairedData = otherPercentDamagePairedData;
+            StructPercentDamagePairedData = structPercentDamagePairedData;
+            ContentPercentDamagePairedData = contentPercentDamagePairedData;
+            VehiclePercentDamagePairedData = vehiclePercentDamagePairedData;
+            OtherPercentDamagePairedData = otherPercentDamagePairedData;
             FirstFloorElevationSampled = sampledFirstFloorElevation;
             StructureValueSampled = sampledStructureValue;
             ContentValueSampled = sampledContentValue;

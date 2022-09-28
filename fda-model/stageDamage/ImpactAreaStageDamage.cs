@@ -11,6 +11,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using fda_model.hydraulics;
 using metrics;
 using compute;
+using interfaces;
 
 namespace stageDamage
 {
@@ -143,7 +144,7 @@ namespace stageDamage
             }
             return null;
         }
-        private void ComputeLowerStageDamage(PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private void ComputeLowerStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = _hydraulicDataset.HydraulicProfiles[0];
@@ -157,12 +158,12 @@ namespace stageDamage
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, _ImpactAreaID, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, _ImpactAreaID, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
         }
-        private void ComputeMiddleStageDamage(PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private void ComputeMiddleStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 2: Stages between the lowest profile and highest profile 
             //I think we do the 8 profiles for now 
@@ -171,12 +172,12 @@ namespace stageDamage
             {
                 double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
                 float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs());
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, _ImpactAreaID, stages);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, _ImpactAreaID, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
         }
-        private void ComputeUpperStageDamage(PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private void ComputeUpperStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 3: Stages between the highest profile 
             List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
@@ -187,20 +188,20 @@ namespace stageDamage
             for (int stepCount = 0; stepCount < numIntermediateStagesToCompute; stepCount++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount+1));
             }
         }
-        public List<UncertainPairedData> Compute()
+        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
             List<double> allStagesAtIndexLocation = new List<double>();
             List <ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
             PairedData stageFrequency = CreateStageFrequency();
 
-            ComputeLowerStageDamage(stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-            ComputeMiddleStageDamage(stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-            ComputeUpperStageDamage(stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+            ComputeLowerStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+            ComputeMiddleStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+            ComputeUpperStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
 
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
@@ -225,7 +226,7 @@ namespace stageDamage
         }
         //public for testing
         //assume that the inventory has already been trimmed 
-        public ConsequenceDistributionResults ComputeDamageOneCoordinate(ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
+        public ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
         {
             double lowerProb = 0.025;
             double upperProb = .975;
@@ -233,7 +234,7 @@ namespace stageDamage
             Int64 iteration = 0;
             while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
             {
-                DeterministicInventory deterministicInventory = inventory.Sample(seed);
+                DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                 ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
                 consequenceDistributionResults.AddConsequenceRealization(consequenceResults,impactAreaID,iteration);
                 iteration++;

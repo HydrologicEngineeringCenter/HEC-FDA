@@ -8,6 +8,7 @@ using compute;
 using Statistics;
 using paireddata;
 using fda_model.hydraulics;
+using interfaces;
 
 namespace stageDamage
 {
@@ -25,12 +26,12 @@ namespace stageDamage
         #endregion
 
         #region Methods 
-        public List<UncertainPairedData> Compute(RandomProvider randomProvider, ConvergenceCriteria convergenceCriteria)
+        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
             foreach(ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
-                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute();
+                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
                 foreach(UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
                 {
                     scenarioStageDamageResults.Add(uncertainPairedData);

@@ -1,4 +1,5 @@
 ﻿using fda_model.structures;
+using interfaces;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
@@ -192,9 +193,8 @@ namespace structures
             }
             return -9999;
         }
-        public DeterministicInventory Sample(int seed)
+        public DeterministicInventory Sample(IProvideRandomNumbers randomProvider)
         {
-            Random random = new Random(seed);
 
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in Structures)
@@ -205,7 +205,7 @@ namespace structures
                     {
                         if (structure.OccTypeName.Equals(occupancyType.Name))
                         {
-                            inventorySample.Add(structure.Sample(random.Next(), occupancyType));
+                            inventorySample.Add(structure.Sample(randomProvider, occupancyType));
                             break;
                         }
                     }

@@ -1,4 +1,5 @@
-﻿using RasMapperLib;
+﻿using interfaces;
+using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,10 +53,9 @@ namespace structures
             FirstFloorElevation = firstFloorElevation;
  
         }
-        public DeterministicStructure Sample(int seed, OccupancyType occtype)
+        public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype)
         {
-            Random random = new Random(seed);
-            SampledStructureParameters sampledStructureParameters = occtype.Sample(seed, ValueStructureMean, FirstFloorElevation, ValueContentMean, ValueOtherMean, ValueVehicleMean);
+            SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, ValueStructureMean, FirstFloorElevation, ValueContentMean, ValueOtherMean, ValueVehicleMean);
             //load up the deterministic structure
             return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,sampledStructureParameters);
         }
