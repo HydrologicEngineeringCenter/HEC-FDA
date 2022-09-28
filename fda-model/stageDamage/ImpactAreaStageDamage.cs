@@ -189,7 +189,7 @@ namespace stageDamage
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
-                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount));
+                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount+1));
             }
         }
         public List<UncertainPairedData> Compute()
