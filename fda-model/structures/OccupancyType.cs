@@ -236,11 +236,13 @@ namespace structures
             public OccupancyTypeBuilder withContentToStructureValueRatio(ValueRatioWithUncertainty valueRatioWithUncertainty)
             {
                 _occupancyType._contentToStructureValueRatio = valueRatioWithUncertainty;
+                _occupancyType._useContentToStructureValueRatio = true;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withOtherToStructureValueRatio(ValueRatioWithUncertainty valueRatioWithUncertainty)
             {
                 _occupancyType._otherToStructureValueRatio = valueRatioWithUncertainty;
+                _occupancyType._useOtherToStructureValueRatio = true;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withFirstFloorElevationUncertainty(FirstFloorElevationUncertainty firstFloorElevationUncertainty)
