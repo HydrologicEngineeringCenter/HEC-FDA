@@ -98,7 +98,13 @@ namespace structures
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
         }
-
+        public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
+        {
+            Structures = structures;
+            _Occtypes = occTypes;
+            GetUniqueImpactAreas();
+            GetUniqueDamageCatagories();
+        }
         /// <summary>
         /// Updates a point shapefile with ground elevations sampled off a RAS terrain at their location. Requires a RAS HDF terrain, and modifies the file in place. 
         /// </summary>
@@ -119,13 +125,7 @@ namespace structures
             }
             structureInventory.Save();
         }
-        public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
-        {
-            Structures = structures;
-            _Occtypes = occTypes;
-            GetUniqueImpactAreas();
-            GetUniqueDamageCatagories();
-        }
+
         private void GetUniqueImpactAreas()
         {
             List<int> impactAreas = new List<int>();

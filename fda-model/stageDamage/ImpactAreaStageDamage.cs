@@ -12,6 +12,7 @@ using fda_model.hydraulics;
 using metrics;
 using compute;
 using interfaces;
+using Statistics.Distributions;
 
 namespace stageDamage
 {
@@ -224,9 +225,9 @@ namespace stageDamage
             }
             return extrapolatedStages;
         }
-        //public for testing
+        //public and static for testing
         //assume that the inventory has already been trimmed 
-        public ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
+        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
         {
             double lowerProb = 0.025;
             double upperProb = .975;
