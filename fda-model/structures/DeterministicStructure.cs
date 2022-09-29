@@ -18,6 +18,7 @@ namespace structures
         public double VehicleValueSample { get; }
         public double OtherValueSample { get; }
         public string DamageCatagory { get; }
+        public SampledStructureParameters SampledStructureParameters { get { return _sampledStructureParameters; } }
         #endregion
 
         #region Constructor 
