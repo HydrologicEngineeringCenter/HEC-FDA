@@ -57,7 +57,7 @@ namespace structures
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, ValueStructureMean, FirstFloorElevation, ValueContentMean, ValueOtherMean, ValueVehicleMean);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid,ImpactAreaID,DamageCatagory,sampledStructureParameters);
+            return new DeterministicStructure(Fid,ImpactAreaID,sampledStructureParameters);
         }
 
 

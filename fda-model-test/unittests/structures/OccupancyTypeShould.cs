@@ -48,8 +48,8 @@ namespace fda_model_test.unittests.structures
             SampledStructureParameters sampledStructureParameters = occupancyType.Sample(medianRandomProvider, structureValue, firstFloorElevation);
             double expectedContentValue = expectedCSVR * sampledStructureParameters.StructureValueSampled;
 
-            Assert.Equal(name, sampledStructureParameters.Name);
-            Assert.Equal(damageCategory, sampledStructureParameters.DamageCatagory);
+            Assert.Equal(name, sampledStructureParameters.OccupancyTypeName);
+            Assert.Equal(damageCategory, sampledStructureParameters.OccupancyTypeDamageCategory);
             Assert.Equal(expectedPercentDamage, sampledStructureParameters.StructPercentDamagePairedData.Yvals);
             Assert.Equal(structureValue, sampledStructureParameters.StructureValueSampled);
             Assert.Equal(expectedContentValue, sampledStructureParameters.ContentValueSampled);

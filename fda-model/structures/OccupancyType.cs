@@ -9,8 +9,8 @@ namespace structures
     {
         #region Fields
         //fundamental traits
-        private string _Name;
-        private string _Damcat;
+        private string _OccupancyTypeName;
+        private string _OccupancyTypeDamageCategory;
 
         //configuration flags 
         private bool _computeStructureDamage = false;
@@ -70,11 +70,11 @@ namespace structures
         }
         public string DamageCategory
         {
-            get { return _Damcat; }
+            get { return _OccupancyTypeDamageCategory; }
         }
         public string Name
         {
-            get { return _Name; }
+            get { return _OccupancyTypeName; }
         }
 
         #endregion
@@ -109,7 +109,7 @@ namespace structures
             //parameters
             double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom());
             double structureValueSampled = _structureValueError.Sample(structureValue, randomNumbers.NextRandom());
-            double contentValueSampled;
+            double contentValueSampled = 0;
             if (_computeContentDamage)
             {
                 if (_useContentToStructureValueRatio)
@@ -126,7 +126,7 @@ namespace structures
             {
                 contentValueSampled = contentValue;
             }
-            double otherValueSampled;
+            double otherValueSampled = 0;
             if (_computeOtherDamage)
             {
                 if (_useOtherToStructureValueRatio)
@@ -143,7 +143,7 @@ namespace structures
             {
                 otherValueSampled = otherValue;
             }
-            double vehicleValueSampled;
+            double vehicleValueSampled = 0;
             if (_computeVehicleDamage)
             {
                 vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, randomNumbers.NextRandom());
@@ -154,7 +154,7 @@ namespace structures
                 vehicleValueSampled = vehicleValue;
             }
             
-            return new SampledStructureParameters(_Name, _Damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, contentValueSampled, _computeVehicleDamage, vehicleValueSampled, _computeOtherDamage, otherValueSampled);
+            return new SampledStructureParameters(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueSampled, vehicleDamagePairedData, vehicleValueSampled, otherDamagePairedData,      otherValueSampled);
         }
         public static OccupancyTypeBuilder builder()
         {
@@ -176,12 +176,12 @@ namespace structures
             }
             public OccupancyTypeBuilder withDamageCategory(string damageCategory)
             {
-                _occupancyType._Damcat = damageCategory;
+                _occupancyType._OccupancyTypeDamageCategory = damageCategory;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withName(string name)
             {
-                _occupancyType._Name = name;
+                _occupancyType._OccupancyTypeName = name;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withStructureDepthPercentDamage(UncertainPairedData structureDepthPercentDamage)

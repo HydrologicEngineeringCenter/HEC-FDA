@@ -3,7 +3,7 @@
 namespace structures
 {
     public class DeterministicStructure
-    {//TODO: How are we going to handle parameters that are not being used?
+    {
         #region Fields
         SampledStructureParameters _sampledStructureParameters;
         #endregion
@@ -21,16 +21,17 @@ namespace structures
         #endregion
 
         #region Constructor 
-        public DeterministicStructure(int fid, int impactAreaID, string damageCatagory, SampledStructureParameters sampledStructureParameters)
+        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;
-            DamageCatagory = damageCatagory;
+            DamageCatagory = sampledStructureParameters.OccupancyTypeDamageCategory;
             FirstFloorElevation = sampledStructureParameters.FirstFloorElevationSampled;
             StructValueSample = sampledStructureParameters.StructureValueSampled;
             ContentValueSample = sampledStructureParameters.ContentValueSampled;
             VehicleValueSample = sampledStructureParameters.VehicleValueSampled;
             OtherValueSample = sampledStructureParameters.OtherValueSampled;
+            _sampledStructureParameters = sampledStructureParameters;
         }
         #endregion
 
@@ -45,17 +46,28 @@ namespace structures
             double structDamage = structDamagepercent * StructValueSample;
 
             //Content
-            double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-            double contDamage = contentDamagePercent * ContentValueSample;
+            double contDamage = 0;
+            if (_sampledStructureParameters.ComputeContentDamage)
+            {
+                double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                contDamage = contentDamagePercent * ContentValueSample;
+            }
 
             //Vehicle
+            double vehicleDamage = 0;
+            if (_sampledStructureParameters.ComputeVehicleDamage)
+            {
             double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-            double vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+            vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+            }
 
             //Other
+            double otherDamage = 0;
+            if (_sampledStructureParameters.ComputeOtherDamage)
+            {
             double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-            double otherDamage = otherDamagePercent * OtherValueSample;
-
+            otherDamage = otherDamagePercent * OtherValueSample;
+            }
 
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
