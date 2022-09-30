@@ -116,6 +116,13 @@ namespace structures
             }
             structureInventory.Save();
         }
+        public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
+        {
+            PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
+            PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
+            TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
+            return terrain.ComputePointElevations(pointMs);
+        }
         public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
             Structures = structures;
