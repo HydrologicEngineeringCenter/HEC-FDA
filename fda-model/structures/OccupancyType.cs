@@ -1,6 +1,7 @@
 ﻿using paireddata;
 using Statistics;
 using System;
+using interfaces;
 
 namespace structures
 { //TODO: add messaging and validation 
@@ -8,8 +9,8 @@ namespace structures
     {
         #region Fields
         //fundamental traits
-        private string name;
-        private string damcat;
+        private string _OccupancyTypeName;
+        private string _OccupancyTypeDamageCategory;
 
         //configuration flags 
         private bool _computeStructureDamage = false;
@@ -69,11 +70,11 @@ namespace structures
         }
         public string DamageCategory
         {
-            get { return damcat; }
+            get { return _OccupancyTypeDamageCategory; }
         }
         public string Name
         {
-            get { return name; }
+            get { return _OccupancyTypeName; }
         }
 
         #endregion
@@ -94,60 +95,70 @@ namespace structures
         }
         #endregion
         #region Methods
-        public SampledStructureParameters Sample(int seed, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999)
+        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999)
         {
-            Random random = new Random(seed);
             //damage functions
-            IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData contentDamagePairedData = _contentDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
-            IPairedData otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(random.NextDouble());
+            IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+            //HACK consider adding empty constructor to PairedData
+            IPairedData contentDamagePairedData = new PairedData(new double[] {0}, new double[] {0});
+            //HACK
+            IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
+            //HACK
+            IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
 
             //parameters
-            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation,random.NextDouble());
-            double structureValueSampled = _structureValueError.Sample(structureValue, random.NextDouble());
-            double contentValueSampled;
+            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom());
+            double structureValueSampled = _structureValueError.Sample(structureValue, randomNumbers.NextRandom());
+            double contentValueSampled = 0;
             if (_computeContentDamage)
             {
                 if (_useContentToStructureValueRatio)
                 {
-                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(random.NextDouble());
+                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(randomNumbers.NextRandom());
                 }
                 else
                 {
-                    contentValueSampled = _contentValueError.Sample(contentValue, random.NextDouble());
+                    contentValueSampled = _contentValueError.Sample(contentValue, randomNumbers.NextRandom());
                 }
-            } else
+                contentDamagePairedData = _contentDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+            }
+            else
             {
                 contentValueSampled = contentValue;
             }
-            double otherValueSampled;
+            double otherValueSampled = 0;
             if (_computeOtherDamage)
             {
                 if (_useOtherToStructureValueRatio)
                 {
-                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(random.NextDouble());
+                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(randomNumbers.NextRandom());
                 }
                 else
                 {
-                    otherValueSampled = _otherValueError.Sample(otherValue, random.NextDouble());
+                    otherValueSampled = _otherValueError.Sample(otherValue, randomNumbers.NextRandom());
                 }
+                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
             }
             else
             {
                 otherValueSampled = otherValue;
             }
-            double vehicleValueSampled;
+            double vehicleValueSampled = 0;
             if (_computeVehicleDamage)
             {
-                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, random.NextDouble());
+                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, randomNumbers.NextRandom());
+                vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
             }
             else
             {
                 vehicleValueSampled = vehicleValue;
             }
             
-            return new SampledStructureParameters(name, damcat, structDamagePairedData, contentDamagePairedData, vehicleDamagePairedData, otherDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, contentValueSampled, _computeVehicleDamage, vehicleValueSampled, _computeOtherDamage, otherValueSampled);
+            return new SampledStructureParameters(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueSampled, vehicleDamagePairedData, vehicleValueSampled, otherDamagePairedData,      otherValueSampled);
+        }
+        public static OccupancyTypeBuilder builder()
+        {
+            return new OccupancyTypeBuilder(new OccupancyType());
         }
         #endregion
 
@@ -163,7 +174,16 @@ namespace structures
                 //validate
                 return _occupancyType;
             }
-
+            public OccupancyTypeBuilder withDamageCategory(string damageCategory)
+            {
+                _occupancyType._OccupancyTypeDamageCategory = damageCategory;
+                return new OccupancyTypeBuilder(_occupancyType);
+            }
+            public OccupancyTypeBuilder withName(string name)
+            {
+                _occupancyType._OccupancyTypeName = name;
+                return new OccupancyTypeBuilder(_occupancyType);
+            }
             public OccupancyTypeBuilder withStructureDepthPercentDamage(UncertainPairedData structureDepthPercentDamage)
             {
                 _occupancyType._structureDepthPercentDamageFunction = structureDepthPercentDamage;
@@ -216,11 +236,18 @@ namespace structures
             public OccupancyTypeBuilder withContentToStructureValueRatio(ValueRatioWithUncertainty valueRatioWithUncertainty)
             {
                 _occupancyType._contentToStructureValueRatio = valueRatioWithUncertainty;
+                _occupancyType._useContentToStructureValueRatio = true;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withOtherToStructureValueRatio(ValueRatioWithUncertainty valueRatioWithUncertainty)
             {
                 _occupancyType._otherToStructureValueRatio = valueRatioWithUncertainty;
+                _occupancyType._useOtherToStructureValueRatio = true;
+                return new OccupancyTypeBuilder(_occupancyType);
+            }
+            public OccupancyTypeBuilder withFirstFloorElevationUncertainty(FirstFloorElevationUncertainty firstFloorElevationUncertainty)
+            {
+                _occupancyType._firstFloorElevationError = firstFloorElevationUncertainty;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
         }

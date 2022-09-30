@@ -1,4 +1,5 @@
 ﻿using fda_model.structures;
+using interfaces;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,8 @@ namespace structures
 
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes)
         {
+            //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
+            //is missing to avoid null reference exceptions in the compute 
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             Structures = new List<Structure>();
@@ -84,13 +87,21 @@ namespace structures
                         ff_elev = ground_elv + found_ht;
                     }
                     int impactAreaID = GetImpactAreaID(point, impactAreaShapefilePath);
-                    Structures.Add(new Structure(fid, point, found_ht, val_struct, val_cont, val_vehic, val_other, st_damcat, occtype, impactAreaID, cbfips));
+                    Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips));
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
+            _Occtypes = occTypes;
+            GetUniqueImpactAreas();
+            GetUniqueDamageCatagories();
+        }
+        
+        public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
+        {
+            Structures = structures;
             _Occtypes = occTypes;
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
@@ -102,13 +113,7 @@ namespace structures
             TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
             return terrain.ComputePointElevations(pointMs);
         }
-        public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
-        {
-            Structures = structures;
-            _Occtypes = occTypes;
-            GetUniqueImpactAreas();
-            GetUniqueDamageCatagories();
-        }
+
         private void GetUniqueImpactAreas()
         {
             List<int> impactAreas = new List<int>();
@@ -178,9 +183,8 @@ namespace structures
             }
             return -9999;
         }
-        public DeterministicInventory Sample(int seed)
+        public DeterministicInventory Sample(IProvideRandomNumbers randomProvider)
         {
-            Random random = new Random(seed);
 
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in Structures)
@@ -191,7 +195,7 @@ namespace structures
                     {
                         if (structure.OccTypeName.Equals(occupancyType.Name))
                         {
-                            inventorySample.Add(structure.Sample(random.Next(), occupancyType));
+                            inventorySample.Add(structure.Sample(randomProvider, occupancyType));
                             break;
                         }
                     }
