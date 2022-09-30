@@ -1,6 +1,6 @@
-﻿using metrics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
+using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {

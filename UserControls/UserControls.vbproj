@@ -6,7 +6,6 @@
 		<UseWPF>True</UseWPF>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RootNamespace>UserControls</RootNamespace>
-		<OutputPath>..\Build\FDA2.0</OutputPath>
 	</PropertyGroup>
 
 </Project>

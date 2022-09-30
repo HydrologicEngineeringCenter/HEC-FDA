@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace HEC.FDA.ViewModel.Utilities
+﻿namespace HEC.FDA.ViewModel.Utilities
 {
     public interface IDetectChanges
     {

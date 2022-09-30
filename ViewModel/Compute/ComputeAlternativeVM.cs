@@ -1,10 +1,10 @@
-﻿using alternatives;
-using compute;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using System;
 using System.Threading.Tasks;
 
@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.Compute
 
             Task.Run(() =>
             {
-                AlternativeResults results = Alternative.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, id, firstResults, secondResults);
+                AlternativeResults results = new Alternative().AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, id, firstResults, secondResults);
                 callback?.Invoke(results);
             });
 

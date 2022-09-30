@@ -1,5 +1,4 @@
 ﻿using HEC.FDA.ViewModel.Editors;
-using HEC.MVVMFramework.ViewModel.Validation;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes

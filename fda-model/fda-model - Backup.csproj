@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+	<OutputPath>..\Build\FDA2.0</OutputPath>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>USACE.HEC.FDA.Model</PackageId>
+		<VersionPrefix>1.1.0</VersionPrefix>
+		<Description>A library for handling HEC-FDA Flood Risk Analysis computations</Description>
+		<Authors>Hydrologic Engineering Center</Authors>
+		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	
+  <ItemGroup>
+    <PackageReference Include="HenryGeorgist.Framework.Base" Version="1.0.0-alpha-2022.1.15.2236" />
+
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022.1.17.1743" />
+
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,6 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
-using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

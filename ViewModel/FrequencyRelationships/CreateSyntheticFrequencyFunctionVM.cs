@@ -1,14 +1,12 @@
-﻿using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+﻿using HEC.FDA.Model.utilities;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Importer;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
-using utilities;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {

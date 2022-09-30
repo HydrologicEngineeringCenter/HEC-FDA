@@ -1,10 +1,10 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using paireddata;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;

@@ -1,8 +1,4 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using System;
-using System.Collections.Generic;
-
-namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
+﻿namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
     public class EADSummaryRowItem
     {

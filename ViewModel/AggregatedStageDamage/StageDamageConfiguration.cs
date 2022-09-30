@@ -1,17 +1,12 @@
-﻿using HEC.FDA.ViewModel.Hydraulics;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
-using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
-using paireddata;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
