@@ -4,7 +4,7 @@ using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.hydraulics;
 
-namespace HEC.FDA.ModelTest.unittests.hydraulics
+namespace fda_model_test.unittests
 {
     public class HydraulicProfileShould
     {

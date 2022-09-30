@@ -7,9 +7,9 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.integrationtests
+namespace fda_model_test
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category","Integration")]
     public class StudyDataAnalyticalFrequencyResultsTests
     {
 
@@ -44,7 +44,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Normal(477.4,.5)
                 //note that the rating curve domain lies within the stage-damage domain
         };
-        static double[] StageDamageStages = { 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
+        static double[] StageDamageStages = {460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
         static IDistribution[] DamageDistrbutions =
         {
             new Normal(0,0),
@@ -99,7 +99,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .withStageDamages(stageDamageList)
                 .build();
             ImpactAreaScenarioResults results = simulation.PreviewCompute();
-            double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
         }
@@ -110,7 +110,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         /// <param name="seed"></param>
         /// <param name="expected"></param>
         [Theory]
-        [InlineData(10000, 2345, 21.09)]
+        [InlineData(10000,2345,21.09)]
         public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected)
         {
             ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
@@ -127,7 +127,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
-            double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
         }
@@ -163,13 +163,13 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
-                .withLevee(leveeFragilityFunction, topOfLeveeElevation)
+                .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
             SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
@@ -190,7 +190,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         {
             ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions,metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name);
@@ -204,7 +204,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
-            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
             SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;

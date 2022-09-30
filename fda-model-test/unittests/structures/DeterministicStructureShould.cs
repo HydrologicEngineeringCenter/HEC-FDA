@@ -3,13 +3,13 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 
-namespace HEC.FDA.ModelTest.unittests.structures
+namespace fda_model_test.unittests.structures
 {
     public class DeterministicStructureShould
     {
         private static string occupancyTypeName = "Res1-1NB";
         private static string occupancyTypeDamageCategory = "Residential";
-        private static double[] depths = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        private static double[] depths = new double[] {0,1,2,3,4,5,6,7,8};
         private static double[] percentDamage = new double[] { 0, .10, .20, .30, .40, .50, .60, .70, .80 };
         private static PairedData structureDepthPercentDamage = new PairedData(depths, percentDamage);
         private static PairedData contentDepthPercentDamage = new PairedData(depths, percentDamage);
@@ -26,21 +26,21 @@ namespace HEC.FDA.ModelTest.unittests.structures
 
 
         [Theory]
-        [InlineData(100, 0, 0)]
-        [InlineData(104, 400, 200)]
-        [InlineData(108, 800, 400)]
+        [InlineData(100,0,0)]
+        [InlineData(104,400,200)]
+        [InlineData(108,800,400)]
         public void DeterministicStructureShouldComputeDamageCorrectly(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage)
         {
             ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation);
-            Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
-            Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
+            Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage,0);
+            Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage,0);
         }
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
     }
 }

@@ -8,7 +8,7 @@ using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Histograms;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.unittests
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class UncertainPairedDataShould
@@ -55,7 +55,7 @@ namespace HEC.FDA.ModelTest.unittests
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
             {
-                arrayOfProbabilities[i] = (i + 0.5) / arraySize;
+                arrayOfProbabilities[i] = (((double)i + 0.5)) / ((double)arraySize);
             }
             double cumulativeArea = 0;
             for (int i = 0; i < arraySize; i++)
@@ -83,7 +83,7 @@ namespace HEC.FDA.ModelTest.unittests
             double[] arrayOfProbabilities = new double[arraySize];
             for (int i = 0; i < arraySize; i++)
             {
-                arrayOfProbabilities[i] = (i + 0.5) / arraySize;
+                arrayOfProbabilities[i] = (((double)i + 0.5)) / ((double)arraySize);
             }
             object areaLock = new object();
             double cumulativeArea = 0;

@@ -7,7 +7,7 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.unittests
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
 

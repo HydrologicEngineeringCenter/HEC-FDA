@@ -4,7 +4,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.unittests.structures
+namespace fda_model_test.unittests.structures
 {
     public class OccupancyTypeShould
     {
@@ -31,7 +31,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static string damageCategory = "DamageCategory";
 
         [Theory]
-        [InlineData(100, 10)]
+        [InlineData(100,10)]
         public void OccupancyTypeShouldSampleCorrectly(double structureValue, double firstFloorElevation)
         {
             OccupancyType occupancyType = OccupancyType.builder()

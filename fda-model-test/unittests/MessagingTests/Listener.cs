@@ -1,10 +1,12 @@
-﻿using HEC.MVVMFramework.Base.Enumerations;
+﻿
+
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace HEC.FDA.ModelTest.unittests.MessagingTests
+namespace fda_model_test.unittests.MessagingTests
 {
     internal class Listener : IRecieveMessages
     {
@@ -22,11 +24,11 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         public string GetMessageLogAsString()
         {
             List<string> messages = new List<string>();
-            foreach (var message in MessageLog)
+            foreach(var message in MessageLog)
             {
                 messages.Add(message.ToString());
             }
-            string messagesAsOneString = string.Join(Environment.NewLine, messages.ToArray());
+            string messagesAsOneString = String.Join(Environment.NewLine, messages.ToArray());
             return messagesAsOneString;
         }
     }

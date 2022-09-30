@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.Model.structures;
 
-namespace HEC.FDA.ModelTest.unittests.structures
+namespace fda_model_test.unittests.structures
 {
     public class InventoryShould
     {

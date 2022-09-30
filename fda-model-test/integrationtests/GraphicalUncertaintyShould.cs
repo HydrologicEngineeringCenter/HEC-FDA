@@ -9,7 +9,7 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Histograms;
 
-namespace HEC.FDA.ModelTest.integrationtests
+namespace fda_model_test.integrationtests
 {
     public class GraphicalUncertaintyShould
     {
@@ -20,9 +20,9 @@ namespace HEC.FDA.ModelTest.integrationtests
         [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 50, .98, true, new double[] { 482.734, 485.367, 490.633, 493.266 })]
         [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 50, .998, true, new double[] { 488.361, 492.18, 499.82, 503.639 })]
         [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .9, true, new double[] { 480.969, 481.638, 484.675, 486.35 })]
-        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .95, true, new double[] { 480.97, 481.638, 489.264, 493.205 })]
-        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .98, true, new double[] { 480.97, 482.625, 493.375, 498.750 })]
-        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .998, true, new double[] { 480.973, 488.203, 503.797, 511.593 })]
+        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .95, true, new double[] {480.97, 481.638, 489.264, 493.205  })]
+        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .98, true, new double[] {480.97, 482.625, 493.375, 498.750 })]
+        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 480, 481, 482, 483, 486, 488, 490, 494, 496 }, 12, .998, true, new double[] {480.973, 488.203, 503.797, 511.593 })]
         //[InlineData(new double[] {.99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 1, 1.5, 2, 3, 5, 9, 12, 16, 19}, 50, .9, true, new double[] {1.727, 2.333, 3.667, 4.335 })]
         //[InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 1, 1.5, 2, 3, 5, 9, 12, 16, 19 }, 50, .95, true, new double[] {1.975, 3.262, 5.836, 7.123  })]
         //[InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 }, new double[] { 1, 1.5, 2, 3, 5, 9, 12, 16, 19 }, 50, .98, true, new double[] { 1.975, 4.297, 13.703, 18.406 })]
@@ -47,9 +47,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             double binWidth = (int)(range / quantityOfBins);
             ThreadsafeInlineHistogram graphicalThreadsafeInlineHistogram = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
             int masterseed = 1234;
-            long progressChunks = 1;
-            long _completedIterations = 0;
-            long _ExpectedIterations = convergenceCriteria.MaxIterations;
+            Int64 progressChunks = 1;
+            Int64 _completedIterations = 0;
+            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -60,10 +60,10 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
                 seeds[i] = masterSeedList.Next();
             }
-            long iterations = convergenceCriteria.MinIterations;
+            Int64 iterations = convergenceCriteria.MinIterations;
             double lowerQuantile = 0.025;
             double upperQuantile = 0.975;
-
+            
             while (!graphicalThreadsafeInlineHistogram.IsHistogramConverged(upperQuantile, lowerQuantile))
             {
                 Parallel.For(0, iterations, i =>
@@ -91,7 +91,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 double actualStageOrFlow = graphicalThreadsafeInlineHistogram.InverseCDF(percentiles[j]);
                 double expectedStageOrFlow = expectedFlowsOrStages[j];
                 double difference = actualStageOrFlow - expectedStageOrFlow;
-                double error = (actualStageOrFlow - expectedStageOrFlow) / expectedStageOrFlow;
+                double error = (actualStageOrFlow - expectedStageOrFlow)/expectedStageOrFlow;
                 Debug.WriteLine("| {0,9} | {1,25} | {2,-19} | {3,-17} | {4, -18}| {5, -18}|", 1 - nonExceedanceProbability, percentiles[j], expectedStageOrFlow, actualStageOrFlow, difference, error);
             }
         }

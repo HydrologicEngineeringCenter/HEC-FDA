@@ -9,7 +9,7 @@ using HEC.FDA.Model.alternatives;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.unittests
+namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]
     public class AlternativeTest
@@ -33,16 +33,16 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1)]
         public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
-            //create a stage distribution
-            IDistribution[] stages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
-            {
-                stages[i] = new Uniform(0, 300000 * i, 10);
-            }
-            UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
+                MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
+                ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+                //create a stage distribution
+                IDistribution[] stages = new IDistribution[2];
+                for (int i = 0; i < 2; i++)
+                {
+                    stages[i] = new Uniform(0, 300000 * i, 10);
+                }
+                UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
             IDistribution[] baseDamages = new IDistribution[3]
             {
@@ -56,68 +56,68 @@ namespace HEC.FDA.ModelTest.unittests
                     new Uniform(0,1200000,10),
                     new Uniform(0,1200000, 10)
             };
-            UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
-            UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
-            List<UncertainPairedData> updBase = new List<UncertainPairedData>();
-            updBase.Add(base_stage_damage);
-            List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
-            updFuture.Add(future_stage_damage);
+                UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
+                UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
+                List<UncertainPairedData> updBase = new List<UncertainPairedData>();
+                updBase.Add(base_stage_damage);
+                List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
+                updFuture.Add(future_stage_damage);
 
-            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBase)
-                .build();
+                ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                    .withFlowFrequency(flow_frequency)
+                    .withFlowStage(flow_stage)
+                    .withStageDamages(updBase)
+                    .build();
 
-            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFuture)
-                .build();
+                ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(impactAreaID)
+                    .withFlowFrequency(flow_frequency)
+                    .withFlowStage(flow_stage)
+                    .withStageDamages(updFuture)
+                    .build();
 
-            IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
-            impactAreaListBaseYear.Add(sBase);
-            IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
-            impactAreaListFutureYear.Add(sFuture);
+                IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
+                impactAreaListBaseYear.Add(sBase);
+                IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
+                impactAreaListFutureYear.Add(sFuture);
 
-            Scenario baseScenario = new Scenario(baseYear, impactAreaListBaseYear);
-            ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
-            Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
-            ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
+                Scenario baseScenario = new Scenario(baseYear, impactAreaListBaseYear);
+                ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
+                Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
+                ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
-            double tolerance = 0.05;
+                AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+                double tolerance = 0.05;
 
-            double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
-            double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
-            double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
-            Assert.True(errorAAEQExceededWithProb < tolerance);
+                double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+                double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
+                double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
+                Assert.True(errorAAEQExceededWithProb < tolerance);
 
-            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID, damCat, assetCat);
-            double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
-            double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
-            Assert.True(errorMeanAAEQ < tolerance);
+                double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID, damCat, assetCat);
+                double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
+                double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
+                Assert.True(errorMeanAAEQ < tolerance);
 
-            double actualBaseYearEAD = alternativeResults.MeanBaseYearEAD(impactAreaID, damCat, assetCat);
-            double differenceActualBaseYearEAD = actualBaseYearEAD - expectedBaseYearEAD;
-            double errorBaseYearEAD = Math.Abs(differenceActualBaseYearEAD / actualBaseYearEAD);
-            Assert.True(errorBaseYearEAD < tolerance);
+                double actualBaseYearEAD = alternativeResults.MeanBaseYearEAD(impactAreaID, damCat, assetCat);
+                double differenceActualBaseYearEAD = actualBaseYearEAD - expectedBaseYearEAD;
+                double errorBaseYearEAD = Math.Abs(differenceActualBaseYearEAD / actualBaseYearEAD);
+                Assert.True(errorBaseYearEAD < tolerance);
 
-            double actualFutureYearEAD = alternativeResults.MeanFutureYearEAD(impactAreaID, damCat, assetCat);
-            double differenceActualFutureYearEAD = actualFutureYearEAD - expectedFutureYearEAD;
-            double errorFutureYearEAD = Math.Abs(differenceActualFutureYearEAD / actualFutureYearEAD);
-            Assert.True(errorFutureYearEAD < tolerance);
+                double actualFutureYearEAD = alternativeResults.MeanFutureYearEAD(impactAreaID, damCat, assetCat);
+                double differenceActualFutureYearEAD = actualFutureYearEAD - expectedFutureYearEAD;
+                double errorFutureYearEAD = Math.Abs(differenceActualFutureYearEAD / actualFutureYearEAD);
+                Assert.True(errorFutureYearEAD < tolerance);
 
-            double actualBaseYearEADExceeded = alternativeResults.BaseYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
-            double differenceActualBaseYearEADExceeded = actualBaseYearEADExceeded - expectedBaseYearDamageExceededWithAnyProb;
-            double errorBaseYearEADExceeded = Math.Abs(differenceActualBaseYearEADExceeded / actualBaseYearEADExceeded);
-            Assert.True(errorBaseYearEADExceeded < tolerance);
+                double actualBaseYearEADExceeded = alternativeResults.BaseYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+                double differenceActualBaseYearEADExceeded = actualBaseYearEADExceeded - expectedBaseYearDamageExceededWithAnyProb;
+                double errorBaseYearEADExceeded = Math.Abs(differenceActualBaseYearEADExceeded / actualBaseYearEADExceeded);
+                Assert.True(errorBaseYearEADExceeded < tolerance);
 
-            double actualFutureYearEADExceeded = alternativeResults.FutureYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
-            double differenceActualFutureYearEADExceeded = actualFutureYearEADExceeded - expectedFutureYearDamageExceededWithAnyProb;
-            double errorFutureYearEADExceeded = Math.Abs(differenceActualFutureYearEADExceeded / actualFutureYearEADExceeded);
-            Assert.True(errorFutureYearEADExceeded < tolerance);
-
+                double actualFutureYearEADExceeded = alternativeResults.FutureYearEADDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+                double differenceActualFutureYearEADExceeded = actualFutureYearEADExceeded - expectedFutureYearDamageExceededWithAnyProb;
+                double errorFutureYearEADExceeded = Math.Abs(differenceActualFutureYearEADExceeded / actualFutureYearEADExceeded);
+                Assert.True(errorFutureYearEADExceeded < tolerance);
+        
         }
 
         [Theory]

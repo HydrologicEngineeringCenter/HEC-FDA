@@ -8,7 +8,7 @@ using HEC.FDA.Model.scenarios;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.ModelTest.unittests
+namespace fda_model_test.unittests
 {
     public class ScenarioShould
     {
