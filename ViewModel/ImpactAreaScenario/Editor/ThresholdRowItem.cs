@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.Statistics.Convergence;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,7 +35,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public Threshold GetThreshold()
         {
-            Statistics.ConvergenceCriteria convergenceCriteria = new Statistics.ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             return new Threshold(ID, convergenceCriteria, ThresholdType.Metric, ThresholdValue.Value);
         }
 

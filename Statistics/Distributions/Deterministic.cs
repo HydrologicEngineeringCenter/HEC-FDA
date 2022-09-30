@@ -1,6 +1,4 @@
-﻿using Statistics.Distributions;
-
-namespace HEC.FDA.Statistics.Distributions
+﻿namespace HEC.FDA.Statistics.Distributions
 {
     public class Deterministic : ContinuousDistribution
     {

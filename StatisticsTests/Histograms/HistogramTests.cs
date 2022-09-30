@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Xunit;
-using Utilities;
 using System.Xml.Linq;
-using System.Diagnostics;
-using System.Threading;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Histograms;
 using HEC.FDA.Statistics.Distributions;

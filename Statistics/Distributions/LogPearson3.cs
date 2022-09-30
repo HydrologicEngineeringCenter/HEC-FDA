@@ -2,7 +2,6 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Linq;
-using HEC.FDA.Statistics;
 
 namespace HEC.FDA.Statistics.Distributions
 {

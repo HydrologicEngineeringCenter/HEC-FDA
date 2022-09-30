@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using System;
 using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions

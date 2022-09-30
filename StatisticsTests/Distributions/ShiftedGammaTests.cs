@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HEC.FDA.Statistics.Distributions;
+using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using Utilities;
 using Xunit;
 
 namespace StatisticsTests.Distributions
@@ -26,7 +24,7 @@ namespace StatisticsTests.Distributions
         [InlineData(3.370, 614.880, 1.2, 0.01, 351.50666218164383280964)]//USGS-R SMWR
         public void ShiftedGamma_InverseCDF(double alpha, double beta, double shift, double p, double output)
         {
-            var testObj = new Statistics.Distributions.ShiftedGamma(alpha, beta, shift);
+            var testObj = new ShiftedGamma(alpha, beta, shift);
             double result = testObj.InverseCDF(p);
             double percent = Math.Abs((output - result) / output);
             //Assert.Equal(output, result, 9);

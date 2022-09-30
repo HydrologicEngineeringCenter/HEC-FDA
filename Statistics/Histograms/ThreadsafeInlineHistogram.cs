@@ -6,7 +6,6 @@ using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using Statistics.Histograms;
 
 namespace HEC.FDA.Statistics.Histograms
 {

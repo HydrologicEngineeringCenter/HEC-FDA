@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Linq;
 using Utilities;
 using Xunit;
-using Statistics;
 using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
@@ -29,7 +25,7 @@ namespace StatisticsTests.Distributions
         [InlineData(7.1d, 1d, -1d, 1)]
         public void BadValidation(double mean, double sd, double skew, int n)
         {
-            LogPearson3 dist = new Statistics.Distributions.LogPearson3(mean, sd, skew, n);
+            LogPearson3 dist = new LogPearson3(mean, sd, skew, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -38,7 +34,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 1)]
         public void GoodValidation(double mean, double sd, int n)
         {
-            Normal dist = new Statistics.Distributions.Normal(mean, sd, n);
+            Normal dist = new Normal(mean, sd, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }
@@ -58,7 +54,7 @@ namespace StatisticsTests.Distributions
         [InlineData(6d, 2.99d, -2.99d, 100)]
         public void GoodData_Returns_NoErrorState(double mean, double sd, double skew, int n)
         {
-            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew, n);
+            var testObj = new LogPearson3(mean, sd, skew, n);
             testObj.Validate();
             Assert.True(testObj.ErrorLevel < HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major);
         }
@@ -126,7 +122,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0, 1, 2.5, .99, 7004.83327479266154114157)]//USGS-R SMWR
         public void LPIII_InverseCDF(double mean, double sd, double skew, double rv, double output)
         {
-            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            var testObj = new LogPearson3(mean, sd, skew);
             double result = testObj.InverseCDF(rv);
             double fraction = Math.Abs((output - result) / output);
             Assert.True(fraction < .05);
@@ -176,7 +172,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 1d, 2d)]
         public void LPIII_Means(double mean, double sd, double skew)
         {
-            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            var testObj = new LogPearson3(mean, sd, skew);
             double result = testObj.Mean;
             Assert.Equal(mean, result, 9);
         }
@@ -189,7 +185,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 1d, 2d)]
         public void LPIII_StandardDeviation(double mean, double sd, double skew)
         {
-            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            var testObj = new LogPearson3(mean, sd, skew);
             double result = testObj.StandardDeviation;
             Assert.Equal(sd, result, 9);
         }
@@ -202,7 +198,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 1d, 2d)]
         public void LPIII_Skew(double mean, double sd, double skew)
         {
-            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            var testObj = new LogPearson3(mean, sd, skew);
             double result = testObj.Skewness;
             Assert.Equal(skew, result, 9);
         }
@@ -211,7 +207,7 @@ namespace StatisticsTests.Distributions
         [InlineData(4.354, .119, .646, 13601.5, 37152.0, .4, 20350.4)]
         public void LPIII_Truncated(double mean, double standardDeviation, double skew, double min, double max, double probability, double expected)
         {
-            var testObject = new Statistics.Distributions.TruncatedLogPearson3(mean, standardDeviation, skew, min, max);
+            var testObject = new TruncatedLogPearson3(mean, standardDeviation, skew, min, max);
             double actual = testObject.InverseCDF(probability);
             Assert.Equal(expected, actual, 1);
         }

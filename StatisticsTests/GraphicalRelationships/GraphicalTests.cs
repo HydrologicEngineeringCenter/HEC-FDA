@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Linq;
-using Utilities;
 using Xunit;
 using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.Statistics.GraphicalRelationships;

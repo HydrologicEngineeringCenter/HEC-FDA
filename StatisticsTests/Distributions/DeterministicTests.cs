@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using HEC.FDA.Statistics.Distributions;
+using Xunit;
 
 
 namespace StatisticsTests.Distributions
@@ -12,7 +13,7 @@ namespace StatisticsTests.Distributions
         [InlineData(.75, -1, -1)]
         public void Deterministic_InvCDF(double p, double x, double expected)
         {
-            var dist = new Statistics.Distributions.Deterministic(x);
+            var dist = new Deterministic(x);
             double actual = dist.InverseCDF(p);
             Assert.Equal(expected, actual);
 
@@ -24,7 +25,7 @@ namespace StatisticsTests.Distributions
         [InlineData(.75, .5, 0)]
         public void Deterministic_CDF(double x, double val, double expected)
         {
-            var dist = new Statistics.Distributions.Deterministic(x);
+            var dist = new Deterministic(x);
             double actual = dist.CDF(val);
             Assert.Equal(expected, actual);
 
@@ -36,7 +37,7 @@ namespace StatisticsTests.Distributions
         [InlineData(.75, .5, 0)]
         public void Deterministic_PDF(double x, double val, double expected)
         {
-            var dist = new Statistics.Distributions.Deterministic(x);
+            var dist = new Deterministic(x);
             double actual = dist.PDF(val);
             Assert.Equal(expected, actual);
 

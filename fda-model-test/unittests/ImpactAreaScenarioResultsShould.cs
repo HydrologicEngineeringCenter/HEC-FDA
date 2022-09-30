@@ -26,7 +26,7 @@ namespace fda_model_test.unittests
         public void ResultsShouldReadTheSameStuffItWrites()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -64,7 +64,7 @@ namespace fda_model_test.unittests
         public void ResultsShouldNotComputeWhenMaxIterationsAreGreaterThanMinIterations()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 1);
-            ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)

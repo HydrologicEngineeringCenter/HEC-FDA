@@ -1,5 +1,4 @@
-﻿using System;
-using HEC.FDA.Statistics.Convergence;
+﻿using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 using HEC.MVVMFramework.Base.Interfaces;
 

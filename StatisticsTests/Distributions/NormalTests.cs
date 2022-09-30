@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using HEC.FDA.Statistics.Distributions;
 
@@ -18,7 +15,7 @@ namespace StatisticsTests.Distributions
         [InlineData(1d, 1d, 0)]
         public void BadValidation(double mean, double sd, int n)
         {
-            Normal dist = new Statistics.Distributions.Normal(mean, sd, n);
+            Normal dist = new Normal(mean, sd, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -27,7 +24,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 1)]
         public void GoodValidation(double mean, double sd, int n)
         {
-            Normal dist = new Statistics.Distributions.Normal(mean, sd, n);
+            Normal dist = new Normal(mean, sd, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }

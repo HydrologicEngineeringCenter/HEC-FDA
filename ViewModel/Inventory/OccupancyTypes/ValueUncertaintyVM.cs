@@ -1,6 +1,5 @@
 ﻿using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics.Distributions;
 using System;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
