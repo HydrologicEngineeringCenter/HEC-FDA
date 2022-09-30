@@ -1,7 +1,6 @@
 ﻿using HEC.Plotting.Core;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using paireddata;
 using SciChart.Charting.Model.ChartSeries;
 using Statistics;
 using System;
@@ -9,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using SciChart.Charting.Visuals.Axes;
 using AxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
 {

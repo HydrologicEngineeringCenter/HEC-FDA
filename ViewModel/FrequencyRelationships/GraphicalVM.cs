@@ -1,13 +1,11 @@
-﻿using paireddata;
-using Statistics.GraphicalRelationships;
-using System.Xml.Linq;
-using Statistics.Distributions;
+﻿using System.Xml.Linq;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using System;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Importer;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {

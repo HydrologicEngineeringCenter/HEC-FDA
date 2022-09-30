@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Statistics;
-using System.Xml.Linq;
+﻿using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics.Histograms;
 
-namespace metrics
-{ 
-    public class ConsequenceResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+namespace HEC.FDA.Model.metrics
+{
+    public class ConsequenceResults : Validation, IReportMessage
     {
         #region Fields
         private List<ConsequenceResult> _consequenceResultList;
@@ -106,7 +102,7 @@ namespace metrics
                 }
             }
             string message = "The requested damage category - impact area combination could not be found. An arbitrary object is being returned";
-            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             ConsequenceResult dummyResult = new ConsequenceResult();
             return dummyResult;

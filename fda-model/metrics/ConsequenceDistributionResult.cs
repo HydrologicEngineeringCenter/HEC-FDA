@@ -2,16 +2,13 @@
 using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
-using System.Runtime.Remoting;
-using System.Reflection;
-using Statistics.Distributions;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
-    public class ConsequenceDistributionResult: IReportMessage, IProgressReport
+    public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
         //TODO: hard-wiring the bin width is no good
@@ -121,7 +118,7 @@ namespace metrics
         #endregion
 
         #region Methods
-        internal void AddConsequenceRealization(double damageRealization, Int64 iteration)
+        internal void AddConsequenceRealization(double damageRealization, long iteration)
         {
             _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
         }
@@ -140,11 +137,11 @@ namespace metrics
 
         public bool Equals(ConsequenceDistributionResult damageResult)
         {
-                bool histogramsMatch = _consequenceHistogram.Equals(damageResult.ConsequenceHistogram);
-                if (!histogramsMatch)
-                {
-                    return false;
-                }
+            bool histogramsMatch = _consequenceHistogram.Equals(damageResult.ConsequenceHistogram);
+            if (!histogramsMatch)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -168,7 +165,7 @@ namespace metrics
             if (type.Equals("Histogram"))
             {
                 damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
-            } 
+            }
             else
             {
                 damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));

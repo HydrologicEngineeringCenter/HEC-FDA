@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xunit;
-using compute;
-using paireddata;
 using Statistics;
 using Statistics.Distributions;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test
 {
@@ -97,7 +98,7 @@ namespace fda_model_test
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
-            metrics.ImpactAreaScenarioResults results = simulation.PreviewCompute();
+            ImpactAreaScenarioResults results = simulation.PreviewCompute();
             double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
@@ -123,9 +124,9 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .build();
 
-            compute.RandomProvider randomProvider = new RandomProvider(seed);
+            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
             double difference = expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .015);
@@ -164,14 +165,14 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .withLevee(leveeFragilityFunction,topOfLeveeElevation)
                 .build();
-            compute.RandomProvider randomProvider = new RandomProvider(seed);
+            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .02);
-            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
             double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }
@@ -199,14 +200,14 @@ namespace fda_model_test
                 .withStageDamages(stageDamageList)
                 .withLevee(fragilityCurve, topOfLeveeElevation)
                 .build();
-            compute.RandomProvider randomProvider = new RandomProvider(seed);
+            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
             double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .01);//try assert.equal with -2
-            metrics.SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
+            SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
             double meanActualAEP = systemPerformanceResults.MeanAEP();
             Assert.Equal(meanExpectedAEP, meanActualAEP, 2);
         }

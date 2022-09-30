@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace fda_model.hydraulics.enums
+﻿namespace HEC.FDA.Model.hydraulics.enums
 {
     public enum HydraulicDataSource
     {

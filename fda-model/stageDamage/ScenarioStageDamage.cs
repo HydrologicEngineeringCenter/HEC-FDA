@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using structures;
-using compute;
+﻿using System.Collections.Generic;
 using Statistics;
-using paireddata;
-using fda_model.hydraulics;
-using interfaces;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.interfaces;
 
-namespace stageDamage
+namespace HEC.FDA.Model.stageDamage
 {
     public class ScenarioStageDamage
     {
@@ -29,10 +22,10 @@ namespace stageDamage
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
-            foreach(ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
+            foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
                 List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
-                foreach(UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
+                foreach (UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
                 {
                     scenarioStageDamageResults.Add(uncertainPairedData);
                 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HEC.FDA.ViewModel.FrequencyRelationships
+﻿namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
     public class FlowDoubleWrapper: BaseViewModel
     {

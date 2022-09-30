@@ -1,8 +1,7 @@
 ﻿using Xunit;
-using structures;
-using Statistics;
-using paireddata;
-using metrics;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.metrics;
 
 namespace fda_model_test.unittests.structures
 {

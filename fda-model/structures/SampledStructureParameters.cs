@@ -1,6 +1,6 @@
-﻿using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class SampledStructureParameters
     {
@@ -21,7 +21,7 @@ namespace structures
         //this will be set either using the other value or the other to structure value ratio 
         public double OtherValueSampled { get; }
 
-         
+
         public SampledStructureParameters(string occupancyTypeName, string occupancyTypeDamageCategory, IPairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, IPairedData contentPercentDamagePairedData = null, double sampledContentValue = -999, IPairedData vehiclePercentDamagePairedData = null, double sampledVehicleValue = -999, IPairedData otherPercentDamagePairedData = null, double sampledOtherValue = -999)
         {
             //TODO: Sampling the depth percent damage functions for each structure individually seems a bit overkill 

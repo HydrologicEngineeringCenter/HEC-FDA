@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace fda_model.structures
+﻿namespace HEC.FDA.Model.structures
 {
     public class StructureInventoryColumnMap
     {
@@ -22,9 +16,9 @@ namespace fda_model.structures
         public string YearInConstruction { get; }
         public string CBFips { get; }
 
-        public StructureInventoryColumnMap(string structureID = "fd_id", string occupancyType = "occtype",string damageCatagory = "st_damcat", string firstFloorElev = "ff_elev",
-            string sructureValue = "val_struct", string foundationHeight = "found_ht", string groundElev = "ground_elv", string contentValue = "val_cont", string otherValue = "val_other", 
-            string vehicalValue = "val_vehic", string begDamDepth = "begDamDepth", string yearInConstruction= "yrbuilt", string cbfips = "cbfips")
+        public StructureInventoryColumnMap(string structureID = "fd_id", string occupancyType = "occtype", string damageCatagory = "st_damcat", string firstFloorElev = "ff_elev",
+            string sructureValue = "val_struct", string foundationHeight = "found_ht", string groundElev = "ground_elv", string contentValue = "val_cont", string otherValue = "val_other",
+            string vehicalValue = "val_vehic", string begDamDepth = "begDamDepth", string yearInConstruction = "yrbuilt", string cbfips = "cbfips")
         {
             StructureID = structureID;
             OccupancyType = occupancyType;

@@ -1,5 +1,6 @@
 using Xunit;
-using paireddata;
+using HEC.FDA.Model.paireddata;
+
 namespace fda_model_test.unittests
 {
     [Trait("Category", "Unit")]

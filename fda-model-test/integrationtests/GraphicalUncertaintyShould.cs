@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using alternatives;
-using compute;
-using interfaces;
-using metrics;
-using paireddata;
-using scenarios;
 using Statistics;
-using Statistics.Distributions;
 using Statistics.Histograms;
 using Xunit;
 using System.Diagnostics;
 using System.Threading;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.interfaces;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test.integrationtests
 {

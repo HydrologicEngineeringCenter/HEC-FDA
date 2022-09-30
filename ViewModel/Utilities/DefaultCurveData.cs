@@ -1,4 +1,4 @@
-﻿using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 using Statistics;
 using Statistics.Distributions;
 using System.Collections.Generic;

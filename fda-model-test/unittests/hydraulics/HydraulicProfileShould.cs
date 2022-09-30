@@ -1,10 +1,8 @@
 ﻿using Xunit;
-using fda_model.hydraulics;
-using fda_model.hydraulics.enums;
-using structures;
-using fda_model.structures;
-using System.Linq;
 using System.Collections.Generic;
+using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.hydraulics;
 
 namespace fda_model_test.unittests
 {

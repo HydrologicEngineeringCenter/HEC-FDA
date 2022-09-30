@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-namespace paireddata
+namespace HEC.FDA.Model.paireddata
 {
     public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply, IMetaData
     {

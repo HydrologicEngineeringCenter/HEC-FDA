@@ -1,15 +1,10 @@
 ﻿using Statistics;
 using Statistics.Distributions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class ValueUncertainty
-{
+    {
         #region Fields
         private double _percentOfInventoryValueStandardDeviationOrMin;
         private double _percentOfInventoryValueMax;
@@ -36,7 +31,7 @@ namespace structures
         public double Sample(double inventoryValue, double probability)
         {
             double sampledValue;
-            switch(_distributionType)
+            switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
                     double standardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;

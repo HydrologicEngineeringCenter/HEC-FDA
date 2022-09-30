@@ -7,12 +7,11 @@ using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using HEC.MVVMFramework.Model.Messaging;
 
-namespace paireddata
+namespace HEC.FDA.Model.paireddata
 {
-    public class PairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedData, IReportMessage
+    public class PairedData : Validation, IPairedData, IReportMessage
     {
         private CurveMetaData _metadata;
         public double[] Xvals { get; }
@@ -46,16 +45,16 @@ namespace paireddata
         /// These rules only work in the case that we're working with non-exceedance probability 
         /// </summary>
         private void AddRules()
-        {  
+        {
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a >= b)), $"X must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a >= b)), $"Y must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a >= b), $"X must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => a >= b), $"Y must be strictly monotonically increasing but is not for the function named {_metadata.Name}."));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a > b)), $"X must be monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => (a > b)), $"Y must be monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a > b), $"X must be monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsArrayValid(Yvals, (a, b) => a > b), $"Y must be monotonically increasing but is not for the function named {_metadata.Name}."));
                     break;
                 default:
                     break;
@@ -66,7 +65,7 @@ namespace paireddata
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {   
+            {
                 if (comparison(arrayOfData[i], arrayOfData[i + 1]))
                 {
                     return false;
@@ -80,7 +79,7 @@ namespace paireddata
         public double f(double x)
         {
             //binary search.
-            Int32 index = Array.BinarySearch(Xvals, x);
+            int index = Array.BinarySearch(Xvals, x);
             if (index >= 0)
             {
                 //Matches a value exactly
@@ -111,7 +110,7 @@ namespace paireddata
         {
             //binary search.
             double[] yvalsArray = Yvals;
-            Int32 index = Array.BinarySearch(yvalsArray, y);
+            int index = Array.BinarySearch(yvalsArray, y);
             if (index >= 0)
             {
                 //Matches a value exactly
@@ -130,7 +129,7 @@ namespace paireddata
                 double m = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
                 double b = Xvals[index - 1];
                 double dy = y - Yvals[index - 1];
-                return (dy / m) + b;//not sure this is right. Need to develop tests.
+                return dy / m + b;//not sure this is right. Need to develop tests.
             }
         }
         /// <summary>
@@ -216,7 +215,7 @@ namespace paireddata
             {
                 double xdelta = Xvals[i] - x1;
                 square = xdelta * y1;
-                triangle = ((xdelta) * (Yvals[i] - y1)) / 2.0;
+                triangle = xdelta * (Yvals[i] - y1) / 2.0;
                 ead += square + triangle;
                 x1 = Xvals[i];
                 y1 = Yvals[i];
@@ -334,7 +333,7 @@ namespace paireddata
             }
             Yvals = update;
             string message = $"The sampled function {CurveMetaData.Name} was not monotonically increasing. Monotonicity has been forced";
-            ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
         }
         public void ReportMessage(object sender, MessageEventArgs e)

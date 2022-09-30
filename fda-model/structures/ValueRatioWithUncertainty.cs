@@ -1,15 +1,10 @@
 ﻿using Statistics;
 using Statistics.Distributions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class ValueRatioWithUncertainty
-{
+    {
         #region Fields
         private double _standardDeviationOrMin;
         private double _centralTendency;
@@ -45,7 +40,7 @@ namespace structures
         public double Sample(double probability)
         {
             double sampledValueRatio;
-            switch(_distributionType)
+            switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
                     Normal normal = new Normal(_centralTendency, _standardDeviationOrMin);
@@ -68,7 +63,7 @@ namespace structures
                     break;
             }
             //do not allow for negative value ratios
-            if(sampledValueRatio < 0)
+            if (sampledValueRatio < 0)
             {
                 sampledValueRatio = 0;
             }

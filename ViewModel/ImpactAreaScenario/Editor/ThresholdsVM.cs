@@ -1,8 +1,8 @@
-﻿using metrics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {

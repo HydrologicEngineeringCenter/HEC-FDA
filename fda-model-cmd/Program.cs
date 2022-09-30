@@ -1,9 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using HEC.MVVMFramework.Base.Events;
-using compute;
-using paireddata;
 using Statistics;
 using Statistics.Distributions;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 
 Console.WriteLine("Hello, World!");
 
@@ -94,7 +95,7 @@ ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(i
     .withStageDamages(stageDamageList)
     .withLevee(leveeFragilityFunction, topOfLeveeElevation)
     .build();
-compute.RandomProvider randomProvider = new RandomProvider(seed);
+RandomProvider randomProvider = new RandomProvider(seed);
 ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
 simulation.ProgressReport += WriteProgress;
 
@@ -103,7 +104,7 @@ void WriteProgress(object sender, ProgressReportEventArgs progress)
     Console.WriteLine("compute progress: " + progress.Progress);
 }
 
-metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
 
 double EAD = results.ConsequenceResults.MeanDamage(damageCategory,assetCategory,impactAreaID);
 Console.WriteLine("EAD was " + EAD);

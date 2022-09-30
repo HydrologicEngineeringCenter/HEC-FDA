@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
@@ -8,7 +9,6 @@ using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using paireddata;
 using System;
 using System.Collections;
 using System.Collections.Generic;

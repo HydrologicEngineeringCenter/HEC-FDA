@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.StageTransforms

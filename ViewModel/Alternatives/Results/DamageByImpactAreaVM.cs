@@ -1,8 +1,7 @@
-﻿using HEC.FDA.ViewModel.ImpactArea;
+﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {

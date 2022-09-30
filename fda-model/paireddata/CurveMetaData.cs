@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace paireddata
+namespace HEC.FDA.Model.paireddata
 {
     public class CurveMetaData
     {
@@ -16,7 +12,7 @@ namespace paireddata
         public string DamageCategory { get; }
         public string AssetCategory { get; }
         public bool IsNull { get; set; }
-        public CurveTypesEnum CurveType {get;}
+        public CurveTypesEnum CurveType { get; }
         public int ImpactAreaID
         {
             get

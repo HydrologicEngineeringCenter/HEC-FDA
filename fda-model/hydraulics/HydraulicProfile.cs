@@ -1,11 +1,11 @@
-﻿using fda_model.hydraulics.enums;
+﻿using HEC.FDA.Model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
 
-namespace fda_model.hydraulics
+namespace HEC.FDA.Model.hydraulics
 {
-    public class HydraulicProfile:IComparable
+    public class HydraulicProfile : IComparable
     {
         public double Probability { get; set; }
         public string FilePath { get; set; }
@@ -13,7 +13,7 @@ namespace fda_model.hydraulics
         public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath,  HydraulicDataSource dataSource, string profileName, string terrainFile = null)
+        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName, string terrainFile = null)
         {
             Probability = probability;
             FilePath = filepath;
@@ -23,7 +23,7 @@ namespace fda_model.hydraulics
         }
         public float[] GetWSE(PointMs pts)
         {
-            
+
             TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
             float[] terrainElevs = terrain.ComputePointElevations(pts);
 
@@ -81,7 +81,7 @@ namespace fda_model.hydraulics
 
             HydraulicProfile otherProfile = obj as HydraulicProfile;
             if (otherProfile != null)
-                return this.Probability.CompareTo(otherProfile.Probability);
+                return Probability.CompareTo(otherProfile.Probability);
             else
                 throw new ArgumentException("Object is not a Temperature");
         }

@@ -1,9 +1,9 @@
-﻿using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 using Statistics;
 using System;
 using System.Xml.Linq;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
     public class Threshold
     {
@@ -28,7 +28,7 @@ namespace metrics
             }
         }
         #endregion
-     
+
         #region Constructors 
         public Threshold()
         {
@@ -38,11 +38,11 @@ namespace metrics
             SystemPerformanceResults = new SystemPerformanceResults();
             _isNull = true;
         }
-        public Threshold(int thresholdID,ConvergenceCriteria c, ThresholdEnum thresholdType=0, double thresholdValue=0 )
+        public Threshold(int thresholdID, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c); 
+            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c);
             ThresholdID = thresholdID;
             _isNull = false;
         }
@@ -88,7 +88,7 @@ namespace metrics
             masterElement.SetAttributeValue("Threshold_Value", ThresholdValue);
             masterElement.SetAttributeValue("Threshold_ID", ThresholdID);
             XElement projectPerformanceElement = SystemPerformanceResults.WriteToXML();
-            projectPerformanceElement.Name= "Project_Performance_Results";
+            projectPerformanceElement.Name = "Project_Performance_Results";
             masterElement.Add(projectPerformanceElement);
             return masterElement;
         }

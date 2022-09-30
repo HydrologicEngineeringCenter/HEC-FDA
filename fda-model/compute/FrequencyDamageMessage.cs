@@ -1,34 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 
-namespace compute
+namespace HEC.FDA.Model.compute
 {
-    public class FrequencyDamageMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
+    public class FrequencyDamageMessage : MVVMFramework.Base.Interfaces.IMessage
     {
-    private PairedData _frequencyDamage;
-    
-    public string Message
+        private PairedData _frequencyDamage;
+
+        public string Message
         {
             get
             {
                 return $"FrequencyDamage";
             }
         }
-    public PairedData FrequencyDamage
+        public PairedData FrequencyDamage
         {
             get
             {
                 return _frequencyDamage;
             }
         }
-    public FrequencyDamageMessage(PairedData frequencyDamage)
-    {
+        public FrequencyDamageMessage(PairedData frequencyDamage)
+        {
             _frequencyDamage = frequencyDamage;
+        }
     }
-}
 }
 

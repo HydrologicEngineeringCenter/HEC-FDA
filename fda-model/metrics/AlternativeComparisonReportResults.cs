@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using Statistics.Histograms;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
-    public class AlternativeComparisonReportResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    public class AlternativeComparisonReportResults : Validation, IReportMessage
     {   //TODO: save a year 
         #region Fields
         private List<ConsequenceDistributionResults> _aaeqReducedResultsList;
@@ -16,7 +15,7 @@ namespace metrics
         private List<AlternativeResults> _withProjectAlternativeResults;
         private AlternativeResults _withoutProjectAlternativeResults;
         private bool _isNull;
-    
+
         #endregion
 
         #region Properties 
@@ -87,15 +86,15 @@ namespace metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new List<string>();
-            foreach(ConsequenceDistributionResults consequenceReducedResults in _aaeqReducedResultsList)
+            foreach (ConsequenceDistributionResults consequenceReducedResults in _aaeqReducedResultsList)
             {
-                        foreach (ConsequenceDistributionResult consequenceResult in consequenceReducedResults.ConsequenceResultList)
-                        {
-                            if (!assetCats.Contains(consequenceResult.AssetCategory))
-                            {
-                                assetCats.Add(consequenceResult.AssetCategory);
-                            }
-                        }
+                foreach (ConsequenceDistributionResult consequenceResult in consequenceReducedResults.ConsequenceResultList)
+                {
+                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    {
+                        assetCats.Add(consequenceResult.AssetCategory);
+                    }
+                }
 
             }
             return assetCats;
@@ -297,9 +296,9 @@ namespace metrics
         internal ConsequenceDistributionResults GetConsequencesReducedResultsForGivenAlternative(int alternativeID, bool getEADResults = false, bool getBaseYearResults = false)
         {
             List<ConsequenceDistributionResults> listToSearch = new List<ConsequenceDistributionResults>();
-            if(!getEADResults) { listToSearch = _aaeqReducedResultsList; }
-            else if(getEADResults && getBaseYearResults) { listToSearch = _baseYearEADReducedResultsList; }
-            else if(getEADResults && !getBaseYearResults) { listToSearch = _futureYearEADReducedResultsList; }
+            if (!getEADResults) { listToSearch = _aaeqReducedResultsList; }
+            else if (getEADResults && getBaseYearResults) { listToSearch = _baseYearEADReducedResultsList; }
+            else if (getEADResults && !getBaseYearResults) { listToSearch = _futureYearEADReducedResultsList; }
             else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }
             foreach (ConsequenceDistributionResults consequenceDistResults in listToSearch)
             {
@@ -323,7 +322,7 @@ namespace metrics
                 }
             }
             AlternativeResults dummyAlternativeResults = new AlternativeResults();
-            ReportMessage(this, new MessageEventArgs(new Message ("The requested alternative could not be found. An artibtrary object is being returned.")));
+            ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An artibtrary object is being returned.")));
             return dummyAlternativeResults;
         }
         public void ReportMessage(object sender, MessageEventArgs e)

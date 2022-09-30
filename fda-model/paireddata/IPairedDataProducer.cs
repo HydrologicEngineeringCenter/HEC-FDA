@@ -1,5 +1,4 @@
-using System;
-namespace paireddata
+namespace HEC.FDA.Model.paireddata
 {
     public interface IPairedDataProducer
     {

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Statistics;
 using Statistics.Histograms;
-using paireddata;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
-    public class ImpactAreaScenarioResults: IContainImpactAreaScenarioResults
+    public class ImpactAreaScenarioResults : IContainImpactAreaScenarioResults
     {//TODO: I want to make this class internal. We should access this logic through ScenarioResults. 
         #region Fields
         //TODO: this is not working quite like I expect. 
@@ -123,14 +121,14 @@ namespace metrics
             return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
-        { 
+        {
             if (computeWithDamage == true)
-            {   
+            {
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
-                    if(!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
+                    if (!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
-                        if(consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
+                        if (consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
                         {
                             return false;
                         }
@@ -141,7 +139,7 @@ namespace metrics
         }
         public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
         {
-            
+
             List<bool> convergedList = new List<bool>();
             //dont like this
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
@@ -157,7 +155,7 @@ namespace metrics
                 else
                 {
                     return false;
-                } 
+                }
             }
             return true;
         }
@@ -168,22 +166,23 @@ namespace metrics
         public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             bool eadIsConverged = true;
-                if (computeWithDamage == true)
+            if (computeWithDamage == true)
+            {
+                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
-                    foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                    {   
-                        if(consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
+                    if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
+                    {
+                        eadIsConverged = true;
+                    }
+                    else
+                    {
+                        if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
                         {
-                            eadIsConverged = true;
-                        } else
-                        {
-                            if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
-                            {
-                                eadIsConverged = false;
-                            }
+                            eadIsConverged = false;
                         }
                     }
                 }
+            }
             bool cnepIsConverged = true;
             List<bool> convergedList = new List<bool>();
 
@@ -192,7 +191,7 @@ namespace metrics
             {
                 bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
                 convergedList.Add(thresholdAssuranceIsConverged);
-          
+
             }
             foreach (var convergenceResult in convergedList)
             {
@@ -207,9 +206,9 @@ namespace metrics
             }
             return eadIsConverged && cnepIsConverged;
         }
-        public Int64 RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
+        public long RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            List<Int64> eadIterationsRemaining = new List<Int64>();
+            List<long> eadIterationsRemaining = new List<long>();
             if (computeWithDamage == true)
             {
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
@@ -220,12 +219,12 @@ namespace metrics
                     }
                     else
                     {
-                    eadIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                        eadIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb));
                     }
                 }
             }
 
-            List<Int64> performanceIterationsRemaining = new List<Int64>();
+            List<long> performanceIterationsRemaining = new List<long>();
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
                 performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
@@ -267,14 +266,14 @@ namespace metrics
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ImpactAreaScenarioResults(performanceByThresholds,expectedAnnualDamageResults,impactAreaID);
+            return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
         }
 
         internal void ForceDeQueue()
         {
             PerformanceByThresholds.ForceDeQueue();
             ConsequenceResults.ForceDeQueue();
-         }
+        }
         #endregion
     }
 }

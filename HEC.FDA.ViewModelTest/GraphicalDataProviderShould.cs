@@ -1,5 +1,5 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data;
-using paireddata;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
 using System.Xml.Linq;
 using Xunit;
 

@@ -1,7 +1,6 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.ViewModel.Implementations;
-using HEC.MVVMFramework.ViewModel.Validation;
 using Statistics;
 using Statistics.Distributions;
 using System;

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Xunit;
-using metrics;
-using compute;
-using paireddata;
 using Statistics;
 using Statistics.Distributions;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test.unittests
 {

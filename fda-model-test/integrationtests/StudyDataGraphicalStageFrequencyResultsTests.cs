@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using metrics;
-using compute;
-using paireddata;
 using Statistics;
 using Statistics.Distributions;
-
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 
 namespace fda_model_test.integrationtests
 {
@@ -102,7 +98,7 @@ namespace fda_model_test.integrationtests
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
             double difference = Math.Abs(expected - results.MeanExpectedAnnualConsequences(impactareaid, category, assetcategory));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;

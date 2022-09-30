@@ -1,9 +1,7 @@
-﻿using paireddata;
-using Statistics;
-using System;
-using interfaces;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.interfaces;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
     public class OccupancyType
     {
@@ -82,8 +80,8 @@ namespace structures
         public OccupancyType()
         {
             _structureDepthPercentDamageFunction = new UncertainPairedData();
-            _contentDepthPercentDamageFunction = new UncertainPairedData(); 
-            _vehicleDepthPercentDamageFunction= new UncertainPairedData();
+            _contentDepthPercentDamageFunction = new UncertainPairedData();
+            _vehicleDepthPercentDamageFunction = new UncertainPairedData();
             _OtherDepthPercentDamageFunction = new UncertainPairedData();
             _firstFloorElevationError = new FirstFloorElevationUncertainty();
             _structureValueError = new ValueUncertainty();
@@ -100,11 +98,11 @@ namespace structures
             //damage functions
             IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
             //HACK consider adding empty constructor to PairedData
-            IPairedData contentDamagePairedData = new PairedData(new double[] {0}, new double[] {0});
+            IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
             //HACK
-            IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
+            IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
             //HACK
-            IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
+            IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters
             double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom());
@@ -153,8 +151,8 @@ namespace structures
             {
                 vehicleValueSampled = vehicleValue;
             }
-            
-            return new SampledStructureParameters(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueSampled, vehicleDamagePairedData, vehicleValueSampled, otherDamagePairedData,      otherValueSampled);
+
+            return new SampledStructureParameters(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueSampled, vehicleDamagePairedData, vehicleValueSampled, otherDamagePairedData, otherValueSampled);
         }
         public static OccupancyTypeBuilder builder()
         {
@@ -164,7 +162,7 @@ namespace structures
 
         public class OccupancyTypeBuilder
         {
-            private OccupancyType _occupancyType; 
+            private OccupancyType _occupancyType;
             internal OccupancyTypeBuilder(OccupancyType occupancyType)
             {
                 _occupancyType = occupancyType;
@@ -190,7 +188,7 @@ namespace structures
                 _occupancyType._computeStructureDamage = true;
                 return new OccupancyTypeBuilder(_occupancyType);
             }
-            
+
             public OccupancyTypeBuilder withContentDepthPercentDamage(UncertainPairedData contentDepthPercentDamage)
             {
                 _occupancyType._contentDepthPercentDamageFunction = contentDepthPercentDamage;

@@ -2,23 +2,23 @@
 using Statistics.Distributions;
 using Statistics.GraphicalRelationships;
 using Statistics;
-using interfaces;
-using System.Linq;
 using System.Xml.Linq;
 using System;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
-namespace paireddata
+using HEC.FDA.Model.interfaces;
+
+namespace HEC.FDA.Model.paireddata
 {
-    public class GraphicalUncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage, IMetaData
+    public class GraphicalUncertainPairedData : Validation, IPairedDataProducer, ICanBeNull, IReportMessage, IMetaData
     {
         #region Fields
         private int _EquivalentRecordLength;
         private double[] _ExceedanceProbabilities;
         private double[] _NonExceedanceProbabilities;
-        private Statistics.ContinuousDistribution[] _StageOrLogFlowDistributions;
+        private ContinuousDistribution[] _StageOrLogFlowDistributions;
         private CurveMetaData _metaData;
         private bool _UsingStagesNotFlows;
         private double _MaximumProbability;
@@ -44,7 +44,7 @@ namespace paireddata
         {
             get { return _metaData.YLabel; }
         }
-        public Statistics.ContinuousDistribution[] StageOrLogFlowDistributions
+        public ContinuousDistribution[] StageOrLogFlowDistributions
         {
             get
             {
@@ -173,7 +173,7 @@ namespace paireddata
             switch (_metaData.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => (a > b)), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
+                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => a > b), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
                     break;
                 default:
                     break;
@@ -237,7 +237,7 @@ namespace paireddata
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
         {
             bool nullMatches = CurveMetaData.IsNull.Equals(incomingGraphicalUncertainPairedData.CurveMetaData.IsNull);
-            if(nullMatches && IsNull)
+            if (nullMatches && IsNull)
             {
                 return true;
             }
@@ -251,7 +251,7 @@ namespace paireddata
             {
                 bool probabilityIsTheSame = _ExceedanceProbabilities[i].Equals(incomingGraphicalUncertainPairedData.ExceedanceProbabilities[i]);
                 bool distributionIsTheSame = _StageOrLogFlowDistributions[i].Equals(incomingGraphicalUncertainPairedData.StageOrLogFlowDistributions[i]);
-                if(!probabilityIsTheSame || !distributionIsTheSame)
+                if (!probabilityIsTheSame || !distributionIsTheSame)
                 {
                     return false;
                 }
@@ -327,13 +327,13 @@ namespace paireddata
                         }
                         else
                         {
-                            stageOrFlowDistributions[i] = (Normal)Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                            stageOrFlowDistributions[i] = (Normal)ContinuousDistribution.FromXML(ordinateElements);
                         }
                     }
                     i++;
                 }
                 List<double> inputFlowOrStageValues = new List<double>();
-                foreach(XElement valueElement in xElement.Element("InputFlowOrStage").Elements())
+                foreach (XElement valueElement in xElement.Element("InputFlowOrStage").Elements())
                 {
                     double value = Convert.ToDouble(valueElement.Attribute("Value").Value);
                     inputFlowOrStageValues.Add(value);
@@ -344,6 +344,6 @@ namespace paireddata
         }
         #endregion
     }
-    }
+}
 
 

@@ -1,20 +1,18 @@
-﻿using paireddata;
-using Statistics;
+﻿using Statistics;
 using System;
 using System.Collections.Generic;
-using structures;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
-using fda_model.hydraulics;
-using metrics;
-using compute;
-using interfaces;
-using Statistics.Distributions;
+using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.interfaces;
 
-namespace stageDamage
+namespace HEC.FDA.Model.stageDamage
 {
     public class ImpactAreaStageDamage : Validation, IReportMessage
     {
@@ -191,13 +189,13 @@ namespace stageDamage
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
-                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount+1));
+                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount + 1));
             }
         }
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
             List<double> allStagesAtIndexLocation = new List<double>();
-            List <ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
+            List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
             PairedData stageFrequency = CreateStageFrequency();
 
             ComputeLowerStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
@@ -212,7 +210,7 @@ namespace stageDamage
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
             foreach (float structureStage in stagesAtStructuresHighestProfile)
             {
-                extrapolatedStages[stepCount] = structureStage + upperInterval*stepCount;
+                extrapolatedStages[stepCount] = structureStage + upperInterval * stepCount;
             }
             return extrapolatedStages;
         }
@@ -221,7 +219,7 @@ namespace stageDamage
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             foreach (float stage in WSEsAtLowest)
             {
-                extrapolatedStages[i] = stage - interval*(numIntermediateStagesToCompute-i);
+                extrapolatedStages[i] = stage - interval * (numIntermediateStagesToCompute - i);
             }
             return extrapolatedStages;
         }
@@ -232,12 +230,12 @@ namespace stageDamage
             double lowerProb = 0.025;
             double upperProb = .975;
             ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(convergenceCriteria);
-            Int64 iteration = 0;
+            long iteration = 0;
             while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
             {
                 DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                 ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
-                consequenceDistributionResults.AddConsequenceRealization(consequenceResults,impactAreaID,iteration);
+                consequenceDistributionResults.AddConsequenceRealization(consequenceResults, impactAreaID, iteration);
                 iteration++;
             }
             return consequenceDistributionResults;

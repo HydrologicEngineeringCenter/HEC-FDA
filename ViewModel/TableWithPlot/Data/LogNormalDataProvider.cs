@@ -2,7 +2,7 @@
 using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
-using paireddata;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using Statistics.Histograms;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
-    public class PerformanceByThresholds : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    public class PerformanceByThresholds : Validation, IReportMessage
     {
         #region Fields
         private List<Threshold> _Thresholds;
@@ -96,7 +94,7 @@ namespace metrics
             }
             Threshold dummyThreshold = new Threshold();
             string message = "The requested threshold could not be found so a dummy threshold is being returned";
-            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new MVVMFramework.Model.Messaging.ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyThreshold;
 
@@ -132,7 +130,7 @@ namespace metrics
         {
             foreach (Threshold threshold in ListOfThresholds)
             {
-                foreach(AssuranceResultStorage assuranceResultStorage in threshold.SystemPerformanceResults.Assurances)
+                foreach (AssuranceResultStorage assuranceResultStorage in threshold.SystemPerformanceResults.Assurances)
                 {
                     assuranceResultStorage.AssuranceHistogram.ForceDeQueue();
                 }

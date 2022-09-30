@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
-public class AssuranceResultStorage
-{
+    public class AssuranceResultStorage
+    {
         #region Fields
         ThreadsafeInlineHistogram _assurance;
         string _type;
         double _standardNonExceedanceProbability;
-       
+
         #endregion
 
         #region Properties
@@ -61,7 +57,7 @@ public class AssuranceResultStorage
         public AssuranceResultStorage(string assuranceType, double binWidth, ConvergenceCriteria convergenceCriteria, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
             _standardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
-            _assurance = new ThreadsafeInlineHistogram(binWidth,convergenceCriteria);
+            _assurance = new ThreadsafeInlineHistogram(binWidth, convergenceCriteria);
             _assurance.SetIterationSize(convergenceCriteria.MaxIterations);
             _type = assuranceType;
         }
@@ -79,7 +75,7 @@ public class AssuranceResultStorage
         {
             if (_type == incomingAssuranceResultStorage.AssuranceType)
             {
-                if(_standardNonExceedanceProbability == incomingAssuranceResultStorage.StandardNonExceedanceProbability)
+                if (_standardNonExceedanceProbability == incomingAssuranceResultStorage.StandardNonExceedanceProbability)
                 {
                     if (_assurance.Equals(incomingAssuranceResultStorage.AssuranceHistogram))
                     {

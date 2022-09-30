@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using interfaces;
+using HEC.FDA.Model.interfaces;
 
-namespace compute
+namespace HEC.FDA.Model.compute
 {
     public class RandomProvider : IProvideRandomNumbers
     {
@@ -29,9 +25,9 @@ namespace compute
         }
         public double NextRandom()
         {
-                return _randomNumberGenerator.NextDouble(); 
+            return _randomNumberGenerator.NextDouble();
         }
-        public double[] NextRandomSequence(Int64 size)
+        public double[] NextRandomSequence(long size)
         {
             double[] randomNumbers = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < size; i++)

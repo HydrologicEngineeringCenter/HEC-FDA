@@ -1,10 +1,6 @@
-﻿using RasMapperLib;
-using RasMapperLib.Mapping;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
-namespace fda_model.hydraulics
+namespace HEC.FDA.Model.hydraulics
 {
     public class HydraulicDataset
     {

@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using impactarea;
-using metrics;
 using System.Xml.Linq;
-using compute;
 using Statistics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.interfaces;
+using HEC.FDA.Model.compute;
 
-namespace scenarios
+namespace HEC.FDA.Model.scenarios
 {
     public class Scenario : IReportMessage
     {
@@ -29,11 +29,11 @@ namespace scenarios
         public event MessageReportedEventHandler MessageReport;
         public int Year
         {
-            get{return _year;}
+            get { return _year; }
         }
         public IList<ImpactAreaScenarioSimulation> ImpactAreas
         {
-            get { return _impactAreaSimulations;  }
+            get { return _impactAreaSimulations; }
         }
         #endregion
         #region Constructors
@@ -42,17 +42,19 @@ namespace scenarios
             _year = 0;
             _impactAreaSimulations = new List<ImpactAreaScenarioSimulation>();
         }
-        public Scenario(int year, IList<ImpactAreaScenarioSimulation> impactAreaSimulations){
+        public Scenario(int year, IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
+        {
             _year = year;
             _impactAreaSimulations = impactAreaSimulations;
         }
         #endregion
         #region Methods
-        public ScenarioResults Compute(interfaces.IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //probably instantiate a rng to seed each impact area differently
             ScenarioResults scenarioResults = new ScenarioResults(_year);
-            foreach(ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations){
+            foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
+            {
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria));
             }
             return scenarioResults;
@@ -81,7 +83,7 @@ namespace scenarios
             {
                 return false;
             }
-            foreach(ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
+            foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
             {
                 ImpactAreaScenarioSimulation impactAreaScenarioSimulationToCompare = scenarioToCompare.GetImpactAreaScenarioSimulation(impactAreaScenarioSimulation.ImpactAreaID);
                 bool impactAreaScenariosAreTHeSame = impactAreaScenarioSimulation.Equals(impactAreaScenarioSimulationToCompare);

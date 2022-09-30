@@ -1,4 +1,5 @@
-﻿using compute;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
@@ -7,7 +8,6 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;

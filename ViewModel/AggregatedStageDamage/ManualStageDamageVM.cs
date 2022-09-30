@@ -1,8 +1,8 @@
-﻿using HEC.FDA.ViewModel.ImpactArea;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

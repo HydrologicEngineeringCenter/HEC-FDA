@@ -1,10 +1,6 @@
-﻿using structures;
-using System.IO;
-using System.Reflection;
-using Xunit;
-using fda_model.structures;
-using RasMapperLib;
+﻿using Xunit;
 using System.Collections.Generic;
+using HEC.FDA.Model.structures;
 
 namespace fda_model_test.unittests.structures
 {

@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xunit;
-using compute;
-using paireddata;
-using Statistics;
-using Statistics.Histograms;
-using metrics;
-using alternatives;
-using Statistics.Distributions;
-using scenarios;
-using System.Xml.Linq;
-using fda_model.hydraulics;
-using fda_model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
 
 namespace fda_model_test.unittests.hydraulics
 {

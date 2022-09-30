@@ -1,15 +1,12 @@
-﻿using compute;
-using fda_model_test.unittests.MessagingTests;
+﻿using fda_model_test.unittests.MessagingTests;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Implementations;
-using paireddata;
 using Statistics;
 using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace fda_model_test.unittests
@@ -86,7 +83,7 @@ namespace fda_model_test.unittests
             Listener listener = new Listener();
             MessageHub.Register(simulation);
             MessageHub.Subscribe(listener);
-            metrics.ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
 
             Debug.WriteLine(listener.GetMessageLogAsString());
 

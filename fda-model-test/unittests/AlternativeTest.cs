@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xunit;
-using compute;
-using paireddata;
 using Statistics;
-using Statistics.Histograms;
-using metrics;
-using alternatives;
 using Statistics.Distributions;
-using scenarios;
-using System.Xml.Linq;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.scenarios;
+using HEC.FDA.Model.alternatives;
 
 namespace fda_model_test.unittests
 {

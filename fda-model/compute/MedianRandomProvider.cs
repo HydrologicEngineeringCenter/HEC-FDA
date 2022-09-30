@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using interfaces;
-using Statistics;
+﻿using HEC.FDA.Model.interfaces;
 
-namespace compute
+namespace HEC.FDA.Model.compute
 {
     public class MedianRandomProvider : IProvideRandomNumbers
     {
@@ -21,14 +15,14 @@ namespace compute
         {
             return .5;
         }
-        
 
-        public double[] NextRandomSequence(Int64 size)
+
+        public double[] NextRandomSequence(long size)
         {
             double[] randomNumbers = new double[size];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < size; i++)
             {
-                randomNumbers[i] = (((double)i) +.5)/ (double)size;
+                randomNumbers[i] = (i + .5) / size;
             }
             return randomNumbers;
         }

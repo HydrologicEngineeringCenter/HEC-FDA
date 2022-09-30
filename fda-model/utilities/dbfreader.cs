@@ -1,6 +1,4 @@
-﻿
-
-namespace utilities
+﻿namespace HEC.FDA.Model.utilities
 {
     using System;
     using System.Collections.Generic;
@@ -13,12 +11,12 @@ namespace utilities
         private FileStream _dbfstream;
         private BinaryReader _dbfreader;
         private bool _DataBaseOpen;
-        private Int16 _FirstDataRecordIndex;
-        private List<Int32> _RecordStartPositions = new List<Int32>();
-        private Int32 _NumberOfRecords; // Some of them can have the deleted tag
-        private Int16 _RecordLength;
+        private short _FirstDataRecordIndex;
+        private List<int> _RecordStartPositions = new List<int>();
+        private int _NumberOfRecords; // Some of them can have the deleted tag
+        private short _RecordLength;
         private byte[] _Lengths;
-        private Int16[] _Positions;
+        private short[] _Positions;
         private string _filePath;
         private string[] _ColumnNames;
         private Type[] _ColumnTypes;
@@ -40,7 +38,7 @@ namespace utilities
             LoadAttributeInfo();
             Close();
         }
- 
+
         public void Open()
         {
             _dbfstream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -71,7 +69,7 @@ namespace utilities
                     }
                 case "STRING":
                     {
-                        return CellValue.Trim(System.Convert.ToChar(" "));
+                        return CellValue.Trim(Convert.ToChar(" "));
                     }
                 case "BOOL":
                     {
@@ -136,12 +134,12 @@ namespace utilities
             _RecordLength = BitConverter.ToInt16(bytes, 10);
             _NColumns = (_FirstDataRecordIndex - 32 - 1) / 32;
             // 
-            _RecordStartPositions = new List<Int32>();
-            for (Int32 i = 0; i <= _NumberOfRecords - 1; i++)
+            _RecordStartPositions = new List<int>();
+            for (int i = 0; i <= _NumberOfRecords - 1; i++)
             {
-                _dbfreader.BaseStream.Position = _FirstDataRecordIndex + ((i) * _RecordLength);
+                _dbfreader.BaseStream.Position = _FirstDataRecordIndex + i * _RecordLength;
                 if (_dbfreader.ReadByte() == 32)
-                    _RecordStartPositions.Add(_FirstDataRecordIndex + 1 + ((i) * _RecordLength));
+                    _RecordStartPositions.Add(_FirstDataRecordIndex + 1 + i * _RecordLength);
             }
             _NRows = _RecordStartPositions.Count;
             // ''''''''''''''''''''''''''''''''''''''Field Subrecords (always 32 bytes from 0 to 31)'''''''''''''''''''''''''''
@@ -160,7 +158,7 @@ namespace utilities
                 {
                     case "I":
                         {
-                            _ColumnTypes[col - 1] = typeof(Int32);
+                            _ColumnTypes[col - 1] = typeof(int);
                             break;
                         }
 
@@ -169,7 +167,7 @@ namespace utilities
                             if (bytes[17] > 0)
                                 _ColumnTypes[col - 1] = typeof(double);
                             else
-                                _ColumnTypes[col - 1] = typeof(Int32);
+                                _ColumnTypes[col - 1] = typeof(int);
                             break;
                         }
 

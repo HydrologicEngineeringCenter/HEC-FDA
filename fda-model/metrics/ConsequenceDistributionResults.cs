@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Statistics;
 using System.Xml.Linq;
@@ -7,11 +6,11 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
-using paireddata;
+using HEC.FDA.Model.paireddata;
 
-namespace metrics
-{ 
-    public class ConsequenceDistributionResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+namespace HEC.FDA.Model.metrics
+{
+    public class ConsequenceDistributionResults : Validation, IReportMessage
     {
         #region Fields
         private static string STRUCTURE_ASSET_CATEGORY = "Structure";
@@ -23,7 +22,7 @@ namespace metrics
         private List<ConsequenceDistributionResult> _consequenceResultList;
         //impact area to be string?
         private bool _isNull;
-        
+
         #endregion
 
         #region Properties 
@@ -109,13 +108,13 @@ namespace metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, Int64 iteration)
+        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, long iteration)
         {
             foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
             {
@@ -125,7 +124,7 @@ namespace metrics
                 AddConsequenceRealizationByAssetCategory(consequenceResult.VehicleDamage, consequenceResult.DamageCategory, VEHICLE_ASSET_CATEGRY, consequenceResult.RegionID, iteration);
             }
         }
-        private void AddConsequenceRealizationByAssetCategory(double consequenceRealization, string damageCategory, string assetCategory, int impactAreaID, Int64 iteration)
+        private void AddConsequenceRealizationByAssetCategory(double consequenceRealization, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
             ConsequenceDistributionResult structureConsequenceDistributionResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (structureConsequenceDistributionResult.IsNull)
@@ -297,13 +296,13 @@ namespace metrics
                         if (damageResult.AssetCategory.Equals(assetCategory))
                         {
                             return damageResult;
-                        } 
+                        }
                     }
                 }
             }
-        string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
-        ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
-        ReportMessage(this, new MessageEventArgs(errorMessage));
+            string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
+            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ReportMessage(this, new MessageEventArgs(errorMessage));
             ConsequenceDistributionResult dummyResult = new ConsequenceDistributionResult();
             return dummyResult;
         }
@@ -318,14 +317,14 @@ namespace metrics
 
         public bool Equals(ConsequenceDistributionResults inputDamageResults)
         {
-           foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
-           {
-               ConsequenceDistributionResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
-               bool resultsMatch = damageResult.Equals(inputDamageResult);
-               if (!resultsMatch)
-               {
-                   return false;
-               }
+            foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
+            {
+                ConsequenceDistributionResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
+                bool resultsMatch = damageResult.Equals(inputDamageResult);
+                if (!resultsMatch)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -348,48 +347,48 @@ namespace metrics
             List<IHistogram> histograms = new List<IHistogram>();
             foreach (ConsequenceDistributionResult consequenceResult in _consequenceResultList)
             {
-                if(damageCategory == null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
                     histograms.Add(consequenceResult.ConsequenceHistogram);
                 }
-                if(damageCategory != null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
                 {
-                    if(damageCategory.Equals(consequenceResult.DamageCategory))
+                    if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if(damageCategory == null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
                 {
-                    if(assetCategory.Equals(consequenceResult.AssetCategory))
+                    if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if(damageCategory == null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
                 {
-                    if(impactAreaID.Equals(consequenceResult.RegionID))
+                    if (impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if(damageCategory != null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
                 {
-                    if(damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if(damageCategory != null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
                 {
-                    if(damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if(damageCategory == null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
                 {
-                    if(assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
@@ -403,7 +402,7 @@ namespace metrics
             if (histograms.Count == 0)
             {
                 string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 aggregateHistogram = new Histogram();
             }
@@ -441,7 +440,7 @@ namespace metrics
                 {
                     foreach (string assetCategory in assetCategories)
                     {
-                        CurveMetaData curveMetaData = new CurveMetaData("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory,CurveTypesEnum.MonotonicallyIncreasing, impactAreaID, assetCategory);
+                        CurveMetaData curveMetaData = new CurveMetaData("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, CurveTypesEnum.MonotonicallyIncreasing, impactAreaID, assetCategory);
                         List<IHistogram> histograms = new List<IHistogram>();
                         foreach (ConsequenceDistributionResults consequenceDistributions in yValues)
                         {
@@ -473,7 +472,7 @@ namespace metrics
             List<int> impactAreas = new List<int>();
             foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
             {
-                if(!impactAreas.Contains(consequenceDistributionResult.RegionID))
+                if (!impactAreas.Contains(consequenceDistributionResult.RegionID))
                 {
                     impactAreas.Add(consequenceDistributionResult.RegionID);
                 }

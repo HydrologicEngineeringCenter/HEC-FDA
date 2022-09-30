@@ -1,9 +1,9 @@
 ﻿using Xunit;
-using structures;
 using Statistics;
-using paireddata;
 using Statistics.Distributions;
-using compute;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test.unittests.structures
 {

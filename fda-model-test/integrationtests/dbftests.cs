@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using utilities;
+using HEC.FDA.Model.utilities;
 
 namespace fda_model_test.integrationtests
 {

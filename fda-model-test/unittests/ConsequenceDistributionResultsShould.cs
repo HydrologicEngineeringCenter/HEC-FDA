@@ -1,12 +1,11 @@
 ﻿using Xunit;
-using paireddata;
 using System.Collections.Generic;
 using Statistics;
-using System.Xml.Linq;
 using System;
 using Statistics.Distributions;
 using Statistics.Histograms;
-using metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.metrics;
 
 namespace unittests
 {

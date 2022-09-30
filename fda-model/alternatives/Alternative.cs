@@ -1,19 +1,15 @@
-using compute;
-using metrics;
 using Statistics;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.Model.metrics;
 
-namespace alternatives
+namespace HEC.FDA.Model.alternatives
 {
-    public class Alternative: Validation, IReportMessage, IProgressReport
+    public class Alternative : Validation, IReportMessage, IProgressReport
     {
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -29,7 +25,7 @@ namespace alternatives
         /// <returns></returns>
         /// 
 
-        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, 
+        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear)
         {
             ReportProgress(this, new ProgressReportEventArgs(55));
@@ -40,8 +36,9 @@ namespace alternatives
             List<int> analysisYears = new List<int>();
             analysisYears.Add(baseYear);
             analysisYears.Add(futureYear);
-            if (!CanCompute(baseYear,futureYear, periodOfAnalysis))
-            {   AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            if (!CanCompute(baseYear, futureYear, periodOfAnalysis))
+            {
+                AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
                 MessageEventArgs messageArguments = new MessageEventArgs(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned"));
                 nullAlternativeResults.ReportMessage(nullAlternativeResults, messageArguments);
                 return nullAlternativeResults;
@@ -157,11 +154,11 @@ namespace alternatives
                 baseYearDamageResult.ReportMessage(baseYearDamageResult, beginComputeMessageArgs);
             }
             List<double> resultCollection = new List<double>();
-            Int64 iterations = convergenceCriteria.MinIterations;
+            long iterations = convergenceCriteria.MinIterations;
             bool converged = false;
-            Int64 progressChunks = 1;
-            Int64 _completedIterations = 0;
-            Int64 _ExpectedIterations = convergenceCriteria.MaxIterations;
+            long progressChunks = 1;
+            long _completedIterations = 0;
+            long _ExpectedIterations = convergenceCriteria.MaxIterations;
             if (_ExpectedIterations > 100)
             {
                 progressChunks = _ExpectedIterations / 100;
@@ -177,7 +174,7 @@ namespace alternatives
                     _completedIterations++;
                     if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                     {
-                        double percentcomplete = ((double)_completedIterations) / ((double)_ExpectedIterations) * 100;
+                        double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
                         aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
                     }
                 }
@@ -221,7 +218,7 @@ namespace alternatives
         }
         private static double IntoAverageAnnualEquivalentTerms(double sumPresentValueEAD, int periodOfAnalysis, double discountRate)
         {
-            double presentValueInterestFactorOfAnnuity = (1 - (1 / Math.Pow(1 + discountRate, periodOfAnalysis))) / discountRate;
+            double presentValueInterestFactorOfAnnuity = (1 - 1 / Math.Pow(1 + discountRate, periodOfAnalysis)) / discountRate;
             double averageAnnualEquivalentDamage = sumPresentValueEAD / presentValueInterestFactorOfAnnuity;
             return averageAnnualEquivalentDamage;
         }
@@ -239,7 +236,7 @@ namespace alternatives
         }
         private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, int baseYear, int mostLikelyFutureYear, int periodOfAnalysis)
         {
-            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear +1);
+            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear + 1);
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {

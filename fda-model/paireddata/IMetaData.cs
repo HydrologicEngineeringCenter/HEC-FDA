@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace paireddata
+﻿namespace HEC.FDA.Model.paireddata
 {
- public interface IMetaData
-{
+    public interface IMetaData
+    {
         CurveMetaData CurveMetaData { get; }
-}
+    }
 }

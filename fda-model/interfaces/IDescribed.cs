@@ -1,5 +1,4 @@
-using System;
-namespace interfaces
+namespace HEC.FDA.Model.interfaces
 {
     public interface IDescribed
     {

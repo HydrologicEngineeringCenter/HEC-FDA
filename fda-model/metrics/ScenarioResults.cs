@@ -8,9 +8,9 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
-    public class ScenarioResults : HEC.MVVMFramework.Base.Implementations.Validation, IReportMessage
+    public class ScenarioResults : Validation, IReportMessage
     {
         #region Fields 
         List<IContainImpactAreaScenarioResults> _resultsList;
@@ -34,7 +34,7 @@ namespace metrics
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();
             int dummyImpactAreaID = 0;
-            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID,true);
+            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
             _resultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
             MessageHub.Register(this);
@@ -111,23 +111,23 @@ namespace metrics
         {
             return GetResults(impactAreaID).GetAEPHistogram(thresholdID);
         }
-        public double MeanAEP(int impactAreaID, int thresholdID=0)
+        public double MeanAEP(int impactAreaID, int thresholdID = 0)
         {
             return GetResults(impactAreaID).MeanAEP(thresholdID);
         }
-        public double MedianAEP(int impactAreaID, int thresholdID=0)
+        public double MedianAEP(int impactAreaID, int thresholdID = 0)
         {
             return GetResults(impactAreaID).MedianAEP(thresholdID);
         }
-        public double AssuranceOfAEP(int impactAreaID,  double exceedanceProbability, int thresholdID=0)
+        public double AssuranceOfAEP(int impactAreaID, double exceedanceProbability, int thresholdID = 0)
         {
             return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
         }
-        public double LongTermExceedanceProbability(int impactAreaID,  int years, int thresholdID = 0)
+        public double LongTermExceedanceProbability(int impactAreaID, int years, int thresholdID = 0)
         {
             return GetResults(impactAreaID).LongTermExceedanceProbability(thresholdID, years);
         }
-        public double AssuranceOfEvent(int impactAreaID, double standardNonExceedanceProbability, int thresholdID=0)
+        public double AssuranceOfEvent(int impactAreaID, double standardNonExceedanceProbability, int thresholdID = 0)
         {
             return GetResults(impactAreaID).AssuranceOfEvent(thresholdID, standardNonExceedanceProbability);
         }
@@ -142,7 +142,7 @@ namespace metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value -999
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory= null)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {//TODO: This could probably be more efficient and could use some null checking
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
@@ -197,11 +197,11 @@ namespace metrics
                     }
                     if (damageCategory != null && assetCategory != null && impactAreaID != -999)
                     {
-                        if(damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
+                        if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                         {
                             return consequenceResult.MeanExpectedAnnualConsequences();
                         }
-                        
+
                     }
                 }
             }
@@ -281,7 +281,7 @@ namespace metrics
                 }
             }
             return consequenceValue;
-        } 
+        }
         /// <summary>
         /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
@@ -359,7 +359,7 @@ namespace metrics
             if (histograms.Count == 0)
             {
                 string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
-                ErrorMessage errorMessage = new ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 aggregateHistogram = new Histogram();
             }
@@ -379,7 +379,7 @@ namespace metrics
         }
         public ImpactAreaScenarioResults GetResults(int impactAreaID)
         {
-            foreach(ImpactAreaScenarioResults results in _resultsList)
+            foreach (ImpactAreaScenarioResults results in _resultsList)
             {
                 if (results.ImpactAreaID.Equals(impactAreaID))
                 {
@@ -387,9 +387,9 @@ namespace metrics
                 }
             }
             int dummyImpactAreaID = 9999;
-            ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults(dummyImpactAreaID,true);
+            ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
             string message = $"The IMPACT AREA SCENARIO RESULTS could not be found. an arbitrary object is being returned";
-            HEC.MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new HEC.MVVMFramework.Model.Messaging.ErrorMessage(message, HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyResults;
         }

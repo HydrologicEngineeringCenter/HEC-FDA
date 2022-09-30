@@ -1,4 +1,3 @@
-using interfaces;
 using Statistics;
 using System;
 using System.Xml.Linq;
@@ -7,10 +6,11 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics.Distributions;
+using HEC.FDA.Model.interfaces;
 
-namespace paireddata
+namespace HEC.FDA.Model.paireddata
 {
-    public class UncertainPairedData : HEC.MVVMFramework.Base.Implementations.Validation, IPairedDataProducer, ICanBeNull, IReportMessage
+    public class UncertainPairedData : Validation, IPairedDataProducer, ICanBeNull, IReportMessage
     {
         #region Fields 
         private double[] _xvals;
@@ -79,7 +79,7 @@ namespace paireddata
         {
             _xvals = xs;
             _yvals = ys;
-            _metadata = new CurveMetaData(xlabel,ylabel,name);
+            _metadata = new CurveMetaData(xlabel, ylabel, name);
             AddRules();
             MessageHub.Register(this);
         }
@@ -108,14 +108,14 @@ namespace paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals,.9999, (a, b) => (a < b)), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a < b)), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound."));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => (a == b)) || IsArrayValid(Xvals, (a, b) => (a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .9999, (a, b) => (a <= b)), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => (a == b)) || IsDistributionArrayValid(Yvals, .0001, (a, b) => (a <= b)), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found."));
                     break;
                 default:
                     break;
@@ -135,7 +135,7 @@ namespace paireddata
             }
             return true;
         }
-        private bool IsDistributionArrayValid(IDistribution[] arrayOfData,double prob, Func<double, double, bool> comparison)
+        private bool IsDistributionArrayValid(IDistribution[] arrayOfData, double prob, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -156,8 +156,9 @@ namespace paireddata
             }
             PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
             pairedData.Validate();
-            if (pairedData.HasErrors){
-                
+            if (pairedData.HasErrors)
+            {
+
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
@@ -173,7 +174,7 @@ namespace paireddata
                     //TODO: do something
                 }
 
-                
+
             }
             return pairedData;
         }
@@ -222,7 +223,7 @@ namespace paireddata
             XElement curveMetaDataElement = _metadata.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
-            if(_metadata.IsNull)
+            if (_metadata.IsNull)
             {
                 return masterElement;
             }
@@ -269,7 +270,7 @@ namespace paireddata
                         }
                         else
                         {
-                            yValues[i] = Statistics.ContinuousDistribution.FromXML(ordinateElements);
+                            yValues[i] = ContinuousDistribution.FromXML(ordinateElements);
                         }
                     }
                     i++;

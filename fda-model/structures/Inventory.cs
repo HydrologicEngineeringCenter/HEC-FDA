@@ -1,19 +1,18 @@
-﻿using fda_model.structures;
-using interfaces;
+﻿using HEC.FDA.Model.interfaces;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
     public class Inventory
     {
         private List<OccupancyType> _Occtypes;
         private List<string> _damageCategories;
-        private List<int> _impactAreaIDs; 
+        private List<int> _impactAreaIDs;
         public List<Structure> Structures { get; }
         public List<int> ImpactAreas
         {
@@ -98,7 +97,7 @@ namespace structures
             GetUniqueImpactAreas();
             GetUniqueDamageCatagories();
         }
-        
+
         public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
         {
             Structures = structures;

@@ -1,7 +1,7 @@
-﻿using metrics;
+﻿using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class DeterministicInventory
     {

@@ -1,12 +1,7 @@
-﻿using interfaces;
+﻿using HEC.FDA.Model.interfaces;
 using RasMapperLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class Structure
     {
@@ -37,13 +32,13 @@ namespace structures
             ImpactAreaID = impactAreaID;
             Cbfips = cbfips;
             FirstFloorElevation = firstFloorElevation;
- 
+
         }
         public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype)
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid,ImpactAreaID,sampledStructureParameters);
+            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters);
         }
 
 

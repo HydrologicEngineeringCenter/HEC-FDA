@@ -1,14 +1,14 @@
 ﻿using Xunit;
-using structures;
 using Statistics;
 using Statistics.Distributions;
-using compute;
-using paireddata;
-using metrics;
 using RasMapperLib;
 using System.Collections.Generic;
-using stageDamage;
 using System;
+using HEC.FDA.Model.stageDamage;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 
 namespace fda_model_test.unittests
 {

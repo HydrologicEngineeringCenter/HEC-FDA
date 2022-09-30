@@ -1,16 +1,14 @@
 ﻿
 
 using Xunit;
-using compute;
-using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System;
 using System.Xml.Linq;
 using Statistics.Distributions;
-using metrics;
-using Statistics.Histograms;
-using interfaces;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test.unittests
 {
@@ -52,7 +50,7 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             
-            Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
@@ -90,7 +88,7 @@ namespace fda_model_test.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);
             ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
@@ -98,7 +96,7 @@ namespace fda_model_test.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
 
-            metrics.ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
+            ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
 
             double difference = expectedEAD - actual;

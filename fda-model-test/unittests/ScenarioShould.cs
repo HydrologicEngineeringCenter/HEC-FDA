@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using paireddata;
+﻿using System.Collections.Generic;
 using Xunit;
 using Statistics;
 using Statistics.Distributions;
-using compute;
-using metrics;
-using scenarios;
 using System.Xml.Linq;
-using Statistics.Histograms;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.scenarios;
 
 namespace fda_model_test.unittests
 {
@@ -51,7 +46,7 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
 
             // build IAS for Impact Area 1
             ImpactAreaScenarioSimulation simulation1 = ImpactAreaScenarioSimulation.builder(id1)
@@ -100,7 +95,7 @@ namespace fda_model_test.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
 
             // build IAS for Impact Area 1
             ImpactAreaScenarioSimulation simulation1 = ImpactAreaScenarioSimulation.builder(id1)

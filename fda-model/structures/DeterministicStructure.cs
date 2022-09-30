@@ -1,6 +1,6 @@
-﻿using metrics;
+﻿using HEC.FDA.Model.metrics;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class DeterministicStructure
     {
@@ -58,16 +58,16 @@ namespace structures
             double vehicleDamage = 0;
             if (_sampledStructureParameters.ComputeVehicleDamage)
             {
-            double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-            vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+                double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                vehicleDamage = vehicleDamagePercent * VehicleValueSample;
             }
 
             //Other
             double otherDamage = 0;
             if (_sampledStructureParameters.ComputeOtherDamage)
             {
-            double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-            otherDamage = otherDamagePercent * OtherValueSample;
+                double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                otherDamage = otherDamagePercent * OtherValueSample;
             }
 
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);

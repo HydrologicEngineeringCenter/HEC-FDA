@@ -1,6 +1,4 @@
-﻿using System;
-using System.Xml.Linq;
-namespace metrics
+﻿namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
     public class ConsequenceResult
     {
@@ -37,9 +35,9 @@ namespace metrics
         {
             get { return _structureDamage; }
         }
-        public double ContentDamage 
-        { 
-            get { return _contentDamage; } 
+        public double ContentDamage
+        {
+            get { return _contentDamage; }
         }
         public double VehicleDamage
         {
@@ -61,7 +59,7 @@ namespace metrics
             _damageCategory = "unassigned";
             _regionID = 0;
             _isNull = true;
-            
+
         }
 
         internal ConsequenceResult(string damageCategory, int impactAreaID)
@@ -69,7 +67,7 @@ namespace metrics
             _damageCategory = damageCategory;
             _regionID = impactAreaID;
             _isNull = false;
-        }        
+        }
         #endregion
 
         #region Methods

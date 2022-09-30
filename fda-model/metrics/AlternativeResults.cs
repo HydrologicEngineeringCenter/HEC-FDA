@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using Statistics;
 using Statistics.Histograms;
 
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
     public class AlternativeResults : Validation, IReportMessage, IProgressReport
     {
@@ -281,7 +280,7 @@ namespace metrics
             ConsequenceDistributionResult consequenceResult = AAEQDamageResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (consequenceResult.IsNull)
             {
-                ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory,assetCategory,convergenceCriteria ,impactAreaID);
+                ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
                 _aaeqResults.ConsequenceResultList.Add(newConsequenceResult);
             }
         }

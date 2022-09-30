@@ -1,10 +1,10 @@
-﻿using paireddata;
-using Statistics.Distributions;
-using compute;
-using structures;
+﻿using Statistics.Distributions;
 using Statistics;
 using RasMapperLib;
 using Xunit;
+using HEC.FDA.Model.structures;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace fda_model_test.unittests.structures
 {

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace compute
+namespace HEC.FDA.Model.compute
 {
-    public class ComputeCompleteMessage : HEC.MVVMFramework.Base.Interfaces.IMessage
+    public class ComputeCompleteMessage : MVVMFramework.Base.Interfaces.IMessage
     {
-        private Int64 _iterations;
+        private long _iterations;
         private int _impactAreaID;
         public string Message
         {
@@ -17,14 +13,14 @@ namespace compute
                 return $"The compute for the impact area with ID {_impactAreaID} has finished after {_iterations} iterations" + Environment.NewLine;
             }
         }
-        public Int64 Iterations
+        public long Iterations
         {
             get
             {
                 return _iterations;
             }
         }
-        public ComputeCompleteMessage(Int64 iterations, int impactAreaID)
+        public ComputeCompleteMessage(long iterations, int impactAreaID)
         {
             _iterations = iterations;
             _impactAreaID = impactAreaID;

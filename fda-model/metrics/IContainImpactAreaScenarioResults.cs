@@ -1,7 +1,4 @@
-using System;
-using System.Xml.Linq;
-
-namespace metrics
+namespace HEC.FDA.Model.metrics
 {
     public interface IContainImpactAreaScenarioResults
     {

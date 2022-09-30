@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Statistics;
+﻿using Statistics;
 using Statistics.Distributions;
 
-namespace structures
+namespace HEC.FDA.Model.structures
 {
     public class FirstFloorElevationUncertainty
-{
+    {
         #region Fields
         private double _feetAboveInventoryValue;
         private double _standardDeviationFromOrFeetBelowInventoryValue;
@@ -33,7 +28,7 @@ namespace structures
         public double Sample(double inventoriedFirstFloorElevation, double probability)
         {
             double sampledFirstFloorElevation;
-            switch(_distributionType)
+            switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
                     Normal normal = new Normal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
@@ -42,12 +37,12 @@ namespace structures
                 case IDistributionEnum.LogNormal:
                     LogNormal logNormal = new LogNormal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
                     sampledFirstFloorElevation = logNormal.InverseCDF(probability);
-                    break ;
+                    break;
                 case IDistributionEnum.Triangular:
                     Triangular triangular = new Triangular(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
                     sampledFirstFloorElevation = triangular.InverseCDF(probability);
                     break;
-                case IDistributionEnum.Uniform: 
+                case IDistributionEnum.Uniform:
                     Uniform uniform = new Uniform(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
                     sampledFirstFloorElevation = uniform.InverseCDF(probability);
                     break;
