@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Statistics;
+using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {
@@ -15,14 +15,14 @@ namespace StatisticsTests.Distributions
         [InlineData(0, 1d, 100)]
         public void Bootstrap_Works_with_Reasonable_RandomRange(double min, double max, int n)
         {
-            Statistics.Distributions.Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
+            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             double[] randyPacket = new double[dist.SampleSize];//needs to be initialized with a set of random nubmers between 0 and 1;
             for (int i = 0; i < dist.SampleSize; i++)
             {
                 randyPacket[i] = ((double)i +0.5) / (double)dist.SampleSize;
             }
-            Statistics.IDistribution bootstrap = dist.Sample(randyPacket);
-            Statistics.Distributions.Uniform bu = (Statistics.Distributions.Uniform)bootstrap;
+            IDistribution bootstrap = dist.Sample(randyPacket);
+            Uniform bu = (Uniform)bootstrap;
             Assert.Equal(.5, (bu.Min+bu.Max)/2);
             Assert.Equal(IDistributionEnum.Uniform, bootstrap.Type);
         }
@@ -39,7 +39,7 @@ namespace StatisticsTests.Distributions
                 randomNumberArray[i] = random.NextDouble();
             }
             IDistribution testBootstrapDistribution = distributionLP3.Sample(randomNumberArray);
-            Statistics.Distributions.LogPearson3 tbd = (Statistics.Distributions.LogPearson3)testBootstrapDistribution;
+            LogPearson3 tbd = (LogPearson3)testBootstrapDistribution;
             double actual = tbd.Mean;
             double difference = expected - actual;
             double relativeDifference = difference / expected;

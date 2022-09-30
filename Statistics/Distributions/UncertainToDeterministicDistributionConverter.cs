@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
     public static class UncertainToDeterministicDistributionConverter
     {
@@ -43,8 +39,8 @@ namespace Statistics.Distributions
                     double unloggedNormalMean = Math.Exp(logNormalMean);
                     returnedDistribution = new Deterministic(unloggedNormalMean);
                     break;
-            } 
+            }
             return returnedDistribution;
-        } 
+        }
     }
 }

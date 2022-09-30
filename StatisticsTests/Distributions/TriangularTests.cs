@@ -1,4 +1,5 @@
-﻿using Statistics;
+﻿using HEC.FDA.Statistics.Distributions;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -31,7 +32,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 1d, 2d, -1)]
         public void BadValidation(double min, double mostlikely, double max, int n)
         {
-            Statistics.Distributions.Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -41,7 +42,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 3d, 3d, 1)]
         public void MinorValidation(double min, double mostlikely, double max, int n)
         {
-            Statistics.Distributions.Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
             Assert.True(dist.ErrorLevel == HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Minor);
@@ -51,7 +52,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 3d, 1)]
         public void GoodValidation(double min,double mostlikely, double max, int n)
         {
-            Statistics.Distributions.Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit;
-using Statistics.Distributions;
+using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {

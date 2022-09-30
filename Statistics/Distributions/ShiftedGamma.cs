@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
     internal class ShiftedGamma
     {
         private readonly Gamma _Gamma;
-        
+
         internal double Shift { get; }
-        
+
         internal ShiftedGamma(double alpha, double beta, double shift)
         {
             // The Gamma distribution is defined by 2 parameters: 
@@ -20,7 +20,7 @@ namespace Statistics.Distributions
         internal double CDF(double x)
         {
             double val = x - Shift;
-            if(Math.Abs(val) < .001)
+            if (Math.Abs(val) < .001)
             {
                 val = 0;
             }

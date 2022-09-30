@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Statistics
+﻿namespace HEC.FDA.Statistics.Distributions
 {
     /// <summary>
     /// An enumeration of supported IDistribution types

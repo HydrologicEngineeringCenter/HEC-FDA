@@ -1,4 +1,4 @@
-﻿using Statistics;
+﻿using HEC.FDA.Statistics.Distributions;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes

@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using Statistics.Distributions;
-using Statistics.GraphicalRelationships;
-using Statistics;
 using System.Xml.Linq;
 using System;
 using HEC.MVVMFramework.Base.Events;
@@ -9,6 +6,8 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.interfaces;
+using HEC.FDA.Statistics.Distributions;
+using HEC.FDA.Statistics.GraphicalRelationships;
 
 namespace HEC.FDA.Model.paireddata
 {

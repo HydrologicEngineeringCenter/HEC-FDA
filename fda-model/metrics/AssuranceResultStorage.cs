@@ -1,7 +1,7 @@
 ﻿using System;
-using Statistics.Histograms;
-using Statistics;
 using System.Xml.Linq;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {

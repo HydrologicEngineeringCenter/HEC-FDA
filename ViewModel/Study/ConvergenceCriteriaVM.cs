@@ -1,5 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using Statistics;
+﻿using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.ViewModel.Utilities;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Study

@@ -1,12 +1,12 @@
 ﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Utilities;
+using HEC.FDA.Statistics;
 
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
     public class TruncatedLogPearson3 : ContinuousDistribution
     {
@@ -50,7 +50,7 @@ namespace Statistics.Distributions
             _Constructed = true;
 
         }
-        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, Int64 sampleSize = 1)
+        public TruncatedLogPearson3(double mean, double standardDeviation, double skew, double min, double max, long sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = standardDeviation;
@@ -76,43 +76,50 @@ namespace Statistics.Distributions
         private void addRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return StandardDeviation > 0;
                 },
                 "Standard Deviation must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return StandardDeviation < 3;
                 },
                 "Standard Deviation must be less than 3.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Mean > 0;
                 },
                 "Mean must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Mean < 7; //log base 10 mean annual max flow in cfs of amazon river at mouth is 6.7
                 },
                 "Mean must be less than 7.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Skewness),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Skewness > -3.0;
                 },
                 "Skewness must be greater than -3.0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Skewness),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Skewness < 3.0;
                 },
                 "Skewness must be less than 3.0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -190,7 +197,7 @@ namespace Statistics.Distributions
 
             if (Truncated && _Constructed)
             {
-                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityRange.Min + p * (_ProbabilityRange.Max - _ProbabilityRange.Min);
             }
             if (!p.IsFinite())
             {
@@ -212,7 +219,7 @@ namespace Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
 
-        internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {Convert.ToDouble(n).Print()})";
+        internal static string Print(double mean, double sd, double skew, long n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {Convert.ToDouble(n).Print()})";
         internal static string RequiredParameterization(bool printNotes = true)
         {
             string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
@@ -229,7 +236,7 @@ namespace Statistics.Distributions
                 sample[i] = Math.Log10(sample[i]);
             }
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new TruncatedLogPearson3(stats.Mean, stats.StandardDeviation, stats.Skewness, this.Min, this.Max, stats.SampleSize);
+            return new TruncatedLogPearson3(stats.Mean, stats.StandardDeviation, stats.Skewness, Min, Max, stats.SampleSize);
         }
         #endregion
     }

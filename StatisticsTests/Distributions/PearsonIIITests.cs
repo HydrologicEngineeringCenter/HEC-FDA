@@ -9,7 +9,7 @@ namespace StatisticsTests.Distributions
 {
     [Trait("Category", "Unit")]
     /// <summary>
-    /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="Statistics.Distributions.ShiftedGamma"/>.
+    /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="HEC.FDA.Statistics.Distributions.ShiftedGamma"/>.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class PearsonIIITests

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
 
-namespace Statistics
+namespace HEC.FDA.Statistics.Convergence
 {
     public class ConvergenceCriteria : Validation
     {
@@ -33,26 +30,26 @@ namespace Statistics
         public bool Equals(ConvergenceCriteria convergenceCriteria)
         {
             bool minIterationsAreEqual = MinIterations.Equals(convergenceCriteria.MinIterations);
-            if(!minIterationsAreEqual)
-            { 
-                return false; 
+            if (!minIterationsAreEqual)
+            {
+                return false;
             }
             bool maxIterationsAreEqual = MaxIterations.Equals(convergenceCriteria.MaxIterations);
-            if(!maxIterationsAreEqual)
-            { 
-                return false; 
+            if (!maxIterationsAreEqual)
+            {
+                return false;
             }
             bool zAlphaAreEqual = ZAlpha.Equals(convergenceCriteria.ZAlpha);
             if (!zAlphaAreEqual)
-            { 
-                return false; 
-            }
-            bool toleranceAreEqual = Tolerance.Equals(convergenceCriteria.Tolerance);
-            if(!toleranceAreEqual)
-            { 
+            {
                 return false;
             }
-           return true; 
+            bool toleranceAreEqual = Tolerance.Equals(convergenceCriteria.Tolerance);
+            if (!toleranceAreEqual)
+            {
+                return false;
+            }
+            return true;
         }
         public XElement WriteToXML()
         {

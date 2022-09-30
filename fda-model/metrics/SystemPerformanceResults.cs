@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Statistics;
-using Statistics.Histograms;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {

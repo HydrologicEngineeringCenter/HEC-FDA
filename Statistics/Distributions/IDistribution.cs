@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace Statistics
+namespace HEC.FDA.Statistics.Distributions
 {
     /// <summary>
     /// Provides and interface for double precision numbers stored as statistical distributions rather than static values.
@@ -18,7 +18,7 @@ namespace Statistics
         /// The sample size used to fit the distribution.
         /// </summary>
         /// <remarks> If the distribution was not fit from a sample use the desired length of samples or <see cref="int.MaxValue"/> if the distribution is assumed to be a population distribution. </remarks>
-        Int64 SampleSize { get; }
+        long SampleSize { get; }
         bool Truncated { get; }
         #endregion
         #region Voids
@@ -29,7 +29,7 @@ namespace Statistics
         /// </summary>
         /// <param name="x"> A value from the distribution. </param>
         /// <returns> The portion of the distribution found at the point of <paramref name="x"/>. </returns>
-        double PDF(double x);        
+        double PDF(double x);
         /// <summary>
         /// Computes the CDF of the distribution.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Statistics
         /// Prints a string describing the distribution.
         /// </summary>
         /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
-        /// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
+        /// <returns> A string in the form: <see cref="Type"/>(parameter1: value, parameter2: value, ...). </returns>
         string Print(bool round = false);
         /// <summary>
         /// Prints a string describing the parameterization requirements for the distribution.

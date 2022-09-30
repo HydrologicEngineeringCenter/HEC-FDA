@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Statistics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.interfaces;
+using HEC.FDA.Statistics.Convergence;
 
 namespace HEC.FDA.Model.stageDamage
 {

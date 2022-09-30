@@ -1,5 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
-using Statistics;
+﻿using HEC.FDA.Statistics.Distributions;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {

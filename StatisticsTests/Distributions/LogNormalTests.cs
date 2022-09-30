@@ -1,6 +1,6 @@
 ﻿using Xunit;
-using Statistics.Distributions;
 using System;
+using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {

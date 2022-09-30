@@ -5,9 +5,9 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.scenarios;
-using Statistics;
-using Statistics.Distributions;
-using Statistics.Histograms;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Distributions;
+using HEC.FDA.Statistics.Histograms;
 using Xunit;
 
 namespace fda_model_test.integrationtests

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
+using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics;
 
 namespace HEC.FDA.ViewModel.Study
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
     public class SpecialFunctions
     {
@@ -20,43 +20,43 @@ namespace Statistics.Distributions
             if (t < 0.5)
             {
                 // Reflection formula
-                return Math.Log(Math.PI) - Math.Log(Math.Sin(Math.PI * t)) - SpecialFunctions.logGamma(1 - t);
+                return Math.Log(Math.PI) - Math.Log(Math.Sin(Math.PI * t)) - logGamma(1 - t);
             }
             else
             {
                 // Coefficients used by the GNU Scientific Library
-                var sum = 0.9999999999998099 + 676.5203681218851 / (t) - 1259.1392167224028 / (t + 1.0) + 771.3234287776531 / (t + 2.0) - 176.6150291621406 / (t + 3.0) + 12.507343278686905 / (t + 4.0) - 0.13857109526572012 / (t + 5.0) + 9.984369578019572E-6 / (t + 6.0) + 1.5056327351493116E-7 / (t + 7.0);
+                var sum = 0.9999999999998099 + 676.5203681218851 / t - 1259.1392167224028 / (t + 1.0) + 771.3234287776531 / (t + 2.0) - 176.6150291621406 / (t + 3.0) + 12.507343278686905 / (t + 4.0) - 0.13857109526572012 / (t + 5.0) + 9.984369578019572E-6 / (t + 6.0) + 1.5056327351493116E-7 / (t + 7.0);
                 var baseNumber = t + 7 - 0.5;
-                return ((0.5 * Math.Log(2.0 * Math.PI) + Math.Log(sum)) - baseNumber) + (t - 0.5) * Math.Log(baseNumber);
+                return 0.5 * Math.Log(2.0 * Math.PI) + Math.Log(sum) - baseNumber + (t - 0.5) * Math.Log(baseNumber);
             }
         }
         public static double logFactorial(int n)
         {
-            return SpecialFunctions.logGamma(n + 1.0);
+            return logGamma(n + 1.0);
         }
         public static double gamma(double t)
         {
-            return Math.Exp(SpecialFunctions.logGamma(t));
+            return Math.Exp(logGamma(t));
         }
         public static double factorial(int n)
         {
-            return Math.Round(SpecialFunctions.gamma(n + 1.0));
+            return Math.Round(gamma(n + 1.0));
         }
         public static double incompleteGamma(double t, double x)
         {
-            return SpecialFunctions.gamma(t) * SpecialFunctions.regIncompleteGamma(t, x);
+            return gamma(t) * regIncompleteGamma(t, x);
         }
         public static double incompleteGamma(double t, double xl, double xu)
         {
-            return SpecialFunctions.incompleteGamma(t, xu) - SpecialFunctions.incompleteGamma(t, xl);
+            return incompleteGamma(t, xu) - incompleteGamma(t, xl);
         }
         public static double regIncompleteGamma(double t, double x)
         {
-            return SpecialFunctions.regularizedGammaP(t, x, 1.0E-14, int.MaxValue);
+            return regularizedGammaP(t, x, 1.0E-14, int.MaxValue);
         }
         public static double logIncompleteGamma(double t, double x)
         {
-            return SpecialFunctions.logGamma(t) + Math.Log(SpecialFunctions.regIncompleteGamma(t, x));
+            return logGamma(t) + Math.Log(regIncompleteGamma(t, x));
         }
         /**
             * <p>Computes the digamma function of x.</p>
@@ -84,30 +84,30 @@ namespace Statistics.Distributions
             //{
             //	return x;
             //}
-            if ((Math.Sign(x) == -1.0 && Math.Ceiling(x) == x) || x == 0)
+            if (Math.Sign(x) == -1.0 && Math.Ceiling(x) == x || x == 0)
             {
                 return double.PositiveInfinity;
             }
             double value = 0;
             while (true)
             {
-                if (x >= 0 && x < SpecialFunctions.GAMMA_MINX)
+                if (x >= 0 && x < GAMMA_MINX)
                 {
-                    x = SpecialFunctions.GAMMA_MINX;
+                    x = GAMMA_MINX;
                 }
-                if (x < SpecialFunctions.DIGAMMA_MINNEGX)
+                if (x < DIGAMMA_MINNEGX)
                 {
-                    x = SpecialFunctions.DIGAMMA_MINNEGX + SpecialFunctions.GAMMA_MINX;
+                    x = DIGAMMA_MINNEGX + GAMMA_MINX;
                     continue;
                 }
-                if (x > 0 && x <= SpecialFunctions.S_LIMIT)
+                if (x > 0 && x <= S_LIMIT)
                 {
-                    return value + -SpecialFunctions.GAMMA - 1 / x;
+                    return value + -GAMMA - 1 / x;
                 }
-                if (x >= SpecialFunctions.C_LIMIT)
+                if (x >= C_LIMIT)
                 {
                     var inv = 1 / (x * x);
-                    return value + Math.Log(x) - 0.5 / x - inv * ((1.0 / 12) + inv * (1.0 / 120 - inv / 252));
+                    return value + Math.Log(x) - 0.5 / x - inv * (1.0 / 12 + inv * (1.0 / 120 - inv / 252));
                 }
                 value -= 1 / x;
                 x = x + 1;
@@ -138,7 +138,7 @@ namespace Statistics.Distributions
             //    ret = double.NaN;
             //}
 
-            if ((a <= 0.0) || (x < 0.0))
+            if (a <= 0.0 || x < 0.0)
             {
                 ret = double.NaN;
             }
@@ -150,7 +150,7 @@ namespace Statistics.Distributions
             {
                 // use regularizedGammaQ because it should converge faster in this
                 // case.
-                ret = 1.0 - SpecialFunctions.regularizedGammaQ(a, x, epsilon, maxIterations);
+                ret = 1.0 - regularizedGammaQ(a, x, epsilon, maxIterations);
             }
             else
             {
@@ -171,13 +171,13 @@ namespace Statistics.Distributions
                 }
                 if (n >= maxIterations)
                 { }
-                else if (sum>double.MaxValue)
+                else if (sum > double.MaxValue)
                 {
                     ret = 1.0;
                 }
                 else
                 {
-                    ret = Math.Exp(-x + (a * Math.Log(x)) - SpecialFunctions.logGamma(a)) * sum;
+                    ret = Math.Exp(-x + a * Math.Log(x) - logGamma(a)) * sum;
                 }
             }
             return ret;
@@ -206,7 +206,7 @@ namespace Statistics.Distributions
             //{
             //    ret = double.NaN;
             //}
-            if ((a <= 0.0) || (x < 0.0))
+            if (a <= 0.0 || x < 0.0)
             {
                 ret = double.NaN;
             }
@@ -218,13 +218,13 @@ namespace Statistics.Distributions
             {
                 // use regularizedGammaP because it should converge faster in this
                 // case.
-                ret = 1.0 - SpecialFunctions.regularizedGammaP(a, x, epsilon, maxIterations);
+                ret = 1.0 - regularizedGammaP(a, x, epsilon, maxIterations);
             }
             else
             {
                 // create continued fraction
-                ret = 1.0 / SpecialFunctions.evaluateCFGammaQ(a, x, epsilon, maxIterations);
-                ret = Math.Exp(-x + (a * Math.Log(x)) - SpecialFunctions.logGamma(a)) * ret;
+                ret = 1.0 / evaluateCFGammaQ(a, x, epsilon, maxIterations);
+                ret = Math.Exp(-x + a * Math.Log(x) - logGamma(a)) * ret;
             }
             return ret;
         }
@@ -245,7 +245,7 @@ namespace Statistics.Distributions
         private static double evaluateCFGammaQ(double a, double x, double epsilon, int maxIterations)
         {
             var small = 1.0E-50;
-            var hPrev = ((2.0 * 0.0) + 1.0) - a + x;
+            var hPrev = 2.0 * 0.0 + 1.0 - a + x;
             //getA(0, x);
             // use the value of small as epsilon criteria for zero checks
             if (Math.Abs(hPrev - 0.0) < small)
@@ -259,7 +259,7 @@ namespace Statistics.Distributions
             while (n < maxIterations)
             {
 
-                var aa = ((2.0 * n) + 1.0) - a + x;
+                var aa = 2.0 * n + 1.0 - a + x;
                 //getA(n, x);
 
                 var bb = n * (a - n);
@@ -302,19 +302,19 @@ namespace Statistics.Distributions
             {
                 return double.NaN;
             }
-            return SpecialFunctions.logGamma(s) + (SpecialFunctions.logGamma(t) - SpecialFunctions.logGamma(s + t));
+            return logGamma(s) + (logGamma(t) - logGamma(s + t));
         }
         public static double beta(double s, double t)
         {
-            return Math.Exp(SpecialFunctions.logBeta(s, t));
+            return Math.Exp(logBeta(s, t));
         }
         public static double incompleteBeta(double s, double t, double x)
         {
-            return SpecialFunctions.beta(s, t) * SpecialFunctions.regIncompleteBeta(s, t, x);
+            return beta(s, t) * regIncompleteBeta(s, t, x);
         }
         public static double regIncompleteBeta(double s, double t, double x)
         {
-            return SpecialFunctions.regularizedBeta(s, t, x, 1.0E-14, int.MaxValue);
+            return regularizedBeta(s, t, x, 1.0E-14, int.MaxValue);
         }
         /**
             * Returns the regularized beta function I(x, a, b).
@@ -341,11 +341,11 @@ namespace Statistics.Distributions
             }
             else if (x > (a + 1) / (2 + b + a) && 1 - x <= (b + 1) / (2 + b + a))
             {
-                ret = 1 - SpecialFunctions.regularizedBeta(b, a, 1 - x, epsilon, maxIterations);
+                ret = 1 - regularizedBeta(b, a, 1 - x, epsilon, maxIterations);
             }
             else
             {
-                ret = Math.Exp((a * Math.Log(x)) + (b * Math.Log(-x + 1)) - Math.Log(a) - SpecialFunctions.logBeta(a, b)) * 1.0 / SpecialFunctions.evaluateCFBeta(a, b, x, epsilon, maxIterations);
+                ret = Math.Exp(a * Math.Log(x) + b * Math.Log(-x + 1) - Math.Log(a) - logBeta(a, b)) * 1.0 / evaluateCFBeta(a, b, x, epsilon, maxIterations);
             }
             return ret;
         }
@@ -373,29 +373,29 @@ namespace Statistics.Distributions
         const double LARGE_TRIGAMMA = 8.0;
         public static double trigamma(double x)
         {
-            if (double.IsNaN(x) || double.IsInfinity(x) || 0.0.CompareTo(x) == 0 || (x < 0.0 && Math.Floor(x).CompareTo(x) == 0))
+            if (double.IsNaN(x) || double.IsInfinity(x) || 0.0.CompareTo(x) == 0 || x < 0.0 && Math.Floor(x).CompareTo(x) == 0)
             {
                 return double.NaN;
             }
             double y = 0;
             if (x < 0.0)
             {
-                var val = (Math.PI * (1.0 / Math.Sin(-Math.PI * x)));
-                y = -SpecialFunctions.trigamma(-x + 1) + val * val;
+                var val = Math.PI * (1.0 / Math.Sin(-Math.PI * x));
+                y = -trigamma(-x + 1) + val * val;
             }
-            if (x > 0.0 && x <= SpecialFunctions.SMALL_TRIGAMMA)
+            if (x > 0.0 && x <= SMALL_TRIGAMMA)
             {
-                y = 1 / (x * x) + SpecialFunctions.c + SpecialFunctions.c1 * x;
+                y = 1 / (x * x) + c + c1 * x;
             }
-            while (x > SpecialFunctions.SMALL_TRIGAMMA && x < SpecialFunctions.LARGE_TRIGAMMA)
+            while (x > SMALL_TRIGAMMA && x < LARGE_TRIGAMMA)
             {
                 y += 1.0 / (x * x);
                 x++;
             }
-            if (x >= SpecialFunctions.LARGE_TRIGAMMA)
+            if (x >= LARGE_TRIGAMMA)
             {
                 var z = 1.0 / (x * x);
-                y += 0.5 * z + (1.0 + z * (SpecialFunctions.B2 + z * (SpecialFunctions.B4 + z * (SpecialFunctions.B6 + z * (SpecialFunctions.B8 + z * SpecialFunctions.B10))))) / x;
+                y += 0.5 * z + (1.0 + z * (B2 + z * (B4 + z * (B6 + z * (B8 + z * B10))))) / x;
             }
             return y;
         }
@@ -440,12 +440,12 @@ namespace Statistics.Distributions
                 {
                     // even
                     m = n / 2.0;
-                    bb = (m * (b - m) * x) / ((a + (2 * m) - 1) * (a + (2 * m)));
+                    bb = m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m));
                 }
                 else
                 {
                     m = (n - 1.0) / 2.0;
-                    bb = -((a + m) * (a + b + m) * x) / ((a + (2 * m)) * (a + (2 * m) + 1.0));
+                    bb = -((a + m) * (a + b + m) * x) / ((a + 2 * m) * (a + 2 * m + 1.0));
                 }
                 var dN = aa + bb * dPrev;
                 if (Math.Abs(dN - 0.0) < small)
@@ -522,11 +522,11 @@ namespace Statistics.Distributions
             {
                 throw new Exception("N has to be greater than k!");
             }
-            return (int)(((int)SpecialFunctions.factorial(n)) / (((int)SpecialFunctions.factorial(k)) * ((int)SpecialFunctions.factorial(n - k))));
+            return (int)factorial(n) / ((int)factorial(k) * (int)factorial(n - k));
         }
         public static double singleParGammaPDF(double alpha, double x)
         {
-            return (Math.Pow(x, (alpha - 1)) * Math.Exp(-x)) / SpecialFunctions.gamma(alpha);
+            return Math.Pow(x, alpha - 1) * Math.Exp(-x) / gamma(alpha);
         }
         /**
             * gammaDerivative - Derived from (probfun.f) ddgam.
@@ -562,7 +562,7 @@ namespace Statistics.Distributions
                     sum += del;
                     if (i > 1 && Math.Abs(del) < (1.0 + Math.Abs(sum)) * tol)
                     {
-                        return sum / Math.Exp(SpecialFunctions.logGamma(alpha)) - SpecialFunctions.digamma(alpha) * SpecialFunctions.regIncompleteGamma(alpha, x);
+                        return sum / Math.Exp(logGamma(alpha)) - digamma(alpha) * regIncompleteGamma(alpha, x);
                     }
                 }
                 // TODO: shouldn't come here. return error
@@ -570,14 +570,14 @@ namespace Statistics.Distributions
             }
             else if (x > alpha + 30.0)
             {
-                t = Math.Exp(-x + (alpha - 1.0) * log_X - SpecialFunctions.logGamma(alpha));
-                r = log_X - SpecialFunctions.digamma(alpha);
+                t = Math.Exp(-x + (alpha - 1.0) * log_X - logGamma(alpha));
+                r = log_X - digamma(alpha);
                 sum = r * t;
                 for (var i = 1; i < (int)(alpha - 1.0); i++)
                 {
                     var ami = alpha - i;
                     t = t * ami / x;
-                    r = log_X - SpecialFunctions.digamma(ami);
+                    r = log_X - digamma(ami);
                     del = r * t;
                     sum += del;
                     if (i > 1 && Math.Abs(del) < (1.0 + Math.Abs(sum)) * tol)
@@ -590,13 +590,13 @@ namespace Statistics.Distributions
             }
             else
             {
-                t = Math.Exp(-x + alpha * log_X - SpecialFunctions.logGamma(alpha + 1.0));
-                r = log_X - SpecialFunctions.digamma(alpha + 1.0);
+                t = Math.Exp(-x + alpha * log_X - logGamma(alpha + 1.0));
+                r = log_X - digamma(alpha + 1.0);
                 sum = r * t;
                 for (var i = 1; i < 10000; i++)
                 {
                     t = t * x / (alpha + i);
-                    r = log_X - SpecialFunctions.digamma(alpha + i + 1.0);
+                    r = log_X - digamma(alpha + i + 1.0);
                     del = r * t;
                     sum += del;
                     if (i > 1 && Math.Abs(del) < (1.0 + Math.Abs(sum)) * tol)
@@ -609,7 +609,7 @@ namespace Statistics.Distributions
             }
         }
         //********** MAIN **********
-        public static void Main(String[] args)
+        public static void Main(string[] args)
         {
             //for(int i=1;i<20;i++){
             //	double x = 10+0.2*i;
@@ -618,8 +618,8 @@ namespace Statistics.Distributions
             var s = 1.0E12;
             for (var i = 0; i <= 20; i++)
             {
-                var val = s + (1000000 * i) / 20.0;
-                Console.WriteLine("rig(" + val.ToString() + "): " + SpecialFunctions.regIncompleteGamma(s, val).ToString());
+                var val = s + 1000000 * i / 20.0;
+                Console.WriteLine("rig(" + val.ToString() + "): " + regIncompleteGamma(s, val).ToString());
             }
         }
     }

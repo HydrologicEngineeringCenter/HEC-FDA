@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Statistics\Statistics.csproj" />
+    <ProjectReference Include="..\Statistics\HEC.FDA.Statistics.csproj" />
   </ItemGroup>
 
 </Project>

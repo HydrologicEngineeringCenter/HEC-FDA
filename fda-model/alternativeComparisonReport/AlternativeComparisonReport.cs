@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Statistics.Histograms;
-using Statistics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {

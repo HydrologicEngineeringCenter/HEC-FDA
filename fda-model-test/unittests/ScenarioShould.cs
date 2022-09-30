@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Xunit;
-using Statistics;
-using Statistics.Distributions;
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.scenarios;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Distributions;
 
 namespace fda_model_test.unittests
 {

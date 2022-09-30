@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using HEC.FDA.Statistics.Histograms;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {

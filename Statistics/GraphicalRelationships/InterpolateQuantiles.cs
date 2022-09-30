@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
-namespace Statistics.Graphical
+namespace HEC.FDA.Statistics.GraphicalRelationships
 {
     public class InterpolateQuantiles
     {
@@ -27,7 +23,7 @@ namespace Statistics.Graphical
                 exceedanceProbability = finalExceedanceProbabilities[i];
                 for (int j = 0; j < _InputXValues.Count(); j++) //look over input exceedance probabilities
                 {
-                    if ((exceedanceProbability - _InputYValues[j]) > -1.0e-5) //if the required exceedance probability matches the input exceedance probability
+                    if (exceedanceProbability - _InputYValues[j] > -1.0e-5) //if the required exceedance probability matches the input exceedance probability
                     {
                         inputOrdinate = j; //get the index of the input flow or exceedance value 
                         break;
@@ -35,7 +31,7 @@ namespace Statistics.Graphical
                 }
                 if (inputOrdinate == 0) //if the index is for the first input flow or stage value
                 {
-                    quantiles[i] = _InputXValues[inputOrdinate];  
+                    quantiles[i] = _InputXValues[inputOrdinate];
 
                 }
                 else
@@ -45,13 +41,13 @@ namespace Statistics.Graphical
                         double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(exceedanceProbability);
                         double zValueSmallerInputExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
                         double zValueLargerExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
-                        double fractionOfQuantileDifference = ((zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability));
-                        quantiles[i] = fractionOfQuantileDifference * _InputXValues[inputOrdinate] + (1-fractionOfQuantileDifference)* _InputXValues[inputOrdinate - 1];
-                        
+                        double fractionOfQuantileDifference = (zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability);
+                        quantiles[i] = fractionOfQuantileDifference * _InputXValues[inputOrdinate] + (1 - fractionOfQuantileDifference) * _InputXValues[inputOrdinate - 1];
+
                     }
                     else//out at the tail, use linear interpolation...
                     {
-                        quantiles[i] = _InputXValues[inputOrdinate - 1] + ((finalExceedanceProbabilities[i] - _InputYValues[inputOrdinate - 1]) / (_InputYValues[inputOrdinate] - _InputYValues[inputOrdinate - 1])) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        quantiles[i] = _InputXValues[inputOrdinate - 1] + (finalExceedanceProbabilities[i] - _InputYValues[inputOrdinate - 1]) / (_InputYValues[inputOrdinate] - _InputYValues[inputOrdinate - 1]) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
                     }
                 }
             }

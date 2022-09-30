@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Statistics;
-using Statistics.Histograms;
 using Xunit;
 using Utilities;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-
+using HEC.FDA.Statistics.Histograms;
+using HEC.FDA.Statistics.Distributions;
+using HEC.FDA.Statistics.Convergence;
 
 namespace StatisticsTests.Histograms
 {
@@ -231,7 +231,7 @@ namespace StatisticsTests.Histograms
         [InlineData(10000, .1, .80, 1.96, .975)]
         public void NormallyDistributed_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
         {
-            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            IDistribution stdNormal = new Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: .1, zAlpha: z);
@@ -257,7 +257,7 @@ namespace StatisticsTests.Histograms
         [InlineData(10000, .1, .80, 1.96, .975)]
         public void Parallel_Histogram_Convergence(int maxiter, double binWidth, double quantile, double value, double expected)
         {
-            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            IDistribution stdNormal = new Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: .01, zAlpha: z);
@@ -281,7 +281,7 @@ namespace StatisticsTests.Histograms
         [InlineData(10000000, .80, 1.96, .975)]
         public void Parallel_Histogram_Convergence_automatic(int maxiter, double quantile, double value, double expected)
         {
-            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            IDistribution stdNormal = new Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: .1, zAlpha: z);

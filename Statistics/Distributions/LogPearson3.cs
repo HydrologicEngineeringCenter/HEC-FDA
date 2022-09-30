@@ -2,10 +2,11 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Linq;
+using HEC.FDA.Statistics;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
-    public class LogPearson3: ContinuousDistribution
+    public class LogPearson3 : ContinuousDistribution
     {
         private double _twoDividedBySkew = 0;
         private double _skewDividedBySix = 0;
@@ -19,7 +20,8 @@ namespace Statistics.Distributions
         [Stored(Name = "St_Dev", type = typeof(double))]
         public double StandardDeviation { get; set; }
         [Stored(Name = "Skew", type = typeof(double))]
-        public double Skewness {
+        public double Skewness
+        {
             get
             {
                 return _skew;
@@ -27,7 +29,7 @@ namespace Statistics.Distributions
             set
             {
                 _skew = value;
-                if(_skew != 0)
+                if (_skew != 0)
                 {
                     _skewDividedBySix = _skew / 6;
                     _twoDividedBySkew = 2 / _skew;
@@ -40,7 +42,7 @@ namespace Statistics.Distributions
             }
         }
         [Stored(Name = "IsNull", type = typeof(bool))]
-        public bool IsNull { get; set;  }
+        public bool IsNull { get; set; }
         #endregion
 
         #region Constructor
@@ -53,7 +55,7 @@ namespace Statistics.Distributions
             SampleSize = 1;
             addRules();
             IsNull = true;
-            
+
         }
         /// <summary>
         /// LP# Dist
@@ -71,7 +73,7 @@ namespace Statistics.Distributions
             SampleSize = sampleSize;
             addRules();
             IsNull = false;
-            
+
         }
         private LogPearson3(bool successfullyLoggedData)
         {
@@ -95,43 +97,50 @@ namespace Statistics.Distributions
                 "Input flow values cannot be negative",
                 ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return StandardDeviation > 0;
                 },
                 "Standard Deviation must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return StandardDeviation < 3;
                 },
                 "Standard Deviation must be less than 3.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Mean > 0;
                 },
                 "Mean must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Mean < 7; //log base 10 mean annual max flow in cfs of amazon river at mouth is 6.7
                 },
                 "Mean must be less than 7.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Skewness),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Skewness > -3.0;
                 },
                 "Skewness must be greater than -3.0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Skewness),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Skewness < 3.0;
                 },
                 "Skewness must be less than 3.0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -145,7 +154,7 @@ namespace Statistics.Distributions
         public override double PDF(double x)
         {
             PearsonIII d = new PearsonIII(Mean, StandardDeviation, Skewness, SampleSize);
-            return d.PDF(Math.Log10(x))/x/Math.Log(10);        
+            return d.PDF(Math.Log10(x)) / x / Math.Log(10);
         }
         public override double CDF(double x)
         {
@@ -173,7 +182,7 @@ namespace Statistics.Distributions
             if (Skewness == 0)
             {
                 //Normal zeroSkewNorm = new Normal(Mean, StandardDeviation);
-                double logflow = (Normal.StandardNormalInverseCDF(p)*StandardDeviation) + Mean;
+                double logflow = Normal.StandardNormalInverseCDF(p) * StandardDeviation + Mean;
                 return Math.Pow(10, logflow);
             }
             else
@@ -181,8 +190,8 @@ namespace Statistics.Distributions
                 //Normal sn = new Normal();
                 double z = Normal.StandardNormalInverseCDF(p);
                 double whfactor = (z - _skewDividedBySix) * Skewness / 6.0 + 1;
-                double k = (_twoDividedBySkew) * ((whfactor*whfactor*whfactor) - 1); //pemdas says you cant substitute for the divide in that other instance... so dont do it!
-                double logflow = Mean + (k * StandardDeviation);
+                double k = _twoDividedBySkew * (whfactor * whfactor * whfactor - 1); //pemdas says you cant substitute for the divide in that other instance... so dont do it!
+                double logflow = Mean + k * StandardDeviation;
                 return Math.Pow(10, logflow);
             }
         }
@@ -203,7 +212,7 @@ namespace Statistics.Distributions
             if (skew == 0)
             {
                 //Normal zeroSkewNorm = new Normal(Mean, StandardDeviation);
-                double logflow = (Normal.StandardNormalInverseCDF(p) * sd) + mean;
+                double logflow = Normal.StandardNormalInverseCDF(p) * sd + mean;
                 return Math.Pow(10, logflow);
             }
             else
@@ -212,8 +221,8 @@ namespace Statistics.Distributions
                 //Normal sn = new Normal();
                 double z = Normal.StandardNormalInverseCDF(p);
                 double whfactor = (z - skewdividedbysix) * skew / 6.0 + 1;
-                double k = (twodividedbyskew) * ((whfactor * whfactor * whfactor) - 1); //pemdas says you cant substitute for the divide in that other instance... so dont do it!
-                double logflow = mean + (k * sd);
+                double k = twodividedbyskew * (whfactor * whfactor * whfactor - 1); //pemdas says you cant substitute for the divide in that other instance... so dont do it!
+                double logflow = mean + k * sd;
                 return Math.Pow(10, logflow);
             }
         }
@@ -222,21 +231,21 @@ namespace Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
 
-        internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean}, sd: {sd}, skew: {skew}, sample size: {n})";
+        internal static string Print(double mean, double sd, double skew, long n) => $"log PearsonIII(mean: {mean}, sd: {sd}, skew: {skew}, sample size: {n})";
         internal static string RequiredParameterization(bool printNotes = true)
         {
             string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
             if (printNotes) s += RequirementNotes();
             return s;
         }
-        internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue)}], sd: (0, {Math.Log10(double.MaxValue)}], skew: [{(Math.Log10(double.MaxValue) * -1)}, {Math.Log10(double.MaxValue)}], sample size: > 0)";
+        internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue)}], sd: (0, {Math.Log10(double.MaxValue)}], skew: [{Math.Log10(double.MaxValue) * -1}, {Math.Log10(double.MaxValue)}], sample size: > 0)";
         internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a distribution of log base 10 Pearson III distributed random values). Therefore the mean and standard deviation parameters must be positive finite numbers and while a large range of numbers are acceptable a relative small rate will produce meaningful results.";
 
         public override IDistribution Fit(double[] sample)
         {
 
-            for(int i = 0; i<sample.Count(); i++) 
-            {   
+            for (int i = 0; i < sample.Count(); i++)
+            {
                 if (sample[i] <= 0)
                 {
                     return new LogPearson3(successfullyLoggedData: false);

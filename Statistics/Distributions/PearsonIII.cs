@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Statistics.Distributions;
+using System;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
     internal class PearsonIII
     {
@@ -16,9 +17,9 @@ namespace Statistics.Distributions
         public double Mean { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public Int64 SampleSize { get; }
+        public long SampleSize { get; }
 
-        public PearsonIII(double mean, double sd, double skew, Int64 n = 1)
+        public PearsonIII(double mean, double sd, double skew, long n = 1)
         {
             Mean = mean;
             StandardDeviation = sd;
@@ -29,7 +30,7 @@ namespace Statistics.Distributions
         public double CDF(double x)
         {
             if (Math.Abs(Skewness) < _NoSkewness)
-            {              
+            {
                 // a PearsonIII distribution with no skew is normally distributed.
                 IDistribution norm = new Normal(Mean, StandardDeviation);
                 return norm.CDF(x);
@@ -38,7 +39,7 @@ namespace Statistics.Distributions
             {
                 // a skewed PearsonIII distribution is a shifted gamma distribution
                 double shift;
-                double alpha = 4d / (Skewness * Skewness); 
+                double alpha = 4d / (Skewness * Skewness);
                 double beta = 0.5 * StandardDeviation * Skewness;
                 // positively skewed distribution 
                 if (Skewness > 0)
@@ -56,7 +57,7 @@ namespace Statistics.Distributions
                     //if (!alpha.IsOnRange(0, double.PositiveInfinity, false, false) || !beta.IsOnRange(0, double.PositiveInfinity)) throw new InvalidOperationException(PrintExceptionMessage(alpha, beta));
                     ShiftedGamma gamma = new ShiftedGamma(alpha, beta, shift);
                     return 1 - gamma.CDF(-x);
-                }               
+                }
             }
         }
         public double PDF(double x)

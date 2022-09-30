@@ -2,9 +2,9 @@
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Statistics.Convergence;
+using HEC.FDA.Statistics.Distributions;
 using HEC.MVVMFramework.Base.Implementations;
-using Statistics;
-using Statistics.Distributions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;

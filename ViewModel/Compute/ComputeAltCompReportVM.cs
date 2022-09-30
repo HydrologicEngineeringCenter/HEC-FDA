@@ -1,8 +1,8 @@
 ﻿using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
+using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

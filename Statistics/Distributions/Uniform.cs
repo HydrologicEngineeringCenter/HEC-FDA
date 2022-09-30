@@ -1,9 +1,10 @@
 ﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.Statistics;
 
-namespace Statistics.Distributions
+namespace HEC.FDA.Statistics.Distributions
 {
-    public class Uniform: ContinuousDistribution
+    public class Uniform : ContinuousDistribution
     {
         #region Fields and Properties
         private double _min;
@@ -11,10 +12,10 @@ namespace Statistics.Distributions
 
         #region IDistribution Properties
         public override IDistributionEnum Type => IDistributionEnum.Uniform;
-        [Stored(Name = "Min", type =typeof(double))]
-        public double Min { get{return _min;} set{_min = value;} }
+        [Stored(Name = "Min", type = typeof(double))]
+        public double Min { get { return _min; } set { _min = value; } }
         [Stored(Name = "Max", type = typeof(double))]
-        public double Max { get{return _max;} set{_max = value;} }
+        public double Max { get { return _max; } set { _max = value; } }
         #endregion
 
         #endregion
@@ -38,19 +39,22 @@ namespace Statistics.Distributions
         private void addRules()
         {
             AddSinglePropertyRule(nameof(Min),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Min <= Max;
                 },
                 "Min must be smaller or equal to Max.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Min),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return Min < Max;
                 },
                 "Min shouldnt equal Max.",
                 ErrorLevel.Minor));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -59,9 +63,10 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
-        
+
         #region IDistribution Functions
-        public override double PDF(double x){
+        public override double PDF(double x)
+        {
             if (Max == Min)
             {
                 if (x == Min)
@@ -73,15 +78,21 @@ namespace Statistics.Distributions
                     return 0.0;
                 }
             }
-            if(x<Min){
+            if (x < Min)
+            {
                 return 0;
-            }else if(x<= Max){
-                return 1/(Max-Min);
-            }else{
+            }
+            else if (x <= Max)
+            {
+                return 1 / (Max - Min);
+            }
+            else
+            {
                 return 0;
             }
         }
-        public override double CDF(double x){
+        public override double CDF(double x)
+        {
             if (Max == Min)
             {
                 if (x >= Min)
@@ -93,32 +104,43 @@ namespace Statistics.Distributions
                     return 0.0;
                 }
             }
-            if (x<Min){
+            if (x < Min)
+            {
                 return 0;
-            }else if(x<= Max){
-                return (x-Min)/(Max-Min);
-            }else{
+            }
+            else if (x <= Max)
+            {
+                return (x - Min) / (Max - Min);
+            }
+            else
+            {
                 return 0;
             }
         }
-        public override double InverseCDF(double p){
-            return Min +((Max-Min)*p);
+        public override double InverseCDF(double p)
+        {
+            return Min + (Max - Min) * p;
         }
-        public override string Print(bool round = false) {
-           return "Uniform(range: {Min:"+Min+", Max:"+Max+"})";
+        public override string Print(bool round = false)
+        {
+            return "Uniform(range: {Min:" + Min + ", Max:" + Max + "})";
         }
         public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
-        public override bool Equals(IDistribution distribution){
-            if (Type==distribution.Type){
+        public override bool Equals(IDistribution distribution)
+        {
+            if (Type == distribution.Type)
+            {
                 Uniform dist = (Uniform)distribution;
                 if (Min == dist.Min)
                 {
-                    if(Max == dist.Max){
-                        if(SampleSize == dist.SampleSize){
+                    if (Max == dist.Max)
+                    {
+                        if (SampleSize == dist.SampleSize)
+                        {
                             return true;
-                        } 
+                        }
                     }
-                }                
+                }
             }
             return false;
         }

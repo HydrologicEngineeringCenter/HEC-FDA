@@ -1,7 +1,7 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
-using Statistics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

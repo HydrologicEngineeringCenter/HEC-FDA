@@ -1,13 +1,13 @@
 ﻿using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics;
 using System.Collections.Generic;
 using System.Linq;
 using static HEC.FDA.Model.compute.ImpactAreaScenarioSimulation;

@@ -1,5 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
-using Statistics.Distributions;
+using HEC.FDA.Statistics.Distributions;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Utilities

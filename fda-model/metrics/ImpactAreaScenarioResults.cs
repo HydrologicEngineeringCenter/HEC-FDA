@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Statistics.Histograms;
 using System.Linq;
 using System.Xml.Linq;
+using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {

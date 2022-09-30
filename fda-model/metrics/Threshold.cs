@@ -1,5 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
-using Statistics;
+using HEC.FDA.Statistics.Convergence;
 using System;
 using System.Xml.Linq;
 

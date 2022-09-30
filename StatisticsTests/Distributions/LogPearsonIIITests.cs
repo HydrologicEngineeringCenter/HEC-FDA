@@ -6,12 +6,13 @@ using System.Linq;
 using Utilities;
 using Xunit;
 using Statistics;
+using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {
     [Trait("Category", "Unit")]
     /// <summary>
-    /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="Statistics.Distributions.LogPearson3"/>.
+    /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="LogPearson3"/>.
     /// Most testing values produced using the USGS SMWR R package. Example script here: https://drive.google.com/file/d/1CUAJ0UckcreU9Nis8edNvyadkHDymTZs/view?usp=sharing
     /// </summary>
     [ExcludeFromCodeCoverage]
@@ -28,7 +29,7 @@ namespace StatisticsTests.Distributions
         [InlineData(7.1d, 1d, -1d, 1)]
         public void BadValidation(double mean, double sd, double skew, int n)
         {
-            Statistics.Distributions.LogPearson3 dist = new Statistics.Distributions.LogPearson3(mean, sd, skew, n);
+            LogPearson3 dist = new Statistics.Distributions.LogPearson3(mean, sd, skew, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -37,16 +38,16 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 1)]
         public void GoodValidation(double mean, double sd, int n)
         {
-            Statistics.Distributions.Normal dist = new Statistics.Distributions.Normal(mean, sd, n);
+            Normal dist = new Statistics.Distributions.Normal(mean, sd, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }
         /// <summary>
-        /// Tests that valid parameters return the <see cref="Statistics.Distributions.LogPearson3"/> in a non-error state. A <see cref="Statistics.Distributions.LogPearson3.State"/> should be <see cref="IMessageLevels.Message"/> since a message is added describing the finite range of the object.
+        /// Tests that valid parameters return the <see cref="LogPearson3"/> in a non-error state. A <see cref="LogPearson3.State"/> should be <see cref="IMessageLevels.Message"/> since a message is added describing the finite range of the object.
         /// </summary>
-        /// <param name="mean"> <see cref="Statistics.Distributions.LogPearson3.Mean"/> parameter for the <see cref="Statistics.Distributions.LogPearson3"/> distribution, which is a log base 10 representation of a random number. Any non-positive, non-finite or non-numerical value is expected to cause an <see cref="Utilities.InvalidConstructorArgumentsException"/> to be thrown. </param>
-        /// <param name="sd"> <see cref="Statistics.Distributions.LogPearson3.StandardDeviation"/> parameter for the <see cref="Statistics.Distributions.LogPearson3"/> distribution, which is a log base 10 representation of a random number. Any non-positive, non-finite or non-numerical value is expected to cause an <see cref="Utilities.InvalidConstructorArgumentsException"/> to be thrown. </param>
-        /// <param name="skew"> <see cref="Statistics.Distributions.LogPearson3.Skewness"/> parameter for the <see cref="Statistics.Distributions.LogPearson3"/> distribution, which is a log base 10 representation of a random number. Only non-finite or non-numerical values are expected to cause an <see cref="Utilities.InvalidConstructorArgumentsException"/> to be thrown. </param>
+        /// <param name="mean"> <see cref="LogPearson3.Mean"/> parameter for the <see cref="LogPearson3"/> distribution, which is a log base 10 representation of a random number. Any non-positive, non-finite or non-numerical value is expected to cause an <see cref="InvalidConstructorArgumentsException"/> to be thrown. </param>
+        /// <param name="sd"> <see cref="LogPearson3.StandardDeviation"/> parameter for the <see cref="LogPearson3"/> distribution, which is a log base 10 representation of a random number. Any non-positive, non-finite or non-numerical value is expected to cause an <see cref="InvalidConstructorArgumentsException"/> to be thrown. </param>
+        /// <param name="skew"> <see cref="LogPearson3.Skewness"/> parameter for the <see cref="LogPearson3"/> distribution, which is a log base 10 representation of a random number. Only non-finite or non-numerical values are expected to cause an <see cref="InvalidConstructorArgumentsException"/> to be thrown. </param>
         /// <param name="n"></param>
         [Theory]
         [InlineData(1d, 1d, 1d, 100)]

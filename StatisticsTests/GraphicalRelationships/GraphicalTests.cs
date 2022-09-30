@@ -5,8 +5,8 @@ using System.Text;
 using System.Linq;
 using Utilities;
 using Xunit;
-using Statistics.GraphicalRelationships;
-using Statistics.Distributions;
+using HEC.FDA.Statistics.Distributions;
+using HEC.FDA.Statistics.GraphicalRelationships;
 
 namespace StatisticsTests.GraphicalRelationships
 {
@@ -37,7 +37,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
+            ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] means = new double[dists.Length];
             for (int i = 0; i < dists.Length; i++)
             {
@@ -57,7 +57,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(probs, flows, erl);
             graphical.ComputeGraphicalConfidenceLimits();
-            Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
+            ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] prob = graphical.ExceedanceProbabilities;
             Assert.Equal(dists.Length, prob.Length);
         }
@@ -83,7 +83,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows: usingStagesNotFlows);
             graphical.ComputeGraphicalConfidenceLimits();
-            Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
+            ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
             for (int i = 0; i < actualDistributions.Length; i++)
             {
                 double actual;
@@ -112,7 +112,7 @@ namespace StatisticsTests.GraphicalRelationships
         {
             Graphical graphical = new Graphical(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows: usingStagesNotFlows);
             graphical.ComputeGraphicalConfidenceLimits();
-            Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
+            ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
             for (int i = 0; i < actualDistributions.Length; i++)
             {
                 double actual;
