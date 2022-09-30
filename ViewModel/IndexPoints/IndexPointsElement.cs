@@ -50,17 +50,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
             Navigate(tab, false, false);
         }
 
-
-        public override void RemoveElement(object sender, EventArgs e)
-        {
-            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                StudyFilesManager.DeleteDirectory(Name, GetType());
-            }
-        }
-
         #endregion
         #region Functions 
 

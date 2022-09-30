@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
             SequentialRow lastCurrent = Data[Data.Count - 1] as SequentialRow;
             lastCurrent.PreviousRow = lastPrev;
         }
-        public UncertainPairedData ToUncertainPairedData(string xlabel, string ylabel, string name, string description, string category)
+        public UncertainPairedData ToUncertainPairedData(string xlabel, string ylabel, string name, string description, string category, string assetCategory)
         {
             double[] xs = new double[Data.Count];
             IDistribution[] ys = new IDistribution[Data.Count];
@@ -67,7 +67,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
                 xs[i] = ((SequentialRow)Data[i]).X;
                 ys[i] = ((SequentialRow)Data[i]).Y;
             }
-            return new UncertainPairedData(xs, ys, xlabel, ylabel, name, category);
+            CurveMetaData curveMetaData = new CurveMetaData(xlabel, ylabel, name, category, assetCategory);
+            return new UncertainPairedData(xs, ys, curveMetaData);
         }
         public void UpdateFromUncertainPairedData(UncertainPairedData upd)
         {
