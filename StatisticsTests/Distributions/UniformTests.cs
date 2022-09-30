@@ -1,4 +1,8 @@
 ﻿using HEC.FDA.Statistics.Distributions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Xunit;
 
 namespace StatisticsTests.Distributions
@@ -10,7 +14,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 1d)]
         public void GoodDataParameters_Set_Properly(double min, double max)
         {
-            var testObj = new Uniform(min, max);
+            var testObj = new Statistics.Distributions.Uniform(min, max);
             Assert.Equal(min, testObj.Min, 2);
             Assert.Equal(max, testObj.Max, 2);
         }
@@ -20,7 +24,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 1d, -1)]
         public void BadValidation(double min, double max, int n)
         {
-            Uniform dist = new Uniform(min, max, n);
+            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -28,7 +32,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 0d, 1)]
         public void MinorValidation(double min, double max, int n)
         {
-            Uniform dist = new Uniform(min, max, n);
+            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
             Assert.True(dist.ErrorLevel==HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Minor);
@@ -38,7 +42,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 1)]
         public void GoodValidation(double min, double max, int n)
         {
-            Uniform dist = new Uniform(min, max, n);
+            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }
@@ -57,7 +61,7 @@ namespace StatisticsTests.Distributions
         [InlineData(1d, 3d, 0.95, 2.90)]
         public void Uniform_INVCDF(double min, double max, double prob, double expected)
         {
-            var testObj = new Uniform(min, max);
+            var testObj = new Statistics.Distributions.Uniform(min, max);
             double result = testObj.InverseCDF(prob);
             Assert.Equal(result, expected, 5);
         }

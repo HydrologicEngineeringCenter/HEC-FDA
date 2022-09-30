@@ -1,5 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Xunit;
+using Statistics.Distributions;
 using System.Xml.Linq;
 using HEC.FDA.Statistics.Distributions;
 

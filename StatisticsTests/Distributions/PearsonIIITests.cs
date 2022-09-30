@@ -1,6 +1,8 @@
-﻿using HEC.FDA.Statistics.Distributions;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using Utilities;
 using Xunit;
 
 namespace StatisticsTests.Distributions
@@ -23,7 +25,7 @@ namespace StatisticsTests.Distributions
         [InlineData(4434.739, 1681.290, 1.323, 1, .01, 2135.36487671968916401966)] //USGS-R SMWR
         public void PearsonIII_InverseCDF(double mean, double standardDeviation, double skew, int sampleSize, double p, double output)
         {
-            var testObj = new PearsonIII(mean, standardDeviation, skew, sampleSize);
+            var testObj = new Statistics.Distributions.PearsonIII(mean, standardDeviation, skew, sampleSize);
             double result = testObj.InverseCDF(p);
             double percent = Math.Abs((output - result) / output);
             //Assert.Equal(output, result, 9);

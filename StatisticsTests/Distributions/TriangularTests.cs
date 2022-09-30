@@ -1,5 +1,10 @@
 ﻿using HEC.FDA.Statistics.Distributions;
+using Statistics;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using Utilities;
 using Xunit;
 
 namespace StatisticsTests.Distributions
@@ -16,7 +21,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d,5d, 10d, 1.0, 10.0)]
         public void Triangular_INVCDF(double min, double mostlikely, double max, double prob, double expected)
         {
-            Triangular testObj = new Triangular(min, mostlikely, max);
+            var testObj = new Statistics.Distributions.Triangular(min, mostlikely, max);
             double result = testObj.InverseCDF(prob);
             Assert.Equal(result, expected, 5);
         }
@@ -27,7 +32,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 1d, 2d, -1)]
         public void BadValidation(double min, double mostlikely, double max, int n)
         {
-            Triangular dist = new Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -37,7 +42,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 3d, 3d, 1)]
         public void MinorValidation(double min, double mostlikely, double max, int n)
         {
-            Triangular dist = new Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
             Assert.True(dist.ErrorLevel == HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Minor);
@@ -47,7 +52,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 3d, 1)]
         public void GoodValidation(double min,double mostlikely, double max, int n)
         {
-            Triangular dist = new Triangular(min, mostlikely, max, n);
+            Triangular dist = new Statistics.Distributions.Triangular(min, mostlikely, max, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }

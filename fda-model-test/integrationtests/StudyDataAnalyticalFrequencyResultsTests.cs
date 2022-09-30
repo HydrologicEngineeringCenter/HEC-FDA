@@ -88,7 +88,7 @@ namespace fda_model_test
         [InlineData(20.74)]
         public void ComputeMeanEAD_Test(double expected)
         {
-            ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
+            ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
@@ -113,7 +113,7 @@ namespace fda_model_test
         [InlineData(10000,2345,21.09)]
         public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected)
         {
-            ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
+            ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
@@ -143,7 +143,7 @@ namespace fda_model_test
         [InlineData(10000, 2345, 19.46, 475, .2487)]
         public void ComputeMeanEADAndPerformanceWithIterationsAndLevee_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
-            ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
+            ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
@@ -154,9 +154,9 @@ namespace fda_model_test
             IDistribution[] leveefailprobs = new IDistribution[3];
             for (int i = 0; i < 2; i++)
             {
-                leveefailprobs[i] = new Deterministic(0); //probability at the top must be 1
+                leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
             }
-            leveefailprobs[2] = new Deterministic(1);
+            leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
             UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
@@ -188,7 +188,7 @@ namespace fda_model_test
         [InlineData(10000, 2345, 20.63, 475, .4225)]
         public void ComputeMeanEADAndPerformanceWithIterationsAndLeveeAndFragility_Test(int iterations, int seed, double expectedEAD, double topOfLeveeElevation, double meanExpectedAEP)
         {
-            ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
+            ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData);
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions,metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();

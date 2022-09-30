@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Statistics.Distributions;
+using System;
 
 namespace HEC.FDA.Statistics.Distributions
 {

@@ -2,6 +2,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Enumerations;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

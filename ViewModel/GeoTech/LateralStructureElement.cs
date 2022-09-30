@@ -3,6 +3,7 @@ using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
+using Statistics.Distributions;
 using System;
 using System.Xml.Linq;
 

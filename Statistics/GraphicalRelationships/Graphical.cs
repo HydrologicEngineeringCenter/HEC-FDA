@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Statistics.Distributions;
 using Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Statistics.Distributions;

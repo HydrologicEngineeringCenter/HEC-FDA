@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using HEC.MVVMFramework.Base.Events;
+using Statistics.Distributions;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
@@ -73,7 +74,7 @@ bool computeWithDamage = true;
 
 
 double topOfLeveeElevation = 475;
-ContinuousDistribution flowFrequency = new LogPearson3(3.537, .438, .075, 125);
+ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
 UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, curveMetaDataWithoutCategories);
 UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, curveMetaDataWithCategories);
 List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
@@ -84,9 +85,9 @@ double[] leveestages = new double[] { 0.0d, topOfLeveeElevation - epsilon, topOf
 IDistribution[] leveefailprobs = new IDistribution[3];
 for (int i = 0; i < 2; i++)
 {
-    leveefailprobs[i] = new Deterministic(0); //probability at the top must be 1
+    leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
 }
-leveefailprobs[2] = new Deterministic(1);
+leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
 UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function");
 
 ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)

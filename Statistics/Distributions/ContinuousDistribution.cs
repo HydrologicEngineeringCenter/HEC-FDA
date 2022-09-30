@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Statistics.Distributions;
+using System;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Xml.Linq;

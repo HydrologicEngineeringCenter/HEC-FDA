@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Xunit;
+using Utilities;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using HEC.FDA.Statistics.Histograms;

@@ -1,5 +1,6 @@
 ﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.FDA.Statistics;
 
 namespace HEC.FDA.Statistics.Distributions
 {
