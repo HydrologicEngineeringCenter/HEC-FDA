@@ -207,7 +207,7 @@ namespace stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        public float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
+        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
             foreach (float structureStage in stagesAtStructuresHighestProfile)
@@ -216,7 +216,7 @@ namespace stageDamage
             }
             return extrapolatedStages;
         }
-        public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
+        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             foreach (float stage in WSEsAtLowest)
