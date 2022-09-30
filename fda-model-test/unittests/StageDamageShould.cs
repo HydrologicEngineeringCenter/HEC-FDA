@@ -10,11 +10,11 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     public class StageDamageShould
     {
-    
+
         //structure data
         private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
         private static PointM pointM = new PointM();
@@ -94,7 +94,7 @@ namespace fda_model_test.unittests
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
             Inventory inventory = new Inventory(structures, occupancyTypesList);
-            float[] WSEs = new float[] {7, 10, 8, 12 };
+            float[] WSEs = new float[] { 7, 10, 8, 12 };
 
             //Act
             ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, inventory, impactAreaID, WSEs);

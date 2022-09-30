@@ -1,7 +1,7 @@
 using Xunit;
 using HEC.FDA.Model.paireddata;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class PairedDataShould
@@ -16,7 +16,7 @@ namespace fda_model_test.unittests
         [InlineData(10, 6)]
         [InlineData(2, 0)]
         [InlineData(8, 4)]
-        [InlineData(7,3.5)]
+        [InlineData(7, 3.5)]
         [InlineData(3.5, 1.75)]
         public void ReturnYGivenX(double expected, double sample)
         {
@@ -24,7 +24,7 @@ namespace fda_model_test.unittests
             double actual = pairedMultiplyByTwo.f(sample);
             Assert.Equal(expected, actual);
         }
-        
+
         [Theory]
         [InlineData(3, 1.5)]
         [InlineData(10, 5)]
@@ -43,11 +43,11 @@ namespace fda_model_test.unittests
         public void Compose()
         {
             double[] countByTens = { 10, 20, 30, 40, 50 };
-            PairedData PairedByOnesAndTens = new PairedData(countByTens,countByOnes);
+            PairedData PairedByOnesAndTens = new PairedData(countByTens, countByOnes);
 
             IPairedData expected = PairedByOnesAndTens;
             IPairedData actual = pairedCountbyOnes.compose(PairedByOnesAndTens);
-            Assert.Equal(expected.Xvals,actual.Xvals);
+            Assert.Equal(expected.Xvals, actual.Xvals);
             Assert.Equal(expected.Yvals, actual.Yvals);
         }
 
@@ -90,11 +90,11 @@ namespace fda_model_test.unittests
             double[] multiplierXs = { 2, 3, 4 };
             double[] multiplierYs = { .5, .5, .5 };
             double[] expectedXs = { 1, 1.999, 2, 3, 4, 4.001, 5 };
-            double[] expectedYs = {0, 0, 1, 1.5, 2, 4.001, 5};
+            double[] expectedYs = { 0, 0, 1, 1.5, 2, 4.001, 5 };
             PairedData multiplier = new PairedData(multiplierXs, multiplierYs);
 
             PairedData expected = new PairedData(expectedXs, expectedYs);
-            PairedData actual = (PairedData)pairedCountbyOnes.multiply(multiplier); 
+            PairedData actual = (PairedData)pairedCountbyOnes.multiply(multiplier);
             Assert.Equal(expected.Xvals, actual.Xvals);
             Assert.Equal(expected.Yvals, actual.Yvals);
         }

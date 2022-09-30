@@ -7,7 +7,7 @@ using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Histograms;
 using HEC.FDA.Statistics.Distributions;
 
-namespace unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     public class ConsequenceDistributionResultsShould
     {
@@ -50,7 +50,7 @@ namespace unittests
             double actualMeanFirstUPDMiddleStage = uncertainPairedData[0].Yvals[9].InverseCDF(0.5);
             double actualMeanLastUPDLastStage = uncertainPairedData[3].SamplePairedData(0.5).f(19);
             double relativeErrorMeanFirstUPDMiddleStage = Math.Abs(actualMeanFirstUPDMiddleStage - expectedMeanAllOver) / expectedMeanAllOver;
-            double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver)/expectedMeanAllOver;
+            double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver) / expectedMeanAllOver;
             double tolerance = 0.5;
 
             //Assert

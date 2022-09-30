@@ -2,7 +2,7 @@
 using HEC.FDA.Model.structures;
 using HEC.FDA.Statistics.Distributions;
 
-namespace fda_model_test.unittests.structures
+namespace HEC.FDA.ModelTest.unittests.structures
 {
     public class ValueUncertaintyShould
     {
@@ -18,7 +18,7 @@ namespace fda_model_test.unittests.structures
         {
             ValueUncertainty valueUncertainty = new ValueUncertainty(distributionEnum, percentOfInventoryValueStandardDeviationOrMin, percentOfInventoryMax);
             double actual = valueUncertainty.Sample(inventoryValue, probability);
-            Assert.Equal(expected, actual,1);
+            Assert.Equal(expected, actual, 1);
         }
     }
 }

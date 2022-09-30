@@ -7,7 +7,7 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Statistics.Convergence;
 using HEC.FDA.Statistics.Distributions;
 
-namespace fda_model_test.integrationtests
+namespace HEC.FDA.ModelTest.integrationtests
 {
     /// <summary>
     /// The example data in this test is based on River Des Peres study data
@@ -19,7 +19,7 @@ namespace fda_model_test.integrationtests
         static int equivalentRecordLength = 25;
         static double[] exceedanceProbabilities = new double[] { .5, .2, .1, .04, .02, .01, .005, .002 };
         static double[] stageFrequencyStages = new double[] { 370, 373, 378, 381, 384, 385, 386, 387 };
-       
+
         static double[] stageDamageStages = new double[] { 369.5, 370, 370.5, 371, 371.5, 372, 372.5, 373, 373.5, 374, 374.5, 375, 375.5, 376, 376.5, 377, 377.5, 378, 378.5, 379, 379.5, 380, 380.5, 381, 381.5, 382, 382.5, 383, 383.5, 384, 384.5, 385, 385.5, 386, 386.5, 387, 387.5, 388, 388.5, 389, 389.5, 390, 390.5, 391, 391.5, 392, 392.5, 393, 393.5, 394, 394.5, 395 };
         static IDistribution[] stageDamageDamageDistributions = new IDistribution[]
         {
@@ -83,7 +83,7 @@ namespace fda_model_test.integrationtests
         static string category = "residential";
         static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
         static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType, assetcategory);
-        
+
         [Theory]
         [InlineData(1234, 5.88)]
         public void ComputeMeanEADWithIterations_Test(int seed, double expected)
@@ -98,13 +98,13 @@ namespace fda_model_test.integrationtests
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             double difference = Math.Abs(expected - results.MeanExpectedAnnualConsequences(impactareaid, category, assetcategory));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;
             Assert.True(relativeDifference < tolerance);
         }
-        
+
 
     }
 }

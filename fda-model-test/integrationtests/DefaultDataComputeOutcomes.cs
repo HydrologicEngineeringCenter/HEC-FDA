@@ -10,7 +10,7 @@ using HEC.FDA.Statistics.Distributions;
 using HEC.FDA.Statistics.Histograms;
 using Xunit;
 
-namespace fda_model_test.integrationtests
+namespace HEC.FDA.ModelTest.integrationtests
 {
     public class DefaultDataComputeOutcomes
     {
@@ -42,7 +42,7 @@ namespace fda_model_test.integrationtests
         private static RandomProvider randomProvider = new RandomProvider(seed);
         //set up exterior-interior relationship 
 
-        private static double[] _ExteriorInteriorXValues = new double[] {927, 928, 930, 931, 932, 933, 934, 935, 935.5, 936, 936.5, 937, 937.5, 938, 950 };
+        private static double[] _ExteriorInteriorXValues = new double[] { 927, 928, 930, 931, 932, 933, 934, 935, 935.5, 936, 936.5, 937, 937.5, 938, 950 };
         private static IDistribution[] _ExteriorInteriorYValues = new IDistribution[]
         {
             new Deterministic(927),
@@ -146,7 +146,7 @@ namespace fda_model_test.integrationtests
             double[] mostLIkely = new double[] { 929.21, 931.4, 932.6, 933.6, 934.5, 935.2, 935.8, 936.5, 937.1, 937.6, 938.6, 939.7, 940.7, 941.6, 942.1, 943.2, 944.6 };
             double[] minStages = new double[] { 928.9, 930.7, 932, 933, 933.8, 934.5, 935, 935.4, 935.9, 936.3, 937.1, 937.9, 938.6, 939.3, 941.2, 942.3, 944.5 };
             double[] maxStages = new double[] { 929.5, 931.9, 933.3, 934.4, 935.3, 936.1, 936.8, 937.6, 938.2, 939, 940.2, 941.4, 942.8, 943.8, 944.25, 946.6, 948.5 };
-            IDistribution[] stageDischarge = new IDistribution[mostLIkely.Length];  
+            IDistribution[] stageDischarge = new IDistribution[mostLIkely.Length];
             for (int i = 0; i < mostLIkely.Length; i++)
             {
                 stageDischarge[i] = new Triangular(minStages[i], mostLIkely[i], maxStages[i]);
@@ -173,10 +173,10 @@ namespace fda_model_test.integrationtests
         private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, failureLeveeMetaData);
         private static double defaultLeveeElevation = 937;
         private static double[] defaultFailureStages = new double[] { 920, 936.999, 937, 948 };
-        private static IDistribution[] defaultFailureProbs = new IDistribution[] 
-        { 
-            new Deterministic(0), 
-            new Deterministic(0), 
+        private static IDistribution[] defaultFailureProbs = new IDistribution[]
+        {
+            new Deterministic(0),
+            new Deterministic(0),
             new Deterministic(1),
             new Deterministic(1),
         };
@@ -189,7 +189,7 @@ namespace fda_model_test.integrationtests
         #endregion
 
         [Theory]
-        [InlineData(310937.1,295506.53 )]
+        [InlineData(310937.1, 295506.53)]
         public void WithoutAnalytical_ScenarioResults(double expectedCommercialMeanEAD, double expectedResidentialMeanEAD)
         {
             //Arrange 
@@ -211,11 +211,11 @@ namespace fda_model_test.integrationtests
             //Act
             double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
             double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
-            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID1,commercialDamageCategory);
+            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID1, commercialDamageCategory);
             double actualCommercialMeanEADFromAnotherSource = eadHistogram.Mean;
             double tolerance = 0.11;
             double strictTolerance = 0.01;
-            double commercialMeanEADSourcesRelativeDifference = Math.Abs(actualCommercialMeanEAD - actualCommercialMeanEADFromAnotherSource)/actualCommercialMeanEADFromAnotherSource;
+            double commercialMeanEADSourcesRelativeDifference = Math.Abs(actualCommercialMeanEAD - actualCommercialMeanEADFromAnotherSource) / actualCommercialMeanEADFromAnotherSource;
             double commercialEADRelativeDifference = Math.Abs(actualCommercialMeanEAD - expectedCommercialMeanEAD) / expectedCommercialMeanEAD;
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
             double AAEQRelativeDifference = Math.Abs(actualMeanAAEQ - expectedCommercialMeanEAD) / expectedCommercialMeanEAD; //EAD is constant over POA soq AAEQ = EAD
@@ -252,7 +252,7 @@ namespace fda_model_test.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
 
             //Act
-            double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1,residentialDamageCategory);
+            double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
             double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
             double tolerance = 0.19;
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
@@ -419,7 +419,7 @@ namespace fda_model_test.integrationtests
         //    ImpactAreaScenarioResults impactAreaScenarioResults = scenarioResults.GetResults(impactAreaID1);
 
         //    bool resultsAreNull = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList.Count == 0;
-            
+
         //    Assert.True(resultsAreNull);
 
         //}
