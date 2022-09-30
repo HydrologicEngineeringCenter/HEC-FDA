@@ -6,7 +6,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest
 {
-
+    [Trait("Category", "Unit")]
     public class LeveeElementShould
     {
 
