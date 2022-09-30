@@ -80,6 +80,7 @@ namespace fda_model_test.unittests
         private static string contentAssetCategory = "Content";
         private static string structureAssetCategory = "Structure";
 
+        //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(340, 306, 540, 486)]
         public void ComputeDamageOneCoordinateShouldComputeCorrectly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage, double expectedCommercialStructureDamage, double expectedCommercialContentDamage)
