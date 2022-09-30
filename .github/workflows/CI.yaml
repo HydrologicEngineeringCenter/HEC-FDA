@@ -6,7 +6,8 @@ on:
 
 jobs:
   CI:
-    runs-on: windows-latest                     
+    runs-on: windows-latest
+                         
     env:
       Solution_Name: Fda.sln                                  
 
@@ -15,23 +16,23 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-
+        
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Add Source
-      run: |
-            dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
-            dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name Willsgithub "https://nuget.pkg.github.com/HenryGeorgist/index.json"
+      
+    - name: Add Github and Nexus Source
+      run:  |
+        dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+        dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
 
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release
-
+        
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Release
         
-    - name: Execute unit tests
-      run: dotnet test --no-build
+    - name: Test
+      run: dotnet test --filter Category=Unit --no-build
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
