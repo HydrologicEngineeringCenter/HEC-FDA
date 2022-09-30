@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<OutputPath>..\Build\FDA2.0</OutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup>
