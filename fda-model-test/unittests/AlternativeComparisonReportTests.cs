@@ -110,7 +110,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWithoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
@@ -139,7 +139,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
@@ -260,7 +260,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
@@ -289,7 +289,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
@@ -395,7 +395,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults);
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
@@ -424,7 +424,7 @@ namespace fda_model_test.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
             Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults, futureWithProjectScenarioResults);
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
