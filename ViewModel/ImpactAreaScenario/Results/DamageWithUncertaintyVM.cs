@@ -3,9 +3,9 @@ using HEC.Plotting.SciChart2D.ViewModel;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using System.Linq;
+using Statistics.Histograms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {

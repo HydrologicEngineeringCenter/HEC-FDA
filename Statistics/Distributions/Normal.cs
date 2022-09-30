@@ -1,9 +1,8 @@
 ﻿using System;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
-using HEC.FDA.Statistics;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
     public class Normal : ContinuousDistribution
     {
@@ -95,11 +94,11 @@ namespace HEC.FDA.Statistics.Distributions
                     return 0.0;
                 }
             }
-            if (x == double.PositiveInfinity)
+            if (x == Double.PositiveInfinity)
             {
                 return 1.0;
             }
-            else if (x == double.NegativeInfinity)
+            else if (x == Double.NegativeInfinity)
             {
                 return 0.0;
             }
@@ -141,9 +140,9 @@ namespace HEC.FDA.Statistics.Distributions
             double t = Math.Sqrt(Math.Log(1 / (q * q)));
             double tsquared = t * t;
             double tcubed = tsquared * t;
-            x = t - (c0 + c1 * t + c2 * tsquared) / (1 + d1 * t + d2 * tsquared + d3 * tcubed);
+            x = t - (c0 + c1 * t + c2 * (tsquared)) / (1 + d1 * t + d2 * tsquared + d3 * tcubed);
             x = i * x;
-            return x * StandardDeviation + Mean;
+            return (x * StandardDeviation) + Mean;
 
         }
         public static double StandardNormalInverseCDF(double p)
@@ -175,9 +174,9 @@ namespace HEC.FDA.Statistics.Distributions
             double t = Math.Sqrt(Math.Log(1 / (q * q)));
             double tsquared = t * t;
             double tcubed = tsquared * t;
-            x = t - (c0 + c1 * t + c2 * tsquared) / (1 + d1 * t + d2 * tsquared + d3 * tcubed);
+            x = t - (c0 + c1 * t + c2 * (tsquared)) / (1 + d1 * t + d2 * tsquared + d3 * tcubed);
             x = i * x;
-            return x * 1.0;
+            return (x * 1.0);
 
         }
         //TODO: It looks to me that this method does the same exact thing independent of the bool value 
@@ -203,7 +202,7 @@ namespace HEC.FDA.Statistics.Distributions
         }
         #endregion
 
-        internal static string Print(double mean, double sd, long n) => $"Normal(mean: {mean}, sd: {sd}, sample size: {n})";
+        internal static string Print(double mean, double sd, Int64 n) => $"Normal(mean: {mean}, sd: {sd}, sample size: {n})";
         public static string RequiredParameterization(bool printNotes = false) => $"The Normal distribution requires the following parameterization: {Parameterization()}.";
         internal static string Parameterization() => $"Normal(mean: [{double.MinValue}, {double.MaxValue}], sd: [{double.MinValue}, {double.MaxValue}], sample size: > 0)";
         public override IDistribution Fit(double[] sample)
@@ -227,7 +226,7 @@ namespace HEC.FDA.Statistics.Distributions
             {
 
                 double dfdx = PDF(x);
-                if (double.MinValue > Math.Abs(dfdx))//consider a unequivically better choice than minvalue (e-8)
+                if (Double.MinValue > Math.Abs(dfdx))//consider a unequivically better choice than minvalue (e-8)
                 {
                     //this is a minimum or maximum. Can't get any closer
                     return x;
@@ -240,7 +239,7 @@ namespace HEC.FDA.Statistics.Distributions
                     return x;
                 }
             }
-            return double.NaN;
+            return Double.NaN;
         }
         #endregion
     }

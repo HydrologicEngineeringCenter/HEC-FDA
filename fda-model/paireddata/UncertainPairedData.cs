@@ -1,11 +1,12 @@
+using Statistics;
 using System;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
+using Statistics.Distributions;
 using HEC.FDA.Model.interfaces;
-using HEC.FDA.Statistics.Distributions;
 
 namespace HEC.FDA.Model.paireddata
 {

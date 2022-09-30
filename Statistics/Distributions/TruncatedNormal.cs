@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
     internal class TruncatedNormal : Normal
     {
@@ -44,7 +46,7 @@ namespace HEC.FDA.Statistics.Distributions
             //Messages = msgs;
             addRules();
         }
-        public TruncatedNormal(double mean, double sd, double minValue, double maxValue, long sampleSize = 1)
+        public TruncatedNormal(double mean, double sd, double minValue, double maxValue, Int64 sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = sd;
@@ -61,15 +63,13 @@ namespace HEC.FDA.Statistics.Distributions
         private void addRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return StandardDeviation > 0;
                 },
                 "Standard Deviation must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -97,11 +97,11 @@ namespace HEC.FDA.Statistics.Distributions
         }
         public override double CDF(double x)
         {
-            if (x == double.PositiveInfinity)
+            if (x == Double.PositiveInfinity)
             {
                 return 1.0;
             }
-            else if (x == double.NegativeInfinity)
+            else if (x == Double.NegativeInfinity)
             {
                 return 0.0;
             }
@@ -119,11 +119,11 @@ namespace HEC.FDA.Statistics.Distributions
             if (Truncated)
             {
                 //https://en.wikipedia.org/wiki/Truncated_normal_distribution
-                p = _ProbabilityRange.Min + p * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
             }
             if (p <= _ProbabilityRange.Min) return Min;
             if (p >= _ProbabilityRange.Max) return Max;
-            return Mean + StandardNormalInverseCDF(p) * StandardDeviation;
+            return Mean + Normal.StandardNormalInverseCDF(p)*StandardDeviation;
             //return invCDFNewton(p, Mean, 1e-10, 100);
         }
 
@@ -169,7 +169,7 @@ namespace HEC.FDA.Statistics.Distributions
         public override IDistribution Fit(double[] sample)
         {
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new TruncatedNormal(stats.Mean, stats.StandardDeviation, Min, Max, stats.SampleSize);
+            return new TruncatedNormal(stats.Mean, stats.StandardDeviation, this.Min, this.Max, stats.SampleSize);
         }
 
         /**
@@ -187,7 +187,7 @@ namespace HEC.FDA.Statistics.Distributions
             {
 
                 double dfdx = PDF(x);
-                if (double.MinValue > Math.Abs(dfdx))
+                if (Double.MinValue > Math.Abs(dfdx))
                 {
                     //this is a minimum or maximum. Can't get any closer
                     return x;
@@ -200,7 +200,7 @@ namespace HEC.FDA.Statistics.Distributions
                     return x;
                 }
             }
-            return double.NaN;
+            return Double.NaN;
         }
         #endregion
     }

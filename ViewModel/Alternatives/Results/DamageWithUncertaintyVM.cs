@@ -1,9 +1,9 @@
 ﻿using HEC.FDA.Model.metrics;
-using HEC.FDA.Statistics.Histograms;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using Statistics.Histograms;
 using System.Collections.Generic;
 using System.Linq;
 

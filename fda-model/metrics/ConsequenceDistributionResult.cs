@@ -1,10 +1,10 @@
 ﻿using System;
+using Statistics.Histograms;
+using Statistics;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 

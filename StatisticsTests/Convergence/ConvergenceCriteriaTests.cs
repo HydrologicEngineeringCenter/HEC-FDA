@@ -1,7 +1,6 @@
 ﻿using Xunit;
+using Statistics;
 using System.Xml.Linq;
-using HEC.FDA.Statistics.Convergence;
-
 namespace StatisticsTests.Convergence
 {
     public class ConvergenceCriteriaTests

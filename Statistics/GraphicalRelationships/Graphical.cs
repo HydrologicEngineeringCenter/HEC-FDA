@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Statistics.Graphical;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Statistics.Distributions;
 using Utilities;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.FDA.Statistics.Distributions;
 
-namespace HEC.FDA.Statistics.GraphicalRelationships
+namespace Statistics.GraphicalRelationships
 {
-    public class Graphical : Validation
+    public class Graphical: HEC.MVVMFramework.Base.Implementations.Validation
     {
         #region Fields
         private double _MaximumExceedanceProbability; //the maximum exceedance probability possible in the frequency curve
@@ -22,7 +24,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         /// <summary>
         /// _InputExceedanceProbabilities represents the 8 or so exceedance probabilities passed into the constructor 
         /// </summary>
-        private double[] _InputExceedanceProbabilities;
+        private double[] _InputExceedanceProbabilities; 
         /// <summary>
         /// _InputFlowOrStageValues represent the 8 or so flow or stage values passed into the constructor 
         /// </summary>
@@ -38,7 +40,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         #endregion
 
         #region Properties
-        [Stored(Name = "Using Stages Not Flows", type = typeof(bool))]
+        [Stored(Name ="Using Stages Not Flows", type = typeof(bool))]
         public bool UsingStagesNotFlows
         {
             get
@@ -101,7 +103,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
         /// <param name="maximumProbability"></param> The maximum exceedance probability used in the frequency relationship.
         /// <param name="minimumProbability"></param> The minimum exceedance probability used in the frequency relationship. 
-
+      
         public Graphical(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {//TODO: Validate that ERL > 0
             _SampleSize = equivalentRecordLength;
@@ -112,8 +114,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
             if (_UsingStagesNotFlows)
             {
                 _InputStageOrUnLoggedFlowValues = stageOrUnloggedFlowValues;
-            }
-            else
+            } else
             {
                 _InputStageOrUnLoggedFlowValues = LogFlows(stageOrUnloggedFlowValues);
             }
@@ -124,8 +125,8 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_InputExceedanceProbabilities), new Rule(() => IsArrayValid(_InputExceedanceProbabilities, (a, b) => a >= b), "Exceedance Probabilities must be strictly monotonically decreasing"));
-            AddSinglePropertyRule(nameof(_InputStageOrUnLoggedFlowValues), new Rule(() => IsArrayValid(_InputStageOrUnLoggedFlowValues, (a, b) => a <= b), "Y must be strictly monotonically decreasing"));
+                AddSinglePropertyRule(nameof(_InputExceedanceProbabilities), new Rule(() => IsArrayValid(_InputExceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
+                AddSinglePropertyRule(nameof(_InputStageOrUnLoggedFlowValues), new Rule(() => IsArrayValid(_InputStageOrUnLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -163,7 +164,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         /// <param name="lowerExceedanceProbabilityHoldStandardErrorConstant"></param> Less frequent end of frequency curve after which to hold standard error constant. Default is 0.99.
         /// <param name="higherExceedanceProbabilityHoldStandardErrorConstant"></param> Infrequent end of frequency curve after which to hold standard error constant. Default is 0.01.
         public void ComputeGraphicalConfidenceLimits(bool useConstantStandardError = true, double lowerExceedanceProbabilityHoldStandardErrorConstant = 0.01, double higherExceedanceProbabilityHoldStandardErrorConstant = 0.99)
-        {
+        {   
             ExtendFrequencyCurveBasedOnNormalProbabilityPaper();
             List<double> finalProbabilities = GetFinalProbabilities();
             InterpolateQuantiles interpolatedQuantiles = new InterpolateQuantiles(_InputStageOrUnLoggedFlowValues, _InputExceedanceProbabilities);
@@ -193,7 +194,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
 
                 //insert the maximum probability into the first location 
                 listOfInputExceedanceProbabilities.Insert(0, _MaximumExceedanceProbability);
-
+               
                 if (smallestInputFlowOrStage < 0) { listOfInputFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
 
                 if (smallestInputFlowOrStage > 0)
@@ -204,16 +205,16 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
                 else if (smallestInputFlowOrStage < -1.0e-4)
                 {
                     listOfInputFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
-                }
+                }                   
                 else
                 {
                     listOfInputFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
-                }
+                } 
             }
             //less frequent end of the frequency curve
             if (listOfInputExceedanceProbabilities.Last() - _MinimumExceedanceProbability > _Tolerance)
             {
-                Normal standardNormalDistribution = new Normal();
+                Distributions.Normal standardNormalDistribution = new Distributions.Normal();
                 double penultimateInputExceedanceProbability = listOfInputExceedanceProbabilities[listOfInputExceedanceProbabilities.Count - 2];
                 double lastInputExceedanceProbability = listOfInputExceedanceProbabilities.Last();
                 double zValueOfMin = standardNormalDistribution.InverseCDF(_MinimumExceedanceProbability);
@@ -222,7 +223,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
                 double penultimateInputFlowOrStage = listOfInputFlowOrStageValues[listOfInputFlowOrStageValues.Count - 2];
                 double lastInputFlowOrStage = listOfInputFlowOrStageValues.Last();
                 double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability); //TODO: figure out what c represents and give it a good name
-                double upperFlowOrStage = (lastInputFlowOrStage - penultimateInputFlowOrStage + c * penultimateInputFlowOrStage) / c;
+                double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
                 listOfInputFlowOrStageValues.Add(upperFlowOrStage);
                 listOfInputExceedanceProbabilities.Add(_MinimumExceedanceProbability);
             }
@@ -324,7 +325,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
             double slope;
             double standardErrorSquared;
             double[] _scurve = new double[_FinalExceedanceProbabilities.Count()];
-
+            
             for (int i = 1; i < _FinalExceedanceProbabilities.Count() - 1; i++)
             {
                 p = 1 - _FinalExceedanceProbabilities[i];
@@ -335,17 +336,17 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
 
                 //hold slope constant and calculate standard error for the first coordinate
                 if (i == 1)
-                {
+                { 
                     p = 1 - _FinalExceedanceProbabilities[i - 1];
                     _scurve[i - 1] = Equation6StandardError(p, slope);
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == _FinalExceedanceProbabilities.Count() - 2)
+                if (i == _FinalExceedanceProbabilities.Count() -2 )
                 {
                     p = 1 - _FinalExceedanceProbabilities[i + 1];
-                    standardErrorSquared = p * (1 - p) / (Math.Pow(1 / slope, 2.0D) * _SampleSize);
-                    _scurve[i + 1] = Math.Sqrt(standardErrorSquared);
+                    standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * _SampleSize);
+                    _scurve[i +1 ] = Math.Sqrt(standardErrorSquared);
                 }
 
             }
@@ -367,12 +368,12 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         private ContinuousDistribution[] ConstructContinuousDistributions()
         {
             ContinuousDistribution[] distributionArray = new ContinuousDistribution[_StageOrLogFlowStandardErrorsComputed.Length];
-
+            
             if (_UsingStagesNotFlows)
             {
                 for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new Normal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new Distributions.Normal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }
@@ -380,7 +381,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
             {
                 for (int i = 0; i < _StageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new LogNormal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new Distributions.LogNormal(_ExpandedStageOrLogFlowValues[i], _StageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }
@@ -394,7 +395,7 @@ namespace HEC.FDA.Statistics.GraphicalRelationships
         /// <returns></returns>
         private double Equation6StandardError(double nonExceedanceProbability, double slope)
         {
-            double standardErrorSquared = nonExceedanceProbability * (1 - nonExceedanceProbability) / (Math.Pow(1 / slope, 2.0D) * _SampleSize);
+            double standardErrorSquared = (nonExceedanceProbability * (1 - nonExceedanceProbability)) / (Math.Pow(1 / slope, 2.0D) * _SampleSize);
             double standardError = Math.Pow(standardErrorSquared, 0.5);
             return standardError;
         }

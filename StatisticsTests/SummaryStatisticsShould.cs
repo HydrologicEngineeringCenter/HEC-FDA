@@ -1,4 +1,4 @@
-﻿using HEC.FDA.Statistics;
+﻿using Statistics;
 using System;
 using Xunit;
 

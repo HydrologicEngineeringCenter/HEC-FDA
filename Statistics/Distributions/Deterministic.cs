@@ -1,6 +1,7 @@
-﻿using Statistics.Distributions;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Enumerations;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
     public class Deterministic : ContinuousDistribution
     {
@@ -45,13 +46,12 @@ namespace HEC.FDA.Statistics.Distributions
 
         public override bool Equals(IDistribution distribution)
         {
-            if (Type == distribution.Type)
-            {
+            if (Type==distribution.Type){
                 Deterministic dist = (Deterministic)distribution;
                 if (Value == dist.Value)
                 {
                     return true;
-                }
+                }                
             }
             return false;
         }

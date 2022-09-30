@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit;
 using Statistics.Distributions;
+using Statistics;
 using System.Xml.Linq;
-using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {

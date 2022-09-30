@@ -1,11 +1,11 @@
 ﻿using Xunit;
 using System.Collections.Generic;
+using Statistics;
 using System;
+using Statistics.Distributions;
+using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Histograms;
-using HEC.FDA.Statistics.Distributions;
 
 namespace unittests
 {

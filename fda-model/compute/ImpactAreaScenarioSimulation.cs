@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Statistics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
@@ -13,8 +14,6 @@ using System.Text;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 
 namespace HEC.FDA.Model.compute
 {

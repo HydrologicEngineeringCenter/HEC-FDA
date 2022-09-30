@@ -1,4 +1,8 @@
-﻿namespace HEC.FDA.Statistics
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Statistics
 {
     /// <summary>
     /// An interface providing sample statistics for <see cref="double"/> precision sets of finite, numeric data.

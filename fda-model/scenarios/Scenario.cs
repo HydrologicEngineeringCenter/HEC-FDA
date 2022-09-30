@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using Statistics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.compute;
-using HEC.FDA.Statistics.Convergence;
 
 namespace HEC.FDA.Model.scenarios
 {

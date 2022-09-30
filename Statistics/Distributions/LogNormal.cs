@@ -3,10 +3,10 @@ using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Linq;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
     public class LogNormal : ContinuousDistribution
-    {
+    {      
         #region Fields and Properties
         private double _mean;
         private double _standardDeviation;
@@ -15,9 +15,9 @@ namespace HEC.FDA.Statistics.Distributions
         #region IDistribution Properties
         public override IDistributionEnum Type => IDistributionEnum.LogNormal;
         [Stored(Name = "Mean", type = typeof(double))]
-        public double Mean { get { return _mean; } set { _mean = value; } }
+         public double Mean { get{return _mean;} set{_mean = value;} }
         [Stored(Name = "Standard_Deviation", type = typeof(double))]
-        public double StandardDeviation { get { return _standardDeviation; } set { _standardDeviation = value; } }
+        public double StandardDeviation { get{return _standardDeviation;} set{_standardDeviation = value;} }
         #endregion
         #endregion
 
@@ -37,10 +37,10 @@ namespace HEC.FDA.Statistics.Distributions
         /// <param name="sampleSize"></param>
         public LogNormal(double mean, double sd, int sampleSize = 1)
         {
-
-            _mean = mean;
-            _standardDeviation = sd;
-            SampleSize = sampleSize;
+                        
+          _mean = mean;
+          _standardDeviation = sd;
+          SampleSize = sampleSize;
             addRules();
         }
 
@@ -48,29 +48,25 @@ namespace HEC.FDA.Statistics.Distributions
         private void addRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return StandardDeviation >= 0;
                 },
                 "Standard Deviation must be greater than or equal to 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return StandardDeviation > 0;
                 },
                 "Standard Deviation shouldnt equal 0.",
                 ErrorLevel.Minor));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return Mean > 0;
                 },
                 "Mean must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -80,14 +76,12 @@ namespace HEC.FDA.Statistics.Distributions
 
         #region Functions
         #region IDistribution
-        public override double PDF(double x)
-        {
+        public override double PDF(double x){
             Normal standardNormal = new Normal();
             double z = (Math.Log(x) - Mean) / StandardDeviation;
             return standardNormal.PDF(z);
         }
-        public override double CDF(double x)
-        {
+        public override double CDF(double x){
             Normal standardNormal = new Normal();
             double z = (Math.Log(x) - Mean) / StandardDeviation;
             return standardNormal.CDF(z);
@@ -96,14 +90,14 @@ namespace HEC.FDA.Statistics.Distributions
         {
             if (p <= 0) return 0;
             if (p >= 1) return double.PositiveInfinity;
-            return Math.Exp(Mean + Normal.StandardNormalInverseCDF(p) * StandardDeviation);
+            return Math.Exp(Mean+Normal.StandardNormalInverseCDF(p)*StandardDeviation);
         }
         public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"LogNormal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
         public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0;
         #endregion
 
-        internal static string Print(double mean, double sd, long n) => $"LogNormal(mean: {mean}, sd: {sd}, sample size: {n})";
+        internal static string Print(double mean, double sd, Int64 n) => $"LogNormal(mean: {mean}, sd: {sd}, sample size: {n})";
         public static string RequiredParameterization(bool printNotes)
         {
             string msg = $"The Log Normal distribution requires the following parameterization: {Parameterization()}.";
@@ -121,7 +115,7 @@ namespace HEC.FDA.Statistics.Distributions
             }
             ISampleStatistics stats = new SampleStatistics(sample);
             return new LogNormal(stats.Mean, stats.StandardDeviation, stats.SampleSize);
-        }
+        }   
         #endregion
     }
 }

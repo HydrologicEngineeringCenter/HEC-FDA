@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Utilities;
 
-namespace HEC.FDA.Statistics
+namespace Statistics
 {
     public class SampleStatistics : ISampleStatistics
     {
@@ -28,7 +29,7 @@ namespace HEC.FDA.Statistics
         {
             get
             {
-                return _sampleVariance * (double)((_n - 1) / (double)_n);
+                return _sampleVariance * (double)((double)(_n - 1) / (double)_n);
             }
         }
         public double StandardDeviation
@@ -46,15 +47,15 @@ namespace HEC.FDA.Statistics
         {
             get { return _kurtosis; }
         }
-        public IRange<double> Range { get; }
+        public Utilities.IRange<double> Range { get; }
         public int SampleSize
         {
-            get { return _n; }
+            get { return (int)_n; }
         }
         public SampleStatistics(double[] data)
         {
             InitalizeStats(data);
-            Range = IRangeFactory.Factory(_min, _max);
+            Range = Utilities.IRangeFactory.Factory(_min, _max);
         }
         internal void InitalizeStats(IEnumerable<double> observations)
         {
@@ -74,24 +75,24 @@ namespace HEC.FDA.Statistics
                     if (observation < _min) _min = observation;
                     _n += 1;
                     double obsminusmean = observation - _mean;
-                    double tmpMean = _mean + obsminusmean / _n;
-                    _sampleVariance = (_n - 2) / (double)(_n - 1) * _sampleVariance + obsminusmean * obsminusmean / _n;
+                    double tmpMean = _mean + ((obsminusmean) / (double)_n);
+                    _sampleVariance = ((((double)(_n - 2) / (double)(_n - 1)) * _sampleVariance) + ((obsminusmean)*(obsminusmean)) / (double)_n);
                     _mean = tmpMean;
                 }
             }
 
-            double s = Math.Pow(_sampleVariance * (double)((_n - 1) / (double)_n), 0.5);
+            double s = System.Math.Pow(_sampleVariance * (double)((double)(_n - 1) / (double)_n), 0.5);
             double SkewSums = 0;
             //double ksums = 0;
             double midpoint = ((double)_n - 1) / 2;
             bool noRounding = false;
-            if (Math.Floor(midpoint) == midpoint)
+            if (System.Math.Floor(midpoint) == midpoint)
             {
                 noRounding = true;
             }
             else
             {
-                midpoint = Math.Floor(midpoint);
+                midpoint = System.Math.Floor(midpoint);
             }
             Array.Sort(observations.ToArray());
             int val = 0;
@@ -121,16 +122,16 @@ namespace HEC.FDA.Statistics
 
                 }
                 double obsminusmean = observation - _mean;
-                SkewSums = SkewSums + obsminusmean * obsminusmean * obsminusmean;
+                SkewSums = SkewSums + (obsminusmean*obsminusmean*obsminusmean);
                 //ksums = ksums + System.Math.Pow(((observation - _mean) / s), 4.0);
                 val++;
             }
-            double nd = _n;
-            // ksums = ksums * (nd * (nd + 1.0)) / ((nd - 1.0) * (nd - 2.0) * (nd - 3.0));
-            _skew = nd * SkewSums / ((nd - 1.0) * (nd - 2.0) * (s * s * s));
+            double nd = (double)_n;
+           // ksums = ksums * (nd * (nd + 1.0)) / ((nd - 1.0) * (nd - 2.0) * (nd - 3.0));
+            _skew = ((nd) * SkewSums) / ((nd - 1.0) * (nd - 2.0) * (s*s*s));
             //_kurtosis = (ksums) - ((3.0 * (System.Math.Pow((nd - 1.0), 2.0))) / ((nd - 2.0) * (nd - 3.0)));
         }
-        public IMessageLevels Validate(IValidator<ISampleStatistics> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(Utilities.IValidator<ISampleStatistics> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

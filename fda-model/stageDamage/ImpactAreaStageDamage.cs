@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Statistics;
+using System;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
@@ -10,8 +11,6 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.interfaces;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 
 namespace HEC.FDA.Model.stageDamage
 {

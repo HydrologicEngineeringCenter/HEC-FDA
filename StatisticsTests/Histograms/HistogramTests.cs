@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Statistics;
+using Statistics.Histograms;
 using Xunit;
 using Utilities;
+using Statistics.Distributions;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Threading;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Histograms;
-using HEC.FDA.Statistics.Distributions;
 
 namespace StatisticsTests.Histograms
 {
@@ -178,7 +178,7 @@ namespace StatisticsTests.Histograms
         [InlineData(1000, 10000, .1, .80, 1.96, .975)]
         public void NormallyDistributed_Histogram_Convergence(int minIter, int maxiter, double binWidth, double quantile, double value, double expected)
         {
-            IDistribution stdNormal = new Normal(0, 1);
+            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(minIterations:minIter, maxIterations: maxiter, tolerance: 1, zAlpha: z);
@@ -257,7 +257,7 @@ namespace StatisticsTests.Histograms
         [InlineData(10000, .1, .80)]
         public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile)
         {
-            IDistribution stdNormal = new Normal(0, 1);
+            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
             var convergencecriteria = new ConvergenceCriteria(maxIterations: maxiter, tolerance: 1, zAlpha: z);

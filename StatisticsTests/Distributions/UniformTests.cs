@@ -1,5 +1,4 @@
-﻿using HEC.FDA.Statistics.Distributions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -24,7 +23,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 1d, -1)]
         public void BadValidation(double min, double max, int n)
         {
-            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
+            Statistics.Distributions.Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
         }
@@ -32,7 +31,7 @@ namespace StatisticsTests.Distributions
         [InlineData(0d, 0d, 1)]
         public void MinorValidation(double min, double max, int n)
         {
-            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
+            Statistics.Distributions.Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.True(dist.HasErrors);
             Assert.True(dist.ErrorLevel==HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Minor);
@@ -42,7 +41,7 @@ namespace StatisticsTests.Distributions
         [InlineData(-1d, 2d, 1)]
         public void GoodValidation(double min, double max, int n)
         {
-            Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
+            Statistics.Distributions.Uniform dist = new Statistics.Distributions.Uniform(min, max, n);
             dist.Validate();
             Assert.False(dist.HasErrors);
         }

@@ -1,4 +1,5 @@
 ﻿using HEC.CS.Collections;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,12 +13,11 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {

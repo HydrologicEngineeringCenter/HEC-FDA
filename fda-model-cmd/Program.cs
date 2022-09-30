@@ -1,11 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using HEC.MVVMFramework.Base.Events;
+using Statistics;
 using Statistics.Distributions;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 
 Console.WriteLine("Hello, World!");
 
@@ -74,7 +73,7 @@ bool computeWithDamage = true;
 
 
 double topOfLeveeElevation = 475;
-ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
+Statistics.ContinuousDistribution flowFrequency = new Statistics.Distributions.LogPearson3(3.537, .438, .075, 125);
 UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, curveMetaDataWithoutCategories);
 UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, curveMetaDataWithCategories);
 List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();

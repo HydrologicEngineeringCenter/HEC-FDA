@@ -1,8 +1,9 @@
-﻿using HEC.FDA.Statistics.Distributions;
-using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.ViewModel.Implementations;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 

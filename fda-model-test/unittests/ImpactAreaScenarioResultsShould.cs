@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Xunit;
+using Statistics;
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 
 namespace fda_model_test.unittests
 {
@@ -26,7 +25,7 @@ namespace fda_model_test.unittests
         public void ResultsShouldReadTheSameStuffItWrites()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
+            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
@@ -64,7 +63,7 @@ namespace fda_model_test.unittests
         public void ResultsShouldNotComputeWhenMaxIterationsAreGreaterThanMinIterations()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 1);
-            ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
+            Statistics.ContinuousDistribution flow_frequency = new Statistics.Distributions.Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)

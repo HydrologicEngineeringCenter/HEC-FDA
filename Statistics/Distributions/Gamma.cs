@@ -1,8 +1,8 @@
 using System;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
-    class Gamma
+    class Gamma 
     {
         #region fields
         private double _Shape;
@@ -25,8 +25,7 @@ namespace HEC.FDA.Statistics.Distributions
             if (x <= 0)
             {
                 return 0;
-            }
-            else if (x >= double.MaxValue)
+            } else if(x >= double.MaxValue)
             {
                 return 1;
             }
@@ -60,7 +59,7 @@ namespace HEC.FDA.Statistics.Distributions
             }
             return double.NaN;
 
-
+            
         }
 
         public double PDF(double x)
@@ -79,28 +78,28 @@ namespace HEC.FDA.Statistics.Distributions
         }
 
         private double f(double x)
-        {
-            return CDF(x);
-        }
-
-
+            {
+                return CDF(x);
+            }
+            
+    
         private double dfdx(double x)
-        {
-            return PDF(x);
-        }
-
-        //********** GENERAL COMBINATION NEWTON / BISECTION SEARCH FORMULA **********
-        /**
-         * @param f = a real function, a method with a double parameter that returns a double
-         * @param dfdx = derivative of f, a method with a double parameter that returns a double
-         * @param y = the right hand side of the equation
-         * @param xGuess = initial guess for the iterative solver
-         * @return a value corresponding to the solution x of f(x)=y
-         *         found using the Newton method and bisection searchin the interval [xMin,xMax]
-         *         It is required that f(xMax)-y and f(xMin)-y have opposite signs.
-         */
-        private double newtonBiSearch(double y, double xMin, double xMax, double tolX, int maxIter)
-        {
+            {
+                return PDF(x);
+            }
+    
+    //********** GENERAL COMBINATION NEWTON / BISECTION SEARCH FORMULA **********
+    /**
+     * @param f = a real function, a method with a double parameter that returns a double
+     * @param dfdx = derivative of f, a method with a double parameter that returns a double
+     * @param y = the right hand side of the equation
+     * @param xGuess = initial guess for the iterative solver
+     * @return a value corresponding to the solution x of f(x)=y
+     *         found using the Newton method and bisection searchin the interval [xMin,xMax]
+     *         It is required that f(xMax)-y and f(xMin)-y have opposite signs.
+     */
+    private double newtonBiSearch(double y, double xMin, double xMax, double tolX, int maxIter)
+        { 
             int j;
             double dfrts, dx, dxold, frts, fh, fl;
             double temp, xh, xl, rts, rtsOld;
@@ -132,8 +131,8 @@ namespace HEC.FDA.Statistics.Distributions
             dfrts = dfdx(rts);
             for (j = 1; j <= maxIter; j++)
             { //Loop over allowed iterations.
-                if (((rts - xh) * dfrts - frts) * ((rts - xl) * dfrts - frts) > 0.0 //Bisect if Newton out of range,
-                || Math.Abs(2.0 * frts) > Math.Abs(dxold * dfrts))
+                if ((((rts - xh) * dfrts - frts) * ((rts - xl) * dfrts - frts) > 0.0) //Bisect if Newton out of range,
+                || (Math.Abs(2.0 * frts) > Math.Abs(dxold * dfrts)))
                 {      //or not decreasing fast enough.
                     dxold = dx;
                     dx = 0.5 * (xh - xl);
@@ -176,7 +175,7 @@ namespace HEC.FDA.Statistics.Distributions
                 }
             }
             return double.NaN;
-        }
-        #endregion
     }
+    #endregion
+}
 }

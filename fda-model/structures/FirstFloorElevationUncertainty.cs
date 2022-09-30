@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Statistics.Distributions;
+﻿using Statistics;
+using Statistics.Distributions;
 
 namespace HEC.FDA.Model.structures
 {

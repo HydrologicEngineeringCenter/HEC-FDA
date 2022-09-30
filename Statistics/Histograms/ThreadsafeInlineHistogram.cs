@@ -2,29 +2,26 @@
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using Statistics.Histograms;
 
-namespace HEC.FDA.Statistics.Histograms
+namespace Statistics.Histograms
 {
-    public class ThreadsafeInlineHistogram : IHistogram
+    public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
         private bool _HistogramIsZeroValued = false;
-        private long[] _BinCounts = new long[] { };
+        private Int64[] _BinCounts = new Int64[] { };
         private double _SampleMean;
         private double _SampleVariance;
         private double _Min;
         private double _Max;
         private double _SampleMin;
         private double _SampleMax;
-        private long _SampleSize;
+        private Int64 _SampleSize;
         private double _BinWidth;
         private bool _Converged = false;
-        private long _ConvergedIterations = int.MinValue;
+        private Int64 _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private int _maxQueueCount = 1000; //TODO: what does this represent?
@@ -79,7 +76,7 @@ namespace HEC.FDA.Statistics.Histograms
                 return _Converged;
             }
         }
-        public long ConvergedIteration
+        public Int64 ConvergedIteration
         {
             get
             {
@@ -109,7 +106,7 @@ namespace HEC.FDA.Statistics.Histograms
                 return _BinWidth;
             }
         }
-        public long[] BinCounts
+        public Int64[] BinCounts
         {
             get
             {
@@ -158,7 +155,7 @@ namespace HEC.FDA.Statistics.Histograms
             get
             {
                 ForceDeQueue();
-                return _SampleVariance * (double)((_SampleSize - 1) / (double)_SampleSize);
+                return _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             }
         }
         public double StandardDeviation
@@ -169,7 +166,7 @@ namespace HEC.FDA.Statistics.Histograms
                 return Math.Pow(Variance, 0.5);
             }
         }
-        public long SampleSize
+        public Int64 SampleSize
         {
             get
             {
@@ -208,7 +205,7 @@ namespace HEC.FDA.Statistics.Histograms
             _HistogramIsZeroValued = true;
             for (int i = 0; i < 10; i++)
             {
-                AddObservationToHistogram(0, i);
+                AddObservationToHistogram(0,i);
             }
             MessageHub.Register(this);
         }
@@ -232,7 +229,7 @@ namespace HEC.FDA.Statistics.Histograms
             _postQueueCount = postqueueSize;
             MessageHub.Register(this);
         }
-        private ThreadsafeInlineHistogram(double min, double max, double binWidth, long[] binCounts, ConvergenceCriteria convergenceCriteria)
+        private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
             Min = min;
@@ -272,7 +269,7 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return 0;
             }
-            if (_Min == _Max - _BinWidth)
+            if (_Min == (_Max - _BinWidth))
             {
                 return 0.0;
             }
@@ -280,14 +277,14 @@ namespace HEC.FDA.Statistics.Histograms
 
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                double midpoint = Min + i * _BinWidth + 0.5 * _BinWidth;
+                double midpoint = Min + (i * _BinWidth) + (0.5 * _BinWidth);
 
                 deviation += midpoint - _SampleMean;
                 deviation2 += deviation * deviation;
                 deviation3 += deviation2 * deviation;
 
             }
-            double variance = _SampleVariance * (double)((_SampleSize - 1) / (double)_SampleSize);
+            double variance = _SampleVariance * (double)((double)(_SampleSize - 1) / (double)_SampleSize);
             return deviation3 / _SampleSize / Math.Pow(variance, 3 / 2);
         }
         public double HistogramMean()
@@ -297,14 +294,14 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == _Max - _BinWidth)
+            if (_Min == (_Max - _BinWidth))
             {
-                return _Min + .5 * _BinWidth;
+                return _Min + (.5 * _BinWidth);
             }
             double sum = 0;
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                sum += (_Min + i * _BinWidth + 0.5 * _BinWidth) * _BinCounts[i];
+                sum += (_Min + (i * _BinWidth) + (0.5 * _BinWidth)) * _BinCounts[i];
             }
             return sum / _SampleSize;
         }
@@ -319,7 +316,7 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return 0;
             }
-            if (_Min == _Max - _BinWidth)
+            if (_Min == (_Max - _BinWidth))
             {
                 return 0.0;
             }
@@ -327,7 +324,7 @@ namespace HEC.FDA.Statistics.Histograms
 
             for (int i = 0; i < _BinCounts.Length; i++)
             {
-                double midpoint = _Min + i * _BinWidth + 0.5 * _BinWidth;
+                double midpoint = _Min + (i * _BinWidth) + (0.5 * _BinWidth);
 
                 deviation = midpoint - _SampleMean;
                 deviation2 += deviation * deviation;
@@ -340,12 +337,12 @@ namespace HEC.FDA.Statistics.Histograms
             //force dequeue is triggered in histogram variance.
             return Math.Sqrt(HistogramVariance());
         }
-        public void SetIterationSize(long iterationSize)
+        public void SetIterationSize(Int64 iterationSize)
         {
             //_observations = new double[iterationSize];
             //_maxQueueCount = iterationSize;
         }
-        public void AddObservationToHistogram(double observation, long index)
+        public void AddObservationToHistogram(double observation, Int64 index)
         {
             _observations.Enqueue(observation);
             Interlocked.Increment(ref _enqueue);
@@ -395,7 +392,7 @@ namespace HEC.FDA.Statistics.Histograms
         }
         //TODO: WHat does this mean??
         private void DeQueue()
-        {
+        {   
             //do NOT reference any properties of this class in this method!
             //it will trigger unsafe operations across threads.
 
@@ -422,7 +419,7 @@ namespace HEC.FDA.Statistics.Histograms
                     double temporaryBinWidth = range / (1.0 + 3.322 * Math.Log10(size));
                     _BinWidth = Math.Min(_BinWidth, temporaryBinWidth);
                 }
-                _BinCounts = new long[] { 0 };
+                _BinCounts = new Int64[] { 0 };
                 _Max = _Min + _BinWidth;
                 _maxQueueCount = _postQueueCount;
 
@@ -445,37 +442,37 @@ namespace HEC.FDA.Statistics.Histograms
                     if (observation > _SampleMax) _SampleMax = observation;
                     if (observation < _SampleMin) _SampleMin = observation;
                     _SampleSize += 1;
-                    double tmpMean = _SampleMean + (observation - _SampleMean) / _SampleSize;
-                    _SampleVariance = (_SampleSize - 2) / (double)(_SampleSize - 1) * _SampleVariance + Math.Pow(observation - _SampleMean, 2) / _SampleSize;
+                    double tmpMean = _SampleMean + ((observation - _SampleMean) / (double)_SampleSize);
+                    _SampleVariance = ((((double)(_SampleSize - 2) / (double)(_SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - _SampleMean, 2)) / (double)_SampleSize);
                     _SampleMean = tmpMean;
                 }
                 int quantityAdditionalBins = 0;
                 if (observation < _Min)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((_Min - observation) / _BinWidth));
-                    long[] newBinCounts = new long[quantityAdditionalBins + _BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
 
-                    for (int i = _BinCounts.Length + quantityAdditionalBins - 1; i > quantityAdditionalBins - 1; i--)
+                    for (int i = _BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
                     {
                         newBinCounts[i] = _BinCounts[i - quantityAdditionalBins];
                     }
                     _BinCounts = newBinCounts;
                     _BinCounts[0] += 1;
-                    double newMin = _Min - quantityAdditionalBins * _BinWidth;
+                    double newMin = _Min - (quantityAdditionalBins * _BinWidth);
                     double max = _Max;
                     Min = newMin;
                 }
                 else if (observation > _Max)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - _Max + _BinWidth) / _BinWidth));
-                    long[] newBinCounts = new long[quantityAdditionalBins + _BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
                     for (int i = 0; i < _BinCounts.Length; i++)
                     {
                         newBinCounts[i] = _BinCounts[i];
                     }
                     newBinCounts[_BinCounts.Length + quantityAdditionalBins - 1] += 1;
                     _BinCounts = newBinCounts;
-                    double newMax = _Min + _BinCounts.Length * _BinWidth; //is this right?
+                    double newMax = _Min + (_BinCounts.Length * _BinWidth); //is this right?
                     Max = newMax;
                 }
                 else
@@ -488,13 +485,13 @@ namespace HEC.FDA.Statistics.Histograms
                     if (observation == _Max)
                     {
                         quantityAdditionalBins = 1;
-                        long[] newBinCounts = new long[quantityAdditionalBins + _BinCounts.Length];
+                        Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
                         for (int i = 0; i < _BinCounts.Length; i++)
                         {
                             newBinCounts[i] = _BinCounts[i];
                         }
                         _BinCounts = newBinCounts;
-                        double newMax = _Min + _BinCounts.Length * _BinWidth;//double check
+                        double newMax = _Min + (_BinCounts.Length * _BinWidth);//double check
                         Max = newMax;
                     }
                     _BinCounts[newObsIndex] += 1;
@@ -508,12 +505,12 @@ namespace HEC.FDA.Statistics.Histograms
             //
             foreach (double x in data)
             {
-                AddObservationToHistogram(x, 1);
+                AddObservationToHistogram(x,1);
             }
         }
-        public long FindBinCount(double x, bool cumulative = true)
+        public Int64 FindBinCount(double x, bool cumulative = true)
         {
-            if (x > Max)
+            if(x > Max)
             {
                 if (cumulative)
                 {
@@ -531,7 +528,7 @@ namespace HEC.FDA.Statistics.Histograms
             int obsIndex = Convert.ToInt32(Math.Floor((x - _Min) / _BinWidth));
             if (cumulative)
             {
-                long sum = 0;
+                Int64 sum = 0;
                 for (int i = 0; i < obsIndex + 1; i++)
                 {
                     sum += _BinCounts[i];
@@ -540,7 +537,7 @@ namespace HEC.FDA.Statistics.Histograms
             }
             else
             {
-                if (obsIndex < 0 || obsIndex >= _BinCounts.Length) return 0;
+                if(obsIndex<0||obsIndex>=_BinCounts.Length) return 0;
                 return _BinCounts[obsIndex];
             }
 
@@ -552,7 +549,7 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == _Max - _BinWidth)
+            if (_Min == (_Max - _BinWidth))
             {
                 if (x > _Min)
                 {
@@ -575,7 +572,7 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == _Max - _BinWidth)
+            if (_Min == (_Max - _BinWidth))
             {
                 if (x > _Min)
                 {
@@ -609,9 +606,9 @@ namespace HEC.FDA.Statistics.Histograms
                 {
                     return double.NaN;
                 }
-                if (_Min == _Max - _BinWidth)
+                if (_Min == (_Max - _BinWidth))
                 {
-                    return _Min + _BinWidth * p;
+                    return _Min + (_BinWidth * p);
                 }
                 int numobs = Convert.ToInt32(_SampleSize * p);
                 if (p <= 0.5)
@@ -666,7 +663,7 @@ namespace HEC.FDA.Statistics.Histograms
             }
         }
 
-
+ 
 
         public XElement ToXML()
         {
@@ -705,7 +702,7 @@ namespace HEC.FDA.Statistics.Histograms
             int sampleSize = Convert.ToInt32(sampleSizeString);
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
-            long[] binCounts = new long[binQuantity];
+            Int64[] binCounts = new Int64[binQuantity];
             for (int i = 0; i < binQuantity; i++)
             {
                 binCounts[i] = Convert.ToInt64(element.Attribute($"Bin_Counts_{i}").Value);
@@ -752,16 +749,16 @@ namespace HEC.FDA.Statistics.Histograms
             //consider extraction and build on this nomenclature 
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
-            double variance = lowerq * (1 - lowerq) / (_SampleSize * qslope * qslope);
+            double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
             bool lower = false;
             double lower_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
-            if (lower_comparison <= _ConvergenceCriteria.Tolerance * .5) { lower = true; }
+            if (lower_comparison <= (_ConvergenceCriteria.Tolerance * .5)) { lower = true; }
             qval = InverseCDF(upperq);
             qslope = PDF(qval);
-            variance = upperq * (1 - upperq) / (_SampleSize * qslope * qslope);
+            variance = (upperq * (1 - upperq)) / (((double)_SampleSize) * qslope * qslope);
             bool upper = false;
             double upper_comparison = Math.Abs(_ConvergenceCriteria.ZAlpha * Math.Sqrt(variance) / qval);
-            if (upper_comparison <= _ConvergenceCriteria.Tolerance * .5) { upper = true; }
+            if (upper_comparison <= (_ConvergenceCriteria.Tolerance * .5)) { upper = true; }
             if (lower)
             {
                 _Converged = true;
@@ -774,7 +771,7 @@ namespace HEC.FDA.Statistics.Histograms
             }
             return _Converged;
         }
-        public long EstimateIterationsRemaining(double upperProbability, double lowerProbability)
+        public Int64 EstimateIterationsRemaining(double upperProbability, double lowerProbability)
         {
             if (_Converged) return 0;
             double upperProb = upperProbability;
@@ -782,11 +779,11 @@ namespace HEC.FDA.Statistics.Histograms
             double zAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha;
             double upperValueAtUpperProb = InverseCDF(upperProb);
             double probOfUpperValue = PDF(upperValueAtUpperProb);
-            long upperEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
-            if (probOfUpperValue > 0.0 & upperValueAtUpperProb != 0)
+            Int64 upperEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            if (probOfUpperValue > 0.0 & upperValueAtUpperProb !=0 )
             {
                 double bottomTerm = upperValueAtUpperProb * _ConvergenceCriteria.Tolerance * probOfUpperValue;
-                double anotherTerm = zAlphaDoubled / bottomTerm;
+                double anotherTerm = (zAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
                 double productTerm = valueOfSomethingNotClear * anotherTermSquared;
                 if (productTerm > int.MaxValue - 1)
@@ -795,7 +792,7 @@ namespace HEC.FDA.Statistics.Histograms
                 }
                 else
                 {
-                    long productTermToInt = (long)Math.Ceiling(productTerm);
+                    Int64 productTermToInt = (Int64)Math.Ceiling(productTerm);
                     upperEstimateIterationsRemaining = Math.Abs(productTermToInt);
                 }
             }
@@ -804,11 +801,11 @@ namespace HEC.FDA.Statistics.Histograms
             double lowerZAlphaDoubled = 2 * _ConvergenceCriteria.ZAlpha; //this need not be negative?
             double lowerValueAtLowerProb = InverseCDF(lowerProb);
             double probOfLowerValue = PDF(lowerValueAtLowerProb);
-            long lowerEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
+            Int64 lowerEstimateIterationsRemaining = _ConvergenceCriteria.MaxIterations;
             if (probOfLowerValue > 0.0 & upperValueAtUpperProb != 0)
             {
                 double bottomTerm = lowerValueAtLowerProb * _ConvergenceCriteria.Tolerance * probOfLowerValue;
-                double anotherTerm = lowerZAlphaDoubled / bottomTerm;
+                double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
                 double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
                 double productTerm = lowerValueOfSomethingNotClear * anotherTermSquared;
                 if (productTerm > int.MaxValue - 1)
@@ -817,12 +814,12 @@ namespace HEC.FDA.Statistics.Histograms
                 }
                 else
                 {
-                    long productTermToInt = (long)Math.Ceiling(productTerm);
-                    lowerEstimateIterationsRemaining = Math.Abs(productTermToInt);
+                    Int64 productTermToInt = (Int64)Math.Ceiling(productTerm);
+                lowerEstimateIterationsRemaining = Math.Abs(productTermToInt);
                 }
             }
-            long biggestGuessIterationsRemaining = Math.Max(upperEstimateIterationsRemaining, lowerEstimateIterationsRemaining);
-            long remainingIterations = _ConvergenceCriteria.MaxIterations - _SampleSize;
+            Int64 biggestGuessIterationsRemaining = Math.Max(upperEstimateIterationsRemaining, lowerEstimateIterationsRemaining);
+            Int64 remainingIterations = _ConvergenceCriteria.MaxIterations - _SampleSize;
             return Convert.ToInt64(Math.Min(remainingIterations, biggestGuessIterationsRemaining));
         }
         public bool Equals(IDistribution distribution)
@@ -879,7 +876,7 @@ namespace HEC.FDA.Statistics.Histograms
             {
                 return false;
             }
-            return true;
+            return true; 
 
         }
 
@@ -903,13 +900,13 @@ namespace HEC.FDA.Statistics.Histograms
         {
             if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] samples = new double[SampleSize];
-            for (int i = 0; i < SampleSize; i++) samples[i] = InverseCDF(packetOfRandomNumbers[i]);
-            return Fit(samples);
+            for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
+            return this.Fit(samples);
         }
-
+        
         public IDistribution Fit(double[] data)
         {//Unless we thought we would continue adding data multithreaded, then returning a regular histogram is best
-            return new Histogram(data.ToList(), ConvergenceCriteria);
+            return new Histogram(data.ToList(), this.ConvergenceCriteria);
         }
         #endregion
     }

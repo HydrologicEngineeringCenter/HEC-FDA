@@ -3,9 +3,8 @@ using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Linq;
 using Utilities;
-using HEC.FDA.Statistics;
 
-namespace HEC.FDA.Statistics.Distributions
+namespace Statistics.Distributions
 {
     internal class TruncatedLogNormal : ContinuousDistribution
     {
@@ -58,22 +57,19 @@ namespace HEC.FDA.Statistics.Distributions
         private void addRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return StandardDeviation > 0;
                 },
                 "Standard Deviation must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(Mean),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return Mean > 0;
                 },
                 "Mean must be greater than 0.",
                 ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() =>
-                {
+                new Rule(() => {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -97,7 +93,7 @@ namespace HEC.FDA.Statistics.Distributions
         {
             if (Truncated)
             {
-                p = _ProbabilityRange.Min + p * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
             }
             if (p <= _ProbabilityRange.Min) return Min;
             if (p >= _ProbabilityRange.Max) return Max;
@@ -109,7 +105,7 @@ namespace HEC.FDA.Statistics.Distributions
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0;
         #endregion
 
-        internal static string Print(double mean, double sd, long n) => $"LogNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {Convert.ToDouble(n).Print()})";
+        internal static string Print(double mean, double sd, Int64 n) => $"LogNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {Convert.ToDouble(n).Print()})";
         public static string RequiredParameterization(bool printNotes)
         {
             string msg = $"The Log Normal distribution requires the following parameterization: {Parameterization()}.";
@@ -126,7 +122,7 @@ namespace HEC.FDA.Statistics.Distributions
                 sample[i] = Math.Log10(sample[i]);
             }
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new TruncatedLogNormal(stats.Mean, stats.StandardDeviation, Min, Max, stats.SampleSize);
+            return new TruncatedLogNormal(stats.Mean, stats.StandardDeviation, this.Min, this.Max, stats.SampleSize);
         }
         #endregion
     }

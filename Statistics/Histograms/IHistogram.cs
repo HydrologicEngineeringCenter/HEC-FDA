@@ -1,21 +1,19 @@
 ﻿using System;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Distributions;
+using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Interfaces;
-
-namespace HEC.FDA.Statistics.Histograms
+namespace Statistics.Histograms
 {
-    public interface IHistogram : IReportMessage, IDistribution
+    public interface IHistogram: IReportMessage, IDistribution 
     {
         #region Properties 
         bool IsConverged { get; }
         bool HistogramIsZeroValued { get; set; }
         bool HistogramIsSingleValued { get; }
-        long ConvergedIteration { get; }
+        Int64 ConvergedIteration { get; }
         double BinWidth { get; }
-        long[] BinCounts { get; }
-        double Min { get; }
-        double Max { get; }
+        Int64[] BinCounts { get; }
+        double Min { get;  }
+        double Max { get;  }
         double Mean { get; }
         double Variance { get; }
         double StandardDeviation { get; }
@@ -26,11 +24,11 @@ namespace HEC.FDA.Statistics.Histograms
         #endregion
 
         #region Methods
-        void AddObservationToHistogram(double observation, long iterationIndex);
+        void AddObservationToHistogram(double observation, Int64 iterationIndex);
         void ForceDeQueue();
         bool IsHistogramConverged(double upperq, double lowerq);
-        long EstimateIterationsRemaining(double upperq, double lowerq);
-        long FindBinCount(double x, bool cumulative = true);
+        Int64 EstimateIterationsRemaining(double upperq, double lowerq);
+        Int64 FindBinCount(double x, bool cumulative = true);
         #endregion
     }
 }

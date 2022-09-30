@@ -1,4 +1,4 @@
-﻿using HEC.FDA.Statistics.Distributions;
+﻿using Statistics;
 using System;
 using Xunit;
 
@@ -10,7 +10,7 @@ namespace StatisticsTests
         [Fact]
         public void ComputeBootstrap_LP3()
         {
-            LogPearson3 lp3 = new Statistics.Distributions.LogPearson3(1, 1, 1, 100);
+            Statistics.Distributions.LogPearson3 lp3 = new Statistics.Distributions.LogPearson3(1, 1, 1, 100);
             double[] probs = NextRandomSequence(lp3.SampleSize, 1234);
             IDistribution bootstrap = lp3.Sample(probs);
             double value = bootstrap.InverseCDF(.5);
@@ -19,7 +19,7 @@ namespace StatisticsTests
         [Fact]
         public void ComputeMeanBootstrap_LP3()
         {
-            LogPearson3 lp3 = new Statistics.Distributions.LogPearson3(1, 1, 1, 100);
+            Statistics.Distributions.LogPearson3 lp3 = new Statistics.Distributions.LogPearson3(1, 1, 1, 100);
             double[] probs = NextNonRandomSequence(lp3.SampleSize);
             IDistribution bootstrap = lp3.Sample(probs);
             double value = bootstrap.InverseCDF(.5);

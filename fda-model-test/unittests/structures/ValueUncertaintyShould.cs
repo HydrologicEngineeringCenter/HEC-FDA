@@ -1,6 +1,6 @@
 ﻿using Xunit;
+using Statistics;
 using HEC.FDA.Model.structures;
-using HEC.FDA.Statistics.Distributions;
 
 namespace fda_model_test.unittests.structures
 {

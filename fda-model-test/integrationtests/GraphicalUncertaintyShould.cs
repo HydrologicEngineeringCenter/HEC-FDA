@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Statistics;
+using Statistics.Histograms;
 using Xunit;
 using System.Diagnostics;
 using System.Threading;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.compute;
-using HEC.FDA.Statistics.Convergence;
-using HEC.FDA.Statistics.Histograms;
 
 namespace fda_model_test.integrationtests
 {
