@@ -53,6 +53,7 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
             _ratingChart = new Chart2D(VM.RatingRelationshipControl.ChartVM);
             _stageDamageChart = new Chart2D(VM.StageDamageControl.ChartVM);
             _damageFreqChart = new Chart2D(VM.DamageFrequencyControl.ChartVM);
+            _damageFreqChart.ToolTip = "This damage-frequency function reflects total damage";
 
             Chart2D[] charts = GetChartsThatAreShowing();
             var provider = new Chart2DProvider(GetChartsThatAreShowing);

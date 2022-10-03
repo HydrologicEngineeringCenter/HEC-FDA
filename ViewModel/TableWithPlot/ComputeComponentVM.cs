@@ -196,9 +196,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 }
             }
         }
-        public UncertainPairedData SelectedItemToPairedData(string damCat = "")
+        public UncertainPairedData SelectedItemToPairedData(string damCat = "", string assetCategory = "")
         {
-            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, damCat);
+            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, damCat, assetCategory);
         }
         public virtual XElement ToXML()
         {

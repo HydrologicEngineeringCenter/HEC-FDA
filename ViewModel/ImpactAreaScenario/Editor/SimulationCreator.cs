@@ -141,7 +141,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 bool allZeroes = IsCurveYValuesAllZero(curve);
                 if(!allZeroes)
                 {
-                    UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat);
+                    UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat, curve.AssetCategory);
                     stageDamages.Add(upd);
                 }
             }
