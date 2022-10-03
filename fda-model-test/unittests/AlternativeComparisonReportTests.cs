@@ -143,7 +143,7 @@ namespace fda_model_test.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             //double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             //double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             //double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
@@ -293,7 +293,7 @@ namespace fda_model_test.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             List<string> reportedDamCats = alternativeComparisonReportResults.GetDamageCategories();
 
             List<string> expectedList = new List<string>() { damCat };
@@ -428,7 +428,7 @@ namespace fda_model_test.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(mrp, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);

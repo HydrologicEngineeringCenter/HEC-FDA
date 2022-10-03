@@ -51,7 +51,6 @@ namespace HEC.FDA.ViewModel.Compute
             {
                 Progress = progress.Progress;
             }
-
         }
     }
 }

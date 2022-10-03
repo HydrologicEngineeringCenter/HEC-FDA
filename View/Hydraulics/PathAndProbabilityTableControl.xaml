@@ -17,12 +17,12 @@
                         <TextBlock Text="Name" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Probability}" Width="*">
+                <DataGridTextColumn Binding="{Binding Probability, StringFormat=N3}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding ReturnYear}" Width="*">
+                <DataGridTextColumn Binding="{Binding ReturnYear, StringFormat=N3}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Return Interval" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

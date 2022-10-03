@@ -2,6 +2,7 @@
 using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Base.Implementations;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,11 @@ namespace HEC.FDA.ViewModel.Compute
 
             List<Task> tasks = CreateAlternativeComputeTasks(allAlts);
 
+            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new Model.alternativeComparisonReport.AlternativeComparisonReport();
+            altCompReport.ProgressReport += Alt_ProgressReport;
+            MessageVM.InstanceHash.Add(altCompReport.GetHashCode());
+            MessageHub.Register(altCompReport);
+
             Task.Run(() =>
             {
                 foreach (Task t in tasks)
@@ -40,15 +46,13 @@ namespace HEC.FDA.ViewModel.Compute
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
-                AlternativeComparisonReportResults results = Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
+                AlternativeComparisonReportResults results = altCompReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
                 Progress = 100;
                 callback?.Invoke(results);
             }
             );
 
         }
-
-
 
         private void ComputeCompleted(AlternativeResults results)
         {
@@ -98,7 +102,13 @@ namespace HEC.FDA.ViewModel.Compute
             return withoutResult;
         }
 
-       
+        private void Alt_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
+        {
+            if (sender is Model.alternativeComparisonReport.AlternativeComparisonReport)
+            {
+                Progress = progress.Progress;
+            }
+        }
 
     }
 }
