@@ -40,7 +40,7 @@ jobs:
       run: dotnet publish View/HEC.FDA.View.csproj
 
     - name: Zip
-      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
+      run: 7z a D:\a\HEC-FDA\HEC-FDA\Build\publish\HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
