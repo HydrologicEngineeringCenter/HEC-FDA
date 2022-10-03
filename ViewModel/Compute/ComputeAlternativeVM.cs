@@ -6,7 +6,6 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
-using metrics;
 using System;
 using System.Threading.Tasks;
 
