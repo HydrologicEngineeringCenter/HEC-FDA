@@ -1,8 +1,8 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot.Data;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.MVVMFramework.ViewModel.Implementations;
-using paireddata;
 using Statistics;
 using System;
 using System.Collections.ObjectModel;
@@ -196,9 +196,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 }
             }
         }
-        public UncertainPairedData SelectedItemToPairedData(string damCat = "")
+        public UncertainPairedData SelectedItemToPairedData(string damCat = "", string assetCategory = "")
         {
-            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, damCat);
+            return SelectedItem.ToUncertainPairedData(XLabel, YLabel, Name, Description, damCat, assetCategory);
         }
         public virtual XElement ToXML()
         {

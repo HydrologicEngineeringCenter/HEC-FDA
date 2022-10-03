@@ -1,7 +1,7 @@
-﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Utilities;
-using paireddata;
 using Statistics;
 using System;
 using System.Collections.Generic;

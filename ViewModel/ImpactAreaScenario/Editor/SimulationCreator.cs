@@ -1,16 +1,16 @@
-﻿using compute;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
-using paireddata;
 using Statistics;
 using System.Collections.Generic;
 using System.Linq;
-using static compute.ImpactAreaScenarioSimulation;
+using static HEC.FDA.Model.compute.ImpactAreaScenarioSimulation;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -141,7 +141,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 bool allZeroes = IsCurveYValuesAllZero(curve);
                 if(!allZeroes)
                 {
-                    UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat);
+                    UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat, curve.AssetCategory);
                     stageDamages.Add(upd);
                 }
             }

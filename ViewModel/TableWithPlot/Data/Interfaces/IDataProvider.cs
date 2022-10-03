@@ -1,4 +1,4 @@
-﻿using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces
         void RemoveRows(List<int> rowIndices);
         void AddRow(int i);
         void AddUnlinkedRow(int i);
-        UncertainPairedData ToUncertainPairedData(string xlabel, string ylabel, string name, string description, string category);
+        UncertainPairedData ToUncertainPairedData(string xlabel, string ylabel, string name, string description, string category = "Unassigned", string assetCategory = "Unassigned");
     }
 }
 

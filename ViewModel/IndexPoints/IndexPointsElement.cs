@@ -1,12 +1,8 @@
-﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
-using HEC.FDA.ViewModel.Saving;
+﻿using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -52,17 +48,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
             string header = StringConstants.EDIT_INDEX_POINTS_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header + Name);
             Navigate(tab, false, false);
-        }
-
-
-        public override void RemoveElement(object sender, EventArgs e)
-        {
-            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                PersistenceFactory.GetElementManager<IndexPointsElement>().Remove(this);
-                StudyFilesManager.DeleteDirectory(Name, GetType());
-            }
         }
 
         #endregion

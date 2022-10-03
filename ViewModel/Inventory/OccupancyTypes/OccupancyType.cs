@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using Statistics.Distributions;

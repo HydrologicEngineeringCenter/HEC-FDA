@@ -1,7 +1,6 @@
 ﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

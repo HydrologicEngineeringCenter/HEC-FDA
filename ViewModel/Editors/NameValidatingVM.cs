@@ -1,7 +1,4 @@
-﻿using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.ViewModel.Validation;
-
-namespace HEC.FDA.ViewModel.Editors
+﻿namespace HEC.FDA.ViewModel.Editors
 {
     public class NameValidatingVM : BaseViewModel
     {

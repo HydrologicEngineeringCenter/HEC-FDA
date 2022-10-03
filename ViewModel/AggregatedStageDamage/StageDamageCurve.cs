@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const String SELECTED_IMPACT_AREA_TAG = "SelectedImpactArea";
         private const String SELECTED_DAM_CAT_TAG = "SelectedDamCat";
         private const String ASSET_CATEGORY = "AssetCategory";
-        private const String CONSTRUCTION_TYPE = "AssetCategory";
+        private const String CONSTRUCTION_TYPE = "ConstructionType";
 
         public ImpactAreaRowItem ImpArea { get; }
         public string DamCat { get; }

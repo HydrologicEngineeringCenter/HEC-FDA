@@ -1,12 +1,10 @@
-﻿using compute;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
@@ -42,7 +40,7 @@ namespace HEC.FDA.ViewModel.Compute
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
-                AlternativeComparisonReportResults results = alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
+                AlternativeComparisonReportResults results = Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
                 Progress = 100;
                 callback?.Invoke(results);
             }

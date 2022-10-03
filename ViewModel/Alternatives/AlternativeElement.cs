@@ -1,5 +1,6 @@
-﻿using alternatives;
-using compute;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Compute;
@@ -7,7 +8,6 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,6 @@ namespace HEC.FDA.ViewModel.Alternatives
     public class AlternativeElement : ChildElement
     {
         private const string ALTERNATIVE = "Alternative";
-        private const string NAME = "Name";
-        private const string DESCRIPTION = "Description";
         public const string LAST_EDIT_DATE = "LastEditDate";
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
@@ -244,7 +242,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
             //todo: register somthing with the message hub?
-            AlternativeResults results = Alternative.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
+            AlternativeResults results = new Alternative().AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
             callback?.Invoke(results);
         }
 

@@ -1,7 +1,4 @@
-﻿using HEC.MVVMFramework.ViewModel.Validation;
-using System;
-using System.Linq;
-using HEC.MVVMFramework.Base.Enumerations;
+﻿using System;
 using System.IO;
 
 namespace HEC.FDA.ViewModel.Study

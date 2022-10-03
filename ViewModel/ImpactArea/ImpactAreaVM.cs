@@ -1,6 +1,4 @@
-﻿using HEC.MVVMFramework.ViewModel.Validation;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.ViewModel.Editors;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {

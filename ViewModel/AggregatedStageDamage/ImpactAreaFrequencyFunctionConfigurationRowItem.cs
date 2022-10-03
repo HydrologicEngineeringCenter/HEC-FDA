@@ -1,4 +1,4 @@
-﻿using paireddata;
+﻿using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {

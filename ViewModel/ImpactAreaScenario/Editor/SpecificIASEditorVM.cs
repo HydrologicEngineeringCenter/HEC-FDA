@@ -1,6 +1,4 @@
-﻿using compute;
-using HEC.CS.Collections;
-using paireddata;
+﻿using HEC.CS.Collections;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
@@ -15,9 +13,11 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using metrics;
 using Statistics;
 using HEC.MVVMFramework.Base.Events;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -25,6 +25,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     {
         private ThresholdsVM _additionalThresholdsVM;
         private StageDamageCurve _selectedDamageCurve;
+        private string _selectedAssetCategory;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
         private bool _showWarnings;
@@ -64,12 +65,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public int Year { get; set; } = DateTime.Now.Year;
         public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
+        public CustomObservableCollection<string> AssetCategories { get; } = new CustomObservableCollection<string>();
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> InflowOutflowElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> RatingCurveElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> ExteriorInteriorElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+
+        public string SelectedAssetCategory
+        {
+            get { return _selectedAssetCategory; }
+            set { _selectedAssetCategory = value; NotifyPropertyChanged(); }
+        }
 
         public StageDamageCurve SelectedDamageCurve
         {
@@ -354,6 +362,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (selectedStageDamage != null && selectedStageDamage.ChildElement != null)
             {
                 List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
+                LoadAssetCategories(stageDamageCurves);
 
                 DamageCategories.Clear();
                 DamageCategories.AddRange(stageDamageCurves);
@@ -366,6 +375,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 //the user selected the blank row. Clear the damage category combo
                 DamageCategories.Clear();
+            }
+        }
+
+        private void LoadAssetCategories(List<StageDamageCurve> stageDamageCurves)
+        {
+            List<string> assetCategories = new List<string>();
+            foreach(StageDamageCurve curve in stageDamageCurves)
+            {
+                assetCategories.Add(curve.AssetCategory);
+            }
+            AssetCategories.AddRange(assetCategories);
+            if(AssetCategories.Count > 0)
+            {
+                SelectedAssetCategory = AssetCategories[0];
             }
         }
 
@@ -492,7 +515,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 try
                 {
                     ImpactAreaScenarioResults result = simulation.PreviewCompute();
-                    EAD = result.ConsequenceResults.MeanDamage("Total", "Total", CurrentImpactArea.ID);
+                    EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCurve.DamCat, _selectedAssetCategory, CurrentImpactArea.ID);
                 }
                 catch (Exception ex)
                 {
@@ -551,7 +574,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         private UncertainPairedData getStageDamageFunction()
-        {
+        {      
             UncertainPairedData retval = null;
             if (SelectedDamageCurve != null)
             {
