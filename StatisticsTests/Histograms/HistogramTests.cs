@@ -423,7 +423,7 @@ namespace StatisticsTests.Histograms
         {
             int iterations = 10000;
             Normal normal = new Normal();
-            Random random = new Random();
+            Random random = new Random(1234);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             List<double> data = new List<double>();
             for (int i=0; i<iterations; i++)
