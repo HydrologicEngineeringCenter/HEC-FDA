@@ -510,6 +510,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
+                MedianRandomProvider randomProvider = new MedianRandomProvider();
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
                 try
                 {

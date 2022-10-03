@@ -5,7 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -92,7 +93,7 @@ namespace HEC.FDA.ViewModel.Inventory
             _BegDamDepthRow.SelectedItem = mappings.BeginningDamageDepthCol;
             _YearInConstructionRow.SelectedItem = mappings.YearInConstructionCol;
             _NotesRow.SelectedItem = mappings.NotesCol;
-            _NumberOfStructuresRow.SelectedItem = mappings.NumberOfStructuresCol;            
+            _NumberOfStructuresRow.SelectedItem = mappings.NumberOfStructuresCol;
         }
 
         #endregion
@@ -112,7 +113,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private void ElevationRadioChanged()
         {
             RequiredRows.Clear();
-            if(_FirstFloorElevationIsSelected)
+            if (_FirstFloorElevationIsSelected)
             {
                 RequiredRows.AddRange(FirstFloorElevationRows);
             }
@@ -151,7 +152,7 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
             OptionalRows.Add(_NumberOfStructuresRow);
-        }      
+        }
 
         private void PathChanged()
         {
@@ -160,7 +161,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void UpdateRows()
         {
-            List<string> allColumnNames = GetColumnNames();      
+            List<string> allColumnNames = GetColumnNames();
 
             //required rows
             _StructureIDRow.Items.Clear();
@@ -204,13 +205,13 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
         #region Functions
-        
+
 
         private object[] GetStructureNames()
         {
             object[] structureNames = null;
             DataTableView dtv = GetStructureInventoryTable();
-            if(dtv != null)
+            if (dtv != null)
             {
                 structureNames = dtv.GetColumn(_StructureIDRow.SelectedItem);
             }
@@ -229,6 +230,19 @@ namespace HEC.FDA.ViewModel.Inventory
             return dtv;
         }
 
+        private string getTerrainFile()
+        {
+            string filePath = "";
+            List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+            if (terrainElements.Count > 0)
+            {
+                //there can only be one terrain in the study
+                TerrainElement elem = terrainElements[0];
+                filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
+            }
+            return filePath;
+        }
+
         #region Validation
 
         /// <summary>
@@ -239,17 +253,10 @@ namespace HEC.FDA.ViewModel.Inventory
         /// <returns></returns>
         private List<StructureMissingDataRowItem> GetMissingTerrainElevations()
         {
-            string errorMessage = null;
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
-
-            StructureElevationsFromTerrainFile elevsFromTerrainHelper = new StructureElevationsFromTerrainFile(_Path);
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(elevsFromTerrainHelper.GetStructureElevationsFromTerrainFile(ref errorMessage).ToList());
-            if (errorMessage != null && errorMessage.Length > 0)
-            {
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
-            }
+            _StructureElevations.AddRange(Model.structures.Inventory.GetGroundElevationFromTerrain(Path, getTerrainFile()));
 
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
@@ -267,7 +274,6 @@ namespace HEC.FDA.ViewModel.Inventory
                 StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName, MissingDataType.TerrainElevation);
                 missingDataRows.Add(missingRow);
             }
-
             return missingDataRows;
         }
 
@@ -285,14 +291,14 @@ namespace HEC.FDA.ViewModel.Inventory
                 List<StructureMissingDataRowItem> missingDataRows = AreAllStructureValuesDefinedForRow(_StructureIDRow, MissingDataType.ID);
                 if (missingDataRows.Count > 0)
                 {
-                    vr.AddErrorMessage( "There are missing values in the selected structure id column.");
+                    vr.AddErrorMessage("There are missing values in the selected structure id column.");
                 }
                 else
                 {
                     FdaValidationResult validationResult = AreStructureIdsUnique();
-                    if(!validationResult.IsValid)
+                    if (!validationResult.IsValid)
                     {
-                        vr.AddErrorMessage( validationResult.ErrorMessage);
+                        vr.AddErrorMessage(validationResult.ErrorMessage);
                     }
                 }
             }
@@ -310,13 +316,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
                 object[] rows = dtv.GetColumn(_StructureIDRow.SelectedItem);
                 object[] distincRows = rows.Distinct().ToArray();
-                if(rows.Count() != distincRows.Count())
+                if (rows.Count() != distincRows.Count())
                 {
                     //then there are duplicates
                     vr.AddErrorMessage("Duplicate structure ID's were found. This is not allowed.");
-                }               
+                }
             }
-
             return vr;
         }
 
@@ -391,21 +396,21 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             FdaValidationResult vr = new FdaValidationResult();
             //these are the shared required rows
-            if(!_StructureIDRow.IsValid())
+            if (!_StructureIDRow.IsValid())
             {
-                vr.AddErrorMessage( "A structure ID selection is required.");
+                vr.AddErrorMessage("A structure ID selection is required.");
             }
-            if(!_OccupancyTypeRow.IsValid())
+            if (!_OccupancyTypeRow.IsValid())
             {
                 vr.AddErrorMessage("An occupancy type selection is required.");
             }
-           
+
             if (FirstFloorElevationIsSelected)
             {
                 //first floor elevation
                 if (!_FirstFloorElevRow.IsValid())
                 {
-                   vr.AddErrorMessage( "A first floor elevation selection is required.");
+                    vr.AddErrorMessage("A first floor elevation selection is required.");
                 }
             }
             else
@@ -413,9 +418,9 @@ namespace HEC.FDA.ViewModel.Inventory
                 //found height
                 if (!_FoundationHeightRow.IsValid())
                 {
-                    vr.AddErrorMessage( "A foundation height selection is required.");
+                    vr.AddErrorMessage("A foundation height selection is required.");
                 }
-                if(!FromTerrainFileIsSelected)
+                if (!FromTerrainFileIsSelected)
                 {
                     if (!_GroundElevRow.IsValid())
                     {
@@ -432,7 +437,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        #endregion  
+        #endregion
         #endregion
     }
 }
