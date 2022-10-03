@@ -8,44 +8,38 @@ namespace HEC.FDA.Model.hydraulics
     public class HydraulicProfile : IComparable
     {
         public double Probability { get; set; }
-        public string FilePath { get; set; }
-        public string TerrainPath { get; set; }
+        public string HydraulicsFilePath { get; set; }
         public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName, string terrainFile = null)
+        public HydraulicProfile(double probability, string hydraulicsFilepath, HydraulicDataSource dataSource, string profileName)
         {
             Probability = probability;
-            FilePath = filepath;
-            TerrainPath = terrainFile;
+            HydraulicsFilePath = hydraulicsFilepath;
             DataSourceFormat = dataSource;
             ProfileName = profileName;
         }
         public float[] GetWSE(PointMs pts)
         {
-
-            TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
-            float[] terrainElevs = terrain.ComputePointElevations(pts);
-
             if (DataSourceFormat == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts, terrainElevs);
+                return GetWSEFromGrids(pts);
             }
             else
             {
-                return GetWSEFromHDF(pts, terrainElevs);
+                return GetWSEFromHDF(pts);
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromGrids(PointMs pts)
         {
             //TODO Sample off grids
             return null;
         }
 
-        private float[] GetWSEFromHDF(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromHDF(PointMs pts)
         {
-            var rasResult = new RASResults(FilePath);
+            var rasResult = new RASResults(HydraulicsFilePath);
             var rasGeometry = rasResult.Geometry;
             var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
@@ -63,18 +57,14 @@ namespace HEC.FDA.Model.hydraulics
             {
                 profileIndex = rasResult.ProfileIndex(ProfileName);
             }
+            //ComputeSwitch requires terrian elevs, but they wont be used for WSE, so we give a dummy array
+            float[] dummyTerrainElevs = new float[pts.Count];
+
             // This will produce -9999 for NoData values.
-            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref WSE);
+            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, dummyTerrainElevs, null, ref WSE);
             return WSE;
         }
 
-
-        /// <summary>
-        /// allows for sorting based on probability of the profile.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
         public int CompareTo(object obj)
         {
             if (obj == null) return 1;
@@ -83,7 +73,7 @@ namespace HEC.FDA.Model.hydraulics
             if (otherProfile != null)
                 return Probability.CompareTo(otherProfile.Probability);
             else
-                throw new ArgumentException("Object is not a Temperature");
+                throw new ArgumentException("Object is not a HydraulicProfile");
         }
     }
 }
