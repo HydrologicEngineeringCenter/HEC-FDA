@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModelTest
         public void ReadAndWriteXML()
         {
             GraphicalDataProvider gdp = new GraphicalDataProvider();
-            UncertainPairedData upd = gdp.ToUncertainPairedData("x","y","name","dest","cat");
+            UncertainPairedData upd = gdp.ToUncertainPairedData("x","y","name","dest","cat","asset");
             XElement ele = upd.WriteToXML();
             UncertainPairedData readUPD = UncertainPairedData.ReadFromXML(ele);
             Assert.NotNull(readUPD);
