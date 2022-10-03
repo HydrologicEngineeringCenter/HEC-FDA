@@ -4,13 +4,14 @@ using HEC.FDA.Model.structures;
 
 namespace fda_model_test.unittests.structures
 {
+    [Trait("Category", "Unit")]
     public class InventoryShould
     {
         [Fact]
         public void ConstructFromValidShapefile()
         {
-            string pathToNSIShapefile = @"..\..\..\Resources\MuncieNSI\MuncieNSI.shp";
-            string pathToIAShapefile = @"..\..\..\Resources\MuncieImpactAreas\ImpactAreas.shp";
+            string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
+            string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
             StructureInventoryColumnMap map = new StructureInventoryColumnMap();
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
