@@ -5,13 +5,20 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {
-    public class AlternativeComparisonReport
+    public class AlternativeComparisonReport: IReportMessage, IProgressReport
     {
-        public static AlternativeComparisonReportResults ComputeAlternativeComparisonReport(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+
+        public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
+            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative comparison report compute")));
+            ReportProgress(this, new ProgressReportEventArgs(10));
+
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
             withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, beginComputeMessageArgs);
             List<ConsequenceDistributionResults> aaeqResults = ComputeDistributionOfAAEQDamageReduced(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
@@ -23,6 +30,8 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             List<ConsequenceDistributionResults> futureYearEADResults = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
             MessageEventArgs futureYearEADReducedMessageArgs = new MessageEventArgs(new Message("The distributions of future year EAD reduced for the given with-project conditions have been computed."));
             withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, futureYearEADReducedMessageArgs);
+
+            ReportProgress(this, new ProgressReportEventArgs(100));
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
         }
         private static List<ConsequenceDistributionResults> ComputeDistributionOfAAEQDamageReduced(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
@@ -236,5 +245,14 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         }
 
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
+        }
     }
 }

@@ -356,6 +356,7 @@ namespace HEC.FDA.Model.compute
                 }
 
             }
+            ReportProgress(this, new ProgressReportEventArgs(100));
             _impactAreaScenarioResults.ForceDeQueue();
         }
 

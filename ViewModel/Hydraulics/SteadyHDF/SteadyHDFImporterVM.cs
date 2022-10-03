@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -117,12 +118,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 FdaValidationResult fileValidResult = IsFileValid(fullpath);
                 if (fileValidResult.IsValid)
                 {
-                    //todo: get the list of values from ras mapper?
-                    //RASResults rasResults = new RASResults(fullpath);
-                    //string[] profileNames = rasResults.ProfileNames;
 
-                    string[] profileNames = new string[] {"cody", "kayak", "test"};
-
+                    string[] profileNames = GetProfileNamesFromFilePath(fullpath);
                     double prob = 0;
                     foreach (string file in profileNames)
                     {
@@ -139,9 +136,23 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 {
                     vr.AddErrorMessage(fileValidResult.ErrorMessage);
                     MessageBox.Show(vr.ErrorMessage, "Invalid Files", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 }
             }
+        }
+
+        private string[] GetProfileNamesFromFilePath(string fullpath)
+        {
+            string[] profileNames = null;
+            try
+            {
+                RasMapperLib.RASResults result = new RasMapperLib.RASResults(fullpath);
+                profileNames = result.ProfileNames;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error getting profile names from selected file: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return profileNames;
         }
 
         public override void Save()

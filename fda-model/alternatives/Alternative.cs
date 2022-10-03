@@ -28,7 +28,8 @@ namespace HEC.FDA.Model.alternatives
         public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear)
         {
-            ReportProgress(this, new ProgressReportEventArgs(55));
+            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative compute")));
+            ReportProgress(this, new ProgressReportEventArgs(10));
 
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
@@ -115,6 +116,7 @@ namespace HEC.FDA.Model.alternatives
                     }
                 }
             }
+            ReportProgress(this, new ProgressReportEventArgs(100));
             return alternativeResults;
         }
 
