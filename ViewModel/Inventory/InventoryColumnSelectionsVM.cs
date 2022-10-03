@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HEC.FDA.ViewModel.Watershed;
+using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -255,7 +256,7 @@ namespace HEC.FDA.ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(structures.Inventory.GetGroundElevationFromTerrain(Path, getTerrainFile()));
+            _StructureElevations.AddRange(Model.structures.Inventory.GetGroundElevationFromTerrain(Path, getTerrainFile()));
 
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
@@ -273,7 +274,6 @@ namespace HEC.FDA.ViewModel.Inventory
                 StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName, MissingDataType.TerrainElevation);
                 missingDataRows.Add(missingRow);
             }
-
             return missingDataRows;
         }
 
