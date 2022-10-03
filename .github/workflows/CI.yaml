@@ -46,4 +46,4 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: HEC-FDA-2.0-Snapshot
-        path: D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\HEC-FDA.7z
+        path: D:\a\HEC-FDA\HEC-FDA\Build\publish\HEC-FDA.7z
