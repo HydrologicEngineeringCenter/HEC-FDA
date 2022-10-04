@@ -14,10 +14,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         public IDistribution Y { get; set; }
         public SequentialRow PreviousRow { get; set; }
         public SequentialRow NextRow { get; set; }
+        public bool IsStrictMonotonic { get; set; }
         public SequentialRow(double x, IDistribution y, bool isStrictMonotonic = false, bool xIsDecreasing = false)
         {
             X = x;
             Y = y;
+            IsStrictMonotonic = isStrictMonotonic;
             if (xIsDecreasing)
             {
                 if (isStrictMonotonic)
@@ -72,14 +74,29 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 cExtreme = Y.InverseCDF(pval);
                 nExtreme = NextRow.Y.InverseCDF(pval);
-                return (cExtreme < nExtreme);
+                if (IsStrictMonotonic)
+                {
+                    return (cExtreme < nExtreme);
+                }
+                else
+                {
+                    return (cExtreme <= nExtreme);
+                }
             }
 
             else if (NextRow == null && PreviousRow != null)
             {
                 pExtreme = PreviousRow.Y.InverseCDF(pval);
                 cExtreme = Y.InverseCDF(pval);
-                return (pExtreme < cExtreme);
+                if (IsStrictMonotonic)
+                {
+                    return (pExtreme < cExtreme);
+                }
+                else
+                {
+                    return (pExtreme <= cExtreme);
+                }
+                
             }
 
             else if (NextRow == null && PreviousRow == null)
@@ -90,7 +107,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             pExtreme = PreviousRow.Y.InverseCDF(pval);
             cExtreme = Y.InverseCDF(pval);
             nExtreme = NextRow.Y.InverseCDF(pval);
-            return ((pExtreme < cExtreme) && (cExtreme < nExtreme));
+            if (IsStrictMonotonic)
+            {
+                return ((pExtreme < cExtreme) && (cExtreme < nExtreme));
+            }
+            else
+            {
+                return ((pExtreme <= cExtreme) && (cExtreme <= nExtreme));
+            }
         }
     }
 }
