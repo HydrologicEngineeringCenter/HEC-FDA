@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -23,6 +24,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #endregion
         #region Properties
+
+        //todo: repl
         public HydraulicType HydroType{get;set;}
         public bool IsDepthGrids { get; set; }
 
@@ -160,6 +163,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             return isEqual;
+        }
+
+        //todo: fix this. Maybe use this object yourself
+        public List<HydraulicProfile> CreateProfile()
+        {
+            List < HydraulicProfile > profiles = new List<HydraulicProfile>();
+            foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
+            {
+                profiles.Add( new HydraulicProfile(pathAndProb.Probability,pathAndProb.Path,pathAndProb.));
+
+            }
         }
 
         #endregion

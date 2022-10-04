@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.IO;
 using System.Xml.Linq;
@@ -82,6 +83,12 @@ namespace HEC.FDA.ViewModel.Inventory
             }
             return path;
         }
-     
+
+        //todo: maybe replace my mapping with this object?
+        public StructureInventoryColumnMap CreateColumnMap()
+        {
+            return new StructureInventoryColumnMap();
+        }
+
     }
 }

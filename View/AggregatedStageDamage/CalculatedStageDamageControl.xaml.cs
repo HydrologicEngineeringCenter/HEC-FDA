@@ -20,7 +20,7 @@ namespace HEC.FDA.View.AggregatedStageDamage
         {
             if (DataContext is CalculatedStageDamageVM vm)
             {
-                vm.ComputeCurves();
+                vm.ComputeCurves(                vm.GetOccupancyTypes());
             }
         }
 

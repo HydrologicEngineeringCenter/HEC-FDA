@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+﻿using HEC.FDA.Model.stageDamage;
+using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
@@ -186,8 +188,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        
-       
+        public List<OccupancyType> GetOccupancyTypes()
+        {
+            return CreateModelOcctypes();
+        }
 
         public void ComputeCurves()
         {
@@ -214,6 +218,26 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //modelComputeObject obj =  config.CreateModelComputeObject();
                 //someResultsObject = obj.compute();
                 //then i will translate the results into my VM row items to be displayed in the UI
+                    List<OccupancyType> occupancyTypes = CreateModelOcctypes();
+                //Storage.Connection.Instance.InventoryDirectory.
+                string pointShapefilePath = "";
+                string impAreaShapefilePath = "";
+                StructureInventoryColumnMap structureInventoryColumnMap = _SelectedStructureInventoryElement.CreateColumnMap();
+                StructureInventoryColumnMap colMap = new StructureInventoryColumnMap();
+                Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath,impAreaShapefilePath, structureInventoryColumnMap,occupancyTypes);
+
+                Model.hydraulics.HydraulicProfile profile = new Model.hydraulics.HydraulicProfile();
+                Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset();
+
+                foreach (ImpactAreaRowItem impRow in impactAreaElements[0].ImpactAreaRows)
+                {
+                    int impId = impRow.ID;
+
+                    OccupancyType occupancyType = new OccupancyType()
+                        
+                    ImpactAreaStageDamage stageDamage = new ImpactAreaStageDamage(impId,inv,);
+
+                }
 
 
                 //todo delete these dummy rows once we have the actual compute in place.
@@ -235,6 +259,33 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 MessageBox.Show(vr.ErrorMessage, "Unable to Compute", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
+        }
+
+        private List<OccupancyType> CreateModelOcctypes()
+        {
+            double[] expectedPercentDamage = new double[] { 0, .10, .20, .30, .40, .50 };
+            CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+            UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
+            UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
+            FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+            ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
+            ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
+            expectedCSVR = 0.9;
+            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+            string name = "MyOccupancyType";
+            string damageCategory = "DamageCategory";
+
+
+            OccupancyType occupancyType = OccupancyType.builder()
+        .withName(name)
+        .withDamageCategory(damageCategory)
+        .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
+        .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
+        .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+        .withStructureValueUncertainty(_structureValueUncertainty)
+        .withContentToStructureValueRatio(_contentToStructureValueRatio)
+        .build();
+            return new List<OccupancyType>();
         }
 
         private void TableDataChanged(object sender, EventArgs e)
