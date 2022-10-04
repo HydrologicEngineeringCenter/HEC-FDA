@@ -9,8 +9,6 @@
 	<ItemGroup>	
 		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.0-alpha-2022.7.22.2150" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
-		<PackageReference Include="USACE.HEC.FDA.Model" Version="1.1.0-alpha-2022-07-29-2231" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
