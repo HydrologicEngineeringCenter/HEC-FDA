@@ -7,7 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ras.Mapper" Version="1.0.21-beta-g2e34768d8b" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0-preview-20211130-02" />
 		<PackageReference Include="xunit" Version="2.4.2-pre.12" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -15,8 +14,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
 		<ProjectReference Include="..\Statistics\Statistics.csproj" />
