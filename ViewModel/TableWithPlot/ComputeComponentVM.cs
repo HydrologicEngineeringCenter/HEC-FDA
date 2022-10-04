@@ -165,11 +165,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             }
             else
             {
-                Options.Add(new DeterministicDataProvider());
-                Options.Add(new UniformDataProvider());
-                Options.Add(new NormalDataProvider());
+                Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
+                Options.Add(new UniformDataProvider(_IsStrictMonotonic));
+                Options.Add(new NormalDataProvider(_IsStrictMonotonic));
                 Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
-                Options.Add(new LogNormalDataProvider());
+                Options.Add(new LogNormalDataProvider(_IsStrictMonotonic));
             }
 
             SelectedItem = Options.First();
