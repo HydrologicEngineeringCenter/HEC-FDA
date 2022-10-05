@@ -9,41 +9,36 @@ namespace HEC.FDA.Model.hydraulics
     {
         public double Probability { get; set; }
         public string FilePath { get; set; }
-        public string TerrainPath { get; set; }
         public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName, string terrainFile = null)
+        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName)
         {
             Probability = probability;
             FilePath = filepath;
-            TerrainPath = terrainFile;
             DataSourceFormat = dataSource;
             ProfileName = profileName;
         }
         public float[] GetWSE(PointMs pts)
-        {
-
-            TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
-            float[] terrainElevs = terrain.ComputePointElevations(pts);
-
+        { 
+            
             if (DataSourceFormat == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts, terrainElevs);
+                return GetWSEFromGrids(pts);
             }
             else
             {
-                return GetWSEFromHDF(pts, terrainElevs);
+                return GetWSEFromHDF(pts);
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromGrids(PointMs pts)
         {
             //TODO Sample off grids
             return null;
         }
 
-        private float[] GetWSEFromHDF(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromHDF(PointMs pts)
         {
             var rasResult = new RASResults(FilePath);
             var rasGeometry = rasResult.Geometry;
@@ -64,7 +59,9 @@ namespace HEC.FDA.Model.hydraulics
                 profileIndex = rasResult.ProfileIndex(ProfileName);
             }
             // This will produce -9999 for NoData values.
-            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref WSE);
+            // Compute Switch requires an array of terrain elevations, but since we're using WSE they're not necessary. Mock array is just an array of propper size with values of 0. 
+            float[] mockTerrainElevs = new float[pts.Count];
+            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
 
@@ -83,7 +80,7 @@ namespace HEC.FDA.Model.hydraulics
             if (otherProfile != null)
                 return Probability.CompareTo(otherProfile.Probability);
             else
-                throw new ArgumentException("Object is not a Temperature");
+                throw new ArgumentException("Object is not a HydraulicProfile");
         }
     }
 }
