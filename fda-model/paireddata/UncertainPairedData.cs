@@ -42,6 +42,10 @@ namespace HEC.FDA.Model.paireddata
         {
             get { return _metadata.AssetCategory; }
         }
+        public int ImpactAreaID
+        {
+            get { return _metadata.ImpactAreaID; }
+        }
         public bool IsNull
         {
             get { return _metadata.IsNull; }
