@@ -17,7 +17,7 @@ namespace fda_model_test.unittests
         [Theory]
         [InlineData(pathToResult, HydraulicDataSource.UnsteadyHDF)]
         [InlineData(pathToResult, HydraulicDataSource.SteadyHDF)]
-        //[InlineData(pathToGrid, HydraulicDataSource.WSEGrid)]
+        [InlineData(pathToGrid, HydraulicDataSource.WSEGrid)]
 
         public void GetWSE(string path, HydraulicDataSource dataSource)
         {
