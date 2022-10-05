@@ -7,7 +7,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 
-namespace fda_model_test.integrationtests
+namespace HEC.FDA.ModelTest.integrationtests
 {
     /// <summary>
     /// The example data in this test is based on Bear Creek Workshop 4 FDA study data
@@ -63,8 +63,8 @@ namespace fda_model_test.integrationtests
         static string assetCat = "content";
         static int impactAreaID = 0;
         static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, curveType,assetCat);
-        
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, curveType, assetCat);
+
         [Theory]
         [InlineData(1234, 0.96)]
         public void ComputeMeanEADWithIterations_Test(int seed, double expected)
@@ -81,13 +81,13 @@ namespace fda_model_test.integrationtests
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider,convergenceCriteria);
-            double difference = Math.Abs(expected - results.ConsequenceResults.MeanDamage(damCat,assetCat,impactAreaID));
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            double difference = Math.Abs(expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID));
             double relativeDifference = difference / expected;
             double tolerance = 0.05;
             Assert.True(relativeDifference < tolerance);
         }
-        
+
 
     }
 }

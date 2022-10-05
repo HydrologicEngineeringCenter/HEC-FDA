@@ -8,7 +8,7 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class PerformanceTest
@@ -40,7 +40,7 @@ namespace fda_model_test.unittests
         [InlineData(9800, 20, 1, .02, 0.332392028244906)]
         public void ComputePerformanceWithSimulation_Test(double thresholdValue, int years, int iterations, double expectedAEP, double expectedLTEP)
         {
-            
+
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -69,12 +69,12 @@ namespace fda_model_test.unittests
                 .withStageDamages(uncertainPairedDataList)
                 .withAdditionalThreshold(threshold)
                 .build();
- 
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,false);
 
-            double actualAEP = results.MeanAEP(thresholdID); 
-            double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years); 
+            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
+
+            double actualAEP = results.MeanAEP(thresholdID);
+            double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years);
 
             double aepDifference = Math.Abs(expectedAEP - actualAEP);
             double aepRelativeDifference = aepDifference / expectedAEP;
@@ -92,7 +92,7 @@ namespace fda_model_test.unittests
         /// <param name="iterations"></param>
         /// <param name="expected"></param>
         [Theory]
-        [InlineData(9980, 1, .026)]  
+        [InlineData(9980, 1, .026)]
         public void ComputeLeveeAEP_Test(double thresholdValue, int iterations, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -119,13 +119,13 @@ namespace fda_model_test.unittests
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
                 .withAdditionalThreshold(threshold)
-                .withLevee(leveeCurve,thresholdValue)
+                .withLevee(leveeCurve, thresholdValue)
                 .build();
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
             double actual = results.MeanAEP(thresholdID);
-            Assert.Equal(expected,actual,2);
+            Assert.Equal(expected, actual, 2);
         }
         /// <summary>
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1ui_sPDAleoYyu-T3fgraY5ye-WAMVs_j/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
@@ -191,13 +191,13 @@ namespace fda_model_test.unittests
 
         [Fact]
         public void ConvergenceTest()
-        {            
+        {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             ThresholdEnum thresholdType = ThresholdEnum.ExteriorStage;
             double thresholdValue = 4.1;
             int thresholdID1 = 1;
             int thresholdID2 = 2;
-            Threshold threshold1 = new Threshold(thresholdID1, convergenceCriteria, thresholdType,thresholdValue);
+            Threshold threshold1 = new Threshold(thresholdID1, convergenceCriteria, thresholdType, thresholdValue);
             Threshold threshold2 = new Threshold(thresholdID2, convergenceCriteria, thresholdType, thresholdValue);
             PerformanceByThresholds performanceByThresholds = new PerformanceByThresholds();
             performanceByThresholds.AddThreshold(threshold1);
@@ -211,11 +211,11 @@ namespace fda_model_test.unittests
             Random random = new Random(seed);
             Normal normal = new Normal();
 
-            for (int i = 0; i < convergenceCriteria.MinIterations/2; i++)
+            for (int i = 0; i < convergenceCriteria.MinIterations / 2; i++)
             {
-                double uniformObservation1 = random.NextDouble()+1;
-                double uniformObservation2 = random.NextDouble()+2;
-                double messyObservation = normal.InverseCDF(random.NextDouble())* random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
+                double uniformObservation1 = random.NextDouble() + 1;
+                double uniformObservation2 = random.NextDouble() + 2;
+                double messyObservation = normal.InverseCDF(random.NextDouble()) * random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
                 double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
                 performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1, i);
                 performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2, i);
@@ -225,7 +225,7 @@ namespace fda_model_test.unittests
             ImpactAreaScenarioResults results = new ImpactAreaScenarioResults(id);
             results.PerformanceByThresholds = performanceByThresholds;
 
-            bool isFirstThresholdConverged = performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AssuranceTestForConvergence(.05,.95);
+            bool isFirstThresholdConverged = performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
             bool isSecondThresholdConverged = performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
             bool isPerformanceConverged = results.IsPerformanceConverged();
 
