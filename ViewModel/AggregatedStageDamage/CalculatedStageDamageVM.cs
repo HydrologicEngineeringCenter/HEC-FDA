@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.stageDamage;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.stageDamage;
 using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
@@ -195,13 +196,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public void ComputeCurves()
         {
-            //todo: this is creating dummy curves for now.
-            //todo: make this a seperate class. StageDamageConfiguration
-
-
-
-            //structures: need shapefile and mapping of occtype, the set of occtypes
-            //imp area frequency rows should get dumbed down to just impact area name to UPD curves
             //we know that we have an impact area. We only allow one, so it will be the first one.
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
@@ -212,34 +206,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
             {
-                Rows.Clear();
-
-                //todo: Make a call to the model and pass in the config object.
-                //modelComputeObject obj =  config.CreateModelComputeObject();
-                //someResultsObject = obj.compute();
-                //then i will translate the results into my VM row items to be displayed in the UI
-                    List<OccupancyType> occupancyTypes = CreateModelOcctypes();
-                //Storage.Connection.Instance.InventoryDirectory.
-                string pointShapefilePath = "";
-                string impAreaShapefilePath = "";
-                StructureInventoryColumnMap structureInventoryColumnMap = _SelectedStructureInventoryElement.CreateColumnMap();
-                StructureInventoryColumnMap colMap = new StructureInventoryColumnMap();
-                Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath,impAreaShapefilePath, structureInventoryColumnMap,occupancyTypes);
-
-                Model.hydraulics.HydraulicProfile profile = new Model.hydraulics.HydraulicProfile();
-                Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset();
-
-                foreach (ImpactAreaRowItem impRow in impactAreaElements[0].ImpactAreaRows)
-                {
-                    int impId = impRow.ID;
-
-                    OccupancyType occupancyType = new OccupancyType()
-                        
-                    ImpactAreaStageDamage stageDamage = new ImpactAreaStageDamage(impId,inv,);
-
-                }
-
-
+                Rows.Clear();            
+                //these are the rows in the computed table
+                List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
+                //todo: translate these into my row items below
+                LoadComputedCurveRows(stageDamageFunctions);
                 //todo delete these dummy rows once we have the actual compute in place.
                 for (int i = 1; i < 11; i++)
                 {
@@ -261,30 +232,59 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             
         }
 
+        private void LoadComputedCurveRows(List<UncertainPairedData> computedCurves)
+        {
+            //for (UncertainPairedData item in computedCurves)
+            for(int i =0;i<computedCurves.Count;i++)
+            {
+                UncertainPairedData upd = computedCurves[i];
+                ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+                curve.SetPairedData(upd);
+                //todo: we are losing the impact area info when computing. Maybe i need to make a wrapper class that holds the info i need for each curve?
+                ImpactAreaRowItem impRowItem = new ImpactAreaRowItem(-1, "ImpAreaTestName");
+                Rows.Add(new CalculatedStageDamageRowItem(i, impRowItem, upd.DamageCategory, curve,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
+
+            }
+
+        }
+
+        private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
+        {
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
+
+            int seed = 1234;
+            Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
+            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
+            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
+            //these are the rows in the computed table
+            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+            return stageDamageFunctions;
+        }
+
         private List<OccupancyType> CreateModelOcctypes()
         {
-            double[] expectedPercentDamage = new double[] { 0, .10, .20, .30, .40, .50 };
-            CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
-            UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-            UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-            FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
-            ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-            ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
-            expectedCSVR = 0.9;
-            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-            string name = "MyOccupancyType";
-            string damageCategory = "DamageCategory";
+        //    double[] expectedPercentDamage = new double[] { 0, .10, .20, .30, .40, .50 };
+        //    CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+        //    UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
+        //    UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
+        //    FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+        //    ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
+        //    ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
+        //    expectedCSVR = 0.9;
+        //    MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+        //    string name = "MyOccupancyType";
+        //    string damageCategory = "DamageCategory";
 
 
-            OccupancyType occupancyType = OccupancyType.builder()
-        .withName(name)
-        .withDamageCategory(damageCategory)
-        .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-        .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-        .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-        .withStructureValueUncertainty(_structureValueUncertainty)
-        .withContentToStructureValueRatio(_contentToStructureValueRatio)
-        .build();
+        //    OccupancyType occupancyType = OccupancyType.builder()
+        //.withName(name)
+        //.withDamageCategory(damageCategory)
+        //.withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
+        //.withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
+        //.withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+        //.withStructureValueUncertainty(_structureValueUncertainty)
+        //.withContentToStructureValueRatio(_contentToStructureValueRatio)
+        //.build();
             return new List<OccupancyType>();
         }
 

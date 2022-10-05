@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Utilities;
@@ -25,8 +26,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         #endregion
         #region Properties
 
-        //todo: repl
-        public HydraulicType HydroType{get;set;}
+        //todo: replace this enum with model enum
+        public HydraulicDataSource HydroType {get;set;}
         public bool IsDepthGrids { get; set; }
 
         public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
@@ -39,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
-        public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicType hydroType, int id)
+        public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicDataSource hydroType, int id)
             :base(name, "", description,  id)
         {
             HydroType = hydroType;
@@ -53,7 +54,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
-        public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicType hydroType, int id) 
+        public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
             HydroType = hydroType;
@@ -66,7 +67,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public HydraulicElement(XElement childElement, int id):base(childElement, id)
         {
             string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
-            Enum.TryParse(hydroType, out HydraulicType myHydroType);
+            Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
             HydroType = myHydroType;
 
             IsDepthGrids = Convert.ToBoolean(childElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
@@ -93,17 +94,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             switch (HydroType)
             {
-                case HydraulicType.Gridded:
+                case HydraulicDataSource.WSEGrid:
                     GriddedImporterVM vm = new GriddedImporterVM(this, actionManager);
                     DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElevGridded" + Name);
                     Navigate(tab, false, false);
                     break;
-                case HydraulicType.Steady:
+                case HydraulicDataSource.SteadyHDF:
                     SteadyHDFImporterVM steadyImporter = new SteadyHDFImporterVM(this, actionManager);
                     DynamicTabVM steadyTab = new DynamicTabVM(header, steadyImporter, "EditWatSurfElevSteady" + Name);
                     Navigate(steadyTab, false, false);
                     break;
-                case HydraulicType.Unsteady:
+                case HydraulicDataSource.UnsteadyHDF:
                     UnsteadyHDFImporterVM unsteadyVM = new UnsteadyHDFImporterVM(this, actionManager);
                     DynamicTabVM unsteadyTab = new DynamicTabVM(header, unsteadyVM, "EditWatSurfElevUnsteady" + Name);
                     Navigate(unsteadyTab, false, false);
@@ -165,16 +166,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return isEqual;
         }
 
-        //todo: fix this. Maybe use this object yourself
-        public List<HydraulicProfile> CreateProfile()
+        //todo: fix this. Maybe use this object yourself - yes, do that.
+        public List<HydraulicProfile> CreateProfiles()
         {
+            //todo: find the names of these rows.
             List < HydraulicProfile > profiles = new List<HydraulicProfile>();
             foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
             {
-                profiles.Add( new HydraulicProfile(pathAndProb.Probability,pathAndProb.Path,pathAndProb.));
-
+                //todo: put name in
+                string name = "";
+                profiles.Add( new HydraulicProfile(pathAndProb.Probability, pathAndProb.Path, HydroType, name));
             }
+            return profiles;
         }
+
+    
 
         #endregion
     }

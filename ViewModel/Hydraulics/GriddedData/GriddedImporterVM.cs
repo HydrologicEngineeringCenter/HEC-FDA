@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
@@ -255,7 +256,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);          
         }
 
@@ -274,7 +275,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
         #endregion

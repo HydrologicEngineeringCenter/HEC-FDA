@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged(); 
             }
         }
-        public GraphicalUncertainPairedData MyGraphical
+        public GraphicalUncertainPairedData GraphicalUncertainPairedData
         {
             get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
            
@@ -130,7 +130,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {
-            GraphicalUncertainPairedData graffical = MyGraphical;
+            GraphicalUncertainPairedData graffical = GraphicalUncertainPairedData;
             PairedData upperNonExceedence = graffical.SamplePairedData(.975) as PairedData;
             PairedData lowerNonExceedence = graffical.SamplePairedData(.025) as PairedData;
             double[] probs = lowerNonExceedence.Xvals;
@@ -160,7 +160,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             bool isEqual = true;
 
-            if (!MyGraphical.Equals(elem.MyGraphical))
+            if (!GraphicalUncertainPairedData.Equals(elem.GraphicalUncertainPairedData))
             {
                 isEqual = false;
             }

@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
@@ -243,7 +244,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Unsteady, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
             base.Save(elementToSave);
         }
 
@@ -263,7 +264,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Unsteady, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, id);
             base.Save(elementToSave);
         }
         #endregion

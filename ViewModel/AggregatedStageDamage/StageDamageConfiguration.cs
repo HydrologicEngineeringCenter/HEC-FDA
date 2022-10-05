@@ -1,4 +1,8 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.stageDamage;
+using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -10,7 +14,7 @@ using System.IO;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
-    public class StageDamageConfiguration
+    public class StageDamageConfiguration:BaseViewModel
     {
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public InventoryElement SelectedStructures { get; }
@@ -136,13 +140,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             switch(SelectedHydraulics.HydroType)
             {
-                case HydraulicType.Gridded:
+                case HydraulicDataSource.WSEGrid:
 
                     break;
-                case HydraulicType.Steady:
+                case HydraulicDataSource.SteadyHDF:
 
                     break;
-                case HydraulicType.Unsteady:
+                case HydraulicDataSource.UnsteadyHDF:
 
                     break;
 
@@ -186,6 +190,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
         }
 
+        private string GetStructuresDirectory()
+        {
+            return Connection.Instance.InventoryDirectory + "\\" + SelectedStructures.Name;
+        }
+
+        //todo: add this to the validation to make sure it exists. Make all these methods private?
+        private string GetStructuresPointShapefile()
+        {
+            return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
+        }
+
         public List<ImpactAreaFrequencyFunctionConfigurationRowItem> GetImpactAreaFrequencyRowItems()
         {
             List<ImpactAreaFrequencyFunctionConfigurationRowItem> rows = new List<ImpactAreaFrequencyFunctionConfigurationRowItem>();
@@ -201,7 +216,73 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 rows.Add(new ImpactAreaFrequencyFunctionConfigurationRowItem(item.ImpactArea.Name, freqUPD, stageDischargeUPD));
             }
             return rows;
+        }       
+
+        
+
+        public List<ImpactAreaStageDamage> CreateStageDamages()
+        {
+            //List<OccupancyType> occupancyTypes = CreateModelOcctypes();
+            ////Storage.Connection.Instance.InventoryDirectory.
+            //string pointShapefilePath = GetStructuresPointShapefile();
+            //string impAreaShapefilePath = GetImpactAreaShapefile();
+            //StructureInventoryColumnMap structureInventoryColumnMap = SelectedStructures.CreateColumnMap();
+            //StructureInventoryColumnMap colMap = new StructureInventoryColumnMap();
+            //Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath, 
+            //    structureInventoryColumnMap, occupancyTypes);
+
+            Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea.Name);
+            Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.CreateProfiles());
+
+            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
+            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
+
+            List<ImpactAreaStageDamage> stageDamages = new List<ImpactAreaStageDamage>();
+
+            foreach (ImpactAreaFrequencyFunctionRowItem impactAreaRow in ImpactAreaFrequencyRows)
+            {
+                int impactAreaId = impactAreaRow.ImpactArea.ID;
+
+                //we want to know if it is flow or stage
+                AnalyticalFrequencyElement freqElement = impactAreaRow.FrequencyFunction.Element;
+                bool isGraphical = !freqElement.IsAnalytical;
+                bool isFlow = true;
+                if (isGraphical)
+                {
+                    isFlow = freqElement.MyGraphicalVM.UseFlow;
+                }
+
+                if (isGraphical)
+                {
+                    if (isFlow)
+                    {
+                        GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
+                        UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria,
+                            graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData));
+
+                    }
+                    else
+                    {
+                        Model.paireddata.GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria,
+                            graphicalFrequency: graphicaluncertPairedData));
+                    }
+                }
+                else
+                {
+                    Statistics.Distributions.LogPearson3 logPearson3 = freqElement.CreateAnalyticalLP3Distribution();
+                    stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria, analyticalFlowFrequency: logPearson3));
+                }
+
+            }
+
+            return stageDamages;
+
         }
+
+        
+
 
     }
 }
