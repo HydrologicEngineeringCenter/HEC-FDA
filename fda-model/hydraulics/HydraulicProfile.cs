@@ -9,31 +9,26 @@ namespace HEC.FDA.Model.hydraulics
     {
         public double Probability { get; set; }
         public string FilePath { get; set; }
-        public string TerrainPath { get; set; }
         public HydraulicDataSource DataSourceFormat { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName, string terrainFile = null)
+        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName)
         {
             Probability = probability;
             FilePath = filepath;
-            TerrainPath = terrainFile;
             DataSourceFormat = dataSource;
             ProfileName = profileName;
         }
         public float[] GetWSE(PointMs pts)
-        {
-
-            TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
-            float[] terrainElevs = terrain.ComputePointElevations(pts);
-
+        { 
+            float[] mockTerrainElevs = new float[pts.Count];
             if (DataSourceFormat == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts, terrainElevs);
+                return GetWSEFromGrids(pts, mockTerrainElevs);
             }
             else
             {
-                return GetWSEFromHDF(pts, terrainElevs);
+                return GetWSEFromHDF(pts, mockTerrainElevs);
             }
         }
 
@@ -83,7 +78,7 @@ namespace HEC.FDA.Model.hydraulics
             if (otherProfile != null)
                 return Probability.CompareTo(otherProfile.Probability);
             else
-                throw new ArgumentException("Object is not a Temperature");
+                throw new ArgumentException("Object is not a HydraulicProfile");
         }
     }
 }
