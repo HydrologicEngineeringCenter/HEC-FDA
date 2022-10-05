@@ -152,6 +152,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                         Options[4] = new LogNormalDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[4];
                         break;
+
                 }
             }
 

@@ -212,11 +212,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //todo: translate these into my row items below
                 LoadComputedCurveRows(stageDamageFunctions);
                 //todo delete these dummy rows once we have the actual compute in place.
-                for (int i = 1; i < 11; i++)
-                {
-                    ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total", StageDamageConstructionType.COMPUTED));
-                }
+                //for (int i = 1; i < 11; i++)
+                //{
+                //    ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+                //    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total", StageDamageConstructionType.COMPUTED));
+                //}
                 //end dummy rows
                 if (Rows.Count > 0)
                 {                  
@@ -238,11 +238,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             for(int i =0;i<computedCurves.Count;i++)
             {
                 UncertainPairedData upd = computedCurves[i];
-                ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                curve.SetPairedData(upd);
+                ComputeComponentVM computeComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+                
+                computeComponent.SetPairedData(upd);
                 //todo: we are losing the impact area info when computing. Maybe i need to make a wrapper class that holds the info i need for each curve?
+                //get name from upd.impactareaid
                 ImpactAreaRowItem impRowItem = new ImpactAreaRowItem(-1, "ImpAreaTestName");
-                Rows.Add(new CalculatedStageDamageRowItem(i, impRowItem, upd.DamageCategory, curve,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
+                Rows.Add(new CalculatedStageDamageRowItem(i, impRowItem, upd.DamageCategory, computeComponent,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
 
             }
 

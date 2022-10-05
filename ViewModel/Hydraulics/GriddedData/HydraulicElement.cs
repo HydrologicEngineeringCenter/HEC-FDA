@@ -175,12 +175,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 //todo: put name in
                 string name = "";
-                profiles.Add( new HydraulicProfile(pathAndProb.Probability, pathAndProb.Path, HydroType, name));
+                //i need the whole path
+                string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + pathAndProb.Path;
+                profiles.Add( new HydraulicProfile(pathAndProb.Probability, path, HydroType, name));
             }
             return profiles;
         }
-
-    
 
         #endregion
     }
