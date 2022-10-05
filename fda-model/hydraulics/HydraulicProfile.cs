@@ -21,24 +21,24 @@ namespace HEC.FDA.Model.hydraulics
         }
         public float[] GetWSE(PointMs pts)
         { 
-            float[] mockTerrainElevs = new float[pts.Count];
+            
             if (DataSourceFormat == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts, mockTerrainElevs);
+                return GetWSEFromGrids(pts);
             }
             else
             {
-                return GetWSEFromHDF(pts, mockTerrainElevs);
+                return GetWSEFromHDF(pts);
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromGrids(PointMs pts)
         {
             //TODO Sample off grids
             return null;
         }
 
-        private float[] GetWSEFromHDF(PointMs pts, float[] terrainElevs)
+        private float[] GetWSEFromHDF(PointMs pts)
         {
             var rasResult = new RASResults(FilePath);
             var rasGeometry = rasResult.Geometry;
@@ -59,7 +59,9 @@ namespace HEC.FDA.Model.hydraulics
                 profileIndex = rasResult.ProfileIndex(ProfileName);
             }
             // This will produce -9999 for NoData values.
-            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, terrainElevs, null, ref WSE);
+            // Compute Switch requires an array of terrain elevations, but since we're using WSE they're not necessary. Mock array is just an array of propper size with values of 0. 
+            float[] mockTerrainElevs = new float[pts.Count];
+            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
 
