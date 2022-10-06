@@ -10,7 +10,7 @@ using HEC.FDA.Model.scenarios;
 using HEC.FDA.Model.alternativeComparisonReport;
 using HEC.FDA.Model.alternatives;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class AlternativeComparisonReportTest
@@ -312,7 +312,7 @@ namespace fda_model_test.unittests
             }
             Assert.True(testPasses);
         }
-        
+
         [Theory]
         [InlineData(51442, 36500, 75000, 50, .0275, 2023, 2072, 1, 75000)]
         [InlineData(59410, 36500, 75000, 50, .0275, 2023, 2050, 1, 75000)]

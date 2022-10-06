@@ -2,12 +2,12 @@
 using Statistics;
 using HEC.FDA.Model.structures;
 
-namespace fda_model_test.unittests.structures
+namespace HEC.FDA.ModelTest.unittests.structures
 {
     public class ValueRatioWithUncertaintyShould
     {
         [Theory]
-        [InlineData(IDistributionEnum.Normal, .1, .6, 0, .95,.764485)]
+        [InlineData(IDistributionEnum.Normal, .1, .6, 0, .95, .764485)]
         [InlineData(IDistributionEnum.LogNormal, .57, -.85, 0, .05, .167367)]
         [InlineData(IDistributionEnum.Triangular, .7, .85, .9, .88, .865359)]
         [InlineData(IDistributionEnum.Uniform, .6, .8, .95, .40, .74)]
