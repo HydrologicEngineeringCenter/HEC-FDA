@@ -170,7 +170,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public List<HydraulicProfile> CreateProfiles()
         {
             //todo: find the names of these rows.
-            List < HydraulicProfile > profiles = new List<HydraulicProfile>();
+            List <HydraulicProfile> profiles = new List<HydraulicProfile>();
             foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
             {
                 //todo: put name in

@@ -182,6 +182,19 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         #endregion
 
+        public ImpactAreaRowItem GetImpactAreaRow(int impactAreaID)
+        {
+            ImpactAreaRowItem returnRow = null;
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                if(row.ID == impactAreaID)
+                {
+                    returnRow = row;
+                }
+            }
+            return returnRow;
+        }
+
         public bool Equals(ImpactAreaElement elem)
         {
             bool isEqual = true;

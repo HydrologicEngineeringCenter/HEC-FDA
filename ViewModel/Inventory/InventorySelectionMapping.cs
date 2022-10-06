@@ -54,6 +54,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public string YearInConstructionCol { get; }
         public string NotesCol { get; }
         public string NumberOfStructuresCol { get; }
+        //             occtype name, occtype reference
         public Dictionary<string, OcctypeReference> OcctypesDictionary { get; } = new Dictionary<string, OcctypeReference>();
 
         public InventorySelectionMapping(InventoryColumnSelectionsVM selections, Dictionary<string, OcctypeReference> occtypeDictionary)

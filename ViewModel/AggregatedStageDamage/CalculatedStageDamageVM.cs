@@ -189,10 +189,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        public List<OccupancyType> GetOccupancyTypes()
-        {
-            return CreateModelOcctypes();
-        }
 
         public void ComputeCurves()
         {
@@ -203,21 +199,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
                 ImpactAreaFrequencyRows);
 
+            //todo: add to the validate?
             FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
             {
-                Rows.Clear();            
-                //these are the rows in the computed table
+                Rows.Clear();           
                 List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
-                //todo: translate these into my row items below
                 LoadComputedCurveRows(stageDamageFunctions);
-                //todo delete these dummy rows once we have the actual compute in place.
-                //for (int i = 1; i < 11; i++)
-                //{
-                //    ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                //    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total", StageDamageConstructionType.COMPUTED));
-                //}
-                //end dummy rows
+
                 if (Rows.Count > 0)
                 {                  
                     ShowChart = true;
@@ -234,22 +223,25 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void LoadComputedCurveRows(List<UncertainPairedData> computedCurves)
         {
-            //for (UncertainPairedData item in computedCurves)
             for(int i =0;i<computedCurves.Count;i++)
             {
                 UncertainPairedData upd = computedCurves[i];
-                ComputeComponentVM computeComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                
+                ComputeComponentVM computeComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);              
                 computeComponent.SetPairedData(upd);
-                //todo: we are losing the impact area info when computing. Maybe i need to make a wrapper class that holds the info i need for each curve?
-                //get name from upd.impactareaid
-                ImpactAreaRowItem impRowItem = new ImpactAreaRowItem(-1, "ImpAreaTestName");
-                Rows.Add(new CalculatedStageDamageRowItem(i, impRowItem, upd.DamageCategory, computeComponent,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
-
+                //get the impact area from the id
+                int impactAreaID = upd.ImpactAreaID;
+                ImpactAreaRowItem impactAreaRowItem = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0].GetImpactAreaRow(impactAreaID);
+                
+                Rows.Add(new CalculatedStageDamageRowItem(i+1, impactAreaRowItem, upd.DamageCategory, computeComponent,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
             }
 
         }
 
+        /// <summary>
+        /// Runs the stage damage compute
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns>The list of UPD curves created during the compute</returns>
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
@@ -262,33 +254,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
             return stageDamageFunctions;
         }
-
-        private List<OccupancyType> CreateModelOcctypes()
-        {
-        //    double[] expectedPercentDamage = new double[] { 0, .10, .20, .30, .40, .50 };
-        //    CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
-        //    UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-        //    UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-        //    FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
-        //    ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-        //    ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
-        //    expectedCSVR = 0.9;
-        //    MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-        //    string name = "MyOccupancyType";
-        //    string damageCategory = "DamageCategory";
-
-
-        //    OccupancyType occupancyType = OccupancyType.builder()
-        //.withName(name)
-        //.withDamageCategory(damageCategory)
-        //.withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-        //.withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-        //.withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-        //.withStructureValueUncertainty(_structureValueUncertainty)
-        //.withContentToStructureValueRatio(_contentToStructureValueRatio)
-        //.build();
-            return new List<OccupancyType>();
-        }
+       
 
         private void TableDataChanged(object sender, EventArgs e)
         {

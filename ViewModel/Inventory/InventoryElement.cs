@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.structures;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -125,30 +126,59 @@ namespace HEC.FDA.ViewModel.Inventory
             return inv;
         }
 
-        private List<OccupancyType> CreateModelOcctypes()
+        private FirstFloorElevationUncertainty CreateFirstFloorUncertainty(Statistics.ContinuousDistribution foundationHeightUncertainty)
         {
-        //    double[] expectedPercentDamage = new double[] { 0, .10, .20, .30, .40, .50 };
-        //    CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
-        //    UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-        //    UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(depths, percentDamages, metaData);
-        //    FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
-        //    ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-        //    ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
-        //    expectedCSVR = 0.9;
-        //    MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-        //    string name = "MyOccupancyType";
-        //    string damageCategory = "DamageCategory";
+            //foundationHeightUncertainty.ToCoordinates
+            //todo: not sure how to handle this
+            FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(foundationHeightUncertainty.Type, .5);
+
+            return firstFloorElevationUncertainty;
+        }
+
+        private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
+        {
+            OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+            UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
+            UncertainPairedData contentUPD = ot.ContentItem.Curve.SelectedItemToPairedData();
+            UncertainPairedData vehicleUPD = ot.VehicleItem.Curve.SelectedItemToPairedData();
+            UncertainPairedData otherUPD = ot.OtherItem.Curve.SelectedItemToPairedData();
+
+            Statistics.ContinuousDistribution foundationHeightUncertainty = ot.FoundationHeightUncertainty;
+            FirstFloorElevationUncertainty firstFloorElevationUncertainty = CreateFirstFloorUncertainty(foundationHeightUncertainty);
 
 
-        //    OccupancyType occupancyType = OccupancyType.builder()
-        //.withName(name)
-        //.withDamageCategory(damageCategory)
-        //.withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-        //.withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-        //.withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+            //    ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
+            //    ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
+            //    expectedCSVR = 0.9;
+            //    MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+            //    string name = "MyOccupancyType";
+            //    string damageCategory = "DamageCategory";
+
+
+            OccupancyType occupancyType = OccupancyType.builder()
+        .withName(ot.Name)
+        .withDamageCategory(ot.DamageCategory)
+        .withStructureDepthPercentDamage(structureUPD)
+        .withContentDepthPercentDamage(contentUPD)
+        .withVehicleDepthPercentDamage(vehicleUPD)
+        .withOtherDepthPercentDamage(otherUPD)
+
+        .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
         //.withStructureValueUncertainty(_structureValueUncertainty)
         //.withContentToStructureValueRatio(_contentToStructureValueRatio)
-        //.build();
+        .build();
+            return occupancyType;
+        }
+
+        private List<OccupancyType> CreateModelOcctypes()
+        {
+            List<OccupancyType> occupancyTypes = new List<OccupancyType>();
+            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = SelectionMappings.OcctypesDictionary;
+            foreach(OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
+            {
+                occupancyTypes.Add(CreateModelOcctype(otRef));
+            }
+      
             return new List<OccupancyType>();
         }
 
