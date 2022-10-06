@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
@@ -51,10 +52,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             Name = elem.Name;
             Description = elem.Description;
             IsDepthGridChecked = elem.IsDepthGrids;
-            foreach (PathAndProbability pp in elem.RelativePathAndProbability)
+            foreach (HydraulicProfile pp in elem.Profiles)
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
-                string folderName = Path.GetFileName(pp.Path);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FilePath;
+                string folderName = Path.GetFileName(pp.FilePath);
                 AddRow(folderName, path, pp.Probability, false);
             }
         }
@@ -198,11 +199,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         {
             CopyFileToStudyDirectory();
 
-            List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
+                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName, HydraulicDataSource.SteadyHDF, Name));
             }
 
             int id = GetElementID<HydraulicElement>();
@@ -216,10 +217,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             //if name is different then we need to update the directory name in the study hydraulics folder.
             RenameDirectoryInStudy();
 
-            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
-                newPathProbs.Add(new PathAndProbability(ListOfRows[i].Name, ListOfRows[i].Probability));
+                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, ListOfRows[i].Name, HydraulicDataSource.SteadyHDF, Name));
             }
             HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);

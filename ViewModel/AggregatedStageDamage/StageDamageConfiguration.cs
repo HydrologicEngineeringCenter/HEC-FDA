@@ -223,7 +223,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public List<ImpactAreaStageDamage> CreateStageDamages()
         {
             Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea.Name);
-            Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.CreateProfiles());
+
+            Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.Profiles);
 
             Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
             Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();

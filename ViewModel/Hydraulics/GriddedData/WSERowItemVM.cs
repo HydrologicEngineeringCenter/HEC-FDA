@@ -13,7 +13,7 @@
             IsSelected = true;
             Name = element.Name;
             Description = element.Description;
-            NumberOfElevations = element.RelativePathAndProbability.Count;
+            NumberOfElevations = element.Profiles.Count;
             IsUsingWSE = !element.IsDepthGrids;
             Element = element;
 

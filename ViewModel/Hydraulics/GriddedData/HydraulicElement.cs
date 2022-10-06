@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public HydraulicDataSource HydroType {get;set;}
         public bool IsDepthGrids { get; set; }
 
-        public List<PathAndProbability> RelativePathAndProbability { get; } = new List<PathAndProbability>();
+        public List<HydraulicProfile> Profiles { get; } = new List<HydraulicProfile>();
 
         #endregion
         #region Constructors
@@ -44,21 +44,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             :base(name, "", description,  id)
         {
             HydroType = hydroType;
-            List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> pathAndProbs = new List<HydraulicProfile>();
             foreach(double p in probabilites)
             {
-                pathAndProbs.Add(new PathAndProbability("NA", p));
+                pathAndProbs.Add(new HydraulicProfile(p,"NA", hydroType,name));
             }
-            RelativePathAndProbability.AddRange(pathAndProbs);
+            Profiles.AddRange(pathAndProbs);
             IsDepthGrids = isDepthGrids;
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
-        public HydraulicElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, HydraulicDataSource hydroType, int id) 
+        public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities,bool isDepthGrids, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
             HydroType = hydroType;
-            RelativePathAndProbability.AddRange(relativePathAndProbabilities);
+            Profiles.AddRange(relativePathAndProbabilities);
             IsDepthGrids = isDepthGrids;
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
@@ -77,7 +77,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             IEnumerable<XElement> rowElems = rowsElem.Elements(PathAndProbability.PATH_AND_PROB);
             foreach (XElement elem in rowElems)
             {
-                RelativePathAndProbability.Add(new PathAndProbability(elem));
+                Profiles.Add(new HydraulicProfile(elem));
             }
 
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
@@ -124,7 +124,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             //path and probs
             XElement pathAndProbsElem = new XElement(PATH_AND_PROBS);
-            foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
+            foreach (HydraulicProfile pathAndProb in Profiles)
             {
                 pathAndProbsElem.Add(pathAndProb.ToXML());
             }
@@ -150,13 +150,13 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 isEqual = false;
             }
-            if(RelativePathAndProbability.Count != elem.RelativePathAndProbability.Count)
+            if(Profiles.Count != elem.Profiles.Count)
             {
                 isEqual = false;
             }
-            for(int i = 0;i<RelativePathAndProbability.Count;i++)
+            for(int i = 0;i<Profiles.Count;i++)
             {
-                if(!RelativePathAndProbability[i].Equals(elem.RelativePathAndProbability[i]))
+                if(!Profiles[i].Equals(elem.Profiles[i]))
                 {
                     isEqual = false;
                     break;
@@ -167,20 +167,20 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
 
         //todo: fix this. Maybe use this object yourself - yes, do that.
-        public List<HydraulicProfile> CreateProfiles()
-        {
-            //todo: find the names of these rows.
-            List <HydraulicProfile> profiles = new List<HydraulicProfile>();
-            foreach (PathAndProbability pathAndProb in RelativePathAndProbability)
-            {
-                //todo: put name in
-                string name = "";
-                //i need the whole path
-                string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + pathAndProb.Path;
-                profiles.Add( new HydraulicProfile(pathAndProb.Probability, path, HydroType, name));
-            }
-            return profiles;
-        }
+        //public List<HydraulicProfile> CreateProfiles()
+        //{
+        //    //todo: find the names of these rows.
+        //    List <HydraulicProfile> profiles = new List<HydraulicProfile>();
+        //    foreach (HydraulicProfile pathAndProb in RelativePathAndProbability)
+        //    {
+        //        //todo: put name in
+        //        string name = "";
+        //        //i need the whole path
+        //        string path = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + pathAndProb.FilePath;
+        //        profiles.Add( new HydraulicProfile(pathAndProb.Probability, path, HydroType, name));
+        //    }
+        //    return profiles;
+        //}
 
         #endregion
     }

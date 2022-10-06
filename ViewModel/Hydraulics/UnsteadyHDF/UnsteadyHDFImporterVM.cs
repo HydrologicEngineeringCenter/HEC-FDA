@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
@@ -47,10 +48,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             IsDepthGridChecked = elem.IsDepthGrids;
-            foreach (PathAndProbability pp in elem.RelativePathAndProbability)
+            foreach (HydraulicProfile pp in elem.Profiles)
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
-                string folderName = Path.GetFileName(pp.Path);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FilePath;
+                string folderName = Path.GetFileName(pp.FilePath);
                 _OriginalFileNames.Add(folderName);
                 AddRow(folderName, path, pp.Probability, false);
             }
@@ -229,7 +230,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
             RenameDirectoryInStudy();
             //might have to rename the sub folders.
-            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
                 string newName = ListOfRows[i].Name;
@@ -241,7 +242,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFileNames[i] = newName;
                 }
-                newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, newName, HydraulicDataSource.UnsteadyHDF, Name));
             }
 
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
@@ -253,12 +254,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
 
-            List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 _OriginalFileNames.Add(row.Name);
                 string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
+                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName, HydraulicDataSource.UnsteadyHDF, Name));
 
                 File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
             }

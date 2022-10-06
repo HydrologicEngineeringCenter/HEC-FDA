@@ -2,11 +2,19 @@
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
 {
     public class HydraulicProfile : IComparable
     {
+        public const string PROFILE = "HydraulicProfile";
+        private const string PATH = "Path";
+        private const string PROB = "Probability";
+        private const string DATA_SOURCE = "DataSource";
+        private const string NAME = "Name";
+
+
         public double Probability { get; set; }
         public string FilePath { get; set; }
         public HydraulicDataSource DataSourceFormat { get; set; }
@@ -19,6 +27,18 @@ namespace HEC.FDA.Model.hydraulics
             DataSourceFormat = dataSource;
             ProfileName = profileName;
         }
+
+        public HydraulicProfile(XElement elem)
+        {
+            Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
+            FilePath = elem.Attribute(PATH).Value;
+            ProfileName = elem.Attribute(NAME).Value;
+
+            string dataSource = elem.Attribute(DATA_SOURCE).Value;
+            Enum.TryParse(dataSource, out HydraulicDataSource myHydroSource);
+            DataSourceFormat = myHydroSource;
+        }
+
         public float[] GetWSE(PointMs pts)
         { 
             
@@ -82,6 +102,18 @@ namespace HEC.FDA.Model.hydraulics
             else
                 throw new ArgumentException("Object is not a HydraulicProfile");
         }
+
+        public XElement ToXML()
+        {
+            XElement elem = new XElement(PROFILE);
+            elem.SetAttributeValue(NAME, ProfileName);
+            elem.SetAttributeValue(PATH, FilePath);
+            elem.SetAttributeValue(PROB, Probability);
+            elem.SetAttributeValue(DATA_SOURCE, DataSourceFormat.ToString());
+
+            return elem;
+        }
+
     }
 }
 
