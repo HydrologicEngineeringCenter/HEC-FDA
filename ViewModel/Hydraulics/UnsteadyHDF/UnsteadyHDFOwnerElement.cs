@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         {
             if(e.Element is HydraulicElement elem)
             {
-                if(elem.HydroType == HydraulicDataSource.UnsteadyHDF)
+                if(elem.DataSet.DataSource == HydraulicDataSource.UnsteadyHDF)
                 {
                     AddElement(e.Element);
                 }

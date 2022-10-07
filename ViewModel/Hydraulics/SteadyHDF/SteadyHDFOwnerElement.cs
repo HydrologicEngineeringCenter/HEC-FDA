@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         {
             if (e.Element is HydraulicElement elem)
             {
-                if (elem.HydroType == HydraulicDataSource.SteadyHDF)
+                if (elem.DataSet.DataSource == HydraulicDataSource.SteadyHDF)
                 {
                     AddElement(e.Element);
                 }

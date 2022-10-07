@@ -13,8 +13,8 @@
             IsSelected = true;
             Name = element.Name;
             Description = element.Description;
-            NumberOfElevations = element.Profiles.Count;
-            IsUsingWSE = !element.IsDepthGrids;
+            NumberOfElevations = element.DataSet.HydraulicProfiles.Count;
+            IsUsingWSE = !element.DataSet.IsDepthGrids;
             Element = element;
 
         }

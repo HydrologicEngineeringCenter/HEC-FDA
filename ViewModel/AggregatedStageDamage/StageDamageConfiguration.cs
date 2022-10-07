@@ -138,7 +138,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = new FdaValidationResult();
             string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
 
-            switch(SelectedHydraulics.HydroType)
+            switch(SelectedHydraulics.DataSet.DataSource)
             {
                 case HydraulicDataSource.WSEGrid:
 
@@ -224,7 +224,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea.Name);
 
-            Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.Profiles);
+            Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.DataSet.HydraulicProfiles, SelectedHydraulics.DataSet.DataSource);
+            string hydroParentDirectory = SelectedHydraulics.GetDirectoryInStudy();
+
 
             Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
             Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
@@ -250,14 +252,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     {
                         GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
                         UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
-                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria,
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria, hydroParentDirectory,
                             graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData));
 
                     }
                     else
                     {
                         GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
-                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria,
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria, hydroParentDirectory,
                             graphicalFrequency: graphicaluncertPairedData));
                     }
                 }
@@ -265,7 +267,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     Statistics.Distributions.LogPearson3 logPearson3 = freqElement.CreateAnalyticalLP3Distribution();
                     UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
-                    stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria, analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData));
+                    stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, hydros, convergenceCriteria, hydroParentDirectory,
+                        analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData));
                 }
 
             }

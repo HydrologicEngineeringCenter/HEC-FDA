@@ -16,7 +16,7 @@ namespace HEC.FDA.View.Hydraulics
             InitializeComponent();
             txt_name.Text = element.Name;
             txt_desc.Text = element.Description;
-            lbl_number.Content = "Number of Elevations: " + element.Profiles.Count;
+            lbl_number.Content = "Number of Elevations: " + element.DataSet.HydraulicProfiles.Count;
         }
     }
 }

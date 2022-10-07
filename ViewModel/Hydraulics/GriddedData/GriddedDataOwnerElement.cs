@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             if (e.Element is HydraulicElement elem)
             {
-                if (elem.HydroType == HydraulicDataSource.WSEGrid)
+                if (elem.DataSet.DataSource == HydraulicDataSource.WSEGrid)
                 {
                     AddElement(e.Element);
                 }

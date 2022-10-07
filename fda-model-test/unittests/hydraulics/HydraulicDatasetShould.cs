@@ -15,9 +15,9 @@ namespace fda_model_test.unittests.hydraulics
             double[] ExceedenceProbs = new double[] { 0.5, 0.99, 0.01 };
             foreach(double prob in ExceedenceProbs)
             {
-                profiles.Add(new HydraulicProfile(prob,"", HydraulicDataSource.UnsteadyHDF,""));
+                profiles.Add(new HydraulicProfile(prob,""));
             }
-            HydraulicDataset dataset = new HydraulicDataset(profiles);
+            HydraulicDataset dataset = new HydraulicDataset(profiles, HydraulicDataSource.UnsteadyHDF);
 
             double[] expected = new double[] { 0.99, 0.5, 0.01 };
             double[] actual = new double[3];

@@ -2,6 +2,7 @@
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
@@ -11,44 +12,39 @@ namespace HEC.FDA.Model.hydraulics
         public const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
-        private const string DATA_SOURCE = "DataSource";
-        private const string NAME = "Name";
+
 
 
         public double Probability { get; set; }
-        public string FilePath { get; set; }
-        public HydraulicDataSource DataSourceFormat { get; set; }
-        public string ProfileName { get; set; }
+        /// <summary>
+        /// This is not the full path. This is just the file name. You need to get the hydraulic element name to create the path.
+        /// 
+        /// </summary>
+        public string FileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName)
+
+        public HydraulicProfile(double probability, string filepath)
         {
             Probability = probability;
-            FilePath = filepath;
-            DataSourceFormat = dataSource;
-            ProfileName = profileName;
+            FileName = filepath;
         }
 
         public HydraulicProfile(XElement elem)
         {
             Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
-            FilePath = elem.Attribute(PATH).Value;
-            ProfileName = elem.Attribute(NAME).Value;
-
-            string dataSource = elem.Attribute(DATA_SOURCE).Value;
-            Enum.TryParse(dataSource, out HydraulicDataSource myHydroSource);
-            DataSourceFormat = myHydroSource;
+            FileName = elem.Attribute(PATH).Value;
         }
 
-        public float[] GetWSE(PointMs pts)
+        public float[] GetWSE(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         { 
             
-            if (DataSourceFormat == HydraulicDataSource.WSEGrid)
+            if (dataSource == HydraulicDataSource.WSEGrid)
             {
                 return GetWSEFromGrids(pts);
             }
             else
             {
-                return GetWSEFromHDF(pts);
+                return GetWSEFromHDF(pts, dataSource, parentDirectory);
             }
         }
 
@@ -58,9 +54,9 @@ namespace HEC.FDA.Model.hydraulics
             return null;
         }
 
-        private float[] GetWSEFromHDF(PointMs pts)
+        private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         {
-            var rasResult = new RASResults(FilePath);
+            var rasResult = new RASResults(GetFilePath(parentDirectory));
             var rasGeometry = rasResult.Geometry;
             var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
@@ -70,13 +66,13 @@ namespace HEC.FDA.Model.hydraulics
             float[] WSE = null;
 
             int profileIndex;
-            if (DataSourceFormat == HydraulicDataSource.UnsteadyHDF)
+            if (dataSource == HydraulicDataSource.UnsteadyHDF)
             {
                 profileIndex = RASResultsMap.MaxProfileIndex;
             }
             else
-            {
-                profileIndex = rasResult.ProfileIndex(ProfileName);
+            {               
+                profileIndex = rasResult.ProfileIndex(FileName);
             }
             // This will produce -9999 for NoData values.
             // Compute Switch requires an array of terrain elevations, but since we're using WSE they're not necessary. Mock array is just an array of propper size with values of 0. 
@@ -106,12 +102,14 @@ namespace HEC.FDA.Model.hydraulics
         public XElement ToXML()
         {
             XElement elem = new XElement(PROFILE);
-            elem.SetAttributeValue(NAME, ProfileName);
-            elem.SetAttributeValue(PATH, FilePath);
+            elem.SetAttributeValue(PATH, FileName);
             elem.SetAttributeValue(PROB, Probability);
-            elem.SetAttributeValue(DATA_SOURCE, DataSourceFormat.ToString());
-
             return elem;
+        }
+
+        public string GetFilePath(string parentDirectory)
+        {
+            return parentDirectory + "\\" + FileName;
         }
 
     }

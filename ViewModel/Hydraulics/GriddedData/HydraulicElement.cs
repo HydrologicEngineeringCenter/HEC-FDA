@@ -26,11 +26,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         #endregion
         #region Properties
 
+        public HydraulicDataset DataSet { get; set; }
         //todo: replace this enum with model enum
-        public HydraulicDataSource HydroType {get;set;}
-        public bool IsDepthGrids { get; set; }
+        //public HydraulicDataSource HydroType {get;set;}
+        //public bool IsDepthGrids { get; set; }
 
-        public List<HydraulicProfile> Profiles { get; } = new List<HydraulicProfile>();
+        //public List<HydraulicProfile> Profiles { get; } = new List<HydraulicProfile>();
 
         #endregion
         #region Constructors
@@ -43,43 +44,50 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicDataSource hydroType, int id)
             :base(name, "", description,  id)
         {
-            HydroType = hydroType;
+            //HydroType = hydroType;
             List<HydraulicProfile> pathAndProbs = new List<HydraulicProfile>();
-            foreach(double p in probabilites)
+            foreach (double p in probabilites)
             {
-                pathAndProbs.Add(new HydraulicProfile(p,"NA", hydroType,name));
+                pathAndProbs.Add(new HydraulicProfile(p, "NA"));
             }
-            Profiles.AddRange(pathAndProbs);
-            IsDepthGrids = isDepthGrids;
+            //Profiles.AddRange(pathAndProbs);
+            //IsDepthGrids = isDepthGrids;
+            DataSet = new HydraulicDataset(pathAndProbs, hydroType, isDepthGrids);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities,bool isDepthGrids, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
-            HydroType = hydroType;
-            Profiles.AddRange(relativePathAndProbabilities);
-            IsDepthGrids = isDepthGrids;
+            //HydroType = hydroType;
+            //Profiles.AddRange(relativePathAndProbabilities);
+            //IsDepthGrids = isDepthGrids;
+
+            DataSet = new HydraulicDataset(relativePathAndProbabilities, hydroType, isDepthGrids);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
 
         public HydraulicElement(XElement childElement, int id):base(childElement, id)
         {
-            string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
-            Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
-            HydroType = myHydroType;
 
-            IsDepthGrids = Convert.ToBoolean(childElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
+            DataSet = new HydraulicDataset(childElement.Element(HydraulicDataset.HYDRAULIC_DATA_SET));
 
-            XElement rowsElem = childElement.Element(PATH_AND_PROBS);
+            //string hydroType = childElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
+            //Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
 
-            IEnumerable<XElement> rowElems = rowsElem.Elements(PathAndProbability.PATH_AND_PROB);
-            foreach (XElement elem in rowElems)
-            {
-                Profiles.Add(new HydraulicProfile(elem));
-            }
+            //bool isDepthGrids = Convert.ToBoolean(childElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
 
+            //XElement rowsElem = childElement.Element(PATH_AND_PROBS);
+
+            //IEnumerable<XElement> rowElems = rowsElem.Elements(PathAndProbability.PATH_AND_PROB);
+            //List<HydraulicProfile> pathAndProbs = new List<HydraulicProfile>();
+            //foreach (XElement elem in rowElems)
+            //{
+            //    pathAndProbs.Add(new HydraulicProfile(elem));
+            //}
+
+            //DataSet = new HydraulicDataset(pathAndProbs, myHydroType, isDepthGrids);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
@@ -92,7 +100,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             string header = "Edit Hydraulics -" + Name;
 
-            switch (HydroType)
+            switch (DataSet.DataSource)
             {
                 case HydraulicDataSource.WSEGrid:
                     GriddedImporterVM vm = new GriddedImporterVM(this, actionManager);
@@ -119,17 +127,19 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             XElement elem = new XElement(StringConstants.ELEMENT_XML_TAG);
             elem.Add(CreateHeaderElement());
-            elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, HydroType);
-            elem.SetAttributeValue(IS_DEPTH_GRID_XML_TAG, IsDepthGrids);
 
+            //elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, DataSet.DataSource);
+            //elem.SetAttributeValue(IS_DEPTH_GRID_XML_TAG, DataSet.IsDepthGrids);
+
+            elem.Add(DataSet.ToXML());
             //path and probs
-            XElement pathAndProbsElem = new XElement(PATH_AND_PROBS);
-            foreach (HydraulicProfile pathAndProb in Profiles)
-            {
-                pathAndProbsElem.Add(pathAndProb.ToXML());
-            }
+            //XElement pathAndProbsElem = new XElement(PATH_AND_PROBS);
+            //foreach (HydraulicProfile pathAndProb in DataSet.HydraulicProfiles)
+            //{
+            //    pathAndProbsElem.Add(pathAndProb.ToXML());
+            //}
 
-            elem.Add(pathAndProbsElem);
+            //elem.Add(pathAndProbsElem);
 
             return elem;
         }
@@ -142,21 +152,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 isEqual = false;
             }
-            if (HydroType != elem.HydroType)
+            if (DataSet.DataSource != elem.DataSet.DataSource)
             {
                 isEqual = false;
             }
-            if(IsDepthGrids != elem.IsDepthGrids)
+            if(DataSet.IsDepthGrids != elem.DataSet.IsDepthGrids)
             {
                 isEqual = false;
             }
-            if(Profiles.Count != elem.Profiles.Count)
+            if(DataSet.HydraulicProfiles.Count != elem.DataSet.HydraulicProfiles.Count)
             {
                 isEqual = false;
             }
-            for(int i = 0;i<Profiles.Count;i++)
+            for(int i = 0;i< DataSet.HydraulicProfiles.Count;i++)
             {
-                if(!Profiles[i].Equals(elem.Profiles[i]))
+                if(!DataSet.HydraulicProfiles[i].Equals(elem.DataSet.HydraulicProfiles[i]))
                 {
                     isEqual = false;
                     break;
@@ -181,6 +191,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         //    }
         //    return profiles;
         //}
+
+        public string GetDirectoryInStudy()
+        {
+            return Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
+        }
 
         #endregion
     }

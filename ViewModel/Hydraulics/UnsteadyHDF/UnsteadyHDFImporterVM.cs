@@ -47,11 +47,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         public UnsteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            IsDepthGridChecked = elem.IsDepthGrids;
-            foreach (HydraulicProfile pp in elem.Profiles)
+            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
+            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FilePath;
-                string folderName = Path.GetFileName(pp.FilePath);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
+                string folderName = Path.GetFileName(pp.FileName);
                 _OriginalFileNames.Add(folderName);
                 AddRow(folderName, path, pp.Probability, false);
             }
@@ -242,7 +242,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFileNames[i] = newName;
                 }
-                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, newName, HydraulicDataSource.UnsteadyHDF, Name));
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, newName));
             }
 
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
@@ -259,7 +259,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             {
                 _OriginalFileNames.Add(row.Name);
                 string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName, HydraulicDataSource.UnsteadyHDF, Name));
+                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName));
 
                 File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
             }
