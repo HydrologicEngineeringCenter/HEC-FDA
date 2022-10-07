@@ -80,7 +80,19 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
-
+        public bool Equals(HydraulicProfile hydraulicProfileForComparison)
+        {
+            bool hydraulicProfilesAreEqual = true;
+            if (!Probability.Equals(hydraulicProfileForComparison.Probability))
+            {
+                hydraulicProfilesAreEqual = false;
+            }
+            if (!FileName.Equals(hydraulicProfileForComparison.FileName))
+            {
+                hydraulicProfilesAreEqual = false;
+            }
+            return hydraulicProfilesAreEqual;
+        }
 
         /// <summary>
         /// allows for sorting based on probability of the profile.
