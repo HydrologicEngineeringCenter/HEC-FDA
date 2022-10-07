@@ -114,7 +114,7 @@ namespace HEC.FDA.Model.metrics
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, long iteration)
+        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, long iteration)
         {
             foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
             {

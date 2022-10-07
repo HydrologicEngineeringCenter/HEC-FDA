@@ -194,6 +194,15 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             return returnRow;
         }
+        public Dictionary<string,int> GetNameToIDPairs()
+        {
+            Dictionary<string,int> nameToIDPairs = new Dictionary<string,int>();
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                nameToIDPairs.Add(row.Name, row.ID);
+            }
+            return nameToIDPairs;
+        }
 
         public bool Equals(ImpactAreaElement elem)
         {

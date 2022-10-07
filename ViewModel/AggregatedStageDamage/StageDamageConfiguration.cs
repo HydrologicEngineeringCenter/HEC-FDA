@@ -1,9 +1,7 @@
 ﻿using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
-using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
@@ -222,7 +220,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public List<ImpactAreaStageDamage> CreateStageDamages()
         {
-            Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea.Name);
+            Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
 
             Model.hydraulics.HydraulicDataset hydros = new Model.hydraulics.HydraulicDataset(SelectedHydraulics.DataSet.HydraulicProfiles, SelectedHydraulics.DataSet.DataSource);
             string hydroParentDirectory = SelectedHydraulics.GetDirectoryInStudy();
