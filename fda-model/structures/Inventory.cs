@@ -10,6 +10,7 @@ namespace HEC.FDA.Model.structures
     //TODO: Figure out how to set Occupany Type Set
     public class Inventory
     {
+        private PolygonFeatureLayer _impactAreaSet;
         private List<OccupancyType> _Occtypes;
         private List<string> _damageCategories;
         private List<int> _impactAreaIDs;
@@ -62,6 +63,7 @@ namespace HEC.FDA.Model.structures
             //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
             //is missing to avoid null reference exceptions in the compute 
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
+            _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             Structures = new List<Structure>();
             try
@@ -145,7 +147,14 @@ namespace HEC.FDA.Model.structures
             }
             _damageCategories = damageCatagories;
         }
-        public Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
+        //TODO: I think that the argument here is actually the impact area NAME which will be a problem
+        //Some
+        public Inventory GetInventoryTrimmedToImpactArea(int impactAreaID)
+        {
+            Polygon impactArea = _impactAreaSet.Polygon(impactAreaID);
+            return GetInventoryTrimmmedToPolygon(impactArea);
+        }
+        private Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
         {
             List<Structure> filteredStructureList = new List<Structure>();
 
