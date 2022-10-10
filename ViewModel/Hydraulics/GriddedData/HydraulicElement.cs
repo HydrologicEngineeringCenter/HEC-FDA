@@ -28,6 +28,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         #endregion
         #region Constructors
         /// <summary>
+        /// TODO: We are not importing hydraulics from old fda. Could we delete this constructor? 
         /// This constructor is only used when importing from old fda files. Old fda does not have paths to map layer files.
         /// </summary>
         /// <param name="name"></param>

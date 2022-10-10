@@ -9,7 +9,8 @@ namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
     public class Inventory
-    {
+    { private Dictionary<string, int> _impactAreaNameToID;
+        private PolygonFeatureLayer _impactAreaSet;
         private List<OccupancyType> _Occtypes;
         private List<string> _damageCategories;
         private List<int> _impactAreaIDs;
@@ -57,11 +58,13 @@ namespace HEC.FDA.Model.structures
         }
 
 
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes)
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, Dictionary<string, int> impactAreasNameToID = null)
         {
             //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
             //is missing to avoid null reference exceptions in the compute 
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
+            _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
+            _impactAreaNameToID = impactAreasNameToID;
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             Structures = new List<Structure>();
             try
@@ -145,7 +148,28 @@ namespace HEC.FDA.Model.structures
             }
             _damageCategories = damageCatagories;
         }
-        public Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
+        //TODO: I think that the argument here is actually the impact area NAME which will be a problem
+        //Some
+        public Inventory GetInventoryTrimmedToImpactArea(int impactAreaID)
+        {
+            string impactAreaName = ReverseDictionary(_impactAreaNameToID)[impactAreaID];
+            //TODO: I think that the argument in Polygon should be the impact area name
+            //HOWEVER: Our impact area names are strings, not ints 
+            //BUT: The only possible argument for Polygon() is an int 
+            Polygon impactArea = _impactAreaSet.Polygon(impactAreaID);
+            return GetInventoryTrimmmedToPolygon(impactArea);
+        }
+        private Dictionary<int, string> ReverseDictionary(Dictionary<string, int> dictionaryToReverse)
+        {
+            Dictionary<int, string> impactAreaIDtoName = new Dictionary<int, string>();
+            foreach (string key in _impactAreaNameToID.Keys)
+            {
+                impactAreaIDtoName.Add(_impactAreaNameToID[key], key);
+                    
+            }
+            return impactAreaIDtoName;
+        }
+        private Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
         {
             List<Structure> filteredStructureList = new List<Structure>();
 
@@ -173,11 +197,14 @@ namespace HEC.FDA.Model.structures
             List<Polygon> polygons = polygonFeatureLayer.Polygons().ToList();
             var polygonsList = polygons.ToList();
             for (int i = 0; i < polygonsList.Count; i++)
-            {
+            { 
                 if (polygons[i].Contains(point))
                 {
                     var row = polygonFeatureLayer.FeatureRow(i);
-                    return (int)row["FID"];
+                    //TODO: This hard-coded attribute name is going to get us in trouble 
+                    string impactAreaName = (string)row["FID"];
+                    int impactAreaID = _impactAreaNameToID[impactAreaName];
+                    return impactAreaID;
                 }
             }
             return -9999;

@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -122,15 +123,16 @@ namespace HEC.FDA.ViewModel.Inventory
             return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
         }
 
-        public Model.structures.Inventory CreateModelInventory(string impactAreaName)
+        public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
             List<OccupancyType> occupancyTypes = CreateModelOcctypes();
             string pointShapefilePath = GetStructuresPointShapefile();
-            string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaName);
+            string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
             StructureInventoryColumnMap colMap = new StructureInventoryColumnMap();
+            //include ImpactAreaElement.GetMapping() in the method call below 
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                structureInventoryColumnMap, occupancyTypes);
+                structureInventoryColumnMap, occupancyTypes, impactAreaElement.GetNameToIDPairs());
             return inv;
         }
 

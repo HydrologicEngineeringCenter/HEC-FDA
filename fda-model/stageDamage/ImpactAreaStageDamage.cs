@@ -50,6 +50,10 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
+            //TODO: We need to use the uncommented line. 
+            //The line is commented out because I do not expect the 
+            //method call to work as we "expect"
+            //_inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
@@ -161,7 +165,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int i = 0; i < numIntermediateStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, _ImpactAreaID, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -175,7 +179,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
                 float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, _ImpactAreaID, stages);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
@@ -191,7 +195,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int stepCount = 0; stepCount < numIntermediateStagesToCompute; stepCount++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stepCount, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount + 1));
             }
@@ -229,7 +233,7 @@ namespace HEC.FDA.Model.stageDamage
         }
         //public and static for testing
         //assume that the inventory has already been trimmed 
-        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, int impactAreaID, float[] wses)
+        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses)
         {
             double lowerProb = 0.025;
             double upperProb = .975;
@@ -239,7 +243,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                 ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
-                consequenceDistributionResults.AddConsequenceRealization(consequenceResults, impactAreaID, iteration);
+                consequenceDistributionResults.AddConsequenceRealization(consequenceResults, iteration);
                 iteration++;
             }
             return consequenceDistributionResults;
