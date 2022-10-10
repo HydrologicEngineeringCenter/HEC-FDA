@@ -1,6 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
-using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -113,16 +112,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void LoadCurves(List<StageDamageCurve> curves)
         {
-            int i = 1;
-            foreach (StageDamageCurve stageDamageCurve in curves)
+            for(int i = 0; i < curves.Count; i++)
             {
                 //used cloned curve so that you do not modify the original data
-                StageDamageCurve curve = new StageDamageCurve(stageDamageCurve.WriteToXML());
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
+                StageDamageCurve curve = new StageDamageCurve(curves[i].WriteToXML());
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i + 1, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
                 Rows.Add(newRow);
-                i++;
             }
-            if(Rows.Count>0)
+            if (Rows.Count > 0)
             {
                 ShowChart = true;
                 SelectedRow = Rows[0];
@@ -189,7 +186,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-
         public void ComputeCurves()
         {
             //we know that we have an impact area. We only allow one, so it will be the first one.
@@ -199,7 +195,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
                 ImpactAreaFrequencyRows);
 
-            //todo: add to the validate?
             FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
             {
@@ -255,7 +250,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return stageDamageFunctions;
         }
        
-
         private void TableDataChanged(object sender, EventArgs e)
         {
             SelectedRow.ConstructionType = StageDamageConstructionType.COMPUTED_EDITED;
@@ -332,9 +326,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //add the event
                 TableWithPlot.WasModified += TableDataChanged;
             }
-        }
-
-        
+        }      
 
     }
 }

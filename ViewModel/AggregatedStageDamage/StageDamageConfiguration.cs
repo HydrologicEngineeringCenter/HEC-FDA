@@ -1,9 +1,7 @@
 ﻿using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
-using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
@@ -35,12 +33,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public FdaValidationResult Validate()
         {
             FdaValidationResult vr = new FdaValidationResult();
-
             vr.AddErrorMessage(GetAreAllSelectionsValidResult().ErrorMessage);
-
             vr.AddErrorMessage(DoAllRequiredFilesExist().ErrorMessage);
-
-
             return vr;
         }
 
@@ -57,10 +51,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
 
             vr.AddErrorMessage(ValidateImpactAreaFrequencyFunctionTable().ErrorMessage);
-
             return vr;
         }
-
 
         private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
         {
@@ -76,7 +68,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             return vr;
         }
-
 
         private FdaValidationResult DirectoryHasOneFileMatchingPattern(string directoryPath, string pattern)
         {
@@ -276,8 +267,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return stageDamages;
 
         }
-
-        
 
 
     }

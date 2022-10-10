@@ -2,7 +2,6 @@
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
-using System.IO;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
@@ -13,12 +12,9 @@ namespace HEC.FDA.Model.hydraulics
         private const string PATH = "Path";
         private const string PROB = "Probability";
 
-
-
         public double Probability { get; set; }
         /// <summary>
-        /// This is not the full path. This is just the file name. You need to get the hydraulic element name to create the path.
-        /// 
+        /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
         /// </summary>
         public string FileName { get; set; }
 

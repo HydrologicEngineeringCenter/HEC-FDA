@@ -75,7 +75,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public string GetFilePath(string extension)
         {
             string path = null;
-            string[] files = Directory.GetFiles(Storage.Connection.Instance.InventoryDirectory + "\\" + Name);
+            string[] files = Directory.GetFiles(Connection.Instance.InventoryDirectory + "\\" + Name);
             foreach (string file in files)
             {
                 if(Path.GetExtension(file).Equals(extension))
@@ -90,7 +90,16 @@ namespace HEC.FDA.ViewModel.Inventory
         //todo: maybe replace my mapping with this object?
         private StructureInventoryColumnMap CreateColumnMap()
         {
-            return new StructureInventoryColumnMap();
+            return new StructureInventoryColumnMap(
+                structureID: SelectionMappings.StructureIDCol,
+                occupancyType: SelectionMappings.OccTypeCol,
+                firstFloorElev: SelectionMappings.FirstFloorElevCol,
+                sructureValue: SelectionMappings.StructureValueCol,
+                foundationHeight: SelectionMappings.FoundationHeightCol, groundElev: SelectionMappings.GroundElevCol, contentValue: SelectionMappings.ContentValueCol,
+                otherValue: SelectionMappings.OtherValueCol, vehicalValue: SelectionMappings.VehicleValueCol, begDamDepth: SelectionMappings.BeginningDamageDepthCol,
+                yearInConstruction: SelectionMappings.YearInConstructionCol
+
+                ) ;
         }
 
         public string GetImpactAreaDirectory(string impactAreaName)
@@ -116,7 +125,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public Model.structures.Inventory CreateModelInventory(string impactAreaName)
         {
             List<OccupancyType> occupancyTypes = CreateModelOcctypes();
-            //Storage.Connection.Instance.InventoryDirectory.
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaName);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
@@ -145,15 +153,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
             Statistics.ContinuousDistribution foundationHeightUncertainty = ot.FoundationHeightUncertainty;
             FirstFloorElevationUncertainty firstFloorElevationUncertainty = CreateFirstFloorUncertainty(foundationHeightUncertainty);
-
-
-            //    ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-            //    ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
-            //    expectedCSVR = 0.9;
-            //    MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-            //    string name = "MyOccupancyType";
-            //    string damageCategory = "DamageCategory";
-
 
             OccupancyType occupancyType = OccupancyType.builder()
         .withName(ot.Name)
