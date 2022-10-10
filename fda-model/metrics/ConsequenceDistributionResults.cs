@@ -433,7 +433,7 @@ namespace HEC.FDA.Model.metrics
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             List<int> impactAreas = yValues[yValues.Count - 1].GetImpactAreas();
             List<string> damageCategories = yValues[yValues.Count - 1].GetDamageCategories();
-            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories(); ;
+            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories();
             foreach (int impactAreaID in impactAreas)
             {
                 foreach (string damageCategory in damageCategories)

@@ -129,8 +129,6 @@ namespace HEC.FDA.ViewModel.Inventory
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
-            StructureInventoryColumnMap colMap = new StructureInventoryColumnMap();
-            //include ImpactAreaElement.GetMapping() in the method call below 
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
                 structureInventoryColumnMap, occupancyTypes, impactAreaElement.GetNameToIDPairs());
             return inv;
@@ -180,7 +178,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 occupancyTypes.Add(CreateModelOcctype(otRef));
             }
       
-            return new List<OccupancyType>();
+            return occupancyTypes;
         }
 
 
