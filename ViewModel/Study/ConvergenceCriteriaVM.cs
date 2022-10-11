@@ -6,10 +6,10 @@ namespace HEC.FDA.ViewModel.Study
 {
     public class ConvergenceCriteriaVM:BaseViewModel
     {
-        private double _confidence = DefaultCurveData.CONFIDENCE;
-        private double _tolerance = DefaultCurveData.TOLERANCE;
-        private int _min = DefaultCurveData.MIN;
-        private int _max = DefaultCurveData.MAX;
+        private double _confidence = DefaultCurveData.ConvergenceConfidence;
+        private double _tolerance = DefaultCurveData.ConvergenceTolerance;
+        private int _min = DefaultCurveData.ConvergenceMinIterations;
+        private int _max = DefaultCurveData.ConvergenceMaxIterations;
         public double Confidence
         {
             get { return _confidence; }
