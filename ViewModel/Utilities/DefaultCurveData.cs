@@ -124,39 +124,77 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static double DefaultLeveeElevation = 476;
 
+        private static double[] _DepthPercentDamageXValues = new double[] {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+        private static IDistribution[] _DepthPercentDamageYValues = new IDistribution[]
+        {
+            new Normal(0,0),
+            new Normal(2.5,2.7),
+            new Normal(13.4, 2.0),
+            new Normal(23.3, 1.6),
+            new Normal(32.1, 1.6),
+            new Normal(40.1, 1.8),
+            new Normal(47.1, 1.9),
+            new Normal(53.2, 2.0),
+            new Normal(58.6, 2.1),
+            new Normal(63.2, 2.2),
+            new Normal(67.2, 2.3),
+            new Normal(70.5, 2.4),
+            new Normal(73.2, 2.7),
+            new Normal(75.4,3),
+            new Normal(77.2, 3.3),
+            new Normal(78.5, 3.7),
+            new Normal(79.5, 4.1),
+            new Normal(80.2, 4.5),
+            new Normal(80.7,4.9)
+
+        };
+
+
+        public static UncertainPairedData DepthPercentDamageDefaultCurve()
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, StringConstants.OCCUPANCY_TYPES);
+            return new UncertainPairedData(_DepthPercentDamageXValues, _DepthPercentDamageYValues, curveMetaData);
+        }
         public static UncertainPairedData ExteriorInteriorDefaultCurve()
         {
-            return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
+            return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData GraphicalDefaultCurve()
         {
-            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
+            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData GraphicalStageFreqDefaultCurve()
         {
-            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
+            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData RegulatedUnregulatedDefaultCurve()
         {
-            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
+            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData StageDamageDefaultCurve()
         {
-            return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
+            return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData StageDischargeDefaultCurve()
         {
-            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
+            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), curveMetaData);
         }
 
         public static UncertainPairedData FailureDefaultCurve()
         {
-            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), curveMetaData);
         }
 
     }
