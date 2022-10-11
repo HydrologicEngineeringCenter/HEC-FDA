@@ -3,10 +3,13 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using static HEC.FDA.Model.structures.OccupancyType;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -103,12 +106,12 @@ namespace HEC.FDA.ViewModel.Inventory
                 ) ;
         }
 
-        public string GetImpactAreaDirectory(string impactAreaName)
+        private string GetImpactAreaDirectory(string impactAreaName)
         {
             return Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaName;
         }
 
-        public string GetImpactAreaShapefile(string impactAreaName)
+        private string GetImpactAreaShapefile(string impactAreaName)
         {
             return Directory.GetFiles(GetImpactAreaDirectory(impactAreaName), "*.shp")[0];
         }
@@ -134,13 +137,117 @@ namespace HEC.FDA.ViewModel.Inventory
             return inv;
         }
 
-        private FirstFloorElevationUncertainty CreateFirstFloorUncertainty(Statistics.ContinuousDistribution foundationHeightUncertainty)
+        public FirstFloorElevationUncertainty CreateFirstFloorUncertainty(ContinuousDistribution ordinate)
         {
-            //foundationHeightUncertainty.ToCoordinates
-            //todo: not sure how to handle this
-            FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(foundationHeightUncertainty.Type, .5);
+            FirstFloorElevationUncertainty elevationUncertainty = null;
+            IDistributionEnum ordType = ordinate.Type;
 
-            return firstFloorElevationUncertainty;
+            switch(ordType)
+            {
+                case IDistributionEnum.Deterministic:
+                    elevationUncertainty = new FirstFloorElevationUncertainty();
+                    break;
+                case IDistributionEnum.Normal:
+                    double normalMean = ((Normal)ordinate).Mean;
+                    double normalStDev = ((Normal)ordinate).StandardDeviation;
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, normalStDev, normalMean);
+                    break;
+                case IDistributionEnum.LogNormal:
+                    double logNormalMean = ((LogNormal)ordinate).Mean;
+                    double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
+                    break;
+                case IDistributionEnum.Triangular:
+                    double triMostLikely = ((Triangular)ordinate).MostLikely;
+                    double triMin = ((Triangular)ordinate).Min;
+                    double triMax = ((Triangular)ordinate).Max;
+                    //todo: what about most likely???
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    break;
+                case IDistributionEnum.Uniform:
+                    double uniMin = ((Uniform)ordinate).Min;
+                    double uniMax = ((Uniform)ordinate).Max;
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    break;
+            }
+
+            return elevationUncertainty;
+        }
+
+        public ValueRatioWithUncertainty CreateValueRatioWithUncertainty(ContinuousDistribution ordinate)
+        {
+            ValueRatioWithUncertainty valueUncertainty = null;
+            IDistributionEnum ordType = ordinate.Type;
+
+            switch (ordType)
+            {
+                case IDistributionEnum.Deterministic:
+                    valueUncertainty = new ValueRatioWithUncertainty();
+                    break;
+                case IDistributionEnum.Normal:
+                    double normalMean = ((Normal)ordinate).Mean;
+                    double normalStDev = ((Normal)ordinate).StandardDeviation;
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Normal, normalStDev, normalMean);
+                    break;
+                case IDistributionEnum.LogNormal:
+                    double logNormalMean = ((LogNormal)ordinate).Mean;
+                    double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
+                    break;
+                case IDistributionEnum.Triangular:
+                    double triMostLikely = ((Triangular)ordinate).MostLikely;
+                    double triMin = ((Triangular)ordinate).Min;
+                    double triMax = ((Triangular)ordinate).Max;
+                    //todo: what about most likely???
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    break;
+                case IDistributionEnum.Uniform:
+                    double uniMin = ((Uniform)ordinate).Min;
+                    double uniMax = ((Uniform)ordinate).Max;
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    break;
+
+            }
+
+            return valueUncertainty;
+        }
+
+        public ValueUncertainty CreateValueUncertainty(ContinuousDistribution ordinate)
+        {
+            ValueUncertainty valueUncertainty = null;
+            IDistributionEnum ordType = ordinate.Type;
+
+            switch (ordType)
+            {
+                case IDistributionEnum.Deterministic:
+                    valueUncertainty = new ValueUncertainty();
+                    break;
+                case IDistributionEnum.Normal:
+                    double normalMean = ((Normal)ordinate).Mean;
+                    double normalStDev = ((Normal)ordinate).StandardDeviation;
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, normalStDev, normalMean);
+                    break;
+                case IDistributionEnum.LogNormal:
+                    double logNormalMean = ((LogNormal)ordinate).Mean;
+                    double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
+                    break;
+                case IDistributionEnum.Triangular:
+                    double triMostLikely = ((Triangular)ordinate).MostLikely;
+                    double triMin = ((Triangular)ordinate).Min;
+                    double triMax = ((Triangular)ordinate).Max;
+                    //todo: what about most likely???
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    break;
+                case IDistributionEnum.Uniform:
+                    double uniMin = ((Uniform)ordinate).Min;
+                    double uniMax = ((Uniform)ordinate).Max;
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    break;
+
+            }
+
+            return valueUncertainty;
         }
 
         private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
@@ -151,22 +258,40 @@ namespace HEC.FDA.ViewModel.Inventory
             UncertainPairedData vehicleUPD = ot.VehicleItem.Curve.SelectedItemToPairedData();
             UncertainPairedData otherUPD = ot.OtherItem.Curve.SelectedItemToPairedData();
 
-            Statistics.ContinuousDistribution foundationHeightUncertainty = ot.FoundationHeightUncertainty;
+            ContinuousDistribution foundationHeightUncertainty = ot.FoundationHeightUncertainty;
             FirstFloorElevationUncertainty firstFloorElevationUncertainty = CreateFirstFloorUncertainty(foundationHeightUncertainty);
 
-            OccupancyType occupancyType = OccupancyType.builder()
-        .withName(ot.Name)
-        .withDamageCategory(ot.DamageCategory)
-        .withStructureDepthPercentDamage(structureUPD)
-        .withContentDepthPercentDamage(contentUPD)
-        .withVehicleDepthPercentDamage(vehicleUPD)
-        .withOtherDepthPercentDamage(otherUPD)
+            ValueUncertainty structureUncertainty = CreateValueUncertainty(ot.StructureItem.ValueUncertainty.CreateOrdinate());
+            ValueUncertainty contentUncertainty = CreateValueUncertainty(ot.ContentItem.ValueUncertainty.CreateOrdinate());
+            ValueUncertainty vehicleUncertainty = CreateValueUncertainty(ot.VehicleItem.ValueUncertainty.CreateOrdinate());
+            ValueUncertainty otherUncertainty = CreateValueUncertainty(ot.OtherItem.ValueUncertainty.CreateOrdinate());
 
-        .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-        //.withStructureValueUncertainty(_structureValueUncertainty)
-        //.withContentToStructureValueRatio(_contentToStructureValueRatio)
-        .build();
-            return occupancyType;
+            OccupancyTypeBuilder builder = OccupancyType.builder()
+                .withName(ot.Name)
+                .withDamageCategory(ot.DamageCategory)
+                .withStructureDepthPercentDamage(structureUPD)
+                .withContentDepthPercentDamage(contentUPD)
+                .withVehicleDepthPercentDamage(vehicleUPD)
+                .withOtherDepthPercentDamage(otherUPD)
+
+                .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+
+                .withStructureValueUncertainty(structureUncertainty)
+                .withContentValueUncertainty(contentUncertainty)
+                .withVehicleValueUncertainty(vehicleUncertainty)
+                .withOtherValueUncertainty(otherUncertainty);
+
+            if (ot.ContentItem.IsByValue)
+            {
+                builder.withContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
+            }
+
+            if (ot.OtherItem.IsByValue)
+            {
+                builder.withOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
+            }
+
+            return builder.build();
         }
 
         private List<OccupancyType> CreateModelOcctypes()
@@ -180,7 +305,6 @@ namespace HEC.FDA.ViewModel.Inventory
       
             return occupancyTypes;
         }
-
 
     }
 }
