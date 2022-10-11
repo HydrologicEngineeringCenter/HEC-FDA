@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
             computeComponentVM.SetPairedData(ratingPairedData);
-            StageDischargeElement elem = new StageDischargeElement(rat.Name, rat.CalculationDate, description, computeComponentVM, elemID);
+            StageDischargeElement elem = new StageDischargeElement(rat.Name, DateTime.Now.ToString("G"), description, computeComponentVM, elemID);
             return elem;
         }
 
@@ -506,7 +506,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             computeComponentVM.SetPairedData(func);
-            return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), computeComponentVM, elemID);
+            return new InflowOutflowElement(probFunction.Name, DateTime.Now.ToString("G"), CreatePYSRDescription(probFunction), computeComponentVM, elemID);
         }
 
         private static List<IDistribution> GetUncertaintyValues(ProbabilityFunction probFunction)
@@ -1045,7 +1045,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
             computeComponentVM.SetPairedData(func);
-            LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,elemID);
+            LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, DateTime.Now.ToString("G"), CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, computeComponentVM,elemID);
             return leveeFeatureElement;
         }
 
@@ -1083,7 +1083,7 @@ namespace HEC.FDA.ViewModel.Utilities
    
             ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             computeComponentVM.SetPairedData(func);
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), computeComponentVM, elemID);
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, DateTime.Now.ToString("G"), CreatePYSRDescription(lev), computeComponentVM, elemID);
             return elem;
         }
         #endregion
