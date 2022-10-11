@@ -22,8 +22,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
-
-
         #endregion
 
         #region Properties
