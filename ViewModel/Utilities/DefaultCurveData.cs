@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(475.11),
             new Deterministic(477.4)
         };
-        private static List<double> _FailureXValues = new List<double>() { 458, 468, 470, 471, 472, 472, 473, 474 };
+        private static List<double> _FailureXValues = new List<double>() { 458, 468, 470, 471, 472, 473, 474, 475 };
         private static List<IDistribution> _FailureYValues = new List<IDistribution>()
         {
             new Deterministic(0),
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
 
         #region Other Default Parameter Values
-        public static double DefaultLeveeElevation = 476;
+        public static double DefaultLeveeElevation = 474;
         #endregion
 
         #region Default Curves 
