@@ -16,7 +16,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             double[] ExceedenceProbs = new double[] { 0.5, 0.99, 0.01 };
             foreach (double prob in ExceedenceProbs)
             {
-                profiles.Add(new HydraulicProfile(prob,""));
+                profiles.Add(new HydraulicProfile(prob,"",""));
             }
             HydraulicDataset dataset = new HydraulicDataset(profiles, HydraulicDataSource.UnsteadyHDF);
 
