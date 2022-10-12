@@ -19,6 +19,8 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string ParentDirectoryToGrid = @"..\..\..\fda-model-test\Resources\MuncieGrid\WSE (Max).Terrain";
         private const string GRID_NAME = @"muncie_clip.tif";
 
+        private const string IANameColumnHeader = "Name";
+
 
         [Theory]
         [InlineData(ParentDirectoryToResult, RESULT_NAME, HydraulicDataSource.UnsteadyHDF)]
@@ -34,7 +36,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
 
 
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(696, wses.Length); // All structures have a value
             Assert.Equal(947.244446, wses[0], 1); // first structure has correct WSE

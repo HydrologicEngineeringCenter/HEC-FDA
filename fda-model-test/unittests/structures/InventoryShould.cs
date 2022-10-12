@@ -7,16 +7,19 @@ namespace HEC.FDA.ModelTest.unittests.structures
     [Trait("Category", "Unit")]
     public class InventoryShould
     {
+        private const string IANameColumnHeader = "Name";
+
         [Fact]
         public void ConstructFromValidShapefile()
         {
             string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
             string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
-            StructureInventoryColumnMap map = new StructureInventoryColumnMap();
+
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap(); 
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader);
 
             Assert.NotNull(inventory);
             Assert.Equal(3, inventory.ImpactAreas.Count);
