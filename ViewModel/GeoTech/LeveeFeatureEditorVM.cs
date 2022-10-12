@@ -29,10 +29,10 @@ namespace HEC.FDA.ViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public LeveeFeatureEditorVM(CurveComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
             //set default elevation
-            Elevation = DefaultCurveData.DefaultLeveeElevation;
+            Elevation = DefaultData.DefaultLeveeElevation;
         }
         public LeveeFeatureEditorVM(CurveChildElement element, EditorActionManager actionManager) : base(element, actionManager)
         {
@@ -40,14 +40,14 @@ namespace HEC.FDA.ViewModel.GeoTech
             IsUsingDefault = ((LateralStructureElement)element).IsDefaultCurveUsed;
 
             //tell the table that the y values have to be between 0 and 1
-            TableWithPlot.ComputeComponentVM.SetMinMaxValues(0, 1);
+            TableWithPlot.CurveComponentVM.SetMinMaxValues(0, 1);
         }
         #endregion
 
         public override void Save()
         {
             int id = GetElementID<LateralStructureElement>();
-            LateralStructureElement elem = new LateralStructureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.ComputeComponentVM, id);
+            LateralStructureElement elem = new LateralStructureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);
         }
     }

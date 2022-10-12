@@ -12,7 +12,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <frequencyrelationships:GraphicalControl DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
+        <frequencyrelationships:GraphicalControl DataContext="{Binding Path=CurveComponentVM}" Grid.Column="0"/>
         <plot:PlotWithToolbar Grid.Column="1"/>
     </Grid>
 </UserControl>

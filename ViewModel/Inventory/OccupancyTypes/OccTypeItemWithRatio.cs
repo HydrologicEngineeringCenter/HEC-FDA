@@ -71,7 +71,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         }
 
-        public OccTypeItemWithRatio(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty,
+        public OccTypeItemWithRatio(OcctypeAssetType itemType, bool isChecked, CurveComponentVM curve, ContinuousDistribution valueUncertainty,
             ContinuousDistribution ratioUncertainty, bool isByValue) : base(itemType, isChecked, curve, valueUncertainty)
         {
             _ContentByRatioVM = new OtherValueUncertaintyVM(ratioUncertainty);

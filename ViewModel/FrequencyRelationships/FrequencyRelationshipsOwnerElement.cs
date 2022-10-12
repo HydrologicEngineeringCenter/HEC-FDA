@@ -72,8 +72,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);

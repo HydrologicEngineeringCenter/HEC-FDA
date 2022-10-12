@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         #endregion
 
         #region Constructors
-        public InflowOutflowElement(string name, string lastEditDate, string description, ComputeComponentVM inflowOutflowCurve, int id)
+        public InflowOutflowElement(string name, string lastEditDate, string description, CurveComponentVM inflowOutflowCurve, int id)
             :base(name,lastEditDate,description, inflowOutflowCurve, id)
         {
             AddDefaultActions(EditInflowOutflowCurve, StringConstants.EDIT_REG_UNREG_MENU);

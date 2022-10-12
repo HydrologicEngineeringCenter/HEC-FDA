@@ -60,10 +60,8 @@ namespace HEC.FDA.ViewModel.FlowTransforms
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
-            computeComponentVM.SetPairedData(DefaultCurveData.RegulatedUnregulatedDefaultCurve());
-
-            Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(computeComponentVM, actionManager);
+            CurveComponentVM curveComponentVM = DefaultData.UnregulatedRegulatedComputeComponent(); 
+            Editors.InflowOutflowEditorVM vm = new Editors.InflowOutflowEditorVM(curveComponentVM, actionManager);
 
             string title = StringConstants.CREATE_REG_UNREG_HEADER;
             DynamicTabVM tab = new DynamicTabVM(title, vm, StringConstants.CREATE_REG_UNREG_HEADER);

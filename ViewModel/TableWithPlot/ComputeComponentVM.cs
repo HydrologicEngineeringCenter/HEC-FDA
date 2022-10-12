@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
-    public class ComputeComponentVM : BaseViewModel
+    public class CurveComponentVM : BaseViewModel
     {
         #region Backing Fields
         private string _name;
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public ComputeComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
+        public CurveComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
         {
             _DeterministicOnly = deterministicOnly;
             _IsStrictMonotonic = isStrictMonotonic;
@@ -107,7 +107,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             SetValidation();
         }
 
-        public ComputeComponentVM(XElement vmEle)
+        public CurveComponentVM(XElement vmEle)
         {
             LoadFromXML(vmEle);
             SetValidation();
@@ -115,10 +115,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
         #region Methods
 
-        public ComputeComponentVM Clone()
+        public CurveComponentVM Clone()
         {
             XElement thisData = ToXML();
-            return new ComputeComponentVM(thisData);
+            return new CurveComponentVM(thisData);
         }
 
         /// <summary>

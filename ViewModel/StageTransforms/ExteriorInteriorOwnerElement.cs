@@ -59,14 +59,13 @@ namespace HEC.FDA.ViewModel.StageTransforms
 
         public void CreateNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
-            computeComponentVM.SetPairedData(DefaultCurveData.ExteriorInteriorDefaultCurve());
+            CurveComponentVM curveComponentVM = DefaultData.ExteriorInteriorComputeComponent();
 
             //create action manager
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(computeComponentVM, actionManager);
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(curveComponentVM, actionManager);
             string header = StringConstants.CREATE_EXT_INT_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_EXT_INT_HEADER);
             Navigate(tab, false, true);

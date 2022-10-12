@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.Editors
 {
     public class RatingCurveEditorVM : CurveEditorVM
     {
-        public RatingCurveEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public RatingCurveEditorVM(CurveComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
         }
 
@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Editors
         public override void Save()
         {
             int id = GetElementID<StageDischargeElement>();
-            StageDischargeElement elem = new StageDischargeElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
+            StageDischargeElement elem = new StageDischargeElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);
         }
     }

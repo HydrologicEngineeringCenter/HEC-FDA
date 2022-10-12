@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public event EventHandler DataModified;
 
         private bool _IsChecked;
-        private ComputeComponentVM _Curve;
+        private CurveComponentVM _Curve;
         private TableWithPlotVM _ItemTableWithPlot;
         private ValueUncertaintyVM _ItemValueUncertainty;
  
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             get { return _IsChecked; }
             set { _IsChecked = value; SomethingChanged(this, EventArgs.Empty); NotifyPropertyChanged(); }
         }
-        public ComputeComponentVM Curve
+        public CurveComponentVM Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -70,7 +70,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             ItemType = item.ItemType;
             IsChecked = item.IsChecked;
-            Curve = new ComputeComponentVM(item.Curve.ToXML());
+            Curve = new CurveComponentVM(item.Curve.ToXML());
             TableWithPlot = new TableWithPlotVM(Curve);
             TableWithPlot.WasModified += SomethingChanged;
             ValueUncertainty = new MonetaryValueUncertaintyVM(item.ValueUncertainty.Distribution);
@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccTypeAsset(XElement assetElem)
         {
             _IsChecked = Convert.ToBoolean( assetElem.Attribute("IsSelected").Value);
-            _Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
+            _Curve = new CurveComponentVM(assetElem.Element("CurveComponentVM"));
 
             XElement uncertElem = assetElem.Element("Uncertainty");
 
@@ -122,7 +122,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return uncertElem;
         }
 
-        public OccTypeAsset(OcctypeAssetType itemType, bool isChecked, ComputeComponentVM curve, ContinuousDistribution valueUncertainty)
+        public OccTypeAsset(OcctypeAssetType itemType, bool isChecked, CurveComponentVM curve, ContinuousDistribution valueUncertainty)
         {
             ItemType = itemType;
             IsChecked = isChecked;

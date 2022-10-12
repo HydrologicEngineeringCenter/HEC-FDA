@@ -38,15 +38,32 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             }
         }
 
-        public GraphicalDataProvider()
+        public GraphicalDataProvider(bool useFlow)
         {
             Name = "Deterministic";
-            Data.Add(new GraphicalRow(.99, 500d));
-            Data.Add(new GraphicalRow(.5, 2000d));
-            Data.Add(new GraphicalRow(.1, 34900d));
-            Data.Add(new GraphicalRow(.02, 66900d));
-            Data.Add(new GraphicalRow(.01, 86000d));
-            Data.Add(new GraphicalRow(.002,146000d));
+            if (useFlow)
+            {
+                Data.Add(new GraphicalRow(.99, 1400d));
+                Data.Add(new GraphicalRow(.5, 1500d));
+                Data.Add(new GraphicalRow(.2, 2120d));
+                Data.Add(new GraphicalRow(.1, 3140d));
+                Data.Add(new GraphicalRow(.04, 4210d));
+                Data.Add(new GraphicalRow(.02, 5070d));
+                Data.Add(new GraphicalRow(.01, 6240d));
+                Data.Add(new GraphicalRow(.004, 7050d));
+                Data.Add(new GraphicalRow(.002, 9680d));
+            } else
+            {
+                Data.Add(new GraphicalRow(.99, 458d));
+                Data.Add(new GraphicalRow(.5, 468.33d));
+                Data.Add(new GraphicalRow(.2,469.97d));
+                Data.Add(new GraphicalRow(.1, 471.95d));
+                Data.Add(new GraphicalRow(.04, 473.06d));
+                Data.Add(new GraphicalRow(.02, 473.66d));
+                Data.Add(new GraphicalRow(.01, 474.53d));
+                Data.Add(new GraphicalRow(.004, 475.11d));
+                Data.Add(new GraphicalRow(.002, 477.4d));
+            }
             LinkList();
             xMax = .999999999999999999999;
             xMin = .000000000000000000001;

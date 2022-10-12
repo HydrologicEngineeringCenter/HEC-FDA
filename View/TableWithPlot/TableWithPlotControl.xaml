@@ -23,7 +23,7 @@
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
                 <Grid Grid.Column="0" Visibility="{Binding Path=TableExtended, Converter={StaticResource VisibileIfTrueConverter}}">
-                <local:ComputeComponentControl x:Name="compComp" DataContext="{Binding Path=ComputeComponentVM}" Grid.Column="0"/>
+                <local:ComputeComponentControl x:Name="compComp" DataContext="{Binding Path=CurveComponentVM}" Grid.Column="0"/>
             </Grid>
             </ScrollViewer>
         </Grid>

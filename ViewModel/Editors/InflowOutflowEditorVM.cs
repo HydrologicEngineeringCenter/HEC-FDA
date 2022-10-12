@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.Editors
 {
     public class InflowOutflowEditorVM : CurveEditorVM
     {
-        public InflowOutflowEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public InflowOutflowEditorVM(CurveComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
         }
 
@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Editors
         public override void Save()
         {
             int id = GetElementID<InflowOutflowElement>();
-            InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
+            InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);
         }
     }

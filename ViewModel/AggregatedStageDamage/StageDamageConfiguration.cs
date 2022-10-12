@@ -197,11 +197,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<ImpactAreaFrequencyFunctionConfigurationRowItem> rows = new List<ImpactAreaFrequencyFunctionConfigurationRowItem>();
             foreach (ImpactAreaFrequencyFunctionRowItem item in ImpactAreaFrequencyRows)
             {
-                UncertainPairedData freqUPD = item.FrequencyFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
+                UncertainPairedData freqUPD = item.FrequencyFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                 UncertainPairedData stageDischargeUPD = null;
                 if (item.IsStageDischargeRequired())
                 {
-                    stageDischargeUPD = item.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
+                    stageDischargeUPD = item.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                 }
 
                 rows.Add(new ImpactAreaFrequencyFunctionConfigurationRowItem(item.ImpactArea.Name, freqUPD, stageDischargeUPD));
@@ -240,7 +240,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     if (isFlow)
                     {
                         GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
-                        UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
+                        UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                         stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
                             graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData));
 
@@ -255,7 +255,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 else
                 {
                     Statistics.Distributions.LogPearson3 logPearson3 = freqElement.CreateAnalyticalLP3Distribution();
-                    UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.ComputeComponentVM.SelectedItemToPairedData();
+                    UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                     stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
                         analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData));
                 }

@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             double otherMin = -1;
             double otherMax = -1;
 
-            UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).ComputeComponentVM.SelectedItemToPairedData();
+            UncertainPairedData otherCurve = ((CurveChildElement)otherElem.ChildElement).CurveComponentVM.SelectedItemToPairedData();
 
             stageDamageMin = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Min();
             stageDamageMax = selectedDamageCurve.ComputeComponent.SelectedItemToPairedData().Xvals.Last();
@@ -171,7 +171,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                data = curveElem.ComputeComponentVM.SelectedItemToPairedData();
+                data = curveElem.CurveComponentVM.SelectedItemToPairedData();
             }
 
             return data;
