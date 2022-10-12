@@ -39,7 +39,7 @@ namespace HEC.FDA.Model.hydraulics
             
             if (dataSource == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts);
+                return GetWSEFromGrids(pts, dataSource, parentDirectory);
             }
             else
             {
@@ -47,9 +47,10 @@ namespace HEC.FDA.Model.hydraulics
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts)
+        private float[] GetWSEFromGrids(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         {
-            var baseDs = TiffDataSource<float>.TryLoad(FilePath);
+            var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
+
             if (baseDs == null)
             {
                 return new float[pts.Count];
