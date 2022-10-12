@@ -15,7 +15,4 @@ public class SteadyHDFImporterVMShould
         vm.SelectedPath=PathToSteadyResult;
         Assert.Equal(8, vm.ListOfRows.Count);
     }
-
-    [Fact]
-    public void 
 }

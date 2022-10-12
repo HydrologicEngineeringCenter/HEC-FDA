@@ -53,10 +53,6 @@
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
-                <RadioButton Name="RDBWSE" Content="Water Surface Elevation Grids" IsChecked="True" />
-                <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
-            </StackPanel>
         </Grid>
         <local:PathAndProbabilityTableControl Grid.Row="4" />
 

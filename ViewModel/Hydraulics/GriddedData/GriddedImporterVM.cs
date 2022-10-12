@@ -52,7 +52,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
             foreach(HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
@@ -257,7 +256,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability,newName));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);          
         }
 
@@ -276,7 +275,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
         #endregion

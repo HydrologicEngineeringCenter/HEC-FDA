@@ -14,15 +14,13 @@ namespace HEC.FDA.Model.hydraulics
 
         public List<HydraulicProfile> HydraulicProfiles { get; } = new List<HydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
-        public bool IsDepthGrids { get; set; }
 
-        public HydraulicDataset(List<HydraulicProfile> profiles, HydraulicDataSource dataSource, bool isDepthGrid = false)
+        public HydraulicDataset(List<HydraulicProfile> profiles, HydraulicDataSource dataSource)
         {
             profiles.Sort();
             profiles.Reverse();
             HydraulicProfiles = profiles;
             DataSource = dataSource;
-            IsDepthGrids = isDepthGrid;
         }
 
         public HydraulicDataset(XElement xElement)
@@ -30,8 +28,6 @@ namespace HEC.FDA.Model.hydraulics
             string hydroType = xElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
             Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
             DataSource = myHydroType;
-
-            IsDepthGrids = Convert.ToBoolean(xElement.Attribute(IS_DEPTH_GRID_XML_TAG).Value);
 
             IEnumerable<XElement> profiles = xElement.Elements(PROFILES);
             IEnumerable<XElement> profileElems = profiles.Elements();
@@ -46,7 +42,6 @@ namespace HEC.FDA.Model.hydraulics
         {
             XElement elem = new XElement(HYDRAULIC_DATA_SET);
             elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, DataSource);
-            elem.SetAttributeValue(IS_DEPTH_GRID_XML_TAG, IsDepthGrids);
 
             //path and probs
             XElement profiles = new XElement(PROFILES);
