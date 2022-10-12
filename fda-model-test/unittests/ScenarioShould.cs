@@ -8,7 +8,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.scenarios;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     public class ScenarioShould
     {

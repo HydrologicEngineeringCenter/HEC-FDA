@@ -4,7 +4,7 @@ using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.hydraulics;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
     [Trait("Category", "Unit")]
     public class HydraulicProfileShould
@@ -37,7 +37,7 @@ namespace fda_model_test.unittests
             Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(696, wses.Length); // All structures have a value
-            Assert.Equal(947.244446, wses[0],1); // first structure has correct WSE
+            Assert.Equal(947.244446, wses[0], 1); // first structure has correct WSE
         }
     }
 }

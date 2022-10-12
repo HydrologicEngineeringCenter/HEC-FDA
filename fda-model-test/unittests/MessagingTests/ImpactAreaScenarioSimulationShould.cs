@@ -1,5 +1,4 @@
-﻿using fda_model_test.unittests.MessagingTests;
-using HEC.FDA.Model.compute;
+﻿using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Implementations;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests.MessagingTests
 {
     public class ImpactAreaScenarioSimulationShould
     {
@@ -78,7 +77,7 @@ namespace fda_model_test.unittests
                 .build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            
+
 
             Listener listener = new Listener();
             MessageHub.Register(simulation);

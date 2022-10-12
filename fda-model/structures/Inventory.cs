@@ -24,6 +24,21 @@ namespace HEC.FDA.Model.structures
             get { return _damageCategories; }
         }
 
+        public float[] FirstFloorElevations
+        {
+            get
+            {
+                float[] result = new float[Structures.Count];
+                int count = 0;
+                foreach(Structure structure in Structures)
+                {
+                    result[count] = (float)structure.FirstFloorElevation;
+                    count++;
+                }
+                return result;
+            }
+        }
+
         public static T TryGet<T>(object value, T defaultValue = default)
             where T : struct
         {

@@ -1,8 +1,11 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
+﻿using Geospatial.IO;
+using Geospatial.Rasters;
+using HEC.FDA.Model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace HEC.FDA.Model.hydraulics
 {
@@ -46,8 +49,19 @@ namespace HEC.FDA.Model.hydraulics
 
         private float[] GetWSEFromGrids(PointMs pts)
         {
-            //TODO Sample off grids
-            return null;
+            var baseDs = TiffDataSource<float>.TryLoad(FilePath);
+            if (baseDs == null)
+            {
+                return new float[pts.Count];
+            }
+            RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+
+            List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
+            Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
+            float[] elevationData = new float[points.Length];
+
+            baseRaster.SamplePoints(points, elevationData);
+            return elevationData;
         }
 
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
