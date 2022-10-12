@@ -25,8 +25,8 @@ namespace HEC.FDA.ViewModel.Hydraulics
 
         public void AddBaseElements(FDACache cache)
         {
-            UnsteadyHDFOwnerElement impactAreaOwnerElem = new UnsteadyHDFOwnerElement();
-            AddElement(impactAreaOwnerElem);
+            UnsteadyHDFOwnerElement unsteady = new UnsteadyHDFOwnerElement();
+            AddElement(unsteady);
             SteadyHDFOwnerElement steady = new SteadyHDFOwnerElement();
             AddElement(steady);
             GriddedDataOwnerElement gridded = new GriddedDataOwnerElement();
