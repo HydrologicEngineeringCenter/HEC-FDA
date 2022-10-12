@@ -35,6 +35,7 @@ namespace HEC.FDA.Model.hydraulics
         {
             Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
             FileName = elem.Attribute(PATH).Value;
+            ProfileName = elem.Attribute(PROFILE_NAME).Value;
         }
 
         public float[] GetWSE(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
@@ -130,6 +131,7 @@ namespace HEC.FDA.Model.hydraulics
             XElement elem = new XElement(PROFILE);
             elem.SetAttributeValue(PATH, FileName);
             elem.SetAttributeValue(PROB, Probability);
+            elem.SetAttributeValue(PROFILE_NAME, ProfileName);
             return elem;
         }
 
