@@ -23,17 +23,18 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string SteadyHDFFileName = @"Muncie.p09.hdf";
 
         private const string IANameColumnHeader = "Name";
+        private const string SteadyHydraulicProfileName = "PF1";
 
 
         [Theory]
-        [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF)]
-        [InlineData(ParentDirectoryToSteadyResult, SteadyHDFFileName, HydraulicDataSource.SteadyHDF)]
-        [InlineData(ParentDirectoryToGrid, GridFileName, HydraulicDataSource.WSEGrid)]
+        [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF, "Max" )]
+        [InlineData(ParentDirectoryToSteadyResult, SteadyHDFFileName, HydraulicDataSource.SteadyHDF, SteadyHydraulicProfileName)]
+        [InlineData(ParentDirectoryToGrid, GridFileName, HydraulicDataSource.WSEGrid, "Max")]
 
-        public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource)
+        public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName)
         {
             StructureInventoryColumnMap map = new StructureInventoryColumnMap();
-            HydraulicProfile profile = new HydraulicProfile(.01, fileName);
+            HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
