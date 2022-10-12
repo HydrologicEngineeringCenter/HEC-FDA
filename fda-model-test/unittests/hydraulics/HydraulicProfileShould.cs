@@ -13,24 +13,27 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
 
         private const string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
 
-        private const string ParentDirectoryToResult = @"..\..\..\fda-model-test\Resources\MuncieResult";
-        private const string RESULT_NAME = @"Muncie.p04.hdf";
+        private const string ParentDirectoryToUnsteadyResult = @"..\..\..\fda-model-test\Resources\MuncieResult";
+        private const string UnsteadyHDFFileName = @"Muncie.p04.hdf";
 
         private const string ParentDirectoryToGrid = @"..\..\..\fda-model-test\Resources\MuncieGrid\WSE (Max).Terrain";
-        private const string GRID_NAME = @"muncie_clip.tif";
+        private const string GridFileName = @"muncie_clip.tif";
+
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieGrid\WSE (Max).Terrain";
+        private const string SteadyHDFFileName = @"Muncie.p09.hdf";
 
         private const string IANameColumnHeader = "Name";
 
 
         [Theory]
-        [InlineData(ParentDirectoryToResult, RESULT_NAME, HydraulicDataSource.UnsteadyHDF)]
-        [InlineData(ParentDirectoryToResult, RESULT_NAME, HydraulicDataSource.SteadyHDF)]
-        //[InlineData(pathToGrid, HydraulicDataSource.WSEGrid)]
+        [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF)]
+        [InlineData(ParentDirectoryToSteadyResult, SteadyHDFFileName, HydraulicDataSource.SteadyHDF)]
+        [InlineData(ParentDirectoryToGrid, GridFileName, HydraulicDataSource.WSEGrid)]
 
-        public void GetWSE(string parentDirectory, string profileName, HydraulicDataSource dataSource)
+        public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource)
         {
             StructureInventoryColumnMap map = new StructureInventoryColumnMap();
-            HydraulicProfile profile = new HydraulicProfile(.01, profileName);
+            HydraulicProfile profile = new HydraulicProfile(.01, fileName);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
