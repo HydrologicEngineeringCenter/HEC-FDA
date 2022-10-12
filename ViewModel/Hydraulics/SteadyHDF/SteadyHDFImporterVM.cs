@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         public string SelectedPath
         {
             get { return _SelectedPath; }
-            set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
+            set { _SelectedPath = value; PopulateRows(value); NotifyPropertyChanged(); }
         }
 
         public bool IsDepthGridChecked
@@ -110,7 +110,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             return vr;
         }
 
-        public void FileSelected(string fullpath)
+        public void PopulateRows(string fullpath)
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (fullpath != null && IsCreatingNewElement)
@@ -123,10 +123,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 
                     string[] profileNames = GetProfileNamesFromFilePath(fullpath);
                     double prob = 0;
-                    foreach (string file in profileNames)
+                    foreach (string name in profileNames)
                     {
                         prob += .1;
-                        AddRow(Path.GetFileName(file), Path.GetFullPath(file), prob);
+                        AddRow(Path.GetFileName(name), Path.GetFullPath(name), prob);
                     }
                     if (!vr.IsValid)
                     {
@@ -202,8 +202,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName));
+                pathProbs.Add(new HydraulicProfile( row.Probability, SelectedPath, row.Name));
             }
 
             int id = GetElementID<HydraulicElement>();
