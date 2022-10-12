@@ -23,8 +23,7 @@ namespace HEC.FDA.Model.hydraulics
         public string FileName { get; set; }
         public string ProfileName { get; set; }
 
-
-        public HydraulicProfile(double probability, string fileName, string profileName )
+        public HydraulicProfile(double probability, string fileName, string profileName = "MAX" )
         {
             Probability = probability;
             FileName = fileName;
@@ -43,7 +42,7 @@ namespace HEC.FDA.Model.hydraulics
             
             if (dataSource == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts, dataSource, parentDirectory);
+                return GetWSEFromGrids(pts, parentDirectory);
             }
             else
             {
@@ -51,7 +50,7 @@ namespace HEC.FDA.Model.hydraulics
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
+        private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
             var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
 
