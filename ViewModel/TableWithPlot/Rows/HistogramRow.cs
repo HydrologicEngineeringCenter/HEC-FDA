@@ -72,6 +72,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                     break;
             }
         }
-    {
+    
     }
 }
