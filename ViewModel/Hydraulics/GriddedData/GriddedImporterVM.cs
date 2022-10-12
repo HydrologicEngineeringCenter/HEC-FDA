@@ -20,7 +20,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private bool _IsDepthGridChecked;
         private List<string> _OriginalFolderNames = new List<string>();
         private string _SelectedPath;
 
@@ -32,11 +31,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
-        public bool IsDepthGridChecked
-        {
-            get { return _IsDepthGridChecked; }
-            set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
-        }
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
         #endregion
         #region Constructors
@@ -52,7 +46,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
             foreach(HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
@@ -239,7 +232,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
-
             RenameDirectoryInTheStudy();
             //might have to rename the sub folders.
             List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
@@ -257,7 +249,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability,newName));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);          
         }
 
@@ -276,7 +268,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
         #endregion

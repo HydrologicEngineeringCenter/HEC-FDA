@@ -28,12 +28,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
-        public bool IsDepthGridChecked
-        {
-            get { return _IsDepthGridChecked; }
-            set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
-        }
-
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         #endregion
         #region Constructors
@@ -51,7 +45,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             Name = elem.Name;
             Description = elem.Description;
-            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
             foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
@@ -207,7 +200,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.SteadyHDF, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.SteadyHDF, id);
             base.Save(elementToSave);            
         }
 
@@ -222,7 +215,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             {
                 newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, ListOfRows[i].Name));
             }
-            HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
+            HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);
         }
 

@@ -27,11 +27,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
-        public bool IsDepthGridChecked
-        {
-            get { return _IsDepthGridChecked; }
-            set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
-        }
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         #endregion
         #region Constructors
@@ -47,7 +42,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         public UnsteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
             foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
@@ -245,7 +239,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, newName));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
             base.Save(elementToSave);
         }
 
@@ -265,7 +259,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.UnsteadyHDF, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.UnsteadyHDF, id);
             base.Save(elementToSave);
         }
         #endregion
