@@ -14,18 +14,21 @@ namespace HEC.FDA.Model.hydraulics
         public const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
+        private const string PROFILE_NAME = "ProfileName";
 
         public double Probability { get; set; }
         /// <summary>
         /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
         /// </summary>
         public string FileName { get; set; }
+        public string ProfileName { get; set; }
 
 
-        public HydraulicProfile(double probability, string filepath)
+        public HydraulicProfile(double probability, string fileName, string profileName )
         {
             Probability = probability;
-            FileName = filepath;
+            FileName = fileName;
+            ProfileName = profileName;
         }
 
         public HydraulicProfile(XElement elem)
@@ -83,7 +86,7 @@ namespace HEC.FDA.Model.hydraulics
             }
             else
             {               
-                profileIndex = rasResult.ProfileIndex(FileName);
+                profileIndex = rasResult.ProfileIndex(ProfileName);
             }
             // This will produce -9999 for NoData values.
             // Compute Switch requires an array of terrain elevations, but since we're using WSE they're not necessary. Mock array is just an array of propper size with values of 0. 
