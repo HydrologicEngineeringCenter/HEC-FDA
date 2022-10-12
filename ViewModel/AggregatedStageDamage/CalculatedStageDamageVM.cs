@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.stageDamage;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
@@ -110,16 +112,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void LoadCurves(List<StageDamageCurve> curves)
         {
-            int i = 1;
-            foreach (StageDamageCurve stageDamageCurve in curves)
+            for(int i = 0; i < curves.Count; i++)
             {
                 //used cloned curve so that you do not modify the original data
-                StageDamageCurve curve = new StageDamageCurve(stageDamageCurve.WriteToXML());
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
+                StageDamageCurve curve = new StageDamageCurve(curves[i].WriteToXML());
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i + 1, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
                 Rows.Add(newRow);
-                i++;
             }
-            if(Rows.Count>0)
+            if (Rows.Count > 0)
             {
                 ShowChart = true;
                 SelectedRow = Rows[0];
@@ -186,18 +186,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        
-       
-
         public void ComputeCurves()
         {
-            //todo: this is creating dummy curves for now.
-            //todo: make this a seperate class. StageDamageConfiguration
-
-
-
-            //structures: need shapefile and mapping of occtype, the set of occtypes
-            //imp area frequency rows should get dumbed down to just impact area name to UPD curves
             //we know that we have an impact area. We only allow one, so it will be the first one.
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
@@ -208,21 +198,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = config.Validate();
             if (vr.IsValid)
             {
-                Rows.Clear();
+                Rows.Clear();           
+                List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
+                LoadComputedCurveRows(stageDamageFunctions);
 
-                //todo: Make a call to the model and pass in the config object.
-                //modelComputeObject obj =  config.CreateModelComputeObject();
-                //someResultsObject = obj.compute();
-                //then i will translate the results into my VM row items to be displayed in the UI
-
-
-                //todo delete these dummy rows once we have the actual compute in place.
-                for (int i = 1; i < 11; i++)
-                {
-                    ComputeComponentVM curve = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
-                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, curve, "Total", StageDamageConstructionType.COMPUTED));
-                }
-                //end dummy rows
                 if (Rows.Count > 0)
                 {                  
                     ShowChart = true;
@@ -237,6 +216,40 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             
         }
 
+        private void LoadComputedCurveRows(List<UncertainPairedData> computedCurves)
+        {
+            for(int i =0;i<computedCurves.Count;i++)
+            {
+                UncertainPairedData upd = computedCurves[i];
+                ComputeComponentVM computeComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);              
+                computeComponent.SetPairedData(upd);
+                //get the impact area from the id
+                int impactAreaID = upd.ImpactAreaID;
+                ImpactAreaRowItem impactAreaRowItem = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0].GetImpactAreaRow(impactAreaID);
+                
+                Rows.Add(new CalculatedStageDamageRowItem(i+1, impactAreaRowItem, upd.DamageCategory, computeComponent,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
+            }
+
+        }
+
+        /// <summary>
+        /// Runs the stage damage compute
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns>The list of UPD curves created during the compute</returns>
+        private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
+        {
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
+
+            int seed = 1234;
+            Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
+            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
+            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
+            //these are the rows in the computed table
+            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+            return stageDamageFunctions;
+        }
+       
         private void TableDataChanged(object sender, EventArgs e)
         {
             SelectedRow.ConstructionType = StageDamageConstructionType.COMPUTED_EDITED;
@@ -313,9 +326,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //add the event
                 TableWithPlot.WasModified += TableDataChanged;
             }
-        }
-
-        
+        }      
 
     }
 }

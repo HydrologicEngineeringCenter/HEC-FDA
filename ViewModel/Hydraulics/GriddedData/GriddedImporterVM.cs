@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
@@ -50,11 +52,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            IsDepthGridChecked = elem.IsDepthGrids;
-            foreach(PathAndProbability pp in elem.RelativePathAndProbability)
+            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
+            foreach(HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
-                string folderName = Path.GetFileName(pp.Path);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
+                string folderName = Path.GetFileName(pp.FileName);
                 _OriginalFolderNames.Add(folderName);
                 AddRow(folderName, path, pp.Probability, false);
             }
@@ -240,7 +242,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
             RenameDirectoryInTheStudy();
             //might have to rename the sub folders.
-            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
                 string newName = ListOfRows[i].Name;
@@ -252,10 +254,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFolderNames[i] = newName;
                 }
-                newPathProbs.Add(new PathAndProbability(newName, ListOfRows[i].Probability));
+                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability,newName));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Gridded, OriginalElement.ID);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);          
         }
 
@@ -263,18 +265,18 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
-            List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 _OriginalFolderNames.Add(row.Name);
                 string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
+                pathProbs.Add(new HydraulicProfile(row.Probability, directoryName));
 
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Gridded, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
         #endregion

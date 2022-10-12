@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Xml.Linq;
+using Utility.Extensions.Attributes;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -16,23 +17,27 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        private const String IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
+        private const string IMPACT_AREA_ROWS_TAG = "ImpactAreaRows";
+        private const string UNIQUE_NAME_COLUMN_HEADER_TAG = "UniqueNameColumnHeader";
         #endregion
         #region Properties
 
         public List<ImpactAreaRowItem> ImpactAreaRows { get; } = new List<ImpactAreaRowItem>();
+        public string UniqueNameColumnHeader { get; }
 
         #endregion
         #region Constructors
-        public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id) 
+        public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id, string uniqueNameColumnHeader) 
             : base(name, "", description, id)
         {      
+            UniqueNameColumnHeader = uniqueNameColumnHeader;
             ImpactAreaRows = collectionOfRows;
             AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU);
         }
 
         public ImpactAreaElement(XElement impactAreaElement, int id) : base(impactAreaElement, id)
         {
+            UniqueNameColumnHeader = (string)impactAreaElement.Attribute(UNIQUE_NAME_COLUMN_HEADER_TAG);
             XElement rowsElem = impactAreaElement.Element(IMPACT_AREA_ROWS_TAG);
             IEnumerable<XElement> rowElems = rowsElem.Elements(ImpactAreaRowItem.ROW_ITEM_TAG);
             foreach (XElement nameElem in rowElems)
@@ -47,6 +52,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             XElement impactAreaElem = new XElement(StringConstants.ELEMENT_XML_TAG);
             impactAreaElem.Add(CreateHeaderElement());
+            impactAreaElem.SetAttributeValue(UNIQUE_NAME_COLUMN_HEADER_TAG, UniqueNameColumnHeader);
 
             XElement impactAreaRows = new XElement(IMPACT_AREA_ROWS_TAG);
             foreach (ImpactAreaRowItem row in ImpactAreaRows)
@@ -181,6 +187,28 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
 
         #endregion
+
+        public ImpactAreaRowItem GetImpactAreaRow(int impactAreaID)
+        {
+            ImpactAreaRowItem returnRow = null;
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                if(row.ID == impactAreaID)
+                {
+                    returnRow = row;
+                }
+            }
+            return returnRow;
+        }
+        public Dictionary<string,int> GetNameToIDPairs()
+        {
+            Dictionary<string,int> nameToIDPairs = new Dictionary<string,int>();
+            foreach (ImpactAreaRowItem row in ImpactAreaRows)
+            {
+                nameToIDPairs.Add(row.Name, row.ID);
+            }
+            return nameToIDPairs;
+        }
 
         public bool Equals(ImpactAreaElement elem)
         {

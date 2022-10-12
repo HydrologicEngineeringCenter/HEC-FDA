@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModelTest
             {
                 rows.Add(new ImpactAreaRowItem(i, "row" + i));
             }
-            ImpactAreaElement impAreaElem = new ImpactAreaElement("testName", "desc", rows, id);
+            ImpactAreaElement impAreaElem = new ImpactAreaElement("testName", "desc", rows, id, "header");
             XElement impXML = impAreaElem.ToXML();
             ImpactAreaElement impAreaElem2 = new ImpactAreaElement(impXML, id);
             Assert.True(impAreaElem.Equals(impAreaElem2));

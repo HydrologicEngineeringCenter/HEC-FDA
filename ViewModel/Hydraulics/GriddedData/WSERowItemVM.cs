@@ -13,8 +13,8 @@
             IsSelected = true;
             Name = element.Name;
             Description = element.Description;
-            NumberOfElevations = element.RelativePathAndProbability.Count;
-            IsUsingWSE = !element.IsDepthGrids;
+            NumberOfElevations = element.DataSet.HydraulicProfiles.Count;
+            IsUsingWSE = !element.DataSet.IsDepthGrids;
             Element = element;
 
         }

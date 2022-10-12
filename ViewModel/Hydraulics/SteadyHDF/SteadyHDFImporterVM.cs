@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
@@ -49,11 +51,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             Name = elem.Name;
             Description = elem.Description;
-            IsDepthGridChecked = elem.IsDepthGrids;
-            foreach (PathAndProbability pp in elem.RelativePathAndProbability)
+            IsDepthGridChecked = elem.DataSet.IsDepthGrids;
+            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.Path;
-                string folderName = Path.GetFileName(pp.Path);
+                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
+                string folderName = Path.GetFileName(pp.FileName);
                 AddRow(folderName, path, pp.Probability, false);
             }
         }
@@ -197,15 +199,15 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         {
             CopyFileToStudyDirectory();
 
-            List<PathAndProbability> pathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new PathAndProbability(directoryName, row.Probability));
+                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName));
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicType.Steady, id);
+            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, IsDepthGridChecked, HydraulicDataSource.SteadyHDF, id);
             base.Save(elementToSave);            
         }
 
@@ -215,12 +217,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             //if name is different then we need to update the directory name in the study hydraulics folder.
             RenameDirectoryInStudy();
 
-            List<PathAndProbability> newPathProbs = new List<PathAndProbability>();
+            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
-                newPathProbs.Add(new PathAndProbability(ListOfRows[i].Name, ListOfRows[i].Probability));
+                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, ListOfRows[i].Name));
             }
-            HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicType.Steady, OriginalElement.ID);
+            HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, IsDepthGridChecked, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);
         }
 
