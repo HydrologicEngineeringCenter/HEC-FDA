@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             Name = "Empirical";
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                Data.Add(new HistogramRow(upd.Xvals[i], (Histogram)upd.Yvals[i], IsStrictMonotonic));
+                Data.Add(new HistogramRow(upd.Xvals[i], (IHistogram)upd.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }

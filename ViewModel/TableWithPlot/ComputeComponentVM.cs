@@ -174,6 +174,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                         break;
                     case DistributionOptions.HISTOGRAM_ONLY:
                         Options[0] = new HistogramDataProvider(upd, _IsStrictMonotonic);
+                        SelectedItem = Options[0];
                         //todo: add here
 
                         break;

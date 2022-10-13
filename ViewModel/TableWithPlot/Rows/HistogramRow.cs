@@ -13,7 +13,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             get { return _x; }
             set
             {
-                //do nothing
+                _x = value;
+                NotifyPropertyChanged();
+                ((HistogramRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
+                ((HistogramRow)NextRow)?.NotifyPropertyChanged(nameof(X));
             }
 
         }
@@ -23,7 +26,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((Histogram)Y).CDF(.05);
+                return ((IHistogram)Y).CDF(.05);
             }
         }
         [DisplayAsColumn("Mean")]
@@ -32,7 +35,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((Histogram)Y).Mean;
+                return ((IHistogram)Y).Mean;
             }
         }
         [DisplayAsLine("95th Percentile")]
@@ -41,7 +44,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((Histogram)Y).CDF(.95);
+                return ((IHistogram)Y).CDF(.95);
             }
         }
 
@@ -59,7 +62,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 return new List<string>() { nameof(Mean), nameof(Percentile05), nameof(Percentile95) };
             }
         }
-        public HistogramRow(double x, Histogram y, bool isStrictMonotonic) : base(x, y)
+        public HistogramRow(double x, IHistogram y, bool isStrictMonotonic) : base(x, y)
         {
         }
 
