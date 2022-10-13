@@ -79,8 +79,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
-            //TODO: get rid of hard-coded string
-            CurveComponentVM = new CurveComponentVM(flowFreqElem.Element("CurveComponentVM"));
+
+            XElement curveComponentELement = flowFreqElem.Element("CurveComponentVM");
+            if(curveComponentELement == null)
+            {
+                curveComponentELement = flowFreqElem.Element("ComputeComponentVM");
+            }
+            CurveComponentVM = new CurveComponentVM(curveComponentELement);
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
             if(graphiclVMele != null)
             {

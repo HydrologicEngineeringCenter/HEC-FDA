@@ -467,7 +467,7 @@ namespace HEC.FDA.View.TableWithPlot
                 Binding b = (Binding)dgtc.Binding;
                 b.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
                 b.ValidatesOnNotifyDataErrors = true;
-                b.StringFormat = "N3";
+                b.StringFormat = ViewModel.Utilities.StringConstants.DEFAULT_UNIT_FORMAT;
             }
         }
     }

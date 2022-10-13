@@ -17,6 +17,11 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
             XElement functionElem = childElem.Element("CurveComponentVM");
+            if(functionElem == null)
+            {
+                //this is for backwards compatibility 
+                functionElem = childElem.Element("ComputeComponentVM");
+            }
             CurveComponentVM = new CurveComponentVM(functionElem);
         }
 

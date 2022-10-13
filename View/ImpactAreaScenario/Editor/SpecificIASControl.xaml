@@ -79,7 +79,7 @@
                 <Label Content="Asset Category:" />
                 <ComboBox ItemsSource="{Binding AssetCategories}" SelectedItem="{Binding SelectedAssetCategory}" Width="Auto"/>
                 <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
-                <TextBlock Text="{Binding EAD, StringFormat=N3}" Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
