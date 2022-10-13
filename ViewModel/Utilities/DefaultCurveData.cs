@@ -92,7 +92,6 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Other Default Parameter Values
         public static double DefaultLeveeElevation = 474;
         #endregion
-        //TODO can we create a default occpancy type?
 
         #region Default Curve Component VMs
         public static CurveComponentVM RatingComputeComponent()
@@ -145,6 +144,10 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
 
         #region Default Curves 
+        public static UncertainPairedData GeneralUseDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            return StageDischargeDefaultCurve(distributionEnum);
+        }
         public static UncertainPairedData GraphicalFlowFreqDefaultCurve()
         {
             CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);

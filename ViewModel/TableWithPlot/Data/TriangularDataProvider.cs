@@ -2,6 +2,8 @@
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 using Statistics.Distributions;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
@@ -11,8 +13,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public TriangularDataProvider()
         {
             Name = "Triangular";
-            Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1), IsStrictMonotonic));
-            Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Triangular);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new TriangularRow(uncertainPairedData.Xvals[i], (Triangular)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
 
@@ -20,8 +25,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Triangular";
-            Data.Add(new TriangularRow(0.0d, new Triangular(0, 0, 1), IsStrictMonotonic));
-            Data.Add(new TriangularRow(2.0d, new Triangular(1, 2, 3), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Triangular);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new TriangularRow(uncertainPairedData.Xvals[i], (Triangular)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
         public TriangularDataProvider(UncertainPairedData upd, bool isStrictMonotonic)

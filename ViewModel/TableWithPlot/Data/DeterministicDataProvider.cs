@@ -2,6 +2,8 @@
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
@@ -10,13 +12,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public DeterministicDataProvider()
         {
             Name = "Deterministic";
-            Data.Add(new DeterministicRow(0.0d, 0.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(1.0d, 1.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(2.0d, 2.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(3.0d, 3.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(4.0d, 4.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(5.0d, 5.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(6.0d, 6.0d, IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Deterministic);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new DeterministicRow(uncertainPairedData.Xvals[i], uncertainPairedData.Yvals[i].InverseCDF(.5), IsStrictMonotonic));
+            }
             LinkList();
         }
 
@@ -24,22 +24,20 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Deterministic";
-            Data.Add(new DeterministicRow(0.0d, 0.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(1.0d, 1.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(2.0d, 2.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(3.0d, 3.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(4.0d, 4.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(5.0d, 5.0d, IsStrictMonotonic));
-            Data.Add(new DeterministicRow(6.0d, 6.0d, IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Deterministic);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new DeterministicRow(uncertainPairedData.Xvals[i], uncertainPairedData.Yvals[i].InverseCDF(.5), IsStrictMonotonic));
+            }
             LinkList();
         }
-        public DeterministicDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        public DeterministicDataProvider(UncertainPairedData uncertainPairedData, bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Deterministic";
-            for(int i = 0; i < upd.Xvals.Length; i++)
+            for(int i = 0; i < uncertainPairedData.Xvals.Length; i++)
             {
-                Data.Add(new DeterministicRow(upd.Xvals[i], upd.Yvals[i].InverseCDF(.5), isStrictMonotonic));
+                Data.Add(new DeterministicRow(uncertainPairedData.Xvals[i], uncertainPairedData.Yvals[i].InverseCDF(.5), isStrictMonotonic));
             }
             LinkList();
         }
