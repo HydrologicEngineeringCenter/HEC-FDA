@@ -34,7 +34,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="isDepthGrids"></param>
-        public HydraulicElement(string name, string description,List<double> probabilites, bool isDepthGrids, HydraulicDataSource hydroType, int id)
+        public HydraulicElement(string name, string description,List<double> probabilites, HydraulicDataSource hydroType, int id)
             :base(name, "", description,  id)
         {
             List<HydraulicProfile> pathAndProbs = new List<HydraulicProfile>();
@@ -42,14 +42,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 pathAndProbs.Add(new HydraulicProfile(p, "NA"));
             }
-            DataSet = new HydraulicDataset(pathAndProbs, hydroType, isDepthGrids);
+            DataSet = new HydraulicDataset(pathAndProbs, hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
-        public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities,bool isDepthGrids, HydraulicDataSource hydroType, int id) 
+        public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
-            DataSet = new HydraulicDataset(relativePathAndProbabilities, hydroType, isDepthGrids);
+            DataSet = new HydraulicDataset(relativePathAndProbabilities, hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
@@ -108,10 +108,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 isEqual = false;
             }
             if (DataSet.DataSource != elem.DataSet.DataSource)
-            {
-                isEqual = false;
-            }
-            if(DataSet.IsDepthGrids != elem.DataSet.IsDepthGrids)
             {
                 isEqual = false;
             }
