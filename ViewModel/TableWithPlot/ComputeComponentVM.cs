@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics;
 using System;
@@ -22,6 +23,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private IDataProvider _selectedItem;
         private bool _DeterministicOnly;
         private bool _IsStrictMonotonic;
+        private bool _IsDepthPercentDamage;
         #endregion
         #region Properties
         public string Units
@@ -96,13 +98,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public CurveComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
+        public CurveComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false, bool isDepthPercentDamage = false)
         {
             _DeterministicOnly = deterministicOnly;
             _IsStrictMonotonic = isStrictMonotonic;
             Name = name;
             XLabel = xlabel;
             YLabel = ylabel;
+            _IsDepthPercentDamage = isDepthPercentDamage;
             Initialize();
             SetValidation();
         }
@@ -162,15 +165,32 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             if (_DeterministicOnly)
             {
-                Options.Add(new DeterministicDataProvider());
+                if (_IsDepthPercentDamage)
+                {
+                    Options.Add(new DeterministicDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Deterministic), _IsStrictMonotonic));
+                } else
+                {
+                    Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
+                }
             }
             else
             {
-                Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
-                Options.Add(new UniformDataProvider(_IsStrictMonotonic));
-                Options.Add(new NormalDataProvider(_IsStrictMonotonic));
-                Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
-                Options.Add(new LogNormalDataProvider(_IsStrictMonotonic));
+                if (_IsDepthPercentDamage)
+                {
+                    Options.Add(new DeterministicDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Deterministic), _IsStrictMonotonic));
+                    Options.Add(new UniformDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Uniform), _IsStrictMonotonic));
+                    Options.Add(new NormalDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Normal), _IsStrictMonotonic));
+                    Options.Add(new TriangularDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Triangular), _IsStrictMonotonic));
+                    Options.Add(new LogNormalDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.LogNormal), _IsStrictMonotonic));
+                } else
+                {
+                    Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
+                    Options.Add(new UniformDataProvider(_IsStrictMonotonic));
+                    Options.Add(new NormalDataProvider(_IsStrictMonotonic));
+                    Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
+                    Options.Add(new LogNormalDataProvider(_IsStrictMonotonic));
+                }
+
             }
 
             SelectedItem = Options.First();

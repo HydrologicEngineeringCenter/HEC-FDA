@@ -15,14 +15,15 @@ namespace HEC.FDA.ViewModel.Utilities
         private static double minStage = 463;
         private static double maxStage = 482;
         private static double minDepth = -2;
-        private static double maxDepth = 7;
+        private static double maxDepth = 8;
         private static double minDamage = 0;
         private static double maxDamage = 2500;
         private static int coordinateQuantity = 10;
 
-        private static List<double> _GraphicalXValues = new List<double>() { .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static List<double> _GraphicalXValues = new List<double>() {.99, .5, .2, .1, .04, .02, .01, .004, .002 };
         private static List<IDistribution> _GraphicalYValues = new List<IDistribution>()
         {
+            new Deterministic(1200),
             new Deterministic(1500),
             new Deterministic(2120),
             new Deterministic(3140),
@@ -93,7 +94,7 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
         //TODO can we create a default occpancy type?
 
-        #region Default Compute Component VMs
+        #region Default Curve Component VMs
         public static CurveComponentVM RatingComputeComponent()
         {
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);

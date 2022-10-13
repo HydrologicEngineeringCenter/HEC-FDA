@@ -597,16 +597,16 @@ namespace HEC.FDA.ViewModel.Utilities
             bool CalculateVehicleDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.CAR]); ;
             bool CalculateOtherDamage = !IsEmptyFunction(importedOT._SingleDamageFunction[(int)StructureValueType.OTHER]); ;
 
-            CurveComponentVM structureComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM structureComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             structureComponent.SetPairedData(StructureDepthDamageFunction);
 
-            CurveComponentVM contentComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM contentComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             contentComponent.SetPairedData(ContentDepthDamageFunction);
 
-            CurveComponentVM vehicleComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM vehicleComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             vehicleComponent.SetPairedData(VehicleDepthDamageFunction);
 
-            CurveComponentVM otherComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM otherComponent = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             otherComponent.SetPairedData(OtherDepthDamageFunction);
 
             List<ContinuousDistribution> uncertainties = TranslateErrorDistributionsToIOrdinates(importedOT._ErrorDistribution);

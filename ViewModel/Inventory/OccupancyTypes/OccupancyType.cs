@@ -76,7 +76,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private OccTypeAsset CreateDefaultAsset(OcctypeAssetType assetType, bool isSelected)
         {
-            CurveComponentVM depthPercentDamageCurve = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM depthPercentDamageCurve = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             depthPercentDamageCurve.SetPairedData(DefaultData.DepthPercentDamageDefaultCurve());
             ContinuousDistribution structValueUncert = new Deterministic(0);
             return new OccTypeAsset(assetType,  isSelected, depthPercentDamageCurve, structValueUncert);
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private OccTypeItemWithRatio CreateDefaultItemWithRatio(OcctypeAssetType itemType, bool isSelected)
         {
-            CurveComponentVM depthPercentDamageCurve = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE);
+            CurveComponentVM depthPercentDamageCurve = new CurveComponentVM(StringConstants.OCCTYPE_PLOT_TITLE, StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, isDepthPercentDamage: true);
             depthPercentDamageCurve.SetPairedData(DefaultData.DepthPercentDamageDefaultCurve());
             ContinuousDistribution structValueUncert = new Deterministic(0);
             ContinuousDistribution structValueUncertRatio = new Deterministic(0);
