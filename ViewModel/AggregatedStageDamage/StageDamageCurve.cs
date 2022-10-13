@@ -34,8 +34,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int selectedImpArea = int.Parse(curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
             AssetCategory = curveElement.Attribute(ASSET_CATEGORY).Value;
-            //TODO: get rid of hard-coded string
             XElement functionElem = curveElement.Element("CurveComponentVM");
+            if (functionElem == null)
+            {
+                functionElem = curveElement.Element("ComputeComponentVM");
+            }
             CurveComponentVM curveComponentVM = new CurveComponentVM(functionElem);
             //I don't think the impact area row name matters here
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "impact area row");
