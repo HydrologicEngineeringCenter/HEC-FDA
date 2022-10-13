@@ -9,9 +9,9 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class GraphicalVM : ComputeComponentVM
+    public class GraphicalVM : CurveComponentVM
     {
-        private int _equivalentRecordLength = 5;
+        private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
         private bool _useFlow = true;
         private NamedAction _confidenceLimits;
         public NamedAction ConfidenceLimits 
@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();
-            Options.Add(new GraphicalDataProvider());
+            Options.Add(new GraphicalDataProvider(UseFlow));
             SelectedItem = Options[0];
             Initialize();
         }
@@ -102,7 +102,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void LoadFromProbabilityFunction(ProbabilityFunction pf)
         {
             Options.Clear();
-            Options.Add(new GraphicalDataProvider());
+            Options.Add(new GraphicalDataProvider(UseFlow));
             SelectedItem = Options[0];
             Initialize();
             SelectedItem.Data.Clear();
@@ -130,9 +130,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {
-            GraphicalUncertainPairedData graffical = GraphicalUncertainPairedData;
-            PairedData upperNonExceedence = graffical.SamplePairedData(.975) as PairedData;
-            PairedData lowerNonExceedence = graffical.SamplePairedData(.025) as PairedData;
+            GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
+            PairedData upperNonExceedence = graphical.SamplePairedData(.975) as PairedData;
+            PairedData lowerNonExceedence = graphical.SamplePairedData(.025) as PairedData;
             double[] probs = lowerNonExceedence.Xvals;
 
             foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)

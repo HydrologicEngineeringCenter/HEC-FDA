@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModelTest
         {
             int id = 9;
 
-            ComputeComponentVM compVM = new ComputeComponentVM("someName", "xLabel", "yLabel");
+            CurveComponentVM compVM = new CurveComponentVM("someName", "xLabel", "yLabel");
             compVM.SetPairedData(UncertainPairedDataFactory.CreateDefaultNormalData("xlabel", "ylabel", "name"));
 
             StageDischargeElement elem1 = new StageDischargeElement("myName", "lastEditDate", "desc", compVM, id);

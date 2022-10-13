@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #region Constructors
         //fresh editor
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, ComputeComponentVM function, int id) 
+            double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, CurveComponentVM function, int id) 
             : base(name, lastEditDate, desc, function, id)
         {
             POR = por;
@@ -79,8 +79,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             {
                 AnalyticalFlows = ConvertStringToFlows(flows);
             }
-
-            ComputeComponentVM = new ComputeComponentVM(flowFreqElem.Element("ComputeComponentVM"));
+            //TODO: get rid of hard-coded string
+            CurveComponentVM = new CurveComponentVM(flowFreqElem.Element("CurveComponentVM"));
             XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
             if(graphiclVMele != null)
             {

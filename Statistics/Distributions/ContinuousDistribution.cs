@@ -91,7 +91,8 @@ namespace Statistics
                                 }
                                 else
                                 {
-                                    valD = Convert.ToDouble(xElement.Attribute(storedAttribute.Name).Value);
+                                    string valDstring = xElement.Attribute(storedAttribute.Name).Value;
+                                    valD = Convert.ToDouble(valDstring);
                                 }//TODO: WHAT ARE THE VAL D VAL B VAL I IT IS NOT CLEAR 
                                 propertyInfo.SetValue(iDistribution, valD);
                                 break;

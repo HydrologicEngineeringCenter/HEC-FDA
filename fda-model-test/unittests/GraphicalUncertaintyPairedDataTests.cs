@@ -3,7 +3,7 @@ using Xunit;
 using System.Xml.Linq;
 using HEC.FDA.Model.paireddata;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class GraphicalUncertaintyPairedDataTests
@@ -33,7 +33,7 @@ namespace fda_model_test.unittests
             {
                 for (int j = 1; j < pairedData.Xvals.Length; j++)
                 {
-                    if (pairedData.Yvals[j] < pairedData.Yvals[j-1])
+                    if (pairedData.Yvals[j] < pairedData.Yvals[j - 1])
                     {
                         pass = false;
                         break;
@@ -41,7 +41,7 @@ namespace fda_model_test.unittests
                 }
                 Assert.True(pass);
             }
-           
+
         }
 
         [Theory]

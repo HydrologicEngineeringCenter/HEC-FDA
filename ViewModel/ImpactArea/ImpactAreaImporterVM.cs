@@ -17,8 +17,8 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #endregion
         #region Fields
         private string _Path;
-        private List<string> _UniqueFields;
-        private string _SelectedUniqueName;
+        private List<string> _UniqueNames;
+        private string _SelectedUniqueNameColumnHeader;
         #endregion
         #region Properties
         public string SelectedPath
@@ -28,15 +28,15 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         public CustomObservableCollection <ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
 
-        public List<string> UniqueFields
+        public List<string> UniqueNames
         {
-            get { return _UniqueFields; }
-            set { _UniqueFields = value; NotifyPropertyChanged(); }
+            get { return _UniqueNames; }
+            set { _UniqueNames = value; NotifyPropertyChanged(); }
         } 
-        public string SelectedUniqueName
+        public string SelectedUniqueNameColumnHeader
         {
-            get { return _SelectedUniqueName; }
-            set { _SelectedUniqueName = value; NotifyPropertyChanged(); }
+            get { return _SelectedUniqueNameColumnHeader; }
+            set { _SelectedUniqueNameColumnHeader = value; NotifyPropertyChanged(); }
         }
         #endregion
         #region Constructors
@@ -73,7 +73,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
                     List<string> uniqueNameList = dtv.ColumnNames.ToList();
 
-                    UniqueFields = uniqueNameList;
+                    UniqueNames = uniqueNameList;
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             for (int i = 0; i < dtv.ColumnNames.Count(); i++)
             {
-                if (dtv.ColumnNames[i] == SelectedUniqueName)
+                if (dtv.ColumnNames[i] == SelectedUniqueNameColumnHeader)
                 {
                     object[] col = dtv.GetColumn(i);
                     ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], col);
@@ -106,7 +106,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             int id = GetElementID<ImpactAreaElement>();
 
-            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id);
+            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id, SelectedUniqueNameColumnHeader);
 
             if (IsCreatingNewElement)
             {

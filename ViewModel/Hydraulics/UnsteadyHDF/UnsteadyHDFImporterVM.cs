@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
     public class UnsteadyHDFImporterVM:BaseEditorVM
     {
         #region Fields
-        private bool _IsDepthGridChecked;
         private List<string> _OriginalFileNames = new List<string>();
         private string _SelectedPath;
         #endregion

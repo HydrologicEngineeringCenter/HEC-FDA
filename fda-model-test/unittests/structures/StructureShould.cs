@@ -6,7 +6,7 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 
-namespace fda_model_test.unittests.structures
+namespace HEC.FDA.ModelTest.unittests.structures
 {
     public class StructureShould
     {
@@ -46,7 +46,7 @@ namespace fda_model_test.unittests.structures
         private static Structure structure = new Structure(structureID, pointM, firstFloorElevation, inventoriedStructureValue, damageCategory, occupancyTypeName, impactAreaID);
 
         [Theory]
-        [InlineData(1000, 100, 900, new double[] {0,10,20,30,40,50} )]
+        [InlineData(1000, 100, 900, new double[] { 0, 10, 20, 30, 40, 50 })]
         public void StructureShouldSampleCorrectly(double expectedStructureValue, double expectedFirstFloorElevation, double expectedContentValue, double[] expectedPercentDamage)
         {
             DeterministicStructure deterministicStructure = structure.Sample(medianRandomProvider, occupancyType);
@@ -54,6 +54,6 @@ namespace fda_model_test.unittests.structures
             Assert.Equal(expectedFirstFloorElevation, deterministicStructure.FirstFloorElevation);
             Assert.Equal(expectedContentValue, deterministicStructure.ContentValueSample);
             Assert.Equal(expectedPercentDamage, deterministicStructure.SampledStructureParameters.StructPercentDamagePairedData.Yvals);
-        } 
+        }
     }
 }

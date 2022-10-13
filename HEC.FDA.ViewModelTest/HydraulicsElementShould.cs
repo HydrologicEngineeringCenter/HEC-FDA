@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModelTest
             {
                 rows.Add(new HydraulicProfile(i, "path" + i));
             }
-            HydraulicElement elem1 = new HydraulicElement("test", "desc", rows, true, HydraulicDataSource.WSEGrid, id);
+            HydraulicElement elem1 = new HydraulicElement("test", "desc", rows, HydraulicDataSource.WSEGrid, id);
             XElement elemXML = elem1.ToXML();
 
             HydraulicElement elem2 = new HydraulicElement(elemXML, id);

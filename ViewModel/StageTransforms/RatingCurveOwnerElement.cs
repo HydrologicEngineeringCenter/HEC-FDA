@@ -64,10 +64,8 @@ namespace HEC.FDA.ViewModel.StageTransforms
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
-            computeComponentVM.SetPairedData(DefaultCurveData.StageDischargeDefaultCurve());
-
-            RatingCurveEditorVM vm = new RatingCurveEditorVM(computeComponentVM, actionManager);
+            CurveComponentVM curveComponentVM = DefaultData.RatingComputeComponent();
+            RatingCurveEditorVM vm = new RatingCurveEditorVM(curveComponentVM, actionManager);
             string header = StringConstants.CREATE_STAGE_DISCHARGE_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_STAGE_DISCHARGE_HEADER);
             Navigate(tab, false, true);          

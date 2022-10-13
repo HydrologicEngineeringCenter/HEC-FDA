@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         // Created Date: 6/8/2017 11:31:34 AM
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string name,string lastEditDate, string desc, ComputeComponentVM exteriorInteriorCurve, int id)
+        public ExteriorInteriorElement(string name,string lastEditDate, string desc, CurveComponentVM exteriorInteriorCurve, int id)
             :base(name, lastEditDate, desc, exteriorInteriorCurve, id)
         {
             AddDefaultActions(EditExteriorInteriorCurve, StringConstants.EDIT_EXT_INT_MENU);

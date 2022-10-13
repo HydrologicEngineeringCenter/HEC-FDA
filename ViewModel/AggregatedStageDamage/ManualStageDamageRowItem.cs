@@ -38,7 +38,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             get { return _DamageCategories; }
             set { _DamageCategories = value; NotifyPropertyChanged(); }
         }
-        public ComputeComponentVM ComputeComponent { get; set; }
+        public CurveComponentVM ComputeComponent { get; set; }
 
         public String SelectedDamCat
         {
@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         
         public string SelectedAssetCategory { get; set; }
 
-        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, ComputeComponentVM function, string assetCategory = STRUCTURE)
+        public ManualStageDamageRowItem(int id, ObservableCollection<ImpactAreaRowItem> impAreas, ObservableCollection<String> damCats, CurveComponentVM function, string assetCategory = STRUCTURE)
         {
             ID = id;
             ImpactAreas = impAreas;

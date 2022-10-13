@@ -7,7 +7,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 
-namespace fda_model_test.unittests
+namespace HEC.FDA.ModelTest.unittests
 {
     public class ExpectedAnnualDamageResultsShould
     {//TODO: Access the requisite logic through Scenario results 
@@ -20,7 +20,7 @@ namespace fda_model_test.unittests
         static string assetCat = "content";
         static int id = 0;
         static CurveTypesEnum curveTypesEnum = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaDataWithCategory = new CurveMetaData(xLabel, yLabel, name, damCat, curveTypesEnum,assetCat);
+        static CurveMetaData curveMetaDataWithCategory = new CurveMetaData(xLabel, yLabel, name, damCat, curveTypesEnum, assetCat);
         static CurveMetaData curveMetaDataWithoutCategory = new CurveMetaData(xLabel, yLabel, name, curveTypesEnum);
 
         [Theory]

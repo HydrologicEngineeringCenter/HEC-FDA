@@ -567,7 +567,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
             {
                 CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
-                retval = elem.ComputeComponentVM.SelectedItemToPairedData();
+                retval = elem.CurveComponentVM.SelectedItemToPairedData();
             }
 
             return retval;

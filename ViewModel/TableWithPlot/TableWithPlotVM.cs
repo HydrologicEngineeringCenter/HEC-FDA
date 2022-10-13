@@ -24,7 +24,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
         #region Backing Fields
         private ViewResolvingPlotModel _plotModel = new ViewResolvingPlotModel();
-        private ComputeComponentVM _computeComponentVM;
+        private CurveComponentVM _curveComponentVM;
         private bool _plotExtended = true;
         private bool _tableExtended = true;
         public event UpdatePlotEventHandler UpdatePlotEvent;
@@ -40,9 +40,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             get { return _plotModel; }
         }
-        public ComputeComponentVM ComputeComponentVM
+        public CurveComponentVM CurveComponentVM
         {
-            get { return _computeComponentVM; }
+            get { return _curveComponentVM; }
         }
         public bool PlotExtended
         {
@@ -65,10 +65,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
 
         #region Constructors
-        public TableWithPlotVM(ComputeComponentVM computeComponentVM, bool reverseXAxis = false)
+        public TableWithPlotVM(CurveComponentVM curveComponentVM, bool reverseXAxis = false)
         {
             _reverseXAxis = reverseXAxis;
-            _computeComponentVM = computeComponentVM;
+            _curveComponentVM = curveComponentVM;
             Initialize();
         }
         public TableWithPlotVM(XElement ele)
@@ -82,7 +82,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #region Methods
         private void Initialize()
         {
-            _computeComponentVM.PropertyChanged += _computeComponentVM_PropertyChanged;
+            _curveComponentVM.PropertyChanged += _curveComponentVM_PropertyChanged;
             InitPlotModel(_plotModel);
             SelectedItemToPlotModel();
 
@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
         private void InitPlotModel(PlotModel plotModel)
         {
-            plotModel.Title = _computeComponentVM.Name;
+            plotModel.Title = _curveComponentVM.Name;
             plotModel.LegendPosition = LegendPosition.BottomRight;
 
             if (_reverseXAxis)
@@ -117,7 +117,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             XElement ele = new XElement(this.GetType().Name);
             ele.SetAttributeValue(nameof(ReverseXAxis), ReverseXAxis);
-            ele.Add(ComputeComponentVM.ToXML());
+            ele.Add(CurveComponentVM.ToXML());
             return ele;
         }
         private void LoadFromXML(XElement ele)
@@ -128,17 +128,17 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             string componentType = computeCompElement.Name.ToString();
             if(componentType == "GraphicalVM")
             {
-                    _computeComponentVM = new GraphicalVM(computeCompElement);
+                    _curveComponentVM = new GraphicalVM(computeCompElement);
             }
         }
         public UncertainPairedData GetUncertainPairedData()
         {
-            return ComputeComponentVM.SelectedItem.ToUncertainPairedData(ComputeComponentVM.XLabel, ComputeComponentVM.YLabel, ComputeComponentVM.Name, ComputeComponentVM.Description, "testCategory?");
+            return CurveComponentVM.SelectedItem.ToUncertainPairedData(CurveComponentVM.XLabel, CurveComponentVM.YLabel, CurveComponentVM.Name, CurveComponentVM.Description, "testCategory?");
         }
 
         private void AddHandlers() //Make sure new rows get added to this.
         {
-            foreach (IDataProvider idp in _computeComponentVM.Options)
+            foreach (IDataProvider idp in _curveComponentVM.Options)
             {
                 idp.Data.CollectionChanged += Data_CollectionChanged;
                 foreach (SequentialRow row in idp.Data)
@@ -175,7 +175,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private void SelectedItemToPlotModel()
         {
             _plotModel.Series.Clear();
-            PropertyInfo[] pilist = _computeComponentVM.SelectedItem.Data[0].GetType().GetProperties();
+            PropertyInfo[] pilist = _curveComponentVM.SelectedItem.Data[0].GetType().GetProperties();
             foreach (PropertyInfo pi in pilist)
             {
                 DisplayAsLineAttribute dispAsLineAttribute = (DisplayAsLineAttribute)pi.GetCustomAttribute(typeof(DisplayAsLineAttribute));
@@ -203,16 +203,16 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                     }
                     lineSeries.DataFieldX = "X";
                     lineSeries.DataFieldY = pi.Name;
-                    lineSeries.ItemsSource = _computeComponentVM.SelectedItem.Data;
+                    lineSeries.ItemsSource = _curveComponentVM.SelectedItem.Data;
                     _plotModel.Series.Add(lineSeries);
                 }
             }
             _plotModel.InvalidatePlot(true);
         }
 
-        private void _computeComponentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void _curveComponentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(_computeComponentVM.SelectedItem))
+            if (e.PropertyName == nameof(_curveComponentVM.SelectedItem))
             {
                 SelectedItemToPlotModel();
                 WasModified?.Invoke(sender, e);
@@ -233,7 +233,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             FdaValidationResult vr = new FdaValidationResult();
             int i = 0;
-            foreach (object row in _computeComponentVM.SelectedItem.Data)
+            foreach (object row in _curveComponentVM.SelectedItem.Data)
             {
                 i++;
                 if (row is SequentialRow sequentialRow)

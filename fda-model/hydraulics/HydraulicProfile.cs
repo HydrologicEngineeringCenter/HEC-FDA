@@ -1,8 +1,11 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
+﻿using Geospatial.IO;
+using Geospatial.Rasters;
+using HEC.FDA.Model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace HEC.FDA.Model.hydraulics
 {
@@ -11,24 +14,27 @@ namespace HEC.FDA.Model.hydraulics
         public const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
+        private const string PROFILE_NAME = "ProfileName";
 
         public double Probability { get; set; }
         /// <summary>
         /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
         /// </summary>
         public string FileName { get; set; }
+        public string ProfileName { get; set; }
 
-
-        public HydraulicProfile(double probability, string filepath)
+        public HydraulicProfile(double probability, string fileName, string profileName = "MAX" )
         {
             Probability = probability;
-            FileName = filepath;
+            FileName = fileName;
+            ProfileName = profileName;
         }
 
         public HydraulicProfile(XElement elem)
         {
             Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
             FileName = elem.Attribute(PATH).Value;
+            ProfileName = elem.Attribute(PROFILE_NAME).Value;
         }
 
         public float[] GetWSE(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
@@ -36,7 +42,7 @@ namespace HEC.FDA.Model.hydraulics
             
             if (dataSource == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts);
+                return GetWSEFromGrids(pts, parentDirectory);
             }
             else
             {
@@ -44,10 +50,22 @@ namespace HEC.FDA.Model.hydraulics
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts)
+        private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
-            //TODO Sample off grids
-            return null;
+            var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
+
+            if (baseDs == null)
+            {
+                return new float[pts.Count];
+            }
+            RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+
+            List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
+            Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
+            float[] elevationData = new float[points.Length];
+
+            baseRaster.SamplePoints(points, elevationData);
+            return elevationData;
         }
 
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
@@ -68,7 +86,7 @@ namespace HEC.FDA.Model.hydraulics
             }
             else
             {               
-                profileIndex = rasResult.ProfileIndex(FileName);
+                profileIndex = rasResult.ProfileIndex(ProfileName);
             }
             // This will produce -9999 for NoData values.
             // Compute Switch requires an array of terrain elevations, but since we're using WSE they're not necessary. Mock array is just an array of propper size with values of 0. 
@@ -112,6 +130,7 @@ namespace HEC.FDA.Model.hydraulics
             XElement elem = new XElement(PROFILE);
             elem.SetAttributeValue(PATH, FileName);
             elem.SetAttributeValue(PROB, Probability);
+            elem.SetAttributeValue(PROFILE_NAME, ProfileName);
             return elem;
         }
 

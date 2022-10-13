@@ -82,14 +82,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (_FreqElem.IsAnalytical)
             {
                 _SimulationBuilder.withFlowFrequency(GetFrequencyDistribution());
-                _SimulationBuilder.withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
             }
             else
             {
                 if(_FreqElem.MyGraphicalVM.UseFlow == true)
                 {
                     _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
-                    _SimulationBuilder.withFlowStage(_RatElem.ComputeComponentVM.SelectedItemToPairedData());
+                    _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
                 }
                 else
                 {
@@ -98,11 +98,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             if (_UseInOut)
             {
-                _SimulationBuilder.withInflowOutflow(_InOutElem.ComputeComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.withInflowOutflow(_InOutElem.CurveComponentVM.SelectedItemToPairedData());
             }
             if (_UseExtInt)
             {
-                _SimulationBuilder.withInteriorExterior(_ExtIntElem.ComputeComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.withInteriorExterior(_ExtIntElem.CurveComponentVM.SelectedItemToPairedData());
             }
             if (_UseLevee)
             {
@@ -112,7 +112,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
                 else
                 {
-                    _SimulationBuilder.withLevee(_LeveeElem.ComputeComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+                    _SimulationBuilder.withLevee(_LeveeElem.CurveComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
                 }
             }
         }
