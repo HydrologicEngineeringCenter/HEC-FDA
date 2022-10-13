@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Interfaces;
+using RasMapperLib.Utilities;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -51,6 +52,24 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 ((LogNormal)Y).StandardDeviation = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        [DisplayAsLine("95% CI", Enumerables.ColorEnum.Blue, true)]
+        public double Upper
+        {
+            get
+            {
+                return System.Math.Log(Y.InverseCDF(.95));
+            }
+        }
+    
+        [DisplayAsLine("5% CI", Enumerables.ColorEnum.Blue, true)]
+        public double Lower
+        {
+            get
+            {
+                return System.Math.Log(Y.InverseCDF(.05));
             }
         }
         protected override List<string> YMinProperties
