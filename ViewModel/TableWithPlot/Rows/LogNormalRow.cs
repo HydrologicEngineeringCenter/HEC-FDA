@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        [DisplayAsLine("95% CI", Enumerables.ColorEnum.Blue, true)]
+        [DisplayAsLine("95% CL", Enumerables.ColorEnum.Blue, true)]
         public double Upper
         {
             get
@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
     
-        [DisplayAsLine("5% CI", Enumerables.ColorEnum.Blue, true)]
+        [DisplayAsLine("5% CL", Enumerables.ColorEnum.Blue, true)]
         public double Lower
         {
             get
