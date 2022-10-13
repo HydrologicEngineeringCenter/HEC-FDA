@@ -95,6 +95,7 @@
         public const string EDIT_FREQUENCY_FUNCTIONS_MENU = "Edit Frequency Function...";
         public const string CREATE_FREQUENCY_HEADER = "Create Frequency Function";
         public const string IMPORT_FREQUENCY_FROM_OLD_NAME = "Frequency Function";
+        public const string IMPORT_SYNTHETIC_FUNTION_FROM_DBF = "Import Synthetic Analytical Flow-Frequency Function from DBF...";
 
         public const string REG_UNREG_TRANSFORM_FUNCTIONS = "Regulated-Unregulated Transform Functions";
         public const string CREATE_REG_UNREG_MENU = "Create New Regulated-Unregulated Relationship...";

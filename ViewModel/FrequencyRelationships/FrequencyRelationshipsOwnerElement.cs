@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             NamedAction importSyntheticFreq = new NamedAction();
-            importSyntheticFreq.Header = StringConstants.CreateImportFromFileMenuString("Synthetic Analytical Frequency Function");
+            importSyntheticFreq.Header = StringConstants.IMPORT_SYNTHETIC_FUNTION_FROM_DBF;
             importSyntheticFreq.Action = CreateSyntheticFreqFromDBF;
 
             List<NamedAction> localActions = new List<NamedAction>();

@@ -20,7 +20,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private bool _IsDepthGridChecked;
         private List<string> _OriginalFolderNames = new List<string>();
         private string _SelectedPath;
 
@@ -32,11 +31,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
-        public bool IsDepthGridChecked
-        {
-            get { return _IsDepthGridChecked; }
-            set { _IsDepthGridChecked = value; NotifyPropertyChanged(); }
-        }
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
         #endregion
         #region Constructors
@@ -238,7 +232,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
-
             RenameDirectoryInTheStudy();
             //might have to rename the sub folders.
             List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();

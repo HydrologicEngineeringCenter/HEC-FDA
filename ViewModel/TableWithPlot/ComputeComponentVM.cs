@@ -246,10 +246,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
 
             Options.Clear();
             foreach (XElement updEl in element.Elements())
-            {
-                
-                
-
+            {            
                 string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
                 string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
                 ObjectHandle oh = Activator.CreateInstance(null, typeName);//requires empty constructor

@@ -25,7 +25,11 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Properties
-        public string LastEditDate { get; set; } = "";
+        public string LastEditDate 
+        { 
+            get; 
+            set; 
+        } = "";
         public int ID { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 

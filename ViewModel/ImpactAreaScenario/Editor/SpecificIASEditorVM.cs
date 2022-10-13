@@ -385,7 +385,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 assetCategories.Add(curve.AssetCategory);
             }
-            AssetCategories.AddRange(assetCategories);
+            AssetCategories.AddRange(assetCategories.Distinct());
             if(AssetCategories.Count > 0)
             {
                 SelectedAssetCategory = AssetCategories[0];

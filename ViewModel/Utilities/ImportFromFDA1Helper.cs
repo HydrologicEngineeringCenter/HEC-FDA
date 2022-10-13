@@ -503,7 +503,6 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
             UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
-
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             curveComponentVM.SetPairedData(func);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), curveComponentVM, elemID);
@@ -1042,7 +1041,6 @@ namespace HEC.FDA.ViewModel.Utilities
                 func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 isDefault = false;
             }
-
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
             curveComponentVM.SetPairedData(func);
             LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, curveComponentVM,elemID);
@@ -1080,7 +1078,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 ys.Add(new Deterministic(xy.GetY()));
             }
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
-   
+  
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             curveComponentVM.SetPairedData(func);
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), curveComponentVM, elemID);

@@ -9,7 +9,6 @@ namespace HEC.FDA.Model.hydraulics
     {
         public const string HYDRAULIC_DATA_SET = "HydraulicDataSet";
         private const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
-        private const string IS_DEPTH_GRID_XML_TAG = "IsDepthGrid";
         private const string PROFILES = "Profiles";
 
         public List<HydraulicProfile> HydraulicProfiles { get; } = new List<HydraulicProfile>();
