@@ -74,7 +74,7 @@ public class Inventory
             }
         }
 
-    private Polygon GetImpactAreaPolygon(string impactAreaName)
+    public Polygon GetImpactAreaPolygon(string impactAreaName)
     {
         for (int i = 0; i < _impactAreaSet.FeatureCount(); i++)
         {
@@ -203,12 +203,11 @@ public class Inventory
         }
         return points;
     }
-    private static int GetImpactAreaFID(PointM point, string polygonShapefilePath)
+    public static int GetImpactAreaFID(PointM point, string polygonShapefilePath)
     {
         PolygonFeatureLayer polygonFeatureLayer = new PolygonFeatureLayer("impactAreas", polygonShapefilePath);
         List<Polygon> polygons = polygonFeatureLayer.Polygons().ToList();
-        var polygonsList = polygons.ToList();
-        for (int i = 0; i < polygonsList.Count; i++)
+        for (int i = 0; i < polygons.Count; i++)
         { 
             if (polygons[i].Contains(point))
             {
