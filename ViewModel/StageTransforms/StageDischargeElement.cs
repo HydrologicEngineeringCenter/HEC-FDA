@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.StageTransforms
         
         #region Constructors
 
-        public StageDischargeElement(string name, string lastEditDate, string desc, ComputeComponentVM ratingCurve, int id) 
+        public StageDischargeElement(string name, string lastEditDate, string desc, CurveComponentVM ratingCurve, int id) 
             : base(name, lastEditDate, desc,ratingCurve, id)
         {
             AddDefaultActions(EditRatingCurve, StringConstants.EDIT_STAGE_DISCHARGE_MENU);

@@ -21,7 +21,7 @@ namespace HEC.FDA.ViewModelTest
             double stDev = 2;
             double skew = 3;
             GraphicalVM graphicalVM = new GraphicalVM("graph", "xLabel", "yLabel");
-            ComputeComponentVM compVM = new ComputeComponentVM();
+            CurveComponentVM compVM = new CurveComponentVM();
 
             AnalyticalFrequencyElement elem1 = new AnalyticalFrequencyElement("test", "lastEdit", "desc", por, isAnalytical, isStandard, mean, stDev, skew, flows, graphicalVM, compVM, id);
             XElement elemXML = elem1.ToXML();

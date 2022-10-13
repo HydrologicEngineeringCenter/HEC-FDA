@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
         #endregion
 
         #region constructors
-        public CurveEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) :base(actionManager)
+        public CurveEditorVM(CurveComponentVM defaultCurve, EditorActionManager actionManager) :base(actionManager)
         {
             TableWithPlot = new TableWithPlotVM(defaultCurve);
             TableWithPlot.WasModified += TableDataChanged;
@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public CurveEditorVM(CurveChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            ComputeComponentVM comp = new ComputeComponentVM( elem.ComputeComponentVM.ToXML());
+            CurveComponentVM comp = new CurveComponentVM( elem.CurveComponentVM.ToXML());
             TableWithPlot = new TableWithPlotVM(comp);
             TableWithPlot.WasModified += TableDataChanged;
         }
