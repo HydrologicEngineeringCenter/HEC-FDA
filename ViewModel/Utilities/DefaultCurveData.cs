@@ -136,7 +136,8 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static CurveComponentVM DefaultLeveeComputeComponent()
         {
-            CurveComponentVM defaultCurve = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY, true);
+            CurveComponentVM defaultCurve = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, 
+                StringConstants.FAILURE_FREQUENCY,isDepthPercentDamage: true);
             defaultCurve.SetPairedData(DefaultData.FailureDefaultCurve());
             defaultCurve.SetMinMaxValues(0, 1);
             return defaultCurve;

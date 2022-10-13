@@ -221,7 +221,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             for(int i =0;i<computedCurves.Count;i++)
             {
                 UncertainPairedData upd = computedCurves[i];
-                CurveComponentVM computeComponent = new ComputeComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE,DistributionOptions.HISTOGRAM_ONLY);              
+                CurveComponentVM computeComponent = new CurveComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE,DistributionOptions.HISTOGRAM_ONLY);              
                 computeComponent.SetPairedData(upd);
                 //get the impact area from the id
                 int impactAreaID = upd.ImpactAreaID;
