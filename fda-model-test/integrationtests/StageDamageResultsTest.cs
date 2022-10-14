@@ -11,6 +11,7 @@ using Xunit;
 using Geospatial.Rasters;
 using Statistics.Histograms;
 using HEC.FDA.Model.metrics;
+using System.ComponentModel;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {   
@@ -604,23 +605,19 @@ namespace HEC.FDA.ModelTest.integrationtests
             //Note: before assert, find correct stage-damage function
             //Note: look at consequence distribution results, method getconsequncedistributionresult has logic that is similar to what I want for stage-damage function - logic on line 287 of ConsequenceDistributionResults
 
-            List<UncertainPairedData> stageDamageFunctionsINDMuncie = new List<UncertainPairedData>();
-            foreach(UncertainPairedData currentUncertainPairedData in stageDamageFunctions) 
-            { 
-                if (currentUncertainPairedData.ImpactAreaID.Equals)
-            }
+            double actualDamageAtGivenStage = 0;
+            double givenStage = 940;
 
-            
-            static ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
+            foreach (UncertainPairedData currentUncertainPairedData in stageDamageFunctions) 
             {
-                foreach (ConsequenceDistributionResult damageResult in stageDamageFunctions)
-                {                    
-                    if (damageResult.RegionID.Equals(impactAreaID))
+                if (currentUncertainPairedData.ImpactAreaID.Equals(impactAreaID))
+                {
+                    if (currentUncertainPairedData.DamageCategory.Equals(damageCategory))
                     {
-                        if (damageResult.DamageCategory.Equals(damageCategory))
-
-                                return damageResult;
-            };
+                        IPairedData stageDamagePairedData = currentUncertainPairedData.SamplePairedData(.5)
+                    }
+                }
+            }
 
             for() private static double actualDamageAtGivenStage = actualStageDamage.f(940);//do this in loop 
 
