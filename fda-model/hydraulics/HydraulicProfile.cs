@@ -37,7 +37,8 @@ namespace HEC.FDA.Model.hydraulics
 
         private float[] GetWSEFromGrids(PointMs pts)
         {
-            var baseDs = TiffDataSource<float>.TryLoad(FilePath);
+            var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
+
             if (baseDs == null)
             {
                 return new float[pts.Count];
