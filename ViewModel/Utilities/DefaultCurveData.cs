@@ -1,32 +1,29 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.TableWithPlot;
 using Statistics;
 using Statistics.Distributions;
+using System;
 using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
-    public static class DefaultCurveData
+    public static class DefaultData
     {
-        #region Convergence Criteria
-        public static double CONFIDENCE = 95;
-        public static double TOLERANCE = .01;
-        public static int MIN = 1000;
-        public static int MAX = 500000;
-        #endregion
+        #region Private Default Curve Data
+        private static double minFlow = 900;
+        private static double maxFlow = 10000;
+        private static double minStage = 463;
+        private static double maxStage = 482;
+        private static double minDepth = -2;
+        private static double maxDepth = 8;
+        private static double minDamage = 0;
+        private static double maxDamage = 2500;
+        private static int coordinateQuantity = 10;
 
-        private static List<double> _ExteriorInteriorXValues = new List<double>() {474, 474.1, 474.3, 474.5, 478};
-        private static List<IDistribution> _ExteriorInteriorYValues = new List<IDistribution>() 
-        { 
-            new Deterministic(472),
-            new Deterministic(473),
-            new Deterministic(474),
-            new Deterministic(474.1),
-            new Deterministic(478)
-        };
-
-        private static List<double> _GraphicalXValues = new List<double>() { .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static List<double> _GraphicalXValues = new List<double>() {.99, .5, .2, .1, .04, .02, .01, .004, .002 };
         private static List<IDistribution> _GraphicalYValues = new List<IDistribution>()
         {
+            new Deterministic(1200),
             new Deterministic(1500),
             new Deterministic(2120),
             new Deterministic(3140),
@@ -37,7 +34,7 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(9680)
         };
 
-        private static List<double> _GraphicalStageFreqXValues = new List<double>() { .999, .5, .2, .1, .04, .02, .01, .004, .002};
+        private static List<double> _GraphicalStageFreqXValues = new List<double>() { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
         private static List<IDistribution> _GraphicalStageFreqYValues = new List<IDistribution>()
         {
             new Deterministic(458),
@@ -45,71 +42,12 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(469.97),
             new Deterministic(471.95),
             new Deterministic(473.06),
-            new Deterministic(437.66),
+            new Deterministic(473.66),
             new Deterministic(474.53),
             new Deterministic(475.11),
             new Deterministic(477.4)
         };
-
-        public static double LP3Mean = 3.3;
-        public static double LP3StDev = .254;
-        public static double LP3Skew = -.1021;
-        public static int LP3POR = 48;
-
-        private static List<double> _RegulatedUnregulatedXValues = new List<double>() { 900, 1500, 2120,3140,4210,5070,6240,7050,9680};
-        private static List<IDistribution> _RegulatedUnregulatedYValues = new List<IDistribution>()
-        {
-            new Deterministic(900),
-            new Deterministic(1500),
-            new Deterministic(2000),
-            new Deterministic(2010),
-            new Deterministic(2020),
-            new Deterministic(2050),
-            new Deterministic(5500),
-            new Deterministic(7050),
-            new Deterministic(9680)
-        };
-
-        private static List<double> _StageDamageXValues = new List<double>() { 463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482};
-        private static List<IDistribution> _StageDamageYValues = new List<IDistribution>()
-        {
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(0,0),
-            new Normal(.04, .16),
-            new Normal(.66,1.02),
-            new Normal(2.83,2.47),
-            new Normal(7.48,3.55),
-            new Normal(17.82,7.38),
-            new Normal(39.87, 12.35),
-            new Normal(76.91, 13.53),
-            new Normal(124.82, 13.87),
-            new Normal(173.73, 13.12),
-            new Normal(218.32, 12.03),
-            new Normal(257.83, 11.1),
-            new Normal(292.52, 10.31),
-            new Normal(370.12,12.3),
-            new Normal(480.94,20.45),
-            new Normal(890.76,45.67),
-            new Normal(1287.45,62.34),
-            new Normal(2376.23,134.896),
-        };
-
-        private static List<double> _StageDischargeXValues = new List<double>() { 0,1500,2120,3140,4210,5070,6240,7050,9680 };
-        private static List<IDistribution> _StageDischargeYValues = new List<IDistribution>()
-        {
-            new Normal(458,0),
-            new Normal(468.33,.312),
-            new Normal(469.97,.362),
-            new Normal(471.95,.422),
-            new Normal(473.06,.456),
-            new Normal(475.66,.474),
-            new Normal(477.53,0.5),
-            new Normal(479.11,0.5),
-            new Normal(481.44, 0.5),
-        };
-
-        private static List<double> _FailureXValues = new List<double>() { 458,468,470,471,472,472,473,474 };
+        private static List<double> _FailureXValues = new List<double>() { 458, 468, 470, 471, 472, 473, 474, 475 };
         private static List<IDistribution> _FailureYValues = new List<IDistribution>()
         {
             new Deterministic(0),
@@ -121,43 +59,316 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(.9),
             new Deterministic(1),
         };
+        #endregion
 
-        public static double DefaultLeveeElevation = 476;
+        #region Default Convergence Criteria
+        public static double ConvergenceConfidence = 95;
+        public static double ConvergenceTolerance = .01;
+        public static int ConvergenceMinIterations = 1000;
+        public static int ConvergenceMaxIterations = 500000;
+        #endregion
 
-        public static UncertainPairedData ExteriorInteriorDefaultCurve()
+        #region Default LP3 Parameter Values
+        public static double LP3Mean = 3.3;
+        public static double LP3StDev = .254;
+        public static double LP3Skew = -.1021;
+        public static int PeriodOfRecord = 48;
+        #endregion
+
+        #region Occupancy Type Default Parameter Values
+        public static double ValueUncertaintyNormalStandardDeviation = 10;
+        public static double ValueUncertaintyMin = 10;
+        public static double ValueUncertaintyMax = 20;
+        public static Deterministic ValueRatioUncertaintyDeterministic = new Deterministic(50);
+        public static Normal ValueRatioUncertaintyNormal = new Normal(50, 5);
+        public static Triangular ValueRatioUncertaintyTriangular = new Triangular(45, 50, 60);
+        public static Uniform ValueRatioUncertaintyUniform = new Uniform(45, 60);
+        public static double FirstFloorUncertaintyNormalStandardDeviation = .5;
+        public static double FirstFloorUncertaintyMin = .5;
+        //TODO where should this be used 
+        public static double FirstFloorUncertaintyMax = 1;
+        #endregion
+
+        #region Other Default Parameter Values
+        public static double DefaultLeveeElevation = 474;
+        #endregion
+
+        #region Default Curve Component VMs
+        public static CurveComponentVM RatingComputeComponent()
         {
-            return new UncertainPairedData(_ExteriorInteriorXValues.ToArray(), _ExteriorInteriorYValues.ToArray(), StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
+            curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Normal));
+            curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Triangular));
+            curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Uniform));
+            curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.LogNormal));
+            curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Deterministic));
+            return curveComponentVM;
         }
-
-        public static UncertainPairedData GraphicalDefaultCurve()
+        public static CurveComponentVM UnregulatedRegulatedComputeComponent()
         {
-            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
+            curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Normal));
+            curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Uniform));
+            curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.LogNormal));
+            curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Deterministic));
+            curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Triangular));
+            return curveComponentVM;
         }
+        public static CurveComponentVM ExteriorInteriorComputeComponent()
+        {
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
+            curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Normal));
+            curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Uniform));
+            curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.LogNormal));
+            curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Triangular));
+            curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Deterministic));
+            return curveComponentVM;
+        }
+        public static CurveComponentVM StageDamageCurveComputeComponent()
+        {
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Normal));
+            curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Uniform));
+            curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.LogNormal));
+            curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Triangular));
+            curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Deterministic));
+            return curveComponentVM;
+        }
+        public static CurveComponentVM DefaultLeveeComputeComponent()
+        {
+            CurveComponentVM defaultCurve = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, 
+                StringConstants.FAILURE_FREQUENCY, distOptions:DistributionOptions.DETERMINISTIC_ONLY);
+            defaultCurve.SetPairedData(DefaultData.FailureDefaultCurve());
+            defaultCurve.SetMinMaxValues(0, 1);
+            return defaultCurve;
+        }
+        #endregion
 
+        #region Default Curves 
+        public static UncertainPairedData GeneralUseDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            return StageDischargeDefaultCurve(distributionEnum);
+        }
+        public static UncertainPairedData GraphicalFlowFreqDefaultCurve()
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
+            return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), curveMetaData);
+        }
         public static UncertainPairedData GraphicalStageFreqDefaultCurve()
         {
-            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
+            return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), curveMetaData);
         }
-
-        public static UncertainPairedData RegulatedUnregulatedDefaultCurve()
+        //TODO how to use this with the new argument 
+        private static UncertainPairedData RegulatedUnregulatedDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            return new UncertainPairedData(_RegulatedUnregulatedXValues.ToArray(), _RegulatedUnregulatedYValues.ToArray(), StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
-        }
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
+            List<double> xValues = new List<double>();
+            List<IDistribution> yValues = new List<IDistribution>();
+            double greatestDiffIndex = 4.5;
+            for (int i = 0; i < coordinateQuantity; i++)
+            {
+                IDistribution regulatedFlowDistribution = new Normal();
+                double unregulatedFlow = minFlow + (maxFlow - minFlow) * ((double)i / coordinateQuantity);
+                double regulatedFlow = unregulatedFlow - 100*(1 / Math.Pow((double)i - greatestDiffIndex, 2));
+                double min = regulatedFlow - regulatedFlow * 0.01;
+                double max = regulatedFlow + regulatedFlow * 0.07;
+                switch (distributionEnum)
+                {
+                    case IDistributionEnum.Deterministic:
+                        regulatedFlowDistribution = new Deterministic(regulatedFlow);
+                        break;
+                    case IDistributionEnum.Normal:
+                        double standardDeviation = regulatedFlow / 115;
+                        regulatedFlowDistribution = new Normal(regulatedFlow, standardDeviation);
+                        break;
+                    case IDistributionEnum.Triangular:
 
-        public static UncertainPairedData StageDamageDefaultCurve()
-        {
-            return new UncertainPairedData(_StageDamageXValues.ToArray(), _StageDamageYValues.ToArray(), StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
+                        regulatedFlowDistribution = new Triangular(min, regulatedFlow, max);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        double logRegulatedFlow = Math.Log(regulatedFlow);
+                        double logStandardDeviation = logRegulatedFlow / 115 + (double)i/coordinateQuantity;
+                        regulatedFlowDistribution = new LogNormal(logRegulatedFlow, logStandardDeviation);
+                        break ;
+                    case IDistributionEnum.Uniform:
+                        regulatedFlowDistribution = new Uniform(min, max);
+                        break;
+                }
+                xValues.Add(unregulatedFlow);
+                yValues.Add(regulatedFlowDistribution);
+            }
+            return new UncertainPairedData(xValues.ToArray(), yValues.ToArray(), curveMetaData);
         }
+        private static UncertainPairedData StageDischargeDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
+            List<double> xValues = new List<double>();
+            List<IDistribution> yValues = new List<IDistribution>();
+            for (int i = 0; i < coordinateQuantity; i++)
+            {
+                IDistribution stageDistribution = new Normal();
+                double stepShare = (double)i / coordinateQuantity;
+                double discharge = minFlow + (maxFlow - minFlow) * stepShare;
+                double stage = minStage + (maxStage - minStage)* stepShare;
+                double min = stage - stage * 0.01;
+                double max = stage + stage * 0.07;
+                switch (distributionEnum)
+                {
+                    case IDistributionEnum.Deterministic:
+                        stageDistribution = new Deterministic(stage);
+                        break;
+                    case IDistributionEnum.Normal:
+                        double standardDeviation = stage / 115;
+                        stageDistribution = new Normal(stage, standardDeviation);
+                        break;
+                    case IDistributionEnum.Triangular:
 
-        public static UncertainPairedData StageDischargeDefaultCurve()
-        {
-            return new UncertainPairedData(_StageDischargeXValues.ToArray(), _StageDischargeYValues.ToArray(), StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
+                        stageDistribution = new Triangular(min, stage, max);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        double logStage = Math.Log(stage);
+                        double logStandardDeviation = logStage / 115;
+                        stageDistribution = new LogNormal(logStage, logStandardDeviation);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        stageDistribution = new Uniform(min, max);
+                        break;
+                }
+                xValues.Add(discharge);
+                yValues.Add(stageDistribution);
+            }
+            return new UncertainPairedData(xValues.ToArray(), yValues.ToArray(), curveMetaData);
         }
+        private static UncertainPairedData ExteriorInteriorDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
+            List<double> xValues = new List<double>();
+            List<IDistribution> yValues = new List<IDistribution>();
+            for (int i = 0; i < coordinateQuantity; i++)
+            {
+                IDistribution interiorStageDistribution = new Normal();
+                double exteriorStage = minStage + (maxStage - minStage) * ((double)i / coordinateQuantity);
+                double interiorStage;
+                if(i > 0 && i < 7)
+                {
+                    interiorStage = 464 - 1 + (double)i/coordinateQuantity;
+                } else
+                {
+                    interiorStage = exteriorStage;
+                }
+                double min = interiorStage - interiorStage * 0.03;
+                double max = interiorStage + interiorStage * 0.07;
+                switch (distributionEnum)
+                {
+                    case IDistributionEnum.Deterministic:
+                        interiorStageDistribution = new Deterministic(interiorStage);
+                        break;
+                    case IDistributionEnum.Normal:
+                        double standardDeviation = interiorStage / 115;
+                        interiorStageDistribution = new Normal(interiorStage, standardDeviation);
+                        break;
+                    case IDistributionEnum.Triangular:
+                        interiorStageDistribution = new Triangular(min, interiorStage, max);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        double logInteriorStage = Math.Log(interiorStage);
+                        double logStandardDeviation = logInteriorStage / 115 + (double)i / coordinateQuantity;
+                        interiorStageDistribution = new LogNormal(logInteriorStage, logStandardDeviation);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        interiorStageDistribution = new Uniform(min, max);
+                        break;
+                }
+                xValues.Add(exteriorStage);
+                yValues.Add(interiorStageDistribution);
+            }
+            return new UncertainPairedData(xValues.ToArray(), yValues.ToArray(), curveMetaData);
+        }
+        private static UncertainPairedData FailureDefaultCurve()
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), curveMetaData);
+        }
+        public static UncertainPairedData DepthPercentDamageDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, StringConstants.OCCUPANCY_TYPES);
+            List<double> xValues = new List<double>();
+            List<IDistribution> yValues = new List<IDistribution>();
+            for (int i = 0; i < coordinateQuantity; i++)
+            {
+                IDistribution percentDamageDistribution = new Normal();
+                double depth = minDepth + (maxDepth - minDepth) * ((double)i / coordinateQuantity);
+                double percentDamage = 0 + (100) * ((double)i / coordinateQuantity);
+                double min = percentDamage - percentDamage * 0.03;
+                double max = Math.Min(percentDamage + percentDamage * .07,100);
+                switch (distributionEnum)
+                {
+                    case IDistributionEnum.Deterministic:
+                        percentDamageDistribution = new Deterministic(percentDamage);
+                        break;
+                    case IDistributionEnum.Normal:
+                        double standardDeviation = percentDamage / 115;
+                        percentDamageDistribution = new Normal(percentDamage, standardDeviation);
+                        break;
+                    case IDistributionEnum.Triangular:
 
-        public static UncertainPairedData FailureDefaultCurve()
-        {
-            return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+                        percentDamageDistribution = new Triangular(min, percentDamage, max);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        double logStage = Math.Log(percentDamage + .5);
+                        double logStandardDeviation = logStage / 115 + (double)i / coordinateQuantity; 
+                        percentDamageDistribution = new LogNormal(logStage, logStandardDeviation);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        percentDamageDistribution = new Uniform(min, max);
+                        break;
+                }
+                xValues.Add(depth);
+                yValues.Add(percentDamageDistribution);
+            }
+            return new UncertainPairedData(xValues.ToArray(), yValues.ToArray(), curveMetaData);
         }
+        private static UncertainPairedData StageDamageDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
+            List<double> xValues = new List<double>();
+            List<IDistribution> yValues = new List<IDistribution>();
+            for (int i = 0; i < coordinateQuantity; i++)
+            {
+                IDistribution damageDistribution = new Normal();
+                double stage = minStage + (maxStage - minStage) * ((double)i / coordinateQuantity);
+                double damage = minDamage + (maxDamage - minDamage) * ((double)i / coordinateQuantity);
+                double min = damage - damage * 0.03;
+                double max = damage + damage * 0.07;
+                switch (distributionEnum)
+                {
+                    case IDistributionEnum.Deterministic:
+                        damageDistribution = new Deterministic(damage);
+                        break;
+                    case IDistributionEnum.Normal:
+                        double standardDeviation = damage / 105 + i*2;
+                        damageDistribution = new Normal(damage, standardDeviation);
+                        break;
+                    case IDistributionEnum.Triangular:
+
+                        damageDistribution = new Triangular(min, damage, max);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        double logStage = Math.Log(damage);
+                        double logStandardDeviation = logStage / 115 + (double)i / coordinateQuantity;
+                        damageDistribution = new LogNormal(logStage, logStandardDeviation);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        damageDistribution = new Uniform(min, max);
+                        break;
+                }
+                xValues.Add(stage);
+                yValues.Add(damageDistribution);
+            }
+            return new UncertainPairedData(xValues.ToArray(), yValues.ToArray(), curveMetaData);
+        }
+        #endregion
 
     }
 }

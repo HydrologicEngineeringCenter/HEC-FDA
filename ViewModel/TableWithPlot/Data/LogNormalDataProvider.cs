@@ -3,6 +3,8 @@ using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
@@ -11,25 +13,31 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public LogNormalDataProvider()
         {
             Name = "LogNormal";
-            Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
-            Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.LogNormal);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new LogNormalRow(uncertainPairedData.Xvals[i], (LogNormal)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
         public LogNormalDataProvider(bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "LogNormal";
-            Data.Add(new LogNormalRow(0.0d, new LogNormal(0, 0), IsStrictMonotonic));
-            Data.Add(new LogNormalRow(2.0d, new LogNormal(0, 2), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.LogNormal);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new LogNormalRow(uncertainPairedData.Xvals[i], (LogNormal)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
-        public LogNormalDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        public LogNormalDataProvider(UncertainPairedData uncertainPairedData, bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "LogNormal";
-            for (int i = 0; i < upd.Xvals.Length; i++)
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
             {
-                Data.Add(new LogNormalRow(upd.Xvals[i], (LogNormal)upd.Yvals[i], IsStrictMonotonic));
+                Data.Add(new LogNormalRow(uncertainPairedData.Xvals[i], (LogNormal)uncertainPairedData.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }

@@ -116,10 +116,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             string lastEditDate = DateTime.Now.ToString("G");
 
             List<double> fitToFlows = CreateDefaultFitToFlowValues();
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             GraphicalVM vm = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
-            AnalyticalFrequencyElement newFreqElem = new AnalyticalFrequencyElement(name, lastEditDate, description, por, true, true, mean, stDev, skew, fitToFlows, vm, computeComponentVM, id);
+            AnalyticalFrequencyElement newFreqElem = new AnalyticalFrequencyElement(name, lastEditDate, description, por, true, true, mean, stDev, skew, fitToFlows, vm, curveComponentVM, id);
             return newFreqElem; 
         }
 

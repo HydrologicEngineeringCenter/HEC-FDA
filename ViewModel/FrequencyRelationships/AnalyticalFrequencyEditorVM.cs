@@ -130,12 +130,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         //This supports a fresh editor
-        public AnalyticalFrequencyEditorVM(ComputeComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public AnalyticalFrequencyEditorVM(CurveComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
-            _Mean = DefaultCurveData.LP3Mean;
-            _StDev = DefaultCurveData.LP3StDev;
-            _Skew = DefaultCurveData.LP3Skew;
-            _POR = DefaultCurveData.LP3POR;
+            _Mean = DefaultData.LP3Mean;
+            _StDev = DefaultData.LP3StDev;
+            _Skew = DefaultData.LP3Skew;
+            _POR = DefaultData.PeriodOfRecord;
             GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(Utilities.StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
             GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
             LoadDefaultFlows();
@@ -349,7 +349,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
                 int id = GetElementID<AnalyticalFrequencyElement>();
                 AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(Name, editDate, Description, PeriodOfRecord, IsAnalytical, IsStandard, Mean, StandardDeviation, Skew,
-                     analyticalFlows, GraphicalTableWithPlotVM.ComputeComponentVM as GraphicalVM, TableWithPlot.ComputeComponentVM, id);
+                     analyticalFlows, GraphicalTableWithPlotVM.CurveComponentVM as GraphicalVM, TableWithPlot.CurveComponentVM, id);
 
                 base.Save(elem);
             }

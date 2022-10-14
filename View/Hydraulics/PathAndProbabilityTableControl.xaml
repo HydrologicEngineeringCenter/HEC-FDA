@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -17,12 +18,12 @@
                         <TextBlock Text="Name" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Probability, StringFormat=N3}" Width="*">
+                <DataGridTextColumn Binding="{Binding Probability, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding ReturnYear, StringFormat=N3}" Width="*">
+                <DataGridTextColumn Binding="{Binding ReturnYear, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Return Interval" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

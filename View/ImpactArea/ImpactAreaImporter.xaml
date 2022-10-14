@@ -37,7 +37,7 @@
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Path="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" Margin="5" Grid.Row="2" Grid.Column="1" />
 
             <Label Content="Unique Name:" Grid.Row="3" HorizontalAlignment="Right" Margin="5" />
-            <ComboBox ItemsSource="{Binding Path=UniqueFields, Mode=TwoWay}" SelectedItem="{Binding SelectedUniqueName, Mode=TwoWay}"  Margin="5" Name="Cmb_UniqueName"  Grid.Row="3" Grid.Column="1" SelectionChanged="Cmb_UniqueName_SelectionChanged" />
+            <ComboBox ItemsSource="{Binding Path=UniqueNames, Mode=TwoWay}" SelectedItem="{Binding SelectedUniqueNameColumnHeader, Mode=TwoWay}"  Margin="5" Name="Cmb_UniqueName"  Grid.Row="3" Grid.Column="1" SelectionChanged="Cmb_UniqueName_SelectionChanged" />
         </Grid>
 
         <DataGrid Grid.Row="1" Margin="5" IsReadOnly="True"  Name="dgrid_ImpactAreasGrid" AutoGenerateColumns="False" CanUserResizeColumns="True" ItemsSource="{Binding ListOfRows}" MinHeight="180" CanUserAddRows="False">

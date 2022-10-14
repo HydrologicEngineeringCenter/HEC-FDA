@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -39,7 +40,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             if (e.Element is HydraulicElement elem)
             {
-                if (elem.HydroType == HydraulicType.Gridded)
+                if (elem.DataSet.DataSource == HydraulicDataSource.WSEGrid)
                 {
                     AddElement(e.Element);
                 }

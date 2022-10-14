@@ -4,15 +4,15 @@ using Xunit;
 namespace HEC.FDA.ViewModelTest
 {
     [Trait("Category", "Unit")]
-    public class ComputeComponentVMShould
+    public class CurveComponentVMShould
     {
         [Fact]
         public void ReadAndWriteXML()
         {
-            ComputeComponentVM expected = new ComputeComponentVM("Brennan");
+            CurveComponentVM expected = new CurveComponentVM("Brennan");
             expected.SelectedItem = expected.Options[2];
             var el = expected.ToXML();
-            ComputeComponentVM Actual = new ComputeComponentVM(el);
+            CurveComponentVM Actual = new CurveComponentVM(el);
             Assert.Equal(expected.SelectedItem.GetType(), Actual.SelectedItem.GetType());
         }
     }

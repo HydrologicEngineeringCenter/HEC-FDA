@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.Editors
 {
     public class ExteriorInteriorEditorVM:CurveEditorVM
     {
-        public ExteriorInteriorEditorVM(ComputeComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public ExteriorInteriorEditorVM(CurveComponentVM defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
         }
 
@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Editors
         public override void Save()
         {
             int id = GetElementID<ExteriorInteriorElement>();
-            ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.ComputeComponentVM, id);
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);
         }
 

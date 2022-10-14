@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics;
 using System;
@@ -12,7 +13,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot
 {
-    public class ComputeComponentVM : BaseViewModel
+    public class CurveComponentVM : BaseViewModel
     {
         #region Backing Fields
         private string _name;
@@ -20,8 +21,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private string _ylabel = "ylabel";
         private string _description = "description";
         private IDataProvider _selectedItem;
-        private bool _DeterministicOnly;
         private bool _IsStrictMonotonic;
+        private DistributionOptions _DistributionOptions;
+        private bool _IsDepthPercentDamage;
         #endregion
         #region Properties
         public string Units
@@ -96,18 +98,19 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         }
         #endregion
         #region Constructors
-        public ComputeComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", bool deterministicOnly = false, bool isStrictMonotonic = false)
+        public CurveComponentVM(string name = "default_name", string xlabel = "default_xlabel", string ylabel = "default_ylabel", DistributionOptions distOptions = DistributionOptions.DEFAULT, bool isStrictMonotonic = false, bool isDepthPercentDamage=false)
         {
-            _DeterministicOnly = deterministicOnly;
+            _DistributionOptions = distOptions;
             _IsStrictMonotonic = isStrictMonotonic;
             Name = name;
             XLabel = xlabel;
             YLabel = ylabel;
+            _IsDepthPercentDamage = isDepthPercentDamage;
             Initialize();
             SetValidation();
         }
 
-        public ComputeComponentVM(XElement vmEle)
+        public CurveComponentVM(XElement vmEle)
         {
             LoadFromXML(vmEle);
             SetValidation();
@@ -115,10 +118,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
         #region Methods
 
-        public ComputeComponentVM Clone()
+        public CurveComponentVM Clone()
         {
             XElement thisData = ToXML();
-            return new ComputeComponentVM(thisData);
+            return new CurveComponentVM(thisData);
         }
 
         /// <summary>
@@ -130,46 +133,91 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             if (upd.Yvals.Length > 0)
             {
                 IDistributionEnum distType = upd.Yvals[0].Type;
-                switch(distType)
+
+                switch (_DistributionOptions)
                 {
-                    case IDistributionEnum.Deterministic:
-                        Options[0] = new DeterministicDataProvider(upd, _IsStrictMonotonic);
+                    case DistributionOptions.DEFAULT:
+                        switch (distType)
+                        {
+                            case IDistributionEnum.Deterministic:
+                                Options[0] = new DeterministicDataProvider(upd, _IsStrictMonotonic);
+                                SelectedItem = Options[0];
+                                break;
+                            case IDistributionEnum.Uniform:
+                                Options[1] = new UniformDataProvider(upd, _IsStrictMonotonic);
+                                SelectedItem = Options[1];
+                                break;
+                            case IDistributionEnum.Normal:
+                                Options[2] = new NormalDataProvider(upd, _IsStrictMonotonic);
+                                SelectedItem = Options[2];
+                                break;
+                            case IDistributionEnum.Triangular:
+                                Options[3] = new TriangularDataProvider(upd, _IsStrictMonotonic);
+                                SelectedItem = Options[3];
+                                break;
+                            case IDistributionEnum.LogNormal:
+                                Options[4] = new LogNormalDataProvider(upd, _IsStrictMonotonic);
+                                SelectedItem = Options[4];
+                                break;
+                        }
+                        break;
+                    case DistributionOptions.DETERMINISTIC_ONLY:
+                        if(distType == IDistributionEnum.Deterministic)
+                        {
+                            Options[0] = new DeterministicDataProvider(upd, _IsStrictMonotonic);
+                            SelectedItem = Options[0];
+                        }
+                        else
+                        {
+                            //todo: throw exception?
+                        }
+                        break;
+                    case DistributionOptions.HISTOGRAM_ONLY:
+                        Options[0] = new HistogramDataProvider(upd, _IsStrictMonotonic);
                         SelectedItem = Options[0];
+                        //todo: add here
+
                         break;
-                    case IDistributionEnum.Uniform:
-                        Options[1] = new UniformDataProvider(upd, _IsStrictMonotonic);
-                        SelectedItem = Options[1];
-                        break;
-                    case IDistributionEnum.Normal:
-                        Options[2] = new NormalDataProvider(upd, _IsStrictMonotonic);
-                        SelectedItem = Options[2];
-                        break;
-                    case IDistributionEnum.Triangular:
-                        Options[3] = new TriangularDataProvider(upd, _IsStrictMonotonic);
-                        SelectedItem = Options[3];
-                        break;
-                    case IDistributionEnum.LogNormal:
-                        Options[4] = new LogNormalDataProvider(upd, _IsStrictMonotonic);
-                        SelectedItem = Options[4];
-                        break;
+
                 }
+              
             }
 
         }
 
         private void Initialize()
         {
-            if (_DeterministicOnly)
+            switch(_DistributionOptions)
             {
-                Options.Add(new DeterministicDataProvider());
-            }
-            else
-            {
-                Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
-                Options.Add(new UniformDataProvider(_IsStrictMonotonic));
-                Options.Add(new NormalDataProvider(_IsStrictMonotonic));
-                Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
-                Options.Add(new LogNormalDataProvider(_IsStrictMonotonic));
+                case DistributionOptions.DEFAULT:
+                    if (_IsDepthPercentDamage)
+                {
+                    Options.Add(new DeterministicDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Deterministic), _IsStrictMonotonic));
+                    Options.Add(new UniformDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Uniform), _IsStrictMonotonic));
+                    Options.Add(new NormalDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Normal), _IsStrictMonotonic));
+                    Options.Add(new TriangularDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Triangular), _IsStrictMonotonic));
+                    Options.Add(new LogNormalDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.LogNormal), _IsStrictMonotonic));
+                } else
+                {
+                    Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
+                    Options.Add(new UniformDataProvider(_IsStrictMonotonic));
+                    Options.Add(new NormalDataProvider(_IsStrictMonotonic));
+                    Options.Add(new TriangularDataProvider(_IsStrictMonotonic));
+                    Options.Add(new LogNormalDataProvider(_IsStrictMonotonic));
+                }
+                 break;
+                case DistributionOptions.DETERMINISTIC_ONLY:
+if (_IsDepthPercentDamage)
+                {
+                    Options.Add(new DeterministicDataProvider(DefaultData.DepthPercentDamageDefaultCurve(IDistributionEnum.Deterministic), _IsStrictMonotonic));
+                } else
+                {
+                    Options.Add(new DeterministicDataProvider(_IsStrictMonotonic));
+                }                    
+                break;
+                case DistributionOptions.HISTOGRAM_ONLY:
+                    Options.Add(new HistogramDataProvider(_IsStrictMonotonic));
+                    break;
             }
 
             SelectedItem = Options.First();
@@ -205,7 +253,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             XElement ele = new XElement(this.GetType().Name);
             ele.SetAttributeValue("selectedItem", SelectedItem.Name);
             ele.SetAttributeValue("Name", Name);
-            ele.SetAttributeValue("DeterministicOnly", _DeterministicOnly);
+            ele.SetAttributeValue("DistributionOptions", _DistributionOptions.ToString());
             ele.SetAttributeValue("Description", Description);
 
             foreach (IDataProvider idp in Options)
@@ -220,15 +268,32 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         {
             string selectedItemName = element.Attribute("selectedItem")?.Value;
             Description = element.Attribute("Description")?.Value;
-            _DeterministicOnly = Convert.ToBoolean(element.Attribute("DeterministicOnly")?.Value);
+
+            //for backwards compatibility
+            if (element.Attribute("DistributionOptions") == null)
+            {
+                //this is an old study, there were only two options, deterministic only and default.
+                bool isDeterministicOnly = Convert.ToBoolean(element.Attribute("DeterministicOnly")?.Value);
+                if (isDeterministicOnly)
+                {
+                    _DistributionOptions = DistributionOptions.DETERMINISTIC_ONLY;
+                }
+                else
+                {
+                    _DistributionOptions = DistributionOptions.DEFAULT;
+                }
+            }
+            else
+            {
+                Enum.TryParse(element.Attribute("DistributionOptions").Value, out DistributionOptions distOptions);
+                _DistributionOptions = distOptions;
+            }
+
             Name = element.Attribute("Name")?.Value;
 
             Options.Clear();
             foreach (XElement updEl in element.Elements())
             {
-                
-                
-
                 string assemblyName = "HEC.FDA.ViewModel";//this libraries name and the appropriate namespace. "C:\Temp\FDA2.0_Internal\fda-viewmodel.dll"
                 string typeName = assemblyName + ".TableWithPlot.Data." + updEl.Attribute("DistributionProviderType").Value;
                 ObjectHandle oh = Activator.CreateInstance(null, typeName);//requires empty constructor

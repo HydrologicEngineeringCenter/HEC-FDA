@@ -3,6 +3,8 @@ using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Utilities;
+using Statistics;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
@@ -11,26 +13,32 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public UniformDataProvider()
         {
             Name = "Uniform";
-            Data.Add(new UniformRow(0.0d, new Uniform(0, 0), IsStrictMonotonic));
-            Data.Add(new UniformRow(2.0d, new Uniform(0, 2), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Uniform);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new UniformRow(uncertainPairedData.Xvals[i], (Uniform)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
         public UniformDataProvider(bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Uniform";
-            Data.Add(new UniformRow(0.0d, new Uniform(0, 0), IsStrictMonotonic));
-            Data.Add(new UniformRow(2.0d, new Uniform(0, 2), IsStrictMonotonic));
+            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Uniform);
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
+            {
+                Data.Add(new UniformRow(uncertainPairedData.Xvals[i], (Uniform)uncertainPairedData.Yvals[i], IsStrictMonotonic));
+            }
             LinkList();
         }
 
-        public UniformDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
+        public UniformDataProvider(UncertainPairedData uncertainPairedData, bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Uniform";
-            for (int i = 0; i < upd.Xvals.Length; i++)
+            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
             {
-                Data.Add(new UniformRow(upd.Xvals[i],  (Uniform)upd.Yvals[i], IsStrictMonotonic));
+                Data.Add(new UniformRow(uncertainPairedData.Xvals[i],  (Uniform)uncertainPairedData.Yvals[i], IsStrictMonotonic));
             }
             LinkList();
         }

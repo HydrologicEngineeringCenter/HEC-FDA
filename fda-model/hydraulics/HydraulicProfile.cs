@@ -4,40 +4,56 @@ using HEC.FDA.Model.hydraulics.enums;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using System;
+using System.Xml.Linq;
 using System.Collections.Generic;
 
 namespace HEC.FDA.Model.hydraulics
 {
     public class HydraulicProfile : IComparable
     {
+        public const string PROFILE = "HydraulicProfile";
+        private const string PATH = "Path";
+        private const string PROB = "Probability";
+        private const string PROFILE_NAME = "ProfileName";
+
         public double Probability { get; set; }
-        public string FilePath { get; set; }
-        public HydraulicDataSource DataSourceFormat { get; set; }
+        /// <summary>
+        /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
+        /// </summary>
+        public string FileName { get; set; }
         public string ProfileName { get; set; }
 
-        public HydraulicProfile(double probability, string filepath, HydraulicDataSource dataSource, string profileName)
+        public HydraulicProfile(double probability, string fileName, string profileName = "MAX" )
         {
             Probability = probability;
-            FilePath = filepath;
-            DataSourceFormat = dataSource;
+            FileName = fileName;
             ProfileName = profileName;
         }
-        public float[] GetWSE(PointMs pts)
+
+        public HydraulicProfile(XElement elem)
+        {
+            Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
+            FileName = elem.Attribute(PATH).Value;
+            ProfileName = elem.Attribute(PROFILE_NAME).Value;
+        }
+
+        public float[] GetWSE(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         { 
             
-            if (DataSourceFormat == HydraulicDataSource.WSEGrid)
+            if (dataSource == HydraulicDataSource.WSEGrid)
             {
-                return GetWSEFromGrids(pts);
+                return GetWSEFromGrids(pts, parentDirectory);
             }
             else
             {
-                return GetWSEFromHDF(pts);
+                return GetWSEFromHDF(pts, dataSource, parentDirectory);
             }
         }
 
-        private float[] GetWSEFromGrids(PointMs pts)
+        private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
-            var baseDs = TiffDataSource<float>.TryLoad(FilePath);
+            var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
+
             if (baseDs == null)
             {
                 return new float[pts.Count];
@@ -52,9 +68,9 @@ namespace HEC.FDA.Model.hydraulics
             return elevationData;
         }
 
-        private float[] GetWSEFromHDF(PointMs pts)
+        private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         {
-            var rasResult = new RASResults(FilePath);
+            var rasResult = new RASResults(GetFilePath(parentDirectory));
             var rasGeometry = rasResult.Geometry;
             var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
@@ -64,12 +80,12 @@ namespace HEC.FDA.Model.hydraulics
             float[] WSE = null;
 
             int profileIndex;
-            if (DataSourceFormat == HydraulicDataSource.UnsteadyHDF)
+            if (dataSource == HydraulicDataSource.UnsteadyHDF)
             {
                 profileIndex = RASResultsMap.MaxProfileIndex;
             }
             else
-            {
+            {               
                 profileIndex = rasResult.ProfileIndex(ProfileName);
             }
             // This will produce -9999 for NoData values.
@@ -78,7 +94,19 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
-
+        public bool Equals(HydraulicProfile hydraulicProfileForComparison)
+        {
+            bool hydraulicProfilesAreEqual = true;
+            if (!Probability.Equals(hydraulicProfileForComparison.Probability))
+            {
+                hydraulicProfilesAreEqual = false;
+            }
+            if (!FileName.Equals(hydraulicProfileForComparison.FileName))
+            {
+                hydraulicProfilesAreEqual = false;
+            }
+            return hydraulicProfilesAreEqual;
+        }
 
         /// <summary>
         /// allows for sorting based on probability of the profile.
@@ -96,6 +124,21 @@ namespace HEC.FDA.Model.hydraulics
             else
                 throw new ArgumentException("Object is not a HydraulicProfile");
         }
+
+        public XElement ToXML()
+        {
+            XElement elem = new XElement(PROFILE);
+            elem.SetAttributeValue(PATH, FileName);
+            elem.SetAttributeValue(PROB, Probability);
+            elem.SetAttributeValue(PROFILE_NAME, ProfileName);
+            return elem;
+        }
+
+        public string GetFilePath(string parentDirectory)
+        {
+            return parentDirectory + "\\" + FileName;
+        }
+
     }
 }
 

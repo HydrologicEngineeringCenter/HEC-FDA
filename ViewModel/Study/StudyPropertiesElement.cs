@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="studyPath"></param>
         /// <param name="description"></param>
         public StudyPropertiesElement(string studyName, string studyPath, string description,ConvergenceCriteriaVM convCriteria, int id)
-            :base(studyName, "", description, id)
+            :base(studyName, DateTime.Now.ToString("G"), description, id)
         {
             Name = studyName;
             StudyPath = studyPath;

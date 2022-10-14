@@ -15,11 +15,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public ImpactAreaRowItem ImpArea { get; }
         public string DamCat { get; }
-        public ComputeComponentVM ComputeComponent { get; }
+        public CurveComponentVM ComputeComponent { get; }
         public string AssetCategory { get; }
         public StageDamageConstructionType ConstructionType { get; }
 
-        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function,
+        public StageDamageCurve(ImpactAreaRowItem impArea, String damCat, CurveComponentVM function,
             string assetCategory, StageDamageConstructionType constructionType)
         {
             ImpArea = impArea;
@@ -34,12 +34,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int selectedImpArea = int.Parse(curveElement.Attribute(SELECTED_IMPACT_AREA_TAG).Value);
             string selectedDamCat = curveElement.Attribute(SELECTED_DAM_CAT_TAG).Value;
             AssetCategory = curveElement.Attribute(ASSET_CATEGORY).Value;
-            XElement functionElem = curveElement.Element("ComputeComponentVM");
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(functionElem);
+            XElement functionElem = curveElement.Element("CurveComponentVM");
+            if (functionElem == null)
+            {
+                functionElem = curveElement.Element("ComputeComponentVM");
+            }
+            CurveComponentVM curveComponentVM = new CurveComponentVM(functionElem);
             //I don't think the impact area row name matters here
             ImpArea = new ImpactAreaRowItem(selectedImpArea, "impact area row");
             DamCat = selectedDamCat;
-            ComputeComponent = computeComponentVM;
+            ComputeComponent = curveComponentVM;
 
             //this is for backwards compatability
             if (curveElement.Attribute(CONSTRUCTION_TYPE) != null)

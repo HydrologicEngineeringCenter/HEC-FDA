@@ -114,7 +114,7 @@ namespace HEC.FDA.Model.metrics
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, int impactAreaID, long iteration)
+        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, long iteration)
         {
             foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
             {
@@ -433,7 +433,7 @@ namespace HEC.FDA.Model.metrics
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             List<int> impactAreas = yValues[yValues.Count - 1].GetImpactAreas();
             List<string> damageCategories = yValues[yValues.Count - 1].GetDamageCategories();
-            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories(); ;
+            List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories();
             foreach (int impactAreaID in impactAreas)
             {
                 foreach (string damageCategory in damageCategories)

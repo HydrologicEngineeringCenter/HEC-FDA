@@ -24,9 +24,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             get { return _DamCat; }
             set { _DamCat = value; NotifyPropertyChanged(); }
         }
-        public ComputeComponentVM ComputeComponent { get; set; }
+        public CurveComponentVM ComputeComponent { get; set; }
 
-        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, ComputeComponentVM function, 
+        public CalculatedStageDamageRowItem(int id, ImpactAreaRowItem impArea, String damCat, CurveComponentVM function, 
             string assetCategory, StageDamageConstructionType constructionType)
         {
             AssetCategory = assetCategory;

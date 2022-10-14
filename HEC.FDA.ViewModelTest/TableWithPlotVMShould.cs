@@ -12,11 +12,11 @@ namespace HEC.FDA.ViewModelTest
         public void SaveAndLoadGraphicalToXML()
         {
             TableWithPlotVM expected = new TableWithPlotVM(new GraphicalVM("X", "xlabel", "ylabel"));
-            ((GraphicalVM)(expected.ComputeComponentVM)).EquivalentRecordLength = 1;
+            ((GraphicalVM)(expected.CurveComponentVM)).EquivalentRecordLength = 1;
             XElement ele = expected.ToXML();
             TableWithPlotVM actual =  new TableWithPlotVM(ele);
-            GraphicalVM exp = ((GraphicalVM)(expected.ComputeComponentVM));
-            GraphicalVM act = ((GraphicalVM) (actual.ComputeComponentVM));
+            GraphicalVM exp = ((GraphicalVM)(expected.CurveComponentVM));
+            GraphicalVM act = ((GraphicalVM) (actual.CurveComponentVM));
             Assert.Equal(exp.EquivalentRecordLength, act.EquivalentRecordLength);
         }
     }

@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             importFlowFreq.Action = ImportFlowFreqFromAscii;
 
             NamedAction importSyntheticFreq = new NamedAction();
-            importSyntheticFreq.Header = StringConstants.CreateImportFromFileMenuString("Synthetic Analytical Frequency Function");
+            importSyntheticFreq.Header = StringConstants.IMPORT_SYNTHETIC_FUNTION_FROM_DBF;
             importSyntheticFreq.Action = CreateSyntheticFreqFromDBF;
 
             List<NamedAction> localActions = new List<NamedAction>();
@@ -72,8 +72,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
 
-            ComputeComponentVM computeComponentVM = new ComputeComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(computeComponentVM, actionManager);
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);

@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LateralStructureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, ComputeComponentVM failureFunction, int id) 
+        public LateralStructureElement(string name, string lastEditDate, string description, double elevation, bool isDefault, CurveComponentVM failureFunction, int id) 
             : base(name, lastEditDate, description,failureFunction,  id)
         {
             IsDefaultCurveUsed = isDefault;
