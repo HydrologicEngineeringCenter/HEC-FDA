@@ -244,6 +244,11 @@ namespace HEC.FDA.Model.stageDamage
         {
             MessageReport?.Invoke(sender, e);
         }
+
+        public List<UncertainPairedData> Compute()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
