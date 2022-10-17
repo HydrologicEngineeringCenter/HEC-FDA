@@ -34,10 +34,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             FdaValidationResult vr = new FdaValidationResult();
             vr.AddErrorMessage(GetAreAllSelectionsValidResult().ErrorMessage);
-            vr.AddErrorMessage(DoAllRequiredFilesExist().ErrorMessage);
+            //early exit if selections havn't been made
+            if(vr.IsValid)
+            {
+                vr.AddErrorMessage(DoAllRequiredFilesExist().ErrorMessage);
+            }
+            if(vr.IsValid)
+            {
+                vr.AddErrorMessage(SelectedStructures.AreMappingsValid().ErrorMessage);
+            }
             return vr;
         }
 
+        /// <summary>
+        /// Validates that the hydros, structures, and frequency function table selections are all valid.
+        /// </summary>
+        /// <returns></returns>
         public FdaValidationResult GetAreAllSelectionsValidResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -54,6 +66,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
+        /// <summary>
+        /// Validates that the rows in the table are fully filled out and that there is at least one row.
+        /// </summary>
+        /// <returns></returns>
         private FdaValidationResult ValidateImpactAreaFrequencyFunctionTable()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -69,28 +85,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
-        private FdaValidationResult DirectoryHasOneFileMatchingPattern(string directoryPath, string pattern)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (Directory.Exists(directoryPath))
-            {
-                string[] files = Directory.GetFiles(directoryPath, pattern);
-                if (files.Length == 0)
-                {
-                    vr.AddErrorMessage("The directory does not contain a file that matches the pattern: " + pattern);
-                }
-                else if (files.Length > 1)
-                {
-                    //more than one shapefile discovered
-                    vr.AddErrorMessage("The directory contains multiple files that matche the pattern: " + pattern);
-                }
-            }
-            else
-            {
-                vr.AddErrorMessage("The directory does not exist: " + directoryPath);
-            }
-            return vr;
-        }
 
         /// <summary>
         /// Always validate that this file exists before calling. Use the method above, DirectoryHasOneFileMatchingPattern(). 
@@ -98,10 +92,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <param name="directoryPath"></param>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        private string GetFilePath(string directoryPath, string pattern)
-        {
-            return Directory.GetFiles(directoryPath, pattern)[0];
-        }
+        //private string GetFilePath(string directoryPath, string pattern)
+        //{
+        //    return Directory.GetFiles(directoryPath, pattern)[0];
+        //}
 
         private FdaValidationResult DoAllRequiredFilesExist()
         {
@@ -118,6 +112,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             vr.AddErrorMessage(GetImpactAreaFilesValidResult().ErrorMessage);
             vr.AddErrorMessage(GetHydroFilesValidResult().ErrorMessage);
+            vr.AddErrorMessage(GetStructureInventoryFilesValidResult().ErrorMessage);
             //todo: others?
 
 
@@ -125,30 +120,31 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
         private FdaValidationResult GetHydroFilesValidResult()
         {
-            //todo: finish this
-            FdaValidationResult vr = new FdaValidationResult();
-            string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
+            return SelectedHydraulics.AreFilesValidResult();
+            ////todo: finish this
+            //FdaValidationResult vr = new FdaValidationResult();
+            //string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
 
-            switch(SelectedHydraulics.DataSet.DataSource)
-            {
-                case HydraulicDataSource.WSEGrid:
+            //switch(SelectedHydraulics.DataSet.DataSource)
+            //{
+            //    case HydraulicDataSource.WSEGrid:
 
-                    break;
-                case HydraulicDataSource.SteadyHDF:
+            //        break;
+            //    case HydraulicDataSource.SteadyHDF:
 
-                    break;
-                case HydraulicDataSource.UnsteadyHDF:
+            //        break;
+            //    case HydraulicDataSource.UnsteadyHDF:
 
-                    break;
+            //        break;
 
-            }
+            //}
 
-            //todo: these lines no longer work. Hydros can come in different forms now: gridded, steady, unsteady
-            //vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp").ErrorMessage);
-            //todo: do we need to check that a dbf exists?
-            //vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.dbf").ErrorMessage);
+            ////todo: these lines no longer work. Hydros can come in different forms now: gridded, steady, unsteady
+            ////vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp").ErrorMessage);
+            ////todo: do we need to check that a dbf exists?
+            ////vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.dbf").ErrorMessage);
 
-            return vr;
+            //return vr;
         }
 
         private FdaValidationResult GetImpactAreaFilesValidResult()
@@ -156,9 +152,31 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //impact areas will only be of type *.shp
             FdaValidationResult vr = new FdaValidationResult();
             string impactAreaDirectoryPath = GetImpactAreaDirectory();
-            vr.AddErrorMessage( DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp").ErrorMessage);
+            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp").ErrorMessage);
             //todo: do we need to check that a dbf exists?
-            vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.dbf").ErrorMessage);
+            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.dbf").ErrorMessage);
+
+            if(!vr.IsValid)
+            {
+                vr.InsertMessage(0, "Failed to find required impact area file(s):");
+            }
+
+            return vr;
+        }
+
+        private FdaValidationResult GetStructureInventoryFilesValidResult()
+        {
+            //impact areas will only be of type *.shp
+            FdaValidationResult vr = new FdaValidationResult();
+            string structuresDirectory = GetStructuresDirectory();
+            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.shp").ErrorMessage);
+            //todo: do we need to check that a dbf exists?
+            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.dbf").ErrorMessage);
+
+            if (!vr.IsValid)
+            {
+                vr.InsertMessage(0, "Failed to find required structure inventory file(s):");
+            }
 
             return vr;
         }
@@ -171,10 +189,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return Connection.Instance.ImpactAreaDirectory + "\\" + SelectedImpactArea.Name;
         }
 
-        public string GetImpactAreaShapefile()
-        {
-            return Directory.GetFiles(GetImpactAreaDirectory(), "*.shp")[0];
-        }
+        //public string GetImpactAreaShapefile()
+        //{
+        //    return Directory.GetFiles(GetImpactAreaDirectory(), "*.shp")[0];
+        //}
 
         public string GetHydraulicsDirectory()
         {
@@ -187,10 +205,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
 
         //todo: add this to the validation to make sure it exists. Make all these methods private?
-        private string GetStructuresPointShapefile()
-        {
-            return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
-        }
+        //private string GetStructuresPointShapefile()
+        //{
+        //    return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
+        //}
 
         public List<ImpactAreaFrequencyFunctionConfigurationRowItem> GetImpactAreaFrequencyRowItems()
         {
