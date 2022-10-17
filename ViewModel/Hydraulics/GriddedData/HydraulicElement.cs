@@ -133,6 +133,54 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
         }
 
+        private FdaValidationResult AreUnsteadyFilesValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
+            {
+                string filePath = profile.GetFilePath(GetDirectoryInStudy());
+                if (!File.Exists(filePath))
+                {
+                    vr.AddErrorMessage("Missing file: " + filePath);
+                }
+            }
+            if (!vr.IsValid)
+            {
+                vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult AreGriddedFilesValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
+            {
+                string filePath = profile.GetFilePath(GetDirectoryInStudy());
+                if (!Directory.Exists(filePath))
+                {
+                    vr.AddErrorMessage("Missing directory: " + filePath);
+                }
+            }
+            if (!vr.IsValid)
+            {
+                vr.InsertMessage(0, "The selected hydaulic is missing expected directories:");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult AreSteadyFilesValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(GetDirectoryInStudy(), "*.hdf").ErrorMessage);
+            if (!vr.IsValid)
+            {
+                vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
+            }
+            return vr;
+        }
+
         public FdaValidationResult AreFilesValidResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -141,43 +189,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 case HydraulicDataSource.UnsteadyHDF:
                     {
-                        foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
-                        {
-                            string filePath = profile.GetFilePath(GetDirectoryInStudy());
-                            if (!File.Exists(filePath))
-                            {
-                                vr.AddErrorMessage("Missing file: " + filePath);
-                            }
-                        }
-                        if (!vr.IsValid)
-                        {
-                            vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
-                        }
+                        vr.AddErrorMessage(AreUnsteadyFilesValid().ErrorMessage);
                         break;
                     }
                 case HydraulicDataSource.WSEGrid:
                     {
-                        foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
-                        {
-                            string filePath = profile.GetFilePath(GetDirectoryInStudy());
-                            if (!Directory.Exists(filePath))
-                            {
-                                vr.AddErrorMessage("Missing directory: " + filePath);
-                            }
-                        }
-                        if (!vr.IsValid)
-                        {
-                            vr.InsertMessage(0, "The selected hydaulic is missing expected directories:");
-                        }
+                        vr.AddErrorMessage(AreGriddedFilesValid().ErrorMessage);
                         break;
                     }
                 case HydraulicDataSource.SteadyHDF:
                     {
-                        vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(GetDirectoryInStudy(), "*.hdf").ErrorMessage);
-                        if (!vr.IsValid)
-                        {
-                            vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
-                        }
+                        vr.AddErrorMessage(AreSteadyFilesValid().ErrorMessage);
                         break;
                     }
             }            
