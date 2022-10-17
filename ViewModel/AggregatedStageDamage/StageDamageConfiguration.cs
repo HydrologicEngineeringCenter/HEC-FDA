@@ -1,5 +1,4 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
-using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
@@ -8,7 +7,6 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
-using System.IO;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -30,7 +28,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         #region validation
 
-        public FdaValidationResult Validate()
+        public FdaValidationResult ValidateConfiguration()
         {
             FdaValidationResult vr = new FdaValidationResult();
             vr.AddErrorMessage(GetAreAllSelectionsValidResult().ErrorMessage);
@@ -85,66 +83,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
-
-        /// <summary>
-        /// Always validate that this file exists before calling. Use the method above, DirectoryHasOneFileMatchingPattern(). 
-        /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        //private string GetFilePath(string directoryPath, string pattern)
-        //{
-        //    return Directory.GetFiles(directoryPath, pattern)[0];
-        //}
-
         private FdaValidationResult DoAllRequiredFilesExist()
         {
-            //required files
-            //impact area shapefile 
-            //Index Points Shapefile
-            //hydro file? need to know the type:
-            //gridded
-            //steady path to hdf
-            //unsteady - all 8 hdf files
-            //path and probs 
-
             FdaValidationResult vr = new FdaValidationResult();
 
             vr.AddErrorMessage(GetImpactAreaFilesValidResult().ErrorMessage);
             vr.AddErrorMessage(GetHydroFilesValidResult().ErrorMessage);
             vr.AddErrorMessage(GetStructureInventoryFilesValidResult().ErrorMessage);
-            //todo: others?
-
 
             return vr;
         }
         private FdaValidationResult GetHydroFilesValidResult()
         {
             return SelectedHydraulics.AreFilesValidResult();
-            ////todo: finish this
-            //FdaValidationResult vr = new FdaValidationResult();
-            //string hydroDirectoryPath = Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
-
-            //switch(SelectedHydraulics.DataSet.DataSource)
-            //{
-            //    case HydraulicDataSource.WSEGrid:
-
-            //        break;
-            //    case HydraulicDataSource.SteadyHDF:
-
-            //        break;
-            //    case HydraulicDataSource.UnsteadyHDF:
-
-            //        break;
-
-            //}
-
-            ////todo: these lines no longer work. Hydros can come in different forms now: gridded, steady, unsteady
-            ////vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.shp").ErrorMessage);
-            ////todo: do we need to check that a dbf exists?
-            ////vr.AddErrorMessage(DirectoryHasOneFileMatchingPattern(hydroDirectoryPath, "*.dbf").ErrorMessage);
-
-            //return vr;
         }
 
         private FdaValidationResult GetImpactAreaFilesValidResult()
@@ -170,7 +121,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = new FdaValidationResult();
             string structuresDirectory = GetStructuresDirectory();
             vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.shp").ErrorMessage);
-            //todo: do we need to check that a dbf exists?
             vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.dbf").ErrorMessage);
 
             if (!vr.IsValid)
@@ -184,51 +134,21 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #endregion
 
 
-        public string GetImpactAreaDirectory()
+        private string GetImpactAreaDirectory()
         {
             return Connection.Instance.ImpactAreaDirectory + "\\" + SelectedImpactArea.Name;
-        }
-
-        //public string GetImpactAreaShapefile()
-        //{
-        //    return Directory.GetFiles(GetImpactAreaDirectory(), "*.shp")[0];
-        //}
-
-        public string GetHydraulicsDirectory()
-        {
-            return Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
         }
 
         private string GetStructuresDirectory()
         {
             return Connection.Instance.InventoryDirectory + "\\" + SelectedStructures.Name;
         }
+      
 
-        //todo: add this to the validation to make sure it exists. Make all these methods private?
-        //private string GetStructuresPointShapefile()
-        //{
-        //    return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
-        //}
-
-        public List<ImpactAreaFrequencyFunctionConfigurationRowItem> GetImpactAreaFrequencyRowItems()
-        {
-            List<ImpactAreaFrequencyFunctionConfigurationRowItem> rows = new List<ImpactAreaFrequencyFunctionConfigurationRowItem>();
-            foreach (ImpactAreaFrequencyFunctionRowItem item in ImpactAreaFrequencyRows)
-            {
-                UncertainPairedData freqUPD = item.FrequencyFunction.Element.CurveComponentVM.SelectedItemToPairedData();
-                UncertainPairedData stageDischargeUPD = null;
-                if (item.IsStageDischargeRequired())
-                {
-                    stageDischargeUPD = item.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
-                }
-
-                rows.Add(new ImpactAreaFrequencyFunctionConfigurationRowItem(item.ImpactArea.Name, freqUPD, stageDischargeUPD));
-            }
-            return rows;
-        }       
-
-        
-
+        /// <summary>
+        /// Make sure to call the Validate() method before calling this.
+        /// </summary>
+        /// <returns></returns>
         public List<ImpactAreaStageDamage> CreateStageDamages()
         {
             Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
