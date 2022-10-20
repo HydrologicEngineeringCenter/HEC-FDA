@@ -315,6 +315,24 @@ if (_IsDepthPercentDamage)
                 }
             }
         }
+
+        /// <summary>
+        /// Creates a CurveComponentVM object from the parent XElement
+        /// </summary>
+        /// <param name="parentElement">The XElement that holds the "CurveComponentVM" XElement.</param>
+        /// <returns></returns>
+        public static CurveComponentVM CreateCurveComponentVM(XElement parentElement)
+        {
+            XElement curveComponentELement = parentElement.Element("CurveComponentVM");
+            if (curveComponentELement == null)
+            {
+                //this is for backwards compatibility
+                curveComponentELement = parentElement.Element("ComputeComponentVM");
+            }
+            return new CurveComponentVM(curveComponentELement);
+        }
+
+
         #endregion
     }
 }

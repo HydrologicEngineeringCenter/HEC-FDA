@@ -195,7 +195,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
                 ImpactAreaFrequencyRows);
 
-            FdaValidationResult vr = config.Validate();
+            FdaValidationResult vr = config.ValidateConfiguration();
             if (vr.IsValid)
             {
                 Rows.Clear();           
@@ -206,6 +206,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {                  
                     ShowChart = true;
                     SelectedRow = Rows[0];                   
+                }
+                else
+                {
+                    ShowChart = false;
                 }
                 UpdateComputedCurvesModifiedLabel();
             }
@@ -239,14 +243,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <returns>The list of UPD curves created during the compute</returns>
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
-            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
+            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
+            try
+            {
+                ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
 
-            int seed = 1234;
-            Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
-            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
-            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
-            //these are the rows in the computed table
-            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+                int seed = 1234;
+                Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
+                Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
+                Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
+                //these are the rows in the computed table
+                stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             return stageDamageFunctions;
         }
        

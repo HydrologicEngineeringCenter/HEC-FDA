@@ -56,19 +56,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IsByValue = item.IsByValue;
         }
 
-
         public OccTypeItemWithRatio(XElement assetElem):base(assetElem)
         {
             IsByValue = Convert.ToBoolean(assetElem.Attribute("ByValue").Value);
             XElement ratioUncert = assetElem.Element("RatioUncertainty");
             ContinuousDistribution dist = (ContinuousDistribution)ContinuousDistribution.FromXML(ratioUncert.Descendants().First());
             _ContentByRatioVM = new OtherValueUncertaintyVM(dist);
-            //_IsChecked = Convert.ToBoolean(assetElem.Attribute("IsSelected").Value);
-            //_Curve = new ComputeComponentVM(assetElem.Element("ComputeComponentVM"));
-
-            //_ItemValueUncertainty = new ValueUncertaintyVM(assetElem.Element("Uncertainty"));
-
-
         }
 
         public OccTypeItemWithRatio(OcctypeAssetType itemType, bool isChecked, CurveComponentVM curve, ContinuousDistribution valueUncertainty,
