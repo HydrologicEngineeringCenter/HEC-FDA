@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.Model.structures
 {
@@ -17,11 +18,25 @@ namespace HEC.FDA.Model.structures
         public string BeginningDamageDepth { get; }
         public string YearInConstruction { get; }
         public string CBFips { get; }
-        public List<string> ColumnHeaders
+        public Dictionary<string,Type> ColumnHeaders
         {
             get
             {
-                return new List<string> { StructureID, OccupancyType, DamageCatagory, FirstFloorElev, StructureValue, FoundationHeight, GroundElev, ContentValue, OtherValue, VehicalValue, BeginningDamageDepth,YearInConstruction,CBFips };
+               var rtn = new Dictionary<string, Type>() ;
+                rtn.Add(StructureID, typeof(int));
+                rtn.Add(OccupancyType, typeof(string));
+                rtn.Add(DamageCatagory, typeof(string));
+                rtn.Add(FirstFloorElev, typeof(double));
+                rtn.Add(StructureValue, typeof(double));
+                rtn.Add(FoundationHeight, typeof(double));
+                rtn.Add(GroundElev, typeof(double));
+                rtn.Add(ContentValue, typeof(double));
+                rtn.Add(OtherValue, typeof(double));
+                rtn.Add(VehicalValue, typeof(double));
+                rtn.Add(BeginningDamageDepth, typeof(double));
+                rtn.Add(YearInConstruction, typeof(double));
+                rtn.Add(CBFips, typeof(double));
+                return rtn;
             }
         }
 
