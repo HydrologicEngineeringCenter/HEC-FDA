@@ -1,4 +1,6 @@
-﻿namespace HEC.FDA.Model.structures
+﻿using System.Collections.Generic;
+
+namespace HEC.FDA.Model.structures
 {
     public class StructureInventoryColumnMap
     {
@@ -15,6 +17,13 @@
         public string BeginningDamageDepth { get; }
         public string YearInConstruction { get; }
         public string CBFips { get; }
+        public List<string> ColumnHeaders
+        {
+            get
+            {
+                return new List<string> { StructureID, OccupancyType, DamageCatagory, FirstFloorElev, StructureValue, FoundationHeight, GroundElev, ContentValue, OtherValue, VehicalValue, BeginningDamageDepth,YearInConstruction,CBFips };
+            }
+        }
 
         public StructureInventoryColumnMap(string structureID = "fd_id", string occupancyType = "occtype", string damageCatagory = "st_damcat", string firstFloorElev = "ff_elev",
             string sructureValue = "val_struct", string foundationHeight = "found_ht", string groundElev = "ground_elv", string contentValue = "val_cont", string otherValue = "val_other",
