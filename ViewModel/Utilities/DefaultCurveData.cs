@@ -355,7 +355,8 @@ namespace HEC.FDA.ViewModel.Utilities
                         damageDistribution = new Triangular(min, damage, max);
                         break;
                     case IDistributionEnum.LogNormal:
-                        double logStage = Math.Log(damage);
+                        double tmpDamage = 5;
+                        double logStage = Math.Log(tmpDamage+damage);
                         double logStandardDeviation = logStage / 115 + (double)i / coordinateQuantity;
                         damageDistribution = new LogNormal(logStage, logStandardDeviation);
                         break;
