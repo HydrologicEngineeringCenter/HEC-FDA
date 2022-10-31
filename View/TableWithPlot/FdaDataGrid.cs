@@ -467,6 +467,7 @@ namespace HEC.FDA.View.TableWithPlot
                 Binding b = (Binding)dgtc.Binding;
                 b.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
                 b.ValidatesOnNotifyDataErrors = true;
+                //TODO: This approach fixes all of the data grid columns to the same format. I think we could use a way to access the format of certain columns. 
                 b.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
             }
         }
