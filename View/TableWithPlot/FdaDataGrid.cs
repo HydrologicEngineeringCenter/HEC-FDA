@@ -467,7 +467,7 @@ namespace HEC.FDA.View.TableWithPlot
                 Binding b = (Binding)dgtc.Binding;
                 b.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
                 b.ValidatesOnNotifyDataErrors = true;
-                b.StringFormat = ViewModel.Utilities.StringConstants.DEFAULT_UNIT_FORMAT;
+                b.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
             }
         }
     }

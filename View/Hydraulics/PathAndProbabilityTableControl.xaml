@@ -18,7 +18,7 @@
                         <TextBlock Text="Name" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Probability, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
+                <DataGridTextColumn Binding="{Binding Probability, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Annual Exceedance Probability" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
