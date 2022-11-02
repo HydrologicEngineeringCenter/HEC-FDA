@@ -41,7 +41,7 @@ namespace HEC.FDA.Model.structures
         }
 
         public StructureInventoryColumnMap(string structureID , string occupancyType, string damageCatagory , string firstFloorElev ,
-            string sructureValue , string foundationHeight , string groundElev , string contentValue , string otherValue ,
+            string sructureValue, string foundationHeight , string groundElev , string contentValue , string otherValue ,
             string vehicalValue , string begDamDepth , string yearInConstruction, string cbfips )
         {
             if (!String.IsNullOrEmpty(structureID)){
@@ -55,18 +55,47 @@ namespace HEC.FDA.Model.structures
             {
                 DamageCatagory = damageCatagory;
             }
-
+            if (!String.IsNullOrEmpty(firstFloorElev))
+            {
+                FirstFloorElev = firstFloorElev;
+            }
+            if (!String.IsNullOrEmpty(foundationHeight))
+            {
+                FoundationHeight =foundationHeight;
+            }
+            if (!String.IsNullOrEmpty(groundElev))
+            {
+                GroundElev = groundElev;
+            }
+            if (!String.IsNullOrEmpty(otherValue))
+            {
+                OtherValue = otherValue;
+            }
+            if (!String.IsNullOrEmpty(vehicalValue))
+            {
+                VehicalValue = vehicalValue;
+            }
+            if (!String.IsNullOrEmpty(begDamDepth))
+            {
+                BeginningDamageDepth = begDamDepth;
+            }
+            if (!String.IsNullOrEmpty(YearInConstruction))
+            {
+                YearInConstruction = yearInConstruction;
+            }
+            if (!String.IsNullOrEmpty(StructureValue))
+            {
+                StructureValue = sructureValue;
+            }
+            if (!String.IsNullOrEmpty(contentValue))
+            {
+                ContentValue = contentValue;
+            }
+            if (!String.IsNullOrEmpty(cbfips))
+            {
+                CBFips = cbfips;
+            }
             
-            FirstFloorElev = firstFloorElev;
-            StructureValue = sructureValue;
-            FoundationHeight = foundationHeight;
-            GroundElev = groundElev;
-            ContentValue = contentValue;
-            OtherValue = otherValue;
-            VehicalValue = vehicalValue;
-            BeginningDamageDepth = begDamDepth;
-            YearInConstruction = yearInConstruction;
-            CBFips = cbfips;
         }
     }
 }
