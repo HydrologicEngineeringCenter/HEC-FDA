@@ -79,11 +79,11 @@ namespace HEC.FDA.Model.structures
             {
                 BeginningDamageDepth = begDamDepth;
             }
-            if (!String.IsNullOrEmpty(YearInConstruction))
+            if (!String.IsNullOrEmpty(yearInConstruction))
             {
                 YearInConstruction = yearInConstruction;
             }
-            if (!String.IsNullOrEmpty(StructureValue))
+            if (!String.IsNullOrEmpty(sructureValue))
             {
                 StructureValue = sructureValue;
             }
