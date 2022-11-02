@@ -133,6 +133,8 @@ public class Inventory
                 double val_struct = TryGet<double>(row[map.StructureValue], -999);
                 string st_damcat = TryGetObj<string>(row[map.DamageCatagory], "NA");
                 string occtype = TryGetObj<string>(row[map.OccupancyType], "NA");
+
+                //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
                 double found_ht = TryGet<double>(row[map.FoundationHeight], -999); //not gauranteed
                 double ground_elv = TryGet<double>(row[map.GroundElev], -999); //not gauranteed
                 double ff_elev = TryGet<double>(row[map.FirstFloorElev], -999); // not gauranteed
