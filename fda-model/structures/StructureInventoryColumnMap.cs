@@ -5,19 +5,19 @@ namespace HEC.FDA.Model.structures
 {
     public class StructureInventoryColumnMap
     {
-        public string StructureID { get; }
-        public string OccupancyType { get; }
-        public string DamageCatagory { get; }
-        public string FirstFloorElev { get; }
-        public string StructureValue { get; }
-        public string FoundationHeight { get; }
-        public string GroundElev { get; }
-        public string ContentValue { get; }
-        public string OtherValue { get; }
-        public string VehicalValue { get; }
-        public string BeginningDamageDepth { get; }
-        public string YearInConstruction { get; }
-        public string CBFips { get; }
+        public string StructureID { get; } = "fd_id";
+        public string OccupancyType { get; } = "occtype";
+        public string DamageCatagory { get; } = "st_damcat";
+        public string FirstFloorElev { get; } = "ff_elev";
+        public string StructureValue { get; } = "val_struct";
+        public string FoundationHeight { get; } = "found_ht";
+        public string GroundElev { get; } = "ground_elv";
+        public string ContentValue { get; } = "val_cont";
+        public string OtherValue { get; } = "val_other";
+        public string VehicalValue { get; } = "val_vehic";
+        public string BeginningDamageDepth { get; } = "begDamDepth";
+        public string YearInConstruction { get; } = "yrbuilt";
+        public string CBFips { get; } = "cbfips";
         public Dictionary<string,Type> ColumnHeaders
         {
             get
@@ -40,13 +40,23 @@ namespace HEC.FDA.Model.structures
             }
         }
 
-        public StructureInventoryColumnMap(string structureID = "fd_id", string occupancyType = "occtype", string damageCatagory = "st_damcat", string firstFloorElev = "ff_elev",
-            string sructureValue = "val_struct", string foundationHeight = "found_ht", string groundElev = "ground_elv", string contentValue = "val_cont", string otherValue = "val_other",
-            string vehicalValue = "val_vehic", string begDamDepth = "begDamDepth", string yearInConstruction = "yrbuilt", string cbfips = "cbfips")
+        public StructureInventoryColumnMap(string structureID , string occupancyType, string damageCatagory , string firstFloorElev ,
+            string sructureValue , string foundationHeight , string groundElev , string contentValue , string otherValue ,
+            string vehicalValue , string begDamDepth , string yearInConstruction, string cbfips )
         {
-            StructureID = structureID;
-            OccupancyType = occupancyType;
-            DamageCatagory = damageCatagory;
+            if (!String.IsNullOrEmpty(structureID)){
+                StructureID = structureID;
+            }
+            if (!String.IsNullOrEmpty(occupancyType))
+            {
+                OccupancyType = occupancyType;
+            }
+            if (!String.IsNullOrEmpty(damageCatagory))
+            {
+                DamageCatagory = damageCatagory;
+            }
+
+            
             FirstFloorElev = firstFloorElev;
             StructureValue = sructureValue;
             FoundationHeight = foundationHeight;
