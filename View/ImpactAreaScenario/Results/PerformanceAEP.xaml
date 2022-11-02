@@ -45,7 +45,7 @@
                         <TextBlock Text="AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Assurance of AEP" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

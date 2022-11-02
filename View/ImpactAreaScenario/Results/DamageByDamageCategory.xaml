@@ -45,7 +45,7 @@
 
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Discount Rate:" />
-            <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
             <Label Content="Period of Analysis:" />
             <TextBlock Text="{Binding PeriodOfAnalysis}" VerticalAlignment="Center"/>
         </StackPanel>
