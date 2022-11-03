@@ -33,7 +33,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
 
         public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName)
         {
-            StructureInventoryColumnMap map = new StructureInventoryColumnMap();
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
             HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();

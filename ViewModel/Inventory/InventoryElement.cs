@@ -97,13 +97,20 @@ namespace HEC.FDA.ViewModel.Inventory
             return new StructureInventoryColumnMap(
                 structureID: SelectionMappings.StructureIDCol,
                 occupancyType: SelectionMappings.OccTypeCol,
+                //Currently Missing. Adding to build
+                damageCatagory: null,
                 firstFloorElev: SelectionMappings.FirstFloorElevCol,
                 sructureValue: SelectionMappings.StructureValueCol,
-                foundationHeight: SelectionMappings.FoundationHeightCol, groundElev: SelectionMappings.GroundElevCol, contentValue: SelectionMappings.ContentValueCol,
-                otherValue: SelectionMappings.OtherValueCol, vehicalValue: SelectionMappings.VehicleValueCol, begDamDepth: SelectionMappings.BeginningDamageDepthCol,
-                yearInConstruction: SelectionMappings.YearInConstructionCol
-
-                ) ;
+                foundationHeight: SelectionMappings.FoundationHeightCol, 
+                groundElev: SelectionMappings.GroundElevCol,
+                contentValue: SelectionMappings.ContentValueCol,
+                otherValue: SelectionMappings.OtherValueCol,
+                vehicalValue: SelectionMappings.VehicleValueCol, 
+                begDamDepth: SelectionMappings.BeginningDamageDepthCol,
+                yearInConstruction: SelectionMappings.YearInConstructionCol,
+                //Currently Missing. Adding to build
+                cbfips: null
+                ); 
         }
 
         private string GetImpactAreaDirectory(string impactAreaName)

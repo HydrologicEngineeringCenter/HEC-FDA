@@ -3,6 +3,7 @@ using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 
@@ -10,7 +11,8 @@ namespace HEC.FDA.Model.structures;
 
 //TODO: Figure out how to set Occupany Type Set
 public class Inventory
-{ private Dictionary<string, int> _impactAreaNameToID;
+{
+    private Dictionary<string, int> _impactAreaNameToID;
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
     private List<string> _damageCategories;
@@ -26,53 +28,53 @@ public class Inventory
         get { return _damageCategories; }
     }
 
-        public float[] FirstFloorElevations
+    public float[] FirstFloorElevations
+    {
+        get
         {
-            get
+            float[] result = new float[Structures.Count];
+            int count = 0;
+            foreach (Structure structure in Structures)
             {
-                float[] result = new float[Structures.Count];
-                int count = 0;
-                foreach(Structure structure in Structures)
-                {
-                    result[count] = (float)structure.FirstFloorElevation;
-                    count++;
-                }
-                return result;
+                result[count] = (float)structure.FirstFloorElevation;
+                count++;
             }
+            return result;
         }
+    }
 
-        public static T TryGet<T>(object value, T defaultValue = default)
-            where T : struct
+    public static T TryGet<T>(object value, T defaultValue = default)
+        where T : struct
+    {
+        if (value == null)
+            return defaultValue;
+        else if (value == DBNull.Value)
+            return defaultValue;
+        else
         {
-            if (value == null)
-                return defaultValue;
-            else if (value == DBNull.Value)
-                return defaultValue;
+            var retn = value as T?;
+            if (retn.HasValue)
+                return retn.Value;
             else
-            {
-                var retn = value as T?;
-                if (retn.HasValue)
-                    return retn.Value;
-                else
-                    return defaultValue;
-            }
+                return defaultValue;
         }
-        public static T TryGetObj<T>(object value, T defaultValue = default)
-            where T : class
+    }
+    public static T TryGetObj<T>(object value, T defaultValue = default)
+        where T : class
+    {
+        if (value == null)
+            return defaultValue;
+        else if (value == DBNull.Value)
+            return defaultValue;
+        else
         {
-            if (value == null)
-                return defaultValue;
-            else if (value == DBNull.Value)
-                return defaultValue;
+            var retn = value as T;
+            if (retn != null)
+                return retn;
             else
-            {
-                var retn = value as T;
-                if (retn != null)
-                    return retn;
-                else
-                    return defaultValue;
-            }
+                return defaultValue;
         }
+    }
 
     public Polygon GetImpactAreaPolygon(string impactAreaName)
     {
@@ -80,7 +82,7 @@ public class Inventory
         {
             var row = _impactAreaSet.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
-            if (thisImpactAreaName.Equals(impactAreaName));
+            if (thisImpactAreaName.Equals(impactAreaName)) ;
             {
                 return _impactAreaSet.Polygon(i);
             }
@@ -88,11 +90,32 @@ public class Inventory
         return null;
     }
 
+    private PointFeatureLayer createColumnHeadersForMissingColumns(PointFeatureLayer layer, StructureInventoryColumnMap map)
+    {
+        List<string> layerColumnNames = new List<string>();
+        var row = layer.FeatureRow(0);
+        foreach (DataColumn c in row.Table.Columns)  //loop through the columns. 
+        {
+            layerColumnNames.Add(c.ColumnName);
+        }
+
+        foreach (string columnName in map.ColumnHeaders.Keys)
+        {
+            if (!layerColumnNames.Contains(columnName))
+            {
+                layer.AddAttributeColumn(columnName, map.ColumnHeaders[columnName]);
+            }
+        }
+        return layer;
+    }
+
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, string impactAreaUniqueColumnHeader)
     {
         //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
         //is missing to avoid null reference exceptions in the compute 
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
+        structureInventory = createColumnHeadersForMissingColumns(structureInventory, map);
+
         _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
         _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
 
@@ -103,23 +126,31 @@ public class Inventory
         {
             for (int i = 0; i < structureInventory.FeatureCount(); i++)
             {
+                //required parameters
                 PointM point = pointMs[i];
                 var row = structureInventory.FeatureRow(i);
-                int fid = TryGet<int>(row[map.StructureID]);
-                double found_ht = TryGet<double>(row[map.FoundationHeight]);
-                double ground_elv = TryGet<double>(row[map.GroundElev]);
-                double val_struct = TryGet<double>(row[map.StructureValue]);
-                double val_cont = TryGet<double>(row[map.ContentValue]);
-                double val_vehic = TryGet<double>(row[map.VehicalValue]);
-                double val_other = TryGet<double>(row[map.OtherValue]);
-                string st_damcat = TryGetObj<string>(row[map.DamageCatagory]);
-                string occtype = TryGetObj<string>(row[map.OccupancyType]);
-                string cbfips = TryGetObj<string>(row[map.CBFips]);
-                double ff_elev = TryGet<double>(row[map.FirstFloorElev]);
+                int fid = TryGet<int>(row[map.StructureID], -999);
+                double val_struct = TryGet<double>(row[map.StructureValue], -999);
+                string st_damcat = TryGetObj<string>(row[map.DamageCatagory], "NA");
+                string occtype = TryGetObj<string>(row[map.OccupancyType], "NA");
+
+                //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
+                double found_ht = TryGet<double>(row[map.FoundationHeight], -999); //not gauranteed
+                double ground_elv = TryGet<double>(row[map.GroundElev], -999); //not gauranteed
+                double ff_elev = TryGet<double>(row[map.FirstFloorElev], -999); // not gauranteed
                 if (row[map.FirstFloorElev] == DBNull.Value)
                 {
                     ff_elev = ground_elv + found_ht;
                 }
+
+
+                //optional parameters
+                double val_cont = TryGet<double>(row[map.ContentValue], -999);
+                double val_vehic = TryGet<double>(row[map.VehicalValue], -999);
+                double val_other = TryGet<double>(row[map.OtherValue], -999);
+                string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
+
+
                 int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips));
             }
@@ -208,7 +239,7 @@ public class Inventory
         PolygonFeatureLayer polygonFeatureLayer = new PolygonFeatureLayer("impactAreas", polygonShapefilePath);
         List<Polygon> polygons = polygonFeatureLayer.Polygons().ToList();
         for (int i = 0; i < polygons.Count; i++)
-        { 
+        {
             if (polygons[i].Contains(point))
             {
                 return i;

@@ -11,13 +11,13 @@ namespace HEC.FDA.Model.structures
         public PointM Point { get; }
         public double FirstFloorElevation { get; }
         public double InventoriedStructureValue { get; }
-        public double InventoriedContentValue { get; internal set; }
-        public double InventoriedVehicleValue { get; }
-        public double InventoriedOtherValue { get; internal set; }
+        public double InventoriedContentValue { get; set; }
+        public double InventoriedVehicleValue { get; set; }
+        public double InventoriedOtherValue { get; set; }
         public string DamageCatagory { get; }
         public string OccTypeName { get; }
         public int ImpactAreaID { get; }
-        public string Cbfips { get; }
+        public string Cbfips { get; set; }
 
         public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = -999, double val_vehic = -999, double val_other = -999, string cbfips = "unassigned")
         {
