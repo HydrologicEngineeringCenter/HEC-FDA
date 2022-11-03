@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
         }
         public GraphicalUncertainPairedData GraphicalUncertainPairedData
-        {
+        { 
             get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
            
         }
@@ -147,7 +147,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 {
                     index =binarySearchReturn;
                 }
-                row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index])), Math.Round(upperNonExceedence.f(probs[index])));
+                row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index]), 4), Math.Round(upperNonExceedence.f(probs[index]), 4));
             }
         }
         public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()

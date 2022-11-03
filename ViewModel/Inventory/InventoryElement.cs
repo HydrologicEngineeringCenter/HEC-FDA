@@ -97,13 +97,20 @@ namespace HEC.FDA.ViewModel.Inventory
             return new StructureInventoryColumnMap(
                 structureID: SelectionMappings.StructureIDCol,
                 occupancyType: SelectionMappings.OccTypeCol,
+                //Currently Missing. Adding to build
+                damageCatagory: null,
                 firstFloorElev: SelectionMappings.FirstFloorElevCol,
                 sructureValue: SelectionMappings.StructureValueCol,
-                foundationHeight: SelectionMappings.FoundationHeightCol, groundElev: SelectionMappings.GroundElevCol, contentValue: SelectionMappings.ContentValueCol,
-                otherValue: SelectionMappings.OtherValueCol, vehicalValue: SelectionMappings.VehicleValueCol, begDamDepth: SelectionMappings.BeginningDamageDepthCol,
-                yearInConstruction: SelectionMappings.YearInConstructionCol
-
-                ) ;
+                foundationHeight: SelectionMappings.FoundationHeightCol, 
+                groundElev: SelectionMappings.GroundElevCol,
+                contentValue: SelectionMappings.ContentValueCol,
+                otherValue: SelectionMappings.OtherValueCol,
+                vehicalValue: SelectionMappings.VehicleValueCol, 
+                begDamDepth: SelectionMappings.BeginningDamageDepthCol,
+                yearInConstruction: SelectionMappings.YearInConstructionCol,
+                //Currently Missing. Adding to build
+                cbfips: null
+                ); 
         }
 
         private string GetImpactAreaDirectory(string impactAreaName)
@@ -248,6 +255,30 @@ namespace HEC.FDA.ViewModel.Inventory
             }
 
             return valueUncertainty;
+        }
+
+        public FdaValidationResult AreMappingsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int numOcctypesNotFound = 0;
+
+            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = SelectionMappings.OcctypesDictionary;
+            foreach (OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
+            {
+                OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+                if(ot == null)
+                {
+                    //we didn't find the occtype. We could write out to the user the group id and the occtype id that we didn't find but i don't think
+                    //that is useful since that occtype doesn't exist in the db anymore. It would just be meaningless numbers for the user.
+                    numOcctypesNotFound++;
+                }
+            }
+            if(numOcctypesNotFound > 0)
+            {
+                vr.AddErrorMessage("The structure inventory " + Name + " points at occupancy types that no longer exist. " + numOcctypesNotFound + " were not found. " +
+                    "Edit the structure inventory and reassign the occupancy types.");
+            }
+            return vr;
         }
 
         private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)

@@ -141,14 +141,6 @@ namespace HEC.FDA.ViewModel.Storage
 
             }
         }
-        //public void RenameGeoPackageTable(string oldName, string newName)
-        //{
-        //    if (_SqliteReader.TableNames.Contains(oldName))
-        //    {
-        //        LifeSimGIS.GeoPackageWriter geoWriter = new LifeSimGIS.GeoPackageWriter(_SqliteReader);
-        //        geoWriter.RenameFeatures(oldName, newName);
-        //    }
-        //}
         
         public void DeleteTable(string tableName)
         {

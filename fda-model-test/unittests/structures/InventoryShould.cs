@@ -15,7 +15,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
 
         private Inventory GetTestInventory()
         {
-            StructureInventoryColumnMap map = new StructureInventoryColumnMap();
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap(null,null,null, null, null, null, null, null, null, null, null, null, null);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };

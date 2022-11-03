@@ -79,12 +79,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccTypeAsset(XElement assetElem)
         {
             _IsChecked = Convert.ToBoolean( assetElem.Attribute("IsSelected").Value);
-            XElement curveElement = assetElem.Element("CurveComponentVM");
-            if(curveElement == null)
-            {
-                curveElement = assetElem.Element("ComputeComponentVM");
-            }
-            _Curve = new CurveComponentVM(curveElement);
+
+            _Curve = CurveComponentVM.CreateCurveComponentVM(assetElem);
 
             XElement uncertElem = assetElem.Element("Uncertainty");
 

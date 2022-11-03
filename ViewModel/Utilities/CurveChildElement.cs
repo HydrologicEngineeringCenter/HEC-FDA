@@ -16,13 +16,7 @@ namespace HEC.FDA.ViewModel.Utilities
         protected CurveChildElement(XElement childElem, int id) : base(childElem, id)
         {
             ReadHeaderXElement(childElem.Element(HEADER_XML_TAG));
-            XElement functionElem = childElem.Element("CurveComponentVM");
-            if(functionElem == null)
-            {
-                //this is for backwards compatibility 
-                functionElem = childElem.Element("ComputeComponentVM");
-            }
-            CurveComponentVM = new CurveComponentVM(functionElem);
+            CurveComponentVM = CurveComponentVM.CreateCurveComponentVM(childElem);  
         }
 
 
@@ -43,7 +37,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 isEqual = false;
             }
 
-            //computeComponentVM doesn't have an equals method. I am just going to compare the selected item for now
+            //todo: CurveComponentVM doesn't have an equals method. I am just going to compare the selected item for now
             if(!CurveComponentVM.SelectedItemToPairedData().Equals(elem.CurveComponentVM.SelectedItemToPairedData()))
             {
                 isEqual = false;
