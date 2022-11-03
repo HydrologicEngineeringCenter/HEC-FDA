@@ -15,8 +15,8 @@ namespace HEC.FDA.ModelTest.integrationtests
     public class StageDamageResultsTest
     {
         private static string IANameColumnHeader = "Name";
-        private static string pathToNSIShapefile = @"..\..\..\Resources\MuncieNSI\MuncieNSI.shp";
-        private static string pathToIAShapefile = @"..\..\..\Resources\MuncieImpactAreas\ImpactAreas.shp";
+        private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
+        private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private static string pathToResult1 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p01.hdf";
         private static string pathToResult2 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p02.hdf";
         private static string pathToResult3 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p03.hdf";
@@ -25,10 +25,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static string pathToResult6 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p06.hdf";
         private static string pathToResult7 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p07.hdf";
         private static string pathToResult8 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p08.hdf";
-        private static string pathToTerrain = @"..\..\..\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
-        private static string hydroParentDirectory = @"..\..\..\Resources\MuncieResult";
+        private static string pathToTerrain = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
+        private static string hydroParentDirectory = @"..\..\..\fda-model-test\Resources\MuncieResult";
 
-        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap();
+        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         private static double[] IND1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         private static double[] IND1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
