@@ -8,24 +8,27 @@ using HEC.FDA.Model.structures;
 using Statistics;
 using Statistics.Distributions;
 using Xunit;
-using Geospatial.Rasters;
-using Statistics.Histograms;
-using HEC.FDA.Model.metrics;
-using System.ComponentModel;
+using RasMapperLib.Utilities;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {   
     public class StageDamageResultsTest
     {
-        
-        //arrange: need structure inventory with occtypes, hydraulic modeling, flow-frequency function, stage-flow function, occtype, convergence criteria, impact area id 
-
+        private static string IANameColumnHeader = "Name";
         private static string pathToNSIShapefile = @"..\..\..\Resources\MuncieNSI\MuncieNSI.shp";
         private static string pathToIAShapefile = @"..\..\..\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private static string pathToResult = @"..\..\..\Resources\MuncieResult\Muncie.p04.hdf";
-        private static string pathToTerrain = @"..\..\..\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private static string pathToResult1 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p01.hdf";
+        private static string pathToResult2 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p02.hdf";
+        private static string pathToResult3 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p03.hdf";
+        private static string pathToResult4 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p04.hdf";
+        private static string pathToResult5 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p05.hdf";
+        private static string pathToResult6 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p06.hdf";
+        private static string pathToResult7 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p07.hdf";
+        private static string pathToResult8 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p08.hdf";
+        private static string pathToTerrain = @"..\..\..\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
+        private static string hydroParentDirectory = @"..\..\..\Resources\MuncieResult";
 
-        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap();//The NSI shapefile I have is missing: ffelev, valother, begdamdepth. Otherwise, all match
+        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap();
 
         private static double[] IND1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         private static double[] IND1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -531,9 +534,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             occupancyTypeRES6
         };
 
-        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes);
+        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes, IANameColumnHeader);
 
-        static IDistribution LP3Distribution = IDistributionFactory.FactoryLogPearsonIII(3.7070, .240, -.4750, 99);
+        static ContinuousDistribution LP3Distribution = new LogPearson3(3.7070, .240, -.4750, 99);
         static double[] RatingCurveFlows = { 1166, 2000, 3000, 4000, 5320, 6000, 7000, 8175, 9000, 9995, 12175, 13706, 15157, 16962, 18278, 20000, 24000 };
 
         static string xLabel = "Discharge";
@@ -541,6 +544,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         static string name1 = "Muncie White River";
         static int impactAreaID = 1;
         static CurveMetaData metaData1 = new CurveMetaData(xLabel, yLabel, name1 );
+
 
         static IDistribution[] StageDistributions =
         {
@@ -563,14 +567,16 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Triangular(944.5, 944.6, 948.5)
         };
 
-        private static HydraulicProfile profileFiftyPercent = new HydraulicProfile(.5, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");//Should "pathToTerrain" be removed and replaced with "Max" - Use "Max"
-        private static HydraulicProfile profileTwentyPercent = new HydraulicProfile(.2, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");
-        private static HydraulicProfile profileTenPercent = new HydraulicProfile(.1, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");
-        private static HydraulicProfile profileFivePercent = new HydraulicProfile(.05, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");//.04 in FDA export
-        private static HydraulicProfile profileTwoPercent = new HydraulicProfile(.02, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");
-        private static HydraulicProfile profileOnePercent = new HydraulicProfile(.01, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");
-        private static HydraulicProfile profilePointFivePercent = new HydraulicProfile(.005, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");//.004 in FDA export
-        private static HydraulicProfile profilePointTwoPercent = new HydraulicProfile(.002, pathToResult, HydraulicDataSource.UnsteadyHDF, "Max");
+        static UncertainPairedData stageDischarge = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData1);
+
+        private static HydraulicProfile profileFiftyPercent = new HydraulicProfile(.2, pathToResult1, "Max");
+        private static HydraulicProfile profileTwentyPercent = new HydraulicProfile(.1, pathToResult2, "Max");
+        private static HydraulicProfile profileTenPercent = new HydraulicProfile(.05, pathToResult3, "Max");
+        private static HydraulicProfile profileFivePercent = new HydraulicProfile(.5, pathToResult4, "Max");
+        private static HydraulicProfile profileTwoPercent = new HydraulicProfile(.02, pathToResult5, "Max");
+        private static HydraulicProfile profileOnePercent = new HydraulicProfile(.01, pathToResult6, "Max");
+        private static HydraulicProfile profilePointFivePercent = new HydraulicProfile(.005, pathToResult7, "Max");
+        private static HydraulicProfile profilePointTwoPercent = new HydraulicProfile(.002, pathToResult8, "Max");
 
         private static List<HydraulicProfile> hydraulicDataSetList = new List<HydraulicProfile>() 
         { 
@@ -584,7 +590,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             profilePointTwoPercent 
         };
 
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicDataSetList);
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicDataSetList, HydraulicDataSource.UnsteadyHDF);
 
         private static int stageImpactAreaID = 1;
 
@@ -593,17 +599,14 @@ namespace HEC.FDA.ModelTest.integrationtests
         //[Fact] based on what I've read, think I need Theory here and not Fact
         [Theory]
         [InlineData(1234, 3452605.18)]//this is mean damages at stage of 940ft for IND damcat
-        public void StageDamageShould() 
+        public void StageDamageShould(int seed, double expectedDamage) 
         {
 
-            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, analyticalFlowFrequency);
+            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, hydroParentDirectory, LP3Distribution, dischargeStage:stageDischarge);
             List<ImpactAreaStageDamage> stageDamageObjectList = new List<ImpactAreaStageDamage>() { stageDamageObject };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(stageDamageObjectList);
 
             List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
-
-            //Note: before assert, find correct stage-damage function
-            //Note: look at consequence distribution results, method getconsequncedistributionresult has logic that is similar to what I want for stage-damage function - logic on line 287 of ConsequenceDistributionResults
 
             double actualDamageAtGivenStage = 0;
             double givenStage = 940;
@@ -614,21 +617,17 @@ namespace HEC.FDA.ModelTest.integrationtests
                 {
                     if (currentUncertainPairedData.DamageCategory.Equals(damageCategory))
                     {
-                        IPairedData stageDamagePairedData = currentUncertainPairedData.SamplePairedData(.5)
+                        IPairedData stageDamagePairedData = UncertainPairedData.ConvertToPairedDataAtMeans(currentUncertainPairedData);
+                        actualDamageAtGivenStage += stageDamagePairedData.f(givenStage);
                     }
                 }
             }
 
-            for() private static double actualDamageAtGivenStage = actualStageDamage.f(940);//do this in loop 
+            double tolerance = .05;
+            double difference = actualDamageAtGivenStage - expectedDamage;
+            double relDiff = System.Math.Abs(difference/expectedDamage);
+            Assert.True(relDiff < tolerance);
 
-        //assert
-        List<double> meanDamages = new List<double>();
-            for (int i=0; i<_StructureDepthPercentDamageFunction.yvals.length; i++)
-            {
-                meanDamages.add(((Statistics.Histograms.Histogram)_StructureDepthPercentDamageFunction.yvals[i]).mean);
-            };
-
-            UncertainPairedData actualStageDamage = new UncertainPairedData(_StructureDepthPercentDamageFunction.xvals, meanDamages.toarray());
         }
     }
 }
