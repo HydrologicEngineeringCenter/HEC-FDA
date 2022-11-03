@@ -70,7 +70,8 @@ namespace HEC.FDA.Model.hydraulics
 
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         {
-            var rasResult = new RASResults(GetFilePath(parentDirectory));
+            string fullPathToResult = GetFilePath(parentDirectory);
+            var rasResult = new RASResults(fullPathToResult);
             var rasGeometry = rasResult.Geometry;
             var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
 
