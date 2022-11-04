@@ -19,7 +19,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
-            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader);
+            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false);
         }
 
         [Fact]

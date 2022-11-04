@@ -40,7 +40,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
 
 
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(696, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
