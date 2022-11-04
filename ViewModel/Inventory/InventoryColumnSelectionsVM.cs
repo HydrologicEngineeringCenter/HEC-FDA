@@ -230,7 +230,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return dtv;
         }
 
-        private string getTerrainFile()
+        public static string getTerrainFile()
         {
             string filePath = "";
             List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
