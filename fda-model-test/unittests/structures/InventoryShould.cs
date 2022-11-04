@@ -13,19 +13,19 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private const string pathToTerrainHDF = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
 
-        private Inventory GetTestInventory()
+        private Inventory GetTestInventory(bool useTerrainFile)
         {
             StructureInventoryColumnMap map = new StructureInventoryColumnMap(null,null,null, null, null, null, null, null, null, null, null, null, null);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
-            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false);
+            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathToTerrainHDF);
         }
 
         [Fact]
         public void ConstructFromValidShapefile()
         {
-            Inventory inventory = GetTestInventory();
+            Inventory inventory = GetTestInventory(false);
             Assert.NotNull(inventory);
             Assert.Equal(3, inventory.ImpactAreas.Count);
             Assert.Equal(696, inventory.Structures.Count);
@@ -35,7 +35,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            Inventory inventory = GetTestInventory();
             float[] groundelevs = Inventory.GetGroundElevationFromTerrain(pathToNSIShapefile, pathToTerrainHDF);
             Assert.Equal(696, groundelevs.Length);
             Assert.Equal(946.5,groundelevs[0], 1);
@@ -43,10 +42,17 @@ namespace HEC.FDA.ModelTest.unittests.structures
          [Fact]
          public void GetImpactAreaFID()
         {
-            Inventory inv = GetTestInventory();
+            Inventory inv = GetTestInventory(false);
             PointM pnt = inv.GetPointMs()[0];
             int actual = Inventory.GetImpactAreaFID(pnt, pathToIAShapefile);
             Assert.Equal(0, actual);
+        }
+        [Fact]
+        public void ConstructsWithTerrainGroundElevs()
+        {
+            Inventory inv = GetTestInventory(true);
+            Assert.Equal(696, inv.Structures.Count);
+            Assert.True(inv.Structures[0].FirstFloorElevation > 900);
         }
     }
 }

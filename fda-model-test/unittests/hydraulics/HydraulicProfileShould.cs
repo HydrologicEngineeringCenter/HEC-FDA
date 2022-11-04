@@ -25,22 +25,23 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string IANameColumnHeader = "Name";
         private const string SteadyHydraulicProfileName = "PF 8";
 
+        private const string TerrainPath = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+
 
         [Theory]
-        [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF, "Max" )]
-        [InlineData(ParentDirectoryToSteadyResult, SteadyHDFFileName, HydraulicDataSource.SteadyHDF, SteadyHydraulicProfileName)]
-        [InlineData(ParentDirectoryToGrid, GridFileName, HydraulicDataSource.WSEGrid, "Max")]
+        [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF, "Max",true,TerrainPath )]
+        [InlineData(ParentDirectoryToSteadyResult, SteadyHDFFileName, HydraulicDataSource.SteadyHDF, SteadyHydraulicProfileName, false, TerrainPath)]
+        [InlineData(ParentDirectoryToGrid, GridFileName, HydraulicDataSource.WSEGrid, "Max", false, TerrainPath)]
 
-        public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName)
+        public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName, bool useTerrainFile, string pathTerrain)
         {
             StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
             HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
-            //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
 
 
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathTerrain);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(696, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
