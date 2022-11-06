@@ -156,7 +156,8 @@ namespace HEC.FDA.Model.stageDamage
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = _hydraulicDataset.HydraulicProfiles[0];
             float[] WSEAtLowest = lowestProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            double stageAtProbabilityOfLowestProfile = stageFrequency.f(lowestProfile.Probability);
+            //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
+            double stageAtProbabilityOfLowestProfile = stageFrequency.f(1-lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _minStageForArea);
             //this interval defines the interval in stages by which we'll compute damage 
@@ -177,7 +178,8 @@ namespace HEC.FDA.Model.stageDamage
             //then figure out how to interpolate later 
             foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
-                double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
+                //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
+                double stageAtIndexLocation = stageFrequency.f(1-hydraulicProfile.Probability);
                 float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
@@ -189,7 +191,7 @@ namespace HEC.FDA.Model.stageDamage
             //Part 3: Stages between the highest profile 
             List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
             float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count - 1].Probability);
+            double stageAtProbabilityOfHighestProfile = stageFrequency.f(1-profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
             for (int stepCount = 0; stepCount < numIntermediateStagesToCompute; stepCount++)
@@ -213,7 +215,7 @@ namespace HEC.FDA.Model.stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
+        public float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
             foreach (float structureStage in stagesAtStructuresHighestProfile)
@@ -222,7 +224,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
+        public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             foreach (float stage in WSEsAtLowest)
