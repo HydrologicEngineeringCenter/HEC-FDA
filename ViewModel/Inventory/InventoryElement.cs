@@ -139,8 +139,9 @@ namespace HEC.FDA.ViewModel.Inventory
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
+            string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                structureInventoryColumnMap, occupancyTypes, impactAreaElement.UniqueNameColumnHeader);
+                structureInventoryColumnMap, occupancyTypes, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath);
             return inv;
         }
 

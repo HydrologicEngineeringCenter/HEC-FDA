@@ -109,7 +109,8 @@ public class Inventory
         return layer;
     }
 
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, string impactAreaUniqueColumnHeader)
+    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
+        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
     {
         //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
         //is missing to avoid null reference exceptions in the compute 
@@ -119,6 +120,11 @@ public class Inventory
         _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
         _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
 
+        float[] groundelevs = Array.Empty<float>();
+        if (updateGroundElevFromTerrain)
+        {
+            groundelevs = GetGroundElevationFromTerrain(pointShapefilePath, terrainPath);
+        }
 
         PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
         Structures = new List<Structure>();
@@ -136,7 +142,15 @@ public class Inventory
 
                 //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
                 double found_ht = TryGet<double>(row[map.FoundationHeight], -999); //not gauranteed
-                double ground_elv = TryGet<double>(row[map.GroundElev], -999); //not gauranteed
+                double ground_elv;
+                if (updateGroundElevFromTerrain)
+                {
+                    ground_elv = groundelevs[i];
+                }
+                else
+                {
+                    ground_elv = TryGet<double>(row[map.GroundElev], -999); //not gauranteed
+                }
                 double ff_elev = TryGet<double>(row[map.FirstFloorElev], -999); // not gauranteed
                 if (row[map.FirstFloorElev] == DBNull.Value)
                 {
