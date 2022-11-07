@@ -38,6 +38,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         #region Constructors
         public IndexPointsEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
+            AddValidationRules();
         }
 
         public IndexPointsEditorVM(IndexPointsElement element, List<string> indexPoints, EditorActionManager actionManager) : base(element, actionManager)
@@ -46,9 +47,18 @@ namespace HEC.FDA.ViewModel.IndexPoints
             ListOfRows.AddRange(indexPoints);
             Description = element.Description;
             SelectedPath = Storage.Connection.Instance.IndexPointsDirectory + "\\" + Name;
+            AddValidationRules();
         }
         #endregion
         #region Voids
+        private void AddValidationRules()
+        {
+            AddRule(nameof(ListOfRows), () =>
+            {
+                return ListOfRows.Count > 0;
+            }, "No index points have been defined.");
+        }
+
         /// <summary>
         /// This method grabs all the column headers from the dbf and loads them into a unique name combobox.
         /// </summary>
