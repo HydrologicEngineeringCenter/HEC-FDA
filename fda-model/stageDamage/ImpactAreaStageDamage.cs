@@ -32,7 +32,8 @@ namespace HEC.FDA.Model.stageDamage
         private ConvergenceCriteria convergenceCriteria;
 
         private int seed = 1234;
-        private int numIntermediateStagesToCompute = 15;
+        private int _numInterpolatedStagesToCompute = 10;
+        private int _numExtrapolatedStagesToCompute = 50;
 
         private string _HydraulicParentDirectory;
         #endregion
@@ -156,48 +157,91 @@ namespace HEC.FDA.Model.stageDamage
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             HydraulicProfile lowestProfile = _hydraulicDataset.HydraulicProfiles[0];
             float[] WSEAtLowest = lowestProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            double stageAtProbabilityOfLowestProfile = stageFrequency.f(lowestProfile.Probability);
+            //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
+            double stageAtProbabilityOfLowestProfile = stageFrequency.f(1-lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _minStageForArea);
             //this interval defines the interval in stages by which we'll compute damage 
-            float interval = indexStationLowerStageDelta / numIntermediateStagesToCompute;
-            //Collect damage for first part of function 
-            for (int i = 0; i < numIntermediateStagesToCompute; i++)
+            float interval = indexStationLowerStageDelta / _numExtrapolatedStagesToCompute;
+            //Collect damage for first part of function up to and including the stages at the lowest profile 
+            for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
+
+
         }
         private void ComputeMiddleStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
-            //Part 2: Stages between the lowest profile and highest profile 
-            //I think we do the 8 profiles for now 
-            //then figure out how to interpolate later 
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            //Part 2: Stages between the lowest profile and highest profile, excluding the lowest profile 
+
+            for (int i = 1; i < _hydraulicDataset.HydraulicProfiles.Count; i++)
             {
-                double stageAtIndexLocation = stageFrequency.f(hydraulicProfile.Probability);
-                float[] stages = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                HydraulicProfile previousHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i-1];
+                HydraulicProfile currentHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i];
+                InterpolateBetweenProfiles(randomProvider, previousHydraulicProfile, currentHydraulicProfile, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+            }
+
+        }
+
+        private void InterpolateBetweenProfiles(IProvideRandomNumbers randomProvider, HydraulicProfile previousHydraulicProfile, HydraulicProfile currentHydraulicProfile, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
+        {
+            double previousStageAtIndexLocation = stageFrequency.f(1 - previousHydraulicProfile.Probability);
+            double currentStageAtIndexLocation = stageFrequency.f(1 - currentHydraulicProfile.Probability);
+            double stageDeltaAtIndexLocation = currentStageAtIndexLocation - previousStageAtIndexLocation;
+            double intervalAtIndexLocation = stageDeltaAtIndexLocation / _numInterpolatedStagesToCompute;
+
+            float[] previousStagesAtStructures = previousHydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+            float[] currentStagesAtStructures = currentHydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+            float[] intervalsAtStructures = CalculateIntervals(previousStagesAtStructures, currentStagesAtStructures);
+
+            for (int i = 1; i < _numInterpolatedStagesToCompute; i++)
+            {
+                double stageAtIndexLocation = previousStageAtIndexLocation + intervalAtIndexLocation * i;
+                float[] stages = CalculateIncrementOfStages(previousStagesAtStructures, intervalsAtStructures, i);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
         }
+
+        private float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int i)
+        {
+            float[] stages = new float[intervalsAtStructures.Length];
+            for (int m = 0; m < stages.Length; m++)
+            {
+                stages[m] = previousStagesAtStructures[m] + intervalsAtStructures[m]*i;
+            }
+            return stages;
+        }
+
+        private float[] CalculateIntervals(float[] previousStagesAtStructures, float[] currentStagesAtStructures)
+        {
+           float[] intervals = new float[previousStagesAtStructures.Length];
+            for (int j = 0; j < previousStagesAtStructures.Length; j++)
+            {
+                intervals[j] = (currentStagesAtStructures[j] - previousStagesAtStructures[j])/_numInterpolatedStagesToCompute;
+            }
+            return intervals;
+        }
+
         private void ComputeUpperStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 3: Stages between the highest profile 
             List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
             float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            double stageAtProbabilityOfHighestProfile = stageFrequency.f(profileList[profileList.Count - 1].Probability);
+            double stageAtProbabilityOfHighestProfile = stageFrequency.f(1-profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
-            float upperInterval = indexStationUpperStageDelta / numIntermediateStagesToCompute;
-            for (int stepCount = 0; stepCount < numIntermediateStagesToCompute; stepCount++)
+            float upperInterval = indexStationUpperStageDelta / _numExtrapolatedStagesToCompute;
+            for (int stepCount = 1; stepCount < _numExtrapolatedStagesToCompute; stepCount++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
-                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (numIntermediateStagesToCompute - stepCount + 1));
+                allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (_numExtrapolatedStagesToCompute - stepCount));
             }
         }
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
@@ -213,7 +257,7 @@ namespace HEC.FDA.Model.stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        private float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
+        public float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
             foreach (float structureStage in stagesAtStructuresHighestProfile)
@@ -222,12 +266,12 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        private float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
+        public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             foreach (float stage in WSEsAtLowest)
             {
-                extrapolatedStages[i] = stage - interval * (numIntermediateStagesToCompute - i);
+                extrapolatedStages[i] = stage - interval * (_numInterpolatedStagesToCompute - i);
             }
             return extrapolatedStages;
         }
