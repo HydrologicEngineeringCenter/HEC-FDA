@@ -17,16 +17,16 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static string IANameColumnHeader = "Name";
         private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
         private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private static string pathToResult1 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p01.hdf";
-        private static string pathToResult2 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p02.hdf";
-        private static string pathToResult3 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p03.hdf";
-        private static string pathToResult4 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p04.hdf";
-        private static string pathToResult5 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p05.hdf";
-        private static string pathToResult6 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p06.hdf";
-        private static string pathToResult7 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p07.hdf";
-        private static string pathToResult8 = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files\Muncie.p08.hdf";
+        private static string fileNameResult1 = "Muncie.p01.hdf";
+        private static string filenameResult2 = "Muncie.p02.hdf";
+        private static string filenameResult3 = "Muncie.p03.hdf";
+        private static string filenameResult4 = "Muncie.p04.hdf";
+        private static string filenameResult5 = "Muncie.p05.hdf";
+        private static string filenameResult6 = "Muncie.p06.hdf";
+        private static string filenameResult7 = "Muncie.p07.hdf";
+        private static string filenameResult8 = "Muncie.p08.hdf";
         private static string pathToTerrain = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
-        private static string hydroParentDirectory = @"..\..\..\fda-model-test\Resources\MuncieResult";
+        private static string hydroParentDirectory = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files";
 
         private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
 
@@ -569,14 +569,14 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         static UncertainPairedData stageDischarge = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData1);
 
-        private static HydraulicProfile profileFiftyPercent = new HydraulicProfile(.2, pathToResult1, "Max");
-        private static HydraulicProfile profileTwentyPercent = new HydraulicProfile(.1, pathToResult2, "Max");
-        private static HydraulicProfile profileTenPercent = new HydraulicProfile(.05, pathToResult3, "Max");
-        private static HydraulicProfile profileFivePercent = new HydraulicProfile(.5, pathToResult4, "Max");
-        private static HydraulicProfile profileTwoPercent = new HydraulicProfile(.02, pathToResult5, "Max");
-        private static HydraulicProfile profileOnePercent = new HydraulicProfile(.01, pathToResult6, "Max");
-        private static HydraulicProfile profilePointFivePercent = new HydraulicProfile(.005, pathToResult7, "Max");
-        private static HydraulicProfile profilePointTwoPercent = new HydraulicProfile(.002, pathToResult8, "Max");
+        private static HydraulicProfile profileFiftyPercent = new HydraulicProfile(.2, fileNameResult1, "Max");
+        private static HydraulicProfile profileTwentyPercent = new HydraulicProfile(.1, filenameResult2, "Max");
+        private static HydraulicProfile profileTenPercent = new HydraulicProfile(.05, filenameResult3, "Max");
+        private static HydraulicProfile profileFivePercent = new HydraulicProfile(.5, filenameResult4, "Max");
+        private static HydraulicProfile profileTwoPercent = new HydraulicProfile(.02, filenameResult5, "Max");
+        private static HydraulicProfile profileOnePercent = new HydraulicProfile(.01, filenameResult6, "Max");
+        private static HydraulicProfile profilePointFivePercent = new HydraulicProfile(.005, filenameResult7, "Max");
+        private static HydraulicProfile profilePointTwoPercent = new HydraulicProfile(.002, filenameResult8, "Max");
 
         private static List<HydraulicProfile> hydraulicDataSetList = new List<HydraulicProfile>() 
         { 
