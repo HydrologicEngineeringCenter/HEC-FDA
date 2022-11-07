@@ -34,8 +34,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             createNew.Action = CreateNew;
 
             List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(importFromFile);
             localActions.Add(createNew);
+            localActions.Add(importFromFile);
 
             Actions = localActions;
 
