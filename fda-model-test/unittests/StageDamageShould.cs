@@ -19,6 +19,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
         private static PointM pointM = new PointM();
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
+        private static float[] GroundElevs = new float[] {0,0,0,0,0};
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
         private static string residentialDamageCategory = "Residential";
         private static string commercialDamageCategory = "Commercial";
@@ -89,7 +90,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<Structure> structures = new List<Structure>();
             for (int i = 0; i < structureIDs.Length; i++)
             {
-                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
+                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], GroundElevs[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
