@@ -39,7 +39,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             float[] workingProfile = new float[] { -9999, -9999, 10 };
             float[] nextLargerProfile = new float[] { -9999, 20, 50 };
 
-            HydraulicDataset.CorrectDryStructureDepths(ref workingProfile, firstFloorElevs, nextLargerProfile);
+            HydraulicDataset.CorrectDryStructureWSEs(ref workingProfile, firstFloorElevs, nextLargerProfile);
 
             float[] expected = new float[] { 91, 17, 10 };
 

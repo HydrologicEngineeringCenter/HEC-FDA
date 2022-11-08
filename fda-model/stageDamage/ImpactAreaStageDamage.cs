@@ -161,7 +161,7 @@ namespace HEC.FDA.Model.stageDamage
             float[] WSEAtLowest = lowestProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             HydraulicProfile nextProfile = _hydraulicDataset.HydraulicProfiles[1];
             float[] WSEAtNext = nextProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            HydraulicDataset.CorrectDryStructureDepths(ref WSEAtLowest, _inventory.GroundElevations, WSEAtNext );
+            HydraulicDataset.CorrectDryStructureWSEs(ref WSEAtLowest, _inventory.GroundElevations, WSEAtNext );
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfLowestProfile = stageFrequency.f(1-lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
@@ -209,8 +209,8 @@ namespace HEC.FDA.Model.stageDamage
             float[] currentStagesAtStructures = currentHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             float[] nextStagesAtStructures = nextHydraulicProfile.GetWSE(pointMs,_hydraulicDataset.DataSource,_HydraulicParentDirectory);
 
-            HydraulicDataset.CorrectDryStructureDepths(ref previousStagesAtStructures, _inventory.GroundElevations, currentStagesAtStructures);
-            HydraulicDataset.CorrectDryStructureDepths(ref currentStagesAtStructures, _inventory.GroundElevations, nextStagesAtStructures);
+            HydraulicDataset.CorrectDryStructureWSEs(ref previousStagesAtStructures, _inventory.GroundElevations, currentStagesAtStructures);
+            HydraulicDataset.CorrectDryStructureWSEs(ref currentStagesAtStructures, _inventory.GroundElevations, nextStagesAtStructures);
 
             float[] intervalsAtStructures = CalculateIntervals(previousStagesAtStructures, currentStagesAtStructures);
 
@@ -249,7 +249,7 @@ namespace HEC.FDA.Model.stageDamage
             //Part 3: Stages between the highest profile 
             List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
             float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            HydraulicDataset.CorrectDryStructureDepths(ref stagesAtStructuresHighestProfile, _inventory.GroundElevations);
+            HydraulicDataset.CorrectDryStructureWSEs(ref stagesAtStructuresHighestProfile, _inventory.GroundElevations);
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(1-profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _numExtrapolatedStagesToCompute;
