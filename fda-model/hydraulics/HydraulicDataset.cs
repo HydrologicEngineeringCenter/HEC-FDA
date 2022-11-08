@@ -54,7 +54,7 @@ namespace HEC.FDA.Model.hydraulics
             return elem;
         }
 
-        public static void CorrectDryStructureDepths(ref float[] wsesToCorrect, float[] firstFloorElevs, float[] nextProfileWses = null)
+        public static void CorrectDryStructureDepths(ref float[] wsesToCorrect, float[] groundElevs, float[] nextProfileWses = null)
         {
             float offsetForDryStructures = 9;
             float offsetForBarelyDryStructures = 2;
@@ -66,7 +66,7 @@ namespace HEC.FDA.Model.hydraulics
                     //The case where the largest profile has dry structures
                     if (wsesToCorrect[i] == dryCellValue)
                     {
-                        wsesToCorrect[i] = (firstFloorElevs[i] - offsetForDryStructures);
+                        wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
                     }
                 }
             }
@@ -77,12 +77,12 @@ namespace HEC.FDA.Model.hydraulics
                     //The case where the next largest profile is also dry
                     if (nextProfileWses[i] == dryCellValue)
                     {
-                        wsesToCorrect[i] = (firstFloorElevs[i] - offsetForDryStructures);
+                        wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
                     }
                     //The case where the next largest profile is not dry
                     else
                     {
-                        wsesToCorrect[i] = (firstFloorElevs[i] - offsetForBarelyDryStructures);
+                        wsesToCorrect[i] = (groundElevs[i] - offsetForBarelyDryStructures);
                     }
                 }
             }
