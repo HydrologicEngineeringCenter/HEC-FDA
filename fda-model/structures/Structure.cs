@@ -10,6 +10,7 @@ namespace HEC.FDA.Model.structures
         public int Fid { get; }
         public PointM Point { get; }
         public double FirstFloorElevation { get; }
+        public double GroundElevation { get; }
         public double InventoriedStructureValue { get; }
         public double InventoriedContentValue { get; set; }
         public double InventoriedVehicleValue { get; set; }
@@ -19,7 +20,7 @@ namespace HEC.FDA.Model.structures
         public int ImpactAreaID { get; }
         public string Cbfips { get; set; }
 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = -999, double val_vehic = -999, double val_other = -999, string cbfips = "unassigned")
+        public Structure(int fid, PointM point, double firstFloorElevation, double groundElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = -999, double val_vehic = -999, double val_other = -999, string cbfips = "unassigned")
         {
             Fid = fid;
             Point = point;
