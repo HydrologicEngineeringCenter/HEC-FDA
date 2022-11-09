@@ -40,12 +40,11 @@ namespace HEC.FDA.Model.structures
             }
         }
 
-        public StructureInventoryColumnMap(string structureID, string occupancyType, string damageCatagory, string firstFloorElev,
-            string sructureValue, string foundationHeight, string groundElev, string contentValue, string otherValue,
-            string vehicalValue, string begDamDepth, string yearInConstruction, string cbfips)
+        public StructureInventoryColumnMap(string structureID , string occupancyType, string damageCatagory , string firstFloorElev ,
+            string sructureValue, string foundationHeight , string groundElev , string contentValue , string otherValue ,
+            string vehicalValue , string begDamDepth , string yearInConstruction, string cbfips, string numStructures )
         {
-            if (!String.IsNullOrEmpty(structureID))
-            {
+            if (!String.IsNullOrEmpty(structureID)){
                 StructureID = structureID;
             }
             if (!String.IsNullOrEmpty(occupancyType))
@@ -96,7 +95,11 @@ namespace HEC.FDA.Model.structures
             {
                 CBFips = cbfips;
             }
-
+            if (!String.IsNullOrEmpty(numStructures))
+            {
+                NumberOfStructures = numStructures;
+            }
+            
         }
     }
 }
