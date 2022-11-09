@@ -17,18 +17,34 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static string IANameColumnHeader = "Name";
         private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
         private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private static string fileNameResult1 = "Muncie.p01.hdf";
-        private static string filenameResult2 = "Muncie.p02.hdf";
-        private static string filenameResult3 = "Muncie.p03.hdf";
-        private static string filenameResult4 = "Muncie.p04.hdf";
-        private static string filenameResult5 = "Muncie.p05.hdf";
-        private static string filenameResult6 = "Muncie.p06.hdf";
-        private static string filenameResult7 = "Muncie.p07.hdf";
-        private static string filenameResult8 = "Muncie.p08.hdf";
         private static string pathToTerrain = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
-        private static string hydroParentDirectory = @"Z:\Documents\Work\FDA2\FDA2.0\Studies\Muncie\ExampleStudyDataForQSG\ExampleStudyDataForQSG\Muncie\Hydraulics\Outputs\Native Output Files";
 
-        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        //water data
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+        private const string SteadyHDFFileName = @"Muncie.p10.hdf";
+        private const string Name2 = "2";
+        private const string Name5 = "5";
+        private const string Name10 = "10";
+        private const string Name25 = "25";
+        private const string Name50 = "50";
+        private const string Name100 = "100";
+        private const string Name200 = "200";
+        private const string Name500 = "500";
+        private const HydraulicDataSource hydraulicDataSource = HydraulicDataSource.SteadyHDF;
+
+        private static HydraulicProfile hydraulicProfile2 = new HydraulicProfile(0.5, SteadyHDFFileName, Name2);
+        private static HydraulicProfile hydraulicProfile5 = new HydraulicProfile(0.2, SteadyHDFFileName, Name5);
+        private static HydraulicProfile hydraulicProfile10 = new HydraulicProfile(0.1, SteadyHDFFileName, Name10);
+        private static HydraulicProfile hydraulicProfile25 = new HydraulicProfile(0.04, SteadyHDFFileName, Name25);
+        private static HydraulicProfile hydraulicProfile50 = new HydraulicProfile(.02, SteadyHDFFileName, Name50);
+        private static HydraulicProfile hydraulicProfile100 = new HydraulicProfile(.01, SteadyHDFFileName, Name100);
+        private static HydraulicProfile hydraulicProfile200 = new HydraulicProfile(.005, SteadyHDFFileName, Name200);
+        private static HydraulicProfile hydraulicProfile500 = new HydraulicProfile(.002, SteadyHDFFileName, Name500);
+        private static List<HydraulicProfile> hydraulicProfiles = new List<HydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
+
+        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         private static double[] IND1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         private static double[] IND1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -534,7 +550,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             occupancyTypeRES6
         };
 
-        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes, IANameColumnHeader);
+        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes, IANameColumnHeader, false);
 
         static ContinuousDistribution LP3Distribution = new LogPearson3(3.7070, .240, -.4750, 99);
         static double[] RatingCurveFlows = { 1166, 2000, 3000, 4000, 5320, 6000, 7000, 8175, 9000, 9995, 12175, 13706, 15157, 16962, 18278, 20000, 24000 };
@@ -569,29 +585,6 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         static UncertainPairedData stageDischarge = new UncertainPairedData(RatingCurveFlows, StageDistributions, metaData1);
 
-        private static HydraulicProfile profileFiftyPercent = new HydraulicProfile(.2, fileNameResult1, "Max");
-        private static HydraulicProfile profileTwentyPercent = new HydraulicProfile(.1, filenameResult2, "Max");
-        private static HydraulicProfile profileTenPercent = new HydraulicProfile(.05, filenameResult3, "Max");
-        private static HydraulicProfile profileFivePercent = new HydraulicProfile(.5, filenameResult4, "Max");
-        private static HydraulicProfile profileTwoPercent = new HydraulicProfile(.02, filenameResult5, "Max");
-        private static HydraulicProfile profileOnePercent = new HydraulicProfile(.01, filenameResult6, "Max");
-        private static HydraulicProfile profilePointFivePercent = new HydraulicProfile(.005, filenameResult7, "Max");
-        private static HydraulicProfile profilePointTwoPercent = new HydraulicProfile(.002, filenameResult8, "Max");
-
-        private static List<HydraulicProfile> hydraulicDataSetList = new List<HydraulicProfile>() 
-        { 
-            profileFiftyPercent, 
-            profileTwentyPercent, 
-            profileTenPercent, 
-            profileFivePercent, 
-            profileTwoPercent, 
-            profileOnePercent, 
-            profilePointFivePercent, 
-            profilePointTwoPercent 
-        };
-
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicDataSetList, HydraulicDataSource.UnsteadyHDF);
-
         private static int stageImpactAreaID = 1;
 
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
@@ -602,7 +595,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void StageDamageShould(int seed, double expectedDamage) 
         {
 
-            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, hydroParentDirectory, LP3Distribution, dischargeStage:stageDischarge);
+            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, ParentDirectoryToSteadyResult, LP3Distribution, dischargeStage:stageDischarge);
             List<ImpactAreaStageDamage> stageDamageObjectList = new List<ImpactAreaStageDamage>() { stageDamageObject };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(stageDamageObjectList);
 

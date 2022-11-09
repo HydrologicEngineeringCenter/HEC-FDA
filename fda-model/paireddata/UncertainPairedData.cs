@@ -219,7 +219,7 @@ namespace HEC.FDA.Model.paireddata
         {
             Deterministic[] deterministicDistributions = new Deterministic[uncertainPairedData.Xvals.Length];
             int i = 0;
-            foreach (ContinuousDistribution distribution in uncertainPairedData.Yvals)
+            foreach (IDistribution distribution in uncertainPairedData.Yvals)
             {
                 deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
                 i++;
