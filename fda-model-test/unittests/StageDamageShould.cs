@@ -21,6 +21,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
         private static PointM pointM = new PointM();
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
+        private static float[] GroundElevs = new float[] {0,0,0,0,0};
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
         private static string residentialDamageCategory = "Residential";
         private static string commercialDamageCategory = "Commercial";
@@ -113,6 +114,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();  
+
             float[] WSEs = new float[] { 7, 10, 8, 12 };
 
             //Act

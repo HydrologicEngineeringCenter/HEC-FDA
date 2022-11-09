@@ -28,16 +28,14 @@ public class Inventory
         get { return _damageCategories; }
     }
 
-    public float[] FirstFloorElevations
+    public float[] GroundElevations
     {
         get
         {
             float[] result = new float[Structures.Count];
-            int count = 0;
-            foreach (Structure structure in Structures)
+            for(int i = 0; i < Structures.Count; i++)
             {
-                result[count] = (float)structure.FirstFloorElevation;
-                count++;
+                result[i] = (float)Structures[i].GroundElevation;
             }
             return result;
         }
@@ -169,6 +167,7 @@ public class Inventory
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+
             }
         }
         catch (Exception ex)
