@@ -282,4 +282,10 @@ public class Inventory
         }
         return new DeterministicInventory(inventorySample, _impactAreaIDs, _damageCategories);
     }
+
+    internal List<string> ProduceStructureDetails()
+    {
+        //This has to start with the header 
+        throw new NotImplementedException();
+    }
 }

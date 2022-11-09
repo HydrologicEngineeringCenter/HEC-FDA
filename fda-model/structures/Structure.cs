@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.interfaces;
 using RasMapperLib;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -41,7 +42,10 @@ namespace HEC.FDA.Model.structures
             return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters);
         }
 
-
-
+        internal string StageAndDamageDetails()
+        {
+            //This has to start with the header 
+            throw new NotImplementedException();
+        }
     }
 }

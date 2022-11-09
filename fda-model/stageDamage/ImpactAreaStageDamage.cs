@@ -61,10 +61,7 @@ namespace HEC.FDA.Model.stageDamage
             SetMinAndMaxStage();
         }
 
-        internal List<string> ProduceImpactAreaStructureDetails()
-        {
-            
-        }
+
         #endregion
 
         #region Methods
@@ -300,6 +297,20 @@ namespace HEC.FDA.Model.stageDamage
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        internal List<string> ProduceImpactAreaStructureDetails()
+        {
+            List<string> structureDetails = _inventory.ProduceStructureDetails();
+            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            {
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                for (int i = 0; i < stagesAtStructures.Length; i++)
+                {
+                    structureDetails[i] += _inventory.Structures[i].StageAndDamageDetails();
+                }
+            }
+            return structureDetails;
         }
         #endregion
     }
