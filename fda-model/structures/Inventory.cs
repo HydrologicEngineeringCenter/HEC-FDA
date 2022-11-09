@@ -82,7 +82,7 @@ public class Inventory
         {
             var row = _impactAreaSet.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
-            if (thisImpactAreaName.Equals(impactAreaName)) ;
+            if (thisImpactAreaName.Equals(impactAreaName));
             {
                 return _impactAreaSet.Polygon(i);
             }

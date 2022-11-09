@@ -80,20 +80,17 @@ namespace HEC.FDA.ModelTest.unittests
         private static string contentAssetCategory = "Content";
         private static string structureAssetCategory = "Structure";
 
+        //water data
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+
+
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(340, 306, 540, 486)]
         public void ComputeDamageOneCoordinateShouldComputeCorrectly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage, double expectedCommercialStructureDamage, double expectedCommercialContentDamage)
         {
             //Arrange
-            List<Structure> structures = new List<Structure>();
-            for (int i = 0; i < structureIDs.Length; i++)
-            {
-                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
-                structures.Add(structure);
-            }
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            Inventory inventory = CreateInventory();  
             float[] WSEs = new float[] { 7, 10, 8, 12 };
 
             //Act
@@ -117,5 +114,27 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifferenceCommercialContentDamage < tolerance);
 
         }
+
+        private Inventory CreateInventory()
+        {
+            List<Structure> structures = new List<Structure>();
+            for (int i = 0; i < structureIDs.Length; i++)
+            {
+                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
+                structures.Add(structure);
+            }
+            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
+            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            return inventory;
+        }
+
+        [Theory]
+        [InlineData(5)]
+        public void StructureDetailsShould(double expectedLength)
+        {
+            Inventory inventory = CreateInventory();
+
+        }
+
     }
 }

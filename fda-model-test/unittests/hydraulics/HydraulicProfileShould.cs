@@ -20,10 +20,10 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string GridFileName = @"WSE (Max).Terrain.muncie_clip.tif";
 
         private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
-        private const string SteadyHDFFileName = @"Muncie.p09.hdf";
+        private const string SteadyHDFFileName = @"Muncie.p10.hdf";
 
         private const string IANameColumnHeader = "Name";
-        private const string SteadyHydraulicProfileName = "PF 8";
+        private const string SteadyHydraulicProfileName = "500";
 
         private const string TerrainPath = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
 
