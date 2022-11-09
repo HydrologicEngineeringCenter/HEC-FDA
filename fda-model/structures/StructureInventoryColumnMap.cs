@@ -18,6 +18,7 @@ namespace HEC.FDA.Model.structures
         public string BeginningDamageDepth { get; } = "begDamDepth";
         public string YearInConstruction { get; } = "yrbuilt";
         public string CBFips { get; } = "cbfips";
+        public string NumberOfStructures { get; } = "num_structs";
         public List<Tuple<string, Type>> ColumnHeaders
         {
             get
