@@ -55,7 +55,7 @@ namespace HEC.FDA.Model.structures
 
         internal string ProduceDetails()
         {
-            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue},{InventoriedContentValue},{InventoriedContentValue},{InventoriedOtherValue},{InventoriedOtherValue},{InventoriedVehicleValue},{InventoriedVehicleValue},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue}";
+            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue},{InventoriedContentValue},{InventoriedContentValue},{InventoriedOtherValue},{InventoriedOtherValue},{InventoriedVehicleValue},{InventoriedVehicleValue},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},";
             return details;
         }
     }
