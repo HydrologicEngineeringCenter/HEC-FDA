@@ -9,6 +9,8 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -81,20 +83,38 @@ namespace HEC.FDA.ModelTest.unittests
         private static string contentAssetCategory = "Content";
         private static string structureAssetCategory = "Structure";
 
+        //water data
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+        private const string SteadyHDFFileName = @"Muncie.p10.hdf";
+        private const string Name2 = "2";
+        private const string Name5 = "5";
+        private const string Name10 = "10";
+        private const string Name25 = "25";
+        private const string Name50 = "50";
+        private const string Name100 = "100";
+        private const string Name200 = "200";
+        private const string Name500 = "500";
+        private const HydraulicDataSource hydraulicDataSource = HydraulicDataSource.SteadyHDF;
+
+        private static HydraulicProfile hydraulicProfile2 = new HydraulicProfile(0.5, SteadyHDFFileName, Name2);
+        private static HydraulicProfile hydraulicProfile5 = new HydraulicProfile(0.2, SteadyHDFFileName, Name5);
+        private static HydraulicProfile hydraulicProfile10 = new HydraulicProfile(0.1, SteadyHDFFileName, Name10);
+        private static HydraulicProfile hydraulicProfile25 = new HydraulicProfile(0.04, SteadyHDFFileName, Name25);
+        private static HydraulicProfile hydraulicProfile50 = new HydraulicProfile(.02, SteadyHDFFileName, Name50);
+        private static HydraulicProfile hydraulicProfile100 = new HydraulicProfile(.01, SteadyHDFFileName, Name100);
+        private static HydraulicProfile hydraulicProfile200 = new HydraulicProfile(.005, SteadyHDFFileName, Name200);
+        private static HydraulicProfile hydraulicProfile500 = new HydraulicProfile(.002, SteadyHDFFileName, Name500);
+        private static List<HydraulicProfile> hydraulicProfiles = new List<HydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles,hydraulicDataSource);
+
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(340, 306, 540, 486)]
         public void ComputeDamageOneCoordinateShouldComputeCorrectly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage, double expectedCommercialStructureDamage, double expectedCommercialContentDamage)
         {
             //Arrange
-            List<Structure> structures = new List<Structure>();
-            for (int i = 0; i < structureIDs.Length; i++)
-            {
-                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], GroundElevs[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
-                structures.Add(structure);
-            }
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            Inventory inventory = CreateInventory();  
+
             float[] WSEs = new float[] { 7, 10, 8, 12 };
 
             //Act
@@ -118,5 +138,36 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifferenceCommercialContentDamage < tolerance);
 
         }
+
+        private Inventory CreateInventory()
+        {
+            List<Structure> structures = new List<Structure>();
+            for (int i = 0; i < structureIDs.Length; i++)
+            {
+                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
+                structures.Add(structure);
+            }
+            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
+            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            return inventory;
+        }
+
+        [Theory]
+        [InlineData(5)]
+        public void StructureDetailsShould(double expectedLength)
+        {
+            //Arrange
+            Inventory inventory = CreateInventory();
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, ParentDirectoryToSteadyResult);
+            List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
+
+            //Act
+            List<string> structureDetails = scenarioStageDamage.ProduceStructureDetails();
+
+            //Assert
+            Assert.Equal(expectedLength, structureDetails.Count);
+        }
+
     }
 }

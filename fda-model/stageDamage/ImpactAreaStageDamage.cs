@@ -18,6 +18,10 @@ namespace HEC.FDA.Model.stageDamage
     public class ImpactAreaStageDamage : Validation, IReportMessage
     {
         #region Fields 
+        private const string STRUCTURE_DAMAGE = "StructureDamageAt";
+        private const string CONTENT_DAMAGE = "ContentDamageAt";
+        private const string OTHER_DAMAGE = "OtherDamageAt";
+        private const string VEHICLE_DAMAGE = "VehicleDamageAt";
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
         private ContinuousDistribution _AnalyticalFlowFrequency;
@@ -61,6 +65,8 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
+
+
         #endregion
 
         #region Methods
@@ -312,6 +318,96 @@ namespace HEC.FDA.Model.stageDamage
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+
+        internal List<string> ProduceImpactAreaStructureDetails()
+        {
+            //this list will be the size of the number of structures + 1 where the first string is the header
+            List<string> structureDetails = _inventory.StructureDetails();
+            DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider());
+            StagesToStrings(ref structureDetails);
+            DepthsToStrings(deterministicInventory, ref structureDetails);
+            DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE, ref structureDetails);
+            DamagesToStrings(deterministicInventory, CONTENT_DAMAGE, ref structureDetails);
+            DamagesToStrings(deterministicInventory, OTHER_DAMAGE, ref structureDetails);
+            DamagesToStrings(deterministicInventory, VEHICLE_DAMAGE, ref structureDetails);
+
+            return structureDetails;
+        }
+
+        private void DamagesToStrings(DeterministicInventory deterministicInventory, string assetType, ref List<string> structureDetails)
+        {
+            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            {
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                //first, create the header with the probability information on the hydraulic profile 
+                //that will go in structureDetails[0]
+
+                structureDetails[0] += $"{assetType}{hydraulicProfile.Probability}AEP,";
+
+                if (assetType == STRUCTURE_DAMAGE)
+                {
+                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    {
+                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).StructureDamage},";
+                    }
+
+                } 
+                else if (assetType == CONTENT_DAMAGE)
+                {
+                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    {
+                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).ContentDamage},";
+                    }
+
+                } 
+                else if (assetType == VEHICLE_DAMAGE)
+                {
+                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    {
+                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).VehicleDamage},";
+                    }
+
+                } 
+                else
+                {
+                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    {
+                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).OtherDamage},";
+                    }
+                }
+
+            }
+        }
+
+        private void DepthsToStrings(DeterministicInventory deterministicInventory, ref List<string> structureDetails)
+        {
+            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            {
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                //first, create the header with the probability information on the hydraulic profile 
+                //that will go in structureDetails[0]
+                structureDetails[0] += $"StageOf{hydraulicProfile.Probability}AEP,";
+                for (int i = 0; i < stagesAtStructures.Length; i++)
+                {
+                    structureDetails[i + 1] += $"{stagesAtStructures[i] - deterministicInventory.Inventory[i].FirstFloorElevation},";
+                }
+            }
+        }
+
+        private void StagesToStrings(ref List<string> structureDetails)
+        {
+            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            {
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                //first, create the header with the probability information on the hydraulic profile 
+                //that will go in structureDetails[0]
+                structureDetails[0] += $"StageOf{hydraulicProfile.Probability}AEP,";
+                for (int i = 0; i < stagesAtStructures.Length; i++)
+                {
+                    structureDetails[i + 1] += $"{stagesAtStructures[i]},";
+                }
+            }
         }
         #endregion
     }

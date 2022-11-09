@@ -109,7 +109,9 @@ namespace HEC.FDA.ViewModel.Inventory
                 begDamDepth: SelectionMappings.BeginningDamageDepthCol,
                 yearInConstruction: SelectionMappings.YearInConstructionCol,
                 //Currently Missing. Adding to build
-                cbfips: null
+                cbfips: null,
+                //Currently Missing. Adding to build
+                numStructures: null
                 ); 
         }
 

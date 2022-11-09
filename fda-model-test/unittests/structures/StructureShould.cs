@@ -44,7 +44,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static double inventoriedStructureValue = 1000;
         private static int impactAreaID = 55;
         private static float GroundElev = 0;
-        private static Structure structure = new Structure(structureID, pointM, firstFloorElevation, GroundElev, inventoriedStructureValue, damageCategory, occupancyTypeName, impactAreaID);
+        private static Structure structure = new Structure(structureID, pointM, firstFloorElevation, inventoriedStructureValue, damageCategory, occupancyTypeName, impactAreaID, groundElevation: GroundElev);
 
         [Theory]
         [InlineData(1000, 100, 900, new double[] { 0, 10, 20, 30, 40, 50 })]

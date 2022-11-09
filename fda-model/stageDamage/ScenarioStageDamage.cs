@@ -33,6 +33,20 @@ namespace HEC.FDA.Model.stageDamage
             return scenarioStageDamageResults;
         }
 
+
+        public List<string> ProduceStructureDetails()
+        {
+            List<string> structureDetails = new List<string>();
+            foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
+            {
+                List<string> temp = impactAreaStageDamage.ProduceImpactAreaStructureDetails();
+                foreach (string s in temp)
+                {
+                    structureDetails.Add(s);
+                }
+            }
+            return structureDetails;
+        }
         #endregion
     }
 }
