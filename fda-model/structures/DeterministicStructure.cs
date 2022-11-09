@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -6,6 +7,7 @@ namespace HEC.FDA.Model.structures
     {
         #region Fields
         SampledStructureParameters _sampledStructureParameters;
+        double _DepthAboveFoundationHeight;
         #endregion
 
         #region Properties 
@@ -73,6 +75,11 @@ namespace HEC.FDA.Model.structures
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
             return consequenceResult;
+        }
+
+        internal string ComputeStageAndDamageDetails(float v)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

@@ -18,6 +18,7 @@ namespace HEC.FDA.Model.structures
         public string BeginningDamageDepth { get; } = "begDamDepth";
         public string YearInConstruction { get; } = "yrbuilt";
         public string CBFips { get; } = "cbfips";
+        public string NumberOfStructures = "1";
         public Dictionary<string,Type> ColumnHeaders
         {
             get
@@ -36,13 +37,14 @@ namespace HEC.FDA.Model.structures
                 rtn.Add(BeginningDamageDepth, typeof(double));
                 rtn.Add(YearInConstruction, typeof(double));
                 rtn.Add(CBFips, typeof(double));
+                rtn.Add(NumberOfStructures, typeof(int));
                 return rtn;
             }
         }
 
         public StructureInventoryColumnMap(string structureID , string occupancyType, string damageCatagory , string firstFloorElev ,
             string sructureValue, string foundationHeight , string groundElev , string contentValue , string otherValue ,
-            string vehicalValue , string begDamDepth , string yearInConstruction, string cbfips )
+            string vehicalValue , string begDamDepth , string yearInConstruction, string cbfips, string numStructures )
         {
             if (!String.IsNullOrEmpty(structureID)){
                 StructureID = structureID;
@@ -94,6 +96,10 @@ namespace HEC.FDA.Model.structures
             if (!String.IsNullOrEmpty(cbfips))
             {
                 CBFips = cbfips;
+            }
+            if (!String.IsNullOrEmpty(numStructures))
+            {
+                NumberOfStructures = numStructures;
             }
             
         }

@@ -211,7 +211,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
-                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, ListOfRows[i].Name));
+                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, SelectedPath,ListOfRows[i].Name));
             }
             HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);

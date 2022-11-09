@@ -12,7 +12,6 @@ namespace HEC.FDA.Model.structures;
 //TODO: Figure out how to set Occupany Type Set
 public class Inventory
 {
-    private Dictionary<string, int> _impactAreaNameToID;
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
     private List<string> _damageCategories;
@@ -28,16 +27,14 @@ public class Inventory
         get { return _damageCategories; }
     }
 
-    public float[] FirstFloorElevations
+    public float[] GroundElevations
     {
         get
         {
             float[] result = new float[Structures.Count];
-            int count = 0;
-            foreach (Structure structure in Structures)
+            for(int i = 0; i < Structures.Count; i++)
             {
-                result[count] = (float)structure.FirstFloorElevation;
-                count++;
+                result[i] = (float)Structures[i].GroundElevation;
             }
             return result;
         }
@@ -82,7 +79,7 @@ public class Inventory
         {
             var row = _impactAreaSet.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
-            if (thisImpactAreaName.Equals(impactAreaName)) ;
+            if (thisImpactAreaName.Equals(impactAreaName));
             {
                 return _impactAreaSet.Polygon(i);
             }
@@ -112,8 +109,6 @@ public class Inventory
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
     {
-        //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
-        //is missing to avoid null reference exceptions in the compute 
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
         structureInventory = createColumnHeadersForMissingColumns(structureInventory, map);
 
@@ -159,14 +154,17 @@ public class Inventory
 
 
                 //optional parameters
-                double val_cont = TryGet<double>(row[map.ContentValue], -999);
-                double val_vehic = TryGet<double>(row[map.VehicalValue], -999);
-                double val_other = TryGet<double>(row[map.OtherValue], -999);
+                double val_cont = TryGet<double>(row[map.ContentValue], 0);
+                double val_vehic = TryGet<double>(row[map.VehicalValue], 0);
+                double val_other = TryGet<double>(row[map.OtherValue], 0);
                 string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
-
-
+                double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], 0);
+                int numStructures = TryGet<int>(row[map.NumberOfStructures], 1);
+                int yearInService = TryGet<int>(row[map.YearInConstruction], -999);
+                //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips));
+                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+
             }
         }
         catch (Exception ex)
@@ -178,13 +176,12 @@ public class Inventory
         GetUniqueDamageCatagories();
     }
 
-    public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
+    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes)
     {
-        Structures = structures;
-        _Occtypes = occTypes;
-        GetUniqueImpactAreas();
-        GetUniqueDamageCatagories();
+        Structures = filteredStructureList;
+        _Occtypes = occtypes;
     }
+
     public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
     {
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -226,13 +223,13 @@ public class Inventory
         _damageCategories = damageCatagories;
     }
 
-    private Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
+    private Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
         List<Structure> filteredStructureList = new List<Structure>();
 
         foreach (Structure structure in Structures)
         {
-            if (impactArea.Contains(structure.Point))
+            if (_impactAreaSet[impactAreaFID].Contains(structure.Point))
             {
                 filteredStructureList.Add(structure);
             }
@@ -281,5 +278,16 @@ public class Inventory
             //it is possible that if an occupancy type doesnt exist a structure wont get added...
         }
         return new DeterministicInventory(inventorySample, _impactAreaIDs, _damageCategories);
+    }
+
+    internal List<string> StructureDetails()
+    {
+        string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage";
+        List<string> structureDetails = new List<string>() { header };
+        foreach (Structure structure in Structures)
+        {
+            structureDetails.Add(structure.ProduceDetails());
+        }
+        return structureDetails;
     }
 }
