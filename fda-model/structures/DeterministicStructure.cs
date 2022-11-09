@@ -7,6 +7,7 @@ namespace HEC.FDA.Model.structures
     {
         #region Fields
         SampledStructureParameters _sampledStructureParameters;
+        double _DepthAboveFoundationHeight;
         #endregion
 
         #region Properties 

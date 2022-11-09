@@ -159,11 +159,11 @@ public class Inventory
 
 
                 //optional parameters
-                double val_cont = TryGet<double>(row[map.ContentValue], -999);
-                double val_vehic = TryGet<double>(row[map.VehicalValue], -999);
-                double val_other = TryGet<double>(row[map.OtherValue], -999);
+                double val_cont = TryGet<double>(row[map.ContentValue], 0);
+                double val_vehic = TryGet<double>(row[map.VehicalValue], 0);
+                double val_other = TryGet<double>(row[map.OtherValue], 0);
                 string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
-                double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], -999);
+                double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], 0);
                 int numStructures = TryGet<int>(row[map.NumberOfStructures], 1);
                 int yearInService = TryGet<int>(row[map.YearInConstruction], -999);
                 //TODO: handle number 
