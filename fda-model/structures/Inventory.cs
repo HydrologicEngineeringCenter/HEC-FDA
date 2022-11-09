@@ -220,7 +220,7 @@ public class Inventory
         _damageCategories = damageCatagories;
     }
 
-    private Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
+    public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
         List<Structure> filteredStructureList = new List<Structure>();
 
