@@ -60,6 +60,11 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
+
+        internal List<string> ProduceImpactAreaStructureDetails()
+        {
+            
+        }
         #endregion
 
         #region Methods
