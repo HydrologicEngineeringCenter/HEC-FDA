@@ -19,8 +19,13 @@ namespace HEC.FDA.Model.structures
         public string OccTypeName { get; }
         public int ImpactAreaID { get; }
         public string Cbfips { get; set; }
+        internal double BeginningDamageDepth { get; }
+        internal double FoundationHeight { get; }
+        internal double GroundElevation { get; }
+        internal int YearInService { get; }
+        internal int NumberOfStructures { get; }
 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = -999, double val_vehic = -999, double val_other = -999, string cbfips = "unassigned")
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = -999, double val_vehic = -999, double val_other = -999, string cbfips = "unassigned", double beginDamage = -999, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
         {
             Fid = fid;
             Point = point;
@@ -33,6 +38,12 @@ namespace HEC.FDA.Model.structures
             ImpactAreaID = impactAreaID;
             Cbfips = cbfips;
             FirstFloorElevation = firstFloorElevation;
+            GroundElevation = groundElevation;
+            FoundationHeight = foundationHeight;
+            YearInService = year;
+            NumberOfStructures = numStructures;
+            BeginningDamageDepth = beginDamage;
+
 
         }
         public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype)
@@ -42,10 +53,10 @@ namespace HEC.FDA.Model.structures
             return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters);
         }
 
-        internal string StageAndDamageDetails()
+        internal string ProduceDetails()
         {
-            //This has to start with the header 
-            throw new NotImplementedException();
+            string details = $"{Fid},";
+            return details;
         }
     }
 }

@@ -301,13 +301,18 @@ namespace HEC.FDA.Model.stageDamage
 
         internal List<string> ProduceImpactAreaStructureDetails()
         {
-            List<string> structureDetails = _inventory.ProduceStructureDetails();
+            //Think about indexing and where the header will go 
+            //this will be the size of the number of structures + 1
+            List<string> structureDetails = _inventory.StructureDetails();
+            DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider());
             foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                //first, create the header with the probability information on the hydraulic profile 
+                //that will go in structureDetails[0]
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
-                    structureDetails[i] += _inventory.Structures[i].StageAndDamageDetails();
+                    structureDetails[i+1] += deterministicInventory.Inventory[i].ComputeStageAndDamageDetails(stagesAtStructures[i]);
                 }
             }
             return structureDetails;

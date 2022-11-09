@@ -163,7 +163,7 @@ public class Inventory
                 double val_vehic = TryGet<double>(row[map.VehicalValue], -999);
                 double val_other = TryGet<double>(row[map.OtherValue], -999);
                 string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
-
+                double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], -999);
 
                 int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips));
@@ -283,9 +283,14 @@ public class Inventory
         return new DeterministicInventory(inventorySample, _impactAreaIDs, _damageCategories);
     }
 
-    internal List<string> ProduceStructureDetails()
+    internal List<string> StructureDetails()
     {
-        //This has to start with the header 
-        throw new NotImplementedException();
+        string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage";
+        List<string> structureDetails = new List<string>() { header };
+        foreach (Structure structure in Structures)
+        {
+            structureDetails.Add(structure.ProduceDetails());
+        }
+        return structureDetails;
     }
 }
