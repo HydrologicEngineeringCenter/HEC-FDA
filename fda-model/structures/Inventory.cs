@@ -12,7 +12,6 @@ namespace HEC.FDA.Model.structures;
 //TODO: Figure out how to set Occupany Type Set
 public class Inventory
 {
-    private Dictionary<string, int> _impactAreaNameToID;
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
     private List<string> _damageCategories;
