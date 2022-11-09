@@ -35,7 +35,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
 
         public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName, bool useTerrainFile, string pathTerrain)
         {
-            StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null);
+            StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
             OccupancyType occupancyType = new OccupancyType();
             List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };

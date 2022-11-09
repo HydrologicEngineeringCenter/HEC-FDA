@@ -164,9 +164,11 @@ public class Inventory
                 double val_other = TryGet<double>(row[map.OtherValue], -999);
                 string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
                 double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], -999);
-
+                int numStructures = TryGet<int>(row[map.NumberOfStructures], 1);
+                int yearInService = TryGet<int>(row[map.YearInConstruction], -999);
+                //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips));
+                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
         }
         catch (Exception ex)
