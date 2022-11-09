@@ -96,11 +96,11 @@ public class Inventory
             layerColumnNames.Add(c.ColumnName);
         }
 
-        foreach (string columnName in map.ColumnHeaders.Keys)
+        foreach (Tuple<string,Type> nameTypePair in map.ColumnHeaders)
         {
-            if (!layerColumnNames.Contains(columnName))
+            if (!layerColumnNames.Contains(nameTypePair.Item1))
             {
-                layer.AddAttributeColumn(columnName, map.ColumnHeaders[columnName]);
+                layer.AddAttributeColumn(nameTypePair.Item1, nameTypePair.Item2);
             }
         }
         return layer;
