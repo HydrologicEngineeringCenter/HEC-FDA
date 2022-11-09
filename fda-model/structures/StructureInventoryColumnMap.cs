@@ -37,6 +37,8 @@ namespace HEC.FDA.Model.structures
                 rtn.Add(new Tuple<string, Type>(BeginningDamageDepth, typeof(double)));
                 rtn.Add(new Tuple<string, Type>(YearInConstruction, typeof(double)));
                 rtn.Add(new Tuple<string, Type>(CBFips, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(NumberOfStructures, typeof(int)));
+
                 return rtn;
             }
         }
