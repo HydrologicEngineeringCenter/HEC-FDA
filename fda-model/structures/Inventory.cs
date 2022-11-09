@@ -12,7 +12,6 @@ namespace HEC.FDA.Model.structures;
 //TODO: Figure out how to set Occupany Type Set
 public class Inventory
 {
-    private Dictionary<string, int> _impactAreaNameToID;
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
     private List<string> _damageCategories;
@@ -110,8 +109,6 @@ public class Inventory
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
     {
-        //TODO: I think we need "default" values like -999 for the "missing" attributes or some other way to evaluate what
-        //is missing to avoid null reference exceptions in the compute 
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
         structureInventory = createColumnHeadersForMissingColumns(structureInventory, map);
 
@@ -176,13 +173,12 @@ public class Inventory
         GetUniqueDamageCatagories();
     }
 
-    public Inventory(List<Structure> structures, List<OccupancyType> occTypes)
+    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes)
     {
-        Structures = structures;
-        _Occtypes = occTypes;
-        GetUniqueImpactAreas();
-        GetUniqueDamageCatagories();
+        Structures = filteredStructureList;
+        _Occtypes = occtypes;
     }
+
     public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
     {
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -224,13 +220,13 @@ public class Inventory
         _damageCategories = damageCatagories;
     }
 
-    private Inventory GetInventoryTrimmmedToPolygon(Polygon impactArea)
+    private Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
         List<Structure> filteredStructureList = new List<Structure>();
 
         foreach (Structure structure in Structures)
         {
-            if (impactArea.Contains(structure.Point))
+            if (_impactAreaSet[impactAreaFID].Contains(structure.Point))
             {
                 filteredStructureList.Add(structure);
             }
