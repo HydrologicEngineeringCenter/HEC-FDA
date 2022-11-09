@@ -14,6 +14,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 {   
     public class StageDamageResultsTest
     {
+        //TODO: This test class is incomplete 
         private static string IANameColumnHeader = "Name";
         private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
         private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
