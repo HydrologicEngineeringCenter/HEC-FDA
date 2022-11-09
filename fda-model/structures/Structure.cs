@@ -22,7 +22,6 @@ namespace HEC.FDA.Model.structures
         public string Cbfips { get; set; }
         internal double BeginningDamageDepth { get; }
         internal double FoundationHeight { get; }
-        internal double GroundElevation { get; }
         internal int YearInService { get; }
         internal int NumberOfStructures { get; }
 
