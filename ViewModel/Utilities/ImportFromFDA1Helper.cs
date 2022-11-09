@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //x-values are discharge
             //y-values are stage
             List<IDistribution> ys = new List<IDistribution>();
-            switch(rat.ErrorTypesId)
+            switch (rat.ErrorTypesId)
             {
                 case ErrorType.LOGNORMAL:
                     ys = CreateLogNormalDistributions(rat);
@@ -122,7 +122,7 @@ namespace HEC.FDA.ViewModel.Utilities
             double globalStdDev = rat.GlobalStdDev;
             double baseStage = rat.BaseStage;
             double firstStage = rat.GetStage()[0];
-            double ratio = globalStdDev/(baseStage-firstStage);
+            double ratio = globalStdDev / (baseStage - firstStage);
             double firstStDev = 0;
             int baseStageIndex = FindBaseStageIndex(baseStage, rat.GetStage());
             if (baseStageIndex != -1)
@@ -137,7 +137,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     ys.Add(new Normal(rat.GetStage()[i], stDev));
                 }
                 //add the constant st dev for base stage and up
-                for(int i = baseStageIndex; i<rat.NumberOfPoints;i++)
+                for (int i = baseStageIndex; i < rat.NumberOfPoints; i++)
                 {
                     ys.Add(new Normal(rat.GetStage()[i], globalStdDev));
                 }
@@ -179,7 +179,7 @@ namespace HEC.FDA.ViewModel.Utilities
             double epsilon = .1;
             for (int i = 0; i < stages.Length; i++)
             {
-                if(Math.Abs( stages[i]-baseStage) <= epsilon)
+                if (Math.Abs(stages[i] - baseStage) <= epsilon)
                 {
                     return i;
                 }
@@ -189,7 +189,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static List<IDistribution> CreateTriangularDistributions(RatingFunction rat)
         {
-            
+
             List<IDistribution> ys = new List<IDistribution>();
             if (rat.NumberOfPoints > 0)
             {
@@ -203,7 +203,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
                 double deltaMax = globalStdDevHigh - baseStage;
                 double deltaMin = globalStdDevLow - baseStage;
-                
+
                 double minMostLikelyStageDelta = baseStage - globalStdDevLow;
                 double maxMostLikelyStageDelta = globalStdDevHigh - baseStage;
 
@@ -238,7 +238,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
             }
             return ys;
-        }   
+        }
 
         private static List<IDistribution> CreateUniformDistributions(RatingFunction rat)
         {
@@ -269,13 +269,13 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #region Stage Damage
 
-        public static List<AggregatedStageDamageElement> ImportStageDamages(AggregateDamageFunctionList aggDamageList, List<ImpactAreaElement> impactAreaElements,ref String messages)
+        public static List<AggregatedStageDamageElement> ImportStageDamages(AggregateDamageFunctionList aggDamageList, List<ImpactAreaElement> impactAreaElements, ref String messages)
         {
             List<AggregatedStageDamageElement> Elements = new List<AggregatedStageDamageElement>();
 
             //get the curves from the importer
             IList<AggregateDamageFunction> curves = aggDamageList.GetAggDamageFunctions.Values;
-            
+
             //sort the curves by their plan and year.
             List<List<AggregateDamageFunction>> groupedCurves = curves.GroupBy(curve => new { curve.PlanName, curve.YearName })
                 .Select(group => group.ToList())
@@ -289,7 +289,7 @@ namespace HEC.FDA.ViewModel.Utilities
             foreach (List<AggregateDamageFunction> funcs in groupedCurves)
             {
                 int elemID = id + i;
-                AggregatedStageDamageElement stageDamElem = CreateElement(funcs, impactAreaElements,elemID, ref messages);
+                AggregatedStageDamageElement stageDamElem = CreateElement(funcs, impactAreaElements, elemID, ref messages);
                 if (stageDamElem != null)
                 {
                     Elements.Add(stageDamElem);
@@ -312,7 +312,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 foreach (AggregateDamageFunction func in funcs)
                 {
                     SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc,"Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
+                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, "Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
                     if (stageDamageCurve != null)
                     {
                         curves.Add(stageDamageCurve);
@@ -324,7 +324,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (curves.Count > 0)
                 {
                     List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows,true, elemID);
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows, true, elemID);
                 }
                 else
                 {
@@ -364,7 +364,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "");
         }
 
-        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf,string assetCategory, string damageReachName, string damCat, 
+        private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string assetCategory, string damageReachName, string damCat,
             List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
             damageReachName = damageReachName.Trim();
@@ -418,7 +418,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
                     AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
-                    if(freqElem != null)
+                    if (freqElem != null)
                     {
                         elems.Add(freqElem);
                         i++;
@@ -428,7 +428,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return elems;
         }
 
-       
+
 
         private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
         {
@@ -471,7 +471,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return elem;
         }
 
-     
+
 
         #endregion
 
@@ -484,7 +484,7 @@ namespace HEC.FDA.ViewModel.Utilities
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
-                ProbabilityFunction pf = kvp.Value;                
+                ProbabilityFunction pf = kvp.Value;
                 if (pf.NumberOfTransFlowPoints > 0)
                 {
                     int elemID = id + i;
@@ -529,7 +529,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 for (int i = 0; i < probFunction.NumberOfTransFlowPoints; i++)
                 {
-                    ords.Add(new Triangular(probFunction.TransFlowLower[i], probFunction.TransFlowOutflow[i],  probFunction.TransFlowUpper[i]));
+                    ords.Add(new Triangular(probFunction.TransFlowLower[i], probFunction.TransFlowOutflow[i], probFunction.TransFlowUpper[i]));
                 }
             }
             else if (probFunction.ErrorTypeTransformFlow == ErrorType.UNIFORM)
@@ -557,8 +557,13 @@ namespace HEC.FDA.ViewModel.Utilities
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages)
         {
             int groupID = PersistenceFactory.GetElementManager<OccupancyTypesElement>().GetNextAvailableId();
+            return CreateOcctypes(ots, groupName, ref messages, groupID);
+        }
+
+        public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages, int groupID)
+        {
             List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
-            int occtypeID = 1; 
+            int occtypeID = 1;
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
                 try
@@ -566,7 +571,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     fda2Occtypes.Add(GetFDA2OccupancyType(ot, groupID, occtypeID));
                     occtypeID++;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     string errorMsg = Environment.NewLine + "Failed to import occupancy type '" + ot.Name + "' because of the following exception:";
                     messages += errorMsg + Environment.NewLine + e.Message + Environment.NewLine;
@@ -574,7 +579,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
 
             string lastEditDate = DateTime.Now.ToString("G");
-            OccupancyTypesElement elem = new OccupancyTypesElement(groupName,lastEditDate,"", fda2Occtypes, groupID);
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, lastEditDate, "", fda2Occtypes, groupID);
             return elem;
         }
 
@@ -618,7 +623,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //The ratio uncertainties also need to be converted to FDA 2.0 standard. 
             ContinuousDistribution contentValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.CONTENT];
             ContinuousDistribution otherValueUncertaintyByRatio = uncertainties[(int)OccTypeStrucComponent.OTHER];
-            if(contentValueUncertaintyByRatio != null)
+            if (contentValueUncertaintyByRatio != null)
             {
                 contentValueUncertaintyByRatio = ConvertRatioValueToFDA2(contentValueUncertaintyByRatio);
             }
@@ -631,14 +636,14 @@ namespace HEC.FDA.ViewModel.Utilities
             bool isOtherByValue = otherValueUncertaintyByRatio == null;
 
             ContinuousDistribution contentValueUncertaintyByValue = new Deterministic();
-            ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();          
+            ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();
 
-            OccTypeAsset StructureItem = new OccTypeAsset(OcctypeAssetType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);           
-            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeAssetType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue,contentValueUncertaintyByRatio, isContentByValue);           
+            OccTypeAsset StructureItem = new OccTypeAsset(OcctypeAssetType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);
+            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeAssetType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue, contentValueUncertaintyByRatio, isContentByValue);
             OccTypeAsset VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
             OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(OcctypeAssetType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
 
-            ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;      
+            ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
 
             IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ID);
@@ -655,7 +660,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     double mean = normalDist.Mean;
                     double stDev = normalDist.StandardDeviation;
                     //divide stDev by 100 to convert to decimal percentage
-                    double newStDev = mean * stDev/100;
+                    double newStDev = mean * stDev / 100;
                     retval = new Normal(mean, newStDev);
                     break;
                 case IDistributionEnum.LogNormal:
@@ -663,7 +668,7 @@ namespace HEC.FDA.ViewModel.Utilities
                     double logMean = logNormalDist.Mean;
                     double logStDev = logNormalDist.StandardDeviation;
                     //divide stDev by 100 to convert to decimal percentage
-                    double newLogStDev = logMean * logStDev/100;
+                    double newLogStDev = logMean * logStDev / 100;
                     retval = new LogNormal(logMean, newLogStDev);
                     break;
             }
@@ -753,7 +758,7 @@ namespace HEC.FDA.ViewModel.Utilities
         private static List<ContinuousDistribution> TranslateErrorDistributionsToIOrdinates(ErrorDistribution[] errorDists)
         {
             List<ContinuousDistribution> ordinates = new List<ContinuousDistribution>();
-            if(errorDists.Length >= 5)
+            if (errorDists.Length >= 5)
             {
                 ordinates.Add(TranslateErrorDistToOrdinate(errorDists[0], OccTypeStrucComponent.FFLOOR));
                 ordinates.Add(TranslateErrorDistToOrdinate(errorDists[1], OccTypeStrucComponent.STRUCTURE));
@@ -765,7 +770,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
 
         private static List<UncertainPairedData> TranslateSingleDamageFunctionToCoordinatesFunctions(Importer.OccupancyType ot, List<string> errorMessages)
-        {           
+        {
             SingleDamageFunction[] singleDamageFunctions = ot._SingleDamageFunction;
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
@@ -802,8 +807,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static UncertainPairedData CreateEmptyFunction()
         {
-            List<double> xs = new List<double>() {0};
-            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0)};
+            List<double> xs = new List<double>() { 0 };
+            List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0) };
             return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "");
         }
 
@@ -882,7 +887,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
 
             try
-            { 
+            {
                 return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
             }
             catch (ArgumentException e)
@@ -1007,17 +1012,17 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             return elems;
         }
-       
 
-        private static ChildElement CreateLeveeElement(Levee lev,int elemID, ref string message)
+
+        private static ChildElement CreateLeveeElement(Levee lev, int elemID, ref string message)
         {
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
 
             foreach (Pair_xy xy in lev.FailureFunctionPairs)
             {
-                xs.Add( xy.GetX());
-                ys.Add( xy.GetY());
+                xs.Add(xy.GetX());
+                ys.Add(xy.GetY());
             }
 
             bool isDefault = true;
@@ -1025,8 +1030,8 @@ namespace HEC.FDA.ViewModel.Utilities
             if (xs.Count == 0)
             {
                 //create default curve
-                List<double> defaultXs = new List<double>() {lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
-                List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };                
+                List<double> defaultXs = new List<double>() { lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
+                List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
 
                 func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 message += "No failure function was detected.\nCreating default failure function at top of levee.";
@@ -1041,9 +1046,9 @@ namespace HEC.FDA.ViewModel.Utilities
                 func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
                 isDefault = false;
             }
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY );
+            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY);
             curveComponentVM.SetPairedData(func);
-            LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, curveComponentVM,elemID);
+            LateralStructureElement leveeFeatureElement = new LateralStructureElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), lev.ElevationTopOfLevee, isDefault, curveComponentVM, elemID);
             return leveeFeatureElement;
         }
 
@@ -1074,11 +1079,11 @@ namespace HEC.FDA.ViewModel.Utilities
             List<Deterministic> ys = new List<Deterministic>();
             foreach (Pair_xy xy in lev.ExteriorInteriorPairs)
             {
-                xs.Add( xy.GetX());
+                xs.Add(xy.GetX());
                 ys.Add(new Deterministic(xy.GetY()));
             }
             UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
-  
+
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             curveComponentVM.SetPairedData(func);
             ExteriorInteriorElement elem = new ExteriorInteriorElement(lev.Name, lev.CalculationDate, CreatePYSRDescription(lev), curveComponentVM, elemID);
