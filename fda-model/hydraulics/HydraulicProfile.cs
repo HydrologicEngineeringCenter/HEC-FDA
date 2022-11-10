@@ -59,7 +59,7 @@ namespace HEC.FDA.Model.hydraulics
             //We're using a different peice of the RAS Code to handle this part, so we have to switch to a different definition of Point in the RAS Library. 
             List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
             Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
-            resultsGrid.SamplePoints(points, 1, wses);
+            resultsGrid.SamplePoints(points, 0, wses);
             return wses;
         }
 
