@@ -6,6 +6,7 @@ using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using Geospatial.GDALAssist;
 
 namespace HEC.FDA.Model.hydraulics
 {
@@ -52,6 +53,7 @@ namespace HEC.FDA.Model.hydraulics
 
         private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
+            //THIS IS A HACK TO KEEP IMPORT FROM GRIDS WORKING FOR TESTERS
             var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
 
             if (baseDs == null)
@@ -66,6 +68,16 @@ namespace HEC.FDA.Model.hydraulics
 
             baseRaster.SamplePoints(points, elevationData);
             return elevationData;
+            //END OF HACK
+
+            //string vrtFile = GetFilePath(parentDirectory);
+            //GdalBandedRaster<float> resultsGrid = new GdalBandedRaster<float>(vrtFile);
+            //float[] wses = new float[pts.Count];
+            ////We're using a different peice of the RAS Code to handle this part, so we have to switch to a different definition of Point in the RAS Library. 
+            //List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
+            //Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
+            //resultsGrid.SamplePoints(points, 0, wses);
+            //return wses;
         }
 
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)

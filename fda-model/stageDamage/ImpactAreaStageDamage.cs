@@ -56,10 +56,7 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-            //TODO: We need to use the uncommented line. 
-            //The line is commented out because I do not expect the 
-            //method call to work as we "expect"
-            //_inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
+            _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
@@ -213,8 +210,11 @@ namespace HEC.FDA.Model.stageDamage
             PointMs pointMs = _inventory.GetPointMs();
             float[] previousStagesAtStructures = previousHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             float[] currentStagesAtStructures = currentHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            float[] nextStagesAtStructures = nextHydraulicProfile.GetWSE(pointMs,_hydraulicDataset.DataSource,_HydraulicParentDirectory);
-
+            float[] nextStagesAtStructures = null;
+            if (!(nextHydraulicProfile == null))
+            {
+                nextStagesAtStructures = nextHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+            }
             HydraulicDataset.CorrectDryStructureWSEs(ref previousStagesAtStructures, _inventory.GroundElevations, currentStagesAtStructures);
             HydraulicDataset.CorrectDryStructureWSEs(ref currentStagesAtStructures, _inventory.GroundElevations, nextStagesAtStructures);
 
