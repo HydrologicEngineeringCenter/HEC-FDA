@@ -275,7 +275,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
         {
             string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
-            string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
+            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. 
+            //string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
+            string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
             string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
             return directoryNameForSpecificGrid + "\\" + vrtFileOnly;
         }
