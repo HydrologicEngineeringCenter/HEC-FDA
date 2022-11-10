@@ -5,10 +5,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     /// <summary>
     /// This class exists for the sole purpose of having a blank row in the combobox
     /// </summary>
-    public class FrequencyElementWrapper
+    public class FrequencyElementWrapper : BaseViewModel
     {
-
-        public AnalyticalFrequencyElement Element { get; }
+        private AnalyticalFrequencyElement _Element;
+        public AnalyticalFrequencyElement Element
+        {
+            get { return _Element; }
+            set { _Element = value; NotifyPropertyChanged(nameof(Name)); }
+        }
         public string Name
         {
             get

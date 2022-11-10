@@ -5,9 +5,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     /// <summary>
     /// This class exists for the sole purpose of having a blank row in the combobox
     /// </summary>
-    public class StageDischargeElementWrapper
+    public class StageDischargeElementWrapper:BaseViewModel
     {
-        public StageDischargeElement Element { get; }
+        private StageDischargeElement _Element;
+        public StageDischargeElement Element
+        {
+            get { return _Element; }
+            set { _Element = value; NotifyPropertyChanged(nameof(Name)); }
+        }
         public string Name
         {
             get

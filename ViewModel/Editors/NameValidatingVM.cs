@@ -7,7 +7,7 @@
         public string Name
         {
             get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
+            set { _Name = value.Trim(); NotifyPropertyChanged(); }
         }
 
         public override void AddValidationRules()

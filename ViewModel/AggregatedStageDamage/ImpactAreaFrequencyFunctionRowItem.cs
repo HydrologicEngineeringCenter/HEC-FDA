@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -20,7 +21,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public ImpactAreaRowItem ImpactArea { get; }
         
-        public List<FrequencyElementWrapper> FrequencyFunctions { get;  }
+        public ObservableCollection<FrequencyElementWrapper> FrequencyFunctions { get;  }
 
         public FrequencyElementWrapper FrequencyFunction
         {
@@ -28,7 +29,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _FrequencyFunction = value; NotifyPropertyChanged(); }
         }
 
-        public List<StageDischargeElementWrapper> StageDischargeFunctions { get;  }
+        public ObservableCollection<StageDischargeElementWrapper> StageDischargeFunctions { get;  }
 
         public StageDischargeElementWrapper StageDischargeFunction
         {
@@ -131,9 +132,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private List<FrequencyElementWrapper> CreateFrequencyWrappers(List<AnalyticalFrequencyElement> frequencyFunctions)
+        private ObservableCollection<FrequencyElementWrapper> CreateFrequencyWrappers(List<AnalyticalFrequencyElement> frequencyFunctions)
         {
-            List<FrequencyElementWrapper> frequencyWrappers = new List<FrequencyElementWrapper>();
+            ObservableCollection<FrequencyElementWrapper> frequencyWrappers = new ObservableCollection<FrequencyElementWrapper>();
             //add blank row
             frequencyWrappers.Add(new FrequencyElementWrapper());
             foreach (AnalyticalFrequencyElement elem in frequencyFunctions)
@@ -143,9 +144,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return frequencyWrappers;
         }
 
-        private List<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<StageDischargeElement> stageDischargeFunctions)
+        private ObservableCollection<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<StageDischargeElement> stageDischargeFunctions)
         {
-            List<StageDischargeElementWrapper> stageDischargeWrappers = new List<StageDischargeElementWrapper>();
+            ObservableCollection<StageDischargeElementWrapper> stageDischargeWrappers = new ObservableCollection<StageDischargeElementWrapper>();
             //add blank row
             stageDischargeWrappers.Add(new StageDischargeElementWrapper());
             foreach (StageDischargeElement elem in stageDischargeFunctions)
@@ -159,7 +160,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public FdaValidationResult ValidateRow()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (FrequencyFunction.Element == null)
+            if (FrequencyFunction == null || FrequencyFunction.Element == null)
             {
                 vr.AddErrorMessage("Impact area " + ImpactArea.Name + " does not have a frequency function assignment which will result in poor estimates. Please define this assignment.");
                 if (StageDischargeFunction.Element == null)
