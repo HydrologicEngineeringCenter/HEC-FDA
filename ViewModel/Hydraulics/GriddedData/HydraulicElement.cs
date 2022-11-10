@@ -147,7 +147,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
+                vr.InsertMessage(0, "The selected hydaulics is missing expected files:");
             }
             return vr;
         }
@@ -158,14 +158,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
             {
                 string filePath = profile.GetFilePath(GetDirectoryInStudy());
-                if (!Directory.Exists(filePath))
+                if (!File.Exists(filePath))
                 {
-                    vr.AddErrorMessage("Missing directory: " + filePath);
+                    vr.AddErrorMessage("Missing file: " + filePath);
                 }
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulic is missing expected directories:");
+                vr.InsertMessage(0, "The selected hydaulics is missing expected files:");
             }
             return vr;
         }

@@ -210,8 +210,11 @@ namespace HEC.FDA.Model.stageDamage
             PointMs pointMs = _inventory.GetPointMs();
             float[] previousStagesAtStructures = previousHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             float[] currentStagesAtStructures = currentHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            float[] nextStagesAtStructures = nextHydraulicProfile.GetWSE(pointMs,_hydraulicDataset.DataSource,_HydraulicParentDirectory);
-
+            float[] nextStagesAtStructures = null;
+            if (!(nextHydraulicProfile == null))
+            {
+                nextStagesAtStructures = nextHydraulicProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+            }
             HydraulicDataset.CorrectDryStructureWSEs(ref previousStagesAtStructures, _inventory.GroundElevations, currentStagesAtStructures);
             HydraulicDataset.CorrectDryStructureWSEs(ref currentStagesAtStructures, _inventory.GroundElevations, nextStagesAtStructures);
 
