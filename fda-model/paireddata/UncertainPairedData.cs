@@ -209,11 +209,17 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
+        public static IPairedData ConvertToPairedDataAtMeans(UncertainPairedData uncertainPairedData)
+        {
+            UncertainPairedData intermediatePairedData = ConvertToDeterministic(uncertainPairedData);
+            double medianProb = 0.5;
+            return intermediatePairedData.SamplePairedData(medianProb);
+        }
         public static UncertainPairedData ConvertToDeterministic(UncertainPairedData uncertainPairedData)
         {
             Deterministic[] deterministicDistributions = new Deterministic[uncertainPairedData.Xvals.Length];
             int i = 0;
-            foreach (ContinuousDistribution distribution in uncertainPairedData.Yvals)
+            foreach (IDistribution distribution in uncertainPairedData.Yvals)
             {
                 deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
                 i++;
