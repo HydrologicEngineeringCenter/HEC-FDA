@@ -18,26 +18,27 @@ namespace HEC.FDA.Model.structures
         public string BeginningDamageDepth { get; } = "begDamDepth";
         public string YearInConstruction { get; } = "yrbuilt";
         public string CBFips { get; } = "cbfips";
-        public string NumberOfStructures = "1";
-        public Dictionary<string,Type> ColumnHeaders
+        public string NumberOfStructures { get; } = "num_structs";
+        public List<Tuple<string, Type>> ColumnHeaders
         {
             get
             {
-               var rtn = new Dictionary<string, Type>() ;
-                rtn.Add(StructureID, typeof(int));
-                rtn.Add(OccupancyType, typeof(string));
-                rtn.Add(DamageCatagory, typeof(string));
-                rtn.Add(FirstFloorElev, typeof(double));
-                rtn.Add(StructureValue, typeof(double));
-                rtn.Add(FoundationHeight, typeof(double));
-                rtn.Add(GroundElev, typeof(double));
-                rtn.Add(ContentValue, typeof(double));
-                rtn.Add(OtherValue, typeof(double));
-                rtn.Add(VehicalValue, typeof(double));
-                rtn.Add(BeginningDamageDepth, typeof(double));
-                rtn.Add(YearInConstruction, typeof(double));
-                rtn.Add(CBFips, typeof(double));
-                rtn.Add(NumberOfStructures, typeof(int));
+                var rtn = new List<Tuple<string, Type>>();
+                rtn.Add(new Tuple<string, Type>(StructureID, typeof(int)));
+                rtn.Add(new Tuple<string, Type>(OccupancyType, typeof(string)));
+                rtn.Add(new Tuple<string, Type>(DamageCatagory, typeof(string)));
+                rtn.Add(new Tuple<string, Type>(FirstFloorElev, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(StructureValue, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(FoundationHeight, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(GroundElev, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(ContentValue, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(OtherValue, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(VehicalValue, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(BeginningDamageDepth, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(YearInConstruction, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(CBFips, typeof(double)));
+                rtn.Add(new Tuple<string, Type>(NumberOfStructures, typeof(int)));
+
                 return rtn;
             }
         }
@@ -63,7 +64,7 @@ namespace HEC.FDA.Model.structures
             }
             if (!String.IsNullOrEmpty(foundationHeight))
             {
-                FoundationHeight =foundationHeight;
+                FoundationHeight = foundationHeight;
             }
             if (!String.IsNullOrEmpty(groundElev))
             {

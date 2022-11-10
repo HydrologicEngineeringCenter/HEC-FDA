@@ -246,7 +246,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     Directory.Move(sourceFilePath, destinationFilePath);
                     _OriginalFolderNames[i] = newName;
                 }
-                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability,newName));
+                string fileNameFromChildElementDir = getFilePathFromChildElement(ListOfRows[i]);
+                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, fileNameFromChildElementDir));
             }
 
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
@@ -261,15 +262,24 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 _OriginalFolderNames.Add(row.Name);
-                string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new HydraulicProfile(row.Probability, directoryName));
-
+                string fileNameFromChildElementDir = getFilePathFromChildElement(row);
+                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir));
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 
             int id = GetElementID<HydraulicElement>();
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
+        }
+
+        private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
+        {
+            string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
+            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. 
+            //string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
+            string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
+            string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
+            return directoryNameForSpecificGrid + "\\" + vrtFileOnly;
         }
         #endregion
     }

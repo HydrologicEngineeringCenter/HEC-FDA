@@ -56,10 +56,7 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-            //TODO: We need to use the uncommented line. 
-            //The line is commented out because I do not expect the 
-            //method call to work as we "expect"
-            //_inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
+            _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
