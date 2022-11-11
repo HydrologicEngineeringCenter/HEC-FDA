@@ -56,7 +56,7 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-            _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
+            //_inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
             _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
@@ -280,12 +280,14 @@ namespace HEC.FDA.Model.stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        public float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
+        public static float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
+            int i = 0;
             foreach (float structureStage in stagesAtStructuresHighestProfile)
             {
-                extrapolatedStages[stepCount] = structureStage + upperInterval * stepCount;
+                extrapolatedStages[i] = structureStage + upperInterval * stepCount;
+                i++;
             }
             return extrapolatedStages;
         }

@@ -169,5 +169,12 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedLength, structureDetails.Count);
         }
 
+        [Theory]
+        [InlineData(new float[] {5,4,3}, new float[] {10,9,8})]
+        public void ExtrapolateFromAboveShould(float[] input, float[] expectedResult)
+        {
+            float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromAboveAtIndexLocation(input, 1, 5);
+            Assert.Equal(expectedResult, actualResult);
+        }
     }
 }

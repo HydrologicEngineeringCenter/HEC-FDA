@@ -79,6 +79,7 @@ public class Inventory
         {
             var row = _impactAreaSet.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
+            //TODO: this line does not appear to work correctly. THe condition is being evaluated as true despite the strings being vastly different. 
             if (thisImpactAreaName.Equals(impactAreaName));
             {
                 return _impactAreaSet.Polygon(i);
