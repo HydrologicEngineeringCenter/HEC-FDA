@@ -174,11 +174,11 @@ namespace HEC.FDA.Model.alternatives
                     double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
                     resultCollection.Add(aaeqDamage);
                     _completedIterations++;
-                    if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
-                    {
-                        double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
-                        aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
-                    }
+                }
+                if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
+                {
+                    double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
+                    aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
                 }
                 Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
                 converged = histogram.IsHistogramConverged(.95, .05);
@@ -201,6 +201,7 @@ namespace HEC.FDA.Model.alternatives
                     break;
                 }
             }
+            
             MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed."));
             aaeqResult.ReportMessage(aaeqResult, endComputeMessageArgs);
             return aaeqResult;

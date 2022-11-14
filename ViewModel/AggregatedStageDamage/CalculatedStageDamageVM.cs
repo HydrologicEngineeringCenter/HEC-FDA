@@ -452,8 +452,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
             List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
-            try
-            {
+            //try
+            //{
                 ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
 
                 int seed = 1234;
@@ -462,11 +462,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
                 //these are the rows in the computed table
                 stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
             return stageDamageFunctions;
         }
        
