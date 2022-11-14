@@ -37,8 +37,8 @@ namespace HEC.FDA.Model.stageDamage
         private ConvergenceCriteria convergenceCriteria;
 
         private int seed = 1234;
-        private int _numInterpolatedStagesToCompute = 10;
-        private int _numExtrapolatedStagesToCompute = 50;
+        private int _numInterpolatedStagesToCompute = 1;
+        private int _numExtrapolatedStagesToCompute = 5;
 
         private string _HydraulicParentDirectory;
         #endregion
@@ -174,7 +174,7 @@ namespace HEC.FDA.Model.stageDamage
             //Collect damage for first part of function up to and including the stages at the lowest profile 
             for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
@@ -291,12 +291,14 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
+        public static float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numInterpolatedStagesToCompute)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
+            int j = 0;
             foreach (float stage in WSEsAtLowest)
             {
-                extrapolatedStages[i] = stage - interval * (_numInterpolatedStagesToCompute - i);
+                extrapolatedStages[j] = stage - interval * (numInterpolatedStagesToCompute - i);
+                j++;
             }
             return extrapolatedStages;
         }
@@ -308,7 +310,7 @@ namespace HEC.FDA.Model.stageDamage
             double upperProb = .975;
             ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(convergenceCriteria);
             long iteration = 0;
-            while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
+            while (!consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
             {
                 DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                 ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
