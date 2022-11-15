@@ -107,7 +107,7 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
-        public bool Equals(HydraulicProfile hydraulicProfileForComparison)
+        public bool Equals(IHydraulicProfile hydraulicProfileForComparison)
         {
             bool hydraulicProfilesAreEqual = true;
             if (!Probability.Equals(hydraulicProfileForComparison.Probability))
