@@ -8,6 +8,9 @@ using HEC.FDA.Model.structures;
 using Statistics;
 using Statistics.Distributions;
 using Xunit;
+using System.Linq;
+using RasMapperLib.Utilities;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
@@ -43,7 +46,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static HydraulicProfile hydraulicProfile200 = new HydraulicProfile(.005, SteadyHDFFileName, Name200);
         private static HydraulicProfile hydraulicProfile500 = new HydraulicProfile(.002, SteadyHDFFileName, Name500);
         private static List<HydraulicProfile> hydraulicProfiles = new List<HydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles.Cast<IHydraulicProfile>().ToList(), hydraulicDataSource);
 
         private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 

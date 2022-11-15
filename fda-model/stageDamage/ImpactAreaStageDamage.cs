@@ -12,6 +12,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.interfaces;
 using RasMapperLib;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -160,9 +161,9 @@ namespace HEC.FDA.Model.stageDamage
         {
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
             PointMs pointMs = _inventory.GetPointMs();
-            HydraulicProfile lowestProfile = _hydraulicDataset.HydraulicProfiles[0];
+            IHydraulicProfile lowestProfile = _hydraulicDataset.HydraulicProfiles[0];
             float[] WSEAtLowest = lowestProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            HydraulicProfile nextProfile = _hydraulicDataset.HydraulicProfiles[1];
+            IHydraulicProfile nextProfile = _hydraulicDataset.HydraulicProfiles[1];
             float[] WSEAtNext = nextProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             HydraulicDataset.CorrectDryStructureWSEs(ref WSEAtLowest, _inventory.GroundElevations, WSEAtNext );
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
@@ -188,9 +189,9 @@ namespace HEC.FDA.Model.stageDamage
             int numProfiles = _hydraulicDataset.HydraulicProfiles.Count;
             for (int i = 1; i < numProfiles; i++)
             {
-                HydraulicProfile previousHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i-1];
-                HydraulicProfile currentHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i];
-                HydraulicProfile nextHydraulicProfile = null;
+                IHydraulicProfile previousHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i-1];
+                IHydraulicProfile currentHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i];
+                IHydraulicProfile nextHydraulicProfile = null;
                 if(i < numProfiles - 1) //if we're on the highest profile
                 {
                     nextHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i+1];
@@ -200,7 +201,7 @@ namespace HEC.FDA.Model.stageDamage
 
         }
 
-        private void InterpolateBetweenProfiles(IProvideRandomNumbers randomProvider, HydraulicProfile previousHydraulicProfile, HydraulicProfile currentHydraulicProfile, HydraulicProfile nextHydraulicProfile, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private void InterpolateBetweenProfiles(IProvideRandomNumbers randomProvider, IHydraulicProfile previousHydraulicProfile, IHydraulicProfile currentHydraulicProfile, IHydraulicProfile nextHydraulicProfile, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             double previousStageAtIndexLocation = stageFrequency.f(1 - previousHydraulicProfile.Probability);
             double currentStageAtIndexLocation = stageFrequency.f(1 - currentHydraulicProfile.Probability);
@@ -253,7 +254,7 @@ namespace HEC.FDA.Model.stageDamage
         private void ComputeUpperStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 3: Stages between the highest profile 
-            List<HydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
+            List<IHydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
             float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             HydraulicDataset.CorrectDryStructureWSEs(ref stagesAtStructuresHighestProfile, _inventory.GroundElevations);
             double stageAtProbabilityOfHighestProfile = stageFrequency.f(1-profileList[profileList.Count - 1].Probability);
