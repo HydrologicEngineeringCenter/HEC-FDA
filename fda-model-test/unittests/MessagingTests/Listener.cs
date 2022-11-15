@@ -21,11 +21,8 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         }
         public string GetMessageLogAsString()
         {
-            //Listener can still be recieving messages while this loop is iterating, which changes the loop and throws an exception. This copy prevents that issue
-            List<IMessage> messageLogCopy = new(MessageLog);
-
             List<string> messages = new List<string>();
-            foreach (var message in messageLogCopy)
+            foreach (var message in MessageLog)
             {
                 messages.Add(message.ToString());
             }
