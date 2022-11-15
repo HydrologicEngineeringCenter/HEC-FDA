@@ -13,6 +13,6 @@ namespace HEC.FDA.Model.hydraulics.Interfaces
         public XElement ToXML();
         public int CompareTo(object obj);
         public string GetFilePath(string parentDirectory);
-        public bool Equals(HydraulicProfile hydraulicProfileForComparison);
+        public bool Equals(IHydraulicProfile hydraulicProfileForComparison);
     }
 }
