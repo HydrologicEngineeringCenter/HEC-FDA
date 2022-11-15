@@ -20,7 +20,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             {
                 profiles.Add(new HydraulicProfile(prob,"",""));
             }
-            HydraulicDataset dataset = new HydraulicDataset(profiles.Cast<IHydraulicProfile>().ToList(), HydraulicDataSource.UnsteadyHDF);
+            HydraulicDataset dataset = new HydraulicDataset(new (profiles), HydraulicDataSource.UnsteadyHDF);
 
             double[] expected = new double[] { 0.99, 0.5, 0.01 };
             double[] actual = new double[3];

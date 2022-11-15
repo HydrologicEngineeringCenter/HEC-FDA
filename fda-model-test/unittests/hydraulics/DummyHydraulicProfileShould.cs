@@ -3,6 +3,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
+    [Trait("Category", "Unit")]
     public class DummyHydraulicProfileShould
     {
         [Fact]
@@ -10,8 +11,8 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         {
             DummyHydraulicProfile prof = new DummyHydraulicProfile();
             prof.Probability = .5f;
-            prof.DummyDepths = new float[] {0,1,2};
-            Assert.True(prof.DummyDepths == prof.GetWSE(null,Model.hydraulics.enums.HydraulicDataSource.UnsteadyHDF,null));
+            prof.DummyWSEs = new float[] {0,1,2};
+            Assert.True(prof.DummyWSEs == prof.GetWSE(null,Model.hydraulics.enums.HydraulicDataSource.UnsteadyHDF,null));
         }
     }
 }

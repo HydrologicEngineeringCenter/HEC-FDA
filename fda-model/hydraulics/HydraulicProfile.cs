@@ -10,7 +10,7 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.Model.hydraulics
 {
-    public class HydraulicProfile : IComparable, IHydraulicProfile
+    public class HydraulicProfile :  IHydraulicProfile
     {
         private const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
@@ -127,16 +127,7 @@ namespace HEC.FDA.Model.hydraulics
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public int CompareTo(object obj)
-        {
-            if (obj == null) return 1;
 
-            HydraulicProfile otherProfile = obj as HydraulicProfile;
-            if (otherProfile != null)
-                return Probability.CompareTo(otherProfile.Probability);
-            else
-                throw new ArgumentException("Object is not a HydraulicProfile");
-        }
 
         public XElement ToXML()
         {
@@ -151,7 +142,16 @@ namespace HEC.FDA.Model.hydraulics
         {
             return parentDirectory + "\\" + FileName;
         }
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
 
+            IHydraulicProfile otherProfile = obj as IHydraulicProfile;
+            if (otherProfile != null)
+                return Probability.CompareTo(otherProfile.Probability);
+            else
+                throw new ArgumentException("Object is not a HydraulicProfile");
+        }
     }
 }
 
