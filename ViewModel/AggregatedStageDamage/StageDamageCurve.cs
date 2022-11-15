@@ -23,6 +23,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             string assetCategory, StageDamageConstructionType constructionType)
         {
             ImpArea = impArea;
+            //todo: i don't like this if statement. We might be able to remove it once we have the impact areas working correctly.
+            if(impArea == null)
+            {
+                ImpArea = new ImpactAreaRowItem(-1, "");
+            }
             DamCat = damCat;
             ComputeComponent = function;
             AssetCategory = assetCategory;

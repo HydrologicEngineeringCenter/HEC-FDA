@@ -8,6 +8,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
     internal class HistogramDataProvider : BaseDataProvider
     {
+        /// <summary>
+        /// Only used by the activator. Don't use this ctor.
+        /// </summary>
+        public HistogramDataProvider()
+        {
+
+        }
         public HistogramDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;

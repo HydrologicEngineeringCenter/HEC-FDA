@@ -30,7 +30,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
         public InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem("Other Value:");
         public InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem("Vehicle Value:");
-        public InventoryColumnSelectionsRowItem _ModuleRow = new InventoryColumnSelectionsRowItem("Module:");
         public InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
         public InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
         public InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
@@ -89,7 +88,6 @@ namespace HEC.FDA.ViewModel.Inventory
             _ContentValueRow.SelectedItem = mappings.ContentValueCol;
             _OtherValueRow.SelectedItem = mappings.OtherValueCol;
             _VehicleValueRow.SelectedItem = mappings.VehicleValueCol;
-            _ModuleRow.SelectedItem = mappings.ModuleCol;
             _BegDamDepthRow.SelectedItem = mappings.BeginningDamageDepthCol;
             _YearInConstructionRow.SelectedItem = mappings.YearInConstructionCol;
             _NotesRow.SelectedItem = mappings.NotesCol;
@@ -147,7 +145,6 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_ContentValueRow);
             OptionalRows.Add(_OtherValueRow);
             OptionalRows.Add(_VehicleValueRow);
-            OptionalRows.Add(_ModuleRow);
             OptionalRows.Add(_BegDamDepthRow);
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
@@ -184,8 +181,6 @@ namespace HEC.FDA.ViewModel.Inventory
             _OtherValueRow.Items.AddRange(allColumnNames);
             _VehicleValueRow.Items.Clear();
             _VehicleValueRow.Items.AddRange(allColumnNames);
-            _ModuleRow.Items.Clear();
-            _ModuleRow.Items.AddRange(allColumnNames);
             _BegDamDepthRow.Items.Clear();
             _BegDamDepthRow.Items.AddRange(allColumnNames);
             _YearInConstructionRow.Items.Clear();
