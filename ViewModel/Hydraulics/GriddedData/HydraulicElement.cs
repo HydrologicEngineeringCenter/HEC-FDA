@@ -45,14 +45,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 pathAndProbs.Add(new HydraulicProfile(p, "NA"));
             }
-            DataSet = new HydraulicDataset(pathAndProbs.Cast<IHydraulicProfile>().ToList(), hydroType);
+            DataSet = new HydraulicDataset(new (pathAndProbs), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
-            DataSet = new HydraulicDataset(relativePathAndProbabilities.Cast<IHydraulicProfile>().ToList(), hydroType);
+            DataSet = new HydraulicDataset(new List<IHydraulicProfile>(relativePathAndProbabilities), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
