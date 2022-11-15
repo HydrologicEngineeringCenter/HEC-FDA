@@ -6,13 +6,13 @@ using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
-using Geospatial.GDALAssist;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.Model.hydraulics
 {
-    public class HydraulicProfile : IComparable
+    public class HydraulicProfile : IComparable, IHydraulicProfile
     {
-        public const string PROFILE = "HydraulicProfile";
+        private const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
         private const string PROFILE_NAME = "ProfileName";
