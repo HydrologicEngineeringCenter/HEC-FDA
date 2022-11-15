@@ -1,11 +1,13 @@
 ﻿using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
@@ -43,14 +45,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 pathAndProbs.Add(new HydraulicProfile(p, "NA"));
             }
-            DataSet = new HydraulicDataset(pathAndProbs, hydroType);
+            DataSet = new HydraulicDataset(pathAndProbs.Cast<IHydraulicProfile>().ToList(), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
-            DataSet = new HydraulicDataset(relativePathAndProbabilities, hydroType);
+            DataSet = new HydraulicDataset(relativePathAndProbabilities.Cast<IHydraulicProfile>().ToList(), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
