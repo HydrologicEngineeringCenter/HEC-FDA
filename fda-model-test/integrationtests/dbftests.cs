@@ -3,7 +3,7 @@ using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category", "Disk")]
     public class dbftests
     {
         [Fact]

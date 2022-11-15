@@ -14,7 +14,7 @@ using HEC.FDA.Model.hydraulics;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Disk")]
     public class StageDamageShould
     {
 

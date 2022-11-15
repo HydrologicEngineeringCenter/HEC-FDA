@@ -8,11 +8,10 @@ using HEC.FDA.Model.structures;
 using Statistics;
 using Statistics.Distributions;
 using Xunit;
-using RasMapperLib.Utilities;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category", "Disk")]
     public class StageDamageResultsTest
     {
         //TODO: This test class is incomplete 
