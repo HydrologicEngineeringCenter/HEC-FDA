@@ -152,20 +152,20 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult AreGriddedFilesValid()
+        private FdaValidationResult AreGriddedDirectoriesValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
             foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
             {
-                string filePath = profile.GetFilePath(GetDirectoryInStudy());
-                if (!File.Exists(filePath))
+                string directoryPath = profile.GetFilePath(GetDirectoryInStudy());
+                if (!Directory.Exists(directoryPath))
                 {
-                    vr.AddErrorMessage("Missing file: " + filePath);
+                    vr.AddErrorMessage("Missing file: " + directoryPath);
                 }
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulics is missing expected files:");
+                vr.InsertMessage(0, "The selected hydaulics is missing expected directories:");
             }
             return vr;
         }
@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     }
                 case HydraulicDataSource.WSEGrid:
                     {
-                        vr.AddErrorMessage(AreGriddedFilesValid().ErrorMessage);
+                        vr.AddErrorMessage(AreGriddedDirectoriesValid().ErrorMessage);
                         break;
                     }
                 case HydraulicDataSource.SteadyHDF:
