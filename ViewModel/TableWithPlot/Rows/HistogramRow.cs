@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((IHistogram)Y).CDF(.05);
+                return ((IHistogram)Y).InverseCDF(.05);
             }
         }
         [DisplayAsColumn("Mean")]
@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((IHistogram)Y).CDF(.95);
+                return ((IHistogram)Y).InverseCDF(.95);
             }
         }
 

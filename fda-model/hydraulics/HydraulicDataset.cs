@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -11,10 +12,10 @@ namespace HEC.FDA.Model.hydraulics
         private const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
         private const string PROFILES = "Profiles";
 
-        public List<HydraulicProfile> HydraulicProfiles { get; } = new List<HydraulicProfile>();
+        public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
 
-        public HydraulicDataset(List<HydraulicProfile> profiles, HydraulicDataSource dataSource)
+        public HydraulicDataset(List<IHydraulicProfile> profiles, HydraulicDataSource dataSource)
         {
             profiles.Sort();
             profiles.Reverse();
@@ -33,7 +34,7 @@ namespace HEC.FDA.Model.hydraulics
 
             foreach (XElement elem in profileElems)
             {
-                HydraulicProfiles.Add(new HydraulicProfile(elem));
+                HydraulicProfiles.Add((IHydraulicProfile)new HydraulicProfile(elem));
             }
         }
 

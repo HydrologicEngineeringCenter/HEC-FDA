@@ -6,13 +6,13 @@ using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
-using Geospatial.GDALAssist;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.Model.hydraulics
 {
-    public class HydraulicProfile : IComparable
+    public class HydraulicProfile :  IHydraulicProfile
     {
-        public const string PROFILE = "HydraulicProfile";
+        private const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
         private const string PROFILE_NAME = "ProfileName";
@@ -107,7 +107,7 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
-        public bool Equals(HydraulicProfile hydraulicProfileForComparison)
+        public bool Equals(IHydraulicProfile hydraulicProfileForComparison)
         {
             bool hydraulicProfilesAreEqual = true;
             if (!Probability.Equals(hydraulicProfileForComparison.Probability))
@@ -127,16 +127,7 @@ namespace HEC.FDA.Model.hydraulics
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public int CompareTo(object obj)
-        {
-            if (obj == null) return 1;
 
-            HydraulicProfile otherProfile = obj as HydraulicProfile;
-            if (otherProfile != null)
-                return Probability.CompareTo(otherProfile.Probability);
-            else
-                throw new ArgumentException("Object is not a HydraulicProfile");
-        }
 
         public XElement ToXML()
         {
@@ -151,7 +142,16 @@ namespace HEC.FDA.Model.hydraulics
         {
             return parentDirectory + "\\" + FileName;
         }
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
 
+            IHydraulicProfile otherProfile = obj as IHydraulicProfile;
+            if (otherProfile != null)
+                return Probability.CompareTo(otherProfile.Probability);
+            else
+                throw new ArgumentException("Object is not a HydraulicProfile");
+        }
     }
 }
 
