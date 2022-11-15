@@ -4,6 +4,7 @@ using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
+    [Trait("Category", "Unit")]
     public class FirstFloorElevationUncertaintyShould
     {
         [Theory]

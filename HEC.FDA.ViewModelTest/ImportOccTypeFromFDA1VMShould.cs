@@ -11,6 +11,7 @@ using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModelTest
 {
+    [Trait("Category", "Disk")]
     public class ImportOccTypeFromFDA1VMShould
     {
 

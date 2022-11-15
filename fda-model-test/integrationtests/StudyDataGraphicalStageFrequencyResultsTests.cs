@@ -13,6 +13,8 @@ namespace HEC.FDA.ModelTest.integrationtests
     /// The example data in this test is based on River Des Peres study data
     /// The data is based on without project, 2025, Reach 1, Residential
     /// </summary>
+    /// 
+    [Trait("Category", "Integration")]
     public class StudyDataGraphicalStageFrequencyResultsTests
     {
         static int impactareaid = 1;

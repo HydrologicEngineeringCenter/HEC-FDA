@@ -11,7 +11,8 @@ using Xunit;
 using RasMapperLib.Utilities;
 
 namespace HEC.FDA.ModelTest.integrationtests
-{   
+{
+    [Trait("Category", "Integration")]
     public class StageDamageResultsTest
     {
         //TODO: This test class is incomplete 
