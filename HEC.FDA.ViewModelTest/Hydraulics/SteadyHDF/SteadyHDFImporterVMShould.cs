@@ -6,7 +6,7 @@ namespace HEC.FDA.ViewModelTest.Hydraulics.SteadyHDF;
 [Trait("Category", "Disk")]
 public class SteadyHDFImporterVMShould
 {
-    private const string PathToSteadyResult = @"..\..\fda-model-test\Resources\MuncieSteadyResult\Muncie.p09.hdf";
+    private const string PathToSteadyResult = @"..\..\fda-model-test\Resources\MuncieSteadyResult\Muncie.p10.hdf";
 
     [Fact]
     public void PopulateRowsCorrectly()
