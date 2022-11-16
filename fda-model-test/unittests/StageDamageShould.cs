@@ -99,6 +99,9 @@ namespace HEC.FDA.ModelTest.unittests
         private static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
         private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
 
+        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 }
+        , new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
+
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(340, 306, 540, 486)]
@@ -162,5 +165,18 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedLength, structureDetails.Count);
         }
 
+        [Fact]
+        public void ProduceReasonableResults()
+        {
+            Inventory inventory = CreateInventory();
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteria, String.Empty,graphicalFrequency: stageFrequency);
+            List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
+            impactAreaStageDamages.Add(impactAreaStageDamage);
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
+            List<UncertainPairedData> results = scenarioStageDamage.Compute(new RandomProvider(1234), new ConvergenceCriteria());
+
+            Assert.NotNull(results);
+
+        }
     }
 }
