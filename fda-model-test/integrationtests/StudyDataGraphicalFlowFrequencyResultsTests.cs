@@ -14,6 +14,8 @@ namespace HEC.FDA.ModelTest.integrationtests
     /// The data is based on PYSR Without, 2024, S Fork Bear, SF-8, Residential
     /// see: https://drive.google.com/file/d/12WJL6ambACQLfqGUwbg7tv_wMxLn-a6t/view?usp=sharing
     /// </summary>
+    /// 
+    [Trait("Category", "Integration")]
     public class StudyDataGraphicalFlowFrequencyResultsTests
     {
         static int equivalentRecordLength = 48;

@@ -16,12 +16,13 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.ModelTest.unittests
 {
+    [Trait("Category", "Disk")]
     public class StageDamageShould
     {
 
         //structure data
         private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
-        private static PointM pointM = new PointM();
+        private static PointM pointM = new PointM(); // You'll need to populate this so we can filter structures by impact area. That's done geospatially. 
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
         private static float[] GroundElevs = new float[] {0,0,0,0,0};
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
@@ -150,7 +151,7 @@ namespace HEC.FDA.ModelTest.unittests
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            Inventory inventory = new Inventory(structures, occupancyTypesList,new PolygonFeatureLayer(),"header");
             return inventory;
         }
 

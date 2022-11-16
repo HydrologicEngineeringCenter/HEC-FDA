@@ -13,7 +13,8 @@ using RasMapperLib.Utilities;
 using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.ModelTest.integrationtests
-{   
+{
+    [Trait("Category", "Disk")]
     public class StageDamageResultsTest
     {
         //TODO: This test class is incomplete 
