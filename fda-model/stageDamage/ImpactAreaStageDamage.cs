@@ -173,10 +173,11 @@ namespace HEC.FDA.Model.stageDamage
             //this interval defines the interval in stages by which we'll compute damage 
             float interval = indexStationLowerStageDelta / _numExtrapolatedStagesToCompute;
             //Collect damage for first part of function up to and including the stages at the lowest profile 
-            for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
+            for (int i = 0; i < _numExtrapolatedStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
+                    _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -293,9 +294,9 @@ namespace HEC.FDA.Model.stageDamage
         public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
-            foreach (float stage in WSEsAtLowest)
+            for(int j = 0; j<WSEsAtLowest.Length; j++)
             {
-                extrapolatedStages[i] = stage - interval * (_numInterpolatedStagesToCompute - i);
+                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (_numInterpolatedStagesToCompute - i);
             }
             return extrapolatedStages;
         }
