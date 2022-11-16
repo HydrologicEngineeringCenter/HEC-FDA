@@ -9,7 +9,7 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    //[Trait("Category", "Unit")]
     public class ConsequenceDistributionResultsShould
     {
         [Fact]
