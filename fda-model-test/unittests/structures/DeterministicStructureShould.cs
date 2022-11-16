@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    //[Trait("Category", "Unit")]
+    [Trait("Category", "Unit")]
     public class DeterministicStructureShould
     {
         private static string occupancyTypeName = "Res1-1NB";
