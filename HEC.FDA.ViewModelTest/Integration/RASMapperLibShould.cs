@@ -3,7 +3,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest.Integration
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category", "Disk")]
     public class RASMapperLibShould
     {
         [Fact]
