@@ -338,7 +338,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DamagesToStrings(DeterministicInventory deterministicInventory, string assetType, ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
@@ -383,7 +383,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DepthsToStrings(DeterministicInventory deterministicInventory, ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
@@ -398,7 +398,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void StagesToStrings(ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
