@@ -6,12 +6,13 @@ using RasMapperLib.Mapping;
 using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.Model.hydraulics
 {
-    public class HydraulicProfile : IComparable
+    public class HydraulicProfile :  IHydraulicProfile
     {
-        public const string PROFILE = "HydraulicProfile";
+        private const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
         private const string PROFILE_NAME = "ProfileName";
@@ -52,6 +53,7 @@ namespace HEC.FDA.Model.hydraulics
 
         private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
+            //THIS IS A HACK TO KEEP IMPORT FROM GRIDS WORKING FOR TESTERS
             var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
 
             if (baseDs == null)
@@ -66,6 +68,16 @@ namespace HEC.FDA.Model.hydraulics
 
             baseRaster.SamplePoints(points, elevationData);
             return elevationData;
+            //END OF HACK
+
+            //string vrtFile = GetFilePath(parentDirectory);
+            //GdalBandedRaster<float> resultsGrid = new GdalBandedRaster<float>(vrtFile);
+            //float[] wses = new float[pts.Count];
+            ////We're using a different peice of the RAS Code to handle this part, so we have to switch to a different definition of Point in the RAS Library. 
+            //List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
+            //Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
+            //resultsGrid.SamplePoints(points, 0, wses);
+            //return wses;
         }
 
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
@@ -95,7 +107,7 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
-        public bool Equals(HydraulicProfile hydraulicProfileForComparison)
+        public bool Equals(IHydraulicProfile hydraulicProfileForComparison)
         {
             bool hydraulicProfilesAreEqual = true;
             if (!Probability.Equals(hydraulicProfileForComparison.Probability))
@@ -115,16 +127,7 @@ namespace HEC.FDA.Model.hydraulics
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public int CompareTo(object obj)
-        {
-            if (obj == null) return 1;
 
-            HydraulicProfile otherProfile = obj as HydraulicProfile;
-            if (otherProfile != null)
-                return Probability.CompareTo(otherProfile.Probability);
-            else
-                throw new ArgumentException("Object is not a HydraulicProfile");
-        }
 
         public XElement ToXML()
         {
@@ -139,7 +142,16 @@ namespace HEC.FDA.Model.hydraulics
         {
             return parentDirectory + "\\" + FileName;
         }
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
 
+            IHydraulicProfile otherProfile = obj as IHydraulicProfile;
+            if (otherProfile != null)
+                return Probability.CompareTo(otherProfile.Probability);
+            else
+                throw new ArgumentException("Object is not a HydraulicProfile");
+        }
     }
 }
 

@@ -5,7 +5,7 @@ using RasMapperLib;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Disk")]
     public class InventoryShould
     {
         private const string IANameColumnHeader = "Name";
@@ -53,6 +53,26 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Inventory inv = GetTestInventory(true);
             Assert.Equal(696, inv.Structures.Count);
             Assert.True(inv.Structures[0].FirstFloorElevation > 900);
+        }
+        [Fact]
+        public void filterInventoryToIAPolygon()
+        {
+            Inventory inv = GetTestInventory(false);
+            Inventory trimmedInv1 = inv.GetInventoryTrimmmedToPolygon(0);
+            Inventory trimmedInv2 = inv.GetInventoryTrimmmedToPolygon(1);
+            Inventory trimmedInv3 = inv.GetInventoryTrimmmedToPolygon(2);
+            int countActual = inv.Structures.Count;
+            int count1 = trimmedInv1.Structures.Count;
+            int count2 = trimmedInv2.Structures.Count;
+            int count3 = trimmedInv3.Structures.Count;
+            Assert.Equal(countActual, count1 + count2 + count3);
+        }
+        [Fact]
+        public void returnsUniqueImpactAreaIDs()
+        {
+            Inventory inv = GetTestInventory(false);
+            List<int> uniqueImpactAreaIDs = inv.ImpactAreas;
+            Assert.Equal(3, uniqueImpactAreaIDs.Count);
         }
     }
 }

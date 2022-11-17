@@ -22,7 +22,9 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Add Source
-      run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+      run: | 
+        dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+        dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
 
     - name: Publish
       run: dotnet publish View/HEC.FDA.View.csproj

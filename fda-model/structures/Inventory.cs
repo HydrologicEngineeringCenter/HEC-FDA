@@ -14,19 +14,42 @@ public class Inventory
 {
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
-    private List<string> _damageCategories;
-    private List<int> _impactAreaIDs;
     private string _impactAreaUniqueColumnHeader;
     public List<Structure> Structures { get; }
     public List<int> ImpactAreas
     {
-        get { return _impactAreaIDs; }
+        get
+        {
+            List<int> impactAreas = new List<int>();
+            foreach (var structure in Structures)
+            {
+                if (!impactAreas.Contains(structure.ImpactAreaID))
+                {
+                    impactAreas.Add(structure.ImpactAreaID);
+                }
+            }
+            return impactAreas;
+        }
     }
     public List<string> DamageCategories
     {
-        get { return _damageCategories; }
+        get 
+        {
+            List<string> damageCatagories = new List<string>();
+            foreach (Structure structure in Structures)
+            {
+                if (damageCatagories.Contains(structure.DamageCatagory))
+                {
+                    continue;
+                }
+                else
+                {
+                    damageCatagories.Add(structure.DamageCatagory);
+                }
+            }
+            return damageCatagories;
+        }
     }
-
     public float[] GroundElevations
     {
         get
@@ -96,16 +119,16 @@ public class Inventory
             layerColumnNames.Add(c.ColumnName);
         }
 
-        foreach (string columnName in map.ColumnHeaders.Keys)
+        foreach (Tuple<string,Type> nameTypePair in map.ColumnHeaders)
         {
-            if (!layerColumnNames.Contains(columnName))
+            if (!layerColumnNames.Contains(nameTypePair.Item1))
             {
-                layer.AddAttributeColumn(columnName, map.ColumnHeaders[columnName]);
+                layer.AddAttributeColumn(nameTypePair.Item1, nameTypePair.Item2);
             }
         }
         return layer;
     }
-
+    #region Constructors
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
     {
@@ -172,16 +195,22 @@ public class Inventory
             Console.WriteLine(ex);
         }
         _Occtypes = occTypes;
-        GetUniqueImpactAreas();
-        GetUniqueDamageCatagories();
     }
-
-    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes)
+    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, string impactAreaShapefilePath, string impactAreaUniqueColumnHeader)
     {
         Structures = filteredStructureList;
         _Occtypes = occtypes;
+        _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
     }
-
+    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, PolygonFeatureLayer impactAreas, string impactAreaUniqueColumnHeader)
+    {
+        Structures = filteredStructureList;
+        _Occtypes = occtypes;
+        _impactAreaSet = impactAreas;
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+    }
+    #endregion
     public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
     {
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -190,40 +219,7 @@ public class Inventory
         return terrain.ComputePointElevations(pointMs);
     }
 
-    private void GetUniqueImpactAreas()
-    {
-        List<int> impactAreas = new List<int>();
-        foreach (var structure in Structures)
-        {
-            if (!impactAreas.Contains(structure.ImpactAreaID))
-            {
-                impactAreas.Add(structure.ImpactAreaID);
-            }
-        }
-        _impactAreaIDs = impactAreas;
-    }
-    /// <summary>
-    /// Loops through entire inventory and reports back a list of all the unique damage catagories associated with the structures
-    /// </summary>
-    /// <returns></returns>
-    internal void GetUniqueDamageCatagories()
-    {
-        List<string> damageCatagories = new List<string>();
-        foreach (Structure structure in Structures)
-        {
-            if (damageCatagories.Contains(structure.DamageCatagory))
-            {
-                continue;
-            }
-            else
-            {
-                damageCatagories.Add(structure.DamageCatagory);
-            }
-        }
-        _damageCategories = damageCatagories;
-    }
-
-    private Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
+    public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
         List<Structure> filteredStructureList = new List<Structure>();
 
@@ -234,7 +230,7 @@ public class Inventory
                 filteredStructureList.Add(structure);
             }
         }
-        return new Inventory(filteredStructureList, _Occtypes);
+        return new Inventory(filteredStructureList,_Occtypes,_impactAreaSet, _impactAreaUniqueColumnHeader);
     }
     public PointMs GetPointMs()
     {
@@ -277,7 +273,7 @@ public class Inventory
             }
             //it is possible that if an occupancy type doesnt exist a structure wont get added...
         }
-        return new DeterministicInventory(inventorySample, _impactAreaIDs, _damageCategories);
+        return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories);
     }
 
     internal List<string> StructureDetails()

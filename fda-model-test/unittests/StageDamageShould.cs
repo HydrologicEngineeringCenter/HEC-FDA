@@ -11,15 +11,18 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics;
+using System.Linq;
+using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.ModelTest.unittests
 {
+    [Trait("Category", "Disk")]
     public class StageDamageShould
     {
 
         //structure data
         private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
-        private static PointM pointM = new PointM();
+        private static PointM pointM = new PointM(); // You'll need to populate this so we can filter structures by impact area. That's done geospatially. 
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
         private static float[] GroundElevs = new float[] {0,0,0,0,0};
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
@@ -105,7 +108,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static HydraulicProfile hydraulicProfile200 = new HydraulicProfile(.005, SteadyHDFFileName, Name200);
         private static HydraulicProfile hydraulicProfile500 = new HydraulicProfile(.002, SteadyHDFFileName, Name500);
         private static List<HydraulicProfile> hydraulicProfiles = new List<HydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles,hydraulicDataSource);
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles.Cast<IHydraulicProfile>().ToList(), hydraulicDataSource);
 
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
@@ -148,7 +151,7 @@ namespace HEC.FDA.ModelTest.unittests
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList);
+            Inventory inventory = new Inventory(structures, occupancyTypesList,new PolygonFeatureLayer(),"header");
             return inventory;
         }
 

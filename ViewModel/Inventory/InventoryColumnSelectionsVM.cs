@@ -200,7 +200,9 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
             DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-            return dtv.ColumnNames.ToList();
+            List<string> columnNames = dtv.ColumnNames.ToList();
+            columnNames.Insert(0, "");
+            return columnNames;
         }
 
         #endregion

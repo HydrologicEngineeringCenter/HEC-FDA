@@ -2,9 +2,11 @@
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
+using System.ComponentModel;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
+    [Trait("Category", "Unit")]
     public class DeterministicStructureShould
     {
         private static string occupancyTypeName = "Res1-1NB";

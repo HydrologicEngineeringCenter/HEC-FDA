@@ -4,12 +4,14 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -69,6 +71,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             LoadStructureInventories();
             LoadDepthGrids();
             LoadNewImpactAreaFrequencyRows();
+            AddLiveUpdateEvents();
         }
         
         public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows)
@@ -89,7 +92,212 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ImpactAreaFrequencyRows.Add(clonedRow);
             }
             UpdateComputedCurvesModifiedLabel();
-        }       
+            AddLiveUpdateEvents();
+        }
+
+        #region Live Update Events
+
+        private void AddLiveUpdateEvents()
+        {
+            StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
+            StudyCache.FlowFrequencyRemoved += RemoveFlowFreqElement;
+            StudyCache.FlowFrequencyUpdated += UpdateFlowFreqElement;
+
+            StudyCache.RatingAdded += AddRatingElement;
+            StudyCache.RatingRemoved += RemoveRatingElement;
+            StudyCache.RatingUpdated += UpdateRatingElement;
+
+            StudyCache.WaterSurfaceElevationAdded += AddHydraulicElement;
+            StudyCache.WaterSurfaceElevationRemoved += RemoveHydraulicElement;
+            StudyCache.WaterSurfaceElevationUpdated += UpdateHydraulicElement;
+
+            StudyCache.StructureInventoryAdded += AddStructuresElement;
+            StudyCache.StructureInventoryRemoved += RemoveStructuresElement;
+            StudyCache.StructureInventoryUpdated += UpdateStructuresElement;
+
+        }
+
+        private void AddStructuresElement(object sender, ElementAddedEventArgs e)
+        {
+            Structures.Add((InventoryElement)e.Element);
+        }
+
+        private void RemoveStructuresElement(object sender, ElementAddedEventArgs e)
+        {
+            Structures.Remove(Structures.Single(s =>
+            {
+                if (s.ID == e.Element.ID)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }));
+        }
+
+        private void UpdateStructuresElement(object sender, ElementUpdatedEventArgs e)
+        {
+            int indexToUpdate = -1;
+
+            for (int i = 0; i < Structures.Count; i++)
+            {
+                if (Structures[i].ID == e.NewElement.ID)
+                {
+                    indexToUpdate = i;
+                    break;
+                }
+            }
+
+            if (indexToUpdate != -1)
+            {
+                bool updateSelected = false;
+                if (SelectedStructures == Structures[indexToUpdate])
+                {
+                    updateSelected = true;
+                }
+                Structures[indexToUpdate] = (InventoryElement)e.NewElement;
+                if (updateSelected)
+                {
+                    SelectedStructures = Structures[indexToUpdate];
+                }
+            }
+        }
+
+
+        private void AddHydraulicElement(object sender, ElementAddedEventArgs e)
+        {
+            WaterSurfaceElevations.Add((HydraulicElement)e.Element);
+        }
+
+        private void RemoveHydraulicElement(object sender, ElementAddedEventArgs e)
+        {
+            WaterSurfaceElevations.Remove(WaterSurfaceElevations.Single(s =>
+                {
+                    if (s.ID == e.Element.ID)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }));
+        }
+
+        private void UpdateHydraulicElement(object sender, ElementUpdatedEventArgs e)
+        {
+            int indexToUpdate = -1;
+
+            for (int i = 0; i < WaterSurfaceElevations.Count; i++)
+            {
+                if (WaterSurfaceElevations[i].ID == e.NewElement.ID)
+                {
+                    indexToUpdate = i;
+                    break;
+                }
+            }            
+
+            if(indexToUpdate != -1)
+            {
+                bool updateSelected = false;
+                if (SelectedWaterSurfaceElevation == WaterSurfaceElevations[indexToUpdate])
+                {
+                    updateSelected = true;
+                }
+                WaterSurfaceElevations[indexToUpdate] = (HydraulicElement)e.NewElement;
+                if(updateSelected)
+                {
+                    SelectedWaterSurfaceElevation = WaterSurfaceElevations[indexToUpdate];
+                }
+            }
+        }
+
+
+        private void AddRatingElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.StageDischargeFunctions.Add(new StageDischargeElementWrapper((StageDischargeElement)e.Element));
+            }
+        }
+
+        private void RemoveRatingElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.StageDischargeFunctions.Remove(row.StageDischargeFunctions.Single(s =>
+                {
+                    if (s.Element != null && s.Element.ID == e.Element.ID)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }));
+            }
+        }
+
+        private void UpdateRatingElement(object sender, ElementUpdatedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                foreach (StageDischargeElementWrapper freq in row.StageDischargeFunctions)
+                {
+                    if (freq.Element != null && freq.Element.ID == e.NewElement.ID)
+                    {
+                        freq.Element = (StageDischargeElement)e.NewElement;
+                    }
+                }
+            }
+        }
+
+        private void AddFlowFreqElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach(ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.FrequencyFunctions.Add(new FrequencyElementWrapper((AnalyticalFrequencyElement)e.Element));
+            }
+        }
+
+        private void RemoveFlowFreqElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.FrequencyFunctions.Remove(row.FrequencyFunctions.Single(s =>
+                {
+                    if(s.Element != null && s.Element.ID == e.Element.ID)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }));        
+            }
+        }
+
+        private void UpdateFlowFreqElement(object sender, ElementUpdatedEventArgs e)
+        {
+
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                foreach(FrequencyElementWrapper freq in row.FrequencyFunctions)
+                {
+                    if(freq.Element != null && freq.Element.ID == e.NewElement.ID)
+                    {
+                        freq.Element = (AnalyticalFrequencyElement)e.NewElement;
+                    }
+                }
+            }        
+        }
+
+        #endregion
 
         private void LoadNewImpactAreaFrequencyRows()
         {
