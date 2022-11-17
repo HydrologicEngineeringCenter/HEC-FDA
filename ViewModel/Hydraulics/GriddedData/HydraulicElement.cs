@@ -1,11 +1,13 @@
 ﻿using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
@@ -43,14 +45,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 pathAndProbs.Add(new HydraulicProfile(p, "NA"));
             }
-            DataSet = new HydraulicDataset(pathAndProbs, hydroType);
+            DataSet = new HydraulicDataset(new (pathAndProbs), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
         public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
-            DataSet = new HydraulicDataset(relativePathAndProbabilities, hydroType);
+            DataSet = new HydraulicDataset(new List<IHydraulicProfile>(relativePathAndProbabilities), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
@@ -152,20 +154,20 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult AreGriddedFilesValid()
+        private FdaValidationResult AreGriddedDirectoriesValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
             foreach (HydraulicProfile profile in DataSet.HydraulicProfiles)
             {
-                string filePath = profile.GetFilePath(GetDirectoryInStudy());
-                if (!File.Exists(filePath))
+                string directoryPath = profile.GetFilePath(GetDirectoryInStudy());
+                if (!Directory.Exists(directoryPath))
                 {
-                    vr.AddErrorMessage("Missing file: " + filePath);
+                    vr.AddErrorMessage("Missing file: " + directoryPath);
                 }
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulics is missing expected files:");
+                vr.InsertMessage(0, "The selected hydaulics is missing expected directories:");
             }
             return vr;
         }
@@ -194,7 +196,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     }
                 case HydraulicDataSource.WSEGrid:
                     {
-                        vr.AddErrorMessage(AreGriddedFilesValid().ErrorMessage);
+                        vr.AddErrorMessage(AreGriddedDirectoriesValid().ErrorMessage);
                         break;
                     }
                 case HydraulicDataSource.SteadyHDF:
