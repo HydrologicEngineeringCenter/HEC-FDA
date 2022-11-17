@@ -173,10 +173,12 @@ namespace HEC.FDA.Model.stageDamage
             //this interval defines the interval in stages by which we'll compute damage 
             float interval = indexStationLowerStageDelta / _numExtrapolatedStagesToCompute;
             //Collect damage for first part of function up to and including the stages at the lowest profile 
-            for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
+            for (int i = 0; i < _numExtrapolatedStagesToCompute; i++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
+
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
+                    _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -295,11 +297,10 @@ namespace HEC.FDA.Model.stageDamage
         public static float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numInterpolatedStagesToCompute)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
-            int j = 0;
-            foreach (float stage in WSEsAtLowest)
+
+            for(int j = 0; j<WSEsAtLowest.Length; j++)
             {
-                extrapolatedStages[j] = stage - interval * (numInterpolatedStagesToCompute - i);
-                j++;
+                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (_numInterpolatedStagesToCompute - i);
             }
             return extrapolatedStages;
         }
@@ -365,7 +366,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DamagesToStrings(DeterministicInventory deterministicInventory, string assetType, ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
@@ -410,7 +411,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DepthsToStrings(DeterministicInventory deterministicInventory, ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
@@ -425,7 +426,7 @@ namespace HEC.FDA.Model.stageDamage
 
         private void StagesToStrings(ref List<string> structureDetails)
         {
-            foreach (HydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
