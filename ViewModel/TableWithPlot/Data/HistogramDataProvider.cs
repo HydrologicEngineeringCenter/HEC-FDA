@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 
         override public void AddUnlinkedRow(int i)
         {
-           //do nothing. we wont add rows yet. 
+            DataProviderExtensions.AddRow(this,i,new HistogramRow(0,new Histogram(), IsStrictMonotonic));
         }
     }
 }
