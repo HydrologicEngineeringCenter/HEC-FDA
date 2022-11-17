@@ -2,11 +2,9 @@
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
-using System.ComponentModel;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Unit")]
     public class DeterministicStructureShould
     {
         private static string occupancyTypeName = "Res1-1NB";
@@ -24,16 +22,16 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static SampledStructureParameters sampledStructureParameters = new SampledStructureParameters(occupancyTypeName, occupancyTypeDamageCategory, structureDepthPercentDamage, sampledFirstFloorElevation, sampledStructureValue, computeContentDamage, computeVehicleDamage, computeOtherDamage, contentDepthPercentDamage, sampledContentValue);
         private static int structureID = 44;
         private static int impactAreaID = 55;
-        private static double beginningDamageDepth = -999;
-        private static DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
 
 
         [Theory]
-        [InlineData(100, 0, 0)]
-        [InlineData(104, 400, 200)]
-        [InlineData(108, 800, 400)]
-        public void DeterministicStructureShouldComputeDamageCorrectly(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage)
+        [InlineData(100, 0, 0, -999)]
+        [InlineData(104, 400, 200, -999)]
+        [InlineData(108, 800, 400, -999)]
+        public void DeterministicStructureShouldComputeDamageCorrectly(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage, double beginningDamageDepth)
         {
+            DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
+
             ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation);
             Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
             Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);

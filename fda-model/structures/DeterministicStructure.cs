@@ -48,16 +48,19 @@ namespace HEC.FDA.Model.structures
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
 
             double depthabovefoundHeight = waterSurfaceElevation - FirstFloorElevation;
+            double structDamage = 0;
+            double contDamage = 0;
+            double vehicleDamage = 0;
+            double otherDamage = 0;
 
             if (BeginningDamageDepth < depthabovefoundHeight)
             {
 
                 //Structure
                 double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                double structDamage = structDamagepercent * StructValueSample;
+                structDamage = structDamagepercent * StructValueSample;
 
                 //Content
-                double contDamage = 0;
                 if (_sampledStructureParameters.ComputeContentDamage)
                 {
                     double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
@@ -65,7 +68,6 @@ namespace HEC.FDA.Model.structures
                 }
 
                 //Vehicle
-                double vehicleDamage = 0;
                 if (_sampledStructureParameters.ComputeVehicleDamage)
                 {
                     double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
@@ -73,15 +75,14 @@ namespace HEC.FDA.Model.structures
                 }
 
                 //Other
-                double otherDamage = 0;
                 if (_sampledStructureParameters.ComputeOtherDamage)
                 {
                     double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
                     otherDamage = otherDamagePercent * OtherValueSample;
                 }
-
-                consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
             }
+            consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
+
             return consequenceResult;
         }
 
