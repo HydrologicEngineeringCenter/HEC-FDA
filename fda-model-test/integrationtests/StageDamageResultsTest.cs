@@ -602,7 +602,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
 
-            double actualDamageAtGivenStage = 0;
+            double actualDamageAtGivenStage = 0;//check this out
             double givenStage = 940;
 
             foreach (UncertainPairedData currentUncertainPairedData in stageDamageFunctions) 

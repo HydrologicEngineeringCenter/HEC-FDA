@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.metrics;
 using System;
+using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.Model.structures
 {
@@ -20,14 +21,16 @@ namespace HEC.FDA.Model.structures
         public double VehicleValueSample { get; }
         public double OtherValueSample { get; }
         public string DamageCatagory { get; }
+        public double BeginningDamageDepth { get; }
         public SampledStructureParameters SampledStructureParameters { get { return _sampledStructureParameters; } }
         #endregion
 
         #region Constructor 
-        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters)
+        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;
+            BeginningDamageDepth = beginningDamageDepth;
             DamageCatagory = sampledStructureParameters.OccupancyTypeDamageCategory;
             FirstFloorElevation = sampledStructureParameters.FirstFloorElevationSampled;
             StructValueSample = sampledStructureParameters.StructureValueSampled;
@@ -42,38 +45,43 @@ namespace HEC.FDA.Model.structures
         #region Methods
         public ConsequenceResult ComputeDamage(float waterSurfaceElevation)
         {
+            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
+
             double depthabovefoundHeight = waterSurfaceElevation - FirstFloorElevation;
 
-            //Structure
-            double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-            double structDamage = structDamagepercent * StructValueSample;
-
-            //Content
-            double contDamage = 0;
-            if (_sampledStructureParameters.ComputeContentDamage)
+            if (BeginningDamageDepth < depthabovefoundHeight)
             {
-                double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                contDamage = contentDamagePercent * ContentValueSample;
-            }
 
-            //Vehicle
-            double vehicleDamage = 0;
-            if (_sampledStructureParameters.ComputeVehicleDamage)
-            {
-                double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                vehicleDamage = vehicleDamagePercent * VehicleValueSample;
-            }
+                //Structure
+                double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
+                double structDamage = structDamagepercent * StructValueSample;
 
-            //Other
-            double otherDamage = 0;
-            if (_sampledStructureParameters.ComputeOtherDamage)
-            {
-                double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                otherDamage = otherDamagePercent * OtherValueSample;
-            }
+                //Content
+                double contDamage = 0;
+                if (_sampledStructureParameters.ComputeContentDamage)
+                {
+                    double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                    contDamage = contentDamagePercent * ContentValueSample;
+                }
 
-            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
-            consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
+                //Vehicle
+                double vehicleDamage = 0;
+                if (_sampledStructureParameters.ComputeVehicleDamage)
+                {
+                    double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                    vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+                }
+
+                //Other
+                double otherDamage = 0;
+                if (_sampledStructureParameters.ComputeOtherDamage)
+                {
+                    double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                    otherDamage = otherDamagePercent * OtherValueSample;
+                }
+
+                consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
+            }
             return consequenceResult;
         }
 

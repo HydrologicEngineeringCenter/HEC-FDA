@@ -22,7 +22,8 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static SampledStructureParameters sampledStructureParameters = new SampledStructureParameters(occupancyTypeName, occupancyTypeDamageCategory, structureDepthPercentDamage, sampledFirstFloorElevation, sampledStructureValue, computeContentDamage, computeVehicleDamage, computeOtherDamage, contentDepthPercentDamage, sampledContentValue);
         private static int structureID = 44;
         private static int impactAreaID = 55;
-        private static DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters);
+        private static double beginningDamageDepth = -999;
+        private static DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
 
 
         [Theory]
