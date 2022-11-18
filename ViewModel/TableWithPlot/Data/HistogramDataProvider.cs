@@ -8,6 +8,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
     internal class HistogramDataProvider : BaseDataProvider
     {
+        /// <summary>
+        /// Only used by the activator. Don't use this ctor.
+        /// </summary>
+        public HistogramDataProvider()
+        {
+            Name = "Empirical";
+        }
         public HistogramDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
             IsStrictMonotonic = isStrictMonotonic;
@@ -32,7 +39,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 
         override public void AddUnlinkedRow(int i)
         {
-           //do nothing. we wont add rows yet. 
+            DataProviderExtensions.AddRow(this,i,new HistogramRow(0,new Histogram(), IsStrictMonotonic));
         }
     }
 }
