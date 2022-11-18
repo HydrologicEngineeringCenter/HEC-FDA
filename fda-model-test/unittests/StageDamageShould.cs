@@ -165,6 +165,25 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedLength, structureDetails.Count);
         }
 
+<<<<<<< HEAD
+=======
+
+        [Theory]
+        [InlineData(new float[] {5,4,3}, new float[] {10,9,8})]
+        public void ExtrapolateFromAboveShould(float[] input, float[] expectedResult)
+        {
+            float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromAboveAtIndexLocation(input, 1, 5);
+            Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Theory]
+        [InlineData(new float[] { 500, 400, 300 }, new float[] { 455, 355, 255 })]
+        public void ExtrapolateFromBelowShould(float[] input, float[] expectedResult)
+        {
+            float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromBelowStagesAtIndexLocation(input, 1, 5,50);
+            Assert.Equal(expectedResult, actualResult);
+
+>>>>>>> c853ed2eddb213040c8a8e7b450fdd623859002c
         [Fact]
         public void ProduceReasonableResults()
         {
@@ -177,6 +196,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             Assert.NotNull(results);
 
+<<<<<<< HEAD
         }
 
         [Theory]
@@ -185,6 +205,8 @@ namespace HEC.FDA.ModelTest.unittests
         {
             float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromBelowStagesAtIndexLocation(input, 1, 5,50);
             Assert.Equal(expectedResult, actualResult);
+=======
+>>>>>>> c853ed2eddb213040c8a8e7b450fdd623859002c
         }
     }
 }
