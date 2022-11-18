@@ -13,7 +13,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         /// </summary>
         public HistogramDataProvider()
         {
-
+            Name = "Empirical";
         }
         public HistogramDataProvider(UncertainPairedData upd, bool isStrictMonotonic)
         {
