@@ -298,7 +298,7 @@ namespace HEC.FDA.Model.stageDamage
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             for(int j = 0; j<WSEsAtLowest.Length; j++)
             {
-                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (_numInterpolatedStagesToCompute - i);
+                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (numInterpolatedStagesToCompute - i);
             }
             return extrapolatedStages;
         }
