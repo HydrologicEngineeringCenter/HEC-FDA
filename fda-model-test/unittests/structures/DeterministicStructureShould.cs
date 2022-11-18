@@ -25,9 +25,9 @@ namespace HEC.FDA.ModelTest.unittests.structures
 
 
         [Theory]
-        [InlineData(100, 0, 0, -999)]
-        [InlineData(104, 400, 200, -999)]
-        [InlineData(108, 800, 400, -999)]
+        [InlineData(100, 0, 0, 999)]
+        [InlineData(104, 400, 200, 4)]
+        [InlineData(108, 800, 400, 8)]
         public void DeterministicStructureShouldComputeDamageCorrectly(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage, double beginningDamageDepth)
         {
             DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);

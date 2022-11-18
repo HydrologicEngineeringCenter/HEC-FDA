@@ -53,7 +53,7 @@ namespace HEC.FDA.Model.structures
             double vehicleDamage = 0;
             double otherDamage = 0;
 
-            if (BeginningDamageDepth < depthabovefoundHeight)
+            if (BeginningDamageDepth <= depthabovefoundHeight)
             {
 
                 //Structure
