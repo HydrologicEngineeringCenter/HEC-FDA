@@ -144,7 +144,7 @@ namespace HEC.FDA.ModelTest.unittests
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList, new PolygonFeatureLayer(), "header");
+            Inventory inventory = new Inventory(structures, occupancyTypesList, new PolygonFeatureLayer(), "header", false);
             return inventory;
         }
 

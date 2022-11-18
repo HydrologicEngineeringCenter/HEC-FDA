@@ -15,6 +15,7 @@ public class Inventory
     private PolygonFeatureLayer _impactAreaSet;
     private List<OccupancyType> _Occtypes;
     private string _impactAreaUniqueColumnHeader;
+    private bool _FilterStructuresByImpactArea { get; } = true;
     public List<Structure> Structures { get; }
     public List<int> ImpactAreas
     {
@@ -204,12 +205,13 @@ public class Inventory
         _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
         _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
     }
-    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, PolygonFeatureLayer impactAreas, string impactAreaUniqueColumnHeader)
+    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, PolygonFeatureLayer impactAreas, string impactAreaUniqueColumnHeader, bool filterStructures = true)
     {
         Structures = filteredStructureList;
         _Occtypes = occtypes;
         _impactAreaSet = impactAreas;
         _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+        _FilterStructuresByImpactArea = filterStructures;
     }
     #endregion
     public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
@@ -223,7 +225,7 @@ public class Inventory
     public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
         //If you don't have impact areas, just assume a single impact area, and don't filter anything. 
-        if(_impactAreaSet == null)
+        if(_impactAreaSet == null || _FilterStructuresByImpactArea == false)
         {
             return this;
         }
