@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
              List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
             : base(name, lastEditDate, description, id)
         {
-            ImpactAreaFrequencyRows = impactAreaRows;            
+            ImpactAreaFrequencyRows = impactAreaRows;
 
             Curves = curves;
             IsManual = isManual;
@@ -101,6 +101,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             else
             {
+                //List<string> structureDetails = scenarioStageDamage.ProduceStructureDetails();
+
+
                 //todo: Richard will write the logic that loads the table with the desired details.
                 string path = Storage.Connection.Instance.ProjectDirectory + "\\" + Name + "_Structure_Detail.csv";
                 using (var sw = new StreamWriter(path))
