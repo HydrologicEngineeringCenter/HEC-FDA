@@ -175,7 +175,7 @@ namespace HEC.FDA.Model.stageDamage
             //Collect damage for first part of function up to and including the stages at the lowest profile 
             for (int i = 0; i < _numExtrapolatedStagesToCompute; i++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
                     _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
