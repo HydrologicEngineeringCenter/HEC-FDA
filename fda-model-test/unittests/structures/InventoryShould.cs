@@ -5,7 +5,7 @@ using RasMapperLib;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Disk")]
     public class InventoryShould
     {
         private const string IANameColumnHeader = "Name";

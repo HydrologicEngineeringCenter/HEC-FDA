@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
 using Importer;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModelTest
 {
+    [Trait("Category", "Disk")]
     public class ImportOccTypeFromFDA1VMShould
     {
 
@@ -19,7 +21,7 @@ namespace HEC.FDA.ViewModelTest
         [Fact]
         public void ImportOccTypesFromASCII()
         {
-            string file = @"C:\Programs\Git\Repos\HEC-FDA\fda-model-test\Resources\MuncieOccupancyTypes.txt";
+            string file = @"..\..\fda-model-test\Resources\MuncieOccupancyTypes.txt";
             var thing = Import(file);
             Assert.NotNull(thing);
         }

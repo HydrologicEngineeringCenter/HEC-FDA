@@ -3,6 +3,7 @@ using Statistics;
 using System.Xml.Linq;
 namespace StatisticsTests.Convergence
 {
+    [Trait("Category", "Unit")]
     public class ConvergenceCriteriaTests
     {
         [Theory]
