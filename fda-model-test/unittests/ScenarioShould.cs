@@ -10,6 +10,7 @@ using HEC.FDA.Model.scenarios;
 
 namespace HEC.FDA.ModelTest.unittests
 {
+    [Trait("Category", "Unit")]
     public class ScenarioShould
     {
         static double[] Flows = { 0, 100000 };
