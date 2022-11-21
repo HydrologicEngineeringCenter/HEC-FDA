@@ -221,6 +221,12 @@ public class Inventory
 
     public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
+        //If you don't have impact areas, just assume a single impact area, and don't filter anything. 
+        if(_impactAreaSet == null)
+        {
+            return this;
+        }
+
         List<Structure> filteredStructureList = new List<Structure>();
 
         foreach (Structure structure in Structures)

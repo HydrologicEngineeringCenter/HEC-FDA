@@ -11,8 +11,8 @@ using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics;
-using System.Linq;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.hydraulics.Mock;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -21,10 +21,10 @@ namespace HEC.FDA.ModelTest.unittests
     {
 
         //structure data
-        private static int[] structureIDs = new int[] { 0, 1, 2, 3, };
-        private static PointM pointM = new PointM(); // You'll need to populate this so we can filter structures by impact area. That's done geospatially. 
+        private static int[] structureIDs = new int[] { 0, 1, 2, 3 };
+        private static PointM pointM = new PointM(); // These won't get used. We're gonna do some goofy stuff with fake hydraulics.
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
-        private static float[] GroundElevs = new float[] {0,0,0,0,0};
+        private static float[] GroundElevs = new float[] { 0, 0, 0, 0, 0 };
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
         private static string residentialDamageCategory = "Residential";
         private static string commercialDamageCategory = "Commercial";
@@ -87,28 +87,20 @@ namespace HEC.FDA.ModelTest.unittests
         private static string structureAssetCategory = "Structure";
 
         //water data
-        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
-        private const string SteadyHDFFileName = @"Muncie.p10.hdf";
-        private const string Name2 = "2";
-        private const string Name5 = "5";
-        private const string Name10 = "10";
-        private const string Name25 = "25";
-        private const string Name50 = "50";
-        private const string Name100 = "100";
-        private const string Name200 = "200";
-        private const string Name500 = "500";
         private const HydraulicDataSource hydraulicDataSource = HydraulicDataSource.SteadyHDF;
+        private static DummyHydraulicProfile hydraulicProfile2 = new DummyHydraulicProfile(new float[] { 0, 0, 0, 0 }, 0.5);
+        private static DummyHydraulicProfile hydraulicProfile5 = new DummyHydraulicProfile(new float[] { 1, 1, 1, 1 }, 0.2);
+        private static DummyHydraulicProfile hydraulicProfile10 = new DummyHydraulicProfile(new float[] { 2, 2, 2, 2 }, 0.1);
+        private static DummyHydraulicProfile hydraulicProfile25 = new DummyHydraulicProfile(new float[] { 3, 3, 3, 3 }, 0.04);
+        private static DummyHydraulicProfile hydraulicProfile50 = new DummyHydraulicProfile(new float[] { 4, 4, 4, 4 }, .02);
+        private static DummyHydraulicProfile hydraulicProfile100 = new DummyHydraulicProfile(new float[] { 5, 5, 5, 5 }, .01);
+        private static DummyHydraulicProfile hydraulicProfile200 = new DummyHydraulicProfile(new float[] { 6, 6, 6, 6 }, .005);
+        private static DummyHydraulicProfile hydraulicProfile500 = new DummyHydraulicProfile(new float[] { 7, 7, 7, 7 }, .002);
+        private static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
+        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
 
-        private static HydraulicProfile hydraulicProfile2 = new HydraulicProfile(0.5, SteadyHDFFileName, Name2);
-        private static HydraulicProfile hydraulicProfile5 = new HydraulicProfile(0.2, SteadyHDFFileName, Name5);
-        private static HydraulicProfile hydraulicProfile10 = new HydraulicProfile(0.1, SteadyHDFFileName, Name10);
-        private static HydraulicProfile hydraulicProfile25 = new HydraulicProfile(0.04, SteadyHDFFileName, Name25);
-        private static HydraulicProfile hydraulicProfile50 = new HydraulicProfile(.02, SteadyHDFFileName, Name50);
-        private static HydraulicProfile hydraulicProfile100 = new HydraulicProfile(.01, SteadyHDFFileName, Name100);
-        private static HydraulicProfile hydraulicProfile200 = new HydraulicProfile(.005, SteadyHDFFileName, Name200);
-        private static HydraulicProfile hydraulicProfile500 = new HydraulicProfile(.002, SteadyHDFFileName, Name500);
-        private static List<HydraulicProfile> hydraulicProfiles = new List<HydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles.Cast<IHydraulicProfile>().ToList(), hydraulicDataSource);
+        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 }
+        , new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
 
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
@@ -116,7 +108,7 @@ namespace HEC.FDA.ModelTest.unittests
         public void ComputeDamageOneCoordinateShouldComputeCorrectly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage, double expectedCommercialStructureDamage, double expectedCommercialContentDamage)
         {
             //Arrange
-            Inventory inventory = CreateInventory();  
+            Inventory inventory = CreateInventory();
 
             float[] WSEs = new float[] { 7, 10, 8, 12 };
 
@@ -142,6 +134,7 @@ namespace HEC.FDA.ModelTest.unittests
 
         }
 
+
         private Inventory CreateInventory()
         {
             List<Structure> structures = new List<Structure>();
@@ -151,7 +144,7 @@ namespace HEC.FDA.ModelTest.unittests
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList,new PolygonFeatureLayer(),"header");
+            Inventory inventory = new Inventory(structures, occupancyTypesList, new PolygonFeatureLayer(), "header");
             return inventory;
         }
 
@@ -161,7 +154,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, ParentDirectoryToSteadyResult);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, String.Empty);
             List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
@@ -172,5 +165,18 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedLength, structureDetails.Count);
         }
 
+        [Fact]
+        public void ProduceReasonableResults()
+        {
+            Inventory inventory = CreateInventory();
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteria, String.Empty,graphicalFrequency: stageFrequency);
+            List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
+            impactAreaStageDamages.Add(impactAreaStageDamage);
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
+            List<UncertainPairedData> results = scenarioStageDamage.Compute(new RandomProvider(1234), new ConvergenceCriteria());
+
+            Assert.NotNull(results);
+
+        }
     }
 }

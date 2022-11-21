@@ -28,7 +28,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private const string CONTENT_VALUE = "ContentValue";
         private const string OTHER_VALUE = "OtherValue";
         private const string VEHICLE_VALUE = "VehicleValue";
-        private const string MODULE = "Module";
         private const string BEG_DAMAGE_DEPTH = "BegDamDepth";
 
         private const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
@@ -49,7 +48,6 @@ namespace HEC.FDA.ViewModel.Inventory
         public string ContentValueCol { get; }
         public string OtherValueCol { get; }
         public string VehicleValueCol { get; }
-        public string ModuleCol { get; }
         public string BeginningDamageDepthCol { get; }
         public string YearInConstructionCol { get; }
         public string NotesCol { get; }
@@ -69,7 +67,6 @@ namespace HEC.FDA.ViewModel.Inventory
             ContentValueCol = selections._ContentValueRow.SelectedItem;
             OtherValueCol = selections._OtherValueRow.SelectedItem;
             VehicleValueCol = selections._VehicleValueRow.SelectedItem;
-            ModuleCol = selections._ModuleRow.SelectedItem;
             BeginningDamageDepthCol = selections._BegDamDepthRow.SelectedItem;
             YearInConstructionCol = selections._YearInConstructionRow.SelectedItem;
             NotesCol = selections._NotesRow.SelectedItem;
@@ -97,7 +94,6 @@ namespace HEC.FDA.ViewModel.Inventory
             ContentValueCol = selections.Element(CONTENT_VALUE).Attribute(VALUE).Value;
             OtherValueCol = selections.Element(OTHER_VALUE).Attribute(VALUE).Value;
             VehicleValueCol = selections.Element(VEHICLE_VALUE).Attribute(VALUE).Value;
-            ModuleCol = selections.Element(MODULE).Attribute(VALUE).Value;
             BeginningDamageDepthCol = selections.Element(BEG_DAMAGE_DEPTH).Attribute(VALUE).Value;
             YearInConstructionCol = selections.Element(YEAR_IN_CONSTRUCTION).Attribute(VALUE).Value;
             NotesCol = selections.Element(NOTES).Attribute(VALUE).Value;
@@ -134,7 +130,6 @@ namespace HEC.FDA.ViewModel.Inventory
             columnSelectionsElem.Add(CreateColumnMappingXElement(CONTENT_VALUE, ContentValueCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(OTHER_VALUE, OtherValueCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(VEHICLE_VALUE, VehicleValueCol));
-            columnSelectionsElem.Add(CreateColumnMappingXElement(MODULE, ModuleCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(BEG_DAMAGE_DEPTH, BeginningDamageDepthCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(YEAR_IN_CONSTRUCTION, YearInConstructionCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(NOTES, NotesCol));
