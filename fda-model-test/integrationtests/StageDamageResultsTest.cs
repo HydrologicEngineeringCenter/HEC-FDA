@@ -19,7 +19,7 @@ namespace HEC.FDA.ModelTest.integrationtests
     {
         //TODO: This test class is incomplete 
         private static string IANameColumnHeader = "Name";
-        private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
+        private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
         private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private static string pathToTerrain = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
 
