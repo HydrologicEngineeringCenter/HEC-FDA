@@ -35,7 +35,6 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             SelectionMappings = selections;
             IsImportedFromOldFDA = isImportedFromOldFDA;
-
             AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU);
         }
 
@@ -44,8 +43,6 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             IsImportedFromOldFDA = Convert.ToBoolean( inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
             SelectionMappings = new InventorySelectionMapping(inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS));
-
-
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
@@ -56,8 +53,8 @@ namespace HEC.FDA.ViewModel.Inventory
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(this, actionManager);
-            string header = StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_STRUCTURE_INVENTORIES_HEADER);
+            string header = "Edit " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditInventory" + Name);
             Navigate(tab, false, false);
 
         }

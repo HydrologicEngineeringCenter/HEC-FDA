@@ -1,7 +1,9 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.stageDamage;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -34,7 +36,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             HasChanges = true;
             ManualVM = new ManualStageDamageVM();
-            CalculatedVM = new CalculatedStageDamageVM();
+            CalculatedVM = new CalculatedStageDamageVM(GetName);
             //this registration is so that fda can detect changes made in child view models
             //and prompt the user if they want to save when closing
             RegisterChildViewModel(ManualVM);
@@ -51,13 +53,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (IsManualRadioSelected)
             {
                 ManualVM = new ManualStageDamageVM(element.Curves);
-                CalculatedVM = new CalculatedStageDamageVM();
+                CalculatedVM = new CalculatedStageDamageVM(GetName);
                 CurrentVM = ManualVM;
             }
             else
             {
                 ManualVM = new ManualStageDamageVM();
-                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves, element.ImpactAreaFrequencyRows);
+                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves, element.ImpactAreaFrequencyRows, GetName);
                 CurrentVM = CalculatedVM;
             }
             //this registration is so that fda can detect changes made in child view models
@@ -146,6 +148,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 id = OriginalElement.ID;
             }
             return id;
+        }
+
+        public string GetName()
+        {
+            return Name;
         }
 
         #endregion
