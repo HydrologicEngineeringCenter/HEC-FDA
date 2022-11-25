@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using RasMapperLib.Utilities;
 
 
 namespace HEC.FDA.Model.structures;
@@ -188,7 +189,7 @@ public class Inventory
                 int numStructures = TryGet<int>(row[map.NumberOfStructures], 1);
                 int yearInService = TryGet<int>(row[map.YearInConstruction], -999);
                 //TODO: handle number 
-                int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
+                int impactAreaID = GetImpactAreaFID(point);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
 
             }
@@ -221,11 +222,17 @@ public class Inventory
         TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
         return terrain.ComputePointElevations(pointMs);
     }
+    private PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
+    {
+            Geospatial.Vectors.Point p = Converter.Convert(point);
+            VectorExtensions.Reproject(p, currentProjection, newProjection);
+            return Converter.ConvertPtM(p);
+    }
 
     private Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
     {
         //Check extension of terrain file
-        string extension = Path.GetExtension(terrainFilename);
+        string extension = System.IO.Path.GetExtension(terrainFilename);
         // If HDF, create RASTerrainLayer, then get source files. Create a GDAL Raster from any source.
         if(extension == "hdf")
         {
@@ -235,7 +242,7 @@ public class Inventory
         GDALRaster raster = new GDALRaster(terrainFilename);
         return raster.GetProjection();
     }
-    private Projection getVectorProjection(string vectorPath)
+    private Projection GetVectorProjection(string vectorPath)
     {
         VectorDataset vector = new VectorDataset(vectorPath);
         VectorLayer vectorLayer = vector.GetLayer(0);
@@ -270,10 +277,9 @@ public class Inventory
         }
         return points;
     }
-    public static int GetImpactAreaFID(PointM point, string polygonShapefilePath)
+    public int GetImpactAreaFID(PointM point)
     {
-        PolygonFeatureLayer polygonFeatureLayer = new PolygonFeatureLayer("impactAreas", polygonShapefilePath);
-        List<Polygon> polygons = polygonFeatureLayer.Polygons().ToList();
+        List<Polygon> polygons = _impactAreaSet.Polygons().ToList();
         for (int i = 0; i < polygons.Count; i++)
         {
             if (polygons[i].Contains(point))
