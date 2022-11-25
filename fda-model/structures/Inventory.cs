@@ -1,9 +1,11 @@
-﻿using HEC.FDA.Model.interfaces;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.Model.interfaces;
 using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 
 
@@ -217,6 +219,19 @@ public class Inventory
         PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
         TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
         return terrain.ComputePointElevations(pointMs);
+    }
+    private Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
+    {
+        //Check extension of terrain file
+        string extension = Path.GetExtension(terrainFilename);
+        // If HDF, create RASTerrainLayer, then get source files. Create a GDAL Raster from any source.
+        if(extension == "hdf")
+        {
+            TerrainLayer terrain = new TerrainLayer("Terrain", terrainFilename);
+            terrainFilename = terrain.get_RasterFilename(0);
+        }
+        GDALRaster raster = new GDALRaster(terrainFilename);
+        return raster.GetProjection();
     }
 
     public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
