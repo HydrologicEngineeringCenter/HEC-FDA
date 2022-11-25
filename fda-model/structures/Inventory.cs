@@ -1,4 +1,5 @@
 ﻿using Geospatial.GDALAssist;
+using Geospatial.GDALAssist.Vectors;
 using HEC.FDA.Model.interfaces;
 using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
@@ -220,6 +221,7 @@ public class Inventory
         TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
         return terrain.ComputePointElevations(pointMs);
     }
+
     private Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
     {
         //Check extension of terrain file
@@ -232,6 +234,12 @@ public class Inventory
         }
         GDALRaster raster = new GDALRaster(terrainFilename);
         return raster.GetProjection();
+    }
+    private Projection getVectorProjection(string vectorPath)
+    {
+        VectorDataset vector = new VectorDataset(vectorPath);
+        VectorLayer vectorLayer = vector.GetLayer(0);
+        return vectorLayer.GetProjection();
     }
 
     public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
