@@ -130,7 +130,7 @@ public class Inventory
     }
     #region Constructors
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
+        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath)
     {
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
         structureInventory = createColumnHeadersForMissingColumns(structureInventory, map);
