@@ -668,7 +668,7 @@ namespace Statistics.Histograms
         public XElement ToXML()
         {
             ForceDeQueue();
-            XElement masterElem = new XElement("Histogram");
+            XElement masterElem = new XElement("ThreadsafeInlineHistogram");
             masterElem.SetAttributeValue("Min", _Min);
             masterElem.SetAttributeValue("Max", _Max);
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
