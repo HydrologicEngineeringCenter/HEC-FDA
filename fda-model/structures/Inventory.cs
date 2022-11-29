@@ -1,10 +1,14 @@
-﻿using HEC.FDA.Model.interfaces;
+﻿using Geospatial.GDALAssist;
+using Geospatial.GDALAssist.Vectors;
+using HEC.FDA.Model.interfaces;
 using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using RasMapperLib.Utilities;
 
 
 namespace HEC.FDA.Model.structures;
@@ -12,10 +16,18 @@ namespace HEC.FDA.Model.structures;
 //TODO: Figure out how to set Occupany Type Set
 public class Inventory
 {
-    private PolygonFeatureLayer _impactAreaSet;
-    private List<OccupancyType> _Occtypes;
+    #region Fields
+    private string _structureInventoryShapefile;
+    private string _impactAreaShapefile;
+    private StructureInventoryColumnMap _map;
+    private List<OccupancyType> _occtypes;
     private string _impactAreaUniqueColumnHeader;
-    public List<Structure> Structures { get; }
+    private bool _updateGroundElevsFromTerrain;
+    private string _terrainPath;
+    #endregion
+
+    #region Properties
+    public List<Structure> Structures { get; } = new List<Structure>();
     public List<int> ImpactAreas
     {
         get
@@ -33,7 +45,7 @@ public class Inventory
     }
     public List<string> DamageCategories
     {
-        get 
+        get
         {
             List<string> damageCatagories = new List<string>();
             foreach (Structure structure in Structures)
@@ -55,14 +67,16 @@ public class Inventory
         get
         {
             float[] result = new float[Structures.Count];
-            for(int i = 0; i < Structures.Count; i++)
+            for (int i = 0; i < Structures.Count; i++)
             {
                 result[i] = (float)Structures[i].GroundElevation;
             }
             return result;
         }
     }
+    #endregion
 
+    #region Utilities
     public static T TryGet<T>(object value, T defaultValue = default)
         where T : struct
     {
@@ -95,22 +109,75 @@ public class Inventory
                 return defaultValue;
         }
     }
+    #endregion
 
+    #region Methods
     public Polygon GetImpactAreaPolygon(string impactAreaName)
     {
-        for (int i = 0; i < _impactAreaSet.FeatureCount(); i++)
+        PolygonFeatureLayer impactAreas = new PolygonFeatureLayer("ImpactAreas", _impactAreaShapefile);
+        for (int i = 0; i < impactAreas.FeatureCount(); i++)
         {
-            var row = _impactAreaSet.FeatureRow(i);
+            var row = impactAreas.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
-            if (thisImpactAreaName.Equals(impactAreaName));
+            if (thisImpactAreaName.Equals(impactAreaName)) ;
             {
-                return _impactAreaSet.Polygon(i);
+                return impactAreas.Polygon(i);
             }
         }
         return null;
     }
+    private void LoadStructuresFromSourceFiles()
+    {
+        PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", _structureInventoryShapefile);
+        createColumnHeadersForMissingColumns(ref structureInventory, _map);
+        PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", _impactAreaShapefile);
 
-    private PointFeatureLayer createColumnHeadersForMissingColumns(PointFeatureLayer layer, StructureInventoryColumnMap map)
+        float[] groundelevs = Array.Empty<float>();
+        if (_updateGroundElevsFromTerrain)
+        {
+            groundelevs = GetGroundElevationFromTerrain(_structureInventoryShapefile, _terrainPath);
+        }
+
+        PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
+        for (int i = 0; i < structureInventory.FeatureCount(); i++)
+        {
+            //required parameters
+            PointM point = pointMs[i];
+            var row = structureInventory.FeatureRow(i);
+            int fid = TryGet<int>(row[_map.StructureID], -999);
+            double val_struct = TryGet<double>(row[_map.StructureValue], -999);
+            string st_damcat = TryGetObj<string>(row[_map.DamageCatagory], "NA");
+            string occtype = TryGetObj<string>(row[_map.OccupancyType], "NA");
+            //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
+            double found_ht = TryGet<double>(row[_map.FoundationHeight], -999); //not gauranteed
+            double ground_elv;
+            if (_updateGroundElevsFromTerrain)
+            {
+                ground_elv = groundelevs[i];
+            }
+            else
+            {
+                ground_elv = TryGet<double>(row[_map.GroundElev], -999); //not gauranteed
+            }
+            double ff_elev = TryGet<double>(row[_map.FirstFloorElev], -999); // not gauranteed
+            if (row[_map.FirstFloorElev] == DBNull.Value)
+            {
+                ff_elev = ground_elv + found_ht;
+            }
+            //optional parameters
+            double val_cont = TryGet<double>(row[_map.ContentValue], 0);
+            double val_vehic = TryGet<double>(row[_map.VehicalValue], 0);
+            double val_other = TryGet<double>(row[_map.OtherValue], 0);
+            string cbfips = TryGetObj<string>(row[_map.CBFips], "NA");
+            double beginningDamage = TryGet<double>(row[_map.BeginningDamageDepth], 0);
+            int numStructures = TryGet<int>(row[_map.NumberOfStructures], 1);
+            int yearInService = TryGet<int>(row[_map.YearInConstruction], -999);
+            //TODO: handle number 
+            int impactAreaID = GetImpactAreaFID(point);
+            Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+        }
+    }
+    private void createColumnHeadersForMissingColumns(ref PointFeatureLayer layer, StructureInventoryColumnMap map)
     {
         List<string> layerColumnNames = new List<string>();
         var row = layer.FeatureRow(0);
@@ -119,98 +186,14 @@ public class Inventory
             layerColumnNames.Add(c.ColumnName);
         }
 
-        foreach (Tuple<string,Type> nameTypePair in map.ColumnHeaders)
+        foreach (Tuple<string, Type> nameTypePair in map.ColumnHeaders)
         {
             if (!layerColumnNames.Contains(nameTypePair.Item1))
             {
                 layer.AddAttributeColumn(nameTypePair.Item1, nameTypePair.Item2);
             }
         }
-        return layer;
     }
-    #region Constructors
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes, 
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath = null)
-    {
-        PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
-        structureInventory = createColumnHeadersForMissingColumns(structureInventory, map);
-
-        _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-
-        float[] groundelevs = Array.Empty<float>();
-        if (updateGroundElevFromTerrain)
-        {
-            groundelevs = GetGroundElevationFromTerrain(pointShapefilePath, terrainPath);
-        }
-
-        PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
-        Structures = new List<Structure>();
-        try
-        {
-            for (int i = 0; i < structureInventory.FeatureCount(); i++)
-            {
-                //required parameters
-                PointM point = pointMs[i];
-                var row = structureInventory.FeatureRow(i);
-                int fid = TryGet<int>(row[map.StructureID], -999);
-                double val_struct = TryGet<double>(row[map.StructureValue], -999);
-                string st_damcat = TryGetObj<string>(row[map.DamageCatagory], "NA");
-                string occtype = TryGetObj<string>(row[map.OccupancyType], "NA");
-
-                //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
-                double found_ht = TryGet<double>(row[map.FoundationHeight], -999); //not gauranteed
-                double ground_elv;
-                if (updateGroundElevFromTerrain)
-                {
-                    ground_elv = groundelevs[i];
-                }
-                else
-                {
-                    ground_elv = TryGet<double>(row[map.GroundElev], -999); //not gauranteed
-                }
-                double ff_elev = TryGet<double>(row[map.FirstFloorElev], -999); // not gauranteed
-                if (row[map.FirstFloorElev] == DBNull.Value)
-                {
-                    ff_elev = ground_elv + found_ht;
-                }
-
-
-                //optional parameters
-                double val_cont = TryGet<double>(row[map.ContentValue], 0);
-                double val_vehic = TryGet<double>(row[map.VehicalValue], 0);
-                double val_other = TryGet<double>(row[map.OtherValue], 0);
-                string cbfips = TryGetObj<string>(row[map.CBFips], "NA");
-                double beginningDamage = TryGet<double>(row[map.BeginningDamageDepth], 0);
-                int numStructures = TryGet<int>(row[map.NumberOfStructures], 1);
-                int yearInService = TryGet<int>(row[map.YearInConstruction], -999);
-                //TODO: handle number 
-                int impactAreaID = GetImpactAreaFID(point, impactAreaShapefilePath);
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
-
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
-        _Occtypes = occTypes;
-    }
-    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, string impactAreaShapefilePath, string impactAreaUniqueColumnHeader)
-    {
-        Structures = filteredStructureList;
-        _Occtypes = occtypes;
-        _impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", impactAreaShapefilePath);
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-    }
-    public Inventory(List<Structure> filteredStructureList, List<OccupancyType> occtypes, PolygonFeatureLayer impactAreas, string impactAreaUniqueColumnHeader)
-    {
-        Structures = filteredStructureList;
-        _Occtypes = occtypes;
-        _impactAreaSet = impactAreas;
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-    }
-    #endregion
     public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
     {
         PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -218,25 +201,44 @@ public class Inventory
         TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
         return terrain.ComputePointElevations(pointMs);
     }
-
+    private PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
+    {
+        Geospatial.Vectors.Point p = Converter.Convert(point);
+        VectorExtensions.Reproject(p, currentProjection, newProjection);
+        return Converter.ConvertPtM(p);
+    }
+    private Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
+    {
+        //Check extension of terrain file
+        string extension = System.IO.Path.GetExtension(terrainFilename);
+        // If HDF, create RASTerrainLayer, then get source files. Create a GDAL Raster from any source.
+        if (extension == "hdf")
+        {
+            TerrainLayer terrain = new TerrainLayer("Terrain", terrainFilename);
+            terrainFilename = terrain.get_RasterFilename(0);
+        }
+        GDALRaster raster = new GDALRaster(terrainFilename);
+        return raster.GetProjection();
+    }
+    private Projection GetVectorProjection(string vectorPath)
+    {
+        VectorDataset vector = new VectorDataset(vectorPath);
+        VectorLayer vectorLayer = vector.GetLayer(0);
+        return vectorLayer.GetProjection();
+    }
     public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
     {
-        //If you don't have impact areas, just assume a single impact area, and don't filter anything. 
-        if(_impactAreaSet == null)
-        {
-            return this;
-        }
-
+        PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("ImpactAreas", _impactAreaShapefile);
         List<Structure> filteredStructureList = new List<Structure>();
 
         foreach (Structure structure in Structures)
         {
-            if (_impactAreaSet[impactAreaFID].Contains(structure.Point))
+            if (impactAreaSet[impactAreaFID].Contains(structure.Point))
             {
                 filteredStructureList.Add(structure);
             }
         }
-        return new Inventory(filteredStructureList,_Occtypes,_impactAreaSet, _impactAreaUniqueColumnHeader);
+        return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
     }
     public PointMs GetPointMs()
     {
@@ -247,10 +249,10 @@ public class Inventory
         }
         return points;
     }
-    public static int GetImpactAreaFID(PointM point, string polygonShapefilePath)
+    public int GetImpactAreaFID(PointM point)
     {
-        PolygonFeatureLayer polygonFeatureLayer = new PolygonFeatureLayer("impactAreas", polygonShapefilePath);
-        List<Polygon> polygons = polygonFeatureLayer.Polygons().ToList();
+        PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("ImpactAreas", _impactAreaShapefile);
+        List<Polygon> polygons = impactAreaSet.Polygons().ToList();
         for (int i = 0; i < polygons.Count; i++)
         {
             if (polygons[i].Contains(point))
@@ -260,13 +262,47 @@ public class Inventory
         }
         return -9999;
     }
+    #endregion
+
+    #region Constructors
+    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath)
+    {
+        _structureInventoryShapefile = pointShapefilePath;
+        _impactAreaShapefile = impactAreaShapefilePath;
+        _map = map;
+        _occtypes = occTypes;
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+        _terrainPath = terrainPath;
+        LoadStructuresFromSourceFiles();
+    }
+    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+    string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures)
+    {
+        _structureInventoryShapefile = pointShapefilePath;
+        _impactAreaShapefile = impactAreaShapefilePath;
+        _map = map;
+        _occtypes = occTypes;
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+        _terrainPath = terrainPath;
+        Structures = structures;
+
+    }
+    #endregion
+
+
+
+
+
     public DeterministicInventory Sample(IProvideRandomNumbers randomProvider)
     {
 
         List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
         foreach (Structure structure in Structures)
         {
-            foreach (OccupancyType occupancyType in _Occtypes)
+            foreach (OccupancyType occupancyType in _occtypes)
             {
                 if (structure.DamageCatagory.Equals(occupancyType.DamageCategory))
                 {

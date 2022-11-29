@@ -554,7 +554,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             occupancyTypeRES6
         };
 
-        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes, IANameColumnHeader, false);
+        private static Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occTypes, IANameColumnHeader, false, null);
 
         static ContinuousDistribution LP3Distribution = new LogPearson3(3.7070, .240, -.4750, 99);
         static double[] RatingCurveFlows = { 1166, 2000, 3000, 4000, 5320, 6000, 7000, 8175, 9000, 9995, 12175, 13706, 15157, 16962, 18278, 20000, 24000 };
