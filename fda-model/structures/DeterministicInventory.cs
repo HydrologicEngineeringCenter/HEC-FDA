@@ -24,7 +24,8 @@ namespace HEC.FDA.Model.structures
                 float wse = wses[i];
                 if (wse != -9999)
                 {
-                    consequenceResults.AddExistingConsequenceResultObject(Inventory[i].ComputeDamage(wse));
+                    ConsequenceResult consequenceResult = Inventory[i].ComputeDamage(wse);
+                    consequenceResults.AddExistingConsequenceResultObject(consequenceResult);
                 }
             }
             return consequenceResults;

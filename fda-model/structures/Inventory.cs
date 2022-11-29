@@ -119,7 +119,9 @@ public class Inventory
         {
             var row = impactAreas.FeatureRow(i);
             string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
-            if (thisImpactAreaName.Equals(impactAreaName)) ;
+            //TODO: this line does not appear to work correctly. THe condition is being evaluated as true despite the strings being vastly different. 
+            if (thisImpactAreaName.Equals(impactAreaName));
+
             {
                 return impactAreas.Polygon(i);
             }
@@ -203,6 +205,7 @@ public class Inventory
     }
     private PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
     {
+
         Geospatial.Vectors.Point p = Converter.Convert(point);
         VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(p);
