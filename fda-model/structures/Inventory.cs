@@ -22,8 +22,6 @@ public class Inventory
     private StructureInventoryColumnMap _map;
     private List<OccupancyType> _occtypes;
     private string _impactAreaUniqueColumnHeader;
-  //TODO: Identify whether this is still needed after Brennan's work 
-    private bool _FilterStructuresByImpactArea { get; } = true;
     private bool _updateGroundElevsFromTerrain;
     private string _terrainPath;
     #endregion
