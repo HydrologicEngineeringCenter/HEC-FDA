@@ -7,6 +7,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics.Distributions;
 using HEC.FDA.Model.interfaces;
+using Statistics.Histograms;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -277,6 +278,14 @@ namespace HEC.FDA.Model.paireddata
                         if (ordinateElements.Name.ToString().Equals("X"))
                         {
                             xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
+                        }
+                        else if (ordinateElements.Name.ToString().Equals("ThreadsafeInlineHistogram"))
+                        {
+                            yValues[i] = ThreadsafeInlineHistogram.ReadFromXML(ordinateElements);
+                        }
+                        else if (ordinateElements.Name.ToString().Equals("Histogram"))
+                        {
+                            yValues[i] = Histogram.ReadFromXML(ordinateElements);
                         }
                         else
                         {
