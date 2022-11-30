@@ -52,7 +52,7 @@ namespace HEC.FDA.Model.structures
             double contDamage = 0;
             double vehicleDamage = 0;
             double otherDamage = 0;
-
+            //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
             if (BeginningDamageDepth <= depthabovefoundHeight)
             {
 
