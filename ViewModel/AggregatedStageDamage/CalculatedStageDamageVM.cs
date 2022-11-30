@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -24,6 +25,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private bool _ShowChart;
         private TableWithPlotVM _TableWithPlot;
         private string _CurvesEditedLabel;
+        private readonly Func<string> getName;
+        private bool _WriteDetailsFile = true;
+
+        public bool WriteDetailsFile
+        {
+            get { return _WriteDetailsFile; }
+            set { _WriteDetailsFile = value; NotifyPropertyChanged(); }
+        }
 
         public string CurvesEditedLabel
         {
@@ -65,16 +74,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _SelectedWaterSurfaceElevation = value; NotifyPropertyChanged(); }
         }
 
-        public CalculatedStageDamageVM()
+        public CalculatedStageDamageVM(Func<string> getName)
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
             LoadDepthGrids();
             LoadNewImpactAreaFrequencyRows();
             AddLiveUpdateEvents();
+            this.getName = getName;
         }
         
-        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows)
+        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows, Func<string> getName)
         {
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
@@ -93,6 +103,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             UpdateComputedCurvesModifiedLabel();
             AddLiveUpdateEvents();
+            this.getName = getName;
         }
 
         #region Live Update Events
@@ -396,6 +407,27 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public void ComputeCurves()
         {
+            if (WriteDetailsFile)
+            {
+                string name = getName();
+
+                if (name != null)
+                {
+                    RunCompute();
+                }
+                else
+                {
+                    MessageBox.Show("A name is required to compute.", "Name Required", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                RunCompute();
+            }
+        }
+
+        private void RunCompute()
+        {
             //we know that we have an impact area. We only allow one, so it will be the first one.
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
@@ -406,14 +438,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             FdaValidationResult vr = config.ValidateConfiguration();
             if (vr.IsValid)
             {
-                Rows.Clear();           
+                Rows.Clear();
                 List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
                 LoadComputedCurveRows(stageDamageFunctions);
 
                 if (Rows.Count > 0)
-                {                  
+                {
                     ShowChart = true;
-                    SelectedRow = Rows[0];                   
+                    SelectedRow = Rows[0];
                 }
                 else
                 {
@@ -425,7 +457,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 MessageBox.Show(vr.ErrorMessage, "Unable to Compute", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
         }
 
         private void LoadComputedCurveRows(List<UncertainPairedData> computedCurves)
@@ -455,13 +486,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             try
             {
                 ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
-
                 int seed = 1234;
                 Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
                 Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
                 Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
                 //these are the rows in the computed table
                 stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+                if(WriteDetailsFile)
+                {
+                    WriteDetailsCsvFile(scenarioStageDamage);
+                }
             }
             catch (Exception ex)
             {
@@ -469,7 +503,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             return stageDamageFunctions;
         }
-       
+
+        
+
         private void TableDataChanged(object sender, EventArgs e)
         {
             SelectedRow.ConstructionType = StageDamageConstructionType.COMPUTED_EDITED;
@@ -546,7 +582,26 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //add the event
                 TableWithPlot.WasModified += TableDataChanged;
             }
-        }      
+        }
+
+        private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage)
+        {
+            try
+            {
+                //todo: swap these "details" once the bug gets fixed. 
+                //List<string> details = scenarioStageDamage.ProduceStructureDetails();
+                List<string> details = new List<string>() { "1", "2", "3" };
+                string fileName = getName() + "StructureStageDamageDetails.csv";
+                string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
+                Directory.CreateDirectory(directory);
+                string path = directory + "\\" + fileName;
+                File.AppendAllLines(path, details);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while writing details file to path:\n" + ex.Message, "Details File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
     }
 }

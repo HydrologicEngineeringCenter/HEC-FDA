@@ -97,6 +97,17 @@ namespace HEC.FDA.Model.metrics
             MessageHub.Register(this);
 
         }
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double min, double binWidth)
+        {
+            _damageCategory = damageCategory;
+            _assetCategory = assetCategory;
+            _regionID = impactAreaID;
+            _convergenceCriteria = convergenceCriteria;
+            _consequenceHistogram = new Histogram(min,binWidth, _convergenceCriteria);
+            _isNull = false;
+            MessageHub.Register(this);
+
+        }
         /// <summary>
         /// This constructor can accept wither a Histogram or a ThreadsageInlineHistogram
         /// as such can be used for both compute types

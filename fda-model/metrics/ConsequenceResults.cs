@@ -36,8 +36,6 @@ namespace HEC.FDA.Model.metrics
         public ConsequenceResults()
         {
             _consequenceResultList = new List<ConsequenceResult>();
-            ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
-            _consequenceResultList.Add(dummyConsequenceResult);
             _isNull = false;
             MessageHub.Register(this);
         }

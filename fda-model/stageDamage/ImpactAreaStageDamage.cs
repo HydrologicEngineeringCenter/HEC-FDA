@@ -37,15 +37,15 @@ namespace HEC.FDA.Model.stageDamage
         private double _maxStageForArea;
         private ConvergenceCriteria convergenceCriteria;
 
-        private int seed = 1234;
-        private int _numInterpolatedStagesToCompute = 10;
-        private int _numExtrapolatedStagesToCompute = 50;
+        private int _numExtrapolatedStagesToCompute = 5;
+        private int _numInterpolatedStagesToCompute = 3;
 
         private string _HydraulicParentDirectory;
         #endregion
 
         #region Properties 
         public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory,
@@ -58,7 +58,6 @@ namespace HEC.FDA.Model.stageDamage
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
             _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
-            _inventory = inventory;
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
@@ -175,7 +174,7 @@ namespace HEC.FDA.Model.stageDamage
             //Collect damage for first part of function up to and including the stages at the lowest profile 
             for (int i = 0; i < _numExtrapolatedStagesToCompute; i++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
                     _inventory, WSEsParallelToIndexLocation);
                 consequenceDistributionResults.Add(damageOrdinate);
@@ -282,21 +281,23 @@ namespace HEC.FDA.Model.stageDamage
             List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
             return results;
         }
-        public float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
+        //this is public and static for testing
+        public static float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
         {
             float[] extrapolatedStages = new float[stagesAtStructuresHighestProfile.Length];
-            foreach (float structureStage in stagesAtStructuresHighestProfile)
+            for (int i = 0; i < stagesAtStructuresHighestProfile.Length; i++)
             {
-                extrapolatedStages[stepCount] = structureStage + upperInterval * stepCount;
+                extrapolatedStages[i] = stagesAtStructuresHighestProfile[i] + upperInterval * stepCount;
             }
             return extrapolatedStages;
         }
-        public float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i)
+        //this is public and static for testing
+        public static float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numInterpolatedStagesToCompute)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
             for(int j = 0; j<WSEsAtLowest.Length; j++)
             {
-                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (_numInterpolatedStagesToCompute - i);
+                extrapolatedStages[j] = WSEsAtLowest[j] - interval * (numInterpolatedStagesToCompute - i);
             }
             return extrapolatedStages;
         }
@@ -304,24 +305,47 @@ namespace HEC.FDA.Model.stageDamage
         //assume that the inventory has already been trimmed 
         public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses)
         {
+            ConsequenceDistributionResults returnValue = new ConsequenceDistributionResults();
             double lowerProb = 0.025;
             double upperProb = .975;
-            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(convergenceCriteria);
-            long iteration = 0;
-            while (consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb))
+            
+            bool resultsAreNotConverged = true;
+            long expectedIterations = convergenceCriteria.MaxIterations;
+            long iterations = convergenceCriteria.MinIterations;
+            List<ConsequenceResults> results = new List<ConsequenceResults>();
+            while (resultsAreNotConverged)
             {
-                DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
-                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
-                consequenceDistributionResults.AddConsequenceRealization(consequenceResults, iteration);
-                iteration++;
+                for (int i = 0; i < iterations; i++)
+                {
+                    DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
+                    ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
+                    results.Add(consequenceResults);
+                    //consequenceDistributionResults.AddConsequenceRealization(consequenceResults, i);
+                }
+                ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
+                resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);
+                if (resultsAreNotConverged)
+                {
+                    iterations = consequenceDistributionResults.RemainingIterations(upperProb, lowerProb);
+                } 
+                else
+                {
+                    //Report Message 
+                    iterations = 0;
+                    returnValue = consequenceDistributionResults;
+                    break;
+                }
             }
-            return consequenceDistributionResults;
+            return returnValue;
         }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
         }
-
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender, e);
+        }
         internal List<string> ProduceImpactAreaStructureDetails()
         {
             //this list will be the size of the number of structures + 1 where the first string is the header

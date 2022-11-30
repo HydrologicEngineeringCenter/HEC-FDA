@@ -16,6 +16,7 @@ namespace HEC.FDA.ViewModel.Storage
         private const string IMPACT_AREA_DIRECTORY = "Impact Areas";
         private const string INVENTORY_DIRECTORY = "Structure Inventories";
         private const string INDEX_POINTS_DIRECTORY = "Index Points";
+        private const string STRUCTURE_STAGE_DAMAGE_DETAILS = "StructureStageDamageDetails";
 
         private static string _ProjectDirectory = "";
         #endregion
@@ -107,7 +108,12 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory + "\\" + INDEX_POINTS_DIRECTORY; }
         }
- 
+        public string GetStructureStageDamageDetailsDirectory
+        {
+            get { return _ProjectDirectory + "\\" + STRUCTURE_STAGE_DAMAGE_DETAILS; }
+        }
+
+
 
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 

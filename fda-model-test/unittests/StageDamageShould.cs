@@ -144,7 +144,8 @@ namespace HEC.FDA.ModelTest.unittests
                 structures.Add(structure);
             }
             List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType, commercialOccupancyType };
-            Inventory inventory = new Inventory(structures, occupancyTypesList, new PolygonFeatureLayer(), "header");
+
+            Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
             return inventory;
         }
 
@@ -165,6 +166,16 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedLength, structureDetails.Count);
         }
 
+
+
+        [Theory]
+        [InlineData(new float[] {5,4,3}, new float[] {10,9,8})]
+        public void ExtrapolateFromAboveShould(float[] input, float[] expectedResult)
+        {
+            float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromAboveAtIndexLocation(input, 1, 5);
+            Assert.Equal(expectedResult, actualResult);
+        }
+
         [Fact]
         public void ProduceReasonableResults()
         {
@@ -176,6 +187,15 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> results = scenarioStageDamage.Compute(new RandomProvider(1234), new ConvergenceCriteria());
 
             Assert.NotNull(results);
+
+        }
+
+        [Theory]
+        [InlineData(new float[] { 500, 400, 300 }, new float[] { 455, 355, 255 })]
+        public void ExtrapolateFromBelowShould(float[] input, float[] expectedResult)
+        {
+            float[] actualResult = ImpactAreaStageDamage.ExtrapolateFromBelowStagesAtIndexLocation(input, 1, 5,50);
+            Assert.Equal(expectedResult, actualResult);
 
         }
     }

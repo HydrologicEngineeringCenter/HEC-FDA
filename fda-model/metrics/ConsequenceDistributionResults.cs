@@ -7,6 +7,8 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
+using System;
+using System.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -17,6 +19,7 @@ namespace HEC.FDA.Model.metrics
         private static string CONTENT_ASSET_CATEGORY = "Content";
         private static string OTHER_ASSET_CATEGORY = "Other";
         private static string VEHICLE_ASSET_CATEGRY = "Vehicle";
+        private static int BIN_WIDTH_DENOMINATOR = 100;
         private int _alternativeID;
         private ConvergenceCriteria _ConvergenceCriteria;
         private List<ConsequenceDistributionResult> _consequenceResultList;
@@ -78,6 +81,7 @@ namespace HEC.FDA.Model.metrics
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = false;
             _ConvergenceCriteria = convergenceCriteria;
+            MessageHub.Register(this);
         }
         private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
@@ -85,6 +89,18 @@ namespace HEC.FDA.Model.metrics
             _isNull = false;
             MessageHub.Register(this);
 
+        }
+
+        public ConsequenceDistributionResults(List<ConsequenceResults> results, ConvergenceCriteria convergenceCriteria)
+        {
+            _ConvergenceCriteria = convergenceCriteria;
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            _isNull = false;
+            MessageHub.Register(this);
+            foreach (ConsequenceResults consequenceResults in results)
+            {
+                AddConsequenceRealization(consequenceResults,0);
+            }
         }
         #endregion
 
@@ -129,7 +145,15 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistributionResult structureConsequenceDistributionResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (structureConsequenceDistributionResult.IsNull)
             {
-                ConsequenceDistributionResult newStructureDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, _ConvergenceCriteria, impactAreaID);
+                //HACK: hacking in bin width 
+                //TODO: Get rid of this terrible coding
+                double binWidth = 500;
+                if(consequenceRealization > 0)
+                {
+                    binWidth = consequenceRealization / BIN_WIDTH_DENOMINATOR;
+                }
+                double min = consequenceRealization;
+                ConsequenceDistributionResult newStructureDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, _ConvergenceCriteria, impactAreaID, min, binWidth);
                 newStructureDamageResult.AddConsequenceRealization(consequenceRealization, iteration);
                 _consequenceResultList.Add(newStructureDamageResult);
             }
@@ -286,16 +310,17 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>
         public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
         {
-            foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
+            //foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
+            for (int i = 0; i < _consequenceResultList.Count; i++)
             {
                 //The impact area should always be equal because a consequence result reflects 1 impact area and a consequence resultS reflects 1 impact area   
-                if (damageResult.RegionID.Equals(impactAreaID))
+                if (_consequenceResultList[i].RegionID.Equals(impactAreaID))
                 {
-                    if (damageResult.DamageCategory.Equals(damageCategory))
+                    if (_consequenceResultList[i].DamageCategory.Equals(damageCategory))
                     {
-                        if (damageResult.AssetCategory.Equals(assetCategory))
+                        if (_consequenceResultList[i].AssetCategory.Equals(assetCategory))
                         {
-                            return damageResult;
+                            return (_consequenceResultList[i]);
                         }
                     }
                 }
@@ -412,6 +437,24 @@ namespace HEC.FDA.Model.metrics
             }
             return aggregateHistogram;
 
+        }
+
+        internal long RemainingIterations(double upperProb, double lowerProb)
+        {
+            List<long> stageDamageIterationsRemaining = new List<long>();
+
+                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+                {
+                    if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
+                    {
+                        stageDamageIterationsRemaining.Add(0);
+                    }
+                    else
+                    {
+                        stageDamageIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperProb, lowerProb));
+                    }
+                }
+            return stageDamageIterationsRemaining.Max();
         }
 
         public bool ResultsAreConverged(double upperConfidenceLimit, double lowerConfidenceLimit)

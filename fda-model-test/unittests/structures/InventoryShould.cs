@@ -44,7 +44,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         {
             Inventory inv = GetTestInventory(false);
             PointM pnt = inv.GetPointMs()[0];
-            int actual = Inventory.GetImpactAreaFID(pnt, pathToIAShapefile);
+            int actual = inv.GetImpactAreaFID(pnt);
             Assert.Equal(0, actual);
         }
         [Fact]
