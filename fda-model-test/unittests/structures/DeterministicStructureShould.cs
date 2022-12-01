@@ -25,9 +25,9 @@ namespace HEC.FDA.ModelTest.unittests.structures
 
 
         [Theory]
-        [InlineData(100, 0, 0, 999)]
-        [InlineData(104, 400, 200, 4)]
-        [InlineData(108, 800, 400, 8)]
+        [InlineData(100, 0, 0, -999)]
+        [InlineData(104, 400, 200, 4)]//begDamDept = depthabovefoundationHeight -- positive damages
+        [InlineData(108, 800, 400, 8)]//begDamDept = depthabovefoundationHeight -- positive damages
         public void DeterministicStructureShouldComputeDamageCorrectly(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage, double beginningDamageDepth)
         {
             DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
@@ -37,9 +37,31 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
         }
 
+        [Theory]
+        [InlineData(100, 0, 0, -999)]
+        [InlineData(104, 0, 0, 4.1)]//begDamDept > depthabovefoundationHeight -- zero damages
+        [InlineData(108, 0, 0, 8.1)]//begDamDept > depthabovefoundationHeight -- zero damages
+        public void DeterministicStructureShouldComputeDamageCorrectly2(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage, double beginningDamageDepth)
+        {
+            DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
 
+            ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation);
+            Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
+            Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
+        }
 
+        [Theory]
+        [InlineData(100, 0, 0, -999)]
+        [InlineData(104, 400, 200, 3.9)]//begDamDept < depthabovefoundationHeight -- positive damages
+        [InlineData(108, 800, 400, 7.9)]//begDamDept < depthabovefoundationHeight -- positive damages
+        public void DeterministicStructureShouldComputeDamageCorrectly3(float waterSurfaceElevation, double expectedStructureDamage, double expectedContentDamage, double beginningDamageDepth)
+        {
+            DeterministicStructure deterministicStructure = new DeterministicStructure(structureID, impactAreaID, sampledStructureParameters, beginningDamageDepth);
 
+            ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation);
+            Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
+            Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
+        }
 
 
 
