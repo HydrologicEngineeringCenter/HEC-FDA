@@ -376,12 +376,20 @@ namespace HEC.FDA.Model.stageDamage
                 //that will go in structureDetails[0]
 
                 structureDetails[0] += $"{assetType}{hydraulicProfile.Probability}AEP,";
+                List<ConsequenceResult> consequenceResultList = new List<ConsequenceResult>();
+
+                for (int i = 0; i < stagesAtStructures.Length; i++)
+                {
+                    ConsequenceResult consequenceResult = deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]);
+                    consequenceResultList.Add(consequenceResult);
+                }
 
                 if (assetType == STRUCTURE_DAMAGE)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
-                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).StructureDamage},";
+                        double structureDamage = consequenceResultList[i].StructureDamage;
+                        structureDetails[i + 1] += $"{structureDamage},";
                     }
 
                 } 
@@ -389,7 +397,8 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
-                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).ContentDamage},";
+                        double contentDamage = consequenceResultList[i].ContentDamage;
+                        structureDetails[i + 1] += $"{contentDamage},";
                     }
 
                 } 
@@ -397,7 +406,8 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
-                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).VehicleDamage},";
+                        double vehicleDamage = consequenceResultList[i].VehicleDamage;
+                        structureDetails[i + 1] += $"{vehicleDamage},";
                     }
 
                 } 
@@ -405,7 +415,8 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
-                        structureDetails[i + 1] += $"{deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]).OtherDamage},";
+                        double otherDamage = consequenceResultList[i].OtherDamage;
+                        structureDetails[i + 1] += $"{otherDamage},";
                     }
                 }
 
@@ -419,7 +430,7 @@ namespace HEC.FDA.Model.stageDamage
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
-                structureDetails[0] += $"StageOf{hydraulicProfile.Probability}AEP,";
+                structureDetails[0] += $"DepthAboveFirstFloorOf{hydraulicProfile.Probability}AEP,";
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
                     structureDetails[i + 1] += $"{stagesAtStructures[i] - deterministicInventory.Inventory[i].FirstFloorElevation},";
