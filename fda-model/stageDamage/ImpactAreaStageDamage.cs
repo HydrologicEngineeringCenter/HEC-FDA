@@ -49,7 +49,7 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory,
-            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null)
+            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
@@ -57,7 +57,13 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
+            if (usingMockData)
+            {
+                _inventory = inventory;
+            } else
+            {
             _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
+            }
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
