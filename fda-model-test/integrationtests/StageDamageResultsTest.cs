@@ -19,7 +19,7 @@ namespace HEC.FDA.ModelTest.integrationtests
     {
         //TODO: This test class is incomplete 
         private static string IANameColumnHeader = "Name";
-        private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
+        private static string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
         private static string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private static string pathToTerrain = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";//Not being used?
 
@@ -49,10 +49,102 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles.Cast<IHydraulicProfile>().ToList(), hydraulicDataSource);
 
         private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        
+        private static double[] EDU1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static double[] EDU1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static IDistribution[] EDU1StructPercentDamages = new IDistribution[]
+        {
+            new Triangular(0,0, 0),
+            new Triangular(0, .2, .6),
+            new Triangular(0, .3, 1),
+            new Triangular(0, .6, 2.3),
+            new Triangular(5, 9.9, 16.3),
+            new Triangular(8.1, 14.2, 20),
+            new Triangular(11.4, 18.1, 25.7),
+            new Triangular(16.9, 23.9, 32.9),
+            new Triangular(22.5, 30.2, 38.2),
+            new Triangular(29.8, 36.9, 44.7),
+            new Triangular(32.6, 39.4, 46),
+            new Triangular(39, 43.9, 51.3),
+            new Triangular(40.5, 45.8, 52.9),
+            new Triangular(43.2, 48.4, 56.3),
+            new Triangular(45, 51.1, 60),
+            new Triangular(46.4, 52.8, 62.4)
+        };
 
-        private static double[] IND1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        private static double[] IND1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        private static IDistribution[] IND1StructPercentDamages = new IDistribution[]
+        private static IDistribution[] EDU1ContPercentDamages = new IDistribution[]
+        {
+            new Triangular(0,0, 0),
+            new Triangular(9.4, 14.3, 19.6),
+            new Triangular(16.7, 21.7, 29.3),
+            new Triangular(19.7, 26.6, 34.3),
+            new Triangular(23.4, 30.4, 37.7),
+            new Triangular(31.4, 39, 45.4),
+            new Triangular(38, 45, 50.7),
+            new Triangular(43.3, 47.9, 52.7),
+            new Triangular(48.6, 51.9, 55.4),
+            new Triangular(52.1, 55.7, 60.1),
+            new Triangular(55.7, 59.3, 61.7),
+            new Triangular(57.3, 60.6, 64.9),
+            new Triangular(58.6, 63.4, 67.7)
+        };
+
+        private static CurveMetaData EDU1metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+        private static UncertainPairedData _EDU1StructureDepthPercentDamageFunction = new UncertainPairedData(EDU1StructDepths, EDU1StructPercentDamages, EDU1metaData);
+        private static UncertainPairedData _EDU1ContentDepthPercentDamageFunction = new UncertainPairedData(EDU1ContDepths, EDU1ContPercentDamages, EDU1metaData);
+        private static FirstFloorElevationUncertainty EDU1firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+        private static ValueUncertainty _EDU1structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 30.77, 38.46);
+        private static ValueRatioWithUncertainty _EDU1contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 5, 7.3, 10.5);//T 7.3 2.3 3.2
+
+        private static double[] GOV1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static double[] GOV1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static IDistribution[] GOV1StructPercentDamages = new IDistribution[]
+        {
+            new Triangular(0,0, 0),
+            new Triangular(0, .5, 1.2),
+            new Triangular(0, .6, 1.4),
+            new Triangular(0, 1.1, 3.3),
+            new Triangular(3.5, 7.1, 12.9),
+            new Triangular(4.9, 10.5, 15.9),
+            new Triangular(6.9, 14, 21),
+            new Triangular(10.8, 17.3, 25.9),
+            new Triangular(15.1, 22.3, 31),
+            new Triangular(19.6, 28.2, 38.5),
+            new Triangular(22, 32.1, 42.6),
+            new Triangular(27.1, 35.5, 45.7),
+            new Triangular(30.3, 38.9, 50.5),
+            new Triangular(35.1, 42.7, 54.4),
+            new Triangular(37, 45.7, 57.1),
+            new Triangular(38.6, 47.1, 58.6)
+        };
+
+        private static IDistribution[] GOV1ContPercentDamages = new IDistribution[]
+        {
+            new Triangular(0,0, 0),
+            new Triangular(5, 5, 10),
+            new Triangular(7, 15, 25),
+            new Triangular(10, 20, 30),
+            new Triangular(15, 25, 35),
+            new Triangular(30, 40, 50),
+            new Triangular(44, 50, 60),
+            new Triangular(50, 58, 72),
+            new Triangular(50, 65, 80),
+            new Triangular(70, 78, 90),
+            new Triangular(80, 89.9, 100),
+            new Triangular(80, 90, 100),
+            new Triangular(86, 92, 100)
+        };
+
+        private static CurveMetaData GOV1metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+        private static UncertainPairedData _GOV1StructureDepthPercentDamageFunction = new UncertainPairedData(GOV1StructDepths, GOV1StructPercentDamages, GOV1metaData);
+        private static UncertainPairedData _GOV1ContentDepthPercentDamageFunction = new UncertainPairedData(GOV1ContDepths, GOV1ContPercentDamages, GOV1metaData);
+        private static FirstFloorElevationUncertainty GOV1firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+        private static ValueUncertainty _GOV1structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 30.77, 38.45);
+        private static ValueRatioWithUncertainty _GOV1contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 75, 88, 92.2);//T 88 13 4.2
+
+        private static double[] REL1StructDepths = new double[] { -1.1, -1, -.5, 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static double[] REL1ContDepths = new double[] { 0, .5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private static IDistribution[] REL1StructPercentDamages = new IDistribution[]
         {
             new Triangular(0,0, 0),
             new Triangular(0, .4, 1.2),
@@ -72,7 +164,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Triangular(38.7, 51.7, 62.2)
         };
 
-        private static IDistribution[] IND1ContPercentDamages = new IDistribution[]
+        private static IDistribution[] REL1ContPercentDamages = new IDistribution[]
         {
             new Triangular(0,0, 0),
             new Triangular(7.1, 13.4, 21.1),
@@ -89,425 +181,421 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Triangular(88.1, 93.6, 99.3)
         };
 
-        private static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
-        private static UncertainPairedData _StructureDepthPercentDamageFunction = new UncertainPairedData(IND1StructDepths, IND1StructPercentDamages, metaData);
-        private static UncertainPairedData _ContentDepthPercentDamageFunction = new UncertainPairedData(IND1ContDepths, IND1ContPercentDamages, metaData);
-        private static FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
-        private static ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 30.77, 38.45);
-        private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 36.2, 46.8, 53.5);//T 46.8 10.6 6.7
-        private static int seed = 1234;
-        private static RandomProvider randomProvider = new RandomProvider(seed);
-        private static string name = "IND1";
-        private static string damageCategory = "IND";
+        private static CurveMetaData REL1metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+        private static UncertainPairedData _REL1StructureDepthPercentDamageFunction = new UncertainPairedData(REL1StructDepths, REL1StructPercentDamages, REL1metaData);
+        private static UncertainPairedData _REL1ContentDepthPercentDamageFunction = new UncertainPairedData(REL1ContDepths, REL1ContPercentDamages, REL1metaData);
+        private static FirstFloorElevationUncertainty REL1firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+        private static ValueUncertainty _REL1structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 30.77, 38.46);
+        private static ValueRatioWithUncertainty _REL1contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 36.2, 46.8, 53.5);//T 46.8 10.6 6.7
 
         private static OccupancyType occupancyTypeAuto = OccupancyType.builder()
             .withName("Auto")
             .withDamageCategory("Auto")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM1 = OccupancyType.builder()
             .withName("COM1")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM10 = OccupancyType.builder()
             .withName("COM10")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM2 = OccupancyType.builder()
             .withName("COM2")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM3 = OccupancyType.builder()
             .withName("COM3")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM4 = OccupancyType.builder()
             .withName("COM4")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM5 = OccupancyType.builder()
             .withName("COM5")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM6 = OccupancyType.builder()
             .withName("COM6")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM7 = OccupancyType.builder()
             .withName("COM7")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM8 = OccupancyType.builder()
             .withName("COM8")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeCOM9 = OccupancyType.builder()
             .withName("COM9")
             .withDamageCategory("COM")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeEDU1 = OccupancyType.builder()
             .withName("EDU1")
             .withDamageCategory("PUB")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeEDU2 = OccupancyType.builder()
             .withName("EDU2")
             .withDamageCategory("PUB")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeGOV1 = OccupancyType.builder()
             .withName("GOV1")
-            .withDamageCategory("GOV")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("PUB")
+            .withStructureDepthPercentDamage(_GOV1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_GOV1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(GOV1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_GOV1structureValueUncertainty)
+            .withContentToStructureValueRatio(_GOV1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeGOV2 = OccupancyType.builder()
             .withName("GOV2")
-            .withDamageCategory("GOV")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("PUB")
+            .withStructureDepthPercentDamage(_GOV1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_GOV1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(GOV1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_GOV1structureValueUncertainty)
+            .withContentToStructureValueRatio(_GOV1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND1 = OccupancyType.builder()
-            .withName(name)
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withName("IND1")
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND2 = OccupancyType.builder()
             .withName("IND2")
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND3 = OccupancyType.builder()
             .withName("IND3")
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND4 = OccupancyType.builder()
             .withName("IND4")
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND5 = OccupancyType.builder()
             .withName("IND5")
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeIND6 = OccupancyType.builder()
             .withName("IND6")
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withDamageCategory("IND")
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeREL1 = OccupancyType.builder()
             .withName("REL1")
             .withDamageCategory("PUB")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_REL1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_REL1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(REL1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_REL1structureValueUncertainty)
+            .withContentToStructureValueRatio(_REL1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES11SNB = OccupancyType.builder()
             .withName("RES1-1SNB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES11SWB = OccupancyType.builder()
             .withName("RES1-1SWB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES12SNB = OccupancyType.builder()
             .withName("RES1-2SNB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES12SWB = OccupancyType.builder()
             .withName("RES1-2SWB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES13SNB = OccupancyType.builder()
             .withName("RES1-3SNB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES13SWB = OccupancyType.builder()
             .withName("RES1-3SWB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES1SLNB = OccupancyType.builder()
             .withName("RES1-SLNB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES1SLWB = OccupancyType.builder()
             .withName("RES1-SLWB")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES2 = OccupancyType.builder()
             .withName("RES2")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3 = OccupancyType.builder()
             .withName("RES3")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3A = OccupancyType.builder()
             .withName("RES3A")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3B = OccupancyType.builder()
             .withName("RES3B")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3C = OccupancyType.builder()
             .withName("RES3C")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3D = OccupancyType.builder()
             .withName("RES3D")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3E = OccupancyType.builder()
             .withName("RES3E")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES3F = OccupancyType.builder()
             .withName("RES3F")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES4 = OccupancyType.builder()
             .withName("RES4")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES5 = OccupancyType.builder()
             .withName("RES5")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static OccupancyType occupancyTypeRES6 = OccupancyType.builder()
             .withName("RES6")
             .withDamageCategory("RES")
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
+            .withStructureDepthPercentDamage(_EDU1StructureDepthPercentDamageFunction)
+            .withContentDepthPercentDamage(_EDU1ContentDepthPercentDamageFunction)
+            .withFirstFloorElevationUncertainty(EDU1firstFloorElevationUncertainty)
+            .withStructureValueUncertainty(_EDU1structureValueUncertainty)
+            .withContentToStructureValueRatio(_EDU1contentToStructureValueRatio)
             .build();
 
         private static List<OccupancyType> occTypes = new List<OccupancyType>() 
@@ -533,6 +621,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             occupancyTypeEDU2,
             occupancyTypeGOV1,
             occupancyTypeGOV2,
+            occupancyTypeREL1,
             occupancyTypeRES11SNB,
             occupancyTypeRES11SWB,
             occupancyTypeRES12SNB,
@@ -593,9 +682,11 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
 
-        //[Fact] based on what I've read, think I need Theory here and not Fact
+        private static int seed = 1234;
+        private static RandomProvider randomProvider = new RandomProvider(seed);
+
         [Theory]
-        [InlineData(1234, 3452605.18)]//this is mean damages at stage of 940ft for IND damcat
+        [InlineData(1234, 12704029.1)]//this is mean damages at stage of 940ft for PUB damcat
         public void StageDamageShould(int seed, double expectedDamage) 
         {
 
@@ -612,7 +703,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
                 if (currentUncertainPairedData.ImpactAreaID.Equals(impactAreaID))
                 {
-                    if (currentUncertainPairedData.DamageCategory.Equals(damageCategory))
+                    if (currentUncertainPairedData.DamageCategory.Equals("PUB"))
                     {
                         IPairedData stageDamagePairedData = UncertainPairedData.ConvertToPairedDataAtMeans(currentUncertainPairedData);
                         actualDamageAtGivenStage += stageDamagePairedData.f(givenStage);

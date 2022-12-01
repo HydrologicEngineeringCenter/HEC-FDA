@@ -15,7 +15,7 @@ namespace HEC.FDA.Model.structures
         public string ContentValue { get; } = "val_cont";
         public string OtherValue { get; } = "val_other";
         public string VehicalValue { get; } = "val_vehic";
-        public string BeginningDamageDepth { get; } = "begDamDepth";
+        public string BeginningDamageDepth { get; } = "begDamDep";
         public string YearInConstruction { get; } = "yrbuilt";
         public string CBFips { get; } = "cbfips";
         public string NumberOfStructures { get; } = "num_structs";
