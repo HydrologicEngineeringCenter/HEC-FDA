@@ -47,9 +47,9 @@ namespace HEC.FDA.Model.structures
 
 
         }
-        public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype)
+        public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype, bool computeIsDeterministic)
         {
-            SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue);
+            SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue, computeIsDeterministic);
             //load up the deterministic structure
             return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters);
         }

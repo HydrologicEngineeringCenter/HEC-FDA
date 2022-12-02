@@ -25,30 +25,36 @@ namespace HEC.FDA.Model.structures
             _feetAboveInventoryValue = maximum;
         }
 
-        public double Sample(double inventoriedFirstFloorElevation, double probability)
+        public double Sample(double inventoriedFirstFloorElevation, double probability, bool computeIsDeterministic)
         {
             double sampledFirstFloorElevation;
-            switch (_distributionType)
+            if (computeIsDeterministic)
             {
-                case IDistributionEnum.Normal:
-                    Normal normal = new Normal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
-                    sampledFirstFloorElevation = normal.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.LogNormal:
-                    LogNormal logNormal = new LogNormal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
-                    sampledFirstFloorElevation = logNormal.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.Triangular:
-                    Triangular triangular = new Triangular(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
-                    sampledFirstFloorElevation = triangular.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.Uniform:
-                    Uniform uniform = new Uniform(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
-                    sampledFirstFloorElevation = uniform.InverseCDF(probability);
-                    break;
-                default:
-                    sampledFirstFloorElevation = inventoriedFirstFloorElevation;
-                    break;
+                sampledFirstFloorElevation = inventoriedFirstFloorElevation;
+            } else
+            {
+                switch (_distributionType)
+                {
+                    case IDistributionEnum.Normal:
+                        Normal normal = new Normal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
+                        sampledFirstFloorElevation = normal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        LogNormal logNormal = new LogNormal(inventoriedFirstFloorElevation, _standardDeviationFromOrFeetBelowInventoryValue);
+                        sampledFirstFloorElevation = logNormal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Triangular triangular = new Triangular(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
+                        sampledFirstFloorElevation = triangular.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new Uniform(inventoriedFirstFloorElevation - _standardDeviationFromOrFeetBelowInventoryValue, inventoriedFirstFloorElevation + _feetAboveInventoryValue);
+                        sampledFirstFloorElevation = uniform.InverseCDF(probability);
+                        break;
+                    default:
+                        sampledFirstFloorElevation = inventoriedFirstFloorElevation;
+                        break;
+                }
             }
             return sampledFirstFloorElevation;
         }

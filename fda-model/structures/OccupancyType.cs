@@ -93,11 +93,12 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
         #region Methods
-        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999)
+        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999, bool computeIsDeterministic = false)
         {
             //damage functions
-            IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+            IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             //HACK consider adding empty constructor to PairedData
+            //This hack is here because we need to create these functions before assigning their value;
             IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
             //HACK
             IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
@@ -105,20 +106,20 @@ namespace HEC.FDA.Model.structures
             IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters
-            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom());
-            double structureValueSampled = _structureValueError.Sample(structureValue, randomNumbers.NextRandom());
+            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom(), computeIsDeterministic);
+            double structureValueSampled = _structureValueError.Sample(structureValue, randomNumbers.NextRandom(), computeIsDeterministic);
             double contentValueSampled = 0;
             if (_computeContentDamage)
             {
                 if (_useContentToStructureValueRatio)
                 {
-                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(randomNumbers.NextRandom());
+                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 }
                 else
                 {
-                    contentValueSampled = _contentValueError.Sample(contentValue, randomNumbers.NextRandom());
+                    contentValueSampled = _contentValueError.Sample(contentValue, randomNumbers.NextRandom(), computeIsDeterministic);
                 }
-                contentDamagePairedData = _contentDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+                contentDamagePairedData = _contentDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
             else
             {
@@ -129,13 +130,13 @@ namespace HEC.FDA.Model.structures
             {
                 if (_useOtherToStructureValueRatio)
                 {
-                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(randomNumbers.NextRandom());
+                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 }
                 else
                 {
-                    otherValueSampled = _otherValueError.Sample(otherValue, randomNumbers.NextRandom());
+                    otherValueSampled = _otherValueError.Sample(otherValue, randomNumbers.NextRandom(), computeIsDeterministic);
                 }
-                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
             else
             {
@@ -144,8 +145,8 @@ namespace HEC.FDA.Model.structures
             double vehicleValueSampled = 0;
             if (_computeVehicleDamage)
             {
-                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, randomNumbers.NextRandom());
-                vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom());
+                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, randomNumbers.NextRandom(), computeIsDeterministic);
+                vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
             else
             {

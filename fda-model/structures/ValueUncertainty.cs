@@ -28,9 +28,16 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
-        public double Sample(double inventoryValue, double probability)
+        public double Sample(double inventoryValue, double probability, bool computeIsDeterministic)
         {
             double sampledValue;
+            if (computeIsDeterministic)
+            {
+                sampledValue = inventoryValue;
+
+            } 
+            else
+            {
             switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
@@ -59,6 +66,7 @@ namespace HEC.FDA.Model.structures
                 default:
                     sampledValue = inventoryValue;
                     break;
+            }
             }
             //do not allow negative inventory values 
             if (sampledValue < 0)

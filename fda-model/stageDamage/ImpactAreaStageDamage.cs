@@ -356,7 +356,7 @@ namespace HEC.FDA.Model.stageDamage
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
             List<string> structureDetails = _inventory.StructureDetails();
-            DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider());
+            DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider(), computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
             DepthsToStrings(deterministicInventory, ref structureDetails);
             DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE, ref structureDetails);
