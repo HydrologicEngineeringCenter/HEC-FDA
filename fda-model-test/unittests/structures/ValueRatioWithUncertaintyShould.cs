@@ -17,7 +17,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ValueRatioWithUncertaintyShouldSampleCorrectly(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max, double probability, double expected)
         {
             ValueRatioWithUncertainty valueRatioWithUncertainty = new ValueRatioWithUncertainty(distributionEnum, standardDeviationOrMin, centralTendency, max);
-            double actual = valueRatioWithUncertainty.Sample(probability);
+            double actual = valueRatioWithUncertainty.Sample(probability, computeIsDeterministic: false);
             Assert.Equal(expected, actual, 1);
         }
     }

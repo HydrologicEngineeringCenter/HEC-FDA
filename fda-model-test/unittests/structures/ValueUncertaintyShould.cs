@@ -18,7 +18,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ValueUncertaintyShouldSampleCorrectly(IDistributionEnum distributionEnum, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax, double inventoryValue, double probability, double expected)
         {
             ValueUncertainty valueUncertainty = new ValueUncertainty(distributionEnum, percentOfInventoryValueStandardDeviationOrMin, percentOfInventoryMax);
-            double actual = valueUncertainty.Sample(inventoryValue, probability);
+            double actual = valueUncertainty.Sample(inventoryValue, probability, computeIsDeterministic: false);
             Assert.Equal(expected, actual, 1);
         }
     }

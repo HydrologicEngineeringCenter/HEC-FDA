@@ -16,7 +16,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void FirstFloorElevationShouldSampleCorrectly(IDistributionEnum distributionEnum, double standardDeviationOrMinimum, double maximum, double inventoriedFirstFloorElevation, double probability, double expected)
         {
             FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(distributionEnum, standardDeviationOrMinimum, maximum);
-            double actual = firstFloorElevationUncertainty.Sample(inventoriedFirstFloorElevation, probability);
+            double actual = firstFloorElevationUncertainty.Sample(inventoriedFirstFloorElevation, probability, computeIsDeterministic: false);
             Assert.Equal(expected, actual, 1);
         }
     }
