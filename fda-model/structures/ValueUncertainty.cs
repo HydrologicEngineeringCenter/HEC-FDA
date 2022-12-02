@@ -34,25 +34,25 @@ namespace HEC.FDA.Model.structures
             switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
-                    double standardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;
+                    double standardDeviation = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
                     Normal normal = new Normal(inventoryValue, standardDeviation);
                     sampledValue = normal.InverseCDF(probability);
                     break;
 
                 case IDistributionEnum.LogNormal:
-                    double logStandardDeviation = _percentOfInventoryValueStandardDeviationOrMin * inventoryValue;
+                    double logStandardDeviation = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
                     LogNormal logNormal = new LogNormal(inventoryValue, logStandardDeviation);
                     sampledValue = logNormal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Triangular:
-                    double min = (1 - _percentOfInventoryValueStandardDeviationOrMin) * inventoryValue;
-                    double max = (1 + _percentOfInventoryValueMax) * inventoryValue;
+                    double min = (1 - (_percentOfInventoryValueStandardDeviationOrMin/100)) * inventoryValue;
+                    double max = (1 + (_percentOfInventoryValueMax/100)) * inventoryValue;
                     Triangular triangular = new Triangular(min, inventoryValue, max);
                     sampledValue = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
-                    double minUniform = (1 - _percentOfInventoryValueStandardDeviationOrMin) * inventoryValue;
-                    double maxUniform = (1 + _percentOfInventoryValueMax) * inventoryValue;
+                    double minUniform = (1 - (_percentOfInventoryValueStandardDeviationOrMin/100)) * inventoryValue;
+                    double maxUniform = (1 + (_percentOfInventoryValueMax/100)) * inventoryValue;
                     Uniform uniform = new Uniform(minUniform, maxUniform);
                     sampledValue = uniform.InverseCDF(probability);
                     break;
