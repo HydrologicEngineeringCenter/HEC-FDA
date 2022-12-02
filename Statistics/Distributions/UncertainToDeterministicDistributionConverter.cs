@@ -43,6 +43,10 @@ namespace Statistics.Distributions
                     double unloggedNormalMean = Math.Exp(logNormalMean);
                     returnedDistribution = new Deterministic(unloggedNormalMean);
                     break;
+                case IDistributionEnum.IHistogram:
+                    double mean = ((Histograms.IHistogram)iDistribution).Mean;
+                    returnedDistribution = new Deterministic(mean);
+                    break;
             } 
             return returnedDistribution;
         } 
