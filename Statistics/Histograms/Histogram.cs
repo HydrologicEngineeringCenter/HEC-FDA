@@ -31,6 +31,7 @@ namespace Statistics.Histograms
         #endregion
         #region Properties
         public event MessageReportedEventHandler MessageReport;
+        //TODO: we need a way to test for this 
         public bool HistogramIsZeroValued
         {
             get
@@ -496,6 +497,10 @@ namespace Statistics.Histograms
                 if (_HistogramIsZeroValued)
                 {
                     return 0.0;
+                }
+                if (HistogramIsSingleValued)
+                {
+                    return Mean;
                 }
                 if (_SampleSize == 0)
                 {
