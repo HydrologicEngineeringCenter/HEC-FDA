@@ -152,12 +152,24 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        public IPairedData SamplePairedData(double probability)
+        public IPairedData SamplePairedData(double probability, bool retrieveDeterministicRepresentation = false)
         {
             double[] y = new double[_yvals.Length];
-            for (int i = 0; i < _xvals.Length; i++)
+            if (retrieveDeterministicRepresentation)
             {
-                y[i] = _yvals[i].InverseCDF(probability);
+                for (int i = 0; i < _xvals.Length; i++)
+                {
+                    Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(_yvals[i]);
+                    y[i] = (deterministic.Value);
+                }
+
+            } else
+            {
+                for (int i = 0; i < _xvals.Length; i++)
+                {
+                    y[i] = _yvals[i].InverseCDF(probability);
+                }
+
             }
             PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
             pairedData.Validate();

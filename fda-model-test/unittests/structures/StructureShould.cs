@@ -51,7 +51,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [InlineData(1000, 100, 900, new double[] { 0, 10, 20, 30, 40, 50 })]
         public void StructureShouldSampleCorrectly(double expectedStructureValue, double expectedFirstFloorElevation, double expectedContentValue, double[] expectedPercentDamage)
         {
-            DeterministicStructure deterministicStructure = structure.Sample(medianRandomProvider, occupancyType);
+            DeterministicStructure deterministicStructure = structure.Sample(medianRandomProvider, occupancyType, computeIsDeterministic: true);
             Assert.Equal(expectedStructureValue, deterministicStructure.StructValueSample);
             Assert.Equal(expectedFirstFloorElevation, deterministicStructure.FirstFloorElevation);
             Assert.Equal(expectedContentValue, deterministicStructure.ContentValueSample);

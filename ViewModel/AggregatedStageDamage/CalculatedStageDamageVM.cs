@@ -496,7 +496,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     WriteDetailsCsvFile(scenarioStageDamage);
                 }
-            }
+        }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -588,20 +588,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             try
             {
-                //todo: swap these "details" once the bug gets fixed. 
-                //List<string> details = scenarioStageDamage.ProduceStructureDetails();
-                List<string> details = new List<string>() { "1", "2", "3" };
+                List<string> details = scenarioStageDamage.ProduceStructureDetails();
                 string fileName = getName() + "StructureStageDamageDetails.csv";
                 string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
                 Directory.CreateDirectory(directory);
                 string path = directory + "\\" + fileName;
                 File.AppendAllLines(path, details);
-            }
+        }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occured while writing details file to path:\n" + ex.Message, "Details File Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
+}
 
     }
 }

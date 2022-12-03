@@ -37,30 +37,53 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
-        public double Sample(double probability)
+
+        public double Sample(double probability, bool computeIsDeterministic)
         {
             double sampledValueRatio;
-            switch (_distributionType)
+            if (computeIsDeterministic)
             {
-                case IDistributionEnum.Normal:
-                    Normal normal = new Normal(_centralTendency, _standardDeviationOrMin);
-                    sampledValueRatio = normal.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.LogNormal:
-                    LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
-                    sampledValueRatio = logNormal.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.Triangular:
-                    Triangular triangular = new Triangular(_standardDeviationOrMin, _centralTendency, _max);
-                    sampledValueRatio = triangular.InverseCDF(probability);
-                    break;
-                case IDistributionEnum.Uniform:
-                    Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
-                    sampledValueRatio = uniform.InverseCDF(probability);
-                    break;
-                default:
-                    sampledValueRatio = _centralTendency;
-                    break;
+                switch (_distributionType)
+                {
+                    case IDistributionEnum.LogNormal:
+                        LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
+                        Deterministic deterministicLogNormal = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(logNormal);
+                        sampledValueRatio = deterministicLogNormal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
+                        Deterministic deterministicUniform = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uniform);
+                        sampledValueRatio = deterministicUniform.InverseCDF(probability);
+                        break;
+                    default:
+                        sampledValueRatio = _centralTendency;
+                        break;
+                }
+
+            } else
+            {
+                switch (_distributionType)
+                {
+                    case IDistributionEnum.Normal:
+                        Normal normal = new Normal(_centralTendency, _standardDeviationOrMin);
+                        sampledValueRatio = normal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
+                        sampledValueRatio = logNormal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Triangular triangular = new Triangular(_standardDeviationOrMin, _centralTendency, _max);
+                        sampledValueRatio = triangular.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
+                        sampledValueRatio = uniform.InverseCDF(probability);
+                        break;
+                    default:
+                        sampledValueRatio = _centralTendency;
+                        break;
+                }
             }
             //do not allow for negative value ratios
             if (sampledValueRatio < 0)

@@ -299,7 +299,7 @@ public class Inventory
 
 
 
-    public DeterministicInventory Sample(IProvideRandomNumbers randomProvider)
+    public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
     {
 
         List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
@@ -311,7 +311,7 @@ public class Inventory
                 {
                     if (structure.OccTypeName.Equals(occupancyType.Name))
                     {
-                        inventorySample.Add(structure.Sample(randomProvider, occupancyType));
+                        inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));
                         break;
                     }
                 }
@@ -323,7 +323,7 @@ public class Inventory
 
     internal List<string> StructureDetails()
     {
-        string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage";
+        string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
         List<string> structureDetails = new List<string>() { header };
         foreach (Structure structure in Structures)
         {
