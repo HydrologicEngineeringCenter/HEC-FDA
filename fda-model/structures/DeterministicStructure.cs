@@ -57,27 +57,27 @@ namespace HEC.FDA.Model.structures
             {
 
                 //Structure
-                double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
+                double structDamagepercent = (_sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight))/100;
                 structDamage = structDamagepercent * StructValueSample;
 
                 //Content
                 if (_sampledStructureParameters.ComputeContentDamage)
                 {
-                    double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                    double contentDamagePercent = (_sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight))/100;
                     contDamage = contentDamagePercent * ContentValueSample;
                 }
 
                 //Vehicle
                 if (_sampledStructureParameters.ComputeVehicleDamage)
                 {
-                    double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                    double vehicleDamagePercent = (_sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight))/100;
                     vehicleDamage = vehicleDamagePercent * VehicleValueSample;
                 }
 
                 //Other
                 if (_sampledStructureParameters.ComputeOtherDamage)
                 {
-                    double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                    double otherDamagePercent = (_sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight))/100;
                     otherDamage = otherDamagePercent * OtherValueSample;
                 }
             }

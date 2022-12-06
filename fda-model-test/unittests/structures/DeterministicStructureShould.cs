@@ -10,7 +10,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static string occupancyTypeName = "Res1-1NB";
         private static string occupancyTypeDamageCategory = "Residential";
         private static double[] depths = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-        private static double[] percentDamage = new double[] { 0, .10, .20, .30, .40, .50, .60, .70, .80 };
+        private static double[] percentDamage = new double[] { 0, 10, 20, 30, 40, 50, 60, 70, 80 };
         private static PairedData structureDepthPercentDamage = new PairedData(depths, percentDamage);
         private static PairedData contentDepthPercentDamage = new PairedData(depths, percentDamage);
         private static double sampledFirstFloorElevation = 100;
