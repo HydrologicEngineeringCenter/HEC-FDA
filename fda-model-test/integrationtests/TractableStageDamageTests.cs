@@ -121,7 +121,9 @@ namespace HEC.FDA.ModelTest.integrationtests
         ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
         #endregion
 
-
+        /// <summary>
+        /// The solution for the below test is available at https://docs.google.com/spreadsheets/d/1QTjZ6BzGMBmxB-xWurNz08wnQx7HrmOm/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
         [Theory]
         [InlineData(new double[] {0, 0, 30, 60, 90, 120, 150, 180}, new double[] {0, 0, 0, 0, 84, 168, 252, 336})]
         public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage)
