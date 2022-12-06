@@ -29,7 +29,7 @@ namespace HEC.FDA.Model.stageDamage
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
-
+        private bool _usingMockData;
         private Inventory _inventory;
         private HydraulicDataset _hydraulicDataset;
 
@@ -57,7 +57,8 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
-            if (usingMockData)
+            _usingMockData = usingMockData;
+            if (_usingMockData)
             {
                 _inventory = inventory;
             } else
