@@ -63,6 +63,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        public void UpdateValues(Triangular triangular)
+        {
+            _Triangular.Min = triangular.Min;
+            _Triangular.Max = triangular.Max;
+            _Triangular.MostLikely = triangular.MostLikely;
+        }
+
         public ContinuousDistribution CreateOrdinate()
         {
             return _Triangular;

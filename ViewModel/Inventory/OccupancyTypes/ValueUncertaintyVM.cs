@@ -75,7 +75,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
         
-
         #endregion
 
         #region constructors
@@ -94,12 +93,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             SelectedDistributionTypeChanged(valueUncertaintyOrdinate.Type);
         }
 
-        public ValueUncertaintyVM(XElement uncertElem)
-        {
-            //read the base xml data
-            ContinuousDistribution cd = new Normal();
-        }
-
         #endregion
 
         public abstract XElement ToXML();
@@ -107,7 +100,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public ContinuousDistribution CreateOrdinate()
         {
-            //the currentVM can equal null. That is the deterministic case
+            //the currentVM can equal null. That is the non ratio deterministic case
             if (CurrentVM == null)
             {
                 return new Deterministic(0);
@@ -120,9 +113,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public FdaValidationResult IsValueUncertaintyValid()
         {
-            //todo:
-            //the currentVM can equal null. That is the deterministic case
-            if (CurrentVM == null)
+            //In some cases, deterministic will be null because there is no UI associated with it.
+            if (CurrentVM != null)
             {
                 //if it is deterministic then it is valid.
                 return new FdaValidationResult();
@@ -150,6 +142,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        /// <summary>
+        /// Used to raise an event that will put the "*" on the occtype and prompt the save message when closing.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ControlWasModified(object sender, EventArgs e)
         {
             WasModified?.Invoke(this, new EventArgs());

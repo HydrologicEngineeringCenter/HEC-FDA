@@ -12,63 +12,87 @@ namespace ViewModel.Inventory.OccupancyTypes
         {
         }
 
+        private void LoadDefaultDerministicControl()
+        {
+            DeterministicControlVM = new DeterministicControlVM(.5);
+            DeterministicControlVM.WasModified += ControlWasModified;
+        }
+
+        private void LoadDefaultNormalControl()
+        {
+            NormalControlVM = new NormalControlVM(0, 0, "%", true);
+            NormalControlVM.WasModified += ControlWasModified;
+        }
+
+        private void LoadDefaultLogNormalControl()
+        {
+            LogNormalControlVM = new LogNormalControlVM(0, 0, "", true);
+            LogNormalControlVM.WasModified += ControlWasModified;
+        }
+
+        private void LoadDefaultTriangularControl()
+        {
+            TriangularControlVM = new TriangularControlVM(1, 0, 2, "%", "%", true);
+            TriangularControlVM.WasModified += ControlWasModified;
+        }
+
+        private void LoadDefaultUniformControl()
+        {
+            UniformControlVM = new UniformControlVM(0, 1, "%", "%", true);
+            UniformControlVM.WasModified += ControlWasModified;
+        }
+
+        private void SetSelectedDistribution(IDistribution ordinate)
+        {
+            switch (ordinate.Type)
+            {
+                case IDistributionEnum.Deterministic:
+                    DeterministicControlVM.WasModified -= ControlWasModified;
+                    DeterministicControlVM = new DeterministicControlVM(((Deterministic)ordinate).Value);
+                    DeterministicControlVM.WasModified += ControlWasModified;
+                    break;
+                case IDistributionEnum.Normal:
+                    NormalControlVM.WasModified -= ControlWasModified;
+                    double normalMean = ((Normal)ordinate).Mean;
+                    double normalStDev = ((Normal)ordinate).StandardDeviation;
+                    NormalControlVM = new NormalControlVM(normalMean, normalStDev, "%", true);
+                    NormalControlVM.WasModified += ControlWasModified;
+                    break;
+                case IDistributionEnum.LogNormal:
+                    LogNormalControlVM.WasModified -= ControlWasModified;
+                    double logNormalMean = ((LogNormal)ordinate).Mean;
+                    double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
+                    LogNormalControlVM = new LogNormalControlVM(logNormalMean, logNormalStDev, "", true);
+                    LogNormalControlVM.WasModified += ControlWasModified;
+                    break;
+                case IDistributionEnum.Triangular:
+                    //TriangularControlVM.WasModified -= ControlWasModified;
+                    //double triMostLikely = ((Triangular)ordinate).MostLikely;
+                    //double triMin = ((Triangular)ordinate).Min;
+                    //double triMax = ((Triangular)ordinate).Max;
+                    //TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "%", "%", true);
+                    //TriangularControlVM.WasModified += ControlWasModified;
+                    TriangularControlVM.UpdateValues((Triangular)ordinate);
+                    break;
+                case IDistributionEnum.Uniform:
+                    UniformControlVM.WasModified -= ControlWasModified;
+                    double uniMin = ((Uniform)ordinate).Min;
+                    double uniMax = ((Uniform)ordinate).Max;
+                    UniformControlVM = new UniformControlVM(uniMin, uniMax, "%", "%", true);
+                    UniformControlVM.WasModified += ControlWasModified;
+                    break;
+            }
+        }
+
         public override void LoadControlVMs(IDistribution ordinate)
         {
-            IDistributionEnum ordType = ordinate.Type;
-            //create constant option
-            if (ordType == IDistributionEnum.Deterministic)
-            {
-                //todo: add to here?
-                DeterministicControlVM = new DeterministicControlVM();
-                DeterministicControlVM.WasModified += ControlWasModified;
-                //ControlWasModified(this, new EventArgs());
-            }
+            LoadDefaultDerministicControl();
+            LoadDefaultNormalControl();
+            LoadDefaultLogNormalControl();
+            LoadDefaultTriangularControl();
+            LoadDefaultUniformControl();
 
-            //create normal option
-            double normalMean = 0;
-            double normalStDev = 0;
-            if (ordType == IDistributionEnum.Normal)
-            {
-                normalMean = ((Normal)ordinate).Mean;
-                normalStDev = ((Normal)ordinate).StandardDeviation;
-            }
-            NormalControlVM = new NormalControlVM(normalMean, normalStDev, "%", true);
-            NormalControlVM.WasModified += ControlWasModified;
-
-            //create log normal option
-            double logNormalMean = 0;
-            double logNormalStDev = 0;
-            if (ordType == IDistributionEnum.LogNormal)
-            {
-                logNormalMean = ((LogNormal)ordinate).Mean;
-                logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
-            }
-            LogNormalControlVM = new LogNormalControlVM(logNormalMean, logNormalStDev, "", true);
-            LogNormalControlVM.WasModified += ControlWasModified;
-
-            //create the triangular option
-            double triMostLikely = 1;
-            double triMin = 0;
-            double triMax = 2;
-            if (ordType == IDistributionEnum.Triangular)
-            {
-                triMostLikely = ((Triangular)ordinate).MostLikely;
-                triMin = ((Triangular)ordinate).Min;
-                triMax = ((Triangular)ordinate).Max;
-            }
-            TriangularControlVM = new TriangularControlVM(triMostLikely, triMin, triMax, "%", "%", true);
-            TriangularControlVM.WasModified += ControlWasModified;
-
-            //create the uniform option
-            double uniMin = 0;
-            double uniMax = 1;
-            if (ordType == IDistributionEnum.Uniform)
-            {
-                uniMin = ((Uniform)ordinate).Min;
-                uniMax = ((Uniform)ordinate).Max;
-            }
-            UniformControlVM = new UniformControlVM(uniMin, uniMax, "%", "%", true);
-            UniformControlVM.WasModified += ControlWasModified;
+            SetSelectedDistribution(ordinate);
         }
 
         public override XElement ToXML()
