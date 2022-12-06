@@ -1,4 +1,8 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.hydraulics.Mock;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.stageDamage;
 using HEC.FDA.Model.structures;
 using RasMapperLib;
 using Statistics;
@@ -17,6 +21,8 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static double[] probabilities = new double[] { .99, .5, .2, .1, .04, .02, .01, .004, .002 };
         private static double[] stages = new double[] { 10, 12, 13, 14, 15, 16, 17, 18, 19 };
         private static int equivalentRecordLength = 50;
+        private static CurveMetaData stageFreqMetaData = new CurveMetaData("probability", "stages", "graphical stage frequency");
+        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, stages, equivalentRecordLength, stageFreqMetaData);
 
         private static List<float[]> ComputeStagesAtStructures()
         {
@@ -34,6 +40,19 @@ namespace HEC.FDA.ModelTest.integrationtests
                 stages.Add(profileStages);
             }
             return stages;
+        }
+
+        private static HydraulicDataset ComputeHydraulicDataset()
+        {
+            List<IHydraulicProfile> dummyHydraulicProfiles = new List<IHydraulicProfile>();
+            List<float[]> stages = ComputeStagesAtStructures();
+            int i = 1;
+            foreach (float[] stage in stages)
+            {
+                DummyHydraulicProfile dummyHydraulicProfile = new DummyHydraulicProfile(stage, probabilities[i]);
+            }
+            HydraulicDataset hydraulicDataset = new HydraulicDataset(dummyHydraulicProfiles, Model.hydraulics.enums.HydraulicDataSource.WSEGrid);
+            return hydraulicDataset;
         }
         #endregion
 
@@ -80,17 +99,22 @@ namespace HEC.FDA.ModelTest.integrationtests
         #region Structure Data
         private static PointM pointM = new PointM();
         private static int impactAreaID = 34;
-
-        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID);
-        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID);
-        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID);
-        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID);
+        private static double groundElevation = 12;
+        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
         private static List<Structure> structureList = new List<Structure>() { structure1, structure2, structure3, structure4};
 
         private static string dummyPath = "dummy";
         private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         private static Inventory structureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, structureList);
-        #endregion 
+        #endregion
+
+        #region Other objects 
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, ComputeHydraulicDataset(), convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency);
+        #endregion
 
 
 
