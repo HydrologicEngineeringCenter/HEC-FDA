@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #region fields
         private IValueUncertainty _CurrentVM;
+        private DeterministicControlVM _DeterministicControlVM;
         private NormalControlVM _NormalControlVM;
         private TriangularControlVM _TriangularControlVM;
         private UniformControlVM _UniformControlVM;
@@ -22,6 +23,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region properties
+
+        public DeterministicControlVM DeterministicControlVM
+        {
+            get { return _DeterministicControlVM; }
+            set { _DeterministicControlVM = value; }
+        }
         public TriangularControlVM TriangularControlVM
         {
             get { return _TriangularControlVM; }
@@ -113,6 +120,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public FdaValidationResult IsValueUncertaintyValid()
         {
+            //todo:
             //the currentVM can equal null. That is the deterministic case
             if (CurrentVM == null)
             {
@@ -155,7 +163,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 case IDistributionEnum.Deterministic:
                     {
-                        CurrentVM = null;
+                        CurrentVM = _DeterministicControlVM;
                         break;
                     }
                 case IDistributionEnum.Normal:

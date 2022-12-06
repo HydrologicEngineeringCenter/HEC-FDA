@@ -60,9 +60,10 @@ namespace HEC.FDA.Model.stageDamage
             if (usingMockData)
             {
                 _inventory = inventory;
-            } else
+            } 
+            else
             {
-            _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
+                _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
             }
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;

@@ -18,7 +18,10 @@ namespace ViewModel.Inventory.OccupancyTypes
             //create constant option
             if (ordType == IDistributionEnum.Deterministic)
             {
-                ControlWasModified(this, new EventArgs());
+                //todo: add to here?
+                DeterministicControlVM = new DeterministicControlVM();
+                DeterministicControlVM.WasModified += ControlWasModified;
+                //ControlWasModified(this, new EventArgs());
             }
 
             //create normal option
