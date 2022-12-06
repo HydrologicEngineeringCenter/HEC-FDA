@@ -59,13 +59,13 @@ namespace HEC.FDA.Model.hydraulics
         {
             float offsetForDryStructures = 9;
             float offsetForBarelyDryStructures = 2;
-            float dryCellValue = -9999;
             if (nextProfileWses == null)
             {
                 for (int i = 0; i < wsesToCorrect.Length; i++)
                 {
+                    bool dryInCurrentProfile = wsesToCorrect[i] < groundElevs[i];
                     //The case where the largest profile has dry structures
-                    if (wsesToCorrect[i] == dryCellValue)
+                    if (dryInCurrentProfile)
                     {
                         wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
                     }
@@ -73,10 +73,12 @@ namespace HEC.FDA.Model.hydraulics
             }
             for (int i = 0; i < wsesToCorrect.Length; i++)
             {
-                if (wsesToCorrect[i] == dryCellValue)
+                bool dryInNextProfile = nextProfileWses[i] < groundElevs[i];
+                bool dryInCurrentProfile = wsesToCorrect[i] < groundElevs[i];
+                if (dryInCurrentProfile)
                 {
                     //The case where the next largest profile is also dry
-                    if (nextProfileWses[i] == dryCellValue)
+                    if (dryInNextProfile)
                     {
                         wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
                     }
