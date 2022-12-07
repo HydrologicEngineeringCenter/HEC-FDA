@@ -105,21 +105,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private XElement CreateUncertaintyElement()
         {
             XElement uncertElem = new XElement("Uncertainty");
-
             uncertElem.Add(_ItemValueUncertainty.CreateOrdinate().ToXML());
-
-            //uncertElem.SetAttributeValue("UncertType", _ItemValueUncertainty.GetType());            
-         
-            ////for the uncertainty type, if deterministic, the currentVM will be null
-            //if (_ItemValueUncertainty.CurrentVM == null)
-            //{
-            //    XElement deterministicElem = new XElement("Deterministic");
-            //    uncertElem.Add(deterministicElem);
-            //}
-            //else
-            //{
-            //    uncertElem.Add(_ItemValueUncertainty.CurrentVM.CreateOrdinate().ToXML());
-            //}
             return uncertElem;
         }
 

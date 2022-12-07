@@ -5,6 +5,10 @@ using System;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
+    /// <summary>
+    /// This control is the VM data model for the DeterministicControl.xaml. This control allows the user to 
+    /// enter a "Value" for the ratio in the occtype assets of "Content" and "Other".
+    /// </summary>
     public class DeterministicControlVM : BaseViewModel, IValueUncertainty
     {
         //This class extends BaseViewModel when the other distribution controls extend ValidatingBaseViewModel.
@@ -33,7 +37,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             AddRule(nameof(Value), () =>
             {
                 return Value <= 10 && Value >= 0;
-            }, "Deterministic value ration must be between 0 and 10");
+            }, "Deterministic value ratio must be between 0 and 10");
 
         }
 
@@ -47,7 +51,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             FdaValidationResult vr = new FdaValidationResult();
             if(Value>10 || Value<0)
             {
-                vr.AddErrorMessage("Deterministic value ration must be between 0 and 10");
+                vr.AddErrorMessage("Deterministic value ratio must be between 0 and 10");
             }
             return new FdaValidationResult();
         }
