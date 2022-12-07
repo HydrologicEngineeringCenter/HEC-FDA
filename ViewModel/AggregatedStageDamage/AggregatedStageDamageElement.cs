@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
             SelectedWSE = Convert.ToInt16(elementXML.Attribute(SELECTED_HYDRO).Value);
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
-            bool writeToFileElementExists = elementXML.Elements(WRITE_DETAILS).Any();
+            bool writeToFileElementExists = elementXML.Attribute(WRITE_DETAILS) != null;
             if(writeToFileElementExists)
             {
                 WriteDetailsOut = Convert.ToBoolean(elementXML.Attribute(WRITE_DETAILS).Value);
