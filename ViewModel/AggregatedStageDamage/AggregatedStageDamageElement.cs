@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -11,6 +12,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const string SELECTED_STRUCTURES = "SelectedStructures";
         private const string SELECTED_HYDRO = "SelectedHydraulics";
         private const string IS_MANUAL = "IsManual";
+        private const string WRITE_DETAILS = "WriteDetailsFile";
         private const string STAGE_DAMAGE_CURVES = "StageDamageCurves";
         private const string STAGE_DAMAGE_CURVE = "StageDamageCurve";
         private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
@@ -22,15 +24,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public List<StageDamageCurve> Curves { get; } = new List<StageDamageCurve>();
         public bool IsManual { get; }
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
+        public bool WriteDetailsOut { get; }
 
         #endregion
         #region Constructors
 
         public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
-             List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, int id) 
+             List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, bool writeDetailsOut, int id) 
             : base(name, lastEditDate, description, id)
         {
             ImpactAreaFrequencyRows = impactAreaRows;
+            WriteDetailsOut = writeDetailsOut;
 
             Curves = curves;
             IsManual = isManual;
@@ -45,6 +49,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
             SelectedWSE = Convert.ToInt16(elementXML.Attribute(SELECTED_HYDRO).Value);
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
+            bool writeToFileElementExists = elementXML.Elements(WRITE_DETAILS).Any();
+            if(writeToFileElementExists)
+            {
+                WriteDetailsOut = Convert.ToBoolean(elementXML.Attribute(WRITE_DETAILS).Value);
+            }
+            else
+            {
+                WriteDetailsOut = false;
+            }
 
             XElement stageDamageCurves = elementXML.Element(STAGE_DAMAGE_CURVES);
             IEnumerable<XElement> curves = stageDamageCurves.Elements(STAGE_DAMAGE_CURVE);
@@ -87,6 +100,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             stageDamageElem.SetAttributeValue(SELECTED_HYDRO, SelectedWSE);
             //todo: save the selected wse
             stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
+            stageDamageElem.SetAttributeValue(WRITE_DETAILS, WriteDetailsOut);
 
             XElement curveElements = new XElement(STAGE_DAMAGE_CURVES);
             foreach (StageDamageCurve curve in Curves)
