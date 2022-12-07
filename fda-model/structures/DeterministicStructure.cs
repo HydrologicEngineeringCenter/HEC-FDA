@@ -85,11 +85,6 @@ namespace HEC.FDA.Model.structures
 
             return consequenceResult;
         }
-
-        internal string ComputeStageAndDamageDetails(float v)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
     }
 }
