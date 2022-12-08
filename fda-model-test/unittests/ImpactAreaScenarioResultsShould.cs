@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
-using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -69,48 +68,6 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             Assert.True(results.IsNull);
         }
-
-        //[Theory]
-        //[InlineData(222, 333)]
-        //[InlineData(10_000, 100_000)]
-        //[InlineData(222, 227)]
-        //[InlineData(101, 102)]
-        //[InlineData(107, 109)]
-        //[InlineData(567, 891)]
-        //public void ProgressReportShouldReach100Once(int minIteration, int maxIteration)
-        //{
-        //    ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: minIteration, maxIterations: maxIteration);
-        //    ImpactAreaScenarioSimulation simulation = CreateTestScenarioSimulation(convergenceCriteria);
-        //    RandomProvider randomProvider = new RandomProvider();
-        //    MessageHub.Register(simulation);
-        //    simulation.ProgressReport += Sim_ProgressReport;
-
-        //    ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
-            
-            
-            
-        //    Assert.True(maxProgress==100);
-        //    Assert.True(numAboveCutOff == 1);
-        //}
-
-        //private int progressCutOff = 99;
-        //private int maxProgress = 0;
-        //private int numAboveCutOff = 0;
-
-        //private void Sim_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
-        //{
-
-        //    int prog = progress.Progress;
-        //    if(prog>maxProgress)
-        //    {
-        //        maxProgress = prog;
-        //    }
-        //    if(prog>progressCutOff)
-        //    {
-        //        numAboveCutOff++;
-        //    }
-            
-        //}
 
         private static ImpactAreaScenarioSimulation CreateTestScenarioSimulation(ConvergenceCriteria convergenceCriteria)
         {
