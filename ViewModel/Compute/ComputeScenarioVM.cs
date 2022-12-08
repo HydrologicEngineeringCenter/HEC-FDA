@@ -125,7 +125,7 @@ namespace HEC.FDA.ViewModel.Compute
                 }
             }
             Progress = progress.Progress;
-            if(Progress == 100)
+            if(Progress == ImpactAreaScenarioSimulation.IMPACT_AREA_SIM_COMPLETED)
             {
                 UpdateTotalCompleted();
             }

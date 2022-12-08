@@ -19,6 +19,8 @@ namespace HEC.FDA.Model.compute
 {
     public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
+        public const int IMPACT_AREA_SIM_COMPLETED = -999;
+
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
@@ -359,7 +361,7 @@ namespace HEC.FDA.Model.compute
                 }
 
             }
-            ReportProgress(this, new ProgressReportEventArgs(100));
+            ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
             _impactAreaScenarioResults.ForceDeQueue();
         }
 
