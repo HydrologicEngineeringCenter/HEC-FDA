@@ -639,9 +639,9 @@ namespace HEC.FDA.ViewModel.Utilities
             ContinuousDistribution otherValueUncertaintyByValue = new Deterministic();
 
             OccTypeAsset StructureItem = new OccTypeAsset(OcctypeAssetType.structure, CalculateStructureDamage, structureComponent, structureValueUncertainty);
-            OccTypeItemWithRatio ContentItem = new OccTypeItemWithRatio(OcctypeAssetType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue, contentValueUncertaintyByRatio, isContentByValue);
+            OccTypeAssetWithRatio ContentItem = new OccTypeAssetWithRatio(OcctypeAssetType.content, CalculateContentDamage, contentComponent, contentValueUncertaintyByValue, contentValueUncertaintyByRatio, isContentByValue);
             OccTypeAsset VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, CalculateVehicleDamage, vehicleComponent, vehicleValueUncertainty);
-            OccTypeItemWithRatio OtherItem = new OccTypeItemWithRatio(OcctypeAssetType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
+            OccTypeAssetWithRatio OtherItem = new OccTypeAssetWithRatio(OcctypeAssetType.other, CalculateOtherDamage, otherComponent, otherValueUncertaintyByValue, otherValueUncertaintyByRatio, isOtherByValue);
 
             ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
 

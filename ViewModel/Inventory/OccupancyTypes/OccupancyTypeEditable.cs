@@ -73,9 +73,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         public OccTypeAsset StructureItem { get; set; }
-        public OccTypeItemWithRatio ContentItem { get; set; }
+        public OccTypeAssetWithRatio ContentItem { get; set; }
         public OccTypeAsset VehicleItem { get; set; }
-        public OccTypeItemWithRatio OtherItem { get; set; }
+        public OccTypeAssetWithRatio OtherItem { get; set; }
 
         /// <summary>
         /// This indicates if the occtype has ever been saved before. If false, then
@@ -93,9 +93,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             IOccupancyType clonedOcctype = new OccupancyType(occtype.ToXML());
 
             StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
-            ContentItem = new OccTypeItemWithRatio(clonedOcctype.ContentItem);               
+            ContentItem = new OccTypeAssetWithRatio(clonedOcctype.ContentItem);               
             VehicleItem = new OccTypeAsset(OcctypeAssetType.vehicle, clonedOcctype.VehicleItem.IsChecked, clonedOcctype.VehicleItem.Curve, clonedOcctype.VehicleItem.ValueUncertainty.Distribution);
-            OtherItem = new OccTypeItemWithRatio(clonedOcctype.OtherItem);   
+            OtherItem = new OccTypeAssetWithRatio(clonedOcctype.OtherItem);   
 
             StructureItem.DataModified += OcctypeItemDataModified;
             ContentItem.DataModified += OcctypeItemDataModified;

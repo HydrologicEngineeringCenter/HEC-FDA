@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #region fields
         private IValueUncertainty _CurrentVM;
+        private DeterministicControlVM _DeterministicControlVM;
         private NormalControlVM _NormalControlVM;
         private TriangularControlVM _TriangularControlVM;
         private UniformControlVM _UniformControlVM;
@@ -22,6 +23,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region properties
+
+        public DeterministicControlVM DeterministicControlVM
+        {
+            get { return _DeterministicControlVM; }
+            set { _DeterministicControlVM = value; }
+        }
         public TriangularControlVM TriangularControlVM
         {
             get { return _TriangularControlVM; }
@@ -68,7 +75,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
         
-
         #endregion
 
         #region constructors
@@ -87,12 +93,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             SelectedDistributionTypeChanged(valueUncertaintyOrdinate.Type);
         }
 
-        public ValueUncertaintyVM(XElement uncertElem)
-        {
-            //read the base xml data
-            ContinuousDistribution cd = new Normal();
-        }
-
         #endregion
 
         public abstract XElement ToXML();
@@ -100,7 +100,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public ContinuousDistribution CreateOrdinate()
         {
-            //the currentVM can equal null. That is the deterministic case
+            //the currentVM can equal null. That is the non ratio deterministic case
             if (CurrentVM == null)
             {
                 return new Deterministic(0);
@@ -113,7 +113,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public FdaValidationResult IsValueUncertaintyValid()
         {
-            //the currentVM can equal null. That is the deterministic case
+            //In some cases, deterministic will be null because there is no UI associated with it.
             if (CurrentVM == null)
             {
                 //if it is deterministic then it is valid.
@@ -142,6 +142,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+        /// <summary>
+        /// Used to raise an event that will put the "*" on the occtype and prompt the save message when closing.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ControlWasModified(object sender, EventArgs e)
         {
             WasModified?.Invoke(this, new EventArgs());
@@ -155,7 +160,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 case IDistributionEnum.Deterministic:
                     {
-                        CurrentVM = null;
+                        CurrentVM = _DeterministicControlVM;
                         break;
                     }
                 case IDistributionEnum.Normal:

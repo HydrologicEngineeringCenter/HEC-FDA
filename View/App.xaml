@@ -192,6 +192,10 @@
             </DataTemplate.Resources>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:DeterministicControlVM}">
+            <OccupancyTypesControlsView:DeterministicControl/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
             <OccupancyTypesControlsView:NormalControl/>
         </DataTemplate>
