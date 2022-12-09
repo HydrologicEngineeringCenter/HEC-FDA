@@ -690,7 +690,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void StageDamageShould(int seed, double expectedDamage) 
         {
 
-            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, ParentDirectoryToSteadyResult, LP3Distribution, dischargeStage:stageDischarge);
+            ImpactAreaStageDamage stageDamageObject = new ImpactAreaStageDamage(stageImpactAreaID, inventory, hydraulicDataset, convergenceCriteria, ParentDirectoryToSteadyResult, analyticalFlowFrequency: LP3Distribution, dischargeStage:stageDischarge);
             List<ImpactAreaStageDamage> stageDamageObjectList = new List<ImpactAreaStageDamage>() { stageDamageObject };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(stageDamageObjectList);
 

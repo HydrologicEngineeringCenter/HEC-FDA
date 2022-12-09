@@ -29,7 +29,7 @@ namespace HEC.FDA.Model.stageDamage
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
-
+        private int _AnalysisYear;
         private Inventory _inventory;
         private HydraulicDataset _hydraulicDataset;
 
@@ -48,7 +48,7 @@ namespace HEC.FDA.Model.stageDamage
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory,
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = -999,
             ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here
@@ -57,6 +57,7 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
+            _AnalysisYear = analysisYear;
             if (usingMockData)
             {
                 _inventory = inventory;
@@ -183,7 +184,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
-                    _inventory, WSEsParallelToIndexLocation);
+                    _inventory, WSEsParallelToIndexLocation, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -232,7 +233,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 double stageAtIndexLocation = previousStageAtIndexLocation + intervalAtIndexLocation * i;
                 float[] stages = CalculateIncrementOfStages(previousStagesAtStructures, intervalsAtStructures, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
@@ -270,7 +271,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int stepCount = 1; stepCount < _numExtrapolatedStagesToCompute; stepCount++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (_numExtrapolatedStagesToCompute - stepCount));
             }
@@ -310,7 +311,7 @@ namespace HEC.FDA.Model.stageDamage
         }
         //public and static for testing
         //assume that the inventory has already been trimmed 
-        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses)
+        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses, int analysisYear)
         {
             ConsequenceDistributionResults returnValue = new ConsequenceDistributionResults();
             double lowerProb = 0.025;
@@ -325,7 +326,7 @@ namespace HEC.FDA.Model.stageDamage
                 for (int i = 0; i < iterations; i++)
                 {
                     DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
-                    ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
+                    ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses, analysisYear);
                     results.Add(consequenceResults);
                 }
                 ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);

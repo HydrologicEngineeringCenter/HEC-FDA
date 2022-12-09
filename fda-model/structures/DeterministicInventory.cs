@@ -23,7 +23,7 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
         #region Methods
-        public ConsequenceResults ComputeDamages(float[] wses)
+        public ConsequenceResults ComputeDamages(float[] wses, int analysisYear)
         {
             //assume each structure has a corresponding index to the depth
             ConsequenceResults consequenceResults = new ConsequenceResults();
@@ -32,7 +32,7 @@ namespace HEC.FDA.Model.structures
                 float wse = wses[i];
                 if (wse != -9999)
                 {
-                    ConsequenceResult consequenceResult = Inventory[i].ComputeDamage(wse, _priceIndex);
+                    ConsequenceResult consequenceResult = Inventory[i].ComputeDamage(wse, _priceIndex, analysisYear);
                     consequenceResults.AddExistingConsequenceResultObject(consequenceResult);
                 }
             }

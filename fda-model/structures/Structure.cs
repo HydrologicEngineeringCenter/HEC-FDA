@@ -44,14 +44,12 @@ namespace HEC.FDA.Model.structures
             YearInService = year;
             NumberOfStructures = numStructures;
             BeginningDamageDepth = beginDamage;
-
-
         }
         public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype, bool computeIsDeterministic)
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue, computeIsDeterministic);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth, NumberOfStructures);
+            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth, NumberOfStructures, YearInService);
         }
 
         internal string ProduceDetails(double priceIndex)
