@@ -8,7 +8,7 @@ namespace HEC.FDA.Model.structures
     {
         #region Fields
         SampledStructureParameters _sampledStructureParameters;
-        double _DepthAboveFoundationHeight;
+        int _numberOfStructures;
         #endregion
 
         #region Properties 
@@ -26,7 +26,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructor 
-        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth)
+        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth, int numberOfStructures = 1)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;
@@ -38,6 +38,7 @@ namespace HEC.FDA.Model.structures
             VehicleValueSample = sampledStructureParameters.VehicleValueSampled;
             OtherValueSample = sampledStructureParameters.OtherValueSampled;
             _sampledStructureParameters = sampledStructureParameters;
+            _numberOfStructures = numberOfStructures;
         }
         #endregion
 
@@ -58,27 +59,27 @@ namespace HEC.FDA.Model.structures
 
                 //Structure
                 double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                structDamage = structDamagepercent * StructValueSample * priceIndex ;
+                structDamage = structDamagepercent * StructValueSample * priceIndex * _numberOfStructures;
 
                 //Content
                 if (_sampledStructureParameters.ComputeContentDamage)
                 {
                     double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                    contDamage = contentDamagePercent * ContentValueSample * priceIndex;
+                    contDamage = contentDamagePercent * ContentValueSample * priceIndex * _numberOfStructures;
                 }
 
                 //Vehicle
                 if (_sampledStructureParameters.ComputeVehicleDamage)
                 {
                     double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                    vehicleDamage = vehicleDamagePercent * VehicleValueSample * priceIndex;
+                    vehicleDamage = vehicleDamagePercent * VehicleValueSample * priceIndex * _numberOfStructures;
                 }
 
                 //Other
                 if (_sampledStructureParameters.ComputeOtherDamage)
                 {
                     double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                    otherDamage = otherDamagePercent * OtherValueSample * priceIndex;
+                    otherDamage = otherDamagePercent * OtherValueSample * priceIndex * _numberOfStructures;
                 }
             }
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);

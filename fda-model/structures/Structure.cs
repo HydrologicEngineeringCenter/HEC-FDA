@@ -51,7 +51,7 @@ namespace HEC.FDA.Model.structures
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue, computeIsDeterministic);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth);
+            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth, NumberOfStructures);
         }
 
         internal string ProduceDetails(double priceIndex)
