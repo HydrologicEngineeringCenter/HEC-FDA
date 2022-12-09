@@ -27,8 +27,8 @@ namespace HEC.FDA.ModelTest.unittests.structures
         {
             Inventory inventory = GetTestInventory(false);
             Assert.NotNull(inventory);
-            Assert.Equal(3, inventory.ImpactAreas.Count);
-            Assert.Equal(696, inventory.Structures.Count);
+            Assert.Equal(4, inventory.ImpactAreas.Count);
+            Assert.Equal(682, inventory.Structures.Count);
             Assert.Equal(4, inventory.DamageCategories.Count);
         }
 
@@ -36,7 +36,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void GetGroundElevationFromTerrain()
         {
             float[] groundelevs = Inventory.GetGroundElevationFromTerrain(pathToNSIShapefile, pathToTerrainHDF);
-            Assert.Equal(696, groundelevs.Length);
+            Assert.Equal(682, groundelevs.Length);//Was 696. Is this min elevation or what?
             Assert.Equal(946.5,groundelevs[0], 1);
         }
          [Fact]
@@ -51,7 +51,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ConstructsWithTerrainGroundElevs()
         {
             Inventory inv = GetTestInventory(true);
-            Assert.Equal(696, inv.Structures.Count);
+            Assert.Equal(682, inv.Structures.Count);//Was 696
             Assert.True(inv.Structures[0].FirstFloorElevation > 900);
         }
         [Fact]
@@ -61,18 +61,20 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Inventory trimmedInv1 = inv.GetInventoryTrimmmedToPolygon(0);
             Inventory trimmedInv2 = inv.GetInventoryTrimmmedToPolygon(1);
             Inventory trimmedInv3 = inv.GetInventoryTrimmmedToPolygon(2);
+            Inventory trimmedInv4 = inv.GetInventoryTrimmmedToPolygon(3);
             int countActual = inv.Structures.Count;
             int count1 = trimmedInv1.Structures.Count;
             int count2 = trimmedInv2.Structures.Count;
             int count3 = trimmedInv3.Structures.Count;
-            Assert.Equal(countActual, count1 + count2 + count3);
+            int count4 = trimmedInv4.Structures.Count;
+            Assert.Equal(countActual, count1 + count2 + count3 + count4);
         }
         [Fact]
         public void returnsUniqueImpactAreaIDs()
         {
             Inventory inv = GetTestInventory(false);
             List<int> uniqueImpactAreaIDs = inv.ImpactAreas;
-            Assert.Equal(3, uniqueImpactAreaIDs.Count);
+            Assert.Equal(4, uniqueImpactAreaIDs.Count);
         }
     }
 }
