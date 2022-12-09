@@ -680,7 +680,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         private static int stageImpactAreaID = 1;
 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 300);
 
         private static int seed = 1234;
         private static RandomProvider randomProvider = new RandomProvider(seed);
