@@ -54,9 +54,9 @@ namespace HEC.FDA.Model.structures
             return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth);
         }
 
-        internal string ProduceDetails()
+        internal string ProduceDetails(double priceIndex)
         {
-            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue},{InventoriedContentValue},{InventoriedContentValue},{InventoriedOtherValue},{InventoriedOtherValue},{InventoriedVehicleValue},{InventoriedVehicleValue},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
+            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue*priceIndex},{InventoriedContentValue},{InventoriedContentValue * priceIndex},{InventoriedOtherValue},{InventoriedOtherValue * priceIndex},{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
             return details;
         }
     }

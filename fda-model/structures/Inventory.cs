@@ -24,6 +24,7 @@ public class Inventory
     private string _impactAreaUniqueColumnHeader;
     private bool _updateGroundElevsFromTerrain;
     private string _terrainPath;
+    private double _priceIndex;
     #endregion
 
     #region Properties
@@ -76,40 +77,39 @@ public class Inventory
     }
     #endregion
 
-    #region Utilities
-    public static T TryGet<T>(object value, T defaultValue = default)
-        where T : struct
+    #region Constructors
+    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
     {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            var retn = value as T?;
-            if (retn.HasValue)
-                return retn.Value;
-            else
-                return defaultValue;
-        }
+        _structureInventoryShapefile = pointShapefilePath;
+        _impactAreaShapefile = impactAreaShapefilePath;
+        _map = map;
+        _occtypes = occTypes;
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+        _terrainPath = terrainPath;
+        _priceIndex = priceIndex;
+        LoadStructuresFromSourceFiles();
     }
-    public static T TryGetObj<T>(object value, T defaultValue = default)
-        where T : class
+    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+    string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
     {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            var retn = value as T;
-            if (retn != null)
-                return retn;
-            else
-                return defaultValue;
-        }
+        _structureInventoryShapefile = pointShapefilePath;
+        _impactAreaShapefile = impactAreaShapefilePath;
+        _map = map;
+        _occtypes = occTypes;
+        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+        _terrainPath = terrainPath;
+        Structures = structures;
+        _priceIndex = priceIndex;
+
     }
     #endregion
+
+
+
+  
 
     #region Methods
     public Polygon GetImpactAreaPolygon(string impactAreaName)
@@ -265,40 +265,7 @@ public class Inventory
         }
         return -9999;
     }
-    #endregion
-
-    #region Constructors
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath)
-    {
-        _structureInventoryShapefile = pointShapefilePath;
-        _impactAreaShapefile = impactAreaShapefilePath;
-        _map = map;
-        _occtypes = occTypes;
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-        _terrainPath = terrainPath;
-        LoadStructuresFromSourceFiles();
-    }
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-    string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures)
-    {
-        _structureInventoryShapefile = pointShapefilePath;
-        _impactAreaShapefile = impactAreaShapefilePath;
-        _map = map;
-        _occtypes = occTypes;
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-        _terrainPath = terrainPath;
-        Structures = structures;
-
-    }
-    #endregion
-
-
-
-
-
+  
     public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
     {
 
@@ -318,7 +285,7 @@ public class Inventory
             }
             //it is possible that if an occupancy type doesnt exist a structure wont get added...
         }
-        return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories);
+        return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
     }
 
     internal List<string> StructureDetails()
@@ -327,8 +294,44 @@ public class Inventory
         List<string> structureDetails = new List<string>() { header };
         foreach (Structure structure in Structures)
         {
-            structureDetails.Add(structure.ProduceDetails());
+            structureDetails.Add(structure.ProduceDetails(_priceIndex));
         }
         return structureDetails;
     }
+    #endregion
+
+    #region Utilities
+    public static T TryGet<T>(object value, T defaultValue = default)
+        where T : struct
+    {
+        if (value == null)
+            return defaultValue;
+        else if (value == DBNull.Value)
+            return defaultValue;
+        else
+        {
+            var retn = value as T?;
+            if (retn.HasValue)
+                return retn.Value;
+            else
+                return defaultValue;
+        }
+    }
+    public static T TryGetObj<T>(object value, T defaultValue = default)
+        where T : class
+    {
+        if (value == null)
+            return defaultValue;
+        else if (value == DBNull.Value)
+            return defaultValue;
+        else
+        {
+            var retn = value as T;
+            if (retn != null)
+                return retn;
+            else
+                return defaultValue;
+        }
+    }
+    #endregion
 }

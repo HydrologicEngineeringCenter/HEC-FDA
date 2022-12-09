@@ -43,7 +43,7 @@ namespace HEC.FDA.Model.structures
 
         //TODO: We do not want to return a new structure damage result every time 
         #region Methods
-        public ConsequenceResult ComputeDamage(float waterSurfaceElevation)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, double priceIndex = 1)
         {
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
 
@@ -58,37 +58,32 @@ namespace HEC.FDA.Model.structures
 
                 //Structure
                 double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                structDamage = structDamagepercent * StructValueSample;
+                structDamage = structDamagepercent * StructValueSample * priceIndex ;
 
                 //Content
                 if (_sampledStructureParameters.ComputeContentDamage)
                 {
                     double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                    contDamage = contentDamagePercent * ContentValueSample;
+                    contDamage = contentDamagePercent * ContentValueSample * priceIndex;
                 }
 
                 //Vehicle
                 if (_sampledStructureParameters.ComputeVehicleDamage)
                 {
                     double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                    vehicleDamage = vehicleDamagePercent * VehicleValueSample;
+                    vehicleDamage = vehicleDamagePercent * VehicleValueSample * priceIndex;
                 }
 
                 //Other
                 if (_sampledStructureParameters.ComputeOtherDamage)
                 {
                     double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                    otherDamage = otherDamagePercent * OtherValueSample;
+                    otherDamage = otherDamagePercent * OtherValueSample * priceIndex;
                 }
             }
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
 
             return consequenceResult;
-        }
-
-        internal string ComputeStageAndDamageDetails(float v)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }
