@@ -13,16 +13,13 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.Model.interfaces;
 using RasMapperLib;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.Model.stageDamage
 {
     public class ImpactAreaStageDamage : Validation, IReportMessage
     {
         #region Fields 
-        private const string STRUCTURE_DAMAGE_HEADER = "StructureDamageAt";
-        private const string CONTENT_DAMAGE_HEADER = "ContentDamageAt";
-        private const string OTHER_DAMAGE_HEADER = "OtherDamageAt";
-        private const string VEHICLE_DAMAGE_HEADER = "VehicleDamageAt";
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
         private ContinuousDistribution _AnalyticalFlowFrequency;
@@ -360,10 +357,10 @@ namespace HEC.FDA.Model.stageDamage
             DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider(), computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
             DepthsToStrings(deterministicInventory, ref structureDetails);
-            DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE_HEADER, ref structureDetails);
-            DamagesToStrings(deterministicInventory, CONTENT_DAMAGE_HEADER, ref structureDetails);
-            DamagesToStrings(deterministicInventory, OTHER_DAMAGE_HEADER, ref structureDetails);
-            DamagesToStrings(deterministicInventory, VEHICLE_DAMAGE_HEADER, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.STRUCTURE_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.CONTENT_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.OTHER_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.VEHICLE_ASSET_CATEGORY, ref structureDetails);
 
             return structureDetails;
         }
@@ -376,7 +373,7 @@ namespace HEC.FDA.Model.stageDamage
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
 
-                structureDetails[0] += $"{assetType}{hydraulicProfile.Probability}AEP,";
+                structureDetails[0] += $"{assetType} Damage At {hydraulicProfile.Probability}AEP,";
                 List<ConsequenceResult> consequenceResultList = new List<ConsequenceResult>();
 
                 for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -385,7 +382,7 @@ namespace HEC.FDA.Model.stageDamage
                     consequenceResultList.Add(consequenceResult);
                 }
 
-                if (assetType == STRUCTURE_DAMAGE_HEADER)
+                if (assetType == StringConstants.STRUCTURE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -394,7 +391,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == CONTENT_DAMAGE_HEADER)
+                else if (assetType == StringConstants.CONTENT_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -403,7 +400,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == VEHICLE_DAMAGE_HEADER)
+                else if (assetType == StringConstants.VEHICLE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
