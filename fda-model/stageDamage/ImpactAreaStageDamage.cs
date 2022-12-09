@@ -19,10 +19,10 @@ namespace HEC.FDA.Model.stageDamage
     public class ImpactAreaStageDamage : Validation, IReportMessage
     {
         #region Fields 
-        private const string STRUCTURE_DAMAGE = "StructureDamageAt";
-        private const string CONTENT_DAMAGE = "ContentDamageAt";
-        private const string OTHER_DAMAGE = "OtherDamageAt";
-        private const string VEHICLE_DAMAGE = "VehicleDamageAt";
+        private const string STRUCTURE_DAMAGE_HEADER = "StructureDamageAt";
+        private const string CONTENT_DAMAGE_HEADER = "ContentDamageAt";
+        private const string OTHER_DAMAGE_HEADER = "OtherDamageAt";
+        private const string VEHICLE_DAMAGE_HEADER = "VehicleDamageAt";
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
         private ContinuousDistribution _AnalyticalFlowFrequency;
@@ -360,10 +360,10 @@ namespace HEC.FDA.Model.stageDamage
             DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider(), computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
             DepthsToStrings(deterministicInventory, ref structureDetails);
-            DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, CONTENT_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, OTHER_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, VEHICLE_DAMAGE, ref structureDetails);
+            DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE_HEADER, ref structureDetails);
+            DamagesToStrings(deterministicInventory, CONTENT_DAMAGE_HEADER, ref structureDetails);
+            DamagesToStrings(deterministicInventory, OTHER_DAMAGE_HEADER, ref structureDetails);
+            DamagesToStrings(deterministicInventory, VEHICLE_DAMAGE_HEADER, ref structureDetails);
 
             return structureDetails;
         }
@@ -385,7 +385,7 @@ namespace HEC.FDA.Model.stageDamage
                     consequenceResultList.Add(consequenceResult);
                 }
 
-                if (assetType == STRUCTURE_DAMAGE)
+                if (assetType == STRUCTURE_DAMAGE_HEADER)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -394,7 +394,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == CONTENT_DAMAGE)
+                else if (assetType == CONTENT_DAMAGE_HEADER)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -403,7 +403,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == VEHICLE_DAMAGE)
+                else if (assetType == VEHICLE_DAMAGE_HEADER)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
