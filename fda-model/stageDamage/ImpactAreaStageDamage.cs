@@ -327,7 +327,6 @@ namespace HEC.FDA.Model.stageDamage
                     DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                     ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
                     results.Add(consequenceResults);
-                    //consequenceDistributionResults.AddConsequenceRealization(consequenceResults, i);
                 }
                 ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
                 resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);

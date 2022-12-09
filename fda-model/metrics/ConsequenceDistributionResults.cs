@@ -15,11 +15,6 @@ namespace HEC.FDA.Model.metrics
     public class ConsequenceDistributionResults : Validation, IReportMessage
     {
         #region Fields
-        private static string STRUCTURE_ASSET_CATEGORY = "Structure";
-        private static string CONTENT_ASSET_CATEGORY = "Content";
-        private static string OTHER_ASSET_CATEGORY = "Other";
-        private static string VEHICLE_ASSET_CATEGRY = "Vehicle";
-        private static int BIN_WIDTH_DENOMINATOR = 100;
         private int _alternativeID;
         private ConvergenceCriteria _ConvergenceCriteria;
         private List<ConsequenceDistributionResult> _consequenceResultList;
@@ -94,12 +89,19 @@ namespace HEC.FDA.Model.metrics
         public ConsequenceDistributionResults(List<ConsequenceResults> results, ConvergenceCriteria convergenceCriteria)
         {
             _ConvergenceCriteria = convergenceCriteria;
-            _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = false;
             MessageHub.Register(this);
-            foreach (ConsequenceResults consequenceResults in results)
+            _consequenceResultList = new List<ConsequenceDistributionResult>();
+            Process(results);
+
+        }
+        private void Process(List<ConsequenceResults> results)
+        {
+            ProcessedConsequenceResultsList processedConsequenceResultsList = new ProcessedConsequenceResultsList(results);
+            foreach (ProcessedConsequenceResults processedConsequenceResults in processedConsequenceResultsList.Results)
             {
-                AddConsequenceRealization(consequenceResults,0);
+                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.ImpactAreaID, processedConsequenceResults.DamageRealizations);
+                _consequenceResultList.Add(result);
             }
         }
         #endregion
@@ -130,38 +132,7 @@ namespace HEC.FDA.Model.metrics
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResults consequenceResults, long iteration)
-        {
-            foreach (ConsequenceResult consequenceResult in consequenceResults.ConsequenceResultList)
-            {
-                AddConsequenceRealizationByAssetCategory(consequenceResult.StructureDamage, consequenceResult.DamageCategory, STRUCTURE_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
-                AddConsequenceRealizationByAssetCategory(consequenceResult.ContentDamage, consequenceResult.DamageCategory, CONTENT_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
-                AddConsequenceRealizationByAssetCategory(consequenceResult.OtherDamage, consequenceResult.DamageCategory, OTHER_ASSET_CATEGORY, consequenceResult.RegionID, iteration);
-                AddConsequenceRealizationByAssetCategory(consequenceResult.VehicleDamage, consequenceResult.DamageCategory, VEHICLE_ASSET_CATEGRY, consequenceResult.RegionID, iteration);
-            }
-        }
-        private void AddConsequenceRealizationByAssetCategory(double consequenceRealization, string damageCategory, string assetCategory, int impactAreaID, long iteration)
-        {
-            ConsequenceDistributionResult structureConsequenceDistributionResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            if (structureConsequenceDistributionResult.IsNull)
-            {
-                //HACK: hacking in bin width 
-                //TODO: Get rid of this terrible coding
-                double binWidth = 500;
-                if(consequenceRealization > 0)
-                {
-                    binWidth = consequenceRealization / BIN_WIDTH_DENOMINATOR;
-                }
-                double min = consequenceRealization;
-                ConsequenceDistributionResult newStructureDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, _ConvergenceCriteria, impactAreaID, min, binWidth);
-                newStructureDamageResult.AddConsequenceRealization(consequenceRealization, iteration);
-                _consequenceResultList.Add(newStructureDamageResult);
-            }
-            else
-            {
-                structureConsequenceDistributionResult.AddConsequenceRealization(consequenceRealization, iteration);
-            }
-        }
+       
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 

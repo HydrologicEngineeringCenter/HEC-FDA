@@ -5,6 +5,8 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
@@ -97,15 +99,13 @@ namespace HEC.FDA.Model.metrics
             MessageHub.Register(this);
 
         }
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double min, double binWidth)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, List<double> consequences)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new Histogram(min,binWidth, _convergenceCriteria);
-            _isNull = false;
-            MessageHub.Register(this);
+            _consequenceHistogram = new Histogram(consequences, convergenceCriteria);
 
         }
         /// <summary>
