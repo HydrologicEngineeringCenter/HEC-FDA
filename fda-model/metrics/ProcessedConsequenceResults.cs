@@ -21,7 +21,6 @@ namespace HEC.FDA.Model.metrics
         internal string DamageCategory { get { return _damageCategory; } }
         internal List<double> DamageRealizations { get { return _damageRealizations; } }
         internal bool IsNull { get { return _isNull; } }
-        internal int ImpactAreaID { get { return 0; } }
         #endregion
 
         #region Constructor 

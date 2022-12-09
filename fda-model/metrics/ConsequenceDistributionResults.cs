@@ -100,19 +100,20 @@ namespace HEC.FDA.Model.metrics
             ProcessedConsequenceResultsList processedConsequenceResultsList = new ProcessedConsequenceResultsList(results);
             foreach (ProcessedConsequenceResults processedConsequenceResults in processedConsequenceResultsList.Results)
             {
-                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.ImpactAreaID, processedConsequenceResults.DamageRealizations);
+                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.DamageRealizations);
                 _consequenceResultList.Add(result);
             }
         }
         #endregion
 
         #region Methods 
-        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, bool histogramIsZeroValued = false)
+        //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, bool histogramIsZeroValued = false)
         {
-            ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory);
             if (damageResult.IsNull)
             {
-                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
+                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria);
                 newDamageResult.ConsequenceHistogram.HistogramIsZeroValued = histogramIsZeroValued;
                 _consequenceResultList.Add(newDamageResult);
             }
@@ -274,17 +275,18 @@ namespace HEC.FDA.Model.metrics
         }
         /// <summary>
         /// This method returns a consequence result for the given damage category, asset category, and impact area 
+        /// Impact area ID is used for alternative and alternative comparison reports 
+        /// Impact area ID is -999 otherwise 
         /// </summary>
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID)
+        public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
         {
             //foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
             for (int i = 0; i < _consequenceResultList.Count; i++)
             {
-                //The impact area should always be equal because a consequence result reflects 1 impact area and a consequence resultS reflects 1 impact area   
                 if (_consequenceResultList[i].RegionID.Equals(impactAreaID))
                 {
                     if (_consequenceResultList[i].DamageCategory.Equals(damageCategory))
@@ -442,14 +444,12 @@ namespace HEC.FDA.Model.metrics
             }
             return allHistogramsAreConverged;
         }
-        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<ConsequenceDistributionResults> yValues)
+        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<ConsequenceDistributionResults> yValues, int impactAreaID)
         {
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
-            List<int> impactAreas = yValues[yValues.Count - 1].GetImpactAreas();
             List<string> damageCategories = yValues[yValues.Count - 1].GetDamageCategories();
             List<string> assetCategories = yValues[yValues.Count - 1].GetAssetCategories();
-            foreach (int impactAreaID in impactAreas)
-            {
+   
                 foreach (string damageCategory in damageCategories)
                 {
                     foreach (string assetCategory in assetCategories)
@@ -464,7 +464,7 @@ namespace HEC.FDA.Model.metrics
                         uncertainPairedDataList.Add(uncertainPairedData);
                     }
                 }
-            }
+       
             return uncertainPairedDataList;
         }
 
@@ -479,19 +479,6 @@ namespace HEC.FDA.Model.metrics
                 }
             }
             return assetCategories;
-        }
-
-        private List<int> GetImpactAreas()
-        {
-            List<int> impactAreas = new List<int>();
-            foreach (ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
-            {
-                if (!impactAreas.Contains(consequenceDistributionResult.RegionID))
-                {
-                    impactAreas.Add(consequenceDistributionResult.RegionID);
-                }
-            }
-            return impactAreas;
         }
 
         private List<string> GetDamageCategories()

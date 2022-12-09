@@ -13,11 +13,10 @@ namespace HEC.FDA.Model.metrics
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
-        //TODO: hard-wiring the bin width is no good
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
-        private int _regionID;
+        private int _regionID = -999;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
 
@@ -87,23 +86,23 @@ namespace HEC.FDA.Model.metrics
         }
         /// <summary>
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
             MessageHub.Register(this);
 
         }
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, List<double> consequences)
+        //This constructor is used by the stage damage compute and does not track impact area ID 
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new Histogram(consequences, convergenceCriteria);
 
