@@ -97,12 +97,10 @@ namespace HEC.FDA.Model.structures
         {
             //damage functions
             IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
-            //HACK consider adding empty constructor to PairedData
             //This hack is here because we need to create these functions before assigning their value;
+            //This hack feels less hacky than having an empty paired data constructor with the same junk 
             IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
-            //HACK
             IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
-            //HACK
             IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters

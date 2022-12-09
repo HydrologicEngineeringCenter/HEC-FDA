@@ -13,7 +13,11 @@ namespace HEC.FDA.Model.paireddata
 {
     public class PairedData : Validation, IPairedData, IReportMessage
     {
+        #region Fields 
         private CurveMetaData _metadata;
+        #endregion
+
+        #region Properties 
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
         public CurveMetaData CurveMetaData
@@ -24,7 +28,9 @@ namespace HEC.FDA.Model.paireddata
             }
         }
         public event MessageReportedEventHandler MessageReport;
+        #endregion
 
+        #region Constructors 
         public PairedData(double[] xs, double[] ys)
         {
             Xvals = xs;
@@ -41,6 +47,9 @@ namespace HEC.FDA.Model.paireddata
             AddRules();
             MessageHub.Register(this);
         }
+        #endregion
+
+        #region MEthods 
         /// <summary>
         /// These rules only work in the case that we're working with non-exceedance probability 
         /// </summary>
@@ -340,5 +349,6 @@ namespace HEC.FDA.Model.paireddata
         {
             MessageReport?.Invoke(sender, e);
         }
+        #endregion
     }
 }
