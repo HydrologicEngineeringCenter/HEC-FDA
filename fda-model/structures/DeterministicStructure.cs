@@ -63,27 +63,27 @@ namespace HEC.FDA.Model.structures
                 {
                     //Structure
                     double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                    structDamage = structDamagepercent * StructValueSample * priceIndex * _numberOfStructures;
+                    structDamage = (structDamagepercent/100) * StructValueSample * priceIndex * _numberOfStructures;
 
                     //Content
                     if (_sampledStructureParameters.ComputeContentDamage)
                     {
                         double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                        contDamage = contentDamagePercent * ContentValueSample * priceIndex * _numberOfStructures;
+                        contDamage = (contentDamagePercent/100) * ContentValueSample * priceIndex * _numberOfStructures;
                     }
 
                     //Vehicle
                     if (_sampledStructureParameters.ComputeVehicleDamage)
                     {
                         double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                        vehicleDamage = vehicleDamagePercent * VehicleValueSample * priceIndex * _numberOfStructures;
+                        vehicleDamage = (vehicleDamagePercent/100) * VehicleValueSample * priceIndex * _numberOfStructures;
                     }
 
                     //Other
                     if (_sampledStructureParameters.ComputeOtherDamage)
                     {
                         double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                        otherDamage = otherDamagePercent * OtherValueSample * priceIndex * _numberOfStructures;
+                        otherDamage = (otherDamagePercent/100) * OtherValueSample * priceIndex * _numberOfStructures;
                     }
                 }
             }

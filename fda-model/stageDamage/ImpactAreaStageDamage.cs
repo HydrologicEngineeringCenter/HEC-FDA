@@ -27,6 +27,7 @@ namespace HEC.FDA.Model.stageDamage
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
         private int _AnalysisYear;
+        private bool _usingMockData;
         private Inventory _inventory;
         private HydraulicDataset _hydraulicDataset;
 
@@ -34,8 +35,8 @@ namespace HEC.FDA.Model.stageDamage
         private double _maxStageForArea;
         private ConvergenceCriteria convergenceCriteria;
 
-        private int _numExtrapolatedStagesToCompute = 5;
-        private int _numInterpolatedStagesToCompute = 3;
+        private int _numExtrapolatedStagesToCompute = 15;
+        private int _numInterpolatedStagesToCompute = 20;
 
         private string _HydraulicParentDirectory;
         #endregion
@@ -55,7 +56,8 @@ namespace HEC.FDA.Model.stageDamage
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
             _AnalysisYear = analysisYear;
-            if (usingMockData)
+            _usingMockData = usingMockData;
+            if (_usingMockData)
             {
                 _inventory = inventory;
             } 
@@ -67,8 +69,6 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
-
-
         #endregion
 
         #region Methods
