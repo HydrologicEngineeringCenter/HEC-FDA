@@ -62,7 +62,7 @@
 
         }
 
-        internal ConsequenceResult(string damageCategory, int impactAreaID)
+        public ConsequenceResult(string damageCategory, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _regionID = impactAreaID;
@@ -71,7 +71,7 @@
         #endregion
 
         #region Methods
-        internal void IncrementConsequence(double structureDamage, double contentDamage = 0, double vehicleDamage = 0, double otherDamage = 0)
+        public void IncrementConsequence(double structureDamage, double contentDamage = 0, double vehicleDamage = 0, double otherDamage = 0)
         {
             _structureDamage += structureDamage;
             _contentDamage += contentDamage;

@@ -46,7 +46,7 @@ namespace HEC.FDA.Model.stageDamage
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = -999,
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
             ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here

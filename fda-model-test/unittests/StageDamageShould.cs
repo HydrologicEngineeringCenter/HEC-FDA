@@ -16,7 +16,7 @@ using HEC.FDA.Model.hydraulics.Mock;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Disk")]
+    [Trait("Category", "Unit")]
     public class StageDamageShould
     {
 
@@ -24,7 +24,6 @@ namespace HEC.FDA.ModelTest.unittests
         private static int[] structureIDs = new int[] { 0, 1, 2, 3 };
         private static PointM pointM = new PointM(); // These won't get used. We're gonna do some goofy stuff with fake hydraulics.
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
-        private static float[] GroundElevs = new float[] { 0, 0, 0, 0, 0 };
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
         private static string residentialDamageCategory = "Residential";
         private static string commercialDamageCategory = "Commercial";
@@ -39,27 +38,27 @@ namespace HEC.FDA.ModelTest.unittests
         private static IDistribution[] residentialPercentDamage = new IDistribution[]
         {
             new Normal(0,0),
-            new Normal(.10,.05),
-            new Normal(.20,.06),
-            new Normal(.30,.07),
-            new Normal(.40,.08),
-            new Normal(.50,.09)
+            new Normal(10,05),
+            new Normal(20,06),
+            new Normal(30,07),
+            new Normal(40,08),
+            new Normal(50,09)
         };
         private static IDistribution[] commercialPercentDamage = new IDistribution[]
         {
             new Normal(0,0),
-            new Normal(.20,.05),
-            new Normal(.30,.06),
-            new Normal(.40,.07),
-            new Normal(.50,.08),
-            new Normal(.60,.09)
+            new Normal(20,05),
+            new Normal(30,06),
+            new Normal(40,07),
+            new Normal(50,08),
+            new Normal(60,09)
         };
         private static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
         private static UncertainPairedData _ResidentialDepthPercentDamageFunction = new UncertainPairedData(depths, residentialPercentDamage, metaData);
         private static UncertainPairedData _CommercialDepthPercentDamageFunction = new UncertainPairedData(depths, commercialPercentDamage, metaData);
         private static FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
         private static ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-        private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, .1, .9);
+        private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
         private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
         private static OccupancyType residentialOccupancyType = OccupancyType.builder()
@@ -82,7 +81,7 @@ namespace HEC.FDA.ModelTest.unittests
             .withContentToStructureValueRatio(_contentToStructureValueRatio)
             .build();
 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
         private static string contentAssetCategory = "Content";
         private static string structureAssetCategory = "Structure";
 
@@ -113,7 +112,7 @@ namespace HEC.FDA.ModelTest.unittests
             float[] WSEs = new float[] { 7, 10, 8, 12 };
 
             //Act
-            ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, inventory, WSEs, analysisYear: -999);
+            ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, inventory, WSEs, analysisYear: 9999);
             double actualResidentialStructureDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
             double actualResidentialContentDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
             double actualCommercialStructureDamage = consequenceDistributionResults.MeanDamage(commercialDamageCategory, structureAssetCategory);
@@ -180,11 +179,11 @@ namespace HEC.FDA.ModelTest.unittests
         public void ProduceReasonableResults()
         {
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteria, String.Empty,graphicalFrequency: stageFrequency);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteria, String.Empty,graphicalFrequency: stageFrequency, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
-            List<UncertainPairedData> results = scenarioStageDamage.Compute(new RandomProvider(1234), new ConvergenceCriteria());
+            List<UncertainPairedData> results = scenarioStageDamage.Compute(new RandomProvider(1234), new ConvergenceCriteria(minIterations: 200, maxIterations: 500));
 
             Assert.NotNull(results);
 

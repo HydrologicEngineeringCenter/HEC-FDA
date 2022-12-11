@@ -111,7 +111,7 @@ namespace HEC.FDA.Model.structures
             {
                 if (_useContentToStructureValueRatio)
                 {
-                    contentValueSampled = structureValueSampled * _contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+                    contentValueSampled = structureValueSampled * (_contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
                 }
                 else
                 {
@@ -128,7 +128,7 @@ namespace HEC.FDA.Model.structures
             {
                 if (_useOtherToStructureValueRatio)
                 {
-                    otherValueSampled = structureValueSampled * _otherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+                    otherValueSampled = structureValueSampled * (_otherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
                 }
                 else
                 {

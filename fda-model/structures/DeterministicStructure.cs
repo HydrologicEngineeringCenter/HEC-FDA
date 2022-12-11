@@ -46,7 +46,7 @@ namespace HEC.FDA.Model.structures
 
         //TODO: We do not want to return a new structure damage result every time 
         #region Methods
-        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, double priceIndex = 1, int analysisYear = -999)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, double priceIndex = 1, int analysisYear = 9999)
         {
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
 

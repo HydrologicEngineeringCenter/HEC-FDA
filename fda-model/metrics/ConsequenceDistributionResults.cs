@@ -92,21 +92,22 @@ namespace HEC.FDA.Model.metrics
             _isNull = false;
             MessageHub.Register(this);
             _consequenceResultList = new List<ConsequenceDistributionResult>();
-            Process(results);
-
+            int impactAreaID = results[0].ConsequenceResultList[0].RegionID;
+            Process(results, impactAreaID);
         }
-        private void Process(List<ConsequenceResults> results)
+
+        #endregion
+
+        #region Methods 
+        private void Process(List<ConsequenceResults> results, int impactAreaID)
         {
             ProcessedConsequenceResultsList processedConsequenceResultsList = new ProcessedConsequenceResultsList(results);
             foreach (ProcessedConsequenceResults processedConsequenceResults in processedConsequenceResultsList.Results)
             {
-                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.DamageRealizations);
+                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.DamageRealizations, impactAreaID);
                 _consequenceResultList.Add(result);
             }
         }
-        #endregion
-
-        #region Methods 
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
         internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, bool histogramIsZeroValued = false)
         {
@@ -393,7 +394,8 @@ namespace HEC.FDA.Model.metrics
                 }
                 if (damageCategory != null && assetCategory != null && impactAreaID != -999)
                 {
-                    return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceHistogram;
+                    ConsequenceDistributionResult consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+                    return consequence.ConsequenceHistogram;
                 }
             }
             IHistogram aggregateHistogram;
@@ -458,7 +460,8 @@ namespace HEC.FDA.Model.metrics
                         List<IHistogram> histograms = new List<IHistogram>();
                         foreach (ConsequenceDistributionResults consequenceDistributions in yValues)
                         {
-                            histograms.Add(consequenceDistributions.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID));
+                            IHistogram histogram = consequenceDistributions.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+                            histograms.Add(histogram);
                         }
                         UncertainPairedData uncertainPairedData = new UncertainPairedData(xValues.ToArray(), histograms.ToArray(), curveMetaData);
                         uncertainPairedDataList.Add(uncertainPairedData);

@@ -7,7 +7,7 @@ using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.Model.metrics
 {
-    internal class ProcessedConsequenceResultsList
+    public class ProcessedConsequenceResultsList
     {
 
         #region Fields 
@@ -15,20 +15,19 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Properties
-        internal List<ProcessedConsequenceResults> Results { get { return _results; } }
+        public List<ProcessedConsequenceResults> Results { get { return _results; } }
         #endregion
 
         #region Constructor 
-        internal ProcessedConsequenceResultsList(List<ConsequenceResults> consequenceResults)
+        public ProcessedConsequenceResultsList(List<ConsequenceResults> consequenceResults)
         {
-            _results = Process(consequenceResults);
+            Process(consequenceResults);
         }
         #endregion
 
         #region Methods 
-        private List<ProcessedConsequenceResults> Process(List<ConsequenceResults> consequenceResultsList)
+        private void Process(List<ConsequenceResults> consequenceResultsList)
         {
-            List<ProcessedConsequenceResults> results = new List<ProcessedConsequenceResults>();
 
             foreach (var consequenceResults in consequenceResultsList)
             {
@@ -38,7 +37,6 @@ namespace HEC.FDA.Model.metrics
                 }
             }
 
-            return results;
         }
 
         private void ProcessEachConsequenceResult(ConsequenceResult consequenceResult)

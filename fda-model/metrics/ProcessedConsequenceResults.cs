@@ -7,7 +7,7 @@ using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.Model.metrics
 {
-    internal class ProcessedConsequenceResults
+    public class ProcessedConsequenceResults
     {
         #region Fields 
         private string _assetCategory;
@@ -17,9 +17,9 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Properties 
-        internal string AssetCategory { get { return _assetCategory; } }
-        internal string DamageCategory { get { return _damageCategory; } }
-        internal List<double> DamageRealizations { get { return _damageRealizations; } }
+        public string AssetCategory { get { return _assetCategory; } }
+        public string DamageCategory { get { return _damageCategory; } }
+        public List<double> DamageRealizations { get { return _damageRealizations; } }
         internal bool IsNull { get { return _isNull; } }
         #endregion
 
@@ -31,7 +31,7 @@ namespace HEC.FDA.Model.metrics
             _damageRealizations = new List<double>();
             _isNull = isNull;
         }
-        internal ProcessedConsequenceResults(double damageValue, string assetCategory, string damageCategory)
+        public ProcessedConsequenceResults(double damageValue, string assetCategory, string damageCategory)
         {
             _damageRealizations = new List<double>() { damageValue };
             _assetCategory = assetCategory;
@@ -40,7 +40,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods 
-        internal void AddDamageRealization(double damageValue)
+        public void AddDamageRealization(double damageValue)
         {
             _damageRealizations.Add(damageValue);
         }
