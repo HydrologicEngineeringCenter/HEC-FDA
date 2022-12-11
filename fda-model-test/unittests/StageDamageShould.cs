@@ -34,24 +34,38 @@ namespace HEC.FDA.ModelTest.unittests
         private static int impactAreaID = 1;
 
         //occupancy type data
-        private static double[] depths = new double[] { 0, 1, 2, 3, 4, 5 };
+        private static double[] depths = new double[] {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         private static IDistribution[] residentialPercentDamage = new IDistribution[]
         {
             new Normal(0,0),
-            new Normal(10,05),
-            new Normal(20,06),
-            new Normal(30,07),
-            new Normal(40,08),
-            new Normal(50,09)
+            new Normal(10,4),
+            new Normal(20,8),
+            new Normal(30,12),
+            new Normal(40,16),
+            new Normal(50,12), 
+            new Normal(60,8),
+            new Normal(70, 10),
+            new Normal(80, 8),
+            new Normal(90, 4),
+            new Normal(100,0),
+            new Normal(100,0),
+            new Normal(100,0)
         };
         private static IDistribution[] commercialPercentDamage = new IDistribution[]
         {
             new Normal(0,0),
-            new Normal(20,05),
-            new Normal(30,06),
-            new Normal(40,07),
-            new Normal(50,08),
-            new Normal(60,09)
+            new Normal(10,4),
+            new Normal(20,8),
+            new Normal(30,12),
+            new Normal(40,16),
+            new Normal(50,12),
+            new Normal(60,8),
+            new Normal(70, 10),
+            new Normal(80, 8),
+            new Normal(90, 4),
+            new Normal(100,0),
+            new Normal(100,0),
+            new Normal(100,0)
         };
         private static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
         private static UncertainPairedData _ResidentialDepthPercentDamageFunction = new UncertainPairedData(depths, residentialPercentDamage, metaData);
@@ -132,8 +146,6 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifferenceCommercialContentDamage < tolerance);
 
         }
-
-
         private Inventory CreateInventory()
         {
             List<Structure> structures = new List<Structure>();
@@ -147,6 +159,34 @@ namespace HEC.FDA.ModelTest.unittests
             Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
             return inventory;
         }
+
+        [Theory]
+        [InlineData(199.98, 179.80)]
+        public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage)
+        {
+            //Arrange
+            Structure structure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], occupancyTypes[0], impactAreaID);
+            List<Structure> structures = new List<Structure>() { structure };
+            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyType };
+            Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
+            float[] WSEs = new float[] { 7 };
+            RandomProvider randomProvider = new RandomProvider(seed: 1234);
+            
+            //Act
+            ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, inventory, WSEs, analysisYear: 9999);
+      
+            double actualResidentialStructureDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
+            double structureRelativeDifference = Math.Abs(actualResidentialStructureDamage - expectedResidentialStructureDamage)/expectedResidentialStructureDamage;
+            double actualResidentialContentDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
+            double contentRelativeDifference = Math.Abs(actualResidentialContentDamage - expectedResidentialContentDamage) / expectedResidentialContentDamage;
+
+            //Assert 
+            double tolerance = 0.05;
+            Assert.True(structureRelativeDifference < tolerance);
+            Assert.True(contentRelativeDifference < tolerance);
+        }
+
+
 
         [Theory]
         [InlineData(5)]

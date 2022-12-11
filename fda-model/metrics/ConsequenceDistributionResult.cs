@@ -98,7 +98,6 @@ namespace HEC.FDA.Model.metrics
             MessageHub.Register(this);
 
         }
-        //This constructor is used by the stage damage compute and does not track impact area ID 
         public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
         {
             _damageCategory = damageCategory;

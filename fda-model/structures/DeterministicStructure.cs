@@ -63,27 +63,43 @@ namespace HEC.FDA.Model.structures
                 {
                     //Structure
                     double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                    structDamage = (structDamagepercent/100) * StructValueSample * priceIndex * _numberOfStructures;
+                    if (structDamagepercent > 100)
+                    {
+                        structDamagepercent = 100;
+                    }
+                    structDamage = (structDamagepercent / 100) * StructValueSample * priceIndex * _numberOfStructures;
 
                     //Content
                     if (_sampledStructureParameters.ComputeContentDamage)
                     {
                         double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                        contDamage = (contentDamagePercent/100) * ContentValueSample * priceIndex * _numberOfStructures;
+                        if (contentDamagePercent > 100)
+                        {
+                            contentDamagePercent = 100;
+                        }
+                        contDamage = (contentDamagePercent / 100) * ContentValueSample * priceIndex * _numberOfStructures;
                     }
 
                     //Vehicle
                     if (_sampledStructureParameters.ComputeVehicleDamage)
                     {
                         double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                        vehicleDamage = (vehicleDamagePercent/100) * VehicleValueSample * priceIndex * _numberOfStructures;
+                        if (vehicleDamagePercent > 100)
+                        {
+                            vehicleDamagePercent = 100;
+                        }
+                        vehicleDamage = (vehicleDamagePercent / 100) * VehicleValueSample * priceIndex * _numberOfStructures;
                     }
 
                     //Other
                     if (_sampledStructureParameters.ComputeOtherDamage)
                     {
                         double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                        otherDamage = (otherDamagePercent/100) * OtherValueSample * priceIndex * _numberOfStructures;
+                        if (otherDamagePercent > 100)
+                        {
+                            otherDamagePercent = 100;
+                        }
+                        otherDamage = (otherDamagePercent / 100) * OtherValueSample * priceIndex * _numberOfStructures;
                     }
                 }
             }

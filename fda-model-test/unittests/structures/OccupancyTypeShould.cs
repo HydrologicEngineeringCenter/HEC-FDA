@@ -14,11 +14,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static IDistribution[] percentDamages = new IDistribution[]
         {
             new Normal(0,0),
-            new Normal(10,.05),
-            new Normal(20,.06),
-            new Normal(30,.07),
-            new Normal(40,.08),
-            new Normal(50,.09)
+            new Normal(10,05),
+            new Normal(20,06),
+            new Normal(30,07),
+            new Normal(40,08),
+            new Normal(50,09)
         };
         private static double[] expectedPercentDamage = new double[] { 0, 10, 20,30, 40, 50 };
         private static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");

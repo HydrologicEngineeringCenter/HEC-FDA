@@ -248,7 +248,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
         #endregion
         #region Compute Objects
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10, maxIterations: 50);
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10, maxIterations: 5000);
         private static ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, hydraulicDataset, convergenceCriteria, dummyPath, analyticalFlowFrequency: LP3Distribution, dischargeStage: stageDischarge, usingMockData: true);
 
         #endregion
