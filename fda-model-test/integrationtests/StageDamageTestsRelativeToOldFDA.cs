@@ -17,6 +17,9 @@ namespace HEC.FDA.ModelTest.integrationtests
     [Trait("Category", "Integration")]
     public class StageDamageTestsRelativeToOldFDA
     {
+        //TODO: This class will not be used as a comparison of stage damage between 1.4.3 and 2.0 
+        //rather, this class will be used as a comparison of EAD when using 2.0 computed stage damage functions
+        //the EAD logic has yet to be written 
         #region Metadata 
         private static int impactAreaID = 34;
         #endregion

@@ -159,7 +159,10 @@ namespace HEC.FDA.ModelTest.unittests
             Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
             return inventory;
         }
-
+        /// <summary>
+        /// This test demonstrates that the stage-damage algorithm computes damage with uncertainty correctly for a given set of water surface elevations
+        /// Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1Fx37H4k7PFQbYTi2uJL_N0GOSgQyrA-G/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
         [Theory]
         [InlineData(199.98, 179.80)]
         public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage)
