@@ -9,7 +9,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
     [Trait("Category", "Disk")]
     public class HydraulicProfileShould
     {
-        private const string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\MuncieNSI.shp";
+        private const string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
 
         private const string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
 
@@ -43,7 +43,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
 
             Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathTerrain);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
-            Assert.Equal(696, wses.Length); // All structures have a value
+            Assert.Equal(682, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
         }
     }

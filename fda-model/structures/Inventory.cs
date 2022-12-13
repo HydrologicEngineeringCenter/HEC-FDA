@@ -89,6 +89,8 @@ public class Inventory
         _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
         _terrainPath = terrainPath;
         _priceIndex = priceIndex;
+        //TODO: Add some validation here
+        //If we have a bad shapefile name, then we get a null ref exception in the below method `
         LoadStructuresFromSourceFiles();
     }
     public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
