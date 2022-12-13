@@ -88,13 +88,14 @@ namespace HEC.FDA.Model.metrics
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
+            _regionID = impactAreaID;
             MessageHub.Register(this);
 
         }
