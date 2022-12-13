@@ -67,8 +67,8 @@ namespace HEC.FDA.ModelTest.integrationtests
         static IDistribution[] residentialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90), new Deterministic(100) };
         static IDistribution[] residentialContentAndCommercialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(5), new Deterministic(15), new Deterministic(25), new Deterministic(35), new Deterministic(45), new Deterministic(55), new Deterministic(65), new Deterministic(75), new Deterministic(85), new Deterministic(95) };
         static IDistribution[] commericalContentDamage = new IDistribution[] { new Deterministic(0), new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90) };
-        static ValueRatioWithUncertainty residentialCSVR = new ValueRatioWithUncertainty(0.5);
-        static ValueRatioWithUncertainty commercialCSVR = new ValueRatioWithUncertainty(1.2);
+        static ValueRatioWithUncertainty residentialCSVR = new ValueRatioWithUncertainty(50);
+        static ValueRatioWithUncertainty commercialCSVR = new ValueRatioWithUncertainty(120);
         static string residentialDamAndOccType = "Residential";
         static string commercialDamAndOccType = "Commercial";
         static string contentAssetType = "Content";
