@@ -278,17 +278,17 @@ namespace HEC.FDA.ModelTest.unittests
         /// Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1Fx37H4k7PFQbYTi2uJL_N0GOSgQyrA-G/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         [Theory]
-        //[InlineData(5, 99.89, 89.65, 104.31, 79.82)]
-        [InlineData(9, 300.27, 270.07, 267.63, 204.96)]
+        //[InlineData(5, 99.89, 89.65, 104.31, 79.82, 88.85, 68)]
+        [InlineData(9, 300.27, 270.07, 267.63, 204.96, 310.3, 237.83)]
 
-        public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(float wse, double expectedNormalDistStructure, double expectedNormalDistContent, double expectedTriLeftDistStructure, double expectedTriLeftDistContent)//, double expectedTriRightStructure, double expectedTriLeftContent, double expectedUniformStructure, double expectedUniformContent)
+        public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(float wse, double expectedNormalDistStructure, double expectedNormalDistContent, double expectedTriLeftDistStructure, double expectedTriLeftDistContent, double expectedTriRightStructure, double expectedTriLeftContent)//, double expectedUniformStructure, double expectedUniformContent)
         {
             //Arrange ---------------------------------------------------------------------
 
             //Structures 
             Structure normalStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialNormalDistOccupancyTypeName, impactAreaID);
-            Structure triLeftStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialTriRightDistOccupancyTypeName, impactAreaID);
-            Structure triRightStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialTriLeftDistOccupancyTypeName, impactAreaID);
+            Structure triLeftStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialTriLeftDistOccupancyTypeName, impactAreaID);
+            Structure triRightStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialTriRightDistOccupancyTypeName , impactAreaID);
             Structure uniformStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialUniformDistOccupancyTypeName, impactAreaID);
 
             //Occ Types
@@ -310,7 +310,7 @@ namespace HEC.FDA.ModelTest.unittests
             //Act
             ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999);
             ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999);
-            //ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999);
+            ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999);
             //ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999);
 
             //Normal 
@@ -326,10 +326,10 @@ namespace HEC.FDA.ModelTest.unittests
             double triLeftContentRelativeDifference = Math.Abs(actualTriLeftContentDamage - expectedTriLeftDistContent) / expectedTriLeftDistContent;
 
             ////Tri Right
-            //double actualTriRightStructureDamage = triRight.MeanDamage(residentialDamageCategory, structureAssetCategory);
-            //double triRightStructureRelativeDiff = Math.Abs(actualTriRightStructureDamage - expectedTriRightStructure) / expectedTriRightStructure;
-            //double actualTriRightContentDamage = triRight.MeanDamage(residentialDamageCategory, contentAssetCategory);
-            //double triRightContentRelativeDiff = Math.Abs(actualTriRightContentDamage - expectedTriLeftContent) / expectedTriLeftContent;
+            double actualTriRightStructureDamage = triRight.MeanDamage(residentialDamageCategory, structureAssetCategory);
+            double triRightStructureRelativeDiff = Math.Abs(actualTriRightStructureDamage - expectedTriRightStructure) / expectedTriRightStructure;
+            double actualTriRightContentDamage = triRight.MeanDamage(residentialDamageCategory, contentAssetCategory);
+            double triRightContentRelativeDiff = Math.Abs(actualTriRightContentDamage - expectedTriLeftContent) / expectedTriLeftContent;
 
             ////Uniform 
             //double actualUniformStructureDamage = uniform.MeanDamage(residentialDamageCategory, structureAssetCategory);
@@ -343,8 +343,8 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(normalContentRelativeDifference < tolerance);
             Assert.True(triLeftStructureRelativeDifference < tolerance);
             Assert.True(triLeftContentRelativeDifference < tolerance);
-            //Assert.True(triRightStructureRelativeDiff < tolerance);
-            //Assert.True(triRightContentRelativeDiff < tolerance);
+            Assert.True(triRightStructureRelativeDiff < tolerance);
+            Assert.True(triRightContentRelativeDiff < tolerance);
             //Assert.True(uniformStructureRelativeDiff < tolerance);
             //Assert.True(uniformContentRelativeDiff < tolerance);
         }

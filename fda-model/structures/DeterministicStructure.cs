@@ -81,6 +81,10 @@ namespace HEC.FDA.Model.structures
                         {
                             contentDamagePercent = 100;
                         }
+                        if (contentDamagePercent < 0)
+                        {
+                            contentDamagePercent = 0;
+                        }
                         contDamage = (contentDamagePercent / 100) * ContentValueSample * priceIndex * _numberOfStructures;
                     }
 
@@ -92,6 +96,10 @@ namespace HEC.FDA.Model.structures
                         {
                             vehicleDamagePercent = 100;
                         }
+                        if (vehicleDamagePercent < 0)
+                        {
+                            vehicleDamagePercent = 0;
+                        }
                         vehicleDamage = (vehicleDamagePercent / 100) * VehicleValueSample * priceIndex * _numberOfStructures;
                     }
 
@@ -102,6 +110,10 @@ namespace HEC.FDA.Model.structures
                         if (otherDamagePercent > 100)
                         {
                             otherDamagePercent = 100;
+                        }
+                        if (otherDamagePercent < 0)
+                        {
+                            otherDamagePercent = 0;
                         }
                         otherDamage = (otherDamagePercent / 100) * OtherValueSample * priceIndex * _numberOfStructures;
                     }
