@@ -34,7 +34,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static int impactAreaID = 1;
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
         private static string contentAssetCategory = "Content";
-        private static string structureAssetCategory = "Structure"
+        private static string structureAssetCategory = "Structure";
 
         #region Normally Distributed Occ Type Data
         //occupancy type data
