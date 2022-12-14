@@ -278,10 +278,10 @@ namespace HEC.FDA.ModelTest.unittests
         /// Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1Fx37H4k7PFQbYTi2uJL_N0GOSgQyrA-G/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         [Theory]
-        [InlineData(5, 99.89, 89.65)]
-        [InlineData(11, 400.37, 360.28)]
+        //[InlineData(5, 99.89, 89.65, 104.31, 79.82)]
+        [InlineData(9, 300.27, 270.07, 267.63, 204.96)]
 
-        public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(float wse, double expectedNormalDistStructure, double expectedNormalDistContent)//, double expectedTriLeftDistStructure, double expectedTriLeftDistContent, double expectedTriRightStructure, double expectedTriLeftContent, double expectedUniformStructure, double expectedUniformContent)
+        public void ComputeDamageWithUncertaintyOneCoordinateShouldComputeCorrecly(float wse, double expectedNormalDistStructure, double expectedNormalDistContent, double expectedTriLeftDistStructure, double expectedTriLeftDistContent)//, double expectedTriRightStructure, double expectedTriLeftContent, double expectedUniformStructure, double expectedUniformContent)
         {
             //Arrange ---------------------------------------------------------------------
 
@@ -309,7 +309,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             //Act
             ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999);
-            //ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999);
+            ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999);
             //ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999);
             //ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999);
 
@@ -320,10 +320,10 @@ namespace HEC.FDA.ModelTest.unittests
             double normalContentRelativeDifference = Math.Abs(actualNormalResidentialContentDamage - expectedNormalDistContent) / expectedNormalDistContent;
 
             //Tri Left
-            //double actualTriLeftStructureDamage = triLeft.MeanDamage(residentialDamageCategory, structureAssetCategory);
-            //double triLeftStructureRelativeDifference = Math.Abs(actualTriLeftStructureDamage - expectedTriLeftDistStructure) / expectedTriLeftDistStructure;
-            //double actualTriLeftContentDamage = triLeft.MeanDamage(residentialDamageCategory, contentAssetCategory);
-            //double triLeftContentRelativeDifference = Math.Abs(actualTriLeftContentDamage - expectedTriLeftDistContent) / expectedTriLeftDistContent;
+            double actualTriLeftStructureDamage = triLeft.MeanDamage(residentialDamageCategory, structureAssetCategory);
+            double triLeftStructureRelativeDifference = Math.Abs(actualTriLeftStructureDamage - expectedTriLeftDistStructure) / expectedTriLeftDistStructure;
+            double actualTriLeftContentDamage = triLeft.MeanDamage(residentialDamageCategory, contentAssetCategory);
+            double triLeftContentRelativeDifference = Math.Abs(actualTriLeftContentDamage - expectedTriLeftDistContent) / expectedTriLeftDistContent;
 
             ////Tri Right
             //double actualTriRightStructureDamage = triRight.MeanDamage(residentialDamageCategory, structureAssetCategory);
@@ -338,11 +338,11 @@ namespace HEC.FDA.ModelTest.unittests
             //double uniformContentRelativeDiff = Math.Abs(actualUniformContentDamage - expectedUniformContent) / expectedUniformContent;
 
             //Assert 
-            double tolerance = 0.05;
+            double tolerance = 0.10;
             Assert.True(normalStructureRelativeDifference < tolerance);
             Assert.True(normalContentRelativeDifference < tolerance);
-            //Assert.True(triLeftStructureRelativeDifference < tolerance);
-            //Assert.True(triLeftContentRelativeDifference < tolerance);
+            Assert.True(triLeftStructureRelativeDifference < tolerance);
+            Assert.True(triLeftContentRelativeDifference < tolerance);
             //Assert.True(triRightStructureRelativeDiff < tolerance);
             //Assert.True(triRightContentRelativeDiff < tolerance);
             //Assert.True(uniformStructureRelativeDiff < tolerance);
