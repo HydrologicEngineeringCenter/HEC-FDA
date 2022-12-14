@@ -67,6 +67,10 @@ namespace HEC.FDA.Model.structures
                     {
                         structDamagepercent = 100;
                     }
+                    if (structDamagepercent < 0)
+                    {
+                        structDamagepercent = 0;
+                    }
                     structDamage = (structDamagepercent / 100) * StructValueSample * priceIndex * _numberOfStructures;
 
                     //Content

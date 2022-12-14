@@ -44,5 +44,18 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Assert.Equal(expectedStructureDamage * numberOfStructures * priceIndex, consequenceResult.StructureDamage, 0);
             Assert.Equal(expectedContentDamage * numberOfStructures * priceIndex, consequenceResult.ContentDamage, 0);
         }
+
+        [Fact]
+        public void ComputesDamageCorrectlyForNegativeDepthAboveFFE()
+        {
+            double[] depths = new double[] { -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+            double[] percentDamage = new double[] { 0, 0, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+            PairedData depthPercentDamage = new PairedData(depths, percentDamage);
+            SampledStructureParameters sampledStructureParameters = new SampledStructureParameters(occupancyTypeName: "Name", occupancyTypeDamageCategory: "DamCat", structPercentDamagePairedData: depthPercentDamage, sampledFirstFloorElevation: 10, sampledStructureValue: 100, computeContentDamage: false, computeVehicleDamage: false, computeOtherDamage: false);
+            DeterministicStructure deterministicStructure = new DeterministicStructure(fid: 1, impactAreaID: 2, sampledStructureParameters: sampledStructureParameters, beginningDamageDepth: -4);
+            ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation: 7.5f);
+            double expectedDamage = 0.1 * 100;
+            Assert.Equal(expectedDamage, consequenceResult.StructureDamage);
+        }
     }
 }

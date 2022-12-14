@@ -25,7 +25,7 @@ namespace HEC.FDA.Model.structures
         internal int YearInService { get; }
         internal int NumberOfStructures { get; }
 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = 0, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = -999, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
 
         {
             Fid = fid;
