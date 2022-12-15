@@ -229,9 +229,9 @@ namespace HEC.FDA.ModelTest.unittests
         private static RandomProvider randomProvider = new RandomProvider(seed: 1234);
 
 
-        //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
-        [InlineData(340, 306, 540, 486)]
+        [InlineData(560, 504, 690, 621)]
         public void ComputeDamageOneCoordinateShouldComputeCorrectly(double expectedResidentialStructureDamage, double expectedResidentialContentDamage, double expectedCommercialStructureDamage, double expectedCommercialContentDamage)
         {
             //Arrange
