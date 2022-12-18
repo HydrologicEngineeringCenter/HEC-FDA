@@ -54,7 +54,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             SampledStructureParameters sampledStructureParameters = new SampledStructureParameters(occupancyTypeName: "Name", occupancyTypeDamageCategory: "DamCat", structPercentDamagePairedData: depthPercentDamage, sampledFirstFloorElevation: 10, sampledStructureValue: 100, computeContentDamage: false, computeVehicleDamage: false, computeOtherDamage: false);
             DeterministicStructure deterministicStructure = new DeterministicStructure(fid: 1, impactAreaID: 2, sampledStructureParameters: sampledStructureParameters, beginningDamageDepth: -4);
             ConsequenceResult consequenceResult = deterministicStructure.ComputeDamage(waterSurfaceElevation: 7.5f);
-            double expectedDamage = 0.1 * 100;
+            double expectedDamage = 0.15 * 100;
             Assert.Equal(expectedDamage, consequenceResult.StructureDamage);
         }
     }
