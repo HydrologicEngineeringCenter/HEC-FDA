@@ -38,7 +38,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static CurveMetaData commercialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Commercial Stage Damage", commercialDamageCategory, "Total");
 
 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 50000);
         private static int seed = 1234;
         private static RandomProvider randomProvider = new RandomProvider(seed);
         //set up exterior-interior relationship 
