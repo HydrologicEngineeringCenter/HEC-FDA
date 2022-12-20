@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModelTest
             functions.Add(new ImpactAreaFrequencyFunctionRowItem(ri, new List<AnalyticalFrequencyElement>(), new List<StageDischargeElement>()));
 
             AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
-                selectedWSE, selectedStructs, curves, functions, true, id);
+                selectedWSE, selectedStructs, curves, functions, true,false, id);
             XElement elemXML = elem1.ToXML();
 
             AggregatedStageDamageElement elem2 = new AggregatedStageDamageElement(elemXML, id);

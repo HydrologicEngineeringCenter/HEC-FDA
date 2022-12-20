@@ -73,7 +73,6 @@ namespace HEC.FDA.Model.hydraulics
             }
             else
             {
-
                 for (int i = 0; i < wsesToCorrect.Length; i++)
                 {
                     bool dryInNextProfile = nextProfileWses[i] < groundElevs[i];

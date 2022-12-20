@@ -681,10 +681,12 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Converged", _Converged);
             masterElem.SetAttributeValue("Converged_Iterations", _ConvergedIterations);
             masterElem.SetAttributeValue("Converged_On_Max", _ConvergedOnMax);
-            for (int i = 0; i < _BinCounts.Length; i++)
-            {
-                masterElem.SetAttributeValue($"Bin_Counts_{i}", _BinCounts[i]);
-            }
+
+            string binCounts = string.Join(",", _BinCounts.Select(n => n.ToString()).ToArray());
+            XElement binElem = new XElement("Bin_Counts");
+            binElem.SetAttributeValue("Bin_Count", binCounts);
+            masterElem.Add(binElem);
+
             XElement convergenceCriteriaElement = _ConvergenceCriteria.WriteToXML();
             convergenceCriteriaElement.Name = "Convergence_Criteria";
             masterElem.Add(convergenceCriteriaElement);
@@ -703,10 +705,14 @@ namespace Statistics.Histograms
             string binQuantityString = element.Attribute("Bin_Quantity").Value;
             int binQuantity = Convert.ToInt32(binQuantityString);
             Int64[] binCounts = new Int64[binQuantity];
-            for (int i = 0; i < binQuantity; i++)
+
+            XElement binCountsElement = element.Element("Bin_Counts");
+            string binCountString = binCountsElement.Attribute("Bin_Count").Value;
+            if(binCountString != null && binCountString.Length>0)
             {
-                binCounts[i] = Convert.ToInt64(element.Attribute($"Bin_Counts_{i}").Value);
+                binCounts = binCountString.Split(',').Select(Int64.Parse).ToArray();
             }
+
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
             string sampleMeanString = element.Attribute("Sample_Mean").Value;
             double sampleMean = Convert.ToDouble(sampleMeanString);
