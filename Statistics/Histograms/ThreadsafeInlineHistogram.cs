@@ -708,7 +708,10 @@ namespace Statistics.Histograms
 
             XElement binCountsElement = element.Element("Bin_Counts");
             string binCountString = binCountsElement.Attribute("Bin_Count").Value;
-            binCounts = binCountString.Split(',').Select(Int64.Parse).ToArray();
+            if(binCountString != null && binCountString.Length>0)
+            {
+                binCounts = binCountString.Split(',').Select(Int64.Parse).ToArray();
+            }
 
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
             string sampleMeanString = element.Attribute("Sample_Mean").Value;
