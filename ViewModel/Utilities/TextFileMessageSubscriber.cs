@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.Utilities
         private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageTypeFilter = null;
         private Type _senderTypeFilter = null;
-        private int _maxMessageCount = 100;
+        private int _maxMessageCount = 0;
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
@@ -75,6 +75,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private TextFileMessageSubscriber()
         {
+            FilterLevel = ErrorLevel.Fatal;
             _messages = new System.Collections.Concurrent.ConcurrentQueue<IMessage>();
             //register
             MessageHub.Subscribe(this);
@@ -86,16 +87,36 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
-            _messages.Enqueue(e.Message);
+            if(e.Message is IErrorMessage)
+            {
+                IErrorMessage msg = e.Message as IErrorMessage;
+                if(msg.ErrorLevel >= FilterLevel)
+                {
+                    RecieveMessage(msg);
+                }
+            }
+            else
+            {
+                //todo: should we allow this or should we not log these?
+                //RecieveMessage(e.Message);
+            }
+           
+        }
+
+        private void RecieveMessage(IMessage message)
+        {
+            _messages.Enqueue(message);
             Interlocked.Increment(ref _enqueue);
             if (_messages.Count > _maxMessageCount && !_bw.IsBusy)
             {
                 //dequeue
                 lock (_bwListLock)
                 {
-                    if (!_bw.IsBusy) _bw.RunWorkerAsync();
+                    if (!_bw.IsBusy)
+                    {
+                        _bw.RunWorkerAsync();
+                    }
                 }
-
 
             }
         }

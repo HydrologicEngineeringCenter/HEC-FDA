@@ -33,6 +33,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
         public InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
         public InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
+        public InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem("Description:");
         public InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem("Number Of Structures:");
         #endregion
         #region Properties
@@ -91,6 +92,8 @@ namespace HEC.FDA.ViewModel.Inventory
             _BegDamDepthRow.SelectedItem = mappings.BeginningDamageDepthCol;
             _YearInConstructionRow.SelectedItem = mappings.YearInConstructionCol;
             _NotesRow.SelectedItem = mappings.NotesCol;
+            //todo:
+
             _NumberOfStructuresRow.SelectedItem = mappings.NumberOfStructuresCol;
         }
 
@@ -148,6 +151,7 @@ namespace HEC.FDA.ViewModel.Inventory
             OptionalRows.Add(_BegDamDepthRow);
             OptionalRows.Add(_YearInConstructionRow);
             OptionalRows.Add(_NotesRow);
+            OptionalRows.Add(_DescriptionRow);
             OptionalRows.Add(_NumberOfStructuresRow);
         }
 
@@ -187,6 +191,8 @@ namespace HEC.FDA.ViewModel.Inventory
             _YearInConstructionRow.Items.AddRange(allColumnNames);
             _NotesRow.Items.Clear();
             _NotesRow.Items.AddRange(allColumnNames);
+            _DescriptionRow.Items.Clear();
+            _DescriptionRow.Items.AddRange(allColumnNames);
             _NumberOfStructuresRow.Items.Clear();
             _NumberOfStructuresRow.Items.AddRange(allColumnNames);
         }

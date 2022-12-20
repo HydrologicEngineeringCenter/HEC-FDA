@@ -334,7 +334,7 @@ namespace HEC.FDA.Model.paireddata
             Yvals = update;
             string message = $"The sampled function {CurveMetaData.Name} was not monotonically increasing. Monotonicity has been forced";
             ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-            ReportMessage(this, new MessageEventArgs(errorMessage));
+            //ReportMessage(this, new MessageEventArgs(errorMessage));
         }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
