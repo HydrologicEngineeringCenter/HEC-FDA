@@ -177,9 +177,12 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Constructor
+        /// <summary>
+        /// This histogram is an ARBITRARY histogram and should not be used to collect data
+        /// </summary>
         public Histogram()
         {
-            _BinWidth = 1; //TODO this hard-coded value is a hack 
+            _BinWidth = 1; 
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
             _HistogramIsZeroValued = true;

@@ -438,5 +438,7 @@ namespace StatisticsTests.Histograms
             Assert.Equal(expected, actual, 1);
 
         }
+
+
     }
 }

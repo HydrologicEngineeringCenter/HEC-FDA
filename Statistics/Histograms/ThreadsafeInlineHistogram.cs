@@ -743,7 +743,6 @@ namespace Statistics.Histograms
         {
             ForceDeQueue();
             if (_Converged) { return true; }
-            if (_SampleSize < _ConvergenceCriteria.MinIterations) { return false; }
             if (_SampleSize >= _ConvergenceCriteria.MaxIterations)
             {
                 _Converged = true;
@@ -751,6 +750,7 @@ namespace Statistics.Histograms
                 _ConvergedOnMax = true;
                 return true;
             }
+            if (_SampleSize < _ConvergenceCriteria.MinIterations) { return false; }
             //TODO: it appears that this logic is similar or the same to that which is below. 
             //consider extraction and build on this nomenclature 
             double qval = InverseCDF(lowerq);

@@ -9,7 +9,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         [Fact]
         public void ReadFile()
         {
-            string filepath = @"..\\..\\Resources\\ProbData.dbf";
+            string filepath = @"..\..\..\fda-model-test\Resources\ProbData.dbf";
             dbfreader dbr = new dbfreader(filepath);
             double mean = (double)dbr.GetCell("LOG_MEAN", 0);
             Assert.Equal(2.944761, mean);

@@ -21,9 +21,7 @@ namespace HEC.FDA.ModelTest.unittests
             string structureAssetCategory = "Structure";
             string contentAssetCategory = "Content";
             double mean = 2;
-            int impactAreaID_1 = 1;
-            int impactAreaID_2 = 2;
-            ConvergenceCriteria criteria = new ConvergenceCriteria();
+            int impactAreaID_1 = 1;            ConvergenceCriteria criteria = new ConvergenceCriteria();
             ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(criteria);
             Histogram histogram = FillHistogram(mean);
 
@@ -37,15 +35,7 @@ namespace HEC.FDA.ModelTest.unittests
             ConsequenceDistributionResult commercialContent_1 = new ConsequenceDistributionResult(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_1);
 
-            //Impact Area 2
-            ConsequenceDistributionResult residentialStructure_2 = new ConsequenceDistributionResult(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_2);
-            consequenceDistributionResults.AddExistingConsequenceResultObject(residentialStructure_2);
-            ConsequenceDistributionResult residentialContent_2 = new ConsequenceDistributionResult(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_2);
-            consequenceDistributionResults.AddExistingConsequenceResultObject(residentialContent_2);
-            ConsequenceDistributionResult commercialStructure_2 = new ConsequenceDistributionResult(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_2);
-            consequenceDistributionResults.AddExistingConsequenceResultObject(commercialStructure_2);
-            ConsequenceDistributionResult commercialContent_2 = new ConsequenceDistributionResult(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_2);
-            consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_2);
+
 
             List<double> stages = new List<double>();
             List<ConsequenceDistributionResults> consequenceDistributionResultsList = new List<ConsequenceDistributionResults>();
@@ -57,8 +47,8 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             //Act
-            List<UncertainPairedData> uncertainPairedData = ConsequenceDistributionResults.ToUncertainPairedData(stages, consequenceDistributionResultsList);
-            int expectedUPDs = 8;
+            List<UncertainPairedData> uncertainPairedData = ConsequenceDistributionResults.ToUncertainPairedData(stages, consequenceDistributionResultsList, impactAreaID_1);
+            int expectedUPDs = 4;
             int expectedUPDLength = 20;
             double expectedMeanAllOver = mean + 0.5;
             double actualMeanFirstUPDMiddleStage = uncertainPairedData[0].Yvals[9].InverseCDF(0.5);
@@ -66,28 +56,14 @@ namespace HEC.FDA.ModelTest.unittests
             double relativeErrorMeanFirstUPDMiddleStage = Math.Abs(actualMeanFirstUPDMiddleStage - expectedMeanAllOver) / expectedMeanAllOver;
             double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver) / expectedMeanAllOver;
             double tolerance = 0.5;
-            List<int> impactAreaIDs = GetImpactAreaIDs(uncertainPairedData);
             //Assert
             Assert.Equal(expectedUPDs, uncertainPairedData.Count);
             Assert.Equal(expectedUPDLength, uncertainPairedData[0].Yvals.Length);
             Assert.True(relativeErrorMeanFirstUPDMiddleStage < tolerance);
             Assert.True(relativeErrorMeanLastUPDLastStage < tolerance);
-            Assert.Contains(impactAreaID_1, impactAreaIDs);
-            Assert.Contains(impactAreaID_2, impactAreaIDs);
         }
 
-        private List<int> GetImpactAreaIDs(List<UncertainPairedData> uncertainPairedData)
-        {
-            List<int> impactAreaIDs = new List<int>();
-            foreach(UncertainPairedData uncertain in uncertainPairedData)
-            {
-                if (!impactAreaIDs.Contains(uncertain.ImpactAreaID))
-                {
-                    impactAreaIDs.Add(uncertain.ImpactAreaID);
-                }
-            }
-            return impactAreaIDs;
-        }
+
 
         private Histogram FillHistogram(double mean)
         {

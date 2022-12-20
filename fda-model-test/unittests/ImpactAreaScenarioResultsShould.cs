@@ -11,7 +11,7 @@ namespace HEC.FDA.ModelTest.unittests
     [Trait("Category", "Unit")]
 
     public class ImpactAreaScenarioResultsShould
-    {//TODO: Access these results through ScenarioREsults 
+    {
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000, 300000 };
         static string xLabel = "x label";

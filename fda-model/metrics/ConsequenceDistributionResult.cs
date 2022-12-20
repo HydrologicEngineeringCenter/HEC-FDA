@@ -5,17 +5,18 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
-        //TODO: hard-wiring the bin width is no good
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
-        private int _regionID;
+        private int _regionID = -999;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
 
@@ -85,27 +86,26 @@ namespace HEC.FDA.Model.metrics
         }
         /// <summary>
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
         public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
+            _regionID = impactAreaID;
             MessageHub.Register(this);
 
         }
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, double min, double binWidth)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
-            _regionID = impactAreaID;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new Histogram(min,binWidth, _convergenceCriteria);
-            _isNull = false;
-            MessageHub.Register(this);
+            _consequenceHistogram = new Histogram(consequences, convergenceCriteria);
+            _regionID = impactAreaID;
 
         }
         /// <summary>
