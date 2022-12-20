@@ -9,6 +9,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -216,11 +217,11 @@ namespace HEC.FDA.Model.paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new Message($"Sampled Y Values were not monotonically increasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"Sampled Y Values were not monotonically increasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.", ErrorLevel.Major)));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"X values are not monotonically decreasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.")));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"X values are not monotonically decreasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.", ErrorLevel.Major)));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)

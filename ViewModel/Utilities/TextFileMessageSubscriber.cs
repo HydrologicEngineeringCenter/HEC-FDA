@@ -14,11 +14,12 @@ namespace HEC.FDA.ViewModel.Utilities
         private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageTypeFilter = null;
         private Type _senderTypeFilter = null;
-        private int _maxMessageCount = 0;
+        private int _maxMessageCount = 100;
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
         private string _filePath = Path.GetTempFileName();
+        private System.Timers.Timer _timer;
         StreamWriter sw;
         private System.ComponentModel.BackgroundWorker _bw;
         private System.Collections.Concurrent.ConcurrentQueue<IMessage> _messages;
@@ -75,6 +76,13 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private TextFileMessageSubscriber()
         {
+            //start timer, action every 5 seconds call the flush method on SW. check if bwlistlock is locked an not isbusy. could
+            //also look at if deque is >0.
+            _timer = new System.Timers.Timer();
+            _timer.Interval = 5000;
+            _timer.Elapsed += flushStringWriter;
+            _timer.Start();
+
             FilterLevel = ErrorLevel.Fatal;
             _messages = new System.Collections.Concurrent.ConcurrentQueue<IMessage>();
             //register
@@ -85,21 +93,27 @@ namespace HEC.FDA.ViewModel.Utilities
             _bw = new System.ComponentModel.BackgroundWorker();
             _bw.DoWork += _bw_DoWork;
         }
+
+        private void flushStringWriter(object sender, EventArgs e)
+        {
+            sw.Flush();
+        }
+
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
-            if(e.Message is IErrorMessage)
-            {
-                IErrorMessage msg = e.Message as IErrorMessage;
-                if(msg.ErrorLevel >= FilterLevel)
-                {
-                    RecieveMessage(msg);
-                }
-            }
-            else
-            {
-                //todo: should we allow this or should we not log these?
-                //RecieveMessage(e.Message);
-            }
+            //if(e.Message is IErrorMessage)
+            //{
+            //    IErrorMessage msg = e.Message as IErrorMessage;
+            //    if(msg.ErrorLevel >= FilterLevel)
+            //    {
+                    RecieveMessage(e.Message);
+            //    }
+            //}
+            //else
+            //{
+            //    //todo: should we allow this or should we not log these?
+            //    //RecieveMessage(e.Message);
+            //}
            
         }
 
@@ -146,6 +160,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public void Dispose()
         {
+            sw.Flush();
             sw.Dispose();
             sw.Close();
         }

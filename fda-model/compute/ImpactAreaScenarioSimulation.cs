@@ -141,7 +141,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine, ErrorLevel.Major)));
                 }
                 //enumerate what the errors and warnings are 
                 StringBuilder errors = new StringBuilder();

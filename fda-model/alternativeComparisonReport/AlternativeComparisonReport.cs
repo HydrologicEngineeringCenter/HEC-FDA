@@ -6,6 +6,8 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {
@@ -16,7 +18,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative comparison report compute")));
+            ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(10));
 
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
