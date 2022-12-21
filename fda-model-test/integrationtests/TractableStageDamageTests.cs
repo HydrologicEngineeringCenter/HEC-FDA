@@ -20,6 +20,10 @@ namespace HEC.FDA.ModelTest.integrationtests
     [Trait("Category", "Integration")]
     public class TractableStageDamageTests
     {
+        public TractableStageDamageTests()
+        {
+
+        }
         #region H&H Data 
         private static double[] probabilities = new double[] {.5, .2, .1, .04, .02, .01, .004, .002 };
         private static double[] stages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
@@ -118,8 +122,8 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Other objects 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
-        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
+        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 5000);
+        public ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
         #endregion
 
         /// <summary>
