@@ -143,6 +143,9 @@ namespace HEC.FDA.Model.compute
                 }
                 //enumerate what the errors and warnings are 
                 StringBuilder errors = new StringBuilder();
+                //TODO: Why are we going through each summary relationship again to figure out the errors?
+                //We've already done this on construction 
+                //We should take the messages created upon construction 
                 if (_frequency_discharge != null && _frequency_discharge.HasErrors)
                 {
                     errors.AppendLine(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");

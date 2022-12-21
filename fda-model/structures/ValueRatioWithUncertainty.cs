@@ -1,9 +1,11 @@
-﻿using Statistics;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Enumerations;
+using Statistics;
 using Statistics.Distributions;
 
 namespace HEC.FDA.Model.structures
 {
-    public class ValueRatioWithUncertainty
+    public class ValueRatioWithUncertainty: Validation 
     {
         #region Fields
         private double _standardDeviationOrMin;
@@ -17,15 +19,17 @@ namespace HEC.FDA.Model.structures
         {
             _standardDeviationOrMin = 0;
             _centralTendency = 0;
-            _max = 0;
+            _max = double.MaxValue;
             _distributionType = IDistributionEnum.Deterministic;
+            AddRules();
         }
-        public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = 0)
+        public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = double.MaxValue)
         {
             _distributionType = distributionEnum;
             _standardDeviationOrMin = standardDeviationOrMin;
             _centralTendency = centralTendency;
             _max = max;
+            AddRules();
         }
         public ValueRatioWithUncertainty(double deterministicValueRatio)
         {
@@ -33,11 +37,17 @@ namespace HEC.FDA.Model.structures
             _standardDeviationOrMin = 0;
             _max = 0;
             _distributionType = IDistributionEnum.Deterministic;
+            AddRules();
         }
         #endregion
 
         #region Methods
-
+        private void AddRules()
+        {
+            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_standardDeviationOrMin), new Rule(() => _standardDeviationOrMin >= 0 && _max >= 0 && _centralTendency >= 0, "Value ratio parameter values must be non-negative", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_max), new Rule(() => _max > _standardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
+        }
         public double Sample(double probability, bool computeIsDeterministic)
         {
             double sampledValueRatio;

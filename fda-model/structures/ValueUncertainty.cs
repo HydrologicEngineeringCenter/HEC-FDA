@@ -1,9 +1,7 @@
-﻿using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
-using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -37,9 +35,9 @@ namespace HEC.FDA.Model.structures
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty"));
-            AddSinglePropertyRule(nameof(_percentOfInventoryValueStandardDeviationOrMin), new Rule(() => _percentOfInventoryValueStandardDeviationOrMin >= 0, "The percent of inventory value must be greae=ter than or equal to zero."));
-            AddSinglePropertyRule(nameof(_percentOfInventoryValueMax), new Rule(() => _percentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100"));
+            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_percentOfInventoryValueStandardDeviationOrMin), new Rule(() => _percentOfInventoryValueStandardDeviationOrMin >= 0, "The percent of inventory value must be greaeter than or equal to zero.", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_percentOfInventoryValueMax), new Rule(() => _percentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100", ErrorLevel.Fatal));
         }
 
         public double Sample(double inventoryValue, double probability, bool computeIsDeterministic)
