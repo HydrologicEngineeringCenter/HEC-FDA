@@ -10,7 +10,9 @@
 		<Description>A library for computing statistics within HEC-FDA</Description>
 		<Authors>Hydrologic Engineering Center</Authors>
 		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
-		<DebugType>embedded</DebugType>
+		<DebugType>pdbonly</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<TieredCompilation>false</TieredCompilation>
 	</PropertyGroup>
 
   <ItemGroup>
