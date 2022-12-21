@@ -280,8 +280,8 @@ namespace HEC.FDA.ModelTest.unittests
         /// TODO: Once disparities are resolved, upload unit test documentation and save links here 
         /// </summary>
         [Theory]
-        //[InlineData(3, 9.85, 8.77, 30.46, 23.28, 5.73, 4.35, 6.38, 7.38)]//Uni content failed only
-        //[InlineData(5, 99.99, 89.73, 104.32, 79.82, 88.86, 68.01, 40.91, 55.99)]//Uni content and structure failed only
+        //[InlineData(3, 9.85, 8.77, 30.46, 23.28, 5.73, 4.35, 6.38, 5.1)]//Passes
+        //[InlineData(5, 99.99, 89.73, 104.32, 79.82, 88.86, 68.01, 61.13, 48.02)]//Passes
         [InlineData(9, 300.28, 270.07, 267.64, 204.96, 310.3, 237.83, 262.84, 224.35)]//Passes
         //[InlineData(11, 400.38, 360.28, 363.03, 278.21, 418.34, 320.65, 367.01, 310.05)]//Passes
         //[InlineData(20, 500.98, 450.83, 450.89, 345.44, 551.18, 422.6, 576.4, 461.01)]//Passes
@@ -343,7 +343,7 @@ namespace HEC.FDA.ModelTest.unittests
             double uniformContentRelativeDiff = Math.Abs(actualUniformContentDamage - expectedUniformContent) / expectedUniformContent;
 
             //Assert 
-            double tolerance = 0.10;
+            double tolerance = 0.05;
             Assert.True(normalStructureRelativeDifference < tolerance);
             Assert.True(normalContentRelativeDifference < tolerance);
             Assert.True(triLeftStructureRelativeDifference < tolerance);
