@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.Utilities
         private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageTypeFilter = null;
         private Type _senderTypeFilter = null;
-        private int _maxMessageCount = 100;
+        private int _maxMessageCount = 1;
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
@@ -101,25 +101,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
-            //if(e.Message is IErrorMessage)
-            //{
-            //    IErrorMessage msg = e.Message as IErrorMessage;
-            //    if(msg.ErrorLevel >= FilterLevel)
-            //    {
-                    RecieveMessage(e.Message);
-            //    }
-            //}
-            //else
-            //{
-            //    //todo: should we allow this or should we not log these?
-            //    //RecieveMessage(e.Message);
-            //}
-           
-        }
-
-        private void RecieveMessage(IMessage message)
-        {
-            _messages.Enqueue(message);
+            _messages.Enqueue(e.Message);
             Interlocked.Increment(ref _enqueue);
             if (_messages.Count > _maxMessageCount && !_bw.IsBusy)
             {
@@ -131,9 +113,9 @@ namespace HEC.FDA.ViewModel.Utilities
                         _bw.RunWorkerAsync();
                     }
                 }
-
             }
         }
+
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             DeQueue();
@@ -160,7 +142,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public void Dispose()
         {
-            sw.Flush();
+            DeQueue();
             sw.Dispose();
             sw.Close();
         }

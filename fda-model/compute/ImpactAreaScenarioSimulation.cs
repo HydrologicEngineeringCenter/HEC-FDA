@@ -221,7 +221,7 @@ namespace HEC.FDA.Model.compute
                     }
                 }
 
-                Message mess = new Message(errors.ToString());
+                ErrorMessage mess = new ErrorMessage(errors.ToString(), ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(mess));
 
             }
@@ -241,7 +241,8 @@ namespace HEC.FDA.Model.compute
                 {
                     string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                    return false;
 
                 }
             }

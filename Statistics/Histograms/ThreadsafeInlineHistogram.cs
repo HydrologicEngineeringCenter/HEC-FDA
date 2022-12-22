@@ -707,10 +707,20 @@ namespace Statistics.Histograms
             Int64[] binCounts = new Int64[binQuantity];
 
             XElement binCountsElement = element.Element("Bin_Counts");
-            string binCountString = binCountsElement.Attribute("Bin_Count").Value;
-            if(binCountString != null && binCountString.Length>0)
+            if (binCountsElement != null)
             {
-                binCounts = binCountString.Split(',').Select(Int64.Parse).ToArray();
+                string binCountString = binCountsElement.Attribute("Bin_Count").Value;
+                if (binCountString != null && binCountString.Length > 0)
+                {
+                    binCounts = binCountString.Split(',').Select(Int64.Parse).ToArray();
+                }
+            }
+            else
+            {
+                for (int i = 0; i < binQuantity; i++)
+                {
+                    binCounts[i] = Convert.ToInt64(element.Attribute($"Bin_Counts_{i}").Value);
+                }
             }
 
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(element.Element("Convergence_Criteria"));
