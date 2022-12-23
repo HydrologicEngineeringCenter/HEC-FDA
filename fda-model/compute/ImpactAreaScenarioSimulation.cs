@@ -19,6 +19,8 @@ namespace HEC.FDA.Model.compute
 {
     public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
+        public const int IMPACT_AREA_SIM_COMPLETED = -1001;
+
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
@@ -140,7 +142,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine, ErrorLevel.Major)));
                 }
                 //enumerate what the errors and warnings are 
                 StringBuilder errors = new StringBuilder();
@@ -220,7 +222,7 @@ namespace HEC.FDA.Model.compute
                     }
                 }
 
-                Message mess = new Message(errors.ToString());
+                ErrorMessage mess = new ErrorMessage(errors.ToString(), ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(mess));
 
             }
@@ -240,7 +242,8 @@ namespace HEC.FDA.Model.compute
                 {
                     string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                    return false;
 
                 }
             }
@@ -364,7 +367,7 @@ namespace HEC.FDA.Model.compute
                 }
 
             }
-            ReportProgress(this, new ProgressReportEventArgs(100));
+            ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
             _impactAreaScenarioResults.ForceDeQueue();
         }
 

@@ -16,10 +16,13 @@ namespace ViewModel.Inventory.OccupancyTypes
         {
             IDistributionEnum ordType = ordinate.Type;
             //create constant option
+            double determValue = .5;
             if (ordType == IDistributionEnum.Deterministic)
             {
-                ControlWasModified(this, new EventArgs());
+                determValue = ((Deterministic)ordinate).Value;
             }
+            DeterministicControlVM = new DeterministicControlVM(determValue);
+            DeterministicControlVM.WasModified += ControlWasModified;
 
             //create normal option
             double normalMean = 0;

@@ -46,6 +46,7 @@ namespace HEC.FDA.ViewModel.GeoTech
 
         public override void Save()
         {
+            UpdateCurveMetaData();
             int id = GetElementID<LateralStructureElement>();
             LateralStructureElement elem = new LateralStructureElement(Name, DateTime.Now.ToString("G"), Description, Elevation, IsUsingDefault, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);

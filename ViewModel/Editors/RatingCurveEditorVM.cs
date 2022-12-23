@@ -17,6 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void Save()
         {
+            UpdateCurveMetaData();
             int id = GetElementID<StageDischargeElement>();
             StageDischargeElement elem = new StageDischargeElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);

@@ -32,6 +32,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
         private const string NOTES = "Notes";
+        private const string DESCRIPTION = "Description";
         private const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
 
         private const string VALUE = "Value";
@@ -51,6 +52,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public string BeginningDamageDepthCol { get; }
         public string YearInConstructionCol { get; }
         public string NotesCol { get; }
+        public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
         public Dictionary<string, OcctypeReference> OcctypesDictionary { get; } = new Dictionary<string, OcctypeReference>();
 
@@ -70,6 +72,7 @@ namespace HEC.FDA.ViewModel.Inventory
             BeginningDamageDepthCol = selections._BegDamDepthRow.SelectedItem;
             YearInConstructionCol = selections._YearInConstructionRow.SelectedItem;
             NotesCol = selections._NotesRow.SelectedItem;
+            DescriptionCol = selections._DescriptionRow.SelectedItem;
             NumberOfStructuresCol = selections._NumberOfStructuresRow.SelectedItem;
 
             OcctypesDictionary = occtypeDictionary;
@@ -97,6 +100,16 @@ namespace HEC.FDA.ViewModel.Inventory
             BeginningDamageDepthCol = selections.Element(BEG_DAMAGE_DEPTH).Attribute(VALUE).Value;
             YearInConstructionCol = selections.Element(YEAR_IN_CONSTRUCTION).Attribute(VALUE).Value;
             NotesCol = selections.Element(NOTES).Attribute(VALUE).Value;
+            //for backwards compatability, check if it exists
+            XElement descriptionElem = selections.Element(DESCRIPTION);
+            if(descriptionElem != null)
+            {
+                DescriptionCol = descriptionElem.Attribute(VALUE).Value;
+            }
+            else
+            {
+                DescriptionCol = "";
+            }
             NumberOfStructuresCol = selections.Element(NUMBER_OF_STRUCTURES).Attribute(VALUE).Value;
 
             XElement occtypeMappings = inventoryMappingElem.Element(OCCTYPE_MAPPINGS);
@@ -133,6 +146,7 @@ namespace HEC.FDA.ViewModel.Inventory
             columnSelectionsElem.Add(CreateColumnMappingXElement(BEG_DAMAGE_DEPTH, BeginningDamageDepthCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(YEAR_IN_CONSTRUCTION, YearInConstructionCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(NOTES, NotesCol));
+            columnSelectionsElem.Add(CreateColumnMappingXElement(DESCRIPTION, DescriptionCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(NUMBER_OF_STRUCTURES, NumberOfStructuresCol));
 
             XElement occtypesElem = new XElement(OCCTYPE_MAPPINGS);
