@@ -24,16 +24,18 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Fields
         private const string IMPORTED_FROM_OLD_FDA = "ImportedFromOldFDA";
-
+        private Dictionary<String, OccupancyTypes.OcctypeReference> _OcctypeMapping;
         #endregion
         #region Properties
         public bool IsImportedFromOldFDA { get; set; }
-        public InventorySelectionMapping SelectionMappings {get;}
+        public StructureSelectionMapping SelectionMappings {get;}
         #endregion
         #region Constructors
-        public InventoryElement(string name, string description, InventorySelectionMapping selections,  bool isImportedFromOldFDA, int id) 
+        public InventoryElement(string name, string description, StructureSelectionMapping selections, 
+            Dictionary<String, OccupancyTypes.OcctypeReference> occtypeMapping,  bool isImportedFromOldFDA, int id) 
             : base(name,"", description, id)
         {
+            _OcctypeMapping = occtypeMapping;
             SelectionMappings = selections;
             IsImportedFromOldFDA = isImportedFromOldFDA;
             AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU);
@@ -43,7 +45,7 @@ namespace HEC.FDA.ViewModel.Inventory
            : base(inventoryElem, id)
         {
             IsImportedFromOldFDA = Convert.ToBoolean( inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
-            SelectionMappings = new InventorySelectionMapping(inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS));
+            SelectionMappings = new StructureSelectionMapping(inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS));
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
@@ -135,6 +137,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
+            //todo: this method needs to return the mapping, not just a list.
             List<OccupancyType> occupancyTypes = CreateModelOcctypes();
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);

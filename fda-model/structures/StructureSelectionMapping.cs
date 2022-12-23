@@ -1,11 +1,13 @@
-﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace HEC.FDA.ViewModel.Inventory
+namespace HEC.FDA.Model.structures
 {
-    public class InventorySelectionMapping
+    public class StructureSelectionMapping
     {
         private const string SHAPEFILE_OCCTYPE = "ShapefileOcctype";
         private const string GROUP_ID = "GroupID";
@@ -56,9 +58,9 @@ namespace HEC.FDA.ViewModel.Inventory
         public string NotesCol { get; }
         public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
-        public Dictionary<string, OcctypeReference> OcctypesDictionary { get; } = new Dictionary<string, OcctypeReference>();
 
-        public InventorySelectionMapping(InventoryColumnSelectionsVM selections, Dictionary<string, OcctypeReference> occtypeDictionary)
+        //todo: pass all the params in?
+        public StructureSelectionMapping(InventoryColumnSelectionsVM selections)
         {
             IsUsingFirstFloorElevation = selections.FirstFloorElevationIsSelected;
             IsUsingTerrainFile = selections.FromTerrainFileIsSelected;
@@ -82,12 +84,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
 
 
-        public InventorySelectionMapping( XElement inventoryMappingElem)
+        public StructureSelectionMapping(XElement inventoryMappingElem)
         {
             XElement selections = inventoryMappingElem.Element(INVENTORY_COLUMN_SELECTIONS);
 
-            IsUsingFirstFloorElevation = Convert.ToBoolean( selections.Attribute(FIRST_FLOOR_ELEV_SELECTED).Value);
-            IsUsingTerrainFile = Convert.ToBoolean( selections.Attribute(FROM_TERRAIN_FILE).Value);
+            IsUsingFirstFloorElevation = Convert.ToBoolean(selections.Attribute(FIRST_FLOOR_ELEV_SELECTED).Value);
+            IsUsingTerrainFile = Convert.ToBoolean(selections.Attribute(FROM_TERRAIN_FILE).Value);
 
             StructureIDCol = selections.Element(STRUCTURE_ID).Attribute(VALUE).Value;
 
@@ -104,7 +106,7 @@ namespace HEC.FDA.ViewModel.Inventory
             NotesCol = selections.Element(NOTES).Attribute(VALUE).Value;
             //for backwards compatability, check if it exists
             XElement descriptionElem = selections.Element(DESCRIPTION);
-            if(descriptionElem != null)
+            if (descriptionElem != null)
             {
                 DescriptionCol = descriptionElem.Attribute(VALUE).Value;
             }
@@ -116,7 +118,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             XElement occtypeMappings = inventoryMappingElem.Element(OCCTYPE_MAPPINGS);
             IEnumerable<XElement> occtypeMappingElements = occtypeMappings.Elements(OCCTYPE_MAPPING);
-            foreach(XElement occtypeMappingElement in occtypeMappingElements)
+            foreach (XElement occtypeMappingElement in occtypeMappingElements)
             {
                 string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
                 int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
@@ -126,7 +128,7 @@ namespace HEC.FDA.ViewModel.Inventory
             }
         }
 
-       
+
 
         public XElement ToXML()
         {
@@ -152,7 +154,7 @@ namespace HEC.FDA.ViewModel.Inventory
             columnSelectionsElem.Add(CreateColumnMappingXElement(NUMBER_OF_STRUCTURES, NumberOfStructuresCol));
 
             XElement occtypesElem = new XElement(OCCTYPE_MAPPINGS);
-            foreach(KeyValuePair<string, OcctypeReference> pair in OcctypesDictionary)
+            foreach (KeyValuePair<string, OcctypeReference> pair in OcctypesDictionary)
             {
                 occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
             }
@@ -163,7 +165,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         }
 
-        
+
 
         private XElement CreateOcctypeMappingXElement(String shapefileOcctype, OcctypeReference fDAOcctype)
         {
@@ -173,7 +175,7 @@ namespace HEC.FDA.ViewModel.Inventory
             rowElem.SetAttributeValue(ID, fDAOcctype.ID);
             return rowElem;
         }
-     
+
 
         private XElement CreateColumnMappingXElement(string elemName, string value)
         {
@@ -181,6 +183,5 @@ namespace HEC.FDA.ViewModel.Inventory
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
         }
-
     }
 }

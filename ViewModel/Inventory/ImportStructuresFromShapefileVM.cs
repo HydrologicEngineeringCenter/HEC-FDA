@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
@@ -201,8 +202,10 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             //the validation before saving is done in the NextButtonClicked() method.
             int id = GetElementID<InventoryElement>();
-            InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections, _OcctypeLinking.CreateOcctypeMapping());
-            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, false, id);
+            //todo: create the model mapping. 
+            InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections);
+            Dictionary<string, OcctypeReference> occtypeMappings = _OcctypeLinking.CreateOcctypeMapping();
+            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, occtypeMappings, false, id);
 
             if (IsCreatingNewElement)
             {

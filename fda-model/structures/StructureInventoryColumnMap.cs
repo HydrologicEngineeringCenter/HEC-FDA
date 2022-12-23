@@ -5,9 +5,10 @@ namespace HEC.FDA.Model.structures
 {
     public class StructureInventoryColumnMap
     {
+        public bool IsUsingFirstFloorElevation { get; }
+        public bool IsUsingTerrainFile { get; }
         public string StructureID { get; } = "fd_id";
         public string OccupancyType { get; } = "occtype";
-        public string DamageCatagory { get; } = "st_damcat";
         public string FirstFloorElev { get; } = "ff_elev";
         public string StructureValue { get; } = "val_struct";
         public string FoundationHeight { get; } = "found_ht";
@@ -17,8 +18,15 @@ namespace HEC.FDA.Model.structures
         public string VehicalValue { get; } = "val_vehic";
         public string BeginningDamageDepth { get; } = "begDamDep";
         public string YearInConstruction { get; } = "yrbuilt";
-        public string CBFips { get; } = "cbfips";
+        public string NotesCol { get; }
+        public string DescriptionCol { get; }
         public string NumberOfStructures { get; } = "num_structs";
+
+
+        public string DamageCatagory { get; } = "st_damcat";
+        public string CBFips { get; } = "cbfips";
+
+
         public List<Tuple<string, Type>> ColumnHeaders
         {
             get
