@@ -77,37 +77,37 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
 
-    #region Constructors
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
-    {
-        _structureInventoryShapefile = pointShapefilePath;
-        _impactAreaShapefile = impactAreaShapefilePath;
-        _map = map;
-        _occtypes = occTypes;
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-        _terrainPath = terrainPath;
-        _priceIndex = priceIndex;
-        //TODO: Add some validation here
-        //If we have a bad shapefile name, then we get a null ref exception in the below method `
-        LoadStructuresFromSourceFiles();
-    }
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-    string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
-    {
-        _structureInventoryShapefile = pointShapefilePath;
-        _impactAreaShapefile = impactAreaShapefilePath;
-        _map = map;
-        _occtypes = occTypes;
-        _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-        _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-        _terrainPath = terrainPath;
-        Structures = structures;
-        _priceIndex = priceIndex;
+        #region Constructors
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+            string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
+        {
+            _structureInventoryShapefile = pointShapefilePath;
+            _impactAreaShapefile = impactAreaShapefilePath;
+            _map = map;
+            _occtypes = occTypes;
+            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+            _terrainPath = terrainPath;
+            _priceIndex = priceIndex;
+            //TODO: Add some validation here
+            //If we have a bad shapefile name, then we get a null ref exception in the below method `
+            LoadStructuresFromSourceFiles();
+        }
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
+        {
+            _structureInventoryShapefile = pointShapefilePath;
+            _impactAreaShapefile = impactAreaShapefilePath;
+            _map = map;
+            _occtypes = occTypes;
+            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
+            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
+            _terrainPath = terrainPath;
+            Structures = structures;
+            _priceIndex = priceIndex;
 
-    }
-    #endregion
+        }
+        #endregion
 
         #region Methods
         public Polygon GetImpactAreaPolygon(string impactAreaName)
@@ -193,18 +193,6 @@ namespace HEC.FDA.Model.structures
                     layer.AddAttributeColumn(nameTypePair.Item1, nameTypePair.Item2);
                 }
             }
-            //optional parameters
-            double val_cont = TryGet<double>(row[_map.ContentValue], 0);
-            double val_vehic = TryGet<double>(row[_map.VehicalValue], 0);
-            double val_other = TryGet<double>(row[_map.OtherValue], 0);
-            string cbfips = TryGetObj<string>(row[_map.CBFips], "NA");
-            double beginningDamage = TryGet<double>(row[_map.BeginningDamageDepth], -999);
-            int numStructures = TryGet<int>(row[_map.NumberOfStructures], 1);
-            int yearInService = TryGet<int>(row[_map.YearInConstruction], -999);
-            //TODO: handle number 
-            int impactAreaID = GetImpactAreaFID(point);
-            Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
-
         }
         public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
         {
@@ -275,7 +263,7 @@ namespace HEC.FDA.Model.structures
             }
             return -9999;
         }
- 
+
 
         public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
         {
@@ -296,8 +284,8 @@ namespace HEC.FDA.Model.structures
                 }
                 //it is possible that if an occupancy type doesnt exist a structure wont get added...
             }
-        return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
-    }
+            return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
+        }
         internal List<string> StructureDetails()
         {
             string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
@@ -308,40 +296,41 @@ namespace HEC.FDA.Model.structures
             }
             return structureDetails;
         }
-    #endregion
+        #endregion
 
-    #region Utilities
-    public static T TryGet<T>(object value, T defaultValue = default)
-        where T : struct
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
+        #region Utilities
+        public static T TryGet<T>(object value, T defaultValue = default)
+            where T : struct
         {
-            var retn = value as T?;
-            if (retn.HasValue)
-                return retn.Value;
-            else
+            if (value == null)
                 return defaultValue;
+            else if (value == DBNull.Value)
+                return defaultValue;
+            else
+            {
+                var retn = value as T?;
+                if (retn.HasValue)
+                    return retn.Value;
+                else
+                    return defaultValue;
+            }
         }
-    }
-    public static T TryGetObj<T>(object value, T defaultValue = default)
-        where T : class
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
+        public static T TryGetObj<T>(object value, T defaultValue = default)
+            where T : class
         {
-            var retn = value as T;
-            if (retn != null)
-                return retn;
-            else
+            if (value == null)
                 return defaultValue;
+            else if (value == DBNull.Value)
+                return defaultValue;
+            else
+            {
+                var retn = value as T;
+                if (retn != null)
+                    return retn;
+                else
+                    return defaultValue;
+            }
         }
+        #endregion
     }
-    #endregion
 }
