@@ -25,7 +25,7 @@ namespace HEC.FDA.Model.structures
         internal int YearInService { get; }
         internal int NumberOfStructures { get; }
 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = 0, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = -999, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
 
         {
             Fid = fid;
@@ -44,19 +44,17 @@ namespace HEC.FDA.Model.structures
             YearInService = year;
             NumberOfStructures = numStructures;
             BeginningDamageDepth = beginDamage;
-
-
         }
         public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype, bool computeIsDeterministic)
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue, computeIsDeterministic);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth);
+            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth, NumberOfStructures, YearInService);
         }
 
-        internal string ProduceDetails()
+        internal string ProduceDetails(double priceIndex)
         {
-            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue},{InventoriedContentValue},{InventoriedContentValue},{InventoriedOtherValue},{InventoriedOtherValue},{InventoriedVehicleValue},{InventoriedVehicleValue},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
+            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue*priceIndex},{InventoriedContentValue},{InventoriedContentValue * priceIndex},{InventoriedOtherValue},{InventoriedOtherValue * priceIndex},{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
             return details;
         }
     }

@@ -10,7 +10,7 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         private List<ConsequenceResult> _consequenceResultList;
-        private bool _isNull;
+
 
         #endregion
 
@@ -24,49 +24,19 @@ namespace HEC.FDA.Model.metrics
         }
         //this needs to be an error report
         public event MessageReportedEventHandler MessageReport;
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+
         #endregion
         #region Constructors
         public ConsequenceResults()
         {
             _consequenceResultList = new List<ConsequenceResult>();
-            _isNull = false;
             MessageHub.Register(this);
         }
-        internal ConsequenceResults(bool isNull)
-        {
-            _consequenceResultList = new List<ConsequenceResult>();
-            ConsequenceResult dummyConsequenceResult = new ConsequenceResult();
-            _consequenceResultList.Add(dummyConsequenceResult);
-            _isNull = isNull;
-            MessageHub.Register(this);
-        }
-        private ConsequenceResults(List<ConsequenceResult> damageResults)
-        {
-            _consequenceResultList = damageResults;
-            _isNull = false;
-            MessageHub.Register(this);
 
-        }
         #endregion
 
         #region Methods 
-        public void AddNewConsequenceResultObject(string damageCategory, int impactAreaID, double structureDamage = 0, double contentDamage = 0, double otherDamage = 0, double vehicleDamage = 0)
-        {
-            ConsequenceResult damageResult = GetConsequenceResult(damageCategory, impactAreaID);
-            if (damageResult.IsNull)
-            {
-                ConsequenceResult newDamageResult = new ConsequenceResult(damageCategory, impactAreaID);
-                newDamageResult.IncrementConsequence(structureDamage, contentDamage, vehicleDamage, otherDamage);
-                _consequenceResultList.Add(newDamageResult);
-            }
-        }
+
         public void AddExistingConsequenceResultObject(ConsequenceResult consequenceResultToAdd)
         {
             ConsequenceResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.RegionID);
@@ -106,19 +76,7 @@ namespace HEC.FDA.Model.metrics
             return dummyResult;
         }
 
-        public bool Equals(ConsequenceResults inputDamageResults)
-        {
-            foreach (ConsequenceResult damageResult in _consequenceResultList)
-            {
-                ConsequenceResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.RegionID);
-                bool resultsMatch = damageResult.Equals(inputDamageResult);
-                if (!resultsMatch)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);

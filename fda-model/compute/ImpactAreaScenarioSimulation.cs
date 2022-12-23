@@ -119,6 +119,7 @@ namespace HEC.FDA.Model.compute
             {
                 bool histogramIsZeroValued = false;
                 double largeProbability = 0.999;
+                //This is a test to determine whether a histogram will be full of zeroes 
                 double highPercentile = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(largeProbability);
                 if (highPercentile == 0)
                 {
@@ -308,12 +309,12 @@ namespace HEC.FDA.Model.compute
                         IPairedData frequencyDischarge;
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
-                            //If threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                            //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                             frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                         }
                         else
                         {
-                            //If threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                            //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                             frequencyDischarge = _frequency_discharge_graphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
                         }
                         //if frequency_flow is not defined throw big errors.
@@ -336,11 +337,15 @@ namespace HEC.FDA.Model.compute
                     }
                     else
                     {
-                        //if threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                        //if threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                         IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
                         ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i, computeWithDamage, computeIsDeterministic);
                     }
                     Interlocked.Increment(ref _completedIterations);
+                    if (progressChunks == 0)
+                    {
+                        progressChunks = 1;
+                    }
                     if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                     {
                         double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;

@@ -13,22 +13,20 @@ using HEC.FDA.Model.structures;
 using HEC.FDA.Model.interfaces;
 using RasMapperLib;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.Model.stageDamage
 {
     public class ImpactAreaStageDamage : Validation, IReportMessage
     {
         #region Fields 
-        private const string STRUCTURE_DAMAGE = "StructureDamageAt";
-        private const string CONTENT_DAMAGE = "ContentDamageAt";
-        private const string OTHER_DAMAGE = "OtherDamageAt";
-        private const string VEHICLE_DAMAGE = "VehicleDamageAt";
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
         private ContinuousDistribution _AnalyticalFlowFrequency;
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private int _ImpactAreaID;
+        private int _AnalysisYear;
         private bool _usingMockData;
         private Inventory _inventory;
         private HydraulicDataset _hydraulicDataset;
@@ -48,7 +46,7 @@ namespace HEC.FDA.Model.stageDamage
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory,
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
             ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here
@@ -57,6 +55,7 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _ImpactAreaID = impactAreaID;
+            _AnalysisYear = analysisYear;
             _usingMockData = usingMockData;
             if (_usingMockData)
             {
@@ -70,8 +69,6 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
         }
-
-
         #endregion
 
         #region Methods
@@ -184,7 +181,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(WSEAtLowest, interval, i, _numInterpolatedStagesToCompute);
                 ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria,
-                    _inventory, WSEsParallelToIndexLocation);
+                    _inventory, WSEsParallelToIndexLocation, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
             }
@@ -233,7 +230,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 double stageAtIndexLocation = previousStageAtIndexLocation + intervalAtIndexLocation * i;
                 float[] stages = CalculateIncrementOfStages(previousStagesAtStructures, intervalsAtStructures, i);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, stages, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(stageAtIndexLocation);
             }
@@ -271,7 +268,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int stepCount = 1; stepCount < _numExtrapolatedStagesToCompute; stepCount++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(stagesAtStructuresHighestProfile, upperInterval, stepCount);
-                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation);
+                ConsequenceDistributionResults damageOrdinate = ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, _inventory, WSEsParallelToIndexLocation, _AnalysisYear);
                 consequenceDistributionResults.Add(damageOrdinate);
                 allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (_numExtrapolatedStagesToCompute - stepCount));
             }
@@ -286,7 +283,7 @@ namespace HEC.FDA.Model.stageDamage
             ComputeMiddleStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
             ComputeUpperStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
 
-            List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults);
+            List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
             return results;
         }
         //this is public and static for testing
@@ -311,7 +308,7 @@ namespace HEC.FDA.Model.stageDamage
         }
         //public and static for testing
         //assume that the inventory has already been trimmed 
-        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses)
+        public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses, int analysisYear)
         {
             ConsequenceDistributionResults returnValue = new ConsequenceDistributionResults();
             double lowerProb = 0.025;
@@ -326,9 +323,8 @@ namespace HEC.FDA.Model.stageDamage
                 for (int i = 0; i < iterations; i++)
                 {
                     DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
-                    ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses);
+                    ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses, analysisYear);
                     results.Add(consequenceResults);
-                    //consequenceDistributionResults.AddConsequenceRealization(consequenceResults, i);
                 }
                 ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
                 resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);
@@ -361,10 +357,10 @@ namespace HEC.FDA.Model.stageDamage
             DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider(), computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
             DepthsToStrings(deterministicInventory, ref structureDetails);
-            DamagesToStrings(deterministicInventory, STRUCTURE_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, CONTENT_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, OTHER_DAMAGE, ref structureDetails);
-            DamagesToStrings(deterministicInventory, VEHICLE_DAMAGE, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.STRUCTURE_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.CONTENT_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.OTHER_ASSET_CATEGORY, ref structureDetails);
+            DamagesToStrings(deterministicInventory, StringConstants.VEHICLE_ASSET_CATEGORY, ref structureDetails);
 
             return structureDetails;
         }
@@ -377,7 +373,7 @@ namespace HEC.FDA.Model.stageDamage
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
 
-                structureDetails[0] += $"{assetType}{hydraulicProfile.Probability}AEP,";
+                structureDetails[0] += $"{assetType} Damage At {hydraulicProfile.Probability}AEP,";
                 List<ConsequenceResult> consequenceResultList = new List<ConsequenceResult>();
 
                 for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -386,7 +382,7 @@ namespace HEC.FDA.Model.stageDamage
                     consequenceResultList.Add(consequenceResult);
                 }
 
-                if (assetType == STRUCTURE_DAMAGE)
+                if (assetType == StringConstants.STRUCTURE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -395,7 +391,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == CONTENT_DAMAGE)
+                else if (assetType == StringConstants.CONTENT_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -404,7 +400,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 } 
-                else if (assetType == VEHICLE_DAMAGE)
+                else if (assetType == StringConstants.VEHICLE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {

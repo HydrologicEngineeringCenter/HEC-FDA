@@ -272,18 +272,6 @@ namespace HEC.FDA.Model.metrics
         {
             return FutureYearScenarioResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
         }
-
-
-        //TODO what role will these play
-        internal void AddConsequenceResults(int impactAreaID, string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria)
-        {
-            ConsequenceDistributionResult consequenceResult = AAEQDamageResults.GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            if (consequenceResult.IsNull)
-            {
-                ConsequenceDistributionResult newConsequenceResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
-                _aaeqResults.ConsequenceResultList.Add(newConsequenceResult);
-            }
-        }
         internal void AddConsequenceResults(ConsequenceDistributionResult consequenceResultToAdd)
         {
             ConsequenceDistributionResult consequenceResults = AAEQDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);

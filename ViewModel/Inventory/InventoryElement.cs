@@ -2,6 +2,7 @@
 using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 using Statistics.Distributions;
@@ -139,8 +140,11 @@ namespace HEC.FDA.ViewModel.Inventory
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
             string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
+            StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
+
+            double priceIndex = studyProperties.UpdatedPriceIndex;
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                structureInventoryColumnMap, occupancyTypes, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath);
+                structureInventoryColumnMap, occupancyTypes, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
             return inv;
         }
 
