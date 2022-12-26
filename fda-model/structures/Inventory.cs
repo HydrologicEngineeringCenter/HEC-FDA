@@ -20,7 +20,7 @@ namespace HEC.FDA.Model.structures
         private string _structureInventoryShapefile;
         private string _impactAreaShapefile;
         private StructureInventoryColumnMap _map;
-        private List<OccupancyType> _occtypes;
+        private Dictionary<string, OccupancyType> _occtypes;
         private string _impactAreaUniqueColumnHeader;
         private bool _updateGroundElevsFromTerrain;
         private string _terrainPath;
@@ -78,7 +78,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, Dictionary<string, OccupancyType> occTypes,
             string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
         {
             _structureInventoryShapefile = pointShapefilePath;
@@ -93,7 +93,7 @@ namespace HEC.FDA.Model.structures
             //If we have a bad shapefile name, then we get a null ref exception in the below method `
             LoadStructuresFromSourceFiles();
         }
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, Dictionary<string, OccupancyType> occTypes,
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
         {
             _structureInventoryShapefile = pointShapefilePath;
@@ -174,7 +174,8 @@ namespace HEC.FDA.Model.structures
                 int yearInService = TryGet<int>(row[_map.YearInConstruction], -999);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point);
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, 
+                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
         }
         private void createColumnHeadersForMissingColumns(ref PointFeatureLayer layer, StructureInventoryColumnMap map)
@@ -264,56 +265,16 @@ namespace HEC.FDA.Model.structures
             return -9999;
         }
 
-        #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-            string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath)
-        {
-            _structureInventoryShapefile = pointShapefilePath;
-            _impactAreaShapefile = impactAreaShapefilePath;
-            _map = map;
-            _occtypes = occTypes;
-            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-            _terrainPath = terrainPath;
-            LoadStructuresFromSourceFiles();
-        }
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, List<OccupancyType> occTypes,
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures)
-        {
-            _structureInventoryShapefile = pointShapefilePath;
-            _impactAreaShapefile = impactAreaShapefilePath;
-            _map = map;
-            _occtypes = occTypes;
-            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-            _terrainPath = terrainPath;
-            Structures = structures;
-
-        }
-        #endregion
-
-
-
-
-
         public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
         {
-
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in Structures)
             {
-                foreach (OccupancyType occupancyType in _occtypes)
+                if(_occtypes.ContainsKey(structure.OccTypeName))
                 {
-                    if (structure.DamageCatagory.Equals(occupancyType.DamageCategory))
-                    {
-                        if (structure.OccTypeName.Equals(occupancyType.Name))
-                        {
-                            inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));
-                            break;
-                        }
-                    }
+                    OccupancyType occupancyType = _occtypes[structure.OccTypeName];
+                    inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));           
                 }
-                //it is possible that if an occupancy type doesnt exist a structure wont get added...
             }
             return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
         }

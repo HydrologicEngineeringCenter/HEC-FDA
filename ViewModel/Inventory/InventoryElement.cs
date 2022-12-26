@@ -23,6 +23,7 @@ namespace HEC.FDA.ViewModel.Inventory
         // Created Date: 12/1/2016 2:21:18 PM
         #endregion
         #region Fields
+        private const string INVENTORY_MAPPINGS = "InventoryMappings";
         private const string IMPORTED_FROM_OLD_FDA = "ImportedFromOldFDA";
         private const string OCCTYPE_MAPPINGS = "OcctypeMappings";
         private const string OCCTYPE_MAPPING = "OcctypeMapping";
@@ -55,7 +56,7 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             IsImportedFromOldFDA = Convert.ToBoolean( inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
 
-            XElement mappingsElem = inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS);
+            XElement mappingsElem = inventoryElem.Element(INVENTORY_MAPPINGS);
             SelectionMappings = new StructureSelectionMapping(mappingsElem);
 
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
