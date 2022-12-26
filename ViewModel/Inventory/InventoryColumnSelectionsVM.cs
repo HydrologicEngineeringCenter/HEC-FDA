@@ -70,7 +70,7 @@ namespace HEC.FDA.ViewModel.Inventory
             FirstFloorElevationIsSelected = true;
         }
 
-        public InventoryColumnSelectionsVM(InventorySelectionMapping mappings, string inventoryShpPath)
+        public InventoryColumnSelectionsVM(StructureSelectionMapping mappings, string inventoryShpPath)
         {
             LoadRows();
             RequiredRows.AddRange(FirstFloorElevationRows);

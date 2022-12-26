@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
@@ -57,7 +58,7 @@ namespace HEC.FDA.ViewModel.Inventory
             InventoryElement inventoryElement = elem as InventoryElement;
             _SelectedPath = inventoryElement.GetFilePath(".shp");
             _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
-            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.SelectionMappings.OcctypesDictionary);
+            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.OcctypeMapping);
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
@@ -197,13 +198,22 @@ namespace HEC.FDA.ViewModel.Inventory
             return isValid;
         }
 
+        private StructureSelectionMapping CreateSelectionMapping(InventoryColumnSelectionsVM selections)
+        {
+            return new StructureSelectionMapping(selections.FirstFloorElevationIsSelected, selections.FromTerrainFileIsSelected,
+                selections._StructureIDRow.SelectedItem, selections._OccupancyTypeRow.SelectedItem, selections._FirstFloorElevRow.SelectedItem,
+                selections._StructureValueRow.SelectedItem, selections._FoundationHeightRow.SelectedItem, selections._GroundElevRow.SelectedItem,
+                selections._ContentValueRow.SelectedItem, selections._OtherValueRow.SelectedItem, selections._VehicleValueRow.SelectedItem,
+                selections._BegDamDepthRow.SelectedItem, selections._YearInConstructionRow.SelectedItem, selections._NotesRow.SelectedItem,
+                selections._DescriptionRow.SelectedItem, selections._NumberOfStructuresRow.SelectedItem);
+        }
 
         public override void Save()
         {
             //the validation before saving is done in the NextButtonClicked() method.
             int id = GetElementID<InventoryElement>();
             //todo: create the model mapping. 
-            InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections);
+            StructureSelectionMapping mapping = CreateSelectionMapping(_ColumnSelections);
             Dictionary<string, OcctypeReference> occtypeMappings = _OcctypeLinking.CreateOcctypeMapping();
             InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, occtypeMappings, false, id);
 

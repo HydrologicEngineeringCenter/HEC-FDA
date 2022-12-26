@@ -24,11 +24,20 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Fields
         private const string IMPORTED_FROM_OLD_FDA = "ImportedFromOldFDA";
-        private Dictionary<String, OccupancyTypes.OcctypeReference> _OcctypeMapping;
+        private const string OCCTYPE_MAPPINGS = "OcctypeMappings";
+        private const string OCCTYPE_MAPPING = "OcctypeMapping";
+        private const string SHAPEFILE_OCCTYPE = "ShapefileOcctype";
+        private const string GROUP_ID = "GroupID";
+        private const string ID = "ID";
+        private Dictionary<String, OccupancyTypes.OcctypeReference> _OcctypeMapping = new Dictionary<string, OccupancyTypes.OcctypeReference>();
         #endregion
         #region Properties
         public bool IsImportedFromOldFDA { get; set; }
         public StructureSelectionMapping SelectionMappings {get;}
+        public Dictionary<String, OccupancyTypes.OcctypeReference> OcctypeMapping
+        {
+            get { return _OcctypeMapping; }
+        }
         #endregion
         #region Constructors
         public InventoryElement(string name, string description, StructureSelectionMapping selections, 
@@ -45,11 +54,28 @@ namespace HEC.FDA.ViewModel.Inventory
            : base(inventoryElem, id)
         {
             IsImportedFromOldFDA = Convert.ToBoolean( inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
-            SelectionMappings = new StructureSelectionMapping(inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS));
+
+            XElement mappingsElem = inventoryElem.Element(InventorySelectionMapping.INVENTORY_MAPPINGS);
+            SelectionMappings = new StructureSelectionMapping(mappingsElem);
+
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
         #endregion
+
+        private void readDictionaryFromXML(XElement mappingsElem)
+        {
+            XElement occtypeMappings = mappingsElem.Element(OCCTYPE_MAPPINGS);
+            IEnumerable<XElement> occtypeMappingElements = occtypeMappings.Elements(OCCTYPE_MAPPING);
+            foreach (XElement occtypeMappingElement in occtypeMappingElements)
+            {
+                string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
+                int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
+                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID).Value);
+                OccupancyTypes.OcctypeReference otRef = new OccupancyTypes.OcctypeReference(groupID, id);
+                _OcctypeMapping.Add(shapefileOcctypeName, otRef);
+            }
+        }
 
         public void EditElement(object sender, EventArgs e)
         {
@@ -67,8 +93,26 @@ namespace HEC.FDA.ViewModel.Inventory
             XElement inventoryElem = new XElement(StringConstants.ELEMENT_XML_TAG);
             inventoryElem.Add(CreateHeaderElement());
             inventoryElem.SetAttributeValue(IMPORTED_FROM_OLD_FDA, IsImportedFromOldFDA);
+            XElement selectionMappingsElem = SelectionMappings.ToXML();
+
+            XElement occtypesElem = new XElement(OCCTYPE_MAPPINGS);
+            foreach (KeyValuePair<string, OccupancyTypes.OcctypeReference> pair in _OcctypeMapping)
+            {
+                occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
+            }
+            occtypesElem.Add(occtypesElem);
+
             inventoryElem.Add(SelectionMappings.ToXML());
             return inventoryElem;
+        }
+
+        private XElement CreateOcctypeMappingXElement(String shapefileOcctype, OccupancyTypes.OcctypeReference fDAOcctype)
+        {
+            XElement rowElem = new XElement(OCCTYPE_MAPPING);
+            rowElem.SetAttributeValue(SHAPEFILE_OCCTYPE, shapefileOcctype);
+            rowElem.SetAttributeValue(GROUP_ID, fDAOcctype.GroupID);
+            rowElem.SetAttributeValue(ID, fDAOcctype.ID);
+            return rowElem;
         }
 
         /// <summary>
@@ -138,7 +182,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
             //todo: this method needs to return the mapping, not just a list.
-            List<OccupancyType> occupancyTypes = CreateModelOcctypes();
+            Dictionary<string, OccupancyType> occtypeMappings = CreateModelOcctypesMapping();
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
@@ -147,7 +191,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             double priceIndex = studyProperties.UpdatedPriceIndex;
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                structureInventoryColumnMap, occupancyTypes, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
+                structureInventoryColumnMap, occtypeMappings, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
             return inv;
         }
 
@@ -269,7 +313,7 @@ namespace HEC.FDA.ViewModel.Inventory
             FdaValidationResult vr = new FdaValidationResult();
             int numOcctypesNotFound = 0;
 
-            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = SelectionMappings.OcctypesDictionary;
+            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = _OcctypeMapping;
             foreach (OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
             {
                 OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
@@ -332,16 +376,16 @@ namespace HEC.FDA.ViewModel.Inventory
             return builder.build();
         }
 
-        private List<OccupancyType> CreateModelOcctypes()
+        private Dictionary<String, OccupancyType> CreateModelOcctypesMapping()
         {
-            List<OccupancyType> occupancyTypes = new List<OccupancyType>();
-            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = SelectionMappings.OcctypesDictionary;
-            foreach(OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
+            Dictionary<String, OccupancyType> occtypesMapping = new Dictionary<String,OccupancyType>();
+            foreach(KeyValuePair< String, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
             {
-                occupancyTypes.Add(CreateModelOcctype(otRef));
+                OccupancyType ot = CreateModelOcctype(entry.Value);
+                occtypesMapping.Add(entry.Key, ot);
             }
       
-            return occupancyTypes;
+            return occtypesMapping;
         }
 
     }

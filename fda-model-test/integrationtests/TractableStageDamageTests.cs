@@ -99,7 +99,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             .withContentToStructureValueRatio(commercialCSVR)
             .build();
 
-        static List<OccupancyType> occupancyTypes = new List<OccupancyType>() { residentialOccType, commercialOccType };
+        static Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() 
+        { 
+            { residentialDamAndOccType, residentialOccType },
+            { commercialDamAndOccType, commercialOccType}
+        };
+        
         #endregion
 
         #region Structure Data

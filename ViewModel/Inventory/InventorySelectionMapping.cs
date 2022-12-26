@@ -63,18 +63,23 @@ namespace HEC.FDA.ViewModel.Inventory
             IsUsingFirstFloorElevation = selections.FirstFloorElevationIsSelected;
             IsUsingTerrainFile = selections.FromTerrainFileIsSelected;
             StructureIDCol = selections._StructureIDRow.SelectedItem;
+
             OccTypeCol = selections._OccupancyTypeRow.SelectedItem;
             FirstFloorElevCol = selections._FirstFloorElevRow.SelectedItem;
             StructureValueCol = selections._StructureValueRow.SelectedItem;
+
             FoundationHeightCol = selections._FoundationHeightRow.SelectedItem;
             GroundElevCol = selections._GroundElevRow.SelectedItem;
             ContentValueCol = selections._ContentValueRow.SelectedItem;
+
             OtherValueCol = selections._OtherValueRow.SelectedItem;
             VehicleValueCol = selections._VehicleValueRow.SelectedItem;
             BeginningDamageDepthCol = selections._BegDamDepthRow.SelectedItem;
+
             YearInConstructionCol = selections._YearInConstructionRow.SelectedItem;
             NotesCol = selections._NotesRow.SelectedItem;
             DescriptionCol = selections._DescriptionRow.SelectedItem;
+
             NumberOfStructuresCol = selections._NumberOfStructuresRow.SelectedItem;
 
             OcctypesDictionary = occtypeDictionary;
