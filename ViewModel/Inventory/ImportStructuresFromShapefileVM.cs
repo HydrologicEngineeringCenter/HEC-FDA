@@ -65,7 +65,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
 
-        #region Voids
         private void SelectedPathChanged()
         {
             //the selected file has changed. I set the second page to null
@@ -82,7 +81,6 @@ namespace HEC.FDA.ViewModel.Inventory
             CurrentView = _ColumnSelections;
         }
 
-        #region Next Button Click
         private FdaValidationResult ValidateRules()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -212,7 +210,6 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             //the validation before saving is done in the NextButtonClicked() method.
             int id = GetElementID<InventoryElement>();
-            //todo: create the model mapping. 
             StructureSelectionMapping mapping = CreateSelectionMapping(_ColumnSelections);
             Dictionary<string, OcctypeReference> occtypeMappings = _OcctypeLinking.CreateOcctypeMapping();
             InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, occtypeMappings, false, id);
@@ -229,7 +226,5 @@ namespace HEC.FDA.ViewModel.Inventory
             Save(elementToSave);
         }
 
-        #endregion
-        #endregion
     }
 }
