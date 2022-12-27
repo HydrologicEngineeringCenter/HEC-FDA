@@ -19,7 +19,7 @@ namespace HEC.FDA.Model.structures
         #region Fields
         private string _structureInventoryShapefile;
         private string _impactAreaShapefile;
-        private StructureInventoryColumnMap _map;
+        private StructureSelectionMapping _map;
         private Dictionary<string, OccupancyType> _occtypes;
         private string _impactAreaUniqueColumnHeader;
         private bool _updateGroundElevsFromTerrain;
@@ -78,7 +78,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, Dictionary<string, OccupancyType> occTypes,
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
             string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
         {
             _structureInventoryShapefile = pointShapefilePath;
@@ -93,7 +93,7 @@ namespace HEC.FDA.Model.structures
             //If we have a bad shapefile name, then we get a null ref exception in the below method `
             LoadStructuresFromSourceFiles();
         }
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureInventoryColumnMap map, Dictionary<string, OccupancyType> occTypes,
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
         {
             _structureInventoryShapefile = pointShapefilePath;
@@ -119,17 +119,38 @@ namespace HEC.FDA.Model.structures
                 string thisImpactAreaName = TryGetObj<string>(row[_impactAreaUniqueColumnHeader]);
                 //TODO: this line does not appear to work correctly. THe condition is being evaluated as true despite the strings being vastly different. 
                 if (thisImpactAreaName.Equals(impactAreaName))
-
                 {
                     return impactAreas.Polygon(i);
                 }
             }
             return null;
         }
+
+        private T GetRowValueForColumn<T>(DataRow row, string mappingColumnName, T defaultValue) where T : struct
+        {
+            T retval = defaultValue;
+            if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
+            {
+                //column could have wrong data type, or be null, or dbnull
+                retval = TryGet<T>(row[mappingColumnName], defaultValue);
+            }
+            return retval;
+        }
+        private string GetRowValueForColumn(DataRow row, string mappingColumnName, string defaultValue)
+        {
+            string retval = defaultValue;
+            if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
+            {
+                //column could have wrong data type, or be null, or dbnull
+                retval = TryGetObj<string>(row[mappingColumnName], defaultValue);
+            }
+            return retval;
+        }
+
         private void LoadStructuresFromSourceFiles()
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", _structureInventoryShapefile);
-            createColumnHeadersForMissingColumns(ref structureInventory, _map);
+            
             PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", _impactAreaShapefile);
 
             float[] groundelevs = Array.Empty<float>();
@@ -138,18 +159,21 @@ namespace HEC.FDA.Model.structures
                 groundelevs = GetGroundElevationFromTerrain(_structureInventoryShapefile, _terrainPath);
             }
 
+            int defaultMissingValue = -999;
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             for (int i = 0; i < structureInventory.FeatureCount(); i++)
             {
                 //required parameters
                 PointM point = pointMs[i];
-                var row = structureInventory.FeatureRow(i);
-                int fid = TryGet<int>(row[_map.StructureID], -999);
-                double val_struct = TryGet<double>(row[_map.StructureValue], -999);
-                string st_damcat = TryGetObj<string>(row[_map.DamageCatagory], "NA");
-                string occtype = TryGetObj<string>(row[_map.OccupancyType], "NA");
+                DataRow row = structureInventory.FeatureRow(i);
+
+                int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);               
+                double val_struct = GetRowValueForColumn<double>(row,_map.StructureValueCol, defaultMissingValue);
+
+                string st_damcat = GetRowValueForColumn(row, _map.DamageCatagory, "NA");
+                string occtype = GetRowValueForColumn(row, _map.OccTypeCol, "NA");
                 //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
-                double found_ht = TryGet<double>(row[_map.FoundationHeight], -999); //not gauranteed
+                double found_ht = GetRowValueForColumn<double>(row, _map.FoundationHeightCol, defaultMissingValue); //not gauranteed
                 double ground_elv;
                 if (_updateGroundElevsFromTerrain)
                 {
@@ -157,44 +181,28 @@ namespace HEC.FDA.Model.structures
                 }
                 else
                 {
-                    ground_elv = TryGet<double>(row[_map.GroundElev], -999); //not gauranteed
+                    ground_elv = GetRowValueForColumn<double>(row, _map.GroundElevCol, defaultMissingValue); //not gauranteed
                 }
-                double ff_elev = TryGet<double>(row[_map.FirstFloorElev], -999); // not gauranteed
-                if (row[_map.FirstFloorElev] == DBNull.Value)
+                double ff_elev = GetRowValueForColumn<double>(row, _map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
+                if (_map.FirstFloorElevCol == null || row[_map.FirstFloorElevCol] == DBNull.Value)
                 {
                     ff_elev = ground_elv + found_ht;
                 }
                 //optional parameters
-                double val_cont = TryGet<double>(row[_map.ContentValue], 0);
-                double val_vehic = TryGet<double>(row[_map.VehicalValue], 0);
-                double val_other = TryGet<double>(row[_map.OtherValue], 0);
-                string cbfips = TryGetObj<string>(row[_map.CBFips], "NA");
-                double beginningDamage = TryGet<double>(row[_map.BeginningDamageDepth], 0);
-                int numStructures = TryGet<int>(row[_map.NumberOfStructures], 1);
-                int yearInService = TryGet<int>(row[_map.YearInConstruction], -999);
+                double val_cont = GetRowValueForColumn<double>(row, _map.ContentValueCol, 0);
+                double val_vehic = GetRowValueForColumn<double>(row,_map.VehicleValueCol, 0);
+                double val_other = GetRowValueForColumn<double>(row, _map.OtherValueCol, 0);
+                string cbfips = GetRowValueForColumn(row, _map.CBFips, "NA");
+                double beginningDamage = GetRowValueForColumn<double>(row, _map.BeginningDamageDepthCol, 0);
+                int numStructures = GetRowValueForColumn<int>(row, _map.NumberOfStructuresCol, 1);
+                int yearInService = GetRowValueForColumn<int>(row, _map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, 
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
         }
-        private void createColumnHeadersForMissingColumns(ref PointFeatureLayer layer, StructureInventoryColumnMap map)
-        {
-            List<string> layerColumnNames = new List<string>();
-            var row = layer.FeatureRow(0);
-            foreach (DataColumn c in row.Table.Columns)  //loop through the columns. 
-            {
-                layerColumnNames.Add(c.ColumnName);
-            }
-
-            foreach (Tuple<string, Type> nameTypePair in map.ColumnHeaders)
-            {
-                if (!layerColumnNames.Contains(nameTypePair.Item1))
-                {
-                    layer.AddAttributeColumn(nameTypePair.Item1, nameTypePair.Item2);
-                }
-            }
-        }
+       
         public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -278,6 +286,7 @@ namespace HEC.FDA.Model.structures
             }
             return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
         }
+
         internal List<string> StructureDetails()
         {
             string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";

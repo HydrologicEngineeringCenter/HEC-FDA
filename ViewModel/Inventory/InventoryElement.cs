@@ -136,29 +136,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return path;
         }
 
-        //todo: maybe replace my mapping with this object?
-        private StructureInventoryColumnMap CreateColumnMap()
-        {
-            return new StructureInventoryColumnMap(
-                structureID: SelectionMappings.StructureIDCol,
-                occupancyType: SelectionMappings.OccTypeCol,
-                //Currently Missing. Adding to build
-                damageCatagory: null,
-                firstFloorElev: SelectionMappings.FirstFloorElevCol,
-                sructureValue: SelectionMappings.StructureValueCol,
-                foundationHeight: SelectionMappings.FoundationHeightCol, 
-                groundElev: SelectionMappings.GroundElevCol,
-                contentValue: SelectionMappings.ContentValueCol,
-                otherValue: SelectionMappings.OtherValueCol,
-                vehicalValue: SelectionMappings.VehicleValueCol, 
-                begDamDepth: SelectionMappings.BeginningDamageDepthCol,
-                yearInConstruction: SelectionMappings.YearInConstructionCol,
-                //Currently Missing. Adding to build
-                cbfips: null,
-                //Currently Missing. Adding to build
-                numStructures: null
-                ); 
-        }
+        
 
         private string GetImpactAreaDirectory(string impactAreaName)
         {
@@ -182,17 +160,14 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
-            //todo: this method needs to return the mapping, not just a list.
             Dictionary<string, OccupancyType> occtypeMappings = CreateModelOcctypesMapping();
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
-            StructureInventoryColumnMap structureInventoryColumnMap = CreateColumnMap();
             string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
-
             double priceIndex = studyProperties.UpdatedPriceIndex;
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                structureInventoryColumnMap, occtypeMappings, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
+                SelectionMappings, occtypeMappings, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
             return inv;
         }
 

@@ -9,9 +9,7 @@ namespace HEC.FDA.Model.structures
 {
     public class StructureSelectionMapping
     {
-        
         public const string INVENTORY_MAPPINGS = "InventoryMappings";
-
 
         private const string INVENTORY_COLUMN_SELECTIONS = "InventoryColumnSelections";
         private const string FIRST_FLOOR_ELEV_SELECTED = "FirstFloorElevSelected";
@@ -56,7 +54,9 @@ namespace HEC.FDA.Model.structures
         public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
 
-        //todo: pass all the params in?
+        public string DamageCatagory { get; }
+        public string CBFips { get; }
+
         public StructureSelectionMapping(bool FirstFloorElevationIsSelected, bool FromTerrainFileIsSelected, string structureIDRow,
             string occtype, string firstFloorElev, string structureValue, string foundHeight, string groundElev, string contentValue,
             string otherValue, string vehicleValue, string beginningDamageDepth, string yearInConstruction, string notes,
@@ -79,8 +79,6 @@ namespace HEC.FDA.Model.structures
             DescriptionCol = description;
             NumberOfStructuresCol = numberOfStructures;
         }
-
-
 
         public StructureSelectionMapping(XElement inventoryMappingElem)
         {
@@ -113,11 +111,7 @@ namespace HEC.FDA.Model.structures
                 DescriptionCol = "";
             }
             NumberOfStructuresCol = selections.Element(NUMBER_OF_STRUCTURES).Attribute(VALUE).Value;
-
-            
         }
-
-
 
         public XElement ToXML()
         {
@@ -142,22 +136,16 @@ namespace HEC.FDA.Model.structures
             columnSelectionsElem.Add(CreateColumnMappingXElement(DESCRIPTION, DescriptionCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(NUMBER_OF_STRUCTURES, NumberOfStructuresCol));
 
-            
             mappingsElem.Add(columnSelectionsElem);
             return mappingsElem;
-
         }
-
-
-
-   
-
 
         private XElement CreateColumnMappingXElement(string elemName, string value)
         {
             XElement rowElem = new XElement(elemName);
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
-        }
+        }  
+
     }
 }

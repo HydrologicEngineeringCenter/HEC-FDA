@@ -10,14 +10,11 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category", "Unit")]
     public class TractableStageDamageTests
     {
         #region H&H Data 
@@ -118,7 +115,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static List<Structure> structureList = new List<Structure>() { structure1, structure2, structure3, structure4};
 
         private static string dummyPath = "dummy";
-        private static StructureInventoryColumnMap map = new StructureInventoryColumnMap(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         private static Inventory structureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, structureList);
         #endregion
 
