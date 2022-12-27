@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.structures
@@ -34,7 +30,6 @@ namespace HEC.FDA.Model.structures
 
         private const string VALUE = "Value";
 
-
         public bool IsUsingFirstFloorElevation { get; }
         public bool IsUsingTerrainFile { get; }
         public string StructureIDCol { get; }
@@ -48,7 +43,6 @@ namespace HEC.FDA.Model.structures
         public string VehicleValueCol { get; }
         public string BeginningDamageDepthCol { get; }
         public string YearInConstructionCol { get; }
-
 
         public string NotesCol { get; }
         public string DescriptionCol { get; }

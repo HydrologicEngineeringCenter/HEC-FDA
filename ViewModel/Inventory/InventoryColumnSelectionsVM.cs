@@ -19,24 +19,28 @@ namespace HEC.FDA.ViewModel.Inventory
         private readonly List<float> _StructureElevations = new List<float>();
 
         //required rows
-        public InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:");
-        public InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:");
-        public InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:");
-        public InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:");
-        public InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:");
-        public InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:");
+        private InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:");
+        private InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:");
+        private InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:");
+        private InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:");
+        private InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:");
+        private InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:");
 
         //optional rows
-        public InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
-        public InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem("Other Value:");
-        public InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem("Vehicle Value:");
-        public InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
-        public InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
-        public InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
-        public InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem("Description:");
-        public InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem("Number Of Structures:");
+        private InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
+        private InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem("Other Value:");
+        private InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem("Vehicle Value:");
+        private InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
+        private InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
+        private InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
+        private InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem("Description:");
+        private InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem("Number Of Structures:");
         #endregion
         #region Properties
+        public InventoryColumnSelectionsRowItem OccupancyTypeRow
+        {
+            get { return _OccupancyTypeRow; }
+        }
         public string Path
         {
             get { return _Path; }
@@ -442,5 +446,16 @@ namespace HEC.FDA.ViewModel.Inventory
 
         #endregion
         #endregion
+
+        public StructureSelectionMapping CreateSelectionMapping()
+        {
+            return new StructureSelectionMapping(FirstFloorElevationIsSelected, FromTerrainFileIsSelected,
+                _StructureIDRow.SelectedItem, _OccupancyTypeRow.SelectedItem, _FirstFloorElevRow.SelectedItem,
+                _StructureValueRow.SelectedItem, _FoundationHeightRow.SelectedItem, _GroundElevRow.SelectedItem,
+                _ContentValueRow.SelectedItem, _OtherValueRow.SelectedItem, _VehicleValueRow.SelectedItem,
+                _BegDamDepthRow.SelectedItem, _YearInConstructionRow.SelectedItem, _NotesRow.SelectedItem,
+                _DescriptionRow.SelectedItem, _NumberOfStructuresRow.SelectedItem);
+        }
+
     }
 }
