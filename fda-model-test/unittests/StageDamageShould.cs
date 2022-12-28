@@ -21,25 +21,25 @@ namespace HEC.FDA.ModelTest.unittests
     {
 
         //structure data
-        private static int[] structureIDs = new int[] { 0, 1, 2, 3 };
-        private static PointM pointM = new PointM(); // These won't get used. We're gonna do some goofy stuff with fake hydraulics.
-        private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
-        private static double[] structureValues = new double[] { 500, 600, 700, 800 };
-        private static string residentialDamageCategory = "Residential";
-        private static string commercialDamageCategory = "Commercial";
-        private static string residentialNormalDistOccupancyTypeName = "Residential_One_Story_No_Basement_Normal";
-        private static string commercialOccupancyTypeName = "Commercial_Warehouse";
-        private static string[] damageCategories = new string[] { residentialDamageCategory, residentialDamageCategory, commercialDamageCategory, commercialDamageCategory };
-        private static string[] occupancyTypes = new string[] { residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, commercialOccupancyTypeName, commercialOccupancyTypeName };
-        private static int impactAreaID = 1;
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
-        private static string contentAssetCategory = "Content";
-        private static string structureAssetCategory = "Structure";
+        static int[] structureIDs = new int[] { 0, 1, 2, 3 };
+        static PointM pointM = new PointM(); // These won't get used. We're gonna do some goofy stuff with fake hydraulics.
+        static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
+        static double[] structureValues = new double[] { 500, 600, 700, 800 };
+        static string residentialDamageCategory = "Residential";
+        static string commercialDamageCategory = "Commercial";
+        static string residentialNormalDistOccupancyTypeName = "Residential_One_Story_No_Basement_Normal";
+        static string commercialOccupancyTypeName = "Commercial_Warehouse";
+        static string[] damageCategories = new string[] { residentialDamageCategory, residentialDamageCategory, commercialDamageCategory, commercialDamageCategory };
+        static string[] occupancyTypes = new string[] { residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, commercialOccupancyTypeName, commercialOccupancyTypeName };
+        static int impactAreaID = 1;
+        public static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
+        static string contentAssetCategory = "Content";
+        static string structureAssetCategory = "Structure";
 
         #region Normally Distributed Occ Type Data
         //occupancy type data
-        private static double[] depths = new double[] { -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        private static IDistribution[] residentialPercentDamageNormallyDist = new IDistribution[]
+        static double[] depths = new double[] { -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        static IDistribution[] residentialPercentDamageNormallyDist = new IDistribution[]
         {
             new Normal(0,0),
             new Normal(10,4),
@@ -55,7 +55,7 @@ namespace HEC.FDA.ModelTest.unittests
             new Normal(100,0),
             new Normal(100,0)
         };
-        private static IDistribution[] commercialPercentDamageNormallyDist = new IDistribution[]
+         static IDistribution[] commercialPercentDamageNormallyDist = new IDistribution[]
         {
             new Normal(0,0),
             new Normal(10,4),
@@ -71,15 +71,15 @@ namespace HEC.FDA.ModelTest.unittests
             new Normal(100,0),
             new Normal(100,0)
         };
-        private static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
-        private static UncertainPairedData _ResidentialNormallyDistDepthPercentDamageFunction = new UncertainPairedData(depths, residentialPercentDamageNormallyDist, metaData);
-        private static UncertainPairedData _CommercialNormallyDistDepthPercentDamageFunction = new UncertainPairedData(depths, commercialPercentDamageNormallyDist, metaData);
-        private static FirstFloorElevationUncertainty firstFloorElevationNormallyDistUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
-        private static ValueUncertainty _structureValueNormallyDistUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
-        private static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
-        private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+         static CurveMetaData metaData = new CurveMetaData("Depths", "Percent Damage", "Depth-Percent Damage Function");
+         static UncertainPairedData _ResidentialNormallyDistDepthPercentDamageFunction = new UncertainPairedData(depths, residentialPercentDamageNormallyDist, metaData);
+         static UncertainPairedData _CommercialNormallyDistDepthPercentDamageFunction = new UncertainPairedData(depths, commercialPercentDamageNormallyDist, metaData);
+         static FirstFloorElevationUncertainty firstFloorElevationNormallyDistUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
+         static ValueUncertainty _structureValueNormallyDistUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
+         static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
+         public static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
-        private static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.builder()
+         static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.builder()
             .withName(residentialNormalDistOccupancyTypeName)
             .withDamageCategory(residentialDamageCategory)
             .withStructureDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)
@@ -89,7 +89,7 @@ namespace HEC.FDA.ModelTest.unittests
             .withContentToStructureValueRatio(_contentToStructureValueRatioNormallyDist)
             .build();
 
-        private static OccupancyType commercialOccupancyTypeNormalDists = OccupancyType.builder()
+         static OccupancyType commercialOccupancyTypeNormalDists = OccupancyType.builder()
             .withName(commercialOccupancyTypeName)
             .withDamageCategory(commercialDamageCategory)
             .withStructureDepthPercentDamage(_CommercialNormallyDistDepthPercentDamageFunction)
@@ -101,8 +101,8 @@ namespace HEC.FDA.ModelTest.unittests
         #endregion
 
         #region Triangular Skewed-Left Occupancy Type Data
-        private static string residentialTriLeftDistOccupancyTypeName = "Residential_One_Story_No_Basement_TriLeft";
-        private static IDistribution[] percentDamageTriSkewLeft = new IDistribution[]
+         static string residentialTriLeftDistOccupancyTypeName = "Residential_One_Story_No_Basement_TriLeft";
+         static IDistribution[] percentDamageTriSkewLeft = new IDistribution[]
         {
             new Triangular(0,0,0),
             new Triangular(8,10,11),
@@ -119,12 +119,12 @@ namespace HEC.FDA.ModelTest.unittests
             new Triangular(100,100,100)
         };
 
-        private static UncertainPairedData TriDistSkewLeftercentDamageFunction = new UncertainPairedData(depths, percentDamageTriSkewLeft, metaData);
-        private static FirstFloorElevationUncertainty TriDistSkewLeftFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, 3, 1);
-        private static ValueUncertainty TriDistSkewLeftStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 60, 110);
-        private static ValueRatioWithUncertainty TriDistSkewLeftCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 40, 90, 100);
+         static UncertainPairedData TriDistSkewLeftercentDamageFunction = new UncertainPairedData(depths, percentDamageTriSkewLeft, metaData);
+         static FirstFloorElevationUncertainty TriDistSkewLeftFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, 3, 1);
+         static ValueUncertainty TriDistSkewLeftStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 60, 110);
+         static ValueRatioWithUncertainty TriDistSkewLeftCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 40, 90, 100);
 
-        private static OccupancyType triangularLeftSkewOccType = OccupancyType.builder()
+         static OccupancyType triangularLeftSkewOccType = OccupancyType.builder()
             .withName(residentialTriLeftDistOccupancyTypeName)
             .withDamageCategory(residentialDamageCategory)
             .withStructureDepthPercentDamage(TriDistSkewLeftercentDamageFunction)
@@ -137,9 +137,9 @@ namespace HEC.FDA.ModelTest.unittests
         #endregion
 
         #region Triangular Skewed Right Occupancy Type Data
-        private static string residentialTriRightDistOccupancyTypeName = "Residential_One_Story_No_Basement_TriRight";
+        static string residentialTriRightDistOccupancyTypeName = "Residential_One_Story_No_Basement_TriRight";
 
-        private static IDistribution[] percentDamageTriSkewRight = new IDistribution[]
+        static IDistribution[] percentDamageTriSkewRight = new IDistribution[]
 {
             new Triangular(0,0,0),
             new Triangular(8,10,20),
@@ -156,12 +156,12 @@ namespace HEC.FDA.ModelTest.unittests
             new Triangular(100,100,100)
 };
 
-        private static UncertainPairedData TriDistSkewRightPercentDamageFunction = new UncertainPairedData(depths, percentDamageTriSkewRight, metaData);
-        private static FirstFloorElevationUncertainty TriDistSkewRightFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, 1, 3);
-        private static ValueUncertainty TriDistSkewRightStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 90, 140);
-        private static ValueRatioWithUncertainty TriDistSkewRightCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 60, 70, 100);
+        static UncertainPairedData TriDistSkewRightPercentDamageFunction = new UncertainPairedData(depths, percentDamageTriSkewRight, metaData);
+        static FirstFloorElevationUncertainty TriDistSkewRightFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, 1, 3);
+        static ValueUncertainty TriDistSkewRightStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 90, 140);
+        static ValueRatioWithUncertainty TriDistSkewRightCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 60, 70, 100);
 
-        private static OccupancyType triangularRightSkewOccType = OccupancyType.builder()
+        static OccupancyType triangularRightSkewOccType = OccupancyType.builder()
             .withName(residentialTriRightDistOccupancyTypeName)
             .withDamageCategory(residentialDamageCategory)
             .withStructureDepthPercentDamage(TriDistSkewRightPercentDamageFunction)
@@ -174,9 +174,9 @@ namespace HEC.FDA.ModelTest.unittests
         #endregion
 
         #region Uniform Occupancy Type Data
-        private static string residentialUniformDistOccupancyTypeName = "Residential_One_Story_No_Basement_Uniform";
+        static string residentialUniformDistOccupancyTypeName = "Residential_One_Story_No_Basement_Uniform";
 
-        private static IDistribution[] percentDamageUniform = new IDistribution[]
+        static IDistribution[] percentDamageUniform = new IDistribution[]
 {
             new Uniform(0,0),
             new Uniform(8,10),
@@ -193,12 +193,12 @@ namespace HEC.FDA.ModelTest.unittests
             new Uniform(100,100)
 };
 
-        private static UncertainPairedData UniformPercentDamageFunction = new UncertainPairedData(depths, percentDamageUniform, metaData);
-        private static FirstFloorElevationUncertainty UniformFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Uniform, 1, 3);
-        private static ValueUncertainty UniformStValUncertainty = new ValueUncertainty(IDistributionEnum.Uniform, 90, 140);
-        private static ValueRatioWithUncertainty UniformCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Uniform, 60, 100);
+        static UncertainPairedData UniformPercentDamageFunction = new UncertainPairedData(depths, percentDamageUniform, metaData);
+        static FirstFloorElevationUncertainty UniformFFE = new FirstFloorElevationUncertainty(IDistributionEnum.Uniform, 1, 3);
+        static ValueUncertainty UniformStValUncertainty = new ValueUncertainty(IDistributionEnum.Uniform, 90, 140);
+        static ValueRatioWithUncertainty UniformCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Uniform, 60, 100);
 
-        private static OccupancyType UniformOccType = OccupancyType.builder()
+        static OccupancyType UniformOccType = OccupancyType.builder()
             .withName(residentialUniformDistOccupancyTypeName)
             .withDamageCategory(residentialDamageCategory)
             .withStructureDepthPercentDamage(UniformPercentDamageFunction)
@@ -210,23 +210,23 @@ namespace HEC.FDA.ModelTest.unittests
         #endregion 
 
         #region Water Data
-        private const HydraulicDataSource hydraulicDataSource = HydraulicDataSource.SteadyHDF;
-        private static DummyHydraulicProfile hydraulicProfile2 = new DummyHydraulicProfile(new float[] { 0, 0, 0, 0 }, 0.5);
-        private static DummyHydraulicProfile hydraulicProfile5 = new DummyHydraulicProfile(new float[] { 1, 1, 1, 1 }, 0.2);
-        private static DummyHydraulicProfile hydraulicProfile10 = new DummyHydraulicProfile(new float[] { 2, 2, 2, 2 }, 0.1);
-        private static DummyHydraulicProfile hydraulicProfile25 = new DummyHydraulicProfile(new float[] { 3, 3, 3, 3 }, 0.04);
-        private static DummyHydraulicProfile hydraulicProfile50 = new DummyHydraulicProfile(new float[] { 4, 4, 4, 4 }, .02);
-        private static DummyHydraulicProfile hydraulicProfile100 = new DummyHydraulicProfile(new float[] { 5, 5, 5, 5 }, .01);
-        private static DummyHydraulicProfile hydraulicProfile200 = new DummyHydraulicProfile(new float[] { 6, 6, 6, 6 }, .005);
-        private static DummyHydraulicProfile hydraulicProfile500 = new DummyHydraulicProfile(new float[] { 7, 7, 7, 7 }, .002);
-        private static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
-        private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
+        const HydraulicDataSource hydraulicDataSource = HydraulicDataSource.SteadyHDF;
+        static DummyHydraulicProfile hydraulicProfile2 = new DummyHydraulicProfile(new float[] { 0, 0, 0, 0 }, 0.5);
+        static DummyHydraulicProfile hydraulicProfile5 = new DummyHydraulicProfile(new float[] { 1, 1, 1, 1 }, 0.2);
+        static DummyHydraulicProfile hydraulicProfile10 = new DummyHydraulicProfile(new float[] { 2, 2, 2, 2 }, 0.1);
+        static DummyHydraulicProfile hydraulicProfile25 = new DummyHydraulicProfile(new float[] { 3, 3, 3, 3 }, 0.04);
+        static DummyHydraulicProfile hydraulicProfile50 = new DummyHydraulicProfile(new float[] { 4, 4, 4, 4 }, .02);
+        static DummyHydraulicProfile hydraulicProfile100 = new DummyHydraulicProfile(new float[] { 5, 5, 5, 5 }, .01);
+        static DummyHydraulicProfile hydraulicProfile200 = new DummyHydraulicProfile(new float[] { 6, 6, 6, 6 }, .005);
+        static DummyHydraulicProfile hydraulicProfile500 = new DummyHydraulicProfile(new float[] { 7, 7, 7, 7 }, .002);
+        static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
+        static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
 
-        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
+        static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
         new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
         #endregion
 
-        private static RandomProvider randomProvider = new RandomProvider(seed: 1234);
+        static RandomProvider randomProvider = new RandomProvider(seed: 1234);
 
 
         //Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1jeTPOIi20Bz-CWIxM9jIUQz6pxNjwKt1/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
@@ -260,7 +260,7 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifferenceCommercialContentDamage < tolerance);
 
         }
-        private Inventory CreateInventory()
+        public Inventory CreateInventory()
         {
             List<Structure> structures = new List<Structure>();
             for (int i = 0; i < structureIDs.Length; i++)
