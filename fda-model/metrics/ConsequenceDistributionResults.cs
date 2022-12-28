@@ -99,7 +99,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods 
-        private void Process(List<ConsequenceResults> results, int impactAreaID)
+        public void Process(List<ConsequenceResults> results, int impactAreaID)
         {
             ProcessedConsequenceResultsList processedConsequenceResultsList = new ProcessedConsequenceResultsList(results);
             foreach (ProcessedConsequenceResults processedConsequenceResults in processedConsequenceResultsList.Results)
