@@ -60,7 +60,7 @@ namespace HEC.FDA.Model.stageDamage
             if (_usingMockData)
             {
                 _inventory = inventory;
-            } 
+            }
             else
             {
                 _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
@@ -160,7 +160,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             return null;
         }
-        private void ComputeLowerStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation, 
+        private void ComputeLowerStageDamage(IProvideRandomNumbers randomProvider, PairedData stageFrequency, ref List<double> allStagesAtIndexLocation,
             ref List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             //Part 1: Stages between min stage at index location and the stage at the index location for the lowest profile 
@@ -169,9 +169,9 @@ namespace HEC.FDA.Model.stageDamage
             float[] WSEAtLowest = lowestProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             IHydraulicProfile nextProfile = _hydraulicDataset.HydraulicProfiles[1];
             float[] WSEAtNext = nextProfile.GetWSE(pointMs, _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-            HydraulicDataset.CorrectDryStructureWSEs(ref WSEAtLowest, _inventory.GroundElevations, WSEAtNext );
+            HydraulicDataset.CorrectDryStructureWSEs(ref WSEAtLowest, _inventory.GroundElevations, WSEAtNext);
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
-            double stageAtProbabilityOfLowestProfile = stageFrequency.f(1-lowestProfile.Probability);
+            double stageAtProbabilityOfLowestProfile = stageFrequency.f(1 - lowestProfile.Probability);
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _minStageForArea);
             //this interval defines the interval in stages by which we'll compute damage 
@@ -194,12 +194,12 @@ namespace HEC.FDA.Model.stageDamage
             int numProfiles = _hydraulicDataset.HydraulicProfiles.Count;
             for (int i = 1; i < numProfiles; i++)
             {
-                IHydraulicProfile previousHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i-1];
+                IHydraulicProfile previousHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i - 1];
                 IHydraulicProfile currentHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i];
                 IHydraulicProfile nextHydraulicProfile = null;
-                if(i < numProfiles - 1) //if we're on the highest profile
+                if (i < numProfiles - 1) //if we're on the highest profile
                 {
-                    nextHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i+1];
+                    nextHydraulicProfile = _hydraulicDataset.HydraulicProfiles[i + 1];
                 }
                 InterpolateBetweenProfiles(randomProvider, previousHydraulicProfile, currentHydraulicProfile, nextHydraulicProfile, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
             }
@@ -241,17 +241,17 @@ namespace HEC.FDA.Model.stageDamage
             float[] stages = new float[intervalsAtStructures.Length];
             for (int m = 0; m < stages.Length; m++)
             {
-                stages[m] = previousStagesAtStructures[m] + intervalsAtStructures[m]*i;
+                stages[m] = previousStagesAtStructures[m] + intervalsAtStructures[m] * i;
             }
             return stages;
         }
 
         private float[] CalculateIntervals(float[] previousStagesAtStructures, float[] currentStagesAtStructures)
         {
-           float[] intervals = new float[previousStagesAtStructures.Length];
+            float[] intervals = new float[previousStagesAtStructures.Length];
             for (int j = 0; j < previousStagesAtStructures.Length; j++)
             {
-                intervals[j] = (currentStagesAtStructures[j] - previousStagesAtStructures[j])/_numInterpolatedStagesToCompute;
+                intervals[j] = (currentStagesAtStructures[j] - previousStagesAtStructures[j]) / _numInterpolatedStagesToCompute;
             }
             return intervals;
         }
@@ -262,7 +262,7 @@ namespace HEC.FDA.Model.stageDamage
             List<IHydraulicProfile> profileList = _hydraulicDataset.HydraulicProfiles;
             float[] stagesAtStructuresHighestProfile = profileList[profileList.Count - 1].GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
             HydraulicDataset.CorrectDryStructureWSEs(ref stagesAtStructuresHighestProfile, _inventory.GroundElevations);
-            double stageAtProbabilityOfHighestProfile = stageFrequency.f(1-profileList[profileList.Count - 1].Probability);
+            double stageAtProbabilityOfHighestProfile = stageFrequency.f(1 - profileList[profileList.Count - 1].Probability);
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _numExtrapolatedStagesToCompute;
             for (int stepCount = 1; stepCount < _numExtrapolatedStagesToCompute; stepCount++)
@@ -300,7 +300,7 @@ namespace HEC.FDA.Model.stageDamage
         public static float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numInterpolatedStagesToCompute)
         {
             float[] extrapolatedStages = new float[WSEsAtLowest.Length];
-            for(int j = 0; j<WSEsAtLowest.Length; j++)
+            for (int j = 0; j < WSEsAtLowest.Length; j++)
             {
                 extrapolatedStages[j] = WSEsAtLowest[j] - interval * (numInterpolatedStagesToCompute - i);
             }
@@ -313,11 +313,13 @@ namespace HEC.FDA.Model.stageDamage
             ConsequenceDistributionResults returnValue = new ConsequenceDistributionResults();
             double lowerProb = 0.025;
             double upperProb = .975;
-            
+
             bool resultsAreNotConverged = true;
             long expectedIterations = convergenceCriteria.MaxIterations;
             long iterations = convergenceCriteria.MinIterations;
             List<ConsequenceResults> results = new List<ConsequenceResults>();
+            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults();
+            bool isFirstPass = true;
             while (resultsAreNotConverged)
             {
                 for (int i = 0; i < iterations; i++)
@@ -326,12 +328,23 @@ namespace HEC.FDA.Model.stageDamage
                     ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses, analysisYear);
                     results.Add(consequenceResults);
                 }
-                ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
+
+                if (isFirstPass)
+                {
+                    consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
+                    isFirstPass = false;
+                }
+                else
+                {
+                    int impactAreaID = results[0].ConsequenceResultList[0].RegionID;
+                    consequenceDistributionResults.Process(results, impactAreaID);
+                }
+
                 resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);
                 if (resultsAreNotConverged)
                 {
                     iterations = consequenceDistributionResults.RemainingIterations(upperProb, lowerProb);
-                } 
+                }
                 else
                 {
                     //Report Message 
@@ -390,7 +403,7 @@ namespace HEC.FDA.Model.stageDamage
                         structureDetails[i + 1] += $"{structureDamage},";
                     }
 
-                } 
+                }
                 else if (assetType == StringConstants.CONTENT_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -399,7 +412,7 @@ namespace HEC.FDA.Model.stageDamage
                         structureDetails[i + 1] += $"{contentDamage},";
                     }
 
-                } 
+                }
                 else if (assetType == StringConstants.VEHICLE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -408,7 +421,7 @@ namespace HEC.FDA.Model.stageDamage
                         structureDetails[i + 1] += $"{vehicleDamage},";
                     }
 
-                } 
+                }
                 else
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
