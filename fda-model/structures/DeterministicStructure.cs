@@ -8,7 +8,8 @@ namespace HEC.FDA.Model.structures
     {
         #region Fields
         SampledStructureParameters _sampledStructureParameters;
-        double _DepthAboveFoundationHeight;
+        int _numberOfStructures;
+        int _yearInService;
         #endregion
 
         #region Properties 
@@ -26,7 +27,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructor 
-        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth)
+        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth, int numberOfStructures = 1, int yearInService = -999)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;
@@ -38,12 +39,14 @@ namespace HEC.FDA.Model.structures
             VehicleValueSample = sampledStructureParameters.VehicleValueSampled;
             OtherValueSample = sampledStructureParameters.OtherValueSampled;
             _sampledStructureParameters = sampledStructureParameters;
+            _numberOfStructures = numberOfStructures;
+            _yearInService = yearInService;
         }
         #endregion
 
         //TODO: We do not want to return a new structure damage result every time 
         #region Methods
-        public ConsequenceResult ComputeDamage(float waterSurfaceElevation)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, double priceIndex = 1, int analysisYear = 9999)
         {
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
 
@@ -52,33 +55,68 @@ namespace HEC.FDA.Model.structures
             double contDamage = 0;
             double vehicleDamage = 0;
             double otherDamage = 0;
-            //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
-            if (BeginningDamageDepth <= depthabovefoundHeight)
+            if (analysisYear > _yearInService)
             {
+                //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
 
-                //Structure
-                double structDamagepercent = (_sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight))/100;
-                structDamage = structDamagepercent * StructValueSample;
-
-                //Content
-                if (_sampledStructureParameters.ComputeContentDamage)
+                if (BeginningDamageDepth <= depthabovefoundHeight)
                 {
-                    double contentDamagePercent = (_sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight))/100;
-                    contDamage = contentDamagePercent * ContentValueSample;
-                }
+                    //Structure
+                    double structDamagepercent = _sampledStructureParameters.StructPercentDamagePairedData.f(depthabovefoundHeight);
+                    if (structDamagepercent > 100)
+                    {
+                        structDamagepercent = 100;
+                    }
+                    if (structDamagepercent < 0)
+                    {
+                        structDamagepercent = 0;
+                    }
+                    structDamage = (structDamagepercent / 100) * StructValueSample * priceIndex * _numberOfStructures;
 
-                //Vehicle
-                if (_sampledStructureParameters.ComputeVehicleDamage)
-                {
-                    double vehicleDamagePercent = (_sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight))/100;
-                    vehicleDamage = vehicleDamagePercent * VehicleValueSample;
-                }
+                    //Content
+                    if (_sampledStructureParameters.ComputeContentDamage)
+                    {
+                        double contentDamagePercent = _sampledStructureParameters.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                        if (contentDamagePercent > 100)
+                        {
+                            contentDamagePercent = 100;
+                        }
+                        if (contentDamagePercent < 0)
+                        {
+                            contentDamagePercent = 0;
+                        }
+                        contDamage = (contentDamagePercent / 100) * ContentValueSample * priceIndex * _numberOfStructures;
+                    }
 
-                //Other
-                if (_sampledStructureParameters.ComputeOtherDamage)
-                {
-                    double otherDamagePercent = (_sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight))/100;
-                    otherDamage = otherDamagePercent * OtherValueSample;
+                    //Vehicle
+                    if (_sampledStructureParameters.ComputeVehicleDamage)
+                    {
+                        double vehicleDamagePercent = _sampledStructureParameters.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                        if (vehicleDamagePercent > 100)
+                        {
+                            vehicleDamagePercent = 100;
+                        }
+                        if (vehicleDamagePercent < 0)
+                        {
+                            vehicleDamagePercent = 0;
+                        }
+                        vehicleDamage = (vehicleDamagePercent / 100) * VehicleValueSample * priceIndex * _numberOfStructures;
+                    }
+
+                    //Other
+                    if (_sampledStructureParameters.ComputeOtherDamage)
+                    {
+                        double otherDamagePercent = _sampledStructureParameters.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                        if (otherDamagePercent > 100)
+                        {
+                            otherDamagePercent = 100;
+                        }
+                        if (otherDamagePercent < 0)
+                        {
+                            otherDamagePercent = 0;
+                        }
+                        otherDamage = (otherDamagePercent / 100) * OtherValueSample * priceIndex * _numberOfStructures;
+                    }
                 }
             }
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);

@@ -76,7 +76,7 @@ namespace HEC.FDA.ViewModel.Study
             UnitSystem = UnitsSystemEnum.English;
             SurveyedYear = DateTime.Now.Year - 1;
             UpdatedYear = DateTime.Now.Year;
-            UpdatedPriceIndex = 0.01;
+            UpdatedPriceIndex = 1.0;
             DiscountRate = .025;
             PeriodOfAnalysis = 50;
             ConvergenceCriteria = convCriteria;

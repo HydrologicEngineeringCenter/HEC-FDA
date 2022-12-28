@@ -71,21 +71,24 @@ namespace HEC.FDA.Model.hydraulics
                     }
                 }
             }
-            for (int i = 0; i < wsesToCorrect.Length; i++)
+            else
             {
-                bool dryInNextProfile = nextProfileWses[i] < groundElevs[i];
-                bool dryInCurrentProfile = wsesToCorrect[i] < groundElevs[i];
-                if (dryInCurrentProfile)
+                for (int i = 0; i < wsesToCorrect.Length; i++)
                 {
-                    //The case where the next largest profile is also dry
-                    if (dryInNextProfile)
+                    bool dryInNextProfile = nextProfileWses[i] < groundElevs[i];
+                    bool dryInCurrentProfile = wsesToCorrect[i] < groundElevs[i];
+                    if (dryInCurrentProfile)
                     {
-                        wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
-                    }
-                    //The case where the next largest profile is not dry
-                    else
-                    {
-                        wsesToCorrect[i] = (groundElevs[i] - offsetForBarelyDryStructures);
+                        //The case where the next largest profile is also dry
+                        if (dryInNextProfile)
+                        {
+                            wsesToCorrect[i] = (groundElevs[i] - offsetForDryStructures);
+                        }
+                        //The case where the next largest profile is not dry
+                        else
+                        {
+                            wsesToCorrect[i] = (groundElevs[i] - offsetForBarelyDryStructures);
+                        }
                     }
                 }
             }

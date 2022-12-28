@@ -11,7 +11,7 @@ namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class ExpectedAnnualDamageResultsShould
-    {//TODO: Access the requisite logic through Scenario results 
+    {
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static string xLabel = "x label";

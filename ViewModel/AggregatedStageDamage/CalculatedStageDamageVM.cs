@@ -84,8 +84,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             this.getName = getName;
         }
         
-        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows, Func<string> getName)
+        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows,bool writeDetailsOut, Func<string> getName)
         {
+            WriteDetailsFile = writeDetailsOut;
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
             SelectInventory(inventoryID);

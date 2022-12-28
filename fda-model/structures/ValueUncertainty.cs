@@ -64,14 +64,14 @@ namespace HEC.FDA.Model.structures
                     sampledValue = logNormal.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Triangular:
-                    double min = (1 - (_percentOfInventoryValueStandardDeviationOrMin/100)) * inventoryValue;
-                    double max = (1 + (_percentOfInventoryValueMax/100)) * inventoryValue;
+                    double min = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
+                    double max = (_percentOfInventoryValueMax/100) * inventoryValue;
                     Triangular triangular = new Triangular(min, inventoryValue, max);
                     sampledValue = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
-                    double minUniform = (1 - (_percentOfInventoryValueStandardDeviationOrMin/100)) * inventoryValue;
-                    double maxUniform = (1 + (_percentOfInventoryValueMax/100)) * inventoryValue;
+                    double minUniform = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
+                    double maxUniform = (_percentOfInventoryValueMax/100) * inventoryValue;
                     Uniform uniform = new Uniform(minUniform, maxUniform);
                     sampledValue = uniform.InverseCDF(probability);
                     break;

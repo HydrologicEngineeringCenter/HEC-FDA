@@ -12,7 +12,7 @@ namespace HEC.FDA.ModelTest.unittests
 {
     [Trait("Category", "Unit")]
     public class PerformanceTest
-    {//TODO: access the requisite logic through ScenarioResults 
+    {
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 20000 };
         static double[] StageForNonLeveeFailureProbs = { 5000, 8000, 9000, 9600, 9800, 9900, 9960, 9980 };
@@ -271,7 +271,6 @@ namespace HEC.FDA.ModelTest.unittests
             RandomProvider randomProvider = new RandomProvider(seed);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, false);
             XElement xElement = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.WriteToXML();
-            //TODO: At the next line, convergence criteria is being re-set to 100000
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);

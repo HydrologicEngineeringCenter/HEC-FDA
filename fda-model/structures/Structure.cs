@@ -26,9 +26,9 @@ namespace HEC.FDA.Model.structures
         internal int NumberOfStructures { get; }
         #endregion
 
-        #region Constructor 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = 0, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
-        {//TODO: Helpful validation here seems a little difficult - but we might need messaging 
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = -999, double groundElevation = -999, double foundationHeight = -999, int year = -999, int numStructures = 1)
+
+        {
             Fid = fid;
             Point = point;
             InventoriedStructureValue = val_struct;
@@ -53,12 +53,12 @@ namespace HEC.FDA.Model.structures
         {
             SampledStructureParameters sampledStructureParameters = occtype.Sample(randomProvider, InventoriedStructureValue, FirstFloorElevation, InventoriedContentValue, InventoriedOtherValue, InventoriedVehicleValue, computeIsDeterministic);
             //load up the deterministic structure
-            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth);
+            return new DeterministicStructure(Fid, ImpactAreaID, sampledStructureParameters, BeginningDamageDepth, NumberOfStructures, YearInService);
         }
 
-        internal string ProduceDetails()
+        internal string ProduceDetails(double priceIndex)
         {
-            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue},{InventoriedContentValue},{InventoriedContentValue},{InventoriedOtherValue},{InventoriedOtherValue},{InventoriedVehicleValue},{InventoriedVehicleValue},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
+            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue*priceIndex},{InventoriedContentValue},{InventoriedContentValue * priceIndex},{InventoriedOtherValue},{InventoriedOtherValue * priceIndex},{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
             return details;
         }
         #endregion 

@@ -8,6 +8,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using Statistics.Distributions;
 using HEC.FDA.Model.interfaces;
 using Statistics.Histograms;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -179,11 +180,11 @@ namespace HEC.FDA.Model.paireddata
                 if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
                     pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new Message($"The Y Values sampled from the function named {_metadata.Name} were not monotonically increasing as required and were forced to be monotonic")));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The Y Values sampled from the function named {_metadata.Name} were not monotonically increasing as required and were forced to be monotonic", ErrorLevel.Major)));
                 }
                 if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The X values on the function named {_metadata.Name} are not monotonically decreasing as required and were forced to be monotonic")));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The X values on the function named {_metadata.Name} are not monotonically decreasing as required and were forced to be monotonic", ErrorLevel.Major)));
                 }
                 pairedData.Validate();
                 if (pairedData.HasErrors)

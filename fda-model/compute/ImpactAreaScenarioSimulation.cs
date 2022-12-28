@@ -19,6 +19,8 @@ namespace HEC.FDA.Model.compute
 {
     public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
     {
+        public const int IMPACT_AREA_SIM_COMPLETED = -1001;
+
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
@@ -117,6 +119,7 @@ namespace HEC.FDA.Model.compute
             {
                 bool histogramIsZeroValued = false;
                 double largeProbability = 0.999;
+                //This is a test to determine whether a histogram will be full of zeroes 
                 double highPercentile = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(largeProbability);
                 if (highPercentile == 0)
                 {
@@ -139,7 +142,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine)));
+                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine, ErrorLevel.Major)));
                 }
                 //enumerate what the errors and warnings are 
                 StringBuilder errors = new StringBuilder();
@@ -222,7 +225,7 @@ namespace HEC.FDA.Model.compute
                     }
                 }
 
-                Message mess = new Message(errors.ToString());
+                ErrorMessage mess = new ErrorMessage(errors.ToString(), ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(mess));
 
             }
@@ -242,7 +245,8 @@ namespace HEC.FDA.Model.compute
                 {
                     string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
                     ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
+                    ReportMessage(this, new MessageEventArgs(errorMessage)); 
+                    return false;
 
                 }
             }
@@ -308,12 +312,12 @@ namespace HEC.FDA.Model.compute
                         IPairedData frequencyDischarge;
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
-                            //If threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                            //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                             frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                         }
                         else
                         {
-                            //If threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                            //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                             frequencyDischarge = _frequency_discharge_graphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
                         }
                         //if frequency_flow is not defined throw big errors.
@@ -336,11 +340,15 @@ namespace HEC.FDA.Model.compute
                     }
                     else
                     {
-                        //if threadlocalRandomProvider is medianRandomProvider then we get a deterministic result
+                        //if threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                         IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(threadlocalRandomProvider.NextRandom());
                         ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, giveMeADamageFrequency, i, computeWithDamage, computeIsDeterministic);
                     }
                     Interlocked.Increment(ref _completedIterations);
+                    if (progressChunks == 0)
+                    {
+                        progressChunks = 1;
+                    }
                     if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                     {
                         double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
@@ -362,7 +370,7 @@ namespace HEC.FDA.Model.compute
                 }
 
             }
-            ReportProgress(this, new ProgressReportEventArgs(100));
+            ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
             _impactAreaScenarioResults.ForceDeQueue();
         }
 

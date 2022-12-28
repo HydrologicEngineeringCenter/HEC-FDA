@@ -300,6 +300,42 @@ namespace HEC.FDA.ViewModel.Utilities
             return Elements;
         }
 
+        private static List<StageDamageCurve> CreateDamageCurves(AggregateDamageFunction function, 
+            List<ImpactAreaElement> impactAreaElements, ref string messages)
+        {
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+
+            SingleDamageFunction structDamageFunc = function.DamageFunctions[(int)StructureValueType.STRUCTURE];
+            StageDamageCurve stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Structure", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            if (stageDamageCurve != null)
+            {
+                curves.Add(stageDamageCurve);
+            }
+
+            SingleDamageFunction contentDamageFunc = function.DamageFunctions[(int)StructureValueType.CONTENT];
+            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Content", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            if (stageDamageCurve != null)
+            {
+                curves.Add(stageDamageCurve);
+            }
+
+            SingleDamageFunction otherDamageFunc = function.DamageFunctions[(int)StructureValueType.OTHER];
+            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Other", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            if (stageDamageCurve != null)
+            {
+                curves.Add(stageDamageCurve);
+            }
+
+            SingleDamageFunction carDamageFunc = function.DamageFunctions[(int)StructureValueType.CAR];
+            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Vehicle", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            if (stageDamageCurve != null)
+            {
+                curves.Add(stageDamageCurve);
+            }
+
+            return curves;
+        }
+
         private static AggregatedStageDamageElement CreateElement(List<AggregateDamageFunction> funcs, List<ImpactAreaElement> impactAreaElements, int elemID, ref string messages)
         {
             AggregatedStageDamageElement elem = null;
@@ -311,12 +347,14 @@ namespace HEC.FDA.ViewModel.Utilities
                 List<StageDamageCurve> curves = new List<StageDamageCurve>();
                 foreach (AggregateDamageFunction func in funcs)
                 {
-                    SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                    StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, "Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
-                    if (stageDamageCurve != null)
-                    {
-                        curves.Add(stageDamageCurve);
-                    }
+                    curves.AddRange(CreateDamageCurves(func, impactAreaElements,ref messages));
+
+                    //SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
+                    //StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, "Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
+                    //if (stageDamageCurve != null)
+                    //{
+                    //    curves.Add(stageDamageCurve);
+                    //}
                 }
 
                 messages += "\nNumber of curves successfully created: " + curves.Count;
@@ -324,7 +362,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (curves.Count > 0)
                 {
                     List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows, true, elemID);
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows, true,false, elemID);
                 }
                 else
                 {
