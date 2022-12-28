@@ -34,6 +34,11 @@ namespace HEC.FDA.ViewModel.Editors
         {
             HasChanges = true;
         }
+
+        public void UpdateCurveMetaData()
+        {
+            _TableWithPlot.CurveComponentVM.Name = Name;
+        }
         #endregion
     }
 }

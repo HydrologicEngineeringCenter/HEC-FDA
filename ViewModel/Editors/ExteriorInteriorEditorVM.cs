@@ -17,6 +17,7 @@ namespace HEC.FDA.ViewModel.Editors
 
         public override void Save()
         {
+            UpdateCurveMetaData();
             int id = GetElementID<ExteriorInteriorElement>();
             ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, DateTime.Now.ToString("G"), Description, TableWithPlot.CurveComponentVM, id);
             base.Save(elem);
