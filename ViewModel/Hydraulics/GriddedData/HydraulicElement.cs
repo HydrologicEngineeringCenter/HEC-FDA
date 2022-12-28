@@ -149,7 +149,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulics is missing expected files:");
+                vr.InsertMessage(0, "The selected hydraulics is missing expected files:");
             }
             return vr;
         }
@@ -167,7 +167,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulics is missing expected directories:");
+                vr.InsertMessage(0, "The selected hydraulics is missing expected directories:");
             }
             return vr;
         }
@@ -178,7 +178,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(GetDirectoryInStudy(), "*.hdf").ErrorMessage);
             if (!vr.IsValid)
             {
-                vr.InsertMessage(0, "The selected hydaulic is missing expected files:");
+                vr.InsertMessage(0, "The selected hydraulic is missing expected files:");
             }
             return vr;
         }

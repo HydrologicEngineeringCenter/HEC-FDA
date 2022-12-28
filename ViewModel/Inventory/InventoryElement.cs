@@ -289,8 +289,7 @@ namespace HEC.FDA.ViewModel.Inventory
             FdaValidationResult vr = new FdaValidationResult();
             int numOcctypesNotFound = 0;
 
-            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = _OcctypeMapping;
-            foreach (OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
+            foreach (OccupancyTypes.OcctypeReference otRef in _OcctypeMapping.Values)
             {
                 OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
                 if(ot == null)

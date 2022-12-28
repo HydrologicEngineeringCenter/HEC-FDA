@@ -90,7 +90,7 @@ namespace HEC.FDA.Model.structures
             _terrainPath = terrainPath;
             _priceIndex = priceIndex;
             //TODO: Add some validation here
-            //If we have a bad shapefile name, then we get a null ref exception in the below method `
+            //If we have a bad shapefile name, then we get a null ref exception in the below method
             LoadStructuresFromSourceFiles();
         }
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
