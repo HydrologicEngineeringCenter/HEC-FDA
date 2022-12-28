@@ -337,6 +337,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override void Save()
         {
+            if(IsAnalytical)
+            {
+                TableWithPlot.CurveComponentVM.Name = Name;
+            }
+            else
+            {
+                GraphicalTableWithPlotVM.CurveComponentVM.Name = Name;
+            }
             FdaValidationResult result = ValidateEditor();
             if (result.IsValid)
             {
