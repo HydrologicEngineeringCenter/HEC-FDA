@@ -268,7 +268,11 @@ namespace HEC.FDA.ModelTest.unittests
                 Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
                 structures.Add(structure);
             }
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyTypeNormalDists, commercialOccupancyTypeNormalDists };
+            Dictionary<string, OccupancyType> occupancyTypesList = new Dictionary<string, OccupancyType>() 
+            {
+                {residentialNormalDistOccupancyTypeName, residentialOccupancyTypeNormalDists },
+                {commercialOccupancyTypeName, commercialOccupancyTypeNormalDists } 
+            };
 
             Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
             return inventory;
@@ -297,17 +301,23 @@ namespace HEC.FDA.ModelTest.unittests
             Structure uniformStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialUniformDistOccupancyTypeName, impactAreaID);
 
             //Occ Types
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyTypeNormalDists, triangularLeftSkewOccType, triangularRightSkewOccType, UniformOccType };
+            Dictionary<string, OccupancyType> occupancyTypesDictionary = new Dictionary<string, OccupancyType>() 
+            {
+                {residentialNormalDistOccupancyTypeName, residentialOccupancyTypeNormalDists },
+                {residentialTriLeftDistOccupancyTypeName, triangularLeftSkewOccType },
+                {residentialTriRightDistOccupancyTypeName, triangularRightSkewOccType },
+                {residentialUniformDistOccupancyTypeName, UniformOccType }
+            };
             List<Structure> normalStructures = new List<Structure>() { normalStructure };
             List<Structure> triLeftStructures = new List<Structure>() { triLeftStructure };
             List<Structure> triRightStructures = new List<Structure>() { triRightStructure };
             List<Structure> uniformStructures = new List<Structure>() { uniformStructure };
 
             //Inventories 
-            Inventory normalInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, normalStructures);
-            Inventory triLeftInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, triLeftStructures);
-            Inventory triRightInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, triRightStructures);
-            Inventory uniformInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, uniformStructures);
+            Inventory normalInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, normalStructures);
+            Inventory triLeftInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, triLeftStructures);
+            Inventory triRightInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, triRightStructures);
+            Inventory uniformInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, uniformStructures);
 
             //Water
             float[] WSEs = new float[] { wse };

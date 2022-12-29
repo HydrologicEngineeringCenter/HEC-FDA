@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
@@ -56,14 +58,13 @@ namespace HEC.FDA.ViewModel.Inventory
             InventoryElement inventoryElement = elem as InventoryElement;
             _SelectedPath = inventoryElement.GetFilePath(".shp");
             _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
-            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections._OccupancyTypeRow.SelectedItem, inventoryElement.SelectionMappings.OcctypesDictionary);
+            _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections.OccupancyTypeRow.SelectedItem, inventoryElement.OcctypeMapping);
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
         }
 
         #endregion
 
-        #region Voids
         private void SelectedPathChanged()
         {
             //the selected file has changed. I set the second page to null
@@ -80,7 +81,6 @@ namespace HEC.FDA.ViewModel.Inventory
             CurrentView = _ColumnSelections;
         }
 
-        #region Next Button Click
         private FdaValidationResult ValidateRules()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -151,11 +151,11 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             if(_OcctypeLinking == null)
             {
-                _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections._OccupancyTypeRow.SelectedItem);
+                _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections.OccupancyTypeRow.SelectedItem);
             }
             //when we switch to the occtype linking vm, we need to check if the user has switched the occtype column name.
             //if it is the same as it was before, then this call won't do anything.
-            _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections._OccupancyTypeRow.SelectedItem);
+            _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections.OccupancyTypeRow.SelectedItem);
             CurrentView = _OcctypeLinking;
         }
 
@@ -196,13 +196,23 @@ namespace HEC.FDA.ViewModel.Inventory
             return isValid;
         }
 
+        //private StructureSelectionMapping CreateSelectionMapping(InventoryColumnSelectionsVM selections)
+        //{
+        //    return new StructureSelectionMapping(selections.FirstFloorElevationIsSelected, selections.FromTerrainFileIsSelected,
+        //        selections._StructureIDRow.SelectedItem, selections._OccupancyTypeRow.SelectedItem, selections._FirstFloorElevRow.SelectedItem,
+        //        selections._StructureValueRow.SelectedItem, selections._FoundationHeightRow.SelectedItem, selections._GroundElevRow.SelectedItem,
+        //        selections._ContentValueRow.SelectedItem, selections._OtherValueRow.SelectedItem, selections._VehicleValueRow.SelectedItem,
+        //        selections._BegDamDepthRow.SelectedItem, selections._YearInConstructionRow.SelectedItem, selections._NotesRow.SelectedItem,
+        //        selections._DescriptionRow.SelectedItem, selections._NumberOfStructuresRow.SelectedItem);
+        //}
 
         public override void Save()
         {
             //the validation before saving is done in the NextButtonClicked() method.
             int id = GetElementID<InventoryElement>();
-            InventorySelectionMapping mapping = new InventorySelectionMapping(_ColumnSelections, _OcctypeLinking.CreateOcctypeMapping());
-            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, false, id);
+            StructureSelectionMapping mapping = _ColumnSelections.CreateSelectionMapping();
+            Dictionary<string, OcctypeReference> occtypeMappings = _OcctypeLinking.CreateOcctypeMapping();
+            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, occtypeMappings, false, id);
 
             if (IsCreatingNewElement)
             {
@@ -216,7 +226,5 @@ namespace HEC.FDA.ViewModel.Inventory
             Save(elementToSave);
         }
 
-        #endregion
-        #endregion
     }
 }
