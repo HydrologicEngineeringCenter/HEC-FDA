@@ -104,8 +104,7 @@ namespace HEC.FDA.Model.metrics
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new ThreadsafeInlineHistogram(convergenceCriteria);
-            ((ThreadsafeInlineHistogram)_consequenceHistogram).AddObservationsToHistogram(consequences.ToArray());
+            _consequenceHistogram = new Histogram(consequences,convergenceCriteria);
             _regionID = impactAreaID;
 
         }
