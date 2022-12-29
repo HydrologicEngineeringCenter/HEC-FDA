@@ -318,26 +318,32 @@ namespace HEC.FDA.Model.stageDamage
             long expectedIterations = convergenceCriteria.MaxIterations;
             long iterations = convergenceCriteria.MinIterations;
             List<ConsequenceResults> results = new List<ConsequenceResults>();
-            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults();
-            bool isFirstPass = true;
+            for (int i = 0; i < iterations; i++)
+            {
+                DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
+                ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses, analysisYear);
+                results.Add(consequenceResults);
+            }
+            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
+            resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);
+            if (resultsAreNotConverged)
+            {
+                iterations = consequenceDistributionResults.RemainingIterations(upperProb, lowerProb);
+            }
+            else
+            {
+                //Report Message 
+                return consequenceDistributionResults;
+            }
+            results.Clear();
             while (resultsAreNotConverged)
             {
+   
                 for (int i = 0; i < iterations; i++)
                 {
                     DeterministicInventory deterministicInventory = inventory.Sample(randomProvider);
                     ConsequenceResults consequenceResults = deterministicInventory.ComputeDamages(wses, analysisYear);
-                    results.Add(consequenceResults);
-                }
-
-                if (isFirstPass)
-                {
-                    consequenceDistributionResults = new ConsequenceDistributionResults(results, convergenceCriteria);
-                    isFirstPass = false;
-                }
-                else
-                {
-                    int impactAreaID = results[0].ConsequenceResultList[0].RegionID;
-                    consequenceDistributionResults.Process(results, impactAreaID);
+                    consequenceDistributionResults.AddConseuenceResultsObject(consequenceResults);
                 }
 
                 resultsAreNotConverged = !consequenceDistributionResults.ResultsAreConverged(upperProb, lowerProb);
