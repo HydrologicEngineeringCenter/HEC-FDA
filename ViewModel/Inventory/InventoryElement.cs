@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             XElement mappingsElem = inventoryElem.Element(INVENTORY_MAPPINGS);
             SelectionMappings = new StructureSelectionMapping(mappingsElem);
-
+            readDictionaryFromXML(mappingsElem);
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
@@ -101,9 +101,8 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
             }
-            occtypesElem.Add(occtypesElem);
-
-            inventoryElem.Add(SelectionMappings.ToXML());
+            selectionMappingsElem.Add(occtypesElem);
+            inventoryElem.Add(selectionMappingsElem);
             return inventoryElem;
         }
 

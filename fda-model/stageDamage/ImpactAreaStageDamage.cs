@@ -42,6 +42,15 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Properties 
+        public Inventory Inventory
+        {
+            get { return _inventory; }
+        }
+        public int ImpactAreaID
+        {
+            get { return _ImpactAreaID; }
+        }
+
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
