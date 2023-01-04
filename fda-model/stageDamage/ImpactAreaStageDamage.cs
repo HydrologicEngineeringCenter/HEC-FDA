@@ -72,6 +72,10 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Methods
+        private void AddRules()
+        {
+
+        }
         private void SetMinAndMaxStage()
         {
             if (_AnalyticalFlowFrequency != null)
