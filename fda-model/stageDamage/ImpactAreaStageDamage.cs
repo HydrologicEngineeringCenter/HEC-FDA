@@ -68,13 +68,27 @@ namespace HEC.FDA.Model.stageDamage
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
+            AddRules();
         }
         #endregion
 
         #region Methods
         private void AddRules()
         {
-            
+            AddSinglePropertyRule(nameof(_inventory), new Rule(() => { _inventory.Validate(); return !_inventory.HasErrors; }, $"The structure inventory has errors: " + _inventory.GetErrors().ToString(), _inventory.ErrorLevel));
+            AddSinglePropertyRule(nameof(convergenceCriteria), new Rule(() => { convergenceCriteria.Validate(); return !convergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + convergenceCriteria.GetErrors().ToString(), convergenceCriteria.ErrorLevel));
+            if(_AnalyticalFlowFrequency != null)
+            {
+                AddSinglePropertyRule(nameof(_AnalyticalFlowFrequency), new Rule(() => { _AnalyticalFlowFrequency.Validate(); return !_AnalyticalFlowFrequency.HasErrors; }, $"The analytical flow-frequency function has errors: " + _AnalyticalFlowFrequency.GetErrors().ToString(), _AnalyticalFlowFrequency.ErrorLevel));
+            }
+            if (_GraphicalFrequency != null)
+            {
+                AddSinglePropertyRule(nameof(_GraphicalFrequency), new Rule(() => { _GraphicalFrequency.Validate(); return !_GraphicalFrequency.HasErrors; }, "The graphical frequency function has errors: " + _GraphicalFrequency.GetErrors().ToString(), _GraphicalFrequency.ErrorLevel));
+            }
+            if (_DischargeStage != null)
+            {
+                AddSinglePropertyRule(nameof(_DischargeStage), new Rule(() => { _DischargeStage.Validate(); return !_DischargeStage.HasErrors; }, "The stage-discharge function has errors: " + _DischargeStage.GetErrors().ToString(), _DischargeStage.ErrorLevel));
+            }
         }
         private void SetMinAndMaxStage()
         {
