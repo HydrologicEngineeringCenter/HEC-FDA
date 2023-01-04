@@ -293,16 +293,27 @@ namespace HEC.FDA.Model.stageDamage
         }
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
-            List<double> allStagesAtIndexLocation = new List<double>();
-            List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
-            PairedData stageFrequency = CreateStageFrequency();
+            List<UncertainPairedData> results = new List<UncertainPairedData>();
+            if (ErrorLevel >= ErrorLevel.Major)
+            {
+                string message = "At least one component of the stage-damage compute has a major error. THe compute has been aborted. Empty stage-damage functions have been returned";
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                return results;
+            }
+            else
+            {
+                List<double> allStagesAtIndexLocation = new List<double>();
+                List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
+                PairedData stageFrequency = CreateStageFrequency();
 
-            ComputeLowerStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-            ComputeMiddleStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-            ComputeUpperStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                ComputeLowerStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                ComputeMiddleStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                ComputeUpperStageDamage(randomProvider, stageFrequency, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
 
-            List<UncertainPairedData> results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
-            return results;
+                results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
+                return results;
+            }
         }
         //this is public and static for testing
         public static float[] ExtrapolateFromAboveAtIndexLocation(float[] stagesAtStructuresHighestProfile, float upperInterval, int stepCount)
