@@ -1,12 +1,9 @@
 ﻿using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using HEC.FDA.Model.interfaces;
-using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
-//using System.Data;
-using System.IO;
 using System.Linq;
 using RasMapperLib.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
@@ -196,7 +193,7 @@ namespace HEC.FDA.Model.structures
         {
             List<string> layerColumnNames = new List<string>();
             var row = layer.FeatureRow(0);
-            foreach (DataColumn c in row.Table.Columns)  //loop through the columns. 
+            foreach (System.Data.DataColumn c in row.Table.Columns)  //loop through the columns. 
             {
                 layerColumnNames.Add(c.ColumnName);
             }

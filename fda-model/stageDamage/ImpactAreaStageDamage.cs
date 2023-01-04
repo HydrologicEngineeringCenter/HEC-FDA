@@ -74,7 +74,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Methods
         private void AddRules()
         {
-
+            
         }
         private void SetMinAndMaxStage()
         {
