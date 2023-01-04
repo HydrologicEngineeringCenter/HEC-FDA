@@ -13,8 +13,17 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 {
     public class AlternativeComparisonReport: IReportMessage, IProgressReport
     {
+        #region Properties
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
+        #endregion
+
+        #region Constructor 
+        public AlternativeComparisonReport()
+        {
+            MessageHub.Register(this);
+        }
+        #endregion 
 
         public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
@@ -22,28 +31,29 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             ReportProgress(this, new ProgressReportEventArgs(10));
 
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
-            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, beginComputeMessageArgs);
+            ReportMessage(this, beginComputeMessageArgs);
             List<ConsequenceDistributionResults> aaeqResults = ComputeDistributionOfAAEQDamageReduced(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
             MessageEventArgs aaeqResultsMessageArgs = new MessageEventArgs(new Message("The distributions of AAEQ Damage Reduced for the given with-project conditions have been computed."));
-            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, aaeqResultsMessageArgs);
+            ReportMessage(this, aaeqResultsMessageArgs);
             List<ConsequenceDistributionResults> baseYearEADResults = ComputeDistributionEADReducedBaseYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
             MessageEventArgs baseYearEADReducedMessageArgs = new MessageEventArgs(new Message("THe distributions of base year EAD reduced for the given with-project conditions have been computed."));
-            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, baseYearEADReducedMessageArgs);
+            ReportMessage(this, baseYearEADReducedMessageArgs);
             List<ConsequenceDistributionResults> futureYearEADResults = ComputeDistributionEADReducedFutureYear(randomProvider, convergenceCriteria, withoutProjectAlternativeResults, withProjectAlternativesResults);
             MessageEventArgs futureYearEADReducedMessageArgs = new MessageEventArgs(new Message("The distributions of future year EAD reduced for the given with-project conditions have been computed."));
-            withoutProjectAlternativeResults.ReportMessage(withoutProjectAlternativeResults, futureYearEADReducedMessageArgs);
+            ReportMessage(this, futureYearEADReducedMessageArgs);
 
+            //TODO: Fixed the hacked in progress reporting 
             ReportProgress(this, new ProgressReportEventArgs(100));
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
         }
-        private static List<ConsequenceDistributionResults> ComputeDistributionOfAAEQDamageReduced(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private List<ConsequenceDistributionResults> ComputeDistributionOfAAEQDamageReduced(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             List<ConsequenceDistributionResults> damagesReducedAllAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedOneAlternative = new ConsequenceDistributionResults(withProjectAlternativeResults.AlternativeID);
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {withProjectAlternativeResults.AlternativeID} has been initiated."));
-                damageReducedOneAlternative.ReportMessage(damageReducedOneAlternative, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
 
                 List<ConsequenceDistributionResult> withoutProjectConsequenceDistList = new List<ConsequenceDistributionResult>();
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
@@ -74,17 +84,17 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             return damagesReducedAllAlternatives;
         }
 
-        private static ConsequenceDistributionResult IterateOnConsequenceDistributionResult(ConsequenceDistributionResult withProjectDamageResult, ConsequenceDistributionResult withoutProjectDamageResult, IProvideRandomNumbers randomProvider, bool iterateOnWithProject = true)
+        private ConsequenceDistributionResult IterateOnConsequenceDistributionResult(ConsequenceDistributionResult withProjectDamageResult, ConsequenceDistributionResult withoutProjectDamageResult, IProvideRandomNumbers randomProvider, bool iterateOnWithProject = true)
         {
             if (iterateOnWithProject)
             {
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {withProjectDamageResult.DamageCategory}, asset category {withProjectDamageResult.AssetCategory}, and impact area ID {withProjectDamageResult.RegionID} has been initiated."));
-                withProjectDamageResult.ReportMessage(withProjectDamageResult, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
             }
             else
             {
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {withoutProjectDamageResult.DamageCategory}, asset category {withoutProjectDamageResult.AssetCategory}, and impact area ID {withoutProjectDamageResult.RegionID} has been initiated."));
-                withoutProjectDamageResult.ReportMessage(withoutProjectDamageResult, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
             }
             IHistogram withoutProjectHistogram = withoutProjectDamageResult.ConsequenceHistogram;
             IHistogram withProjectHistogram = withProjectDamageResult.ConsequenceHistogram;
@@ -123,7 +133,9 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                         if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                         {
                             double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
-                            damageReducedResult.ReportProgress(damageReducedResult, new ProgressReportEventArgs((int)percentcomplete));
+                           //TODO we need to remove the hacked in progress reporting 
+                           //and use the line below instead 
+                            // damageReducedResult.ReportProgress(damageReducedResult, new ProgressReportEventArgs((int)percentcomplete));
                         }
                     }
                     Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
@@ -150,18 +162,18 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
             }
             MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Damage reduced distribution compute for damage category {damageReducedResult.DamageCategory}, asset category {damageReducedResult.AssetCategory}, and impact area ID {damageReducedResult.RegionID} has completed."));
-            withProjectDamageResult.ReportMessage(withProjectDamageResult, endComputeMessageArgs);
+            ReportMessage(this, endComputeMessageArgs);
             return damageReducedResult;
         }
 
-        private static List<ConsequenceDistributionResults> ComputeDistributionEADReducedBaseYear(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private List<ConsequenceDistributionResults> ComputeDistributionEADReducedBaseYear(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             List<ConsequenceDistributionResults> damageReducedAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(withProjectResults.AlternativeID);
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of base year EAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
-                damageReducedAlternative.ReportMessage(damageReducedAlternative, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectIAS in withProjectResults.BaseYearScenarioResults.ResultsList)
                 {
@@ -201,14 +213,14 @@ namespace HEC.FDA.Model.alternativeComparisonReport
         }
 
 
-        private static List<ConsequenceDistributionResults> ComputeDistributionEADReducedFutureYear(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private List<ConsequenceDistributionResults> ComputeDistributionEADReducedFutureYear(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             List<ConsequenceDistributionResults> damageReducedAlternatives = new List<ConsequenceDistributionResults>();
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
                 ConsequenceDistributionResults damageReducedAlternative = new ConsequenceDistributionResults(alternative.AlternativeID);
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
-                damageReducedAlternative.ReportMessage(damageReducedAlternative, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList)
                 {
