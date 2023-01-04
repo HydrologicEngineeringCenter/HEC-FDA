@@ -69,6 +69,7 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
             AddRules();
+            MessageHub.Register(this);
         }
         #endregion
 

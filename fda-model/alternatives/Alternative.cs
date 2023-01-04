@@ -11,9 +11,19 @@ namespace HEC.FDA.Model.alternatives
 {
     public class Alternative : Validation, IReportMessage, IProgressReport
     {
+        #region Properties 
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
+        #endregion
 
+        #region Constructor
+        public Alternative()
+        {
+            MessageHub.Register(this);
+        }
+        #endregion
+
+        #region Methods 
         /// <summary>
         /// Annualization Compute takes the distributions of EAD in each of the Scenarios for a given Alternative and returns a 
         /// ConsequenceResults object with a ConsequenceResult that holds a ThreadsafeInlineHistogram of AAEQ damage for each damage category, asset category, impact area combination. 
@@ -24,7 +34,6 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
         /// 
-
         public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear)
         {
@@ -41,12 +50,12 @@ namespace HEC.FDA.Model.alternatives
             {
                 AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
                 MessageEventArgs messageArguments = new MessageEventArgs(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned"));
-                nullAlternativeResults.ReportMessage(nullAlternativeResults, messageArguments);
+                ReportMessage(this, messageArguments);
                 return nullAlternativeResults;
             }
             AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
             MessageEventArgs messargs = new MessageEventArgs(new Message("Initiating discounting routine."));
-            alternativeResults.ReportMessage(alternativeResults, messargs);
+            alternativeResults.ReportMessage(this, messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
@@ -139,7 +148,7 @@ namespace HEC.FDA.Model.alternatives
             return canCompute;
         }
 
-        private static ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
+        private ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
         {
             ConsequenceDistributionResult aaeqResult = new ConsequenceDistributionResult();
             ConvergenceCriteria convergenceCriteria;
@@ -147,13 +156,13 @@ namespace HEC.FDA.Model.alternatives
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated."));
-                mlfYearDamageResult.ReportMessage(mlfYearDamageResult, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
                 MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated."));
-                baseYearDamageResult.ReportMessage(baseYearDamageResult, beginComputeMessageArgs);
+                ReportMessage(this, beginComputeMessageArgs);
             }
             List<double> resultCollection = new List<double>();
             long iterations = convergenceCriteria.MinIterations;
@@ -178,7 +187,9 @@ namespace HEC.FDA.Model.alternatives
                 if (_completedIterations % progressChunks == 0)//need an atomic integer count here.
                 {
                     double percentcomplete = _completedIterations / (double)_ExpectedIterations * 100;
-                    aaeqResult.ReportProgress(aaeqResult, new ProgressReportEventArgs((int)percentcomplete));
+                    //TODO: We need to refactor the way that progress is being reported 
+                    //Progress reporting is hacked in. We need to change progress reporting to use the below line instead. 
+                    //ReportProgress(this, new ProgressReportEventArgs((int)percentcomplete));
                 }
                 Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
                 converged = histogram.IsHistogramConverged(.95, .05);
@@ -203,7 +214,7 @@ namespace HEC.FDA.Model.alternatives
             }
             
             MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed."));
-            aaeqResult.ReportMessage(aaeqResult, endComputeMessageArgs);
+            ReportMessage(this, endComputeMessageArgs);
             return aaeqResult;
         }
 
