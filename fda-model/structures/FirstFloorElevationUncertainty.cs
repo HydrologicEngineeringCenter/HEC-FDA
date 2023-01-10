@@ -1,9 +1,11 @@
-﻿using Statistics;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using Statistics;
 using Statistics.Distributions;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.structures
 {
-    public class FirstFloorElevationUncertainty
+    public class FirstFloorElevationUncertainty: Validation 
     {
         #region Fields
         private double _feetAboveInventoryValue;
@@ -12,19 +14,32 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Contructor 
+        /// <summary>
+        /// This constructor is used for deterministic first floor elevations only 
+        /// </summary>
         public FirstFloorElevationUncertainty()
         {
             _feetAboveInventoryValue = 0;
             _standardDeviationFromOrFeetBelowInventoryValue = 0;
             _distributionType = IDistributionEnum.Deterministic;
+            AddRules();
         }
-        public FirstFloorElevationUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMinimum, double maximum = 0)
+        public FirstFloorElevationUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMinimum, double maximum = double.MaxValue)
         {
             _distributionType = distributionEnum;
             _standardDeviationFromOrFeetBelowInventoryValue = standardDeviationOrMinimum;
             _feetAboveInventoryValue = maximum;
+            AddRules();
         }
+        #endregion
 
+        #region Methods 
+        private void AddRules()
+        {
+            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_standardDeviationFromOrFeetBelowInventoryValue), new Rule(() => _standardDeviationFromOrFeetBelowInventoryValue >= 0 && _feetAboveInventoryValue >= 0, "First floor elevation uncertainty parameters must be positive", ErrorLevel.Info));
+
+        }
         public double Sample(double inventoriedFirstFloorElevation, double probability, bool computeIsDeterministic)
         {
             double sampledFirstFloorElevation;

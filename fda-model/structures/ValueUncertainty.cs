@@ -1,9 +1,11 @@
-﻿using Statistics;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Enumerations;
+using Statistics;
 using Statistics.Distributions;
 
 namespace HEC.FDA.Model.structures
 {
-    public class ValueUncertainty
+    public class ValueUncertainty : Validation
     {
         #region Fields
         private double _percentOfInventoryValueStandardDeviationOrMin;
@@ -11,23 +13,33 @@ namespace HEC.FDA.Model.structures
         private IDistributionEnum _distributionType;
         #endregion
 
+        #region Properties 
+        #endregion 
         #region Constructor 
         public ValueUncertainty()
         {
-            _percentOfInventoryValueMax = 0;
+            _percentOfInventoryValueMax = 100;
             _percentOfInventoryValueStandardDeviationOrMin = 0;
             _distributionType = IDistributionEnum.Deterministic;
+            AddRules();
         }
-        public ValueUncertainty(IDistributionEnum distributionType, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax = 0)
+        public ValueUncertainty(IDistributionEnum distributionType, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax = 100)
         {
             _distributionType = distributionType;
             _percentOfInventoryValueStandardDeviationOrMin = percentOfInventoryValueStandardDeviationOrMin;
             _percentOfInventoryValueMax = percentOfInventoryMax;
-
+            AddRules();
         }
         #endregion
 
         #region Methods
+        private void AddRules()
+        {
+            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_percentOfInventoryValueStandardDeviationOrMin), new Rule(() => _percentOfInventoryValueStandardDeviationOrMin >= 0, "The percent of inventory value must be greaeter than or equal to zero.", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_percentOfInventoryValueMax), new Rule(() => _percentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100", ErrorLevel.Fatal));
+        }
+
         public double Sample(double inventoryValue, double probability, bool computeIsDeterministic)
         {
             double sampledValue;

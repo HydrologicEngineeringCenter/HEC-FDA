@@ -4,6 +4,7 @@ namespace HEC.FDA.Model.structures
 {
     public class SampledStructureParameters
     {
+        #region Properties 
         public bool ComputeContentDamage { get; }
         public bool ComputeVehicleDamage { get; }
         public bool ComputeOtherDamage { get; }
@@ -20,14 +21,12 @@ namespace HEC.FDA.Model.structures
         public double VehicleValueSampled { get; }
         //this will be set either using the other value or the other to structure value ratio 
         public double OtherValueSampled { get; }
+        public bool IsNull { get; }
+        #endregion
 
-
+        #region Constructor 
         public SampledStructureParameters(string occupancyTypeName, string occupancyTypeDamageCategory, IPairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, IPairedData contentPercentDamagePairedData = null, double sampledContentValue = -999, IPairedData vehiclePercentDamagePairedData = null, double sampledVehicleValue = -999, IPairedData otherPercentDamagePairedData = null, double sampledOtherValue = -999)
         {
-            //TODO: Sampling the depth percent damage functions for each structure individually seems a bit overkill 
-            //I am not sure that I agree with it being overkill. 
-            //There is uncertainty about percent damage that reflects the interaction between the water and the structure that is a function of the structure condition 
-            //implying uncertainty about percent damage is not perfectly correlated across structures 
             OccupancyTypeName = occupancyTypeName;
             OccupancyTypeDamageCategory = occupancyTypeDamageCategory;
             StructPercentDamagePairedData = structPercentDamagePairedData;
@@ -42,8 +41,18 @@ namespace HEC.FDA.Model.structures
             ComputeContentDamage = computeContentDamage;
             ComputeVehicleDamage = computeVehicleDamage;
             ComputeOtherDamage = computeOtherDamage;
+            IsNull = false;
 
         }
+
+        public SampledStructureParameters()
+        {
+            //TODO: by not handling the properties in this constructor we are simply passing the null reference exception downstream 
+            //Everything has a default or empty constructor except Paired Data
+            //Another case for a Paired Data empty constructor 
+            IsNull = true;
+        }
+        #endregion
     }
 }
 

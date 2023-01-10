@@ -114,19 +114,19 @@ namespace HEC.FDA.Model.paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound.", ErrorLevel.Minor));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound."));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found."));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found.", ErrorLevel.Minor));
                     break;
                 default:
                     break;
             }
-            AddSinglePropertyRule(nameof(Yvals), new Rule(() => Xvals.Length == Yvals.Length, "X and Y columns should have the same number of rows but do not", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => Xvals.Length == Yvals.Length, "X and Y columns should have the same number of rows but do not", ErrorLevel.Fatal));
 
         }
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
