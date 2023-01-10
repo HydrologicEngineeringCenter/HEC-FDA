@@ -250,6 +250,19 @@ namespace HEC.FDA.Model.structures
             }
             return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
         }
+
+        public Inventory GetInventoryTrimmedToDamageCategory(string damageCategory)
+        {
+            List<Structure> filteredStructureList = new List<Structure>();
+            foreach (Structure structure in Structures)
+            {
+                if (structure.DamageCatagory == damageCategory)
+                {
+                    filteredStructureList.Add(structure);
+                }
+            }
+            return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
+        }
         public PointMs GetPointMs()
         {
             PointMs points = new PointMs();
@@ -284,7 +297,7 @@ namespace HEC.FDA.Model.structures
                     inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));           
                 }
             }
-            return new DeterministicInventory(inventorySample, ImpactAreas, DamageCategories, _priceIndex);
+            return new DeterministicInventory(inventorySample, _priceIndex);
         }
 
         internal List<string> StructureDetails()

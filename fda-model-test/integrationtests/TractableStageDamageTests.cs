@@ -24,16 +24,16 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static CurveMetaData stageFreqMetaData = new CurveMetaData("probability", "stages", "graphical stage frequency");
         private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, stages, equivalentRecordLength, stageFreqMetaData);
 
-        private static List<float[]> ComputeStagesAtStructures()
+        private static List<float[]> ComputeStagesAtStructures(float stage1, float stage2)
         {
             List<float[]> stages = new List<float[]>();
-            float[] stagesFirstProfile = new float[] { 13, 14, 15, 16 };
+            float[] stagesFirstProfile = new float[] { stage1, stage2 };
             stages.Add(stagesFirstProfile);
 
             for (int i = 0; i < probabilities.Length - 1; i++)
             {
-                float[] profileStages = new float[4];
-                for (int j = 0; j < 4; j++)
+                float[] profileStages = new float[2];
+                for (int j = 0; j < profileStages.Length; j++)
                 {
                     profileStages[j] = stages[i][j] + 1;
                 }
@@ -42,10 +42,10 @@ namespace HEC.FDA.ModelTest.integrationtests
             return stages;
         }
 
-        private static HydraulicDataset ComputeHydraulicDataset()
+        private static HydraulicDataset ComputeHydraulicDataset(float stage1, float stage2)
         {
             List<IHydraulicProfile> dummyHydraulicProfiles = new List<IHydraulicProfile>();
-            List<float[]> stages = ComputeStagesAtStructures();
+            List<float[]> stages = ComputeStagesAtStructures(stage1, stage2);
             int i = 0;
             foreach (float[] stage in stages)
             {
@@ -56,7 +56,8 @@ namespace HEC.FDA.ModelTest.integrationtests
             HydraulicDataset hydraulicDataset = new HydraulicDataset(dummyHydraulicProfiles, Model.hydraulics.enums.HydraulicDataSource.WSEGrid);
             return hydraulicDataset;
         }
-       private static HydraulicDataset hydraulicDataset = ComputeHydraulicDataset();
+
+     
         #endregion
 
         #region Occupancy Type Data
@@ -112,26 +113,40 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
         private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
         private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static List<Structure> structureList = new List<Structure>() { structure1, structure2, structure3, structure4};
-
+        private static List<Structure> residentialStructureList = new List<Structure>() { structure1, structure2 };
+        private static List<Structure> commercialStructureList = new List<Structure>() { structure3, structure4 };
         private static string dummyPath = "dummy";
         private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        private static Inventory structureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, structureList);
+        private static Inventory residentialStructureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, residentialStructureList);
+        private static Inventory commercialStructureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, commercialStructureList);
+
         #endregion
 
         #region Other objects 
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
-        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, structureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
         #endregion
 
         /// <summary>
         /// The solution for the below test is available at https://docs.google.com/spreadsheets/d/1QTjZ6BzGMBmxB-xWurNz08wnQx7HrmOm/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         [Theory]
-        [InlineData(new double[] {0, 0, 30, 60, 90, 120, 150, 180}, new double[] {0, 0, 0, 0, 84, 168, 252, 336})]
-        public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage)
+        [InlineData(new double[] {0, 0, 30, 60, 90, 120, 150, 180}, new double[] {0, 0, 0, 0, 84, 168, 252, 336}, "Residential", 13, 14)]
+        [InlineData(new double[] { 0, 0, 30, 60, 90, 120, 150, 180 }, new double[] { 0, 0, 0, 0, 84, 168, 252, 336 }, "Commercial", 15, 16)]
+        public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage, string damageCategory, float stage1, float stage2)
         {
-            List<UncertainPairedData> stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+            HydraulicDataset hydraulicDataset = ComputeHydraulicDataset(stage1, stage2);
+            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>(); 
+            if (damageCategory == residentialDamAndOccType)
+            {
+                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
+                stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+            }
+            else
+            {
+                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
+                stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+            }
+                
             double absoluteTolerance = 3;
             double relativeTolerance = 0.05;
             foreach (UncertainPairedData stageDamageFunction in stageDamageFunctions)

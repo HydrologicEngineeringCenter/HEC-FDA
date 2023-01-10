@@ -48,7 +48,7 @@ namespace HEC.FDA.Model.structures
         #region Methods
         public ConsequenceResult ComputeDamage(float waterSurfaceElevation, double priceIndex = 1, int analysisYear = 9999)
         {
-            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory, ImpactAreaID);
+            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory);
 
             double depthabovefoundHeight = waterSurfaceElevation - FirstFloorElevation;
             double structDamage = 0;

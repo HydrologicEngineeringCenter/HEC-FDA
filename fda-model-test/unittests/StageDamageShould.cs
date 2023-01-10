@@ -222,6 +222,17 @@ namespace HEC.FDA.ModelTest.unittests
         private static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
         private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
 
+        private static DummyHydraulicProfile filteredHydraulicProfile2 = new DummyHydraulicProfile(new float[] { 0, 0  }, 0.5);
+        private static DummyHydraulicProfile filteredHydraulicProfile5 = new DummyHydraulicProfile(new float[] { 1, 1  }, 0.2);
+        private static DummyHydraulicProfile filteredHydraulicProfile10 = new DummyHydraulicProfile(new float[] {  2, 2 }, 0.1);
+        private static DummyHydraulicProfile filteredHydraulicProfile25 = new DummyHydraulicProfile(new float[] {  3, 3 }, 0.04);
+        private static DummyHydraulicProfile filteredHydraulicProfile50 = new DummyHydraulicProfile(new float[] { 4, 4 }, .02);
+        private static DummyHydraulicProfile filteredHydraulicProfile100 = new DummyHydraulicProfile(new float[] { 5, 5 }, .01);
+        private static DummyHydraulicProfile filteredHydraulicProfile200 = new DummyHydraulicProfile(new float[] { 6, 6 }, .005);
+        private static DummyHydraulicProfile filteredHydraulicProfile500 = new DummyHydraulicProfile(new float[] { 7, 7 }, .002);
+        private static List<IHydraulicProfile> filteredHydraulicProfiles = new List<IHydraulicProfile>() { filteredHydraulicProfile2, filteredHydraulicProfile5, filteredHydraulicProfile10, filteredHydraulicProfile25, filteredHydraulicProfile50, filteredHydraulicProfile100, filteredHydraulicProfile200, filteredHydraulicProfile500 };
+        private static HydraulicDataset filteredHydraulicDataset = new HydraulicDataset(filteredHydraulicProfiles, hydraulicDataSource);
+
         private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
         new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
         #endregion
@@ -236,15 +247,19 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();
-
-            float[] WSEs = new float[] { 7, 10, 8, 12 };
+            Inventory residentialInventory = inventory.GetInventoryTrimmedToDamageCategory(residentialDamageCategory);
+            Inventory commercialInventory = inventory.GetInventoryTrimmedToDamageCategory(commercialDamageCategory);
+            float[] residentialWSEs = new float[] { 7, 10 };
+            float[] commercialWSEs = new float[] { 8, 12 };            
 
             //Act
-            ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, inventory, WSEs, analysisYear: 9999);
-            double actualResidentialStructureDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
-            double actualResidentialContentDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
-            double actualCommercialStructureDamage = consequenceDistributionResults.MeanDamage(commercialDamageCategory, structureAssetCategory);
-            double actualCommercialContentDamage = consequenceDistributionResults.MeanDamage(commercialDamageCategory, contentAssetCategory);
+            ConsequenceDistributionResults residentialConsequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, residentialInventory, residentialWSEs, analysisYear: 9999, impactAreaID, residentialDamageCategory);
+            double actualResidentialStructureDamage = residentialConsequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
+            double actualResidentialContentDamage = residentialConsequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
+
+            ConsequenceDistributionResults commercialConsequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, commercialInventory, commercialWSEs, analysisYear: 9999, impactAreaID, commercialDamageCategory);
+            double actualCommercialStructureDamage = commercialConsequenceDistributionResults.MeanDamage(commercialDamageCategory, structureAssetCategory);
+            double actualCommercialContentDamage = commercialConsequenceDistributionResults.MeanDamage(commercialDamageCategory, contentAssetCategory);
 
             //Assert
             double relativeDifferenceResidentialStructureDamage = Math.Abs(actualResidentialStructureDamage - expectedResidentialStructureDamage) / expectedResidentialStructureDamage;
@@ -323,10 +338,10 @@ namespace HEC.FDA.ModelTest.unittests
             float[] WSEs = new float[] { wse };
 
             //Act
-            ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999);
+            ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
 
             //Normal 
             double actualNormalResidentialStructureDamage = normal.MeanDamage(residentialDamageCategory, structureAssetCategory);
@@ -398,7 +413,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             ConvergenceCriteria convergenceCriteriaDeterministic = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteriaDeterministic, String.Empty,graphicalFrequency: stageFrequency, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, filteredHydraulicDataset, convergenceCriteriaDeterministic, String.Empty,graphicalFrequency: stageFrequency, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));

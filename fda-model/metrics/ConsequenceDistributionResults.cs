@@ -86,28 +86,11 @@ namespace HEC.FDA.Model.metrics
 
         }
 
-        public ConsequenceDistributionResults(List<ConsequenceResults> results, ConvergenceCriteria convergenceCriteria)
-        {
-            _ConvergenceCriteria = convergenceCriteria;
-            _isNull = false;
-            MessageHub.Register(this);
-            _consequenceResultList = new List<ConsequenceDistributionResult>();
-            int impactAreaID = results[0].ConsequenceResultList[0].RegionID;
-            Process(results, impactAreaID);
-        }
+
 
         #endregion
 
         #region Methods 
-        private void Process(List<ConsequenceResults> results, int impactAreaID)
-        {
-            ProcessedConsequenceResultsList processedConsequenceResultsList = new ProcessedConsequenceResultsList(results);
-            foreach (ProcessedConsequenceResults processedConsequenceResults in processedConsequenceResultsList.Results)
-            {
-                ConsequenceDistributionResult result = new ConsequenceDistributionResult(processedConsequenceResults.DamageCategory, processedConsequenceResults.AssetCategory, _ConvergenceCriteria, processedConsequenceResults.DamageRealizations, impactAreaID);
-                _consequenceResultList.Add(result);
-            }
-        }
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
         internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, bool histogramIsZeroValued = false)
         {
