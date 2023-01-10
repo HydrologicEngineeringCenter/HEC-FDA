@@ -10,7 +10,10 @@ namespace HEC.FDA.Model.stageDamage
         #region Fields 
         private List<ImpactAreaStageDamage> _ImpactAreaStageDamage;
         #endregion
-
+        public List<ImpactAreaStageDamage> ImpactAreaStageDamages
+        {
+            get { return _ImpactAreaStageDamage; }
+        }
         #region Constructor 
         public ScenarioStageDamage(List<ImpactAreaStageDamage> impactAreaStageDamages)
         {

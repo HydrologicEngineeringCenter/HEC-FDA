@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             XElement mappingsElem = inventoryElem.Element(INVENTORY_MAPPINGS);
             SelectionMappings = new StructureSelectionMapping(mappingsElem);
-
+            readDictionaryFromXML(mappingsElem);
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
@@ -101,9 +101,8 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
             }
-            occtypesElem.Add(occtypesElem);
-
-            inventoryElem.Add(SelectionMappings.ToXML());
+            selectionMappingsElem.Add(occtypesElem);
+            inventoryElem.Add(selectionMappingsElem);
             return inventoryElem;
         }
 
@@ -289,8 +288,7 @@ namespace HEC.FDA.ViewModel.Inventory
             FdaValidationResult vr = new FdaValidationResult();
             int numOcctypesNotFound = 0;
 
-            Dictionary<string, OccupancyTypes.OcctypeReference> occtypesDictionary = _OcctypeMapping;
-            foreach (OccupancyTypes.OcctypeReference otRef in occtypesDictionary.Values)
+            foreach (OccupancyTypes.OcctypeReference otRef in _OcctypeMapping.Values)
             {
                 OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
                 if(ot == null)
