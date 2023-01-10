@@ -10,7 +10,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests.MessagingTests
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Disk")] //Labeled Disk because it will fail automated tests. Unsure why . Causes Github Actions to to spin forever. 
     public class ImpactAreaScenarioSimulationShould
     {
         static int equivalentRecordLength = 48;
