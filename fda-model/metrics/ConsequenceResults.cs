@@ -6,7 +6,7 @@ using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ConsequenceResults : Validation, IReportMessage
+    public class ConsequenceResults :  IReportMessage
     {
         #region Fields
         private List<ConsequenceResult> _consequenceResultList;
