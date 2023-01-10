@@ -1,2 +1,2 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿var testClass = new HEC.FDA.ModelTest.unittests.StageDamageShould();
+    testClass.ComputeDamageOneCoordinateShouldComputeCorrectly(560, 504, 690, 621);
