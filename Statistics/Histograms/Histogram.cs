@@ -721,6 +721,10 @@ namespace Statistics.Histograms
                 _ConvergedOnMax = true;
                 return true;
             }
+            if (_SampleSize >= _ConvergenceCriteria.MinIterations && Min == Max)
+            {
+                return true;
+            }
             double qval = InverseCDF(lowerq);
             double qslope = PDF(qval);
             double variance = (lowerq * (1 - lowerq)) / (((double)_SampleSize) * qslope * qslope);
