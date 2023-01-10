@@ -97,15 +97,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 { 
                     tifFiles.Add(file); 
                 }
-                if (Path.GetExtension(file) == ".vrt") 
-                { 
-                    vrtFiles.Add(file); 
-                }
+                //This is commented out until a bug is fixed in ras that guarentees a vrt? #643
+                //if (Path.GetExtension(file) == ".vrt") 
+                //{ 
+                //    vrtFiles.Add(file); 
+                //}
             }
 
             string dirName = Path.GetFileName(directoryPath);
 
-            vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
+            //This is commented out until a bug is fixed in ras that guarentees a vrt? #643
+            //vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
             vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
 
             return vr;
@@ -275,7 +277,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
         {
             string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
-            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. 
+            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. #643
             //string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
             string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
             string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
