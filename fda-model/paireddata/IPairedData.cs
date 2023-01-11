@@ -1,6 +1,6 @@
 namespace HEC.FDA.Model.paireddata
 {
-    public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply, IMetaData
+    public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply
     {
         double[] Xvals { get; }
         double[] Yvals { get; }
