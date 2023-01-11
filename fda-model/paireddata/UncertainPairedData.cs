@@ -173,27 +173,6 @@ namespace HEC.FDA.Model.paireddata
 
             }
             PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
-            pairedData.Validate();
-            if (pairedData.HasErrors)
-            {
-
-                if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
-                {
-                    pairedData.ForceMonotonic();
-                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The Y Values sampled from the function named {_metadata.Name} were not monotonically increasing as required and were forced to be monotonic", ErrorLevel.Major)));
-                }
-                if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
-                {
-                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The X values on the function named {_metadata.Name} are not monotonically decreasing as required and were forced to be monotonic", ErrorLevel.Major)));
-                }
-                pairedData.Validate();
-                if (pairedData.HasErrors)
-                {
-                    //TODO: do something
-                }
-
-
-            }
             return pairedData;
         }
         public void ReportMessage(object sender, MessageEventArgs e)
