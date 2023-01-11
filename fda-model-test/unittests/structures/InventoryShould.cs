@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.Model.structures;
 using RasMapperLib;
 using static HEC.FDA.Model.structures.OccupancyType;
+using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -18,7 +19,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         {
             StructureSelectionMapping map = new StructureSelectionMapping(false, false, null,null,null, null, null, null, null, null, null, null, null, null, null, null);
             //Empty (default) occupancy types
-            OccupancyType occupancyType = new OccupancyType();
+            OccupancyType occupancyType = OccupancyType.builder().build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
             return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathToTerrainHDF);
         }
@@ -76,6 +77,26 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Inventory inv = GetTestInventory(false);
             List<int> uniqueImpactAreaIDs = inv.ImpactAreas;
             Assert.Equal(4, uniqueImpactAreaIDs.Count);
+        }
+
+        [Fact]
+        public void occtypesDictionaryCorrectlyMapsOcctypeNameToOcctype()
+        {
+            OccupancyType ot = StageDamageShould.residentialOccupancyTypeNormalDists;
+            //the occtype created above has an occtype name of Residential_One_Story_No_Basement_Normal
+            StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            //link the occtype name of "NA" to the occtype
+            Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "NA", ot } };
+            //this inventory has hundreds of structures that have an occtype name of "NA"
+            Inventory inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false, pathToTerrainHDF);
+
+            //if the struction in the inventory has an occtype name that isn't in the above dictionary then it will get removed 
+            //from the inventory during the sample.
+            int inventoryCount = inv.Structures.Count;
+            DeterministicInventory deterministicInventory = inv.Sample(new MedianRandomProvider(), false);
+            int afterSampleCount = deterministicInventory.Inventory.Count;
+
+            Assert.Equal(inventoryCount, afterSampleCount);
         }
     }
 }

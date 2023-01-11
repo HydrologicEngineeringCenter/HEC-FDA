@@ -84,7 +84,10 @@ namespace HEC.FDA.Model.structures
 
         #endregion
         #region Constructor
-        public OccupancyType()
+        /// <summary>
+        /// Use the static builder to create occupancy types
+        /// </summary>
+        private OccupancyType()
         {
             _structureDepthPercentDamageFunction = new UncertainPairedData();
             _contentDepthPercentDamageFunction = new UncertainPairedData();
