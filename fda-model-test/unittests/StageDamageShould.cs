@@ -294,9 +294,12 @@ namespace HEC.FDA.ModelTest.unittests
         }
         /// <summary>
         /// This test demonstrates that the stage-damage algorithm computes damage with uncertainty correctly for a given set of water surface elevations
-        /// Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1Fx37H4k7PFQbYTi2uJL_N0GOSgQyrA-G/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
-        /// TODO: The below test has test scenarios commented out while disparities in expected and actual are resolved 
-        /// TODO: Once disparities are resolved, upload unit test documentation and save links here 
+        /// Calculations for this test can be found at the below locations, by distribution type:
+        /// Normal: https://docs.google.com/spreadsheets/d/19yUY75wVNrS3PLIX-QV_uPIopH_pL1ie/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Left-skewed triangular: https://docs.google.com/spreadsheets/d/1ZzDdCIQE7L8trnnCzomyNx60A1X4488-/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Right-skewed triangular: https://docs.google.com/spreadsheets/d/1g4XosSW8f-ndpJmrgphZpgJsOLUGsY-0/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Uniform: https://docs.google.com/spreadsheets/d/13tZkfWPL-UsEFKYShauPKEVSaRYQp-AP/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// TODO: The below test has test scenarios commented out to save time in unit testing. 
         /// </summary>
         [Theory]
         //[InlineData(3, 9.85, 8.77, 30.46, 23.28, 5.73, 4.35, 6.38, 5.1)]//Passes
