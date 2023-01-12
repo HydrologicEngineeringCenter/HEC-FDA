@@ -211,24 +211,10 @@ namespace HEC.FDA.Model.paireddata
                 y[i] = _StageOrLogFlowDistributions[i].InverseCDF(probability);
             }
             PairedData pairedData = new PairedData(_NonExceedanceProbabilities, y, _metaData);
-            //pairedData.Validate();
-            //if (pairedData.HasErrors)
-            //{
-            //    if (pairedData.RuleMap[nameof(pairedData.Yvals)].ErrorLevel > ErrorLevel.Unassigned)
-            //    {
-            //        pairedData.ForceMonotonic();
-            //        ReportMessage(this, new MessageEventArgs(new ErrorMessage($"Sampled Y Values were not monotonically increasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.", ErrorLevel.Major)));
-            //    }
-            //    if (pairedData.RuleMap[nameof(pairedData.Xvals)].ErrorLevel > ErrorLevel.Unassigned)
-            //    {
-            //        ReportMessage(this, new MessageEventArgs(new ErrorMessage($"X values are not monotonically decreasing as required and were forced to be monotonic for graphical frequency function named {_metaData.Name}.", ErrorLevel.Major)));
-            //    }
-            //    pairedData.Validate();
-            //    if (pairedData.HasErrors)
-            //    {
-            //        //TODO: do something
-            //    }
-            //}
+            if (!pairedData.IsValidPerMetadata)
+            {
+                pairedData.ForceMonotonic();
+            }
             return pairedData;
         }
         public void ReportMessage(object sender, MessageEventArgs e)

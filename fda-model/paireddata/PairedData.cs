@@ -11,14 +11,36 @@ using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.paireddata
 {
-    public class PairedData :  IPairedData
+    public class PairedData : IPairedData
     {
         #region Fields 
+        CurveMetaData _metadata;
         #endregion
 
         #region Properties 
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
+        public bool IsValidPerMetadata
+        {
+            get
+            {
+                if (_metadata.CurveType == CurveTypesEnum.MonotonicallyIncreasing)
+                {
+                    if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
+                    {
+                        return true; 
+                    }
+                }
+                if (_metadata.CurveType == CurveTypesEnum.StrictlyMonotonicallyIncreasing)
+                {
+                    if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
         #endregion
 
         #region Constructors 
@@ -31,6 +53,7 @@ namespace HEC.FDA.Model.paireddata
         {
             Xvals = xs;
             Yvals = ys;
+            _metadata = metadata;
         }
         #endregion
 
