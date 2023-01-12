@@ -56,14 +56,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return _Uniform;
         }
 
-        public FdaValidationResult IsValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();           
-            if (Min > Max)
-            {
-                vr.AddErrorMessage("Uniform distribution max value cannot be less than min");
-            }
-            return vr;
-        }
     }
 }

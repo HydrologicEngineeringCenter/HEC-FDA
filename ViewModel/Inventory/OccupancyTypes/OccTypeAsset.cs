@@ -123,22 +123,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DataModified?.Invoke(this, EventArgs.Empty);
         }
 
-        //todo: I don't think that any of these validation methods in the occtype editor are being used anymore
-        //I am going to leave them in because i think that we might want them to go to the log file.
-        public virtual FdaValidationResult IsAssetValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            FdaValidationResult valueUncertVR = ValueUncertainty.IsValueUncertaintyValid();
-            //I want to indicate what "item type" this is.
-            if(!valueUncertVR.IsValid)
-            {
-                string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
-                vr.AddErrorMessage(errorMessage + Environment.NewLine);
-            }
-            FdaValidationResult fdaValidationResult = TableWithPlot.GetTableErrors();
-            vr.AddErrorMessage(fdaValidationResult.ErrorMessage);
-            return vr;
-        }
     }
 }

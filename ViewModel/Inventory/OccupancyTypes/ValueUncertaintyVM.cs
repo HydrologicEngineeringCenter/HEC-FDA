@@ -111,20 +111,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public FdaValidationResult IsValueUncertaintyValid()
-        {
-            //In some cases, deterministic will be null because there is no UI associated with it.
-            if (CurrentVM == null)
-            {
-                //if it is deterministic then it is valid.
-                return new FdaValidationResult();
-            }
-            else
-            {
-                return CurrentVM.IsValid();
-            }
-        }
-
         public abstract void LoadControlVMs(IDistribution ordinate);
 
         /// <summary>
