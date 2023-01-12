@@ -12,6 +12,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         private Dictionary<string, IPropertyRule> _RuleMap = new Dictionary<string, IPropertyRule>();
         private List<string> _Errors;
+        private List<IErrorMessage> _ErrorMessages = new List<IErrorMessage>();
         private INamedAction _ErrorsAction;
         private ErrorLevel _errorLevel;
         public bool HasErrors
@@ -37,10 +38,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         {
             get { return _errorLevel; }
         }
-        public Validation()
-        {
-            //ErrorsAction = new NamedAction() { Action = ShowErrors, IsEnabled = HasErrors };
-        }
+
         public void AddMultiPropertyRule(List<string> properties, IRule rule)
         {
             foreach (string prop in properties)
@@ -95,7 +93,15 @@ namespace HEC.MVVMFramework.Base.Implementations
                 return new List<string>();
             }
             return _Errors;
+            
         }
+
+        public List<IErrorMessage> GetErrorMessages()
+        {
+            Validate();
+            return _ErrorMessages;
+        }
+        
         public void Validate()
         {
             _Errors = new List<string>();
@@ -115,6 +121,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                         _errorLevel = _errorLevel | _RuleMap[s].ErrorLevel;
                     }
                     _Errors.AddRange(_RuleMap[s].Errors);
+                    _ErrorMessages.AddRange(_RuleMap[s].ErrorMessages);
                 }
             }
             if (_errorLevel > ErrorLevel.Unassigned)

@@ -7,6 +7,7 @@ namespace HEC.MVVMFramework.Base.Interfaces
     {
         List<IRule> Rules { get; }
         IEnumerable<string> Errors { get; }
+        List<IErrorMessage> ErrorMessages { get; }
         ErrorLevel ErrorLevel { get; }
         void AddRule(IRule rule);
         void Update();

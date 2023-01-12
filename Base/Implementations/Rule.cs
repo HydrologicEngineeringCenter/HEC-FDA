@@ -27,6 +27,9 @@ namespace HEC.MVVMFramework.Base.Implementations
         {
             get { return _errorLevel; }
         }
+
+        public IErrorMessage ErrorMessage => new ErrorMessage(_message, _errorLevel);
+
         public Rule(Func<bool> expr, string msg) : this(expr, msg, ErrorLevel.Info)
         {
         }

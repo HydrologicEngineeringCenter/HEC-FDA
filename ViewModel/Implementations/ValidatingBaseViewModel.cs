@@ -3,15 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.ViewModel.Enumerations;
 using HEC.MVVMFramework.ViewModel.Events;
 using HEC.MVVMFramework.ViewModel.Interfaces;
-using HEC.MVVMFramework.ViewModel.Validation;
 
 namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class ValidatingBaseViewModel : BaseViewModel, Base.Interfaces.IValidate, INavigate
+    public class ValidatingBaseViewModel : BaseViewModel, IValidate, INavigate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         public event NavigationEventHandler NavigationEvent;

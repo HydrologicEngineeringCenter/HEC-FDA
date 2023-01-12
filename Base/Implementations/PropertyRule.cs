@@ -8,8 +8,14 @@ namespace HEC.MVVMFramework.Base.Implementations
     public class PropertyRule : IPropertyRule
     {
         private List<IRule> _rules = new List<IRule>();
+        private List<IErrorMessage> _errorMessages = new List<IErrorMessage>();
         private List<string> _errors;
         private ErrorLevel _errorLevel;
+        
+        public List<IErrorMessage> ErrorMessages
+        {
+            get { return _errorMessages; }
+        }
         public IEnumerable<string> Errors
         {
             get
@@ -57,6 +63,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                 {
                     if (!r.Expression())
                     {
+                        _errorMessages.Add(new ErrorMessage(r.Message, r.ErrorLevel));
                         _errors.Add(r.Message);
                         if (_errorLevel > ErrorLevel.Unassigned)
                         {
