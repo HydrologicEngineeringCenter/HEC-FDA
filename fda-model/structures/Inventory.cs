@@ -181,9 +181,8 @@ namespace HEC.FDA.Model.structures
 
                 int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);               
                 double val_struct = GetRowValueForColumn<double>(row,_map.StructureValueCol, defaultMissingValue);
-
-                string st_damcat = GetRowValueForColumn(row, _map.DamageCatagory, "NA");
                 string occtype = GetRowValueForColumn(row, _map.OccTypeCol, "NA");
+                string st_damcat = _occtypes[occtype].DamageCategory;
                 //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
                 double found_ht = GetRowValueForColumn<double>(row, _map.FoundationHeightCol, defaultMissingValue); //not gauranteed
                 double ground_elv;
