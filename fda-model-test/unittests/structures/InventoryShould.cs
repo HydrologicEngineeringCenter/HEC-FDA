@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.FDA.Model.structures;
 using RasMapperLib;
+using static HEC.FDA.Model.structures.OccupancyType;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -15,10 +16,10 @@ namespace HEC.FDA.ModelTest.unittests.structures
 
         private Inventory GetTestInventory(bool useTerrainFile)
         {
-            StructureInventoryColumnMap map = new StructureInventoryColumnMap(null,null,null, null, null, null, null, null, null, null, null, null, null, null);
+            StructureSelectionMapping map = new StructureSelectionMapping(false, false, null,null,null, null, null, null, null, null, null, null, null, null, null, null);
             //Empty (default) occupancy types
             OccupancyType occupancyType = new OccupancyType();
-            List<OccupancyType> occupancyTypes = new List<OccupancyType>() { occupancyType };
+            Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
             return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathToTerrainHDF);
         }
 

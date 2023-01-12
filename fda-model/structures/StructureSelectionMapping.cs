@@ -1,18 +1,11 @@
-﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Xml.Linq;
 
-namespace HEC.FDA.ViewModel.Inventory
+namespace HEC.FDA.Model.structures
 {
-    public class InventorySelectionMapping
+    public class StructureSelectionMapping
     {
-        private const string SHAPEFILE_OCCTYPE = "ShapefileOcctype";
-        private const string GROUP_ID = "GroupID";
-        private const string ID = "ID";
         public const string INVENTORY_MAPPINGS = "InventoryMappings";
-        private const string OCCTYPE_MAPPINGS = "OcctypeMappings";
-        private const string OCCTYPE_MAPPING = "OcctypeMapping";
 
         private const string INVENTORY_COLUMN_SELECTIONS = "InventoryColumnSelections";
         private const string FIRST_FLOOR_ELEV_SELECTED = "FirstFloorElevSelected";
@@ -37,7 +30,6 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private const string VALUE = "Value";
 
-
         public bool IsUsingFirstFloorElevation { get; }
         public bool IsUsingTerrainFile { get; }
         public string StructureIDCol { get; }
@@ -51,41 +43,43 @@ namespace HEC.FDA.ViewModel.Inventory
         public string VehicleValueCol { get; }
         public string BeginningDamageDepthCol { get; }
         public string YearInConstructionCol { get; }
+
         public string NotesCol { get; }
         public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
-        public Dictionary<string, OcctypeReference> OcctypesDictionary { get; } = new Dictionary<string, OcctypeReference>();
 
-        public InventorySelectionMapping(InventoryColumnSelectionsVM selections, Dictionary<string, OcctypeReference> occtypeDictionary)
+        public string DamageCatagory { get; }
+        public string CBFips { get; }
+
+        public StructureSelectionMapping(bool FirstFloorElevationIsSelected, bool FromTerrainFileIsSelected, string structureIDRow,
+            string occtype, string firstFloorElev, string structureValue, string foundHeight, string groundElev, string contentValue,
+            string otherValue, string vehicleValue, string beginningDamageDepth, string yearInConstruction, string notes,
+            string description, string numberOfStructures)
         {
-            IsUsingFirstFloorElevation = selections.FirstFloorElevationIsSelected;
-            IsUsingTerrainFile = selections.FromTerrainFileIsSelected;
-            StructureIDCol = selections._StructureIDRow.SelectedItem;
-            OccTypeCol = selections._OccupancyTypeRow.SelectedItem;
-            FirstFloorElevCol = selections._FirstFloorElevRow.SelectedItem;
-            StructureValueCol = selections._StructureValueRow.SelectedItem;
-            FoundationHeightCol = selections._FoundationHeightRow.SelectedItem;
-            GroundElevCol = selections._GroundElevRow.SelectedItem;
-            ContentValueCol = selections._ContentValueRow.SelectedItem;
-            OtherValueCol = selections._OtherValueRow.SelectedItem;
-            VehicleValueCol = selections._VehicleValueRow.SelectedItem;
-            BeginningDamageDepthCol = selections._BegDamDepthRow.SelectedItem;
-            YearInConstructionCol = selections._YearInConstructionRow.SelectedItem;
-            NotesCol = selections._NotesRow.SelectedItem;
-            DescriptionCol = selections._DescriptionRow.SelectedItem;
-            NumberOfStructuresCol = selections._NumberOfStructuresRow.SelectedItem;
-
-            OcctypesDictionary = occtypeDictionary;
+            IsUsingFirstFloorElevation = FirstFloorElevationIsSelected;
+            IsUsingTerrainFile = FromTerrainFileIsSelected;
+            StructureIDCol = structureIDRow;
+            OccTypeCol = occtype;
+            FirstFloorElevCol = firstFloorElev;
+            StructureValueCol = structureValue;
+            FoundationHeightCol = foundHeight;
+            GroundElevCol = groundElev;
+            ContentValueCol = contentValue;
+            OtherValueCol = otherValue;
+            VehicleValueCol = vehicleValue;
+            BeginningDamageDepthCol = beginningDamageDepth;
+            YearInConstructionCol = yearInConstruction;
+            NotesCol = notes;
+            DescriptionCol = description;
+            NumberOfStructuresCol = numberOfStructures;
         }
 
-
-
-        public InventorySelectionMapping( XElement inventoryMappingElem)
+        public StructureSelectionMapping(XElement inventoryMappingElem)
         {
             XElement selections = inventoryMappingElem.Element(INVENTORY_COLUMN_SELECTIONS);
 
-            IsUsingFirstFloorElevation = Convert.ToBoolean( selections.Attribute(FIRST_FLOOR_ELEV_SELECTED).Value);
-            IsUsingTerrainFile = Convert.ToBoolean( selections.Attribute(FROM_TERRAIN_FILE).Value);
+            IsUsingFirstFloorElevation = Convert.ToBoolean(selections.Attribute(FIRST_FLOOR_ELEV_SELECTED).Value);
+            IsUsingTerrainFile = Convert.ToBoolean(selections.Attribute(FROM_TERRAIN_FILE).Value);
 
             StructureIDCol = selections.Element(STRUCTURE_ID).Attribute(VALUE).Value;
 
@@ -102,7 +96,7 @@ namespace HEC.FDA.ViewModel.Inventory
             NotesCol = selections.Element(NOTES).Attribute(VALUE).Value;
             //for backwards compatability, check if it exists
             XElement descriptionElem = selections.Element(DESCRIPTION);
-            if(descriptionElem != null)
+            if (descriptionElem != null)
             {
                 DescriptionCol = descriptionElem.Attribute(VALUE).Value;
             }
@@ -111,20 +105,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 DescriptionCol = "";
             }
             NumberOfStructuresCol = selections.Element(NUMBER_OF_STRUCTURES).Attribute(VALUE).Value;
-
-            XElement occtypeMappings = inventoryMappingElem.Element(OCCTYPE_MAPPINGS);
-            IEnumerable<XElement> occtypeMappingElements = occtypeMappings.Elements(OCCTYPE_MAPPING);
-            foreach(XElement occtypeMappingElement in occtypeMappingElements)
-            {
-                string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
-                int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
-                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID).Value);
-                OcctypeReference otRef = new OcctypeReference(groupID, id);
-                OcctypesDictionary.Add(shapefileOcctypeName, otRef);
-            }
         }
-
-       
 
         public XElement ToXML()
         {
@@ -149,36 +130,16 @@ namespace HEC.FDA.ViewModel.Inventory
             columnSelectionsElem.Add(CreateColumnMappingXElement(DESCRIPTION, DescriptionCol));
             columnSelectionsElem.Add(CreateColumnMappingXElement(NUMBER_OF_STRUCTURES, NumberOfStructuresCol));
 
-            XElement occtypesElem = new XElement(OCCTYPE_MAPPINGS);
-            foreach(KeyValuePair<string, OcctypeReference> pair in OcctypesDictionary)
-            {
-                occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
-            }
-
-            mappingsElem.Add(occtypesElem);
             mappingsElem.Add(columnSelectionsElem);
             return mappingsElem;
-
         }
-
-        
-
-        private XElement CreateOcctypeMappingXElement(String shapefileOcctype, OcctypeReference fDAOcctype)
-        {
-            XElement rowElem = new XElement(OCCTYPE_MAPPING);
-            rowElem.SetAttributeValue(SHAPEFILE_OCCTYPE, shapefileOcctype);
-            rowElem.SetAttributeValue(GROUP_ID, fDAOcctype.GroupID);
-            rowElem.SetAttributeValue(ID, fDAOcctype.ID);
-            return rowElem;
-        }
-     
 
         private XElement CreateColumnMappingXElement(string elemName, string value)
         {
             XElement rowElem = new XElement(elemName);
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
-        }
+        }  
 
     }
 }

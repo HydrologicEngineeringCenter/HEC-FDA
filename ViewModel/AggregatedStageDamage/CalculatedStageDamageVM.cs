@@ -476,6 +476,108 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         }
 
+        private FdaValidationResult DoStructuresExist(ScenarioStageDamage scenarioStageDamage)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            int totalStructureCount = 0;
+            foreach (ImpactAreaStageDamage stageDamage in scenarioStageDamage.ImpactAreaStageDamages)
+            {
+                totalStructureCount += stageDamage.Inventory.Structures.Count;
+            }
+            if(totalStructureCount == 0)
+            {
+                List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+                string impactAreaName = impactAreaElements[0].Name;
+                vr.AddErrorMessage("The compute will not run because this scenario has zero structures inside the impact area set '" + impactAreaName + 
+                    "'. This might be the result of the structures and impact area having different projections.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult DoStructuresExist(ImpactAreaStageDamage iasDamage)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+           
+            int iasStructureCount = iasDamage.Inventory.Structures.Count;
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            string impactAreaName = impactAreaElements[0].GetImpactAreaRow(iasDamage.ImpactAreaID).Name;
+
+            if (iasStructureCount == 0)
+            {
+                vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName +
+                    "'. This impact area will be ignored during the compute.");
+            }
+            else
+            {
+                vr.AddErrorMessage(iasStructureCount + " structures detected in impact area '" + impactAreaName +
+                    "'.");
+            }
+            return vr;
+        }
+
+        private List<ImpactAreaStageDamage> GetIAStageDamagesWithZeroStructures(ScenarioStageDamage scenarioStageDamage)
+        {
+            List<ImpactAreaStageDamage> withZeroStructs = new List<ImpactAreaStageDamage>();
+            foreach (ImpactAreaStageDamage stageDamage in scenarioStageDamage.ImpactAreaStageDamages)
+            {
+                if(stageDamage.Inventory.Structures.Count == 0)
+                {
+                    withZeroStructs.Add(stageDamage);
+                }
+            }      
+            return withZeroStructs;
+        }
+
+        private string GenerateNoStructuresMessage(List<ImpactAreaStageDamage> zeroStructuresImpactAreas)
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            
+            ImpactAreaElement impactAreaElement = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
+            foreach(ImpactAreaStageDamage stageDamage in zeroStructuresImpactAreas)
+            {
+                string impactAreaName = impactAreaElement.GetImpactAreaRow(stageDamage.ImpactAreaID).Name;
+                vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName +
+                    "'. This impact area will be ignored during the compute.");
+            }
+
+            return vr.ErrorMessage;
+        }
+
+        private bool ValidateStructureCount(ScenarioStageDamage scenarioStageDamage)
+        {
+            bool canCompute = true;
+            //check if we have any structures to compute
+            FdaValidationResult vr = DoStructuresExist(scenarioStageDamage);
+            if (!vr.IsValid)
+            {
+                MessageBox.Show(vr.ErrorMessage, "No Structures", MessageBoxButton.OK, MessageBoxImage.Error);
+                canCompute = false;
+            }
+            else
+            {
+                List<ImpactAreaStageDamage> zeroStructuresImpactAreas = GetIAStageDamagesWithZeroStructures(scenarioStageDamage);
+
+                if (zeroStructuresImpactAreas.Count > 0)
+                {
+                    string zeroStructsMessage = GenerateNoStructuresMessage(zeroStructuresImpactAreas);
+                    var Result = MessageBox.Show(zeroStructsMessage + Environment.NewLine +
+                    Environment.NewLine + "Do you want to continue?", "Missing Structures", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (Result == MessageBoxResult.Yes)
+                    {
+                        foreach (ImpactAreaStageDamage area in zeroStructuresImpactAreas)
+                        {
+                            scenarioStageDamage.ImpactAreaStageDamages.Remove(area);
+                        }
+                    }
+                    else
+                    {
+                        canCompute = false;
+                    }
+                }
+            }
+            return canCompute;
+        }
+
         /// <summary>
         /// Runs the stage damage compute
         /// </summary>
@@ -491,21 +593,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
                 Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
                 Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
-                //these are the rows in the computed table
-                stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
-                if(WriteDetailsFile)
+
+                bool canCompute = ValidateStructureCount(scenarioStageDamage);
+                if(canCompute)
                 {
-                    WriteDetailsCsvFile(scenarioStageDamage);
+                    //these are the rows in the computed table
+                    stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+                    if (WriteDetailsFile)
+                    {
+                        WriteDetailsCsvFile(scenarioStageDamage);
+                    }
                 }
-        }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return stageDamageFunctions;
         }
-
-        
 
         private void TableDataChanged(object sender, EventArgs e)
         {

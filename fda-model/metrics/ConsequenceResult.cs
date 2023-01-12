@@ -4,7 +4,6 @@
     {
         #region Fields
         private string _damageCategory;
-        private int _regionID;
         private double _otherDamage = 0;
         private double _structureDamage = 0;
         private double _contentDamage = 0;
@@ -18,13 +17,6 @@
             get
             {
                 return _damageCategory;
-            }
-        }
-        public int RegionID
-        {
-            get
-            {
-                return _regionID;
             }
         }
         public double OtherDamage
@@ -57,15 +49,13 @@
         public ConsequenceResult()
         {
             _damageCategory = "unassigned";
-            _regionID = 0;
             _isNull = true;
 
         }
 
-        public ConsequenceResult(string damageCategory, int impactAreaID)
+        public ConsequenceResult(string damageCategory)
         {
             _damageCategory = damageCategory;
-            _regionID = impactAreaID;
             _isNull = false;
         }
         #endregion
@@ -103,11 +93,6 @@
             }
             bool damageCategoriesMatch = _damageCategory.Equals(damageResult.DamageCategory);
             if (!damageCategoriesMatch)
-            {
-                return false;
-            }
-            bool regionIDMatch = _regionID.Equals(damageResult.RegionID);
-            if (!regionIDMatch)
             {
                 return false;
             }
