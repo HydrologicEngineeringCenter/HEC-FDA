@@ -317,6 +317,7 @@ namespace HEC.FDA.Model.stageDamage
                 List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
                 PairedData stageFrequency = CreateStageFrequency();
 
+
             List<string> damCats = _inventory.DamageCategories;
             foreach (string damageCategory in damCats)
             {
