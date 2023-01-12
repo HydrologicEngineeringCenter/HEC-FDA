@@ -1174,7 +1174,7 @@ namespace HEC.FDA.Model.compute
                 _simulation._damage_category_stage_damage = uncertainPairedDataList;
                 foreach (UncertainPairedData uncertainPairedData in _simulation._damage_category_stage_damage)
                 {
-                    _simulation.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_simulation._impactAreaID}:" + uncertainPairedData.GetErrors().ToString()));
+                    _simulation.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_simulation._impactAreaID}: " + uncertainPairedData.GetErrors().ToString()));
                 }
                 return new SimulationBuilder(_simulation);
             }

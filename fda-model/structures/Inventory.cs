@@ -1,20 +1,18 @@
 ﻿using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using HEC.FDA.Model.interfaces;
-using Microsoft.Toolkit.HighPerformance.Helpers;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
 using RasMapperLib.Utilities;
-
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory
+    public class Inventory: Validation 
     {
         #region Fields
         private string _structureInventoryShapefile;
@@ -92,6 +90,7 @@ namespace HEC.FDA.Model.structures
             //TODO: Add some validation here
             //If we have a bad shapefile name, then we get a null ref exception in the below method
             LoadStructuresFromSourceFiles();
+            AddRules();
         }
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
@@ -105,11 +104,24 @@ namespace HEC.FDA.Model.structures
             _terrainPath = terrainPath;
             Structures = structures;
             _priceIndex = priceIndex;
+            AddRules();
 
         }
         #endregion
 
         #region Methods
+        private void AddRules()
+        {
+            foreach (Structure structure in Structures)
+            {
+                AddSinglePropertyRule("Structure " + structure.Fid, new Rule(() => { structure.Validate(); return !structure.HasErrors; }, $"Structure {structure.Fid} has the following errors: " + structure.GetErrors().ToString(), structure.ErrorLevel));
+            }
+            foreach (OccupancyType occupancyType in _occtypes.Values)
+            {
+                AddSinglePropertyRule("Occupancy Type " + occupancyType.Name, new Rule(() => { occupancyType.Validate(); return !occupancyType.HasErrors; }, $"Occupancy Type {occupancyType.Name} has the following errors: " + occupancyType.GetErrors().ToString(), occupancyType.ErrorLevel));
+            }
+            AddSinglePropertyRule(nameof(_priceIndex), new Rule(() => _priceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {_priceIndex}", ErrorLevel.Major));
+        }
         public Polygon GetImpactAreaPolygon(string impactAreaName)
         {
             PolygonFeatureLayer impactAreas = new PolygonFeatureLayer("ImpactAreas", _impactAreaShapefile);
@@ -126,7 +138,7 @@ namespace HEC.FDA.Model.structures
             return null;
         }
 
-        private T GetRowValueForColumn<T>(DataRow row, string mappingColumnName, T defaultValue) where T : struct
+        private T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
         {
             T retval = defaultValue;
             if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
@@ -136,7 +148,7 @@ namespace HEC.FDA.Model.structures
             }
             return retval;
         }
-        private string GetRowValueForColumn(DataRow row, string mappingColumnName, string defaultValue)
+        private string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
         {
             string retval = defaultValue;
             if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
@@ -165,7 +177,7 @@ namespace HEC.FDA.Model.structures
             {
                 //required parameters
                 PointM point = pointMs[i];
-                DataRow row = structureInventory.FeatureRow(i);
+                System.Data.DataRow row = structureInventory.FeatureRow(i);
 
                 int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);               
                 double val_struct = GetRowValueForColumn<double>(row,_map.StructureValueCol, defaultMissingValue);
