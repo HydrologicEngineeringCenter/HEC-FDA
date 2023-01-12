@@ -306,7 +306,7 @@ namespace HEC.FDA.Model.stageDamage
             List<UncertainPairedData> results = new List<UncertainPairedData>();
             if (ErrorLevel >= ErrorLevel.Major)
             {
-                string message = "At least one component of the stage-damage compute has a major error. THe compute has been aborted. Empty stage-damage functions have been returned";
+                string message = "At least one component of the stage-damage compute has a major error. The compute has been aborted. Empty stage-damage functions have been returned";
                 ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 return results;

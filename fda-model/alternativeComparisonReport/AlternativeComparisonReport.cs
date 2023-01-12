@@ -42,7 +42,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             MessageEventArgs futureYearEADReducedMessageArgs = new MessageEventArgs(new Message("The distributions of future year EAD reduced for the given with-project conditions have been computed."));
             ReportMessage(this, futureYearEADReducedMessageArgs);
 
-            //TODO: Fixed the hacked in progress reporting 
+            //TODO: Fix the hacked in progress reporting 
             ReportProgress(this, new ProgressReportEventArgs(100));
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
         }
