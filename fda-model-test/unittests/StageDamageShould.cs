@@ -222,6 +222,17 @@ namespace HEC.FDA.ModelTest.unittests
         private static List<IHydraulicProfile> hydraulicProfiles = new List<IHydraulicProfile>() { hydraulicProfile2, hydraulicProfile5, hydraulicProfile10, hydraulicProfile25, hydraulicProfile50, hydraulicProfile100, hydraulicProfile200, hydraulicProfile500 };
         private static HydraulicDataset hydraulicDataset = new HydraulicDataset(hydraulicProfiles, hydraulicDataSource);
 
+        private static DummyHydraulicProfile filteredHydraulicProfile2 = new DummyHydraulicProfile(new float[] { 0, 0  }, 0.5);
+        private static DummyHydraulicProfile filteredHydraulicProfile5 = new DummyHydraulicProfile(new float[] { 1, 1  }, 0.2);
+        private static DummyHydraulicProfile filteredHydraulicProfile10 = new DummyHydraulicProfile(new float[] {  2, 2 }, 0.1);
+        private static DummyHydraulicProfile filteredHydraulicProfile25 = new DummyHydraulicProfile(new float[] {  3, 3 }, 0.04);
+        private static DummyHydraulicProfile filteredHydraulicProfile50 = new DummyHydraulicProfile(new float[] { 4, 4 }, .02);
+        private static DummyHydraulicProfile filteredHydraulicProfile100 = new DummyHydraulicProfile(new float[] { 5, 5 }, .01);
+        private static DummyHydraulicProfile filteredHydraulicProfile200 = new DummyHydraulicProfile(new float[] { 6, 6 }, .005);
+        private static DummyHydraulicProfile filteredHydraulicProfile500 = new DummyHydraulicProfile(new float[] { 7, 7 }, .002);
+        private static List<IHydraulicProfile> filteredHydraulicProfiles = new List<IHydraulicProfile>() { filteredHydraulicProfile2, filteredHydraulicProfile5, filteredHydraulicProfile10, filteredHydraulicProfile25, filteredHydraulicProfile50, filteredHydraulicProfile100, filteredHydraulicProfile200, filteredHydraulicProfile500 };
+        private static HydraulicDataset filteredHydraulicDataset = new HydraulicDataset(filteredHydraulicProfiles, hydraulicDataSource);
+
         private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
         new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
         #endregion
@@ -236,15 +247,19 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();
-
-            float[] WSEs = new float[] { 7, 10, 8, 12 };
+            Inventory residentialInventory = inventory.GetInventoryTrimmedToDamageCategory(residentialDamageCategory);
+            Inventory commercialInventory = inventory.GetInventoryTrimmedToDamageCategory(commercialDamageCategory);
+            float[] residentialWSEs = new float[] { 7, 10 };
+            float[] commercialWSEs = new float[] { 8, 12 };            
 
             //Act
-            ConsequenceDistributionResults consequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, inventory, WSEs, analysisYear: 9999);
-            double actualResidentialStructureDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
-            double actualResidentialContentDamage = consequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
-            double actualCommercialStructureDamage = consequenceDistributionResults.MeanDamage(commercialDamageCategory, structureAssetCategory);
-            double actualCommercialContentDamage = consequenceDistributionResults.MeanDamage(commercialDamageCategory, contentAssetCategory);
+            ConsequenceDistributionResults residentialConsequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, residentialInventory, residentialWSEs, analysisYear: 9999, impactAreaID, residentialDamageCategory);
+            double actualResidentialStructureDamage = residentialConsequenceDistributionResults.MeanDamage(residentialDamageCategory, structureAssetCategory);
+            double actualResidentialContentDamage = residentialConsequenceDistributionResults.MeanDamage(residentialDamageCategory, contentAssetCategory);
+
+            ConsequenceDistributionResults commercialConsequenceDistributionResults = ImpactAreaStageDamage.ComputeDamageOneCoordinate(medianRandomProvider, convergenceCriteria, commercialInventory, commercialWSEs, analysisYear: 9999, impactAreaID, commercialDamageCategory);
+            double actualCommercialStructureDamage = commercialConsequenceDistributionResults.MeanDamage(commercialDamageCategory, structureAssetCategory);
+            double actualCommercialContentDamage = commercialConsequenceDistributionResults.MeanDamage(commercialDamageCategory, contentAssetCategory);
 
             //Assert
             double relativeDifferenceResidentialStructureDamage = Math.Abs(actualResidentialStructureDamage - expectedResidentialStructureDamage) / expectedResidentialStructureDamage;
@@ -268,16 +283,23 @@ namespace HEC.FDA.ModelTest.unittests
                 Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
                 structures.Add(structure);
             }
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyTypeNormalDists, commercialOccupancyTypeNormalDists };
+            Dictionary<string, OccupancyType> occupancyTypesList = new Dictionary<string, OccupancyType>() 
+            {
+                {residentialNormalDistOccupancyTypeName, residentialOccupancyTypeNormalDists },
+                {commercialOccupancyTypeName, commercialOccupancyTypeNormalDists } 
+            };
 
             Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
             return inventory;
         }
         /// <summary>
         /// This test demonstrates that the stage-damage algorithm computes damage with uncertainty correctly for a given set of water surface elevations
-        /// Calculations for this test can be found here: https://docs.google.com/spreadsheets/d/1Fx37H4k7PFQbYTi2uJL_N0GOSgQyrA-G/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
-        /// TODO: The below test has test scenarios commented out while disparities in expected and actual are resolved 
-        /// TODO: Once disparities are resolved, upload unit test documentation and save links here 
+        /// Calculations for this test can be found at the below locations, by distribution type:
+        /// Normal: https://docs.google.com/spreadsheets/d/19yUY75wVNrS3PLIX-QV_uPIopH_pL1ie/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Left-skewed triangular: https://docs.google.com/spreadsheets/d/1ZzDdCIQE7L8trnnCzomyNx60A1X4488-/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Right-skewed triangular: https://docs.google.com/spreadsheets/d/1g4XosSW8f-ndpJmrgphZpgJsOLUGsY-0/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Uniform: https://docs.google.com/spreadsheets/d/13tZkfWPL-UsEFKYShauPKEVSaRYQp-AP/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// TODO: The below test has test scenarios commented out to save time in unit testing. 
         /// </summary>
         [Theory]
         //[InlineData(3, 9.85, 8.77, 30.46, 23.28, 5.73, 4.35, 6.38, 5.1)]//Passes
@@ -297,26 +319,32 @@ namespace HEC.FDA.ModelTest.unittests
             Structure uniformStructure = new Structure(structureIDs[0], pointM, firstFloorElevations[0], structureValues[0], damageCategories[0], residentialUniformDistOccupancyTypeName, impactAreaID);
 
             //Occ Types
-            List<OccupancyType> occupancyTypesList = new List<OccupancyType>() { residentialOccupancyTypeNormalDists, triangularLeftSkewOccType, triangularRightSkewOccType, UniformOccType };
+            Dictionary<string, OccupancyType> occupancyTypesDictionary = new Dictionary<string, OccupancyType>() 
+            {
+                {residentialNormalDistOccupancyTypeName, residentialOccupancyTypeNormalDists },
+                {residentialTriLeftDistOccupancyTypeName, triangularLeftSkewOccType },
+                {residentialTriRightDistOccupancyTypeName, triangularRightSkewOccType },
+                {residentialUniformDistOccupancyTypeName, UniformOccType }
+            };
             List<Structure> normalStructures = new List<Structure>() { normalStructure };
             List<Structure> triLeftStructures = new List<Structure>() { triLeftStructure };
             List<Structure> triRightStructures = new List<Structure>() { triRightStructure };
             List<Structure> uniformStructures = new List<Structure>() { uniformStructure };
 
             //Inventories 
-            Inventory normalInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, normalStructures);
-            Inventory triLeftInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, triLeftStructures);
-            Inventory triRightInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, triRightStructures);
-            Inventory uniformInventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, uniformStructures);
+            Inventory normalInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, normalStructures);
+            Inventory triLeftInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, triLeftStructures);
+            Inventory triRightInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, triRightStructures);
+            Inventory uniformInventory = new Inventory(null, null, null, occupancyTypesDictionary, null, false, null, uniformStructures);
 
             //Water
             float[] WSEs = new float[] { wse };
 
             //Act
-            ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999);
-            ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999);
+            ConsequenceDistributionResults normal = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, normalInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults triLeft = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triLeftInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults triRight = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, triRightInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
+            ConsequenceDistributionResults uniform = ImpactAreaStageDamage.ComputeDamageOneCoordinate(randomProvider, convergenceCriteria, uniformInventory, WSEs, analysisYear: 9999, impactAreaID, damageCategories[0]);
 
             //Normal 
             double actualNormalResidentialStructureDamage = normal.MeanDamage(residentialDamageCategory, structureAssetCategory);
@@ -388,7 +416,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             ConvergenceCriteria convergenceCriteriaDeterministic = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, hydraulicDataset, convergenceCriteriaDeterministic, String.Empty,graphicalFrequency: stageFrequency, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID,inventory, filteredHydraulicDataset, convergenceCriteriaDeterministic, String.Empty,graphicalFrequency: stageFrequency, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
