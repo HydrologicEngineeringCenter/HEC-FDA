@@ -45,15 +45,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             return _LogNormal;
         }
-
-        public FdaValidationResult IsValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (StandardDeviation < 0)
-            {
-                vr.AddErrorMessage("Log normal distribution standard deviation value cannot be less than 0");
-            }
-            return vr;
-        }
     }
 }

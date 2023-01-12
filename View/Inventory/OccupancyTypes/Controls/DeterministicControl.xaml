@@ -15,6 +15,7 @@
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" >
             <Label Content="Value Ratio: "/>
             <TextBox Text="{Binding Value, ValidatesOnDataErrors=True}"  Width="60" Height="22" TextAlignment="Center"/>
+            <Label Content="%"/>
         </StackPanel>
             
     </Grid>

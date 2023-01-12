@@ -79,7 +79,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
         private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
-        private static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.builder()
+        public static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.builder()
             .withName(residentialNormalDistOccupancyTypeName)
             .withDamageCategory(residentialDamageCategory)
             .withStructureDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)

@@ -46,14 +46,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return _Deterministic;
         }
 
-        public FdaValidationResult IsValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if(Value>10 || Value<0)
-            {
-                vr.AddErrorMessage("Deterministic value ratio must be between 0 and 10");
-            }
-            return new FdaValidationResult();
-        }
     }
 }

@@ -196,7 +196,7 @@ namespace HEC.FDA.Model.structures
                     ground_elv = GetRowValueForColumn<double>(row, _map.GroundElevCol, defaultMissingValue); //not gauranteed
                 }
                 double ff_elev = GetRowValueForColumn<double>(row, _map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
-                if (_map.FirstFloorElevCol == null || row[_map.FirstFloorElevCol] == DBNull.Value)
+                if ("".Equals(_map.FirstFloorElevCol) || row[_map.FirstFloorElevCol] == DBNull.Value)
                 {
                     ff_elev = ground_elv + found_ht;
                 }

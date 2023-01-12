@@ -94,18 +94,5 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public override FdaValidationResult IsAssetValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            vr.AddErrorMessage(base.IsAssetValid().ErrorMessage);
-            FdaValidationResult valueUncertVR = ContentByRatioVM.IsValueUncertaintyValid();
-            if (!valueUncertVR.IsValid)
-            {
-                string errorMessage = ItemType + " value uncertainty:\n" + valueUncertVR.ErrorMessage;
-                vr.AddErrorMessage(errorMessage + Environment.NewLine);
-            }
-            return vr;
-        }
-
     }
 }

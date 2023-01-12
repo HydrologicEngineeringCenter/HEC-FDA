@@ -355,7 +355,8 @@ namespace HEC.FDA.ViewModel.Inventory
             Dictionary<String, OccupancyType> occtypesMapping = new Dictionary<String,OccupancyType>();
             foreach(KeyValuePair< String, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
             {
-                OccupancyType ot = CreateModelOcctype(entry.Value);
+                OccupancyType ot = CreateModelOcctype(entry.Value);              
+                //todo: log ot error messages?
                 occtypesMapping.Add(entry.Key, ot);
             }
       
