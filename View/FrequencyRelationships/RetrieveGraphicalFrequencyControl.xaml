@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="HEC.FDA.View.FrequencyRelationships.RetrieveGraphicalFrequencyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HEC.FDA.View.FrequencyRelationships" xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="400">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="50"/>
+      <RowDefinition Height="50"/>
+      <RowDefinition Height="50"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!--Combobox to select hydraulic dataset-->
+    <StackPanel Orientation="Vertical" Grid.Row="0">
+      <Label Content="Hydraulic Dataset" ></Label>
+      <ComboBox MinWidth="200"/>
+    </StackPanel>
+
+    <!--combobox to select index point set-->
+    <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+      <Label Content="Index Point Set" />
+      <ComboBox MinWidth="200"/>
+    </StackPanel>
+
+    <OkClose:OKCloseControl Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+  </Grid>
+
+</UserControl>
