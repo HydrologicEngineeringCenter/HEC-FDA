@@ -35,8 +35,8 @@ namespace HEC.FDA.Model.stageDamage
         private double _maxStageForArea;
         private ConvergenceCriteria convergenceCriteria;
 
-        private int _numExtrapolatedStagesToCompute = 15;
-        private int _numInterpolatedStagesToCompute = 20;
+        private int _numExtrapolatedStagesToCompute = 10;
+        private int _numInterpolatedStagesToCompute = 2;
 
         private string _HydraulicParentDirectory;
         #endregion
@@ -353,7 +353,6 @@ namespace HEC.FDA.Model.stageDamage
             return extrapolatedStages;
         }
         //public and static for testing
-        //assume that the inventory has already been trimmed 
         public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses, int analysisYear, int impactAreaID, string damageCategory)
         {
             double lowerProb = 0.025;
