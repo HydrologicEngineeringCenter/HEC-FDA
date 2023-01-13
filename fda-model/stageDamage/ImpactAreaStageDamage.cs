@@ -87,7 +87,7 @@ namespace HEC.FDA.Model.stageDamage
         {
             AddSinglePropertyRule(nameof(_inventory), new Rule(() => { _inventory.Validate(); return !_inventory.HasErrors; }, $"The structure inventory has errors: " + _inventory.GetErrors().ToString(), _inventory.ErrorLevel));
             AddSinglePropertyRule(nameof(convergenceCriteria), new Rule(() => { convergenceCriteria.Validate(); return !convergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + convergenceCriteria.GetErrors().ToString(), convergenceCriteria.ErrorLevel));
-            if(_AnalyticalFlowFrequency != null)
+            if (_AnalyticalFlowFrequency != null)
             {
                 AddSinglePropertyRule(nameof(_AnalyticalFlowFrequency), new Rule(() => { _AnalyticalFlowFrequency.Validate(); return !_AnalyticalFlowFrequency.HasErrors; }, $"The analytical flow-frequency function has errors: " + _AnalyticalFlowFrequency.GetErrors().ToString(), _AnalyticalFlowFrequency.ErrorLevel));
             }
@@ -313,21 +313,19 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
-                List<double> allStagesAtIndexLocation = new List<double>();
-                List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
                 PairedData stageFrequency = CreateStageFrequency();
-
-
-            List<string> damCats = _inventory.DamageCategories;
-            foreach (string damageCategory in damCats)
-            {
-                Inventory inventory = _inventory.GetInventoryTrimmedToDamageCategory(damageCategory);
-                ComputeLowerStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-                ComputeMiddleStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-                ComputeUpperStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
-            }
-
-                results = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
+                List<string> damCats = _inventory.DamageCategories;
+                foreach (string damageCategory in damCats)
+                {
+                    List<double> allStagesAtIndexLocation = new List<double>();
+                    List<ConsequenceDistributionResults> consequenceDistributionResults = new List<ConsequenceDistributionResults>();
+                    Inventory inventory = _inventory.GetInventoryTrimmedToDamageCategory(damageCategory);
+                    ComputeLowerStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                    ComputeMiddleStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                    ComputeUpperStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
+                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
+                    results.AddRange(tempResultsList);
+                }
                 return results;
             }
         }
@@ -352,7 +350,6 @@ namespace HEC.FDA.Model.stageDamage
             return extrapolatedStages;
         }
         //public and static for testing
-        //assume that the inventory has already been trimmed 
         public static ConsequenceDistributionResults ComputeDamageOneCoordinate(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, Inventory inventory, float[] wses, int analysisYear, int impactAreaID, string damageCategory)
         {
             double lowerProb = 0.025;
