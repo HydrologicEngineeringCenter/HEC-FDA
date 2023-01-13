@@ -3,20 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.ViewModel.Enumerations;
 using HEC.MVVMFramework.ViewModel.Events;
 using HEC.MVVMFramework.ViewModel.Interfaces;
-using HEC.MVVMFramework.ViewModel.Validation;
 
 namespace HEC.MVVMFramework.ViewModel.Implementations
 {
-    public class ValidatingBaseViewModel : BaseViewModel, Base.Interfaces.IValidate, INavigate
+    public class ValidatingBaseViewModel : BaseViewModel, IValidate, INavigate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         public event NavigationEventHandler NavigationEvent;
         private Dictionary<string, IPropertyRule> _RuleMap = new Dictionary<string, IPropertyRule>();
-        private List<string> _Errors;
+        private List<IErrorMessage> _Errors;
         private NamedAction _ErrorsAction;
         private ErrorLevel _errorLevel;
         public bool HasErrors
@@ -112,7 +112,7 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
         }
         public void Validate()
         {
-            _Errors = new List<string>();
+            _Errors = new List<IErrorMessage>();
             ErrorLevel prevErrorState = _errorLevel;
             _errorLevel = ErrorLevel.Unassigned;
             foreach (string s in _RuleMap.Keys)

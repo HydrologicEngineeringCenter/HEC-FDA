@@ -6,7 +6,7 @@ namespace HEC.MVVMFramework.Base.Interfaces
     public interface IPropertyRule
     {
         List<IRule> Rules { get; }
-        IEnumerable<string> Errors { get; }
+        IEnumerable<IErrorMessage> Errors { get; }
         ErrorLevel ErrorLevel { get; }
         void AddRule(IRule rule);
         void Update();

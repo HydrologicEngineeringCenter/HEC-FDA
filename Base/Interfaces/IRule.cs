@@ -8,5 +8,6 @@ namespace HEC.MVVMFramework.Base.Interfaces
         ErrorLevel ErrorLevel { get; }
         Func<bool> Expression { get; }
         string Message { get; }
+        IErrorMessage ErrorMessage { get; }
     }
 }

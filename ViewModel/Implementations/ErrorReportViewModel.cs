@@ -1,4 +1,5 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,11 +39,11 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
                 if (r.ErrorLevel > ErrorLevel.Unassigned)
                 {
 
-                    foreach (string m in r.Errors)
+                    foreach (IErrorMessage m in r.Errors)
                     {
-                        msg += m;
+                        msg += m.Message;
                     }
-                    imsg = new Model.Messaging.ErrorMessage(msg, r.ErrorLevel);
+                    imsg = new ErrorMessage(msg, r.ErrorLevel);
                     IMessage = imsg;
                 }
 
