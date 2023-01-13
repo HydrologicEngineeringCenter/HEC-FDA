@@ -324,10 +324,7 @@ namespace HEC.FDA.Model.stageDamage
                     ComputeMiddleStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
                     ComputeUpperStageDamage(inventory, randomProvider, stageFrequency, damageCategory, ref allStagesAtIndexLocation, ref consequenceDistributionResults);
                     List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
-                    foreach (UncertainPairedData uncertainPairedData in tempResultsList)
-                    {
-                        results.Add(uncertainPairedData);
-                    }
+                    results.AddRange(tempResultsList);
                 }
                 return results;
             }
