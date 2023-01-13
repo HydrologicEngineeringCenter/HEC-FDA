@@ -1,4 +1,5 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 using System;
 
 namespace HEC.MVVMFramework.Model.Messaging
