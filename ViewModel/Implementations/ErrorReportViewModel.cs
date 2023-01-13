@@ -39,9 +39,9 @@ namespace HEC.MVVMFramework.ViewModel.Implementations
                 if (r.ErrorLevel > ErrorLevel.Unassigned)
                 {
 
-                    foreach (string m in r.Errors)
+                    foreach (IErrorMessage m in r.Errors)
                     {
-                        msg += m;
+                        msg += m.Message;
                     }
                     imsg = new ErrorMessage(msg, r.ErrorLevel);
                     IMessage = imsg;

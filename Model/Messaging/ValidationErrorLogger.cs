@@ -2,6 +2,7 @@
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.MVVMFramework.Model.Messaging
 {
@@ -25,7 +26,7 @@ namespace HEC.MVVMFramework.Model.Messaging
             if (HasErrors)
             {
                 //each class can have multiple string errors but it will only have one error level
-                List<IErrorMessage> errorMessages = GetErrorMessages();
+                List<IErrorMessage> errorMessages = GetErrors().Cast<IErrorMessage>().ToList();
                 if(errorMessages.Count>0 && introMessage != null)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message(introMessage)));
