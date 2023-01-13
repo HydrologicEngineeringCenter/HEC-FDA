@@ -35,8 +35,8 @@ namespace HEC.FDA.Model.stageDamage
         private double _maxStageForArea;
         private ConvergenceCriteria convergenceCriteria;
 
-        private int _numExtrapolatedStagesToCompute = 10;
-        private int _numInterpolatedStagesToCompute = 2;
+        private int _numExtrapolatedStagesToCompute = 15;
+        private int _numInterpolatedStagesToCompute = 20;
 
         private string _HydraulicParentDirectory;
         #endregion
