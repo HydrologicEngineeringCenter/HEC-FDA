@@ -182,7 +182,7 @@ namespace HEC.FDA.Model.structures
                 int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);               
                 double val_struct = GetRowValueForColumn<double>(row,_map.StructureValueCol, defaultMissingValue);
                 string occtype = GetRowValueForColumn(row, _map.OccTypeCol, "NA");
-                string st_damcat = GetRowValueForColumn(row, _map.DamageCatagory, "NA");
+                string st_damcat = "NA";
                 if (_occtypes.ContainsKey(occtype))
                 {
                     st_damcat = _occtypes[occtype].DamageCategory;
