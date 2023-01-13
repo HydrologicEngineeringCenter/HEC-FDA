@@ -39,10 +39,10 @@ jobs:
     
     - name: Publish
       run: |
-            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.View*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
-            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.Model*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
-            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.ViewModel*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
-            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.Base*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.View.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.Model.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.ViewModel.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+            dotnet nuget push "D:\a\Framework\Framework\Output\HEC.MVVMFramework.Base.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
 
 
 
