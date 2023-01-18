@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.github\workflows\CI.yaml = .github\workflows\CI.yaml
 		.github\workflows\CICD.yml = .github\workflows\CICD.yml
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseTest", "BaseTest\BaseTest.csproj", "{8B5AADC0-38C6-47F3-8BDF-F10E297C479A}"

@@ -22,6 +22,9 @@ jobs:
       
     - name: Add Source
       run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+
+    - name: Install NBGV
+      run: dotnet tool install --tool-path . nbgv
       
     - name: Restore
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Debug
