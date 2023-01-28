@@ -150,17 +150,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         importResult.AddErrorMessage(result.ErrorMessage);
                     }
                 }
-
-                string errorMsg = " The selected directory must have at least one subdirectory that contains one .tif file.\n";
-
-                if (validDirectories.Count < 1)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain any valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                else
-                {
                     double prob = 0;
                     foreach (string dir in validDirectories)
                     {
@@ -170,19 +159,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     //we might have some message for the user?
                     if (!importResult.IsValid)
                     {
-                        importResult.InsertMessage(0, "The selected directory contains at least one valid subdirectory and will ignore the following:\n");
+                        importResult.InsertMessage(0, "The selected directory contains at least 1 valid subdirectory and will ignore the following:\n");
                         MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }
-        }
-                    {
-                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
-                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-            }
-        }
 
         public override void Save()
         {
