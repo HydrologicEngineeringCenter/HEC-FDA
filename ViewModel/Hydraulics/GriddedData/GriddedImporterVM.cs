@@ -66,10 +66,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (ListOfRows.Count != 8)
-            {
-                vr.AddErrorMessage("Eight subdirectories with hydraulic modeling for 8 events, one event in each subdirectory, are required to import.");
-            }
             List<double> probs = new List<double>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
@@ -154,18 +150,36 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         importResult.AddErrorMessage(result.ErrorMessage);
                     }
                 }
-                string errorMsg = "The selected directory must have at least 1 subdirectories that each contains one .tif file.\n";
-                double prob = 0;
-                foreach (string dir in validDirectories)
+
+                string errorMsg = " The selected directory must have at least one subdirectory that contains one .tif file.\n";
+
+                if (validDirectories.Count < 1)
                 {
-                    prob += .1;
-                    AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                    string dirName = Path.GetFileName(fullpath);
+                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain any valid subdirectories." + errorMsg);
+                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                {
+                    double prob = 0;
+                    foreach (string dir in validDirectories)
+                    {
+                        prob += .1;
+                        AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                    }
+                    //we might have some message for the user?
+                    if (!importResult.IsValid)
+                    {
+                        importResult.InsertMessage(0, "The selected directory contains at least one valid subdirectory and will ignore the following:\n");
+                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
-                //we might have some message for the user?
-                if (!importResult.IsValid)
-                {
-                    importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
-                    MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+                    {
+                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
+                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
             }
         }
