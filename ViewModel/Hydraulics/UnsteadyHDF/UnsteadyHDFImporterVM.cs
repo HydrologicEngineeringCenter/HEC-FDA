@@ -189,6 +189,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         private string getUnsteadyRASResultName(string file)
         {
             RasMapperLib.RASResults result = new RasMapperLib.RASResults(file);
+            if(result == null)
+            {
+                return "INVALID";
+            }
             return result.PlanAttributes.PlanTitle;
         }
 
