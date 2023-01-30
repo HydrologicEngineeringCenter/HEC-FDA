@@ -107,21 +107,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            if (vrtFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
-            }
-            else if (vrtFiles.Count > 1)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
-            }
-            return vr;
-        }
-
         #endregion
 
         public void FileSelected(string fullpath)
@@ -242,8 +227,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
         {
             string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
-            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. #643
-            //string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
             string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
             string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
             return directoryNameForSpecificGrid + "\\" + vrtFileOnly;
