@@ -3,6 +3,8 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System;
+using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -21,8 +23,8 @@ namespace HEC.FDA.ViewModel.Utilities
         private string _filePath = Path.GetTempFileName();
         private System.Timers.Timer _timer;
         StreamWriter sw;
-        private System.ComponentModel.BackgroundWorker _bw;
-        private System.Collections.Concurrent.ConcurrentQueue<IMessage> _messages;
+        private BackgroundWorker _bw;
+        private ConcurrentQueue<IMessage> _messages;
         public static TextFileMessageSubscriber Instance = new TextFileMessageSubscriber();
         public ErrorLevel FilterLevel
         {
@@ -78,32 +80,35 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             //start timer, action every 5 seconds call the flush method on SW. check if bwlistlock is locked an not isbusy. could
             //also look at if deque is >0.
-            _timer = new System.Timers.Timer();
-            _timer.Interval = 5000;
-            _timer.Elapsed += flushStringWriter;
-            _timer.Start();
+            //_timer = new System.Timers.Timer();
+            //_timer.Interval = 5000;
+            //_timer.Elapsed += flushStringWriter;
+            //_timer.Start();
 
             FilterLevel = ErrorLevel.Fatal;
-            _messages = new System.Collections.Concurrent.ConcurrentQueue<IMessage>();
+            _messages = new ConcurrentQueue<IMessage>();
             //register
             MessageHub.Subscribe(this);
-            if (!File.Exists(_filePath)) { File.Create(_filePath); }
+            if (!File.Exists(_filePath)) 
+            { 
+                File.Create(_filePath); 
+            }
             sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
             sw.AutoFlush = true;
-            _bw = new System.ComponentModel.BackgroundWorker();
+            _bw = new BackgroundWorker();
             _bw.DoWork += _bw_DoWork;
         }
 
-        private void flushStringWriter(object sender, EventArgs e)
-        {
-            sw.Flush();
-        }
+        //private void flushStringWriter(object sender, EventArgs e)
+        //{
+        //    sw.Flush();
+        //}
 
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
             _messages.Enqueue(e.Message);
             Interlocked.Increment(ref _enqueue);
-            if (_messages.Count > _maxMessageCount && !_bw.IsBusy)
+            if ( !_bw.IsBusy)
             {
                 //dequeue
                 lock (_bwListLock)
@@ -116,7 +121,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
         }
 
-        private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void _bw_DoWork(object sender, DoWorkEventArgs e)
         {
             DeQueue();
         }
@@ -132,13 +137,16 @@ namespace HEC.FDA.ViewModel.Utilities
             try
             {
                 var str = s.ToString();
-                if (!string.IsNullOrEmpty(str)) sw.Write(str);
+                if (!string.IsNullOrEmpty(str))
+                {
+                    sw.Write(DateTime.Now + " " + str);
+                }
             }
             catch (Exception ex)
             {
-                string msg = ex.ToString();
+                string msg = "Exception occured trying to write messages to the log file: " + ex.ToString();
+                sw.Write(msg);
             }
-
         }
         public void Dispose()
         {

@@ -1,4 +1,6 @@
-﻿using Statistics.Distributions;
+﻿using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Distributions;
 using System;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -6,7 +8,7 @@ using System.Xml.Linq;
 
 namespace Statistics
 {
-    public abstract class ContinuousDistribution : HEC.MVVMFramework.Base.Implementations.Validation, IDistribution
+    public abstract class ContinuousDistribution : ValidationErrorLogger, IDistribution
     {   
         public abstract IDistributionEnum Type { get; }
         [Stored(Name = "SampleSize", type = typeof(Int32))]
