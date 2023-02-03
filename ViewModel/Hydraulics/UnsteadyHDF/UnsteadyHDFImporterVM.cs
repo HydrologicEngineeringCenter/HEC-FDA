@@ -172,7 +172,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     foreach (string file in validFiles)
                     {
                         prob += .1;
-                        AddRow(Path.GetFileName(file), Path.GetFullPath(file), prob);
+                        AddRow(getUnsteadyRASResultName(file), Path.GetFullPath(file), prob);
                     }
                 }
                 if(!vrWarnings.IsValid)
@@ -184,6 +184,16 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                     MessageBox.Show(vrErrors.ErrorMessage, "Errors", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private string getUnsteadyRASResultName(string file)
+        {
+            RasMapperLib.RASResults result = new RasMapperLib.RASResults(file);
+            if(result == null)
+            {
+                return "INVALID";
+            }
+            return result.PlanAttributes.PlanTitle;
         }
 
         public override void Save()
