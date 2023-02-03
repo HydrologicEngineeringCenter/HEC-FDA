@@ -266,17 +266,35 @@ namespace HEC.FDA.Model.structures
             return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
         }
 
-        public Inventory GetInventoryTrimmedToDamageCategory(string damageCategory)
+        public (Inventory, List<float[]>) GetInventoryAndWaterTrimmedToDamageCategory(string damageCategory, List<float[]> wsesAtEachStructureByProfile)
         {
             List<Structure> filteredStructureList = new List<Structure>();
-            foreach (Structure structure in Structures)
+            List<List<float>> listedWSEsFiltered = new List<List<float>>();
+            bool listsNotConstructed = true;
+            for (int i = 0; i < Structures.Count; i++)
             {
-                if (structure.DamageCatagory == damageCategory)
+                if (Structures[i].DamageCatagory == damageCategory)
                 {
-                    filteredStructureList.Add(structure);
+                    filteredStructureList.Add(Structures[i]);
+                    for (int j = 0; j < wsesAtEachStructureByProfile.Count; j++)
+                    {
+                        if (listsNotConstructed)
+                        {
+                            List<float> listOfStages = new List<float>();
+                            listedWSEsFiltered.Add(listOfStages);
+
+                        }
+                        listedWSEsFiltered[j].Add(wsesAtEachStructureByProfile[j][i]);
+                    }
+                    listsNotConstructed = false;
                 }
             }
-            return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
+            List<float[]> arrayedWSEsFiltered = new List<float[]>();
+            foreach (List<float> wses in listedWSEsFiltered)
+            {
+                arrayedWSEsFiltered.Add(wses.ToArray());
+            }
+            return (new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList), arrayedWSEsFiltered);
         }
         public PointMs GetPointMs()
         {

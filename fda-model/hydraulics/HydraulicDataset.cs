@@ -55,7 +55,7 @@ namespace HEC.FDA.Model.hydraulics
             return elem;
         }
 
-        public static void CorrectDryStructureWSEs(ref float[] wsesToCorrect, float[] groundElevs, float[] nextProfileWses = null)
+        public static float[] CorrectDryStructureWSEs(float[] wsesToCorrect, float[] groundElevs, float[] nextProfileWses = null)
         {
             float offsetForDryStructures = 9;
             float offsetForBarelyDryStructures = 2;
@@ -92,6 +92,7 @@ namespace HEC.FDA.Model.hydraulics
                     }
                 }
             }
+            return wsesToCorrect;
         }
     }
 }

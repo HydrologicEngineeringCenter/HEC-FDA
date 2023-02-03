@@ -227,7 +227,19 @@ namespace Statistics.Histograms
             Max = data.Max();
             int quantityOfBins = (int)Math.Ceiling(1 + 3.322 * Math.Log10(data.Length));
             double range = Max - Min;
-             _BinWidth = range / quantityOfBins;
+            if (range < 0)
+            {   //TODO: How to handle this?
+                range = 0;
+            }
+            if (range == 0) 
+            {
+                _BinWidth = 1;
+
+            } 
+            else
+            {
+                _BinWidth = range / quantityOfBins;
+            }
             _BinCounts = new long[quantityOfBins];
             AddObservationsToHistogram(data);
             MessageHub.Register(this);
