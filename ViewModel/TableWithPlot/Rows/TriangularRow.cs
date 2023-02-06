@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Statistics.Distributions;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
-using HEC.MVVMFramework.ViewModel.Validation;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {

@@ -17,7 +17,7 @@ using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.compute
 {
-    public class ImpactAreaScenarioSimulation : Validation, IReportMessage, IProgressReport
+    public class ImpactAreaScenarioSimulation : ValidationErrorLogger, IProgressReport
     {
         public const int IMPACT_AREA_SIM_COMPLETED = -1001;
 
@@ -38,7 +38,6 @@ namespace HEC.FDA.Model.compute
         private bool _leveeIsValid = false;
         private double[] _RequiredExceedanceProbabilities = { 0.99900, 0.99000, 0.95000, 0.90000, 0.85000, 0.80000, 0.75000, 0.70000, 0.65000, 0.60000, 0.55000, 0.50000, 0.47500, 0.45000, 0.42500, 0.40000, 0.37500, 0.35000, 0.32500, 0.30000, 0.29000, 0.28000, 0.27000, 0.26000, 0.25000, 0.24000, 0.23000, 0.22000, 0.21000, 0.20000, 0.19500, 0.19000, 0.18500, 0.18000, 0.17500, 0.17000, 0.16500, 0.16000, 0.15500, 0.15000, 0.14500, 0.14000, 0.13500, 0.13000, 0.12500, 0.12000, 0.11500, 0.11000, 0.10500, 0.10000, 0.09500, 0.09000, 0.08500, 0.08000, 0.07500, 0.07000, 0.06500, 0.06000, 0.05900, 0.05800, 0.05700, 0.05600, 0.05500, 0.05400, 0.05300, 0.05200, 0.05100, 0.05000, 0.04900, 0.04800, 0.04700, 0.04600, 0.04500, 0.04400, 0.04300, 0.04200, 0.04100, 0.04000, 0.03900, 0.03800, 0.03700, 0.03600, 0.03500, 0.03400, 0.03300, 0.03200, 0.03100, 0.03000, 0.02900, 0.02800, 0.02700, 0.02600, 0.02500, 0.02400, 0.02300, 0.02200, 0.02100, 0.02000, 0.01950, 0.01900, 0.01850, 0.01800, 0.01750, 0.01700, 0.01650, 0.01600, 0.01550, 0.01500, 0.01450, 0.01400, 0.01350, 0.01300, 0.01250, 0.01200, 0.01150, 0.01100, 0.01050, 0.01000, 0.00950, 0.00900, 0.00850, 0.00800, 0.00750, 0.00700, 0.00650, 0.00600, 0.00550, 0.00500, 0.00490, 0.00450, 0.00400, 0.00350, 0.00300, 0.00250, 0.00200, 0.00195, 0.00190, 0.00185, 0.00180, 0.00175, 0.00170, 0.00165, 0.00160, 0.00155, 0.00150, 0.00145, 0.00140, 0.00135, 0.00130, 0.00125, 0.00120, 0.00115, 0.00110, 0.00105, 0.00100, 0.00095, 0.00090, 0.00085, 0.00080, 0.00075, 0.00070, 0.00065, 0.00060, 0.00055, 0.00050, 0.00045, 0.00040, 0.00035, 0.00030, 0.00025, 0.00020, 0.00015, 0.00010 };
 
-        public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         public bool HasLevee
         {
@@ -133,6 +132,7 @@ namespace HEC.FDA.Model.compute
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider)
         {
+
             if (HasErrors)
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
@@ -144,89 +144,23 @@ namespace HEC.FDA.Model.compute
                 {
                     ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine, ErrorLevel.Major)));
                 }
-                //enumerate what the errors and warnings are 
-                StringBuilder errors = new StringBuilder();
+
                 //TODO: Why are we going through each summary relationship again to figure out the errors?
                 //We've already done this on construction 
                 //We should take the messages created upon construction 
-                if (_frequency_discharge != null && _frequency_discharge.HasErrors)
-                {
-                    errors.AppendLine(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _frequency_discharge.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
 
-                }
-                if (!_frequency_discharge_graphical.IsNull && _frequency_discharge_graphical.HasErrors)
-                {
-                    errors.AppendLine(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _frequency_discharge_graphical.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
+                _frequency_discharge?.LogErrors(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _frequency_discharge_graphical?.LogErrors(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _unregulated_regulated?.LogErrors(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _discharge_stage?.LogErrors(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _frequency_stage?.LogErrors(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _channelstage_floodplainstage?.LogErrors(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+                _systemResponseFunction_stage_failureProbability?.LogErrors(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
 
-                }
-                if (!_unregulated_regulated.IsNull && _unregulated_regulated.HasErrors)
-                {
-                    errors.AppendLine(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _unregulated_regulated.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
-
-                }
-                if (!_discharge_stage.IsNull && _discharge_stage.HasErrors)
-                {
-                    errors.AppendLine(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _discharge_stage.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
-
-                }
-                if (!_frequency_stage.IsNull && _frequency_stage.HasErrors)
-                {
-                    errors.AppendLine(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _frequency_stage.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
-
-                }
-                if (!_channelstage_floodplainstage.IsNull && _channelstage_floodplainstage.HasErrors)
-                {
-                    errors.AppendLine(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _channelstage_floodplainstage.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
-
-                }
-                if (!_systemResponseFunction_stage_failureProbability.IsNull && _systemResponseFunction_stage_failureProbability.HasErrors)
-                {
-                    errors.AppendLine(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                    foreach (string s in _systemResponseFunction_stage_failureProbability.GetErrors())
-                    {
-                        errors.AppendLine(s);
-                    }
-
-                }
                 foreach (UncertainPairedData relationship in _damage_category_stage_damage)
                 {
-                    if (!relationship.IsNull && relationship.HasErrors)
-                    {
-                        errors.AppendLine(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
-                        foreach (string s in relationship.GetErrors())
-                        {
-                            errors.AppendLine(s);
-                        }
-
-                    }
+                    relationship?.LogErrors(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
                 }
-
-                ErrorMessage mess = new ErrorMessage(errors.ToString(), ErrorLevel.Major);
-                ReportMessage(this, new MessageEventArgs(mess));
 
             }
             if (randomProvider is MedianRandomProvider)
@@ -928,11 +862,6 @@ namespace HEC.FDA.Model.compute
             return curvesOverlap;
         }
 
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
-
         public void ReportProgress(object sender, ProgressReportEventArgs e)
         {
             ProgressReport?.Invoke(sender, e);
@@ -1142,7 +1071,6 @@ namespace HEC.FDA.Model.compute
             {
                 _simulation._discharge_stage = uncertainPairedData;
                 _simulation.AddSinglePropertyRule("flow stage", new Rule(() => { _simulation._discharge_stage.Validate(); return !_simulation._discharge_stage.HasErrors; }, $"Flow-Stage has errors  for the impact area with ID {_simulation._impactAreaID}."));
-
                 return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)

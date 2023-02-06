@@ -80,18 +80,18 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             //start timer, action every 5 seconds call the flush method on SW. check if bwlistlock is locked an not isbusy. could
             //also look at if deque is >0.
-            //_timer = new System.Timers.Timer();
-            //_timer.Interval = 5000;
-            //_timer.Elapsed += flushStringWriter;
-            //_timer.Start();
+            _timer = new System.Timers.Timer();
+            _timer.Interval = 5000;
+            _timer.Elapsed += flushStringWriter;
+            _timer.Start();
 
-            FilterLevel = ErrorLevel.Fatal;
+            FilterLevel = ErrorLevel.Unassigned;
             _messages = new ConcurrentQueue<IMessage>();
             //register
             MessageHub.Subscribe(this);
-            if (!File.Exists(_filePath)) 
-            { 
-                File.Create(_filePath); 
+            if (!File.Exists(_filePath))
+            {
+                File.Create(_filePath);
             }
             sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
             sw.AutoFlush = true;
@@ -99,16 +99,16 @@ namespace HEC.FDA.ViewModel.Utilities
             _bw.DoWork += _bw_DoWork;
         }
 
-        //private void flushStringWriter(object sender, EventArgs e)
-        //{
-        //    sw.Flush();
-        //}
+        private void flushStringWriter(object sender, EventArgs e)
+        {
+            sw.Flush();
+        }
 
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
             _messages.Enqueue(e.Message);
             Interlocked.Increment(ref _enqueue);
-            if ( !_bw.IsBusy)
+            if (!_bw.IsBusy)
             {
                 //dequeue
                 lock (_bwListLock)

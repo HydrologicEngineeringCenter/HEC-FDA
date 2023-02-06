@@ -1,10 +1,10 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.ViewModel.Validation;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Interfaces;
 using RasMapperLib.Utilities;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
