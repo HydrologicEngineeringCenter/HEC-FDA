@@ -22,7 +22,6 @@ namespace HEC.MVVMFramework.Model.Messaging
 
         public void LogErrors(string introMessage)
         {
-            Validate();
             if (HasErrors)
             {
                 //each class can have multiple string errors but it will only have one error level

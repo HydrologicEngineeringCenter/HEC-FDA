@@ -1,5 +1,6 @@
 ﻿using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
+using System;
 
 namespace HEC.MVVMFramework.Base.Implementations
 {
@@ -23,7 +24,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public ErrorMessage(string message, ErrorLevel errorLevel)
         {
-            _message = message;
+            _message = DateTime.Now + " " + message;
             _errorLevel = errorLevel;
         }
         public override string ToString()
