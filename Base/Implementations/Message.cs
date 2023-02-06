@@ -1,4 +1,5 @@
 ﻿using HEC.MVVMFramework.Base.Interfaces;
+using System;
 
 namespace HEC.MVVMFramework.Base.Implementations
 {
@@ -14,7 +15,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public Message(string message)
         {
-            _message = message;
+            _message = DateTime.Now + " " + message;
         }
         public override string ToString()
         {
