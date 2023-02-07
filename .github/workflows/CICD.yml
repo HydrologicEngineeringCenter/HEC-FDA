@@ -47,7 +47,7 @@ jobs:
       run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Model.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
 
     - name: Publish ViewModel
-      run:  dotnet nuget push ".\NuGets\HEC.MVVMFramework.ViewModel.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.ViewModel.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
       
     - name: Publish Base
       run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Base.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
