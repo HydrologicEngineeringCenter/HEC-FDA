@@ -31,13 +31,9 @@ jobs:
 
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Release
-
-
+      
     - name: Pack 
-      run: |
-            $datetime = get-date -f yyyy.M.d.Hmm
-            $versionSuffix = "alpha-" + $datetime
-            dotnet pack --configuration Release --version-suffix $versionSuffix
+      run: dotnet pack --configuration Release 
       shell: powershell
     
     - name: Publish View
