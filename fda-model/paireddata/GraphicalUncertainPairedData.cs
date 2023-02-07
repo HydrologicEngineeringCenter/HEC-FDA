@@ -127,7 +127,7 @@ namespace HEC.FDA.Model.paireddata
             MessageHub.Register(this);
 
         }
-        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
             _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;

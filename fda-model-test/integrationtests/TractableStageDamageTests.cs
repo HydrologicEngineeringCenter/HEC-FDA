@@ -22,7 +22,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static double[] stages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
         private static int equivalentRecordLength = 50;
         private static CurveMetaData stageFreqMetaData = new CurveMetaData("probability", "stages", "graphical stage frequency");
-        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, stages, equivalentRecordLength, stageFreqMetaData);
+        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, stages, equivalentRecordLength, stageFreqMetaData, true);
 
         private static List<float[]> ComputeStagesAtStructures(float stage1, float stage2)
         {
