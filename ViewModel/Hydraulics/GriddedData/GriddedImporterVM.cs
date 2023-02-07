@@ -13,7 +13,7 @@ using System.Windows;
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class GriddedImporterVM:BaseEditorVM
+    public class GriddedImporterVM : BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -31,10 +31,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>(); 
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         #endregion
         #region Constructors
-        public GriddedImporterVM(EditorActionManager actionManager):base(actionManager)
+        public GriddedImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
             AddRule(nameof(ListOfRows), () => ListOfRows.Count > 0, "Invalid directory selected.");
         }
@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            foreach(HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
+            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
                 string folderName = Path.GetFileName(pp.FileName);
@@ -56,9 +56,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
         #endregion
         #region Voids
-        public void AddRow( string name, string path, double probability, bool isEnabled = true)
+        public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow= new WaterSurfaceElevationRowItemVM( name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow = new WaterSurfaceElevationRowItemVM(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
 
@@ -66,10 +66,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (ListOfRows.Count != 8)
-            {
-                vr.AddErrorMessage("Eight subdirectories with hydraulic modeling for 8 events, one event in each subdirectory, are required to import.");
-            }
             List<double> probs = new List<double>();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
@@ -83,33 +79,21 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult ContainsVRTAndTIF(string directoryPath)
+        private FdaValidationResult ContainsTif(string directoryPath)
         {
             FdaValidationResult vr = new FdaValidationResult();
-
             List<string> tifFiles = new List<string>();
-            List<string> vrtFiles = new List<string>();
 
             string[] fileList = Directory.GetFiles(directoryPath);
             foreach (string file in fileList)
             {
-                if (Path.GetExtension(file) == ".tif") 
-                { 
-                    tifFiles.Add(file); 
+                if (Path.GetExtension(file) == ".tif")
+                {
+                    tifFiles.Add(file);
                 }
-                //This is commented out until a bug is fixed in ras that guarentees a vrt? #643
-                //if (Path.GetExtension(file) == ".vrt") 
-                //{ 
-                //    vrtFiles.Add(file); 
-                //}
             }
-
             string dirName = Path.GetFileName(directoryPath);
-
-            //This is commented out until a bug is fixed in ras that guarentees a vrt? #643
-            //vr.AddErrorMessage(ValidateVRTFile(vrtFiles, dirName).ErrorMessage);
             vr.AddErrorMessage(ValidateTIFFiles(tifFiles, dirName).ErrorMessage);
-
             return vr;
         }
 
@@ -119,21 +103,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             if (tifFiles.Count == 0)
             {
                 vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
-            }
-            return vr;
-        }
-
-        private FdaValidationResult ValidateVRTFile(List<string> vrtFiles, string directoryName)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            if (vrtFiles.Count == 0)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": No .vrt file found.");
-            }
-            else if (vrtFiles.Count > 1)
-            {
-                vr.AddErrorMessage("Directory " + directoryName + ": More than one .vrt file found.");
             }
             return vr;
         }
@@ -156,7 +125,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 string[] directories = Directory.GetDirectories(fullpath);
                 foreach (string directory in directories)
                 {
-                    FdaValidationResult result = ContainsVRTAndTIF(directory);
+                    FdaValidationResult result = ContainsTif(directory);
                     if (result.IsValid)
                     {
                         validDirectories.Add(directory);
@@ -166,24 +135,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         importResult.AddErrorMessage(result.ErrorMessage);
                     }
                 }
-
-                string errorMsg = " The selected directory must have 8 subdirectories that each contain one .vrt file and at least one .tif file.\n";
-
-                //we require 8 valid directories
-                if (validDirectories.Count < 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' did not contain 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else if (validDirectories.Count > 8)
-                {
-                    string dirName = Path.GetFileName(fullpath);
-                    importResult.InsertMessage(0, "Directory '" + dirName + "' contains more than 8 valid subdirectories." + errorMsg);
-                    MessageBox.Show(importResult.ErrorMessage, "Invalid Directory Structure", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
                     double prob = 0;
                     foreach (string dir in validDirectories)
                     {
@@ -193,12 +144,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     //we might have some message for the user?
                     if (!importResult.IsValid)
                     {
-                        importResult.InsertMessage(0, "The selected directory contains 8 valid subdirectories and will ignore the following:\n");
+                        importResult.InsertMessage(0, "The selected directory contains at least 1 valid subdirectory and will ignore the following:\n");
                         MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }
-        }
 
         public override void Save()
         {
@@ -249,11 +199,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     _OriginalFolderNames[i] = newName;
                 }
                 string fileNameFromChildElementDir = getFilePathFromChildElement(ListOfRows[i]);
-                newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, fileNameFromChildElementDir));
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, fileNameFromChildElementDir));
             }
 
             HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
-            base.Save(elementToSave);          
+            base.Save(elementToSave);
         }
 
         private void SaveNew()
@@ -277,8 +227,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
         {
             string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
-            //I would rather do this with the VRT. But using a tif now as a HACK so testers can still use the import from grid. #643
-            //string vrtFileWithPath = Directory.GetFiles(row.Path, "*.vrt")[0];
             string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
             string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
             return directoryNameForSpecificGrid + "\\" + vrtFileOnly;
