@@ -1,0 +1,1 @@
+dotnet nuget push ".\NuGets\HEC.MVVMFramework.Base.*.nupkg" --source "fda-nuget" --skip-duplicate
