@@ -102,6 +102,9 @@ namespace HEC.FDA.Model.stageDamage
                 AddSinglePropertyRule(nameof(_DischargeStage), new Rule(() => { _DischargeStage.Validate(); return !_DischargeStage.HasErrors; }, "The stage-discharge function has errors: " + _DischargeStage.GetErrors().ToString(), _DischargeStage.ErrorLevel));
             }
         }
+        /// <summary>
+        /// This method is used to identify the minimum stage at the index location and the maximum stage at the index location for which we will calculate damage 
+        /// </summary>
         private void SetMinAndMaxStage()
         {
             if (_AnalyticalFlowFrequency != null)
@@ -161,6 +164,11 @@ namespace HEC.FDA.Model.stageDamage
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
+        /// <summary>
+        /// This method grabs the input summary relationships and generates the median stage frequency function 
+        /// The frequencies in the function are used to align the aggregation stages to the stages at the structures 
+        /// </summary>
+        /// <returns></returns>
         private PairedData CreateStageFrequency()
         {
             PairedData stageFrequency;
@@ -205,12 +213,12 @@ namespace HEC.FDA.Model.stageDamage
             {
                 _StageFrequency = CreateStageFrequency();
                 List<string> damCats = _inventory.DamageCategories;
-                (List<double>, List<float[]>) wsesAtEachStructureByProfile = GetHydraulicDatasetInFloatsWithProbabilities();
+                (List<double>, List<float[]>) wsesAtEachStructureByProfile = _hydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(_inventory, _HydraulicParentDirectory);
 
                 //Run the compute by dam cat to simplify data collection 
                 foreach (string damageCategory in damCats)
                 {
-                    //These are the stages of the stage-damage function 
+                    //These are the stages of the stage-damage function - the aggregation stages 
                     List<double> allStagesAtIndexLocation = new List<double>();
 
                     //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
@@ -241,12 +249,11 @@ namespace HEC.FDA.Model.stageDamage
 
         private void ComputeDamageWithUncertaintyAllCoordinates(ref List<ConsequenceDistributionResults> consequenceDistributionResults, ref List<double> allStagesAtIndexLocation, string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities, bool isFirstPass)
         {
+            //For the first pass, we collect the results in dictionaries where the key is the string asset category 
+            //after the first pass, we take the data in the dictionaries, pass the data into a histogram within the consequence distribution results, and test for convergence 
+            //if the histograms are not converged, then we proceed for additional passes, this time adding osbervations to the histograms directly 
             List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates = new List<Dictionary<string, List<double>>>();
-            //we need to instantiate all stages at index location now 
-            //maybe we dont -- maybe we just use the stage frequency relationship like 
             int iterations = convergenceCriteria.MinIterations;
-            //TODO: we need to track if is very first pass 
-            //"are dictionaries constructed?" if i = 0 then no 
             bool dictionariesAreNotConstructed = true;
             for (int i = 0; i < iterations; i++)
             {
@@ -261,7 +268,13 @@ namespace HEC.FDA.Model.stageDamage
                 TransformDictionaryIntoConsequenceDistributionResults(ref consequenceDistributionResults, ref assetCatDamagesAllCoordinates, damageCategory);
             }
         }
-
+        /// <summary>
+        /// This method is used to transform the data found within the first pass data collection dictionaries into consequence distribution results
+        /// the dictionaries are cleared out after the transformation takes place 
+        /// </summary>
+        /// <param name="consequenceDistributionResults"></param>
+        /// <param name="assetCatDamagesAllCoordinates"></param>
+        /// <param name="damageCategory"></param>
         private void TransformDictionaryIntoConsequenceDistributionResults(ref List<ConsequenceDistributionResults> consequenceDistributionResults, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, string damageCategory)
         {
             foreach (Dictionary<string, List<double>> dictionaryOfDamagesByAssetCategory in assetCatDamagesAllCoordinates)
@@ -292,7 +305,19 @@ namespace HEC.FDA.Model.stageDamage
             return false;
         }
 
-
+        /// <summary>
+        /// This method computes damage at stages lower than the most frequent profile 
+        /// </summary>
+        /// <param name="assetCatDamagesAllCoordinates"></param>
+        /// <param name="allStagesAtIndexLocation"></param>
+        /// <param name="consequenceDistributionResults"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="randomProvider"></param>
+        /// <param name="deterministicInventory"></param>
+        /// <param name="lowestProfile"></param>
+        /// <param name="profileProbabilities"></param>
+        /// <param name="isFirstPass"></param>
+        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] lowestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
@@ -356,6 +381,19 @@ namespace HEC.FDA.Model.stageDamage
             damages.Add(utilities.StringConstants.OTHER_ASSET_CATEGORY, new List<double>() { consequenceResult.OtherDamage });
             return damages;
         }
+        /// <summary>
+        /// This method calculates a stage damage function within the hydraulic profiles 
+        /// </summary>
+        /// <param name="assetCatDamagesAllCoordinates"></param>
+        /// <param name="allStagesAtIndexLocation"></param>
+        /// <param name="consequenceDistributionResults"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="randomProvider"></param>
+        /// <param name="deterministicInventory"></param>
+        /// <param name="allProfiles"></param>
+        /// <param name="profileProbabilities"></param>
+        /// <param name="isFirstPass"></param>
+        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, List<float[]> allProfiles, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             int numProfiles = profileProbabilities.Count;
@@ -427,6 +465,19 @@ namespace HEC.FDA.Model.stageDamage
             }
             return intervals;
         }
+        /// <summary>
+        /// this method calculates the stage damage function for stages higher than the least frequent profile 
+        /// </summary>
+        /// <param name="assetCatDamagesAllCoordinates"></param>
+        /// <param name="allStagesAtIndexLocation"></param>
+        /// <param name="consequenceDistributionResults"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="randomProvider"></param>
+        /// <param name="deterministicInventory"></param>
+        /// <param name="highestProfile"></param>
+        /// <param name="profileProbabilities"></param>
+        /// <param name="isFirstPass"></param>
+        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] highestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
@@ -457,26 +508,6 @@ namespace HEC.FDA.Model.stageDamage
                     consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
                 }
             }
-        }
-
-
-        private (List<double>, List<float[]>) GetHydraulicDatasetInFloatsWithProbabilities()
-        {
-            List<float[]> waterData = new List<float[]>();
-            List<double> profileProbabilities = new List<double>();
-            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
-            {
-                float[] wsesAtStructures = hydraulicProfile.GetWSE(_inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
-                waterData.Add(wsesAtStructures);
-                profileProbabilities.Add(hydraulicProfile.Probability);
-            }
-            for (int i = 0; i < waterData.Count - 1; i++)
-            {
-                waterData[i] = HydraulicDataset.CorrectDryStructureWSEs(waterData[i], _inventory.GroundElevations, waterData[i + 1]);
-            }
-            waterData[waterData.Count - 1] = HydraulicDataset.CorrectDryStructureWSEs(waterData[waterData.Count - 1], _inventory.GroundElevations);
-            return (profileProbabilities, waterData);
-
         }
 
         //this is public and static for testing
