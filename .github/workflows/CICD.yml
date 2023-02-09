@@ -38,16 +38,16 @@ jobs:
       shell: powershell
       
     - name: Publish View Nexus
-      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.View.*.nupkg" --source "fda-nuget" --skip-duplicate
+      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.View.*.nupkg" --api-key ${{ secrets.NEXUS_TOKEN }} --source "fda-nuget" --skip-duplicate
 
     - name: Publish Model Nexus
-      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Model.*.nupkg" --source "fda-nuget" --skip-duplicate
+      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Model.*.nupkg" --api-key ${{ secrets.NEXUS_TOKEN }} --source "fda-nuget" --skip-duplicate
 
     - name: Publish ViewModel Nexus
-      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.ViewModel.*.nupkg" --source "fda-nuget" --skip-duplicate
+      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.ViewModel.*.nupkg" --api-key ${{ secrets.NEXUS_TOKEN }} --source "fda-nuget" --skip-duplicate
       
     - name: Publish Base Nexus
-      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Base.*.nupkg" --source "fda-nuget" --skip-duplicate
+      run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.Base.*.nupkg" --api-key ${{ secrets.NEXUS_TOKEN }} --source "fda-nuget" --skip-duplicate
     
     - name: Publish View Github
       run: dotnet nuget push ".\NuGets\HEC.MVVMFramework.View.*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
