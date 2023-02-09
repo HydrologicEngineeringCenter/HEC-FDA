@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace StatisticsTests.Histograms
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ThreadsafeHistogramTests
     {
         [Theory]

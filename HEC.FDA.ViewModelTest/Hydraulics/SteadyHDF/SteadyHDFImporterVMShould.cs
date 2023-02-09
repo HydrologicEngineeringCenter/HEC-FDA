@@ -3,7 +3,8 @@ using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using Xunit;
 
 namespace HEC.FDA.ViewModelTest.Hydraulics.SteadyHDF;
-[Trait("Category", "Local")]
+[Trait("RunsOn", "Remote")]
+[Collection("Serial")]
 public class SteadyHDFImporterVMShould
 {
     private const string PathToSteadyResult = @"..\..\fda-model-test\Resources\MuncieSteadyResult\Muncie.p10.hdf";

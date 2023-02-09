@@ -2244,7 +2244,7 @@ namespace Importer
 
         protected void ProcessAggDamgFuncFields()
         {
-            //"SD_NAME", "PLAN", "YEAR", "STREAM", "REACH", "CATEGORY", "DESC"
+            //"SD_NAME", "PLAN", "YEAR", "STREAM", "REACH", "RunsOn", "DESC"
 
             //Previous Record was a key record containing the PYSRC etc name field; Now read the deata for that
             if (_PrevKeyRecord)

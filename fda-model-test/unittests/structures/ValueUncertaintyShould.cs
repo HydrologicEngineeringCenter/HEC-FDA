@@ -4,7 +4,7 @@ using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ValueUncertaintyShould
     {
         //test deterministic and test a negative value 

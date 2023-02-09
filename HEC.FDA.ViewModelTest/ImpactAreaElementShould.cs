@@ -5,7 +5,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ImpactAreaElementShould
     {
         [Fact]

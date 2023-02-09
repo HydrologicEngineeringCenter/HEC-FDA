@@ -10,7 +10,7 @@ using Statistics.Distributions;
 
 namespace StatisticsTests.GraphicalRelationships
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class GraphicalTests
     {
         [Theory]

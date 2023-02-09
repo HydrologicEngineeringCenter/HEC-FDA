@@ -6,7 +6,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class UniformTests
     {
         [Theory]

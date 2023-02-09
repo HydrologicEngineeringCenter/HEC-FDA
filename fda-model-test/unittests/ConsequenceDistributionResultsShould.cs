@@ -9,7 +9,7 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ConsequenceDistributionResultsShould
     {
         [Fact]

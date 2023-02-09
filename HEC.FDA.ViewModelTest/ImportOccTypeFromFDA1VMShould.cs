@@ -12,7 +12,8 @@ using static Importer.AsciiImport;
 
 namespace HEC.FDA.ViewModelTest
 {
-    [Trait("Category", "Local")]
+    [Trait("RunsOn", "Remote")]
+    [Collection("Serial")]
     public class ImportOccTypeFromFDA1VMShould
     {
 

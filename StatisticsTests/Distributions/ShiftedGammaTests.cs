@@ -7,7 +7,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
 
     /// <summary>
     /// This class tests the LogPearsonIII Distribution in the Statistics Library <see cref="Statistics.Distributions.ShiftedGamma"/>.

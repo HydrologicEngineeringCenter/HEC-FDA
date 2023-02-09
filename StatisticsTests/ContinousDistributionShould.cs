@@ -4,7 +4,7 @@ using Xunit;
 
 namespace StatisticsTests
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ContinousDistributionShould
     {
         [Fact]

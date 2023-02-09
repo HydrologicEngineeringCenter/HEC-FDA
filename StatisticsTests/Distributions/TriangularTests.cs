@@ -8,7 +8,7 @@ using Xunit;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     [ExcludeFromCodeCoverage]
     public class TriangularTests
     {

@@ -11,7 +11,7 @@ using HEC.FDA.Model.alternatives;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class AlternativeTest
     {
         static double[] FlowXs = { 0, 100000 };

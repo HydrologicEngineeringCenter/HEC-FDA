@@ -8,7 +8,7 @@ using Statistics;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ParametricBootstrap
     {
         [Theory]

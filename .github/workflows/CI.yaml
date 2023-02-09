@@ -37,7 +37,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
         
     - name: Test
-      run: dotnet test --filter Category=Remote --no-restore --verbosity normal
+      run: dotnet test --filter RunsOn=Remote --no-restore 
       
     - name: Publish
       run: dotnet publish View/HEC.FDA.View.csproj

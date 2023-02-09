@@ -3,7 +3,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class DummyHydraulicProfileShould
     {
         [Fact]

@@ -12,7 +12,8 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
+    [Collection("Serial")]
     public class DefaultDataComputeOutcomes
     {
         //this class draws on the default data used in the user interface

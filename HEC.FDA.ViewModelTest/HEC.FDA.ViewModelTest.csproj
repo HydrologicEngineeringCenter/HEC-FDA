@@ -31,5 +31,9 @@
 		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.24-beta-gf5955b1108" />
 		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Integration\" />
+	</ItemGroup>
 	
 </Project>

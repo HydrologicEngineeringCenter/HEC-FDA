@@ -3,7 +3,7 @@ using Statistics;
 using System.Xml.Linq;
 namespace StatisticsTests.Convergence
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class ConvergenceCriteriaTests
     {
         [Theory]

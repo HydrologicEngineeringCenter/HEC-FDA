@@ -12,7 +12,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Remote")]
+    [Trait("RunsOn", "Remote")]
     public class SimulationShould
     {
         static double[] Flows = { 0, 100000 };
