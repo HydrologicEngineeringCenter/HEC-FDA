@@ -168,7 +168,6 @@ namespace HEC.FDA.Model.stageDamage
         /// This method grabs the input summary relationships and generates the median stage frequency function 
         /// The frequencies in the function are used to align the aggregation stages to the stages at the structures 
         /// </summary>
-        /// <returns></returns>
         private PairedData CreateStageFrequency()
         {
             PairedData stageFrequency;
@@ -272,9 +271,6 @@ namespace HEC.FDA.Model.stageDamage
         /// This method is used to transform the data found within the first pass data collection dictionaries into consequence distribution results
         /// the dictionaries are cleared out after the transformation takes place 
         /// </summary>
-        /// <param name="consequenceDistributionResults"></param>
-        /// <param name="assetCatDamagesAllCoordinates"></param>
-        /// <param name="damageCategory"></param>
         private void TransformDictionaryIntoConsequenceDistributionResults(ref List<ConsequenceDistributionResults> consequenceDistributionResults, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, string damageCategory)
         {
             foreach (Dictionary<string, List<double>> dictionaryOfDamagesByAssetCategory in assetCatDamagesAllCoordinates)
@@ -308,16 +304,6 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        /// <param name="assetCatDamagesAllCoordinates"></param>
-        /// <param name="allStagesAtIndexLocation"></param>
-        /// <param name="consequenceDistributionResults"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="randomProvider"></param>
-        /// <param name="deterministicInventory"></param>
-        /// <param name="lowestProfile"></param>
-        /// <param name="profileProbabilities"></param>
-        /// <param name="isFirstPass"></param>
-        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] lowestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
@@ -384,16 +370,6 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        /// <param name="assetCatDamagesAllCoordinates"></param>
-        /// <param name="allStagesAtIndexLocation"></param>
-        /// <param name="consequenceDistributionResults"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="randomProvider"></param>
-        /// <param name="deterministicInventory"></param>
-        /// <param name="allProfiles"></param>
-        /// <param name="profileProbabilities"></param>
-        /// <param name="isFirstPass"></param>
-        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, List<float[]> allProfiles, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             int numProfiles = profileProbabilities.Count;
@@ -468,16 +444,6 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        /// <param name="assetCatDamagesAllCoordinates"></param>
-        /// <param name="allStagesAtIndexLocation"></param>
-        /// <param name="consequenceDistributionResults"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="randomProvider"></param>
-        /// <param name="deterministicInventory"></param>
-        /// <param name="highestProfile"></param>
-        /// <param name="profileProbabilities"></param>
-        /// <param name="isFirstPass"></param>
-        /// <param name="dictionariesAreNotConstructed"></param>
         private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] highestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
