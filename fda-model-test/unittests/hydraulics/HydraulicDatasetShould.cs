@@ -8,7 +8,7 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class HydraulicDatasetShould
     {
         [Fact]

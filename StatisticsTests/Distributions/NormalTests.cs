@@ -8,7 +8,7 @@ using Statistics.Distributions;
 namespace StatisticsTests.Distributions
 {
     [ExcludeFromCodeCoverage]
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class NormalTests
     {
         [Theory]

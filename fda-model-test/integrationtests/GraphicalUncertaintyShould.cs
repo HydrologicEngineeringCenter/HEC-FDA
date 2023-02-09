@@ -11,7 +11,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Integration")]
+    [Trait("Category", "Remote")]
     public class GraphicalUncertaintyShould
     {
         private static CurveMetaData curveMetaData = new CurveMetaData();

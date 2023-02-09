@@ -6,7 +6,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class FrequencyElementShould
     {
         [Fact]

@@ -6,7 +6,7 @@ using HEC.FDA.Model.hydraulics;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
-    [Trait("Category", "Disk")]
+    [Trait("Category", "Local")]
     public class HydraulicProfileShould
     {
         private const string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";

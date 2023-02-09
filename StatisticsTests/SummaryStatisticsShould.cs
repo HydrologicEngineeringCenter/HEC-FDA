@@ -4,7 +4,7 @@ using Xunit;
 
 namespace StatisticsTests
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class SummaryStatisticsShould
     {
         //https://www.itl.nist.gov/div898/strd/univ/data/Mavro.dat

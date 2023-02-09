@@ -5,7 +5,7 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class GraphicalUncertaintyPairedDataTests
     {
         static string xLabel = "x label";

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests.MessagingTests
 {
-    //[Trait("Category", "Unit")]
+    //[Trait("Category", "Remote")]
     public class ImpactAreaScenarioSimulationShould
     {
         static int equivalentRecordLength = 48;

@@ -7,7 +7,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Disk")]
+    [Trait("Category", "Local")]
     public class InventoryShould
     {
         private const string IANameColumnHeader = "Name";

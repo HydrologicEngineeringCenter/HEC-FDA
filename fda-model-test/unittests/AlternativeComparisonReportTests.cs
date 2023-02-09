@@ -12,7 +12,7 @@ using HEC.FDA.Model.alternatives;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class AlternativeComparisonReportTest
     {
         [Theory]

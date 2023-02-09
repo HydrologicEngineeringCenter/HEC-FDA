@@ -6,7 +6,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Rows;
 
 namespace HEC.FDA.ViewModelTest
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class GraphicalVMShould
     {
         [Fact]

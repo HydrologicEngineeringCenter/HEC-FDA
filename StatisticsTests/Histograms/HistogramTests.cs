@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace StatisticsTests.Histograms
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Remote")]
     public class HistogramTests
     {
         [Theory]
