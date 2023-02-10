@@ -570,6 +570,7 @@ namespace Statistics.Histograms
         }
         public static IHistogram AddHistograms(List<IHistogram> histograms)
         {
+            double probabilitySteps = 5000;
             IHistogram aggregatedHistogram;
 
             if (histograms.Count > 0)
@@ -595,9 +596,9 @@ namespace Statistics.Histograms
                     binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                     aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
                     //walk across the probability domain of each histogram at equal probability intervals 
-                    for (int i = 0; i < binQuantity; i++)
+                    for (int i = 0; i < probabilitySteps; i++)
                     {
-                        double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
+                        double probabilityStep = (i + 0.5) / probabilitySteps;
                         double summedValue = 0;
                         Int64 summedBinCount = 0;
 
