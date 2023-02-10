@@ -98,7 +98,6 @@ namespace HEC.FDA.Model.metrics
             if (damageResult.IsNull)
             {
                 ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
-                newDamageResult.ConsequenceHistogram.HistogramIsZeroValued = histogramIsZeroValued;
                 _consequenceResultList.Add(newDamageResult);
             }
         }

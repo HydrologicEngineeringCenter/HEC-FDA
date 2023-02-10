@@ -31,30 +31,20 @@ namespace Statistics.Histograms
         #endregion
         #region Properties
         public event MessageReportedEventHandler MessageReport;
-        //TODO: we need a way to test for this 
         public bool HistogramIsZeroValued
         {
             get
             {
-                return _HistogramIsZeroValued;
-            }
-            set
-            {
-                _HistogramIsZeroValued = value;
+                return IsZeroValued();
             }
         }
+
+
         public bool HistogramIsSingleValued
         {
             get
             {
-                if(_BinCounts.Length == 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return IsSingleValued();
             }
         }
         internal double SampleMax
@@ -185,7 +175,6 @@ namespace Statistics.Histograms
             _BinWidth = 1; 
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
-            _HistogramIsZeroValued = true;
             for (int i = 0; i < 10; i++)
             {
                 AddObservationToHistogram(0);
@@ -505,7 +494,7 @@ namespace Statistics.Histograms
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
-                if (_HistogramIsZeroValued)
+                if (HistogramIsZeroValued)
                 {
                     return 0.0;
                 }
@@ -890,6 +879,28 @@ namespace Statistics.Histograms
             return new Histogram(data.ToList(), this.ConvergenceCriteria);
         }
 
+        private bool IsZeroValued()
+        {
+            bool isZeroValued = false;
+            bool meanIsZero = Mean == 0;
+            bool standardDeviationIsZero = StandardDeviation == 0;
+            if (meanIsZero && standardDeviationIsZero)
+            {
+                isZeroValued = true;
+            }
+            return isZeroValued;
+
+        }
+
+        private bool IsSingleValued()
+        {
+            bool isSingleValued = false;
+            if (_BinCounts[0] == SampleSize)
+            {
+                isSingleValued = true;
+            }
+            return isSingleValued;
+        }
         #endregion
     }
 }
