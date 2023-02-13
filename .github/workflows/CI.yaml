@@ -35,9 +35,15 @@ jobs:
         
     - name: Build
       run: dotnet build -v quiet --configuration Release --no-restore
-        
+
     - name: Test
-      run: dotnet test -v quiet --nologo -l:"console;verbosity=quiet" --no-build --filter RunsOn=Remote
+      run: dotnet test HEC.FDA.ViewModelTest -v quiet --nologo -l:"console;verbosity=quiet" --no-build --filter RunsOn=Remote
+
+    - name: Test
+      run: dotnet test HEC.FDA.ModelTest -v quiet --nologo -l:"console;verbosity=quiet" --no-build --filter RunsOn=Remote
+
+    - name: Test
+      run: dotnet test StatisticsTests -v quiet --nologo -l:"console;verbosity=quiet" --no-build --filter RunsOn=Remote
       
     - name: Publish
       run: dotnet publish -v quiet View/HEC.FDA.View.csproj
