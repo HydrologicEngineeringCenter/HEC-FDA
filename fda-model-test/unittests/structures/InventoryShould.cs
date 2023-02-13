@@ -7,7 +7,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("RunsOn", "Local")]
+    [Trait("RunsOn", "Remote")]
     [Collection("Serial")]
     public class InventoryShould
     {

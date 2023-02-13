@@ -6,7 +6,7 @@ using HEC.FDA.Model.hydraulics;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
-    [Trait("RunsOn", "Local")]
+    [Trait("RunsOn", "Remote")]
     [Collection("Serial")]
     public class HydraulicProfileShould
     {
