@@ -8,7 +8,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("RunsOn", "Local")]
+    [Trait("RunsOn", "Remote")]
 
     public class ImpactAreaScenarioResultsShould
     {
