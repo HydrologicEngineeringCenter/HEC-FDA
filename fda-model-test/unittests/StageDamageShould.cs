@@ -16,7 +16,7 @@ using HEC.FDA.Model.hydraulics.Mock;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     public class StageDamageShould
     {
 
