@@ -8,7 +8,7 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     public class DesPeresStudyDataTests
     {
         static int impactAreaID = 1;

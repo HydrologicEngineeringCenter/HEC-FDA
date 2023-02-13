@@ -9,7 +9,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     public class StudyDataAnalyticalFrequencyResultsTests
     {
 

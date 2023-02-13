@@ -12,7 +12,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     [Collection("Serial")]
     public class DefaultDataComputeOutcomes
     {
