@@ -10,7 +10,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class StageDamageElementShould
     {
     

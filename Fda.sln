@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Statistics", "Statistics\St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticsTests", "StatisticsTests\StatisticsTests.csproj", "{7B39294F-45BC-48F0-BC07-545C3532DD0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEC.FDA.Profiler.StageDamage", "HEC.FDA.Profiler.StageDamage\HEC.FDA.Profiler.StageDamage.csproj", "{8EB66CF4-515E-4201-A5AB-CEB556063E46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.Profiler.StageDamage", "HEC.FDA.Profiler.StageDamage\HEC.FDA.Profiler.StageDamage.csproj", "{8EB66CF4-515E-4201-A5AB-CEB556063E46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

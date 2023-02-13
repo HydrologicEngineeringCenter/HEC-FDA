@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     [ExcludeFromCodeCoverage]
     public class SerializationTests
     {
