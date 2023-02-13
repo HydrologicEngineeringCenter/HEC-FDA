@@ -5,7 +5,7 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     public class DeterministicStructureShould
     {
         private static string occupancyTypeName = "Res1-1NB";
