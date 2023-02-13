@@ -572,7 +572,7 @@ namespace Importer
                 ReachDataTable reachDT = new ReachDataTable();
                 reachDT.ProcessReachDataTable(dataTable);
             }
-            else if (mp_fileNameBase == "CATEGORY")
+            else if (mp_fileNameBase == "RunsOn")
             {
                 CategoryDataTable categoryDT = new CategoryDataTable();
                 categoryDT.ProcessCategoryDataTable(dataTable);

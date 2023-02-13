@@ -4,7 +4,7 @@ using HEC.FDA.Model.structures;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class ValueRatioWithUncertaintyShould
     {
         [Theory]

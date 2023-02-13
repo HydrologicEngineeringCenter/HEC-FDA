@@ -8,7 +8,7 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class StructureShould
     {
         private static double[] depths = new double[] { 0, 1, 2, 3, 4, 5 };

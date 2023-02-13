@@ -4,7 +4,7 @@ using System;
 
 namespace StatisticsTests.Distributions
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class LogNormalTests
     {
         [Theory]
