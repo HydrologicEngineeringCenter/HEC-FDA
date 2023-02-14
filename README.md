@@ -1,9 +1,6 @@
 # HEC-FDA
 
 # Current Status of Main
-![IntegrationTesting](https://github.com/HydrologicEngineeringCenter/HEC-FDA/actions/workflows/IntegrationTesting.yml/badge.svg)
-
-
 ![example workflow](https://github.com/HydrologicEngineeringCenter/HEC-FDA/actions/workflows/CI.yaml/badge.svg)
 
 # Build Process with Visual Studio 2022
