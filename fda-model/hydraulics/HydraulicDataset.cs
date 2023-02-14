@@ -21,7 +21,7 @@ namespace HEC.FDA.Model.hydraulics
 
         public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
-        public List<PairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, HydraulicDataSource dataSource, string parentDirectory)
+        public List<PairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
         {
             List<PairedData> ret = new List<PairedData>();
             PointFeatureLayer indexPoint = new PointFeatureLayer("Structure_Inventory", pointShapefileFilePath);
@@ -35,7 +35,7 @@ namespace HEC.FDA.Model.hydraulics
                     PointM pt = indexPoints[j];
                     PointMs converted = new PointMs();
                     converted.Add(pt);
-                    float[] singleWSE = HydraulicProfiles[i].GetWSE(converted, dataSource, parentDirectory);
+                    float[] singleWSE = HydraulicProfiles[i].GetWSE(converted, DataSource, parentDirectory);
                     probs[i] = HydraulicProfiles[i].Probability;
                     wses[i] = singleWSE[0];
                 }

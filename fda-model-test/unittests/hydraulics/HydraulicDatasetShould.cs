@@ -5,12 +5,32 @@ using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using System.Linq;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
     [Trait("RunsOn", "Remote")]
+    [Collection("Serial")]
     public class HydraulicDatasetShould
     {
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+        private const string SteadyHDFFileName = @"Muncie.p10.hdf";
+        private const string PathToIndexPointShapefile = @"..\..\..\fda-model-test\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
+        [Fact]
+        void retreiveGraphicalFrequencyFunctionsAsPairedData()
+        {
+            //Arrange
+            List<IHydraulicProfile> profiles = new List<IHydraulicProfile>();
+            profiles.Add( new HydraulicProfile(0.50, SteadyHDFFileName, "2"));
+            profiles.Add(new HydraulicProfile(0.002, SteadyHDFFileName, "500"));
+            HydraulicDataset dataset = new HydraulicDataset(profiles, HydraulicDataSource.SteadyHDF);
+
+            //Act
+            List<PairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult);
+
+            //Assert
+            System.Console.WriteLine("poo");
+        }
         [Fact]
         void SortHydrulicProfilesbyDescendingProbability()
         {
@@ -21,7 +41,6 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
                 profiles.Add(new HydraulicProfile(prob,"",""));
             }
             HydraulicDataset dataset = new HydraulicDataset(new (profiles), HydraulicDataSource.UnsteadyHDF);
-
             double[] expected = new double[] { 0.99, 0.5, 0.01 };
             double[] actual = new double[3];
             int count = 0;
@@ -31,7 +50,6 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
                 count++;
             }
             Assert.Equal(expected, actual);
-
         }
         [Fact]
         void CorrectDryStructureDepthsAppropriately()
