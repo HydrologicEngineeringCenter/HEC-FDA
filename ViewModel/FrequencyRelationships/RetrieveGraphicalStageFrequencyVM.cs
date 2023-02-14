@@ -1,13 +1,14 @@
-﻿using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    internal class RetrieveGraphicalStageFrequencyVM : MVVMFramework.ViewModel.Implementations.ValidatingBaseViewModel
+    internal class RetrieveGraphicalStageFrequencyVM : ValidatingBaseViewModel
     {
         #region Fields
         private IndexPointsElement _selectedIndexPointSet;
@@ -44,7 +45,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private NamedAction _generateFrequencyCurves;
         public NamedAction GenerateFrequencyCurves { get { return _generateFrequencyCurves; } set { _generateFrequencyCurves = value; NotifyPropertyChanged(); } }
         #endregion
-
+        #region Constructors
         public RetrieveGraphicalStageFrequencyVM()
         {
             Initialize();
@@ -52,7 +53,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             GenerateFrequencyCurves.Name = "GenerateFrequencyCurves";
             GenerateFrequencyCurves.Action = GenerateFrequencyCurvesAction;
         }
-
+        #endregion
+        #region Methods
         private void Initialize()
         {
             AvailableHydraulics = new ObservableCollection<HydraulicElement>();
@@ -66,11 +68,19 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         private void GenerateFrequencyCurvesAction(object arg1, EventArgs arg2)
         {
-            //Get the index points here somehow
-            SelectedHydraulics.DataSet.GetGraphicalStageFrequency("somepath", Storage.Connection.Instance.HydraulicsDirectory);
+            //Get the index points shapefile here somehow
+            List<PairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency("somepath", Storage.Connection.Instance.HydraulicsDirectory);
+            foreach(PairedData freqCurve in freqCurves)
+            {
+                AddFrequencyRelationship(freqCurve);
+            }
         }
+        private void AddFrequencyRelationship(PairedData pairedData)
+        {
+            //Do Something Here
+        }
+        #endregion
 
 
-
-}
+    }
 }
