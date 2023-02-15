@@ -26,7 +26,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             HydraulicDataset dataset = new HydraulicDataset(profiles, HydraulicDataSource.SteadyHDF);
 
             //Act
-            List<PairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult);
+            List<UncertainPairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult);
 
             //Assert
             System.Console.WriteLine("poo");

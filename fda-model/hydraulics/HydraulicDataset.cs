@@ -3,6 +3,8 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;
 using RasMapperLib;
 using SixLabors.ImageSharp.Metadata.Profiles.Icc;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +23,9 @@ namespace HEC.FDA.Model.hydraulics
 
         public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
-        public List<PairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
+        public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
         {
-            List<PairedData> ret = new List<PairedData>();
+            List<UncertainPairedData> ret = new List<UncertainPairedData>();
             PointFeatureLayer indexPoint = new PointFeatureLayer("Structure_Inventory", pointShapefileFilePath);
             PointMs indexPoints = new PointMs(indexPoint.Points().Select(p => p.PointM()));
             for (int j = 0; j < indexPoints.Count; j++)
@@ -39,8 +41,12 @@ namespace HEC.FDA.Model.hydraulics
                     probs[i] = HydraulicProfiles[i].Probability;
                     wses[i] = singleWSE[0];
                 }
-                double[] doublewses = Array.ConvertAll(wses, new Converter<float, double>(item => (double)item));
-                PairedData pd = new PairedData(probs, doublewses, new CurveMetaData(xlabel: PROBABILITY, ylabel: WSE, name: "dealWithThisLater"));
+                IDistribution[] distributions = new IDistribution[wses.Length];
+                for( int i=0; i<wses.Length; i++)
+                {
+                    distributions[i] = new Deterministic(wses[i]);
+                }
+                UncertainPairedData pd = new(probs, distributions, new CurveMetaData(xlabel: PROBABILITY, ylabel: WSE, name: "dealWithThisLater"));
                 ret.Add(pd);
             }
             return ret;

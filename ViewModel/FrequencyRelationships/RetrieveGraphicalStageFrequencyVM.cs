@@ -1,10 +1,14 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NamedAction = HEC.MVVMFramework.ViewModel.Implementations.NamedAction;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
@@ -69,15 +73,21 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void GenerateFrequencyCurvesAction(object arg1, EventArgs arg2)
         {
             //Get the index points shapefile here somehow
-            List<PairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency("somepath", Storage.Connection.Instance.HydraulicsDirectory);
-            foreach(PairedData freqCurve in freqCurves)
+            List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency("somepath", Storage.Connection.Instance.HydraulicsDirectory);
+            foreach(UncertainPairedData freqCurve in freqCurves)
             {
                 AddFrequencyRelationship(freqCurve);
             }
         }
-        private void AddFrequencyRelationship(PairedData pairedData)
+        private void AddFrequencyRelationship(UncertainPairedData upd)
         {
-            //Do Something Here
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
+            GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            graphicalVM.Options[0].UpdateFromUncertainPairedData(upd);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM();
+            AnalyticalFrequencyElement element = AnalyticalFrequencyElement.CreateGraphicalFrequencyElement(editDate,graphicalVM,id);
+            //element.save
         }
         #endregion
 
