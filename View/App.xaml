@@ -81,312 +81,316 @@
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
                           
              StartupUri="ViewWindow.xaml">
-    <Application.Resources>
-        <Style TargetType="Control" x:Key="defaultErrorTemplate">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="TextBox" BasedOn="{StaticResource defaultErrorTemplate}" />
-        <Style TargetType="CheckBox" BasedOn="{StaticResource defaultErrorTemplate}" />
-        <Style TargetType="frameworkControls:TextBoxFileBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
-        <Style TargetType="frameworkControls:TextBoxFolderBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
-        <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/> 
-                </Trigger> 
-            </Style.Triggers> 
-        </Style>
-        
-        
-        <!--alternatives region-->
-        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:CreateNewAlternativeComparisonReportVM }" >
-            <AlternativeView:CreateNewAlternative/>
-        </DataTemplate>
-        
-        <!--Plans Region-->
-        <DataTemplate DataType="{x:Type PlansVM:CreateNewAlternativeVM }" >
-            <PlansView:CreateNewPlan/>
-        </DataTemplate>
+  <Application.Resources>
+    <Style TargetType="Control" x:Key="defaultErrorTemplate">
+      <Style.Triggers>
+        <Trigger Property="Validation.HasError" Value="true">
+          <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource defaultErrorTemplate}" />
+    <Style TargetType="CheckBox" BasedOn="{StaticResource defaultErrorTemplate}" />
+    <Style TargetType="frameworkControls:TextBoxFileBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
+    <Style TargetType="frameworkControls:TextBoxFolderBrowserControl" BasedOn="{StaticResource defaultErrorTemplate}"/>
+    <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
+      <Style.Triggers>
+        <Trigger Property="Validation.HasError" Value="true">
+          <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
 
-        <!--Editors Region-->
-        <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
-            <StageTransformsView:CurveEditor/>
-        </DataTemplate>
 
-        <!--Aggrgated Region-->
-        <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
-            <AggregatedView:AggregatedStageDamage/>
-        </DataTemplate>
+    <!--alternatives region-->
+    <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:CreateNewAlternativeComparisonReportVM }" >
+      <AlternativeView:CreateNewAlternative/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AggregatedVM:ManualStageDamageVM }" >
-            <AggregatedView:ManualStageDamageControl/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type AggregatedVM:CalculatedStageDamageVM }" >
-            <AggregatedView:CalculatedStageDamageControl/>
-        </DataTemplate>
+    <!--Plans Region-->
+    <DataTemplate DataType="{x:Type PlansVM:CreateNewAlternativeVM }" >
+      <PlansView:CreateNewPlan/>
+    </DataTemplate>
 
-        <!--FrequencyRelationships Region-->
-        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
-            <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
-        </DataTemplate> 
+    <!--Editors Region-->
+    <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
+      <StageTransformsView:CurveEditor/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:GraphicalVM }" >
-            <FrequencyRelationshipsView:GraphicalControl/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
+    <!--Aggrgated Region-->
+    <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
+      <AggregatedView:AggregatedStageDamage/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:CreateSyntheticFrequencyFunctionVM }" >
-            <FrequencyRelationshipsView:CreateSyntheticFrequencyFunction/>
-        </DataTemplate>
-        
-        <!--GeoTech Region-->
-        <DataTemplate DataType="{x:Type GeoTechVM:LeveeFeatureEditorVM }" >
-            <GeoTechView:LeveeFeatureEditor/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type AggregatedVM:ManualStageDamageVM }" >
+      <AggregatedView:ManualStageDamageControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type AggregatedVM:CalculatedStageDamageVM }" >
+      <AggregatedView:CalculatedStageDamageControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
+    <!--FrequencyRelationships Region-->
+    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
+      <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
+    </DataTemplate>
 
-        <!--Impact Area Region-->
-        <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
-            <ImpactAreaView:ImpactAreaImporter/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:GraphicalVM }" >
+      <FrequencyRelationshipsView:GraphicalControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IndexPointsVM:IndexPointsEditorVM }" >
-            <IndexPointsView:IndexPointsEditor/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
 
-        <!--Occupancy Types Region-->
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
-            <OccupancyTypesView:OccupancyTypesEditor/>
-        </DataTemplate>
- 
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:CreateSyntheticFrequencyFunctionVM }" >
+      <FrequencyRelationshipsView:CreateSyntheticFrequencyFunction/>
+    </DataTemplate>
 
-        <!--Occupancy Types Controls Region-->
+    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:RetrieveGraphicalStageFrequencyVM}">
+      <FrequencyRelationshipsView:RetrieveGraphicalFrequencyControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }" >
-            <OccupancyTypesControlsView:ValueUncertaintyControl/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
-            <OccupancyTypesControlsView:CreateNewDamCat/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+    <!--GeoTech Region-->
+    <DataTemplate DataType="{x:Type GeoTechVM:LeveeFeatureEditorVM }" >
+      <GeoTechView:LeveeFeatureEditor/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type GeoTechVM:ImportLeveeElementFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type StageTransformsVM:ImportExteriorInteriorFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
+
+    <!--Impact Area Region-->
+    <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
+      <ImpactAreaView:ImpactAreaImporter/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type IndexPointsVM:IndexPointsEditorVM }" >
+      <IndexPointsView:IndexPointsEditor/>
+    </DataTemplate>
+
+    <!--Occupancy Types Region-->
+    <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
+      <OccupancyTypesView:OccupancyTypesEditor/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
+
+    <!--Occupancy Types Controls Region-->
+
+    <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }" >
+      <OccupancyTypesControlsView:ValueUncertaintyControl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
+      <OccupancyTypesControlsView:CreateNewDamCat/>
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
                                          MinWidth="150" Width="500" 
                                          MinHeight="150" Height="150" />
-            </DataTemplate.Resources>
-        </DataTemplate>
+      </DataTemplate.Resources>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:DeterministicControlVM}">
-            <OccupancyTypesControlsView:DeterministicControl/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
-            <OccupancyTypesControlsView:NormalControl/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:DeterministicControlVM}">
+      <OccupancyTypesControlsView:DeterministicControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:LogNormalControlVM}">
-            <OccupancyTypesControlsView:LogNormalControl/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
+      <OccupancyTypesControlsView:NormalControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
-            <OccupancyTypesControlsView:TriangularControl/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:LogNormalControlVM}">
+      <OccupancyTypesControlsView:LogNormalControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:UniformControlVM}">
-            <OccupancyTypesControlsView:UniformControl/>
-        </DataTemplate>
-        
-        <!--Inventory Region-->      
-        
-        <DataTemplate DataType="{x:Type InventoryVM:InventoryOcctypeLinkingVM }" >
-            <InventoryView:InventoryOcctypeLinking/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:InventoryColumnSelectionsVM }" >
-            <InventoryView:InventoryColumnSelections/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
+      <OccupancyTypesControlsView:TriangularControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type InventoryVM:StructureMissingElevationEditorVM }" >
-            <InventoryView:StructureMissingElevationEditor/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:UniformControlVM}">
+      <OccupancyTypesControlsView:UniformControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
-            <InventoryView:ImportStructuresFromShapefile/>
-        </DataTemplate>
+    <!--Inventory Region-->
 
-        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
-            <AlternativeComparisonReport:ComparisonRowItem/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type InventoryVM:InventoryOcctypeLinkingVM }" >
+      <InventoryView:InventoryOcctypeLinking/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type InventoryVM:InventoryColumnSelectionsVM }" >
+      <InventoryView:InventoryColumnSelections/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:SpecificAltCompReportResultsVM }" >
-            <AlternativeCompReportResultsView:SpecificAltCompReportResults/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type InventoryVM:StructureMissingElevationEditorVM }" >
+      <InventoryView:StructureMissingElevationEditor/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AltCompReportResultsVM }" >
-            <AlternativeCompReportResultsView:AltCompReportResults/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
+      <InventoryView:ImportStructuresFromShapefile/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
-            <AlternativeCompReportResultsView:EADSummary/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }" >
-            <AlternativeCompReportResultsView:AAEQSummary/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >
-            <AlternativeResultsView:AlternativeResults/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByDamCatVM }" >
-            <IASResultsView:DamageByDamageCategory/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByImpactAreaVM }" >
-            <AlternativeResultsView:EADDamageByImpactArea/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageWithUncertaintyVM }" >
-            <AlternativeResultsView:EADDamageWithUncertainty/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
-            <IASEditorView:IASEditor/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
+      <AlternativeComparisonReport:ComparisonRowItem/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type ComputeVM:ComputeBase }" >
-            <IASEditorView:ComputeScenarioEditor/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:SpecificAltCompReportResultsVM }" >
+      <AlternativeCompReportResultsView:SpecificAltCompReportResults/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
-            <IASEditorView:Thresholds/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AltCompReportResultsVM }" >
+      <AlternativeCompReportResultsView:AltCompReportResults/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
+      <AlternativeCompReportResultsView:EADSummary/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }" >
+      <AlternativeCompReportResultsView:AAEQSummary/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >
+      <AlternativeResultsView:AlternativeResults/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByDamCatVM }" >
+      <IASResultsView:DamageByDamageCategory/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByImpactAreaVM }" >
+      <AlternativeResultsView:EADDamageByImpactArea/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageWithUncertaintyVM }" >
+      <AlternativeResultsView:EADDamageWithUncertainty/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
+      <IASEditorView:IASEditor/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ComputeVM:ComputeBase }" >
+      <IASEditorView:ComputeScenarioEditor/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
+      <IASEditorView:Thresholds/>
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
                                          MinWidth="150" Width="450" 
                                          MinHeight="150" Height="430" />
-            </DataTemplate.Resources>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
-            <IASResultsView:IASResults/>
-        </DataTemplate>
+      </DataTemplate.Resources>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
-            <IASResultsView:SpecificIASResultsControl/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
+      <IASResultsView:IASResults/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
-            <IASResultsView:PerformanceAEP/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
+      <IASResultsView:SpecificIASResultsControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAssuranceOfThresholdVM }" >
-            <IASResultsView:PerformanceAssuranceOfThreshold/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
+      <IASResultsView:PerformanceAEP/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceLongTermRiskVM }" >
-            <IASResultsView:PerformanceLongTermRisk/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAssuranceOfThresholdVM }" >
+      <IASResultsView:PerformanceAssuranceOfThreshold/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:DamageWithUncertaintyVM }" >
-            <IASResultsView:DamageWithUncertainty/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceLongTermRiskVM }" >
+      <IASResultsView:PerformanceLongTermRisk/>
+    </DataTemplate>
 
-        <!--Output Region-->
-        <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
-            <OutputView:IndexLocations/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
-            <ImpactAreaScenarioView:EnterSeed/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type IASResultsVM:DamageWithUncertaintyVM }" >
+      <IASResultsView:DamageWithUncertainty/>
+    </DataTemplate>
 
-        <!--Study Region-->
-        <DataTemplate DataType="{x:Type StudyVM:PropertiesVM }" >
-            <StudyView:Properties/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+    <!--Output Region-->
+    <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
+      <OutputView:IndexLocations/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
+      <ImpactAreaScenarioView:EnterSeed/>
+    </DataTemplate>
+
+    <!--Study Region-->
+    <DataTemplate DataType="{x:Type StudyVM:PropertiesVM }" >
+      <StudyView:Properties/>
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
                                          MinWidth="400" Width="500" 
                                          MinHeight="400" Height="550" />
-            </DataTemplate.Resources>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
-            <StudyView:CreateNew/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:ImportStudyFromFDA1VM }" >
-            <StudyView:ImportStudyFromFDA1/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
-            <StudyView:SciChartTest/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:ExistingStudyVM }" >
-            <StudyView:OpenExisting/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type StudyVM:FdaStudyVM }" >
-            <StudyView:StudyView/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+      </DataTemplate.Resources>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
+      <StudyView:CreateNew/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type StudyVM:ImportStudyFromFDA1VM }" >
+      <StudyView:ImportStudyFromFDA1/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
+      <StudyView:SciChartTest/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type StudyVM:ExistingStudyVM }" >
+      <StudyView:OpenExisting/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type StudyVM:FdaStudyVM }" >
+      <StudyView:StudyView/>
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
                                          MinWidth="400" Width="1200" 
                                          MinHeight="400" Height="800" />
-            </DataTemplate.Resources>
-        </DataTemplate>
-        <!--Watershed Region-->
-        <DataTemplate DataType="{x:Type WatershedVM:TerrainBrowserVM }" >
-            <WatershedView:TerrainBrowser/>
-        </DataTemplate>
-        <!--utilites region-->
-        <DataTemplate DataType="{x:Type UtilitiesVM:DynamicTabVM }" >
-            <UtilitiesView:TabHeaderControl/>
-        </DataTemplate>
+      </DataTemplate.Resources>
+    </DataTemplate>
+    <!--Watershed Region-->
+    <DataTemplate DataType="{x:Type WatershedVM:TerrainBrowserVM }" >
+      <WatershedView:TerrainBrowser/>
+    </DataTemplate>
+    <!--utilites region-->
+    <DataTemplate DataType="{x:Type UtilitiesVM:DynamicTabVM }" >
+      <UtilitiesView:TabHeaderControl/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AggregatedVM:ImportStageDamageFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type FlowTransformsVM:ImportInflowOutflowFromFDA1VM }" >
-            <UtilitiesView:ImportFromFDA1/>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
-            <UtilitiesView:Rename/>
-            <DataTemplate.Resources>
-                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+    <DataTemplate DataType="{x:Type AggregatedVM:ImportStageDamageFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type FlowTransformsVM:ImportInflowOutflowFromFDA1VM }" >
+      <UtilitiesView:ImportFromFDA1/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
+      <UtilitiesView:Rename/>
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
                                          MinWidth="100" Width="450" 
                                          MinHeight="100" Height="150" />
-            </DataTemplate.Resources>
-        </DataTemplate>
-        
-        <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }" >
-            <UtilitiesView:MessageWindow/>
-        </DataTemplate>
+      </DataTemplate.Resources>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type UtilitiesVM:CustomHeaderVM }" >
-            <UtilitiesView:CustomHeader/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }" >
+      <UtilitiesView:MessageWindow/>
+    </DataTemplate>
 
-        <!--Water Surface Elevations region-->
-        <DataTemplate DataType="{x:Type GriddedHydraulicsVM:GriddedImporterVM }" >
-            <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type UtilitiesVM:CustomHeaderVM }" >
+      <UtilitiesView:CustomHeader/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type SteadyHydraulicsVM:SteadyHDFImporterVM }" >
-            <WaterSurfaceElevationsView:SteadyHydraulicsImporter/>
-        </DataTemplate>
+    <!--Water Surface Elevations region-->
+    <DataTemplate DataType="{x:Type GriddedHydraulicsVM:GriddedImporterVM }" >
+      <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type UnsteadyHydraulicsVM:UnsteadyHDFImporterVM }" >
-            <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
-        </DataTemplate>
+    <DataTemplate DataType="{x:Type SteadyHydraulicsVM:SteadyHDFImporterVM }" >
+      <WaterSurfaceElevationsView:SteadyHydraulicsImporter/>
+    </DataTemplate>
 
-    </Application.Resources>
+    <DataTemplate DataType="{x:Type UnsteadyHydraulicsVM:UnsteadyHDFImporterVM }" >
+      <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
+    </DataTemplate>
+
+  </Application.Resources>
 </Application>

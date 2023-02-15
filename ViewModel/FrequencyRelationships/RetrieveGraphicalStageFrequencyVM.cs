@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    internal class RetrieveGraphicalStageFrequencyVM : ValidatingBaseViewModel
+    public class RetrieveGraphicalStageFrequencyVM : ValidatingBaseViewModel
     {
         #region Fields
         private IndexPointsElement _selectedIndexPointSet;
