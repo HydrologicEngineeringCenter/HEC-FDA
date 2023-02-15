@@ -230,7 +230,7 @@ namespace Importer
             "YEAR",         // 3
             "STREAM",       // 4
             "REACH",        // 5
-            "RunsOn",     // 6
+            "CATAGORY",     // 6
             "DESC"          // 7
         };
 
