@@ -1,15 +1,14 @@
 ﻿using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.structures;
 using RasMapperLib;
-using SixLabors.ImageSharp.Metadata.Profiles.Icc;
 using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Utility.Memory;
 
 namespace HEC.FDA.Model.hydraulics
 {
@@ -87,8 +86,25 @@ namespace HEC.FDA.Model.hydraulics
             elem.Add(profiles);
             return elem;
         }
+        public (List<double>, List<float[]>) GetHydraulicDatasetInFloatsWithProbabilities(Inventory inventory, string hydraulicParentDirectory)
+        {
+            List<float[]> waterData = new List<float[]>();
+            List<double> profileProbabilities = new List<double>();
+            foreach (IHydraulicProfile hydraulicProfile in HydraulicProfiles)
+            {
+                float[] wsesAtStructures = hydraulicProfile.GetWSE(inventory.GetPointMs(), DataSource, hydraulicParentDirectory);
+                waterData.Add(wsesAtStructures);
+                profileProbabilities.Add(hydraulicProfile.Probability);
+            }
+            for (int i = 0; i < waterData.Count - 1; i++)
+            {
+                waterData[i] = CorrectDryStructureWSEs(waterData[i], inventory.GroundElevations, waterData[i + 1]);
+            }
+            waterData[waterData.Count - 1] = CorrectDryStructureWSEs(waterData[waterData.Count - 1], inventory.GroundElevations);
+            return (profileProbabilities, waterData);
 
-        public static void CorrectDryStructureWSEs(ref float[] wsesToCorrect, float[] groundElevs, float[] nextProfileWses = null)
+        }
+        public static float[] CorrectDryStructureWSEs(float[] wsesToCorrect, float[] groundElevs, float[] nextProfileWses = null)
         {
             float offsetForDryStructures = 9;
             float offsetForBarelyDryStructures = 2;
@@ -125,6 +141,7 @@ namespace HEC.FDA.Model.hydraulics
                     }
                 }
             }
+            return wsesToCorrect;
         }
     }
 }

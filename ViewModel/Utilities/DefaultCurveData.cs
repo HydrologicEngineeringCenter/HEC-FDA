@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Default Convergence Criteria
         public static double ConvergenceConfidence = 95;
         public static double ConvergenceTolerance = .01;
-        public static int ConvergenceMinIterations = 1000;
+        public static int ConvergenceMinIterations = 10000;
         public static int ConvergenceMaxIterations = 50000;
         #endregion
 

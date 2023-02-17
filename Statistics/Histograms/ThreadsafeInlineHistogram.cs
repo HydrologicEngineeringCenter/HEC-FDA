@@ -10,7 +10,6 @@ namespace Statistics.Histograms
     public class ThreadsafeInlineHistogram: IHistogram
     {
         #region Fields
-        private bool _HistogramIsZeroValued = false;
         private Int64[] _BinCounts = new Int64[] { };
         private double _SampleMean;
         private double _SampleVariance;
@@ -40,25 +39,14 @@ namespace Statistics.Histograms
         {
             get
             {
-                return _HistogramIsZeroValued;
-            }
-            set
-            {
-                _HistogramIsZeroValued = value;
+                return IsZeroValued();
             }
         }
         public bool HistogramIsSingleValued
         {
             get
             {
-                if (_BinCounts.Length == 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return IsSingleValued();
             }
         }
         public string TypeOfIHistogram
@@ -202,7 +190,6 @@ namespace Statistics.Histograms
             _ConvergenceCriteria = new ConvergenceCriteria();
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
-            _HistogramIsZeroValued = true;
             for (int i = 0; i < 10; i++)
             {
                 AddObservationToHistogram(0,i);
@@ -250,6 +237,28 @@ namespace Statistics.Histograms
         #endregion
 
         #region Methods
+        private bool IsZeroValued()
+        {
+            bool isZeroValued = false;
+            bool meanIsZero = Mean == 0;
+            bool standardDeviationIsZero = StandardDeviation == 0;
+            if (meanIsZero && standardDeviationIsZero)
+            {
+                isZeroValued = true;
+            }
+            return isZeroValued;
+
+        }
+
+        private bool IsSingleValued()
+        {
+            bool isSingleValued = false;
+            if (_BinCounts[0] == SampleSize)
+            {
+                isSingleValued = true;
+            }
+            return isSingleValued;
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
@@ -598,9 +607,13 @@ namespace Statistics.Histograms
             if (p >= 1) return _Max;
             else
             {
-                if (_HistogramIsZeroValued)
+                if (HistogramIsZeroValued)
                 {
                     return 0.0;
+                }
+                if (HistogramIsSingleValued)
+                {
+                    return Mean;
                 }
                 if (_SampleSize == 0)
                 {

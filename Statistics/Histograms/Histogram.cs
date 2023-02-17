@@ -31,30 +31,20 @@ namespace Statistics.Histograms
         #endregion
         #region Properties
         public event MessageReportedEventHandler MessageReport;
-        //TODO: we need a way to test for this 
         public bool HistogramIsZeroValued
         {
             get
             {
-                return _HistogramIsZeroValued;
-            }
-            set
-            {
-                _HistogramIsZeroValued = value;
+                return IsZeroValued();
             }
         }
+
+
         public bool HistogramIsSingleValued
         {
             get
             {
-                if(_BinCounts.Length == 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return IsSingleValued();
             }
         }
         internal double SampleMax
@@ -185,7 +175,6 @@ namespace Statistics.Histograms
             _BinWidth = 1; 
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = new ConvergenceCriteria();
-            _HistogramIsZeroValued = true;
             for (int i = 0; i < 10; i++)
             {
                 AddObservationToHistogram(0);
@@ -227,7 +216,15 @@ namespace Statistics.Histograms
             Max = data.Max();
             int quantityOfBins = (int)Math.Ceiling(1 + 3.322 * Math.Log10(data.Length));
             double range = Max - Min;
-             _BinWidth = range / quantityOfBins;
+            if (range == 0) 
+            {
+                _BinWidth = 1;
+
+            } 
+            else
+            {
+                _BinWidth = range / quantityOfBins;
+            }
             _BinCounts = new long[quantityOfBins];
             AddObservationsToHistogram(data);
             MessageHub.Register(this);
@@ -497,7 +494,7 @@ namespace Statistics.Histograms
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
-                if (_HistogramIsZeroValued)
+                if (HistogramIsZeroValued)
                 {
                     return 0.0;
                 }
@@ -573,6 +570,7 @@ namespace Statistics.Histograms
         }
         public static IHistogram AddHistograms(List<IHistogram> histograms)
         {
+            double probabilitySteps = 5000;
             IHistogram aggregatedHistogram;
 
             if (histograms.Count > 0)
@@ -598,9 +596,9 @@ namespace Statistics.Histograms
                     binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                     aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
                     //walk across the probability domain of each histogram at equal probability intervals 
-                    for (int i = 0; i < binQuantity; i++)
+                    for (int i = 0; i < probabilitySteps; i++)
                     {
-                        double probabilityStep = (i + 0.5) / binQuantity; //binQuantity determines the number of probability steps ... this may be too small
+                        double probabilityStep = (i + 0.5) / probabilitySteps;
                         double summedValue = 0;
                         Int64 summedBinCount = 0;
 
@@ -882,6 +880,28 @@ namespace Statistics.Histograms
             return new Histogram(data.ToList(), this.ConvergenceCriteria);
         }
 
+        private bool IsZeroValued()
+        {
+            bool isZeroValued = false;
+            bool meanIsZero = Mean == 0;
+            bool standardDeviationIsZero = StandardDeviation == 0;
+            if (meanIsZero && standardDeviationIsZero)
+            {
+                isZeroValued = true;
+            }
+            return isZeroValued;
+
+        }
+
+        private bool IsSingleValued()
+        {
+            bool isSingleValued = false;
+            if (_BinCounts[0] == SampleSize)
+            {
+                isSingleValued = true;
+            }
+            return isSingleValued;
+        }
         #endregion
     }
 }
