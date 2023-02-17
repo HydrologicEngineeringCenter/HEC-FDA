@@ -200,7 +200,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.0" />
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.0-alpha-2022.7.29.1627" />
+    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.14-beta" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
     <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
