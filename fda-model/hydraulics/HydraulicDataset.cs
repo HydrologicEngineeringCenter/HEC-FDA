@@ -15,8 +15,6 @@ namespace HEC.FDA.Model.hydraulics
     public class HydraulicDataset
     {
         public const string HYDRAULIC_DATA_SET = "HydraulicDataSet";
-        private const string PROBABILITY = "Probability";
-        private const string WSE = "wse";
         private const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
         private const string PROFILES = "Profiles";
 
@@ -25,7 +23,7 @@ namespace HEC.FDA.Model.hydraulics
         public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
         {
             List<UncertainPairedData> ret = new List<UncertainPairedData>();
-            PointFeatureLayer indexPoint = new PointFeatureLayer("Structure_Inventory", pointShapefileFilePath);
+            PointFeatureLayer indexPoint = new PointFeatureLayer("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
             PointMs indexPoints = new PointMs(indexPoint.Points().Select(p => p.PointM()));
             for (int j = 0; j < indexPoints.Count; j++)
             {
@@ -45,7 +43,7 @@ namespace HEC.FDA.Model.hydraulics
                 {
                     distributions[i] = new Deterministic(wses[i]);
                 }
-                UncertainPairedData pd = new(probs, distributions, new CurveMetaData(xlabel: PROBABILITY, ylabel: WSE, name: "dealWithThisLater"));
+                UncertainPairedData pd = new(probs, distributions, new CurveMetaData());
                 ret.Add(pd);
             }
             return ret;
@@ -70,7 +68,7 @@ namespace HEC.FDA.Model.hydraulics
 
             foreach (XElement elem in profileElems)
             {
-                HydraulicProfiles.Add((IHydraulicProfile)new HydraulicProfile(elem));
+                HydraulicProfiles.Add(new HydraulicProfile(elem));
             }
         }
         public XElement ToXML()
