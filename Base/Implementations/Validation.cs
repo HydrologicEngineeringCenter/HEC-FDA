@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 
 namespace HEC.MVVMFramework.Base.Implementations
 {
@@ -86,7 +87,21 @@ namespace HEC.MVVMFramework.Base.Implementations
             Validate();
             return _Errors;
         }
-        
+
+        /// <summary>
+        /// To be used in property rules where we want a single string message that contains all the errors.
+        /// </summary>
+        /// <returns></returns>
+        public String GetErrorMessages()
+        {
+            StringBuilder errorsBuilder = new StringBuilder();
+            foreach (IErrorMessage err in _Errors)
+            {
+                errorsBuilder.AppendLine("Error Lever: " + err.ErrorLevel + " " + err.Message);
+            }
+            return errorsBuilder.ToString();
+        }
+
         public void Validate()
         {
             _Errors = new List<IErrorMessage>();
