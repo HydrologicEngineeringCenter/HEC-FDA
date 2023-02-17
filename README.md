@@ -1,5 +1,8 @@
 # HEC-FDA
 
+# Current Status of Main
+![example workflow](https://github.com/HydrologicEngineeringCenter/HEC-FDA/actions/workflows/CI.yaml/badge.svg)
+
 # Build Process with Visual Studio 2022
 - Clone the HEC-FDA Repo to your PC
 - Ensure you have the proper NuGet Source Connections. You'll need both a connection to the HEC Github and Nexus. Nexus is relatively simple to connect to, and will just need to be added to your NuGet Sources through visual studio. There are multiple ways of setting that source. a Microsoft resource is provided at the link below to help. There is also a Github Discussion on adding the Github source reference 

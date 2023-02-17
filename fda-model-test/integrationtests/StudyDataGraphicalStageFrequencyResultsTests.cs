@@ -14,7 +14,7 @@ namespace HEC.FDA.ModelTest.integrationtests
     /// The data is based on without project, 2025, Reach 1, Residential
     /// </summary>
     /// 
-    [Trait("Category", "Integration")]
+    [Trait("RunsOn", "Local")]
     public class StudyDataGraphicalStageFrequencyResultsTests
     {
         static int impactareaid = 1;

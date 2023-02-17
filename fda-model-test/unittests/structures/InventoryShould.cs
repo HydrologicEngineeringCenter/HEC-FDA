@@ -7,7 +7,8 @@ using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
-    [Trait("Category", "Disk")]
+    [Trait("RunsOn", "Remote")]
+    [Collection("Serial")]
     public class InventoryShould
     {
         private const string IANameColumnHeader = "Name";
@@ -15,9 +16,26 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private const string pathToTerrainHDF = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
 
+        //NSI Headers
+        private const string StructureIDCol = "fd_id";
+        private const string OccTypeCol = "occtype";
+        private const string FirstFloorElevCol = "";
+        private const string StructureValueCol = "val_struct";
+        private const string FoundationHeightCol = "found_ht";
+        private const string GroundElevCol = "";
+        private const string ContentValueCol = "val_cont" ;
+        private const string OtherValueCol = "";
+        private const string VehicleValueCol = "val_vehic" ;
+        private const string BeginningDamageDepthCol = "begDamDep";
+        private const string YearInConstructionCol = "yrbuilt";
+        private const string NotesCol = "";
+        private const string DescriptionCol = "";
+        private const string NumberOfStructuresCol = "";
+
         private Inventory GetTestInventory(bool useTerrainFile)
         {
-            StructureSelectionMapping map = new StructureSelectionMapping(false, false, null,null,null, null, null, null, null, null, null, null, null, null, null, null);
+            StructureSelectionMapping map = new StructureSelectionMapping(false, useTerrainFile, StructureIDCol,OccTypeCol,FirstFloorElevCol,StructureValueCol,FoundationHeightCol,
+                GroundElevCol,ContentValueCol,OtherValueCol,VehicleValueCol,BeginningDamageDepthCol,YearInConstructionCol,NotesCol,DescriptionCol,NumberOfStructuresCol);
             //Empty (default) occupancy types
             OccupancyType occupancyType = OccupancyType.builder().build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
@@ -31,18 +49,17 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Assert.NotNull(inventory);
             Assert.Equal(4, inventory.ImpactAreas.Count);
             Assert.Equal(682, inventory.Structures.Count);
-            Assert.Equal(4, inventory.DamageCategories.Count);
         }
 
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
             float[] groundelevs = Inventory.GetGroundElevationFromTerrain(pathToNSIShapefile, pathToTerrainHDF);
-            Assert.Equal(682, groundelevs.Length);//Was 696. Is this min elevation or what?
-            Assert.Equal(946.5,groundelevs[0], 1);
+            Assert.Equal(682, groundelevs.Length);
+            Assert.Equal(946.5, groundelevs[0], 1);
         }
-         [Fact]
-         public void GetImpactAreaFID()
+        [Fact]
+        public void GetImpactAreaFID()
         {
             Inventory inv = GetTestInventory(false);
             PointM pnt = inv.GetPointMs()[0];

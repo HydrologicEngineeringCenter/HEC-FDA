@@ -199,7 +199,7 @@ namespace HEC.FDA.Model.structures
                     ground_elv = GetRowValueForColumn<double>(row, _map.GroundElevCol, defaultMissingValue); //not gauranteed
                 }
                 double ff_elev = GetRowValueForColumn<double>(row, _map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
-                if ("".Equals(_map.FirstFloorElevCol) || row[_map.FirstFloorElevCol] == DBNull.Value)
+                if (ff_elev == defaultMissingValue)
                 {
                     ff_elev = ground_elv + found_ht;
                 }
@@ -265,18 +265,44 @@ namespace HEC.FDA.Model.structures
             }
             return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
         }
-
-        public Inventory GetInventoryTrimmedToDamageCategory(string damageCategory)
+        /// <summary>
+        /// This method filters structures and the water surface profiles by damage category
+        /// Structures and profiles need to be filtered jointly because they are related by index only
+        /// This method preserves the relationship between a given structure and water at the structure 
+        /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <param name="wsesAtEachStructureByProfile"></param>
+        /// <returns></returns>
+        public (Inventory, List<float[]>) GetInventoryAndWaterTrimmedToDamageCategory(string damageCategory, List<float[]> wsesAtEachStructureByProfile)
         {
+            //set up list for filtered structures 
             List<Structure> filteredStructureList = new List<Structure>();
-            foreach (Structure structure in Structures)
+            //set up lists for filtered WSEs - this list of list of floats will be converted back to list of float arrays below
+            //the list of list is used because we are uncertain of the needed size a priori 
+            List<List<float>> listedWSEsFiltered = new List<List<float>>();
+            for (int j = 0; j < wsesAtEachStructureByProfile.Count; j++)
             {
-                if (structure.DamageCatagory == damageCategory)
+                List<float> listOfStages = new List<float>();
+                listedWSEsFiltered.Add(listOfStages);
+            }
+            for (int i = 0; i < Structures.Count; i++)
+            {
+                if (Structures[i].DamageCatagory == damageCategory)
                 {
-                    filteredStructureList.Add(structure);
+                    filteredStructureList.Add(Structures[i]);
+                    //add WSEs for structure i for each profile j 
+                    for (int j = 0; j < wsesAtEachStructureByProfile.Count; j++)
+                    {
+                        listedWSEsFiltered[j].Add(wsesAtEachStructureByProfile[j][i]);
+                    }
                 }
             }
-            return new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList);
+            List<float[]> arrayedWSEsFiltered = new List<float[]>();
+            foreach (List<float> wses in listedWSEsFiltered)
+            {
+                arrayedWSEsFiltered.Add(wses.ToArray());
+            }
+            return (new Inventory(_structureInventoryShapefile, _impactAreaShapefile, _map, _occtypes, _impactAreaUniqueColumnHeader, _updateGroundElevsFromTerrain, _terrainPath, filteredStructureList), arrayedWSEsFiltered);
         }
         public PointMs GetPointMs()
         {

@@ -9,7 +9,7 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class ExpectedAnnualDamageResultsShould
     {
         static double[] Flows = { 0, 100000 };

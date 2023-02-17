@@ -24,6 +24,8 @@ We can always use more test coverage. Please follow our coding conventions (belo
 
 ##Reviewing PRs
 - After confirming no build errors and tests pass, please review code changes and add comments as appropriate 
+- Ensure all tests are attributed with RunsOn = Local or RunsOn = Remote. 
+- Ensure all local tests pass by running them on your own machine (they are not automatically run through GitHub Actions).
 - Approve or request changes and describe changes requested in detail 
 - If approve, merge and delete branch. Update package dependencies in other repositories and confirm that the merge did not break depending projects. 
 - If the merge broke depending projects, create and assign issue to author of PR. 
@@ -40,6 +42,11 @@ Always write a clear log message for your commits. Feel free to tag @rnugent3 fo
 - Please keep the model, view model, and view separated. 
 - Please make access modifiers as limiting as possible.
 - Please avoid the term "test" except for unit tests and debugging aids. 
+- Test classes should use the naming convention {ClassToBeTested}+"Should".cs
+- Individual tests within a class should be written such that they complete the sentence started by class name. 
+  (ex. take class Foo.cs and method Multiply(). Test class would be FooShould.cs and method MultiplyByInput().)
+- Tests should be made to be as simple and fast running as possible. 
+- Tests which complete in less than 5 seconds should be attributed with RunsOn=Remote. Longer tests should be attributed with RunsOn=Local
 - Please use camel casing generally, and, start private fields with an underscore then capital letter, and start properties and methods capitalized.
 - Please start interfaces with an upper-case "I" and start bases with "Base." 
 

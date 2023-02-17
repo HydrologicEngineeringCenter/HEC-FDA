@@ -3,7 +3,8 @@ using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Disk")]
+    [Trait("RunsOn", "Remote")]
+    [Collection("Serial")]
     public class dbftests
     {
         [Fact]

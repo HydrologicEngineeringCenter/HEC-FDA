@@ -3,7 +3,7 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class PairedDataShould
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };

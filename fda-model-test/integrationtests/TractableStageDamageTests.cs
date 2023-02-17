@@ -14,7 +14,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class TractableStageDamageTests
     {
         #region H&H Data 

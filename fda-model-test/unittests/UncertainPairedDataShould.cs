@@ -10,7 +10,7 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ModelTest.unittests
 {
-    [Trait("Category", "Unit")]
+    [Trait("RunsOn", "Remote")]
     public class UncertainPairedDataShould
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };
@@ -177,7 +177,7 @@ namespace HEC.FDA.ModelTest.unittests
             double medianProbability = 0.5;
 
             //Act
-            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability);
+            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability, retrieveDeterministicRepresentation: true);
             double tolerance = 0.05;
 
             //Assert

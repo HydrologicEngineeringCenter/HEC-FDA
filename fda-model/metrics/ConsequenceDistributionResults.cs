@@ -78,7 +78,7 @@ namespace HEC.FDA.Model.metrics
             _ConvergenceCriteria = convergenceCriteria;
             MessageHub.Register(this);
         }
-        private ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
+        internal ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
             _consequenceResultList = damageResults;
             _isNull = false;
@@ -98,7 +98,6 @@ namespace HEC.FDA.Model.metrics
             if (damageResult.IsNull)
             {
                 ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
-                newDamageResult.ConsequenceHistogram.HistogramIsZeroValued = histogramIsZeroValued;
                 _consequenceResultList.Add(newDamageResult);
             }
         }
@@ -117,7 +116,13 @@ namespace HEC.FDA.Model.metrics
             damageResult.AddConsequenceRealization(dammageEstimate, iteration);
 
         }
-       
+        internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID, long iteration)
+        {
+            GetConsequenceResult(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration);
+        }
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 
