@@ -75,7 +75,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void retrieveGraphicalFrequency(object arg1, EventArgs arg2)
         {
             RetrieveGraphicalStageFrequencyVM vm = new RetrieveGraphicalStageFrequencyVM();
-            string header = StringConstants.CreateImportHeader(StringConstants.RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_HEADER);
+            string header = StringConstants.RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
