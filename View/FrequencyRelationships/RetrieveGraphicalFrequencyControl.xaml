@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.FrequencyRelationships" 
              xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="400">
   <Grid>
@@ -22,16 +22,19 @@
     <!--Combobox to select hydraulic dataset-->
     <StackPanel Orientation="Vertical" Grid.Row="0">
       <Label Content="Hydraulic Dataset" ></Label>
-      <ComboBox MinWidth="200" ItemsSource="{Binding AvailableHydraulics}" SelectedItem="{Binding SelectedHydraulics}"/>
+      <ComboBox MinWidth="200" ItemsSource="{Binding AvailableHydraulics}" SelectedItem="{Binding SelectedHydraulics}" DisplayMemberPath="Name"/>
     </StackPanel>
 
     <!--combobox to select index point set-->
     <StackPanel Orientation="Vertical" Grid.Row="1">
       <Label Content="Index Point Set" />
-      <ComboBox MinWidth="200" ItemsSource="{Binding AvailableIndexPointSets}" SelectedItem="{Binding SelectedIndexPointSet}"/>
+      <ComboBox MinWidth="200" ItemsSource="{Binding AvailableIndexPointSets}" SelectedItem="{Binding SelectedIndexPointSet}" DisplayMemberPath="Name"/>
     </StackPanel>
 
-    <Button Grid.Row="2" HorizontalAlignment="Left" Content="Generate Graphical Frequency Curves" Margin="8" Click="{Binding GenerateFrequencyCurves}" />
+    <!--button to create curves-->
+    <v:NamedActionButton Grid.Row="2" Margin="5" NamedAction="{Binding GenerateFrequencyCurves}" />
+    
+    <!--close-->
     <OkClose:OKCloseControl Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
   </Grid>
 
