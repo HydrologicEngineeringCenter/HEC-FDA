@@ -84,25 +84,25 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
 
             string pointShapefile = Storage.Connection.Instance.IndexPointsDirectory + "\\" + SelectedIndexPointSet.Name + "\\" + SelectedIndexPointSet.Name + ".shp";
-            List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, Storage.Connection.Instance.HydraulicsDirectory);
-            foreach(UncertainPairedData freqCurve in freqCurves)
+            string hydraulicParentDirectory = Storage.Connection.Instance.HydraulicsDirectory+"\\"+SelectedHydraulics.Name;
+            List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile,hydraulicParentDirectory );
+            for(int i =0; i < freqCurves.Count; i++)
             {
-                AddFrequencyRelationship(freqCurve);
+                AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i]+ "|" + SelectedHydraulics.Name);
             }
         }
-        private void AddFrequencyRelationship(UncertainPairedData upd)
+        private void AddFrequencyRelationship(UncertainPairedData upd, string name)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
-            string name = upd.CurveMetaData.Name;
             //Create graphical VM
             GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             graphicalVM.Options[0].UpdateFromUncertainPairedData(upd);
 
-            AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(upd.CurveMetaData.Name, editDate, "", default, default, default, default, default, default, default, graphicalVM, default, id);
+            AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(name, editDate,"Retrieved from Hydraulics",DefaultData.PeriodOfRecord, false, true, DefaultData.LP3Mean,DefaultData.LP3StDev, DefaultData.LP3Skew,new List<double>(), graphicalVM,new CurveComponentVM(), id);
             IElementManager elementManager = PersistenceFactory.GetElementManager(element);
 
-            List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();  //Theres a good chance this study cache is null. ASk cody for help
+            List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(); 
             bool newElementMatchesExisting = false;
             foreach(AnalyticalFrequencyElement ele in existingElements)
             {
@@ -119,6 +119,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 elementManager.SaveNew(element);
             }
         }
+
+
         #endregion
     }
 }
