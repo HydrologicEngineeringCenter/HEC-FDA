@@ -388,7 +388,7 @@ namespace HEC.FDA.Model.metrics
             }
             int dummyImpactAreaID = 9999;
             ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
-            string message = $"The IMPACT AREA SCENARIO RESULTS could not be found. an arbitrary object is being returned";
+            string message = $"The IMPACT AREA SCENARIO RESULTS could not be found. An arbitrary object is being returned";
             ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyResults;

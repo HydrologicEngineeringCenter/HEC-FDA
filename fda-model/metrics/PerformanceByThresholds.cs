@@ -94,7 +94,7 @@ namespace HEC.FDA.Model.metrics
             }
             Threshold dummyThreshold = new Threshold();
             string message = "The requested threshold could not be found so a dummy threshold is being returned";
-            MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new MVVMFramework.Model.Messaging.ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyThreshold;
 

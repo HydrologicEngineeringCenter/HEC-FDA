@@ -13,7 +13,7 @@ using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.paireddata
 {
-    public class GraphicalUncertainPairedData : Validation, IPairedDataProducer, ICanBeNull, IReportMessage, IMetaData
+    public class GraphicalUncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull, IMetaData
     {
         #region Fields
         private int _EquivalentRecordLength;
@@ -99,8 +99,6 @@ namespace HEC.FDA.Model.paireddata
                 return _UsingStagesNotFlows;
             }
         }
-        public event MessageReportedEventHandler MessageReport;
-
         #endregion
 
         #region Constructors
@@ -217,10 +215,7 @@ namespace HEC.FDA.Model.paireddata
             }
             return pairedData;
         }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
+
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
         {
             bool nullMatches = CurveMetaData.IsNull.Equals(incomingGraphicalUncertainPairedData.CurveMetaData.IsNull);
