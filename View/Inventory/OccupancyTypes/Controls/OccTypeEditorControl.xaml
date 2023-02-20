@@ -54,7 +54,7 @@
             <TabItem Name="StructureDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding StructureItem.IsChecked}" Name="StructureCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding StructureItem.IsChecked}" IsHitTestVisible="False" Focusable="False" Name="StructureCheck" ToolTip="Structure damage is required" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Structure Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
