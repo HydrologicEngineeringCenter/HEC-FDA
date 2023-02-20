@@ -234,7 +234,7 @@ namespace HEC.FDA.ModelTest.unittests
         private static HydraulicDataset filteredHydraulicDataset = new HydraulicDataset(filteredHydraulicProfiles, hydraulicDataSource);
 
         private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
-        new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"));
+        new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"), true);
         #endregion
 
         private static RandomProvider randomProvider = new RandomProvider(seed: 1234);
