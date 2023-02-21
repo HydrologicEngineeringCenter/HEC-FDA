@@ -200,6 +200,7 @@ namespace HEC.FDA.Model.stageDamage
 
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
+            Validate();
             List<UncertainPairedData> results = new List<UncertainPairedData>();
             if (ErrorLevel >= ErrorLevel.Major)
             {
