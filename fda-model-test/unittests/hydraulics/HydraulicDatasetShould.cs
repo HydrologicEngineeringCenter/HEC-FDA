@@ -6,6 +6,7 @@ using HEC.FDA.Model.structures;
 using System.Linq;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;
+using NuGet.Frameworks;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
@@ -29,7 +30,8 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             List<UncertainPairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult);
 
             //Assert
-            System.Console.WriteLine("poo");
+            Assert.Equal(graphicalFreqCurves.Count, 3);
+            Assert.Equal(graphicalFreqCurves[0].Yvals.Length, 2);
         }
         [Fact]
         void SortHydrulicProfilesbyDescendingProbability()
