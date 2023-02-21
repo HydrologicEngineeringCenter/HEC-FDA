@@ -1,8 +1,13 @@
 ﻿using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
+using RasMapperLib;
+using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
@@ -15,6 +20,38 @@ namespace HEC.FDA.Model.hydraulics
 
         public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
+        public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
+        {
+            List<UncertainPairedData> ret = new List<UncertainPairedData>();
+            PointFeatureLayer indexPoint = new PointFeatureLayer("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
+            if (!indexPoint.SourceFileExists)
+            {
+                return null;
+            }
+            PointMs indexPoints = new PointMs(indexPoint.Points().Select(p => p.PointM()));
+            for (int j = 0; j < indexPoints.Count; j++)
+            {
+                double[] probs = new double[HydraulicProfiles.Count];
+                float[] wses = new float[HydraulicProfiles.Count];
+                for (int i = 0; i < HydraulicProfiles.Count; i++)
+                {
+                    PointM pt = indexPoints[j];
+                    PointMs converted = new PointMs();
+                    converted.Add(pt);
+                    float[] singleWSE = HydraulicProfiles[i].GetWSE(converted, DataSource, parentDirectory);
+                    probs[i] = HydraulicProfiles[i].Probability;
+                    wses[i] = singleWSE[0];
+                }
+                IDistribution[] distributions = new IDistribution[wses.Length];
+                for( int i=0; i<wses.Length; i++)
+                {
+                    distributions[i] = new Deterministic(wses[i]);
+                }
+                UncertainPairedData pd = new(probs, distributions, new CurveMetaData());
+                ret.Add(pd);
+            }
+            return ret;
+        }
 
         public HydraulicDataset(List<IHydraulicProfile> profiles, HydraulicDataSource dataSource)
         {
@@ -35,24 +72,20 @@ namespace HEC.FDA.Model.hydraulics
 
             foreach (XElement elem in profileElems)
             {
-                HydraulicProfiles.Add((IHydraulicProfile)new HydraulicProfile(elem));
+                HydraulicProfiles.Add(new HydraulicProfile(elem));
             }
         }
-
         public XElement ToXML()
         {
             XElement elem = new XElement(HYDRAULIC_DATA_SET);
             elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, DataSource);
-
             //path and probs
             XElement profiles = new XElement(PROFILES);
             foreach (HydraulicProfile profile in HydraulicProfiles)
             {
                 profiles.Add(profile.ToXML());
             }
-
             elem.Add(profiles);
-
             return elem;
         }
         public (List<double>, List<float[]>) GetHydraulicDatasetInFloatsWithProbabilities(Inventory inventory, string hydraulicParentDirectory)

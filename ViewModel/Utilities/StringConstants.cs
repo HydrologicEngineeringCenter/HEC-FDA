@@ -92,6 +92,8 @@
 
         public const string FREQUENCY_FUNCTIONS = "Frequency Functions";
         public const string CREATE_FREQUENCY_FUNCTIONS_MENU = "Create New Frequency Function...";
+        public const string RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_MENU = "Retrieve Graphical Frequency Function...";
+        public const string RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_HEADER = "Retrieve Graphical Frequency Function";
         public const string EDIT_FREQUENCY_FUNCTIONS_MENU = "Edit Frequency Function...";
         public const string CREATE_FREQUENCY_HEADER = "Create Frequency Function";
         public const string IMPORT_FREQUENCY_FROM_OLD_NAME = "Frequency Function";

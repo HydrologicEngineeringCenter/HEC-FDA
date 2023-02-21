@@ -17,6 +17,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             createNew.Header = StringConstants.CREATE_FREQUENCY_FUNCTIONS_MENU;
             createNew.Action = AddNewFlowFrequencyCurve;
 
+            NamedAction retrieveGraphicalFreq = new NamedAction();
+            retrieveGraphicalFreq.Header = StringConstants.RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_MENU;
+            retrieveGraphicalFreq.Action = retrieveGraphicalFrequency;
+
             NamedAction importFlowFreq = new NamedAction();
             importFlowFreq.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_FREQUENCY_FROM_OLD_NAME);
             importFlowFreq.Action = ImportFlowFreqFromAscii;
@@ -27,6 +31,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(createNew);
+            localActions.Add(retrieveGraphicalFreq);
             localActions.Add(importFlowFreq);
             localActions.Add(importSyntheticFreq);
 
@@ -63,6 +68,14 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             ImportFromFDA1VM vm = new ImportFrequencyFromFDA1VM();
             string header = StringConstants.CreateImportHeader(StringConstants.FREQUENCY_FUNCTIONS);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+            Navigate(tab, false, true);
+        }
+
+        private void retrieveGraphicalFrequency(object arg1, EventArgs arg2)
+        {
+            RetrieveGraphicalStageFrequencyVM vm = new RetrieveGraphicalStageFrequencyVM();
+            string header = StringConstants.RETRIEVE_GRAPHICAL_FREQUENCY_FUNCTION_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
         }
