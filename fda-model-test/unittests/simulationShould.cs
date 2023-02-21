@@ -250,7 +250,7 @@ namespace HEC.FDA.ModelTest.unittests
             double[] exceedanceProabilities = new double[] { .5, .2, .1, .04, .02, .01, .005, .002 };
             double[] stagesForFrequency = new double[] { .001, .002, .003, .004, .005, .006, .007, .553 };
             CurveMetaData metaDataDefault = new CurveMetaData("x", "y", "name", damCat, assetCat);
-            GraphicalUncertainPairedData graphicalUncertain = new GraphicalUncertainPairedData(exceedanceProabilities, stagesForFrequency, erl, metaDataDefault);
+            GraphicalUncertainPairedData graphicalUncertain = new GraphicalUncertainPairedData(exceedanceProabilities, stagesForFrequency, erl, metaDataDefault, true);
             double[] stagesForDamage = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1 };
 
             IDistribution[] zeroDamageDistributions = new IDistribution[]

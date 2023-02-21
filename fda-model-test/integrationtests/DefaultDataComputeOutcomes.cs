@@ -81,7 +81,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static double[] _GraphicalStageFreqXValues = new double[] { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
         private static double[] _GraphicalStageFreqYValues = new double[] { 929.21, 934.5, 936.5, 937.6, 938.6, 939.7, 940.7, 941.6, 942.1 };
 
-        private static GraphicalUncertainPairedData graphicalStageFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, graphicalStageMetaData);
+        private static GraphicalUncertainPairedData graphicalStageFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, graphicalStageMetaData, true);
         private static GraphicalUncertainPairedData graphicalStageAsFlowsFrequency = new GraphicalUncertainPairedData(_GraphicalStageFreqXValues, _GraphicalStageFreqYValues, LP3POR, graphicalStageMetaData, false);
 
 

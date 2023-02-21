@@ -22,7 +22,7 @@ namespace HEC.FDA.ModelTest.unittests
        20)]
         public void ReturnsDistributionsWhereMeanAndConfidenceLimitsAreMonotonicallyIncreasing(double[] probs, double[] flows, int erl)
         {
-            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, curveMetaData);
+            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, curveMetaData, true);
             List<IPairedData> pairedDataList = new List<IPairedData>();
             IPairedData lowerPairedData = graphical.SamplePairedData(0.05);
             pairedDataList.Add(lowerPairedData);
@@ -51,7 +51,7 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
 20)]
         public void GraphicalShouldReadTheSameStuffItWrites(double[] probs, double[] flows, int erl)
         {
-            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, curveMetaData);
+            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(probs, flows, erl, curveMetaData, true);
             XElement graphicalElement = graphical.WriteToXML();
             GraphicalUncertainPairedData graphicalFromXML = GraphicalUncertainPairedData.ReadFromXML(graphicalElement);
             bool success = graphical.Equals(graphicalFromXML);
