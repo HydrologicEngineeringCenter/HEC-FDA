@@ -10,6 +10,8 @@ using HEC.MVVMFramework.ViewModel.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
 using NamedAction = HEC.MVVMFramework.ViewModel.Implementations.NamedAction;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
@@ -35,12 +37,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-        public IndexPointsElement SelectedIndexPointSet {
-            get 
+        public IndexPointsElement SelectedIndexPointSet
+        {
+            get
             {
                 return _selectedIndexPointSet;
             }
-            set 
+            set
             {
                 _selectedIndexPointSet = value;
                 NotifyPropertyChanged();
@@ -65,7 +68,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             AvailableHydraulics = new ObservableCollection<HydraulicElement>();
             List<HydraulicElement> hydraulicElements = StudyCache.GetChildElementsOfType<HydraulicElement>();
-            foreach(HydraulicElement hydraulic in hydraulicElements)
+            foreach (HydraulicElement hydraulic in hydraulicElements)
             {
                 AvailableHydraulics.Add(hydraulic);
             }
@@ -73,7 +76,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             AvailableIndexPointSets = new ObservableCollection<IndexPointsElement>();
             List<IndexPointsElement> indexptsElements = StudyCache.GetChildElementsOfType<IndexPointsElement>();
-            foreach(IndexPointsElement indexpt in indexptsElements)
+            foreach (IndexPointsElement indexpt in indexptsElements)
             {
                 AvailableIndexPointSets.Add(indexpt);
             }
@@ -83,12 +86,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void GenerateFrequencyCurvesAction(object arg1, EventArgs arg2)
         {
 
-            string pointShapefile = Storage.Connection.Instance.IndexPointsDirectory + "\\" + SelectedIndexPointSet.Name + "\\" + SelectedIndexPointSet.Name + ".shp";
-            string hydraulicParentDirectory = Storage.Connection.Instance.HydraulicsDirectory+"\\"+SelectedHydraulics.Name;
-            List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile,hydraulicParentDirectory );
-            for(int i =0; i < freqCurves.Count; i++)
+            string pointShapefileDirectory = Storage.Connection.Instance.IndexPointsDirectory + "\\" + SelectedIndexPointSet.Name + "\\";
+            string pointShapefile = GetShapefileFromDirectory(pointShapefileDirectory);
+            string hydraulicParentDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
+            List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, hydraulicParentDirectory);
+            if(freqCurves == null)
             {
-                AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i]+ "|" + SelectedHydraulics.Name);
+                MessageBox.Show("Failed to create frequency curves");
+            }
+            for (int i = 0; i < freqCurves.Count; i++)
+            {
+                AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i] + "|" + SelectedHydraulics.Name);
             }
         }
         private void AddFrequencyRelationship(UncertainPairedData upd, string name)
@@ -99,12 +107,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             graphicalVM.Options[0].UpdateFromUncertainPairedData(upd);
 
-            AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(name, editDate,"Retrieved from Hydraulics",DefaultData.PeriodOfRecord, false, true, DefaultData.LP3Mean,DefaultData.LP3StDev, DefaultData.LP3Skew,new List<double>(), graphicalVM,new CurveComponentVM(), id);
+            AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(name, editDate, "Retrieved from Hydraulics", DefaultData.PeriodOfRecord, false, true, DefaultData.LP3Mean, DefaultData.LP3StDev, DefaultData.LP3Skew, new List<double>(), graphicalVM, new CurveComponentVM(), id);
             IElementManager elementManager = PersistenceFactory.GetElementManager(element);
 
-            List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(); 
+            List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             bool newElementMatchesExisting = false;
-            foreach(AnalyticalFrequencyElement ele in existingElements)
+            foreach (AnalyticalFrequencyElement ele in existingElements)
             {
                 if (ele.Name.Equals(name))
                 {
@@ -119,8 +127,20 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 elementManager.SaveNew(element);
             }
         }
+        private string GetShapefileFromDirectory(string directoryPath)
+        {
+
+            string[] files = Directory.GetFiles(directoryPath, "*.shp");
+            if (files.Length > 1)
+            {
+                MessageBox.Show("There should only be one shapefile in a given index points directory");
+            }
+            return files[0];
 
 
-        #endregion
+
+            #endregion
+        }
     }
 }
+

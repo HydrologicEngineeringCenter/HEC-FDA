@@ -24,6 +24,10 @@ namespace HEC.FDA.Model.hydraulics
         {
             List<UncertainPairedData> ret = new List<UncertainPairedData>();
             PointFeatureLayer indexPoint = new PointFeatureLayer("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
+            if (!indexPoint.SourceFileExists)
+            {
+                return null;
+            }
             PointMs indexPoints = new PointMs(indexPoint.Points().Select(p => p.PointM()));
             for (int j = 0; j < indexPoints.Count; j++)
             {
