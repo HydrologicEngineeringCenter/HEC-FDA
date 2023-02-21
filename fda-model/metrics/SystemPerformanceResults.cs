@@ -292,7 +292,7 @@ namespace HEC.FDA.Model.metrics
                 }
             }
             string message = $"The requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned";
-            MVVMFramework.Model.Messaging.ErrorMessage errorMessage = new MVVMFramework.Model.Messaging.ErrorMessage(message, ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, .98);
             return dummyAssurance;

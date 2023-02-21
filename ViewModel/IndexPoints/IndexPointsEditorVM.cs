@@ -94,7 +94,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
                 ListOfRows.Clear();
                 DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
                 DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
+                
                 for (int i = 0; i < dtv.ColumnNames.Count(); i++)
                 {
                     if (dtv.ColumnNames[i] == SelectedUniqueName)
@@ -106,6 +106,8 @@ namespace HEC.FDA.ViewModel.IndexPoints
                         ListOfRows.AddRange(uniqueNames);
                     }
                 }
+                //we need to trigger the ListOfRows property rules to re-evaluate
+                NotifyPropertyChanged(nameof(ListOfRows));
             }
         }
         #endregion

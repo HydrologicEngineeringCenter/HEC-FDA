@@ -46,7 +46,7 @@ namespace HEC.FDA.Model.structures
         {
             AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(_standardDeviationOrMin), new Rule(() => _standardDeviationOrMin >= 0 && _max >= 0 && _centralTendency >= 0, "Value ratio parameter values must be non-negative", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_max), new Rule(() => _max > _standardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_max), new Rule(() => _max >= _standardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
         }
         public double Sample(double probability, bool computeIsDeterministic)
         {

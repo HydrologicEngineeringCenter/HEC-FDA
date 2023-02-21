@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         public GraphicalUncertainPairedData GraphicalUncertainPairedData
         { 
-            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), usingStagesNotFlows: true);}
+            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), !UseFlow);}
            
         }
         public int EquivalentRecordLength

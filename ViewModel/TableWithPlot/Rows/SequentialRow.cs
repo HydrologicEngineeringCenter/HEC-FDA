@@ -1,7 +1,7 @@
 ﻿using Statistics;
 using System.Collections.Generic;
-using HEC.MVVMFramework.ViewModel.Validation;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {

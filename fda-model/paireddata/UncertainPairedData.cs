@@ -12,7 +12,7 @@ using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.paireddata
 {
-    public class UncertainPairedData : Validation, IPairedDataProducer, ICanBeNull, IReportMessage
+    public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
         #region Fields 
         private double[] _xvals;
@@ -67,7 +67,6 @@ namespace HEC.FDA.Model.paireddata
         {
             get { return _yvals; }
         }
-        public event MessageReportedEventHandler MessageReport;
 
         #endregion
 
@@ -114,12 +113,12 @@ namespace HEC.FDA.Model.paireddata
             switch (_metadata.CurveType)
             {
                 case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => !(IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a < b), $"Y must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name} at the lower bound.", ErrorLevel.Minor));
                     break;
                 case CurveTypesEnum.MonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => !(IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found.", ErrorLevel.Minor));
                     break;
@@ -175,10 +174,7 @@ namespace HEC.FDA.Model.paireddata
             PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
             return pairedData;
         }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
+
         public bool Equals(UncertainPairedData incomingUncertainPairedData)
         {
             bool nullMatches = CurveMetaData.IsNull.Equals(incomingUncertainPairedData.CurveMetaData.IsNull);
