@@ -227,10 +227,10 @@ namespace HEC.FDA.Model.structures
         {
 
             Geospatial.Vectors.Point p = Converter.Convert(point);
-            VectorExtensions.Reproject(p, currentProjection, newProjection);
-            return Converter.ConvertPtM(p);
+            Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
+            return Converter.ConvertPtM(newp);
         }
-        public static Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
+        public static Projection GetTerrainProjection(string terrainFilename)
         {
             TerrainLayer terrain = new TerrainLayer("Terrain", terrainFilename);
             terrainFilename = terrain.get_RasterFilename(0);
