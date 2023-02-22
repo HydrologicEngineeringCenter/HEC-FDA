@@ -4,6 +4,9 @@ using HEC.FDA.Model.structures;
 using RasMapperLib;
 using static HEC.FDA.Model.structures.OccupancyType;
 using HEC.FDA.Model.compute;
+using Geospatial.GDALAssist;
+using System.IO;
+using System;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -31,6 +34,23 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string NotesCol = "";
         private const string DescriptionCol = "";
         private const string NumberOfStructuresCol = "";
+
+        public InventoryShould()
+        {
+            InitializeGDAL();
+        }
+        
+
+        private void InitializeGDAL()
+        {
+            string gdalPath = @"GDAL\";
+            if (!Directory.Exists(gdalPath))
+            {
+                Console.WriteLine("GDAL directory not found: " + gdalPath);
+                return;
+            }
+            GDALSetup.InitializeMultiplatform(gdalPath);
+        }
 
         private Inventory GetTestInventory(bool useTerrainFile)
         {
@@ -106,7 +126,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "NA", ot } };
             //this inventory has hundreds of structures that have an occtype name of "NA"
             Inventory inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false, pathToTerrainHDF);
-
             //if the struction in the inventory has an occtype name that isn't in the above dictionary then it will get removed 
             //from the inventory during the sample.
             int inventoryCount = inv.Structures.Count;
@@ -114,6 +133,34 @@ namespace HEC.FDA.ModelTest.unittests.structures
             int afterSampleCount = deterministicInventory.Inventory.Count;
 
             Assert.Equal(inventoryCount, afterSampleCount);
+        }
+        [Fact]
+        public void ReturnProjectionFromVector()
+        {
+            //Act
+            Projection proj = Inventory.GetVectorProjection(pathToNSIShapefile);
+            //Assert
+            Assert.NotNull(proj);
+        }
+        [Fact]
+        public void ReturnProjectionFromTerrain()
+        {
+            //Act
+            Projection proj = Inventory.GetTerrainProjection(pathToTerrainHDF);
+            //Assert
+            Assert.NotNull(proj);
+        }
+        [Fact]
+        public void ReprojectPoints()
+        {
+            //Arrange
+            Projection projPnt = Inventory.GetVectorProjection(pathToNSIShapefile);
+            Projection projTerr = Inventory.GetTerrainProjection(pathToTerrainHDF);
+            PointM pnt= new PointM(0,0);
+            //Act
+            PointM newPnt = Inventory.ReprojectPoint(pnt, projTerr, projPnt);
+            //Assert
+            Assert.NotEqual(pnt.X, newPnt.X);
         }
     }
 }
