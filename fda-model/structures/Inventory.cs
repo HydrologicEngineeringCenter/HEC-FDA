@@ -50,6 +50,18 @@ namespace HEC.FDA.Model.structures
             }
             return result;
         }
+        internal List<string> GetDamageCategories()
+        {
+            List<string> uniqueDamageCategories = new List<string>();
+            foreach( Structure structure in Structures)
+            {
+                if (!uniqueDamageCategories.Contains(structure.DamageCatagory))
+                {
+                    uniqueDamageCategories.Add(structure.DamageCatagory);
+                }
+            }
+            return uniqueDamageCategories;
+        }
 
         private List<Polygon> LoadImpactAreasFromSourceFiles(string impactAreaShapefile, Projection terrainPrj)
         {
@@ -328,6 +340,8 @@ namespace HEC.FDA.Model.structures
                     return defaultValue;
             }
         }
+
+
         #endregion
     }
 }
