@@ -17,70 +17,45 @@ namespace HEC.FDA.Model.structures
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
-        public List<Polygon> ImpactAreas { get; set; } = new List<Polygon>();
-        public Dictionary<string,OccupancyType> OccTypes { get; set; }
+        public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
-        public List<string> DamageCategories
-        {
-            get
-            {
-                List<string> damageCatagories = new List<string>();
-                foreach (Structure structure in Structures)
-                {
-                    if (damageCatagories.Contains(structure.DamageCatagory))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        damageCatagories.Add(structure.DamageCatagory);
-                    }
-                }
-                return damageCatagories;
-            }
-        }
-        public float[] GroundElevations
-        {
-            get
-            {
-                float[] result = new float[Structures.Count];
-                for (int i = 0; i < Structures.Count; i++)
-                {
-                    result[i] = (float)Structures[i].GroundElevation;
-                }
-                return result;
-            }
-        }
         #endregion
 
         #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             TerrainLayer terrainLayer = new TerrainLayer("ThisNameIsNotUsed", terrainPath);
-            Projection terrainPrj = GetTerrainProjection(terrainLayer);
-            LoadImpactAreasFromSourceFiles(impactAreaShapefilePath, terrainPrj);
-            LoadStructuresFromSourceFiles(pointShapefilePath,map,terrainLayer, updateGroundElevFromTerrain);
+            LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainLayer, updateGroundElevFromTerrain, impactAreaShapefilePath);
             AddRules();
         }
 
-        public Inventory( Dictionary<string, OccupancyType> occTypes, List<Polygon> impactAreas, List<Structure> structures, double priceIndex = 1)
+        public Inventory(Dictionary<string, OccupancyType> occTypes, List<Structure> structures, double priceIndex = 1)
         {
             OccTypes = occTypes;
             Structures = structures;
             PriceIndex = priceIndex;
-            ImpactAreas= impactAreas;
             AddRules();
         }
         #endregion
 
         #region Methods
-        private void LoadImpactAreasFromSourceFiles(string impactAreaShapefile, Projection terrainPrj)
+        public float[] GetGroundElevations()
+        {
+            float[] result = new float[Structures.Count];
+            for (int i = 0; i < Structures.Count; i++)
+            {
+                result[i] = (float)Structures[i].GroundElevation;
+            }
+            return result;
+        }
+
+        private List<Polygon> LoadImpactAreasFromSourceFiles(string impactAreaShapefile, Projection terrainPrj)
         {
             PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("ThisNameIsNotUsed", impactAreaShapefile);
             List<Polygon> polygons = impactAreaSet.Polygons().ToList();
-            ImpactAreas = new List<Polygon>();
+            List<Polygon> ImpactAreas = new List<Polygon>();
 
             //Projections
             Projection impactAreaPrj = GetVectorProjection(impactAreaShapefile);
@@ -90,7 +65,7 @@ namespace HEC.FDA.Model.structures
                 Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, terrainPrj);
                 ImpactAreas.Add(newPoly);
             }
-
+            return ImpactAreas;
         }
         private void AddRules()
         {
@@ -124,8 +99,12 @@ namespace HEC.FDA.Model.structures
             }
             return retval;
         }
-        private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain)
+        private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain, string ImpactAreaShapefilePath)
         {
+            Projection terrainProjection = GetTerrainProjection(terrainLayer);
+            Projection siProjection = GetVectorProjection(pointShapefilePath);
+            Projection iaProjection = GetVectorProjection(ImpactAreaShapefilePath);
+
             PointFeatureLayer _structureFeatureLayer = new PointFeatureLayer(pointShapefilePath);
             float[] groundelevs = Array.Empty<float>();
             if (updateGroundElevFromTerrain)
@@ -135,10 +114,15 @@ namespace HEC.FDA.Model.structures
 
             int defaultMissingValue = -999;
             PointMs pointMs = new PointMs(_structureFeatureLayer.Points().Select(p => p.PointM()));
+            PointMs reprojPointMs = new PointMs();
+            foreach (PointM pt in pointMs)
+            {
+                reprojPointMs.Add(ReprojectPoint(pt, terrainProjection, siProjection));
+            }
             for (int i = 0; i < _structureFeatureLayer.FeatureCount(); i++)
             {
                 //required parameters
-                PointM point = pointMs[i];
+                PointM point = reprojPointMs[i];
                 System.Data.DataRow row = _structureFeatureLayer.FeatureRow(i);
 
                 int fid = GetRowValueForColumn<int>(row, map.StructureIDCol, defaultMissingValue);
@@ -174,7 +158,9 @@ namespace HEC.FDA.Model.structures
                 int numStructures = GetRowValueForColumn<int>(row, map.NumberOfStructuresCol, 1);
                 int yearInService = GetRowValueForColumn<int>(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
-                int impactAreaID = GetImpactAreaFID(point);
+
+                List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, terrainProjection);
+                int impactAreaID = GetImpactAreaFID(point, impactAreas);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
@@ -212,18 +198,18 @@ namespace HEC.FDA.Model.structures
             return vectorLayer.GetProjection();
         }
         #endregion
-        public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
+        public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
         {
             List<Structure> filteredStructureList = new List<Structure>();
 
             foreach (Structure structure in Structures)
             {
-                if (ImpactAreas[impactAreaFID].Contains(structure.Point))
+                if (structure.ImpactAreaID == impactAreaFID)
                 {
                     filteredStructureList.Add(structure);
                 }
             }
-            return new Inventory(OccTypes,ImpactAreas, filteredStructureList);
+            return new Inventory(OccTypes, filteredStructureList);
         }
         /// <summary>
         /// This method filters structures and the water surface profiles by damage category
@@ -262,7 +248,7 @@ namespace HEC.FDA.Model.structures
             {
                 arrayedWSEsFiltered.Add(wses.ToArray());
             }
-            return (new Inventory(OccTypes,ImpactAreas, filteredStructureList,PriceIndex), arrayedWSEsFiltered);
+            return (new Inventory(OccTypes, filteredStructureList, PriceIndex), arrayedWSEsFiltered);
         }
         public PointMs GetPointMs()
         {
@@ -273,7 +259,7 @@ namespace HEC.FDA.Model.structures
             }
             return points;
         }
-        public int GetImpactAreaFID(PointM point)
+        public int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
         {
             for (int i = 0; i < ImpactAreas.Count; i++)
             {
