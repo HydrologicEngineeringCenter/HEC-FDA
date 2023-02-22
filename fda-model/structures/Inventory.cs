@@ -116,17 +116,17 @@ namespace HEC.FDA.Model.structures
             Projection terrainProjection = GetTerrainProjection(terrainLayer);
             Projection siProjection = GetVectorProjection(pointShapefilePath);
             Projection iaProjection = GetVectorProjection(ImpactAreaShapefilePath);
-
-            PointFeatureLayer _structureFeatureLayer = new PointFeatureLayer(pointShapefilePath);
+            List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, terrainProjection);
+            PointFeatureLayer _structureFeatureLayer = new PointFeatureLayer("ThisNameIsNotUsed",pointShapefilePath);
             float[] groundelevs = Array.Empty<float>();
+            int defaultMissingValue = -999;
+            PointMs pointMs = new PointMs(_structureFeatureLayer.Points().Select(p => p.PointM()));
+            PointMs reprojPointMs = new PointMs();
+
             if (updateGroundElevFromTerrain)
             {
                 groundelevs = GetGroundElevationFromTerrain(_structureFeatureLayer, terrainLayer);
             }
-
-            int defaultMissingValue = -999;
-            PointMs pointMs = new PointMs(_structureFeatureLayer.Points().Select(p => p.PointM()));
-            PointMs reprojPointMs = new PointMs();
             foreach (PointM pt in pointMs)
             {
                 reprojPointMs.Add(ReprojectPoint(pt, terrainProjection, siProjection));
@@ -136,7 +136,6 @@ namespace HEC.FDA.Model.structures
                 //required parameters
                 PointM point = reprojPointMs[i];
                 System.Data.DataRow row = _structureFeatureLayer.FeatureRow(i);
-
                 int fid = GetRowValueForColumn<int>(row, map.StructureIDCol, defaultMissingValue);
                 double val_struct = GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
                 string occtype = GetRowValueForColumn(row, map.OccTypeCol, "NA");
@@ -170,12 +169,11 @@ namespace HEC.FDA.Model.structures
                 int numStructures = GetRowValueForColumn<int>(row, map.NumberOfStructuresCol, 1);
                 int yearInService = GetRowValueForColumn<int>(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
-
-                List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, terrainProjection);
                 int impactAreaID = GetImpactAreaFID(point, impactAreas);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
+            Console.WriteLine("finished");
         }
         public static float[] GetGroundElevationFromTerrain(PointFeatureLayer _structureInventoryShapefile, TerrainLayer terrain)
         {
