@@ -115,10 +115,9 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
         private static List<Structure> residentialStructureList = new List<Structure>() { structure1, structure2 };
         private static List<Structure> commercialStructureList = new List<Structure>() { structure3, structure4 };
-        private static string dummyPath = "dummy";
         private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        private static Inventory residentialStructureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, residentialStructureList);
-        private static Inventory commercialStructureInventory = new Inventory(dummyPath, dummyPath, map, occupancyTypes, "header", false, dummyPath, commercialStructureList);
+        private static Inventory residentialStructureInventory = new Inventory( occupancyTypes, residentialStructureList);
+        private static Inventory commercialStructureInventory = new Inventory (occupancyTypes, commercialStructureList);
 
         #endregion
 
@@ -138,12 +137,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>(); 
             if (damageCategory == residentialDamAndOccType)
             {
-                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
+                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                 stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
             }
             else
             {
-                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, dummyPath, graphicalFrequency: stageFrequency, usingMockData: true);
+                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                 stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
             }
                 
