@@ -11,7 +11,7 @@ namespace HEC.FDA.Model.structures
         //TODO: How are we going to handle missing data?
         //For now, we won't allow missing data 
         public int Fid { get; }
-        public PointM Point { get; }
+        public PointM Point { get; set; }
         public double FirstFloorElevation { get; }
         public double GroundElevation { get; }
         public double InventoriedStructureValue { get; }
