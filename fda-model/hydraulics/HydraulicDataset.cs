@@ -104,9 +104,9 @@ namespace HEC.FDA.Model.hydraulics
             }
             for (int i = 0; i < waterData.Count - 1; i++)
             {
-                waterData[i] = CorrectDryStructureWSEs(waterData[i], inventory.GroundElevations, waterData[i + 1]);
+                waterData[i] = CorrectDryStructureWSEs(waterData[i], inventory.GetGroundElevations(), waterData[i + 1]);
             }
-            waterData[waterData.Count - 1] = CorrectDryStructureWSEs(waterData[waterData.Count - 1], inventory.GroundElevations);
+            waterData[waterData.Count - 1] = CorrectDryStructureWSEs(waterData[waterData.Count - 1], inventory.GetGroundElevations());
             return (profileProbabilities, waterData);
 
         }
