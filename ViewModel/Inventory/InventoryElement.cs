@@ -256,26 +256,22 @@ namespace HEC.FDA.ViewModel.Inventory
                     valueUncertainty = new ValueUncertainty(IDistributionEnum.Deterministic, ((Deterministic)ordinate).Value);
                     break;
                 case IDistributionEnum.Normal:
-                    double normalMean = ((Normal)ordinate).Mean;
                     double normalStDev = ((Normal)ordinate).StandardDeviation;
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, normalStDev, normalMean);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, normalStDev);
                     break;
                 case IDistributionEnum.LogNormal:
-                    double logNormalMean = ((LogNormal)ordinate).Mean;
                     double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.LogNormal, logNormalStDev);
                     break;
                 case IDistributionEnum.Triangular:
-                    double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 100 - triMin, 100 + triMax);
                     break;
                 case IDistributionEnum.Uniform:
                     double uniMin = ((Uniform)ordinate).Min;
                     double uniMax = ((Uniform)ordinate).Max;
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 100 - uniMin, 100 + uniMax);
                     break;
 
             }
