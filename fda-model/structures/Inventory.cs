@@ -12,7 +12,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory: Validation 
+    public class Inventory : Validation
     {
         #region Fields
         private string _structureInventoryShapefile;
@@ -137,7 +137,6 @@ namespace HEC.FDA.Model.structures
             }
             return null;
         }
-
         private T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
         {
             T retval = defaultValue;
@@ -158,11 +157,10 @@ namespace HEC.FDA.Model.structures
             }
             return retval;
         }
-
         private void LoadStructuresFromSourceFiles()
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", _structureInventoryShapefile);
-            
+
             PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("Impact_Area_Set", _impactAreaShapefile);
 
             float[] groundelevs = Array.Empty<float>();
@@ -179,8 +177,8 @@ namespace HEC.FDA.Model.structures
                 PointM point = pointMs[i];
                 System.Data.DataRow row = structureInventory.FeatureRow(i);
 
-                int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);               
-                double val_struct = GetRowValueForColumn<double>(row,_map.StructureValueCol, defaultMissingValue);
+                int fid = GetRowValueForColumn<int>(row, _map.StructureIDCol, defaultMissingValue);
+                double val_struct = GetRowValueForColumn<double>(row, _map.StructureValueCol, defaultMissingValue);
                 string occtype = GetRowValueForColumn(row, _map.OccTypeCol, "NA");
                 string st_damcat = "NA";
                 if (_occtypes.ContainsKey(occtype))
@@ -205,7 +203,7 @@ namespace HEC.FDA.Model.structures
                 }
                 //optional parameters
                 double val_cont = GetRowValueForColumn<double>(row, _map.ContentValueCol, 0);
-                double val_vehic = GetRowValueForColumn<double>(row,_map.VehicleValueCol, 0);
+                double val_vehic = GetRowValueForColumn<double>(row, _map.VehicleValueCol, 0);
                 double val_other = GetRowValueForColumn<double>(row, _map.OtherValueCol, 0);
                 string cbfips = GetRowValueForColumn(row, _map.CBFips, "NA");
                 double beginningDamage = GetRowValueForColumn<double>(row, _map.BeginningDamageDepthCol, 0);
@@ -213,11 +211,10 @@ namespace HEC.FDA.Model.structures
                 int yearInService = GetRowValueForColumn<int>(row, _map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point);
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont, 
+                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
         }
-       
         public static float[] GetGroundElevationFromTerrain(string pointShapefilePath, string TerrainPath)
         {
             PointFeatureLayer structureInventory = new PointFeatureLayer("Structure_Inventory", pointShapefilePath);
@@ -225,32 +222,28 @@ namespace HEC.FDA.Model.structures
             TerrainLayer terrain = new TerrainLayer("Terrain", TerrainPath);
             return terrain.ComputePointElevations(pointMs);
         }
-        private PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
+        #region Projection
+        public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
         {
 
             Geospatial.Vectors.Point p = Converter.Convert(point);
             VectorExtensions.Reproject(p, currentProjection, newProjection);
             return Converter.ConvertPtM(p);
         }
-        private Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
+        public static Projection GetTerrainProjection(string Pointsfilename, string terrainFilename)
         {
-            //Check extension of terrain file
-            string extension = System.IO.Path.GetExtension(terrainFilename);
-            // If HDF, create RASTerrainLayer, then get source files. Create a GDAL Raster from any source.
-            if (extension == "hdf")
-            {
-                TerrainLayer terrain = new TerrainLayer("Terrain", terrainFilename);
-                terrainFilename = terrain.get_RasterFilename(0);
-            }
+            TerrainLayer terrain = new TerrainLayer("Terrain", terrainFilename);
+            terrainFilename = terrain.get_RasterFilename(0);
             GDALRaster raster = new GDALRaster(terrainFilename);
             return raster.GetProjection();
         }
-        private Projection GetVectorProjection(string vectorPath)
+        public static Projection GetVectorProjection(string vectorPath)
         {
             VectorDataset vector = new VectorDataset(vectorPath);
             VectorLayer vectorLayer = vector.GetLayer(0);
             return vectorLayer.GetProjection();
         }
+        #endregion
         public Inventory GetInventoryTrimmmedToPolygon(int impactAreaFID)
         {
             PolygonFeatureLayer impactAreaSet = new PolygonFeatureLayer("ImpactAreas", _impactAreaShapefile);
@@ -326,21 +319,19 @@ namespace HEC.FDA.Model.structures
             }
             return -9999;
         }
-
         public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
         {
             List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
             foreach (Structure structure in Structures)
             {
-                if(_occtypes.ContainsKey(structure.OccTypeName))
+                if (_occtypes.ContainsKey(structure.OccTypeName))
                 {
                     OccupancyType occupancyType = _occtypes[structure.OccTypeName];
-                    inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));           
+                    inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));
                 }
             }
             return new DeterministicInventory(inventorySample, _priceIndex);
         }
-
         internal List<string> StructureDetails()
         {
             string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
