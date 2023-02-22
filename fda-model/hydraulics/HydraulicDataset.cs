@@ -14,12 +14,39 @@ namespace HEC.FDA.Model.hydraulics
 {
     public class HydraulicDataset
     {
+        #region Fields
         public const string HYDRAULIC_DATA_SET = "HydraulicDataSet";
         private const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
         private const string PROFILES = "Profiles";
-
+        #endregion
+        #region Properties
         public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
         public HydraulicDataSource DataSource { get; set; }
+        #endregion
+        #region Constructor
+        public HydraulicDataset(List<IHydraulicProfile> profiles, HydraulicDataSource dataSource)
+        {
+            profiles.Sort();
+            profiles.Reverse();
+            HydraulicProfiles = profiles;
+            DataSource = dataSource;
+        }
+        public HydraulicDataset(XElement xElement)
+        {
+            string hydroType = xElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
+            Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
+            DataSource = myHydroType;
+
+            IEnumerable<XElement> profiles = xElement.Elements(PROFILES);
+            IEnumerable<XElement> profileElems = profiles.Elements();
+
+            foreach (XElement elem in profileElems)
+            {
+                HydraulicProfiles.Add(new HydraulicProfile(elem));
+            }
+        }
+        #endregion
+        #region Methods
         public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
         {
             List<UncertainPairedData> ret = new List<UncertainPairedData>();
@@ -51,29 +78,6 @@ namespace HEC.FDA.Model.hydraulics
                 ret.Add(pd);
             }
             return ret;
-        }
-
-        public HydraulicDataset(List<IHydraulicProfile> profiles, HydraulicDataSource dataSource)
-        {
-            profiles.Sort();
-            profiles.Reverse();
-            HydraulicProfiles = profiles;
-            DataSource = dataSource;
-        }
-
-        public HydraulicDataset(XElement xElement)
-        {
-            string hydroType = xElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
-            Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
-            DataSource = myHydroType;
-
-            IEnumerable<XElement> profiles = xElement.Elements(PROFILES);
-            IEnumerable<XElement> profileElems = profiles.Elements();
-
-            foreach (XElement elem in profileElems)
-            {
-                HydraulicProfiles.Add(new HydraulicProfile(elem));
-            }
         }
         public XElement ToXML()
         {
@@ -145,5 +149,6 @@ namespace HEC.FDA.Model.hydraulics
             }
             return wsesToCorrect;
         }
+        #endregion
     }
 }
