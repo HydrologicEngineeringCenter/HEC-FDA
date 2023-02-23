@@ -97,7 +97,7 @@ namespace HEC.MVVMFramework.Base.Implementations
             StringBuilder errorsBuilder = new StringBuilder();
             foreach (IErrorMessage err in _Errors)
             {
-                errorsBuilder.AppendLine("Error Lever: " + err.ErrorLevel + " " + err.Message);
+                errorsBuilder.AppendLine(string.Format("Error Level: {0} Error: {1}", ErrorLevel, err.Message));
             }
             return errorsBuilder.ToString();
         }

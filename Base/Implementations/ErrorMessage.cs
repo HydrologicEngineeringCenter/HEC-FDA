@@ -24,7 +24,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public ErrorMessage(string message, ErrorLevel errorLevel)
         {
-            _message = DateTime.Now + " " + message;
+            _message = message;
             _errorLevel = errorLevel;
         }
         public override string ToString()
