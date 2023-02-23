@@ -6,20 +6,19 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.FDA.Model.metrics;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.alternatives
 {
-    public class Alternative : Validation, IReportMessage, IProgressReport
+    public class Alternative : ValidationErrorLogger, IProgressReport
     {
         #region Properties 
-        public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Constructor
         public Alternative()
         {
-            MessageHub.Register(this);
         }
         #endregion
 
@@ -261,11 +260,6 @@ namespace HEC.FDA.Model.alternatives
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }
             return interpolatedEADs;
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         public void ReportProgress(object sender, ProgressReportEventArgs e)

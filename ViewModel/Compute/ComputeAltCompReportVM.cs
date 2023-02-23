@@ -29,7 +29,6 @@ namespace HEC.FDA.ViewModel.Compute
             Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new Model.alternativeComparisonReport.AlternativeComparisonReport();
             altCompReport.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(altCompReport.GetHashCode());
-            MessageHub.Register(altCompReport);
 
             Task.Run(() =>
             {

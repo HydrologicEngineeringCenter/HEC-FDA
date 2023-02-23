@@ -4,10 +4,11 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
-    public class OccupancyType: Validation, IReportMessage
+    public class OccupancyType: ValidationErrorLogger
     {
         #region Fields
         //fundamental traits
@@ -40,9 +41,6 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Properties 
-        //TODO: VS tells me this is never used - but it is referenced below
-        public event MessageReportedEventHandler MessageReport;
-
         internal bool UseContentToStructureValueRatio
         {
             get
@@ -100,8 +98,6 @@ namespace HEC.FDA.Model.structures
             _otherValueError = new ValueUncertainty();
             _contentToStructureValueRatio = new ValueRatioWithUncertainty();
             _otherToStructureValueRatio = new ValueRatioWithUncertainty();
-            MessageHub.Register(this);
-
         }
         #endregion
         #region Methods
@@ -176,11 +172,6 @@ namespace HEC.FDA.Model.structures
         public static OccupancyTypeBuilder builder()
         {
             return new OccupancyTypeBuilder(new OccupancyType());
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
         #endregion
 

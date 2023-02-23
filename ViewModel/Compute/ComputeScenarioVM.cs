@@ -39,7 +39,6 @@ namespace HEC.FDA.ViewModel.Compute
                     ImpactAreaScenarioSimulation sim = ias.CreateSimulation();
                     if (sim != null)
                     {
-                        MessageHub.Register(sim);
                         sim.ProgressReport += Sim_ProgressReport;
                         sims.Add(sim);
 

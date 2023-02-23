@@ -10,7 +10,6 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Model.Messaging;
-using System.Text;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
@@ -65,7 +64,6 @@ namespace HEC.FDA.Model.compute
             _damage_category_stage_damage = new List<UncertainPairedData>();//defaults to empty
             _impactAreaID = impactAreaID;
             _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
-            MessageHub.Register(this);
         }
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
@@ -129,76 +127,111 @@ namespace HEC.FDA.Model.compute
         }
 
 
+        private void LogSimulationErrors()
+        {
+
+            //get the highest error level. This is so that we can log the intro message at that error level so that the filter will either
+            //show the intro message and an actual error message or it won't show either.
+            List<string> validationIntroMessages = new List<string>();
+            List<ValidationErrorLogger> validationObjects = new List<ValidationErrorLogger>();
+
+            validationObjects.Add(_frequency_discharge);
+            validationIntroMessages.Add(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_frequency_discharge_graphical);
+            validationIntroMessages.Add(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_unregulated_regulated);
+            validationIntroMessages.Add(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_discharge_stage);
+            validationIntroMessages.Add(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_frequency_stage);
+            validationIntroMessages.Add(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_channelstage_floodplainstage);
+            validationIntroMessages.Add(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            validationObjects.Add(_systemResponseFunction_stage_failureProbability);
+            validationIntroMessages.Add(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            foreach (UncertainPairedData relationship in _damage_category_stage_damage)
+            {
+                validationObjects.Add(relationship);
+                validationIntroMessages.Add(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
+            }
+
+
+            ValidationGroup validationGroup = new ValidationGroup(validationObjects, validationIntroMessages, $"The simulation for impact area {_impactAreaID} contains warnings:");
+
+            //    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:", errorLevel)));
+
+            //    _frequency_discharge?.LogErrors(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _frequency_discharge_graphical?.LogErrors(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _unregulated_regulated?.LogErrors(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _discharge_stage?.LogErrors(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _frequency_stage?.LogErrors(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _channelstage_floodplainstage?.LogErrors(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+            //    _systemResponseFunction_stage_failureProbability?.LogErrors(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
+
+            //    foreach (UncertainPairedData relationship in _damage_category_stage_damage)
+            //    {
+            //        relationship?.LogErrors(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
+            //    }
+            //}
+        }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider)
         {
-
+            bool canCompute = true;
             if (HasErrors)
             {
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_impactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
-                    return false;
+                    canCompute = false;
                 }
                 else
                 {
-                    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:" + Environment.NewLine, ErrorLevel.Major)));
-                }
-
-                //TODO: Why are we going through each summary relationship again to figure out the errors?
-                //We've already done this on construction 
-                //We should take the messages created upon construction 
-
-                _frequency_discharge?.LogErrors(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _frequency_discharge_graphical?.LogErrors(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _unregulated_regulated?.LogErrors(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _discharge_stage?.LogErrors(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _frequency_stage?.LogErrors(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _channelstage_floodplainstage?.LogErrors(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-                _systemResponseFunction_stage_failureProbability?.LogErrors(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-
-                foreach (UncertainPairedData relationship in _damage_category_stage_damage)
-                {
-                    relationship?.LogErrors(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
-                }
-
-            }
-            if (randomProvider is MedianRandomProvider)
-            {
-                if (convergenceCriteria.MaxIterations != 1)
-                {
-                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
-
-                }
-            }
-            else
-            {
-                if (convergenceCriteria.MinIterations < 100)
-                {
-                    string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
-                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage)); 
-                    return false;
-
+                    LogSimulationErrors();
+                    if (randomProvider is MedianRandomProvider && convergenceCriteria.MaxIterations != 1)
+                    {
+                        string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
+                        ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                        ReportMessage(this, new MessageEventArgs(errorMessage));
+                        canCompute = false;
+                    }
+                    else if(convergenceCriteria.MinIterations < 100)
+                    {
+                        string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
+                        ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                        ReportMessage(this, new MessageEventArgs(errorMessage));
+                        canCompute = false;
+                    }
+                    //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
+                    //Nor is there relevant messaging 
+                    //Cody added a simple error message below, but I think we probably want the sim overlap method to return a string
+                    // and not a bool so that it can pass out a better message. Maybe we should add my FDA Validation Result object into the model
+                    //so that we can return that object.
+                    bool curvesOverlap = SimulationCurvesHaveOverlap();
+                    if (!curvesOverlap)
+                    {
+                        ErrorMessage errorMessage = new ErrorMessage("The simulation contains curves that do not overlap.", ErrorLevel.Fatal);
+                        ReportMessage(this, new MessageEventArgs(errorMessage));
+                        canCompute = false;
+                    }
+                    //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
+                    //nor is there relevant messaging
+                    convergenceCriteria.Validate();
+                    if (convergenceCriteria.HasErrors)
+                    {
+                        canCompute = false;
+                    }
                 }
             }
-            //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
-            //Nor is there relevant messaging 
-            bool curvesOverlap = SimulationCurvesHaveOverlap();
-            if (!curvesOverlap)
-            {
-                return false;
-            }
-            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
-            //nor is there relevant messaging
-            convergenceCriteria.Validate();
-            if (convergenceCriteria.HasErrors)
-            {
-                return false;
-            }
-            return true;
+            return canCompute;
+            
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency, bool computeIsDeterministic)

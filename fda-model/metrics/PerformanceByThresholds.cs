@@ -2,11 +2,11 @@
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class PerformanceByThresholds : Validation, IReportMessage
+    public class PerformanceByThresholds : ValidationErrorLogger
     {
         #region Fields
         private List<Threshold> _Thresholds;
@@ -32,7 +32,6 @@ namespace HEC.FDA.Model.metrics
                 _Thresholds = value;
             }
         }
-        public event MessageReportedEventHandler MessageReport;
 
         #endregion
 
@@ -41,8 +40,6 @@ namespace HEC.FDA.Model.metrics
         public PerformanceByThresholds()
         {
             _Thresholds = new List<Threshold>();
-            MessageHub.Register(this);
-
         }
         public PerformanceByThresholds(bool isNull)
         {
@@ -50,13 +47,10 @@ namespace HEC.FDA.Model.metrics
             Threshold dummyThreshold = new Threshold();
             _Thresholds.Add(dummyThreshold);
             _IsNull = isNull;
-            MessageHub.Register(this);
-
         }
         private PerformanceByThresholds(List<Threshold> thresholds)
         {
             _Thresholds = thresholds;
-            MessageHub.Register(this);
         }
         #endregion
         #region Methods 
@@ -97,7 +91,6 @@ namespace HEC.FDA.Model.metrics
             ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyThreshold;
-
         }
         public XElement WriteToXML()
         {
@@ -120,10 +113,6 @@ namespace HEC.FDA.Model.metrics
                 thresholdList.Add(threshold);
             }
             return new PerformanceByThresholds(thresholdList);
-        }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         internal void ForceDeQueue()

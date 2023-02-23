@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ConsequenceDistributionResults : Validation, IReportMessage
+    public class ConsequenceDistributionResults : ValidationErrorLogger
     {
         #region Fields
         private int _alternativeID;
@@ -32,7 +32,6 @@ namespace HEC.FDA.Model.metrics
             }
         }
         //this needs to be an error report
-        public event MessageReportedEventHandler MessageReport;
         public bool IsNull
         {
             get
@@ -55,20 +54,17 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistributionResult dummyConsequenceDistributionResult = new ConsequenceDistributionResult();
             _consequenceResultList.Add(dummyConsequenceDistributionResult);
             _isNull = true;
-            MessageHub.Register(this);
         }
         internal ConsequenceDistributionResults(bool isNull)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = isNull;
-            MessageHub.Register(this);
         }
         internal ConsequenceDistributionResults(int alternativeID)
         {
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _alternativeID = alternativeID;
             _isNull = false;
-            MessageHub.Register(this);
         }
         //public for testing
         public ConsequenceDistributionResults(ConvergenceCriteria convergenceCriteria)
@@ -76,14 +72,11 @@ namespace HEC.FDA.Model.metrics
             _consequenceResultList = new List<ConsequenceDistributionResult>();
             _isNull = false;
             _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
         }
         internal ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
         {
             _consequenceResultList = damageResults;
             _isNull = false;
-            MessageHub.Register(this);
-
         }
 
 
@@ -314,10 +307,6 @@ namespace HEC.FDA.Model.metrics
                 }
             }
             return true;
-        }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)

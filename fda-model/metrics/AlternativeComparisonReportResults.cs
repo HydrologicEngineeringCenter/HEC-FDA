@@ -2,11 +2,12 @@
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class AlternativeComparisonReportResults : Validation, IReportMessage
+    public class AlternativeComparisonReportResults : ValidationErrorLogger
     {   //TODO: save a year 
         #region Fields
         private List<ConsequenceDistributionResults> _aaeqReducedResultsList;
@@ -19,7 +20,6 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Properties 
-        public event MessageReportedEventHandler MessageReport;
         internal bool IsNull
         {
             get
@@ -50,7 +50,6 @@ namespace HEC.FDA.Model.metrics
             _futureYearEADReducedResultsList = new List<ConsequenceDistributionResults>();
             ConsequenceDistributionResults dummyFutureYearResults = new ConsequenceDistributionResults();
             _futureYearEADReducedResultsList.Add(dummyFutureYearResults);
-            MessageHub.Register(this);
         }
         internal AlternativeComparisonReportResults(List<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<ConsequenceDistributionResults> aaeqResults, List<ConsequenceDistributionResults> baseYearEADResults, List<ConsequenceDistributionResults> futureYearEADResults)
         {
@@ -59,7 +58,6 @@ namespace HEC.FDA.Model.metrics
             _aaeqReducedResultsList = aaeqResults;
             _baseYearEADReducedResultsList = baseYearEADResults;
             _futureYearEADReducedResultsList = futureYearEADResults;
-            MessageHub.Register(this);
         }
         #endregion
 
@@ -324,10 +322,6 @@ namespace HEC.FDA.Model.metrics
             AlternativeResults dummyAlternativeResults = new AlternativeResults();
             ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An artibtrary object is being returned.")));
             return dummyAlternativeResults;
-        }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         #endregion
