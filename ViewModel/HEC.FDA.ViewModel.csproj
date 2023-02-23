@@ -18,11 +18,12 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\Framework\Base\Base.csproj" />
+		<ProjectReference Include="..\Framework\ViewModel\ViewModel.csproj" />
 		<ProjectReference Include="..\Importer\Importer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="30.0.0" />
-		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.14-beta" />
 		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />

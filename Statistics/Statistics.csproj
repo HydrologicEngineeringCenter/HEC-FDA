@@ -16,9 +16,12 @@
 	</PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="HEC.MVVMFramework.Base" Version="1.0.14-beta" />
-	<PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.14-beta" />
 	<PackageReference Include="USACE.HEC.FDA.Utilities" Version="2.0.0-alpha-2022-7-25-2237" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Base\Base.csproj" />
+    <ProjectReference Include="..\Framework\Model\Model.csproj" />
   </ItemGroup>
 
 </Project>

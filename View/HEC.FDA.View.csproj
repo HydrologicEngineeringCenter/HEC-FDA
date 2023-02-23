@@ -89,6 +89,8 @@
 	
 	
   <ItemGroup>
+    <ProjectReference Include="..\Framework\Base\Base.csproj" />
+    <ProjectReference Include="..\Framework\View\View.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
     <ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
@@ -200,7 +202,6 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.0" />
-    <PackageReference Include="HEC.MVVMFramework.View" Version="1.0.14-beta" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
     <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />

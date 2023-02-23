@@ -12,6 +12,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model-test\HEC.FDA.ModelTest.csproj" />
+		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\Framework\Base\Base.csproj" />
 	</ItemGroup>
 
 </Project>

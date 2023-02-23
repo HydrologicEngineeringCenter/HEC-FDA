@@ -6,12 +6,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.14-beta" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\Framework\Base\Base.csproj" />
+		<ProjectReference Include="..\Framework\Model\Model.csproj" />
 		<ProjectReference Include="..\Statistics\Statistics.csproj" />
 	</ItemGroup>
 
