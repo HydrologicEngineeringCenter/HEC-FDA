@@ -166,7 +166,7 @@ namespace HEC.FDA.ViewModel.Inventory
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
             double priceIndex = studyProperties.UpdatedPriceIndex;
             Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
-                SelectionMappings, occtypeMappings, impactAreaElement.UniqueNameColumnHeader,SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
+                SelectionMappings, occtypeMappings, SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
             return inv;
         }
 
