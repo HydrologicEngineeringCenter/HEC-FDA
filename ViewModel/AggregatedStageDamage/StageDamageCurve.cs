@@ -1,11 +1,12 @@
 ﻿using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.TableWithPlot;
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
-    public class StageDamageCurve
+    public class StageDamageCurve : BaseViewModel
     {
         public static String STAGE_DAMAGE_CURVE_TAG = "StageDamageCurve";
         private const String SELECTED_IMPACT_AREA_TAG = "SelectedImpactArea";
@@ -42,8 +43,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             CurveComponentVM curveComponentVM = CurveComponentVM.CreateCurveComponentVM(curveElement);
 
-            //I don't think the impact area row name matters here
-            ImpArea = new ImpactAreaRowItem(selectedImpArea, "impact area row");
+            //get the impact area name from the id
+            string impAreaName = GetImpactAreaNameFromID(selectedImpArea);
+            ImpArea = new ImpactAreaRowItem(selectedImpArea, impAreaName);
             DamCat = selectedDamCat;
             ComputeComponent = curveComponentVM;
 
@@ -57,6 +59,26 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 ConstructionType = StageDamageConstructionType.COMPUTED;
             }
+        }
+
+        //todo: does this method exist somewhere else? Maybe this should be a static somewhere. I am guessing
+        //we do this in multiple places.
+        private string GetImpactAreaNameFromID(int id)
+        {
+            string name = null;
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count > 0)
+            {
+                foreach(ImpactAreaRowItem row in impactAreaElements[0].ImpactAreaRows)
+                {
+                    if(row.ID == id)
+                    {
+                        name = row.Name;
+                        break;
+                    }
+                }
+            }
+            return name;
         }
 
         public XElement WriteToXML()
