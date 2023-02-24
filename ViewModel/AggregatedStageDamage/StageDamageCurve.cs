@@ -65,16 +65,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         //we do this in multiple places.
         private string GetImpactAreaNameFromID(int id)
         {
-            string name = null;
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if (impactAreaElements.Count > 0)
+            string name = "";
+            if (StudyCache != null)
             {
-                foreach(ImpactAreaRowItem row in impactAreaElements[0].ImpactAreaRows)
+                List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+                if (impactAreaElements.Count > 0)
                 {
-                    if(row.ID == id)
+                    foreach (ImpactAreaRowItem row in impactAreaElements[0].ImpactAreaRows)
                     {
-                        name = row.Name;
-                        break;
+                        if (row.ID == id)
+                        {
+                            name = row.Name;
+                            break;
+                        }
                     }
                 }
             }
