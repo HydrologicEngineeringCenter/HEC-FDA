@@ -4,11 +4,11 @@ using HEC.MVVMFramework.Base.Implementations;
 
 namespace BaseTest.MessageHubTesting
 {
-    //This comment is made to test submodules. I'm committing from FDA, rather than directly from the Framework Repository. 
-    public class MessageHubTester
+    [Trait("RunsOn", "Remote")]
+    public class MessageHubShould
     {
         [Fact]
-        public void Test1()
+        public void RelayMessages()
         {
             int iterations = 10;
 

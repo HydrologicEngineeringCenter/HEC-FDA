@@ -9,7 +9,7 @@ namespace BaseTest.MessageHubTesting
 {
     internal class InstanceMessageReciever : IRecieveInstanceMessages
     {
-        private List<int> _instanceHash;
+        private List<int> _instanceHash = new List<int>();
         private List<string> _messagesRecieved = new List<string>();
 
         public List<string> MessagesRecieved

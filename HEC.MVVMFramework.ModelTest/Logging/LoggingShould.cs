@@ -6,7 +6,8 @@ using Xunit;
 
 namespace ModelTest.Logging
 {
-    public class LoggingTester
+    [Trait("RunsOn", "Remote")]
+    public class LoggingShould
     {
         [Fact]
         public void TestLoggingMessage()
