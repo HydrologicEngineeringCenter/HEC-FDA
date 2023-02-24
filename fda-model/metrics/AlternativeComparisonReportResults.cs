@@ -126,7 +126,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double MeanAAEQDamageReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanAAEQDamageReduced(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID).MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
@@ -141,7 +141,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double MeanBaseYearEADReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
@@ -156,35 +156,35 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double MeanFutureYearEADReduced(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanFutureYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
 
-        public double MeanWithoutProjectBaseYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithoutProjectBaseYearEAD(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return _withoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
         }
-        public double MeanWithoutProjectFutureYearEAD(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithoutProjectFutureYearEAD(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return _withoutProjectAlternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
         }
-        public double MeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
             return alternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
         }
-        public double MeanWithProjectFutureYearEAD(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithProjectFutureYearEAD(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
             return alternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
         }
-        public double MeanWithProjectAAEQDamage(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithProjectAAEQDamage(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
             return alternativeResults.MeanAAEQDamage(impactAreaID, damageCategory, assetCategory);
         }
-        public double MeanWithoutProjectAAEQDamage(int impactArea = -999, string damageCategory = null, string assetCategory = null)
+        public double MeanWithoutProjectAAEQDamage(int impactArea = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return _withoutProjectAlternativeResults.MeanAAEQDamage(impactArea, damageCategory, assetCategory);
         }
@@ -201,7 +201,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double AAEQDamageReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double AAEQDamageReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
@@ -217,7 +217,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
@@ -233,7 +233,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...
         /// <param name="assetCategory"></param> either structure, content, etc...
         /// <returns></returns>
-        public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
@@ -248,7 +248,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults aaeqResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
             return aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
@@ -264,7 +264,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
             return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
@@ -280,7 +280,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public IHistogram GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
             return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);

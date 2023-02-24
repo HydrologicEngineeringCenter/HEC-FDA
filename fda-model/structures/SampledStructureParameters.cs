@@ -25,7 +25,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructor 
-        public SampledStructureParameters(string occupancyTypeName, string occupancyTypeDamageCategory, IPairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, IPairedData contentPercentDamagePairedData = null, double sampledContentValue = -999, IPairedData vehiclePercentDamagePairedData = null, double sampledVehicleValue = -999, IPairedData otherPercentDamagePairedData = null, double sampledOtherValue = -999)
+        public SampledStructureParameters(string occupancyTypeName, string occupancyTypeDamageCategory, IPairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, IPairedData contentPercentDamagePairedData = null, double sampledContentValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, IPairedData vehiclePercentDamagePairedData = null, double sampledVehicleValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, IPairedData otherPercentDamagePairedData = null, double sampledOtherValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             OccupancyTypeName = occupancyTypeName;
             OccupancyTypeDamageCategory = occupancyTypeDamageCategory;
