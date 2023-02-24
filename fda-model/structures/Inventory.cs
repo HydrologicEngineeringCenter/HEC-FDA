@@ -171,7 +171,7 @@ namespace HEC.FDA.Model.structures
                 groundelevs = GetGroundElevationFromTerrain(_structureInventoryShapefile, _terrainPath);
             }
 
-            int defaultMissingValue = -999;
+            int defaultMissingValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
             PointMs pointMs = new PointMs(structureInventory.Points().Select(p => p.PointM()));
             for (int i = 0; i < structureInventory.FeatureCount(); i++)
             {
