@@ -567,8 +567,14 @@ namespace Statistics.Histograms
                 
             }
         }
-        
-        public static IHistogram AddHistograms(List<IHistogram> histograms)//, Func<double, double, double> addOrSubtract)
+        /// <summary>
+        /// If using this method to subtract histograms, there should only be two, and the bottom histogram will get subtracted from the top. 
+        /// This method can be used to aggregate many histograms 
+        /// </summary>
+        /// <param name="histograms"></param> List of histograms - threadsafe or regular 
+        /// <param name="addOrSubtract"></param> Either be Histogram.Sum or Histogram.Subtract
+        /// <returns></returns>
+        public static IHistogram CombineHistograms(List<IHistogram> histograms, Func<double, double, double> addOrSubtract)
         {
             double probabilitySteps = 5000;
             IHistogram aggregatedHistogram;
@@ -581,44 +587,33 @@ namespace Statistics.Histograms
                 }
                 else
                 {
+                    //set up the new histogram 
                     ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
                     double min = 0;
                     double max = 0;
                     double sampleSize = 0;
                     int binQuantity = 0;
-                    //double binWidth = 0;
                     foreach (IHistogram histogramToAdd in histograms)
                     {
-                        min += histogramToAdd.Min;
-                        //min = addOrSubtract(min, histogramToAdd.Min); 
-                        max += histogramToAdd.Max;
-                        //max = addOrSubtract(max, histogramToAdd.Max);
+                        min = addOrSubtract(min, histogramToAdd.Min); 
+                        max = addOrSubtract(max, histogramToAdd.Max);
                         sampleSize += histogramToAdd.SampleSize;
                         binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
-                        //binWidth += histogramToAdd.BinWidth;
                     }
                     int sturgesRuleBinCount = (int)Math.Ceiling(1 + 3.322 * Math.Log10(sampleSize));
                     double range = max - min;
                     double binWidth = range / sturgesRuleBinCount;
-                    //binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                     aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+
                     //walk across the probability domain of each histogram at equal probability intervals 
                     for (int i = 0; i < probabilitySteps; i++)
                     {
                         double probabilityStep = (i + 0.5) / probabilitySteps;
-                        double summedValue = 0;
-                        Int64 summedBinCount = 0;
 
-                        foreach (IHistogram histogramToSample in histograms)
-                        {
-                            histogramToSample.ForceDeQueue();
-                            double sampledValue = histogramToSample.InverseCDF(probabilityStep); //what is the value of each histogram at the given probability step
-                            summedValue += sampledValue; //sum those values 
-                            summedBinCount += histogramToSample.FindBinCount(sampledValue, false); //sum their frequencies 
-                        }
+                        (double combinedValue, Int64 summedBinCount) = CombineHistogramBin(histograms, probabilityStep, addOrSubtract);
                         for (int j = 0; j < summedBinCount; j++)
                         {//this is a coarse approximation, there is probably a more granular way of doing this 
-                            aggregatedHistogram.AddObservationToHistogram(summedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
+                            aggregatedHistogram.AddObservationToHistogram(combinedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
                         }
                     }
                 }
@@ -628,6 +623,28 @@ namespace Statistics.Histograms
                 aggregatedHistogram = new Histogram(0,1);
             }
             return aggregatedHistogram;
+        }
+
+        private static (double combinedValue, Int64 summedBinCount) CombineHistogramBin(List<IHistogram> histograms, double probabilityStep, Func<double, double, double> addOrSubtract)
+        {
+            List<double> valuesToCombine = new List<double>();
+            List<Int64> summedBinValues = new List<Int64>();
+
+            foreach (IHistogram histogramToSample in histograms)
+            {
+                histogramToSample.ForceDeQueue();
+                double sampledValue = histogramToSample.InverseCDF(probabilityStep);
+                valuesToCombine.Add(sampledValue);
+                summedBinValues.Add(histogramToSample.FindBinCount(sampledValue, false)); //sum their frequencies 
+            }
+            double combinedValue = valuesToCombine[0];
+            Int64 summedBinCount = summedBinValues[0];
+            for (int i = 1; i < valuesToCombine.Count; i++)
+            {
+                combinedValue = addOrSubtract(combinedValue, valuesToCombine[i]);
+                summedBinCount += summedBinValues[i];
+            }
+            return (combinedValue, summedBinCount);
         }
 
         public static double Sum(double x1, double x2)

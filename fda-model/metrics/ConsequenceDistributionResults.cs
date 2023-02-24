@@ -396,7 +396,7 @@ namespace HEC.FDA.Model.metrics
             }
             else
             {
-                aggregateHistogram = Histogram.AddHistograms(histograms);
+                aggregateHistogram = Histogram.CombineHistograms(histograms, Histogram.Sum);
             }
             return aggregateHistogram;
 

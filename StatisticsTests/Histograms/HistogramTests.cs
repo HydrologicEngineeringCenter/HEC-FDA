@@ -237,7 +237,7 @@ namespace StatisticsTests.Histograms
                     histograms.Add(histogram1);
                     histograms.Add(histogram2);
                     histograms.Add(histogram3);
-                    IHistogram histogramAddedUp = Histogram.AddHistograms(histograms);
+                    IHistogram histogramAddedUp = Histogram.CombineHistograms(histograms, Histogram.Sum);
 
                     double[] actual = new double[probabilities.Length];
                     for (int i = 0; i < probabilities.Length; i++)
