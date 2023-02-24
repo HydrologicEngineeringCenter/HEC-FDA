@@ -29,7 +29,12 @@ jobs:
       run:  |
         dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
-
+      
+    - name: Initialize Submodules
+      run: | 
+        git submodule init
+        git submodule update
+        
     - name: Install dependencies
       run: dotnet restore -v quiet
         
