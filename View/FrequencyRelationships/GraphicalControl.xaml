@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
-             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=View"
+             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
