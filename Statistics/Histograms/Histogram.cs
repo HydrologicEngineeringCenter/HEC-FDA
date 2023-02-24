@@ -12,7 +12,6 @@ namespace Statistics.Histograms
     public class Histogram: IHistogram, IReportMessage
     {
         #region Fields
-        private bool _HistogramIsZeroValued = false;
         private Int64[] _BinCounts = new Int64[] { };
         private double _SampleMean = 10;
         private double _SampleVariance;
@@ -568,7 +567,8 @@ namespace Statistics.Histograms
                 
             }
         }
-        public static IHistogram AddHistograms(List<IHistogram> histograms)
+        
+        public static IHistogram AddHistograms(List<IHistogram> histograms)//, Func<double, double, double> addOrSubtract)
         {
             double probabilitySteps = 5000;
             IHistogram aggregatedHistogram;
@@ -584,16 +584,23 @@ namespace Statistics.Histograms
                     ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
                     double min = 0;
                     double max = 0;
+                    double sampleSize = 0;
                     int binQuantity = 0;
-                    double binWidth = 0;
+                    //double binWidth = 0;
                     foreach (IHistogram histogramToAdd in histograms)
                     {
                         min += histogramToAdd.Min;
+                        //min = addOrSubtract(min, histogramToAdd.Min); 
                         max += histogramToAdd.Max;
+                        //max = addOrSubtract(max, histogramToAdd.Max);
+                        sampleSize += histogramToAdd.SampleSize;
                         binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
-                        binWidth += histogramToAdd.BinWidth;
+                        //binWidth += histogramToAdd.BinWidth;
                     }
-                    binWidth = binWidth / histograms.Count; //use the average of the binWidths 
+                    int sturgesRuleBinCount = (int)Math.Ceiling(1 + 3.322 * Math.Log10(sampleSize));
+                    double range = max - min;
+                    double binWidth = range / sturgesRuleBinCount;
+                    //binWidth = binWidth / histograms.Count; //use the average of the binWidths 
                     aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
                     //walk across the probability domain of each histogram at equal probability intervals 
                     for (int i = 0; i < probabilitySteps; i++)
@@ -621,6 +628,15 @@ namespace Statistics.Histograms
                 aggregatedHistogram = new Histogram(0,1);
             }
             return aggregatedHistogram;
+        }
+
+        public static double Sum(double x1, double x2)
+        {
+            return x1 + x2;
+        }
+        public static double Subtract(double x1, double x2)
+        {
+            return x1 - x2;
         }
         public XElement ToXML()
         {
