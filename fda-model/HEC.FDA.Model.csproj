@@ -18,7 +18,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="30.0.0" />
-		<PackageReference Include="HEC.MVVMFramework.Model" Version="1.0.14-beta" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,6 +29,8 @@
 
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Framework\Base\Base.csproj" />
+		<ProjectReference Include="..\..\Framework\Model\Model.csproj" />
 		<ProjectReference Include="..\Statistics\Statistics.csproj" />
 	</ItemGroup>
 

@@ -5,10 +5,11 @@ using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Collections.Generic;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
-    public class OccupancyType: ValidationErrorLogger
+    public class OccupancyType: ValidationErrorLogger, IContainValidationGroups
     {
         #region Fields
         //fundamental traits
@@ -80,6 +81,8 @@ namespace HEC.FDA.Model.structures
             get { return _OccupancyTypeName; }
         }
 
+        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
+
         #endregion
         #region Constructor
         /// <summary>
@@ -98,6 +101,25 @@ namespace HEC.FDA.Model.structures
             _otherValueError = new ValueUncertainty();
             _contentToStructureValueRatio = new ValueRatioWithUncertainty();
             _otherToStructureValueRatio = new ValueRatioWithUncertainty();
+
+
+            List<ValidationErrorLogger> validationObjects = new List<ValidationErrorLogger>() 
+            { 
+                _structureValueError,
+                _contentValueError,
+                _vehicleValueError,
+                _otherValueError
+            };
+            List<string> validationIntroMsgs = new List<string>() 
+            { 
+                "The structure value uncertainty has the following errors:",
+                "The structure value uncertainty has the following errors:",
+                "The structure value uncertainty has the following errors:",
+                "The structure value uncertainty has the following errors:",
+            };
+            ValidationGroup vg = new ValidationGroup(validationObjects, validationIntroMsgs, "This occtype has the following errors:");
+            ValidationGroups.Add(vg);
+
         }
         #endregion
         #region Methods

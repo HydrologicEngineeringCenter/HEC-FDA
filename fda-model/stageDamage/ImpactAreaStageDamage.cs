@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace HEC.FDA.Model.stageDamage
 {
-    public class ImpactAreaStageDamage : ValidationErrorLogger
+    public class ImpactAreaStageDamage : ValidationErrorLogger, IContainValidationGroups
     {
         #region Fields 
         private const double MIN_PROBABILITY = 0.0001;
@@ -51,6 +51,8 @@ namespace HEC.FDA.Model.stageDamage
             get { return _ImpactAreaID; }
         }
 
+        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
+
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
@@ -77,6 +79,10 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
             AddRules();
+
+            ValidationGroup vg = new ValidationGroup("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
+            vg.ChildGroups.AddRange(_inventory.ValidationGroups);
+            ValidationGroups.Add(vg);
         }
         #endregion
 

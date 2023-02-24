@@ -8,11 +8,12 @@ using System.Linq;
 using RasMapperLib.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory: Validation 
+    public class Inventory: Validation, IContainValidationGroups
     {
         #region Fields
         private string _structureInventoryShapefile;
@@ -73,6 +74,8 @@ namespace HEC.FDA.Model.structures
                 return result;
             }
         }
+
+        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         #endregion
 
         #region Constructors
@@ -91,6 +94,7 @@ namespace HEC.FDA.Model.structures
             //If we have a bad shapefile name, then we get a null ref exception in the below method
             LoadStructuresFromSourceFiles();
             AddRules();
+            AddValidationGroup();
         }
         public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
         string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
@@ -105,11 +109,20 @@ namespace HEC.FDA.Model.structures
             Structures = structures;
             _priceIndex = priceIndex;
             AddRules();
-
+            AddValidationGroup();
         }
         #endregion
 
         #region Methods
+        private void AddValidationGroup()
+        {
+            ValidationGroup vg = new ValidationGroup("This inventory has the following errors:");
+            foreach (OccupancyType ot in _occtypes.Values)
+            {
+                vg.ChildGroups.AddRange(ot.ValidationGroups);
+            }
+            ValidationGroups.Add(vg);
+        }
         private void AddRules()
         {
             foreach (Structure structure in Structures)

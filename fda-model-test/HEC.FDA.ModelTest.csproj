@@ -26,4 +26,13 @@
 		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="Base">
+	    <HintPath>..\..\Framework\Output\Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Model">
+	    <HintPath>..\..\Framework\Output\Model.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>
