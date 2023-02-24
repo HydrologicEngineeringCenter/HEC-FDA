@@ -15,7 +15,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public Message(string message)
         {
-            _message = DateTime.Now + " " + message;
+            _message = message;
         }
         public override string ToString()
         {
