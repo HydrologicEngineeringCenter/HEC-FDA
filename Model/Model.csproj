@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<OutputPath>..\Output\</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>HEC.MVVMFramework.Model</PackageId>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<Description>A library providing functionality for MVVM Models</Description>
+		<Authors>Will Lehman</Authors>
+		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/Framework</RepositoryUrl>
+		<DebugType>embedded</DebugType>
+		<RootNamespace>HEC.MVVMFramework.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Base\Base.csproj" />
+	</ItemGroup>
+
+</Project>
