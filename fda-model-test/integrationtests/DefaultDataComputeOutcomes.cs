@@ -220,6 +220,10 @@ namespace HEC.FDA.ModelTest.integrationtests
             double commercialMeanEADSourcesRelativeDifference = Math.Abs(actualCommercialMeanEAD - actualCommercialMeanEADFromAnotherSource) / actualCommercialMeanEADFromAnotherSource;
             double commercialEADRelativeDifference = Math.Abs(actualCommercialMeanEAD - expectedCommercialMeanEAD) / expectedCommercialMeanEAD;
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
+
+
+            //TODO: //EAD is constant over POA soq AAEQ = EAD
+            //But currently this is not the case
             double AAEQRelativeDifference = Math.Abs(actualMeanAAEQ - expectedCommercialMeanEAD) / expectedCommercialMeanEAD; //EAD is constant over POA soq AAEQ = EAD
 
 

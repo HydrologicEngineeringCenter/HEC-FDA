@@ -576,7 +576,7 @@ namespace Statistics.Histograms
         /// <returns></returns>
         public static IHistogram CombineHistograms(List<IHistogram> histograms, Func<double, double, double> addOrSubtract)
         {
-            double probabilitySteps = 5000;
+            double probabilitySteps = 2500;
             IHistogram aggregatedHistogram;
 
             if (histograms.Count > 0)
@@ -592,6 +592,7 @@ namespace Statistics.Histograms
 
                     //collect the combined value in a list 
                     List<double> combinationCollection = new List<double>();
+                    List<Int64> combinationFrequencies = new List<Int64>();
 
                     //walk across the probability domain of each histogram at equal probability intervals 
                     for (int i = 0; i < probabilitySteps; i++)
@@ -599,13 +600,26 @@ namespace Statistics.Histograms
                         double probabilityStep = (i + 0.5) / probabilitySteps;
                         //Identify quantiles, add or subtract them, and multiply by summed frequency (bin counts) of quantiles
                         (double combinedValue, Int64 summedBinCount) = CombineHistogramBin(histograms, probabilityStep, addOrSubtract);
+                        combinationFrequencies.Add(summedBinCount);
+                        combinationCollection.Add(combinedValue);
+                    }
 
-                        //TODO: this is a coarse approximation, there is probably a more granular way of doing this 
-                        for (int j = 0; j < summedBinCount; j++)
+                    //Transform the combinations and their frequencies into a new sample of sample size 10,000
+                    int newSampleSize = 10000;
+                    Int64 totalBinCount = combinationFrequencies.Sum();
+                    List<double> transformedCollection = new List<double>();
+
+                    for (int i = 0; i < combinationFrequencies.Count; i++)
+                    {
+                        double relativeFrequency = combinationFrequencies[i] / totalBinCount;
+                        double newFrequency = newSampleSize * relativeFrequency;
+
+                        for (int j = 0; j < newFrequency; j++)
                         {
-                            combinationCollection.Add(combinedValue);
+                            transformedCollection.Add(combinationCollection[i]);
                         }
                     }
+
                     aggregatedHistogram = new Histogram(combinationCollection,convergenceCriteria);
                 }
             }
@@ -630,6 +644,7 @@ namespace Statistics.Histograms
                 //get value of histogram at probability step 
                 double sampledValue = histogramToSample.InverseCDF(probabilityStep);
                 valuesToCombine.Add(sampledValue);
+                //get bin count of histogram at probability step 
                 Int64 sampledValueBinCount = histogramToSample.FindBinCount(sampledValue, false);
                 binCountsToSum.Add(sampledValueBinCount); 
             }
@@ -778,6 +793,7 @@ namespace Statistics.Histograms
         }
         public bool Equals(IDistribution distribution)
         {
+            
             if (distribution == null)
             {
                 return false;
