@@ -587,35 +587,26 @@ namespace Statistics.Histograms
                 }
                 else
                 {
-                    //set up the new histogram 
+                    //identify convergence criteria using the first histogram in the list 
                     ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                    double min = 0;
-                    double max = 0;
-                    double sampleSize = 0;
-                    int binQuantity = 0;
-                    foreach (IHistogram histogramToAdd in histograms)
-                    {
-                        min = addOrSubtract(min, histogramToAdd.Min); 
-                        max = addOrSubtract(max, histogramToAdd.Max);
-                        sampleSize += histogramToAdd.SampleSize;
-                        binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
-                    }
-                    int sturgesRuleBinCount = (int)Math.Ceiling(1 + 3.322 * Math.Log10(sampleSize));
-                    double range = max - min;
-                    double binWidth = range / sturgesRuleBinCount;
-                    aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
+
+                    //collect the combined value in a list 
+                    List<double> combinationCollection = new List<double>();
 
                     //walk across the probability domain of each histogram at equal probability intervals 
                     for (int i = 0; i < probabilitySteps; i++)
                     {
                         double probabilityStep = (i + 0.5) / probabilitySteps;
-
+                        //Identify quantiles, add or subtract them, and multiply by summed frequency (bin counts) of quantiles
                         (double combinedValue, Int64 summedBinCount) = CombineHistogramBin(histograms, probabilityStep, addOrSubtract);
+
+                        //TODO: this is a coarse approximation, there is probably a more granular way of doing this 
                         for (int j = 0; j < summedBinCount; j++)
-                        {//this is a coarse approximation, there is probably a more granular way of doing this 
-                            aggregatedHistogram.AddObservationToHistogram(combinedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
+                        {
+                            combinationCollection.Add(combinedValue);
                         }
                     }
+                    aggregatedHistogram = new Histogram(combinationCollection,convergenceCriteria);
                 }
             }
             else
@@ -627,22 +618,27 @@ namespace Statistics.Histograms
 
         private static (double combinedValue, Int64 summedBinCount) CombineHistogramBin(List<IHistogram> histograms, double probabilityStep, Func<double, double, double> addOrSubtract)
         {
+            //collect quantiles to be summed or subtracted in a list 
             List<double> valuesToCombine = new List<double>();
-            List<Int64> summedBinValues = new List<Int64>();
+            //collect bin counts for each quantile in the list 
+            List<Int64> binCountsToSum = new List<Int64>();
 
             foreach (IHistogram histogramToSample in histograms)
             {
                 histogramToSample.ForceDeQueue();
+
+                //get value of histogram at probability step 
                 double sampledValue = histogramToSample.InverseCDF(probabilityStep);
                 valuesToCombine.Add(sampledValue);
-                summedBinValues.Add(histogramToSample.FindBinCount(sampledValue, false)); //sum their frequencies 
+                Int64 sampledValueBinCount = histogramToSample.FindBinCount(sampledValue, false);
+                binCountsToSum.Add(sampledValueBinCount); 
             }
             double combinedValue = valuesToCombine[0];
-            Int64 summedBinCount = summedBinValues[0];
+            Int64 summedBinCount = binCountsToSum[0];
             for (int i = 1; i < valuesToCombine.Count; i++)
             {
                 combinedValue = addOrSubtract(combinedValue, valuesToCombine[i]);
-                summedBinCount += summedBinValues[i];
+                summedBinCount += binCountsToSum[i];
             }
             return (combinedValue, summedBinCount);
         }
