@@ -29,9 +29,11 @@ namespace HEC.FDA.ModelTest.unittests
         /// calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1mPp8O2jm1wnsacQ7ZE3_sU_2xvghWOjC/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         [Theory]
-        [InlineData(208213.8061, 208213.8061, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2072, 1)]
-        [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1)]
-        public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations)
+        [InlineData(208213.8061, 208213.8061, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2072, 1, 2.0)]
+        [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1, 2.0)]
+        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2072, 1, 1.0)]//if base year EAD = future year EAD then EAD = AAEQ
+        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2050, 1, 1.0)]//if base year EAD = future year EAD then EAD = AAEQ
+        public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
         {
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
@@ -44,17 +46,18 @@ namespace HEC.FDA.ModelTest.unittests
             }
             UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
+            double baseyearDamage = 600000;
             IDistribution[] baseDamages = new IDistribution[3]
             {
                     new Uniform(0,0, 10),
-                    new Uniform(0, 600000, 10),
-                    new Uniform(0,600000, 10)
+                    new Uniform(0, baseyearDamage, 10),
+                    new Uniform(0,baseyearDamage, 10)
             };
             IDistribution[] futureDamages = new IDistribution[3]
             {
                     new Uniform(0,0,10),
-                    new Uniform(0,1200000,10),
-                    new Uniform(0,1200000, 10)
+                    new Uniform(0,baseyearDamage*futureDamageFractionOfExistingDamage,10),
+                    new Uniform(0,baseyearDamage*futureDamageFractionOfExistingDamage, 10)
             };
             UncertainPairedData base_stage_damage = new UncertainPairedData(StageXs, baseDamages, metaData);
             UncertainPairedData future_stage_damage = new UncertainPairedData(StageXs, futureDamages, metaData);
