@@ -105,7 +105,7 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
         #region Methods
-        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = -999, double otherValue = -999, double vehicleValue = -999, bool computeIsDeterministic = false)
+        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, double otherValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, double vehicleValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, bool computeIsDeterministic = false)
         {
             if (ErrorLevel >= ErrorLevel.Major)
             {
