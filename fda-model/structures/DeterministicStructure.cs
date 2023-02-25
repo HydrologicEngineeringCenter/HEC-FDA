@@ -27,7 +27,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructor 
-        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth, int numberOfStructures = 1, int yearInService = -999)
+        public DeterministicStructure(int fid, int impactAreaID, SampledStructureParameters sampledStructureParameters, double beginningDamageDepth, int numberOfStructures = 1, int yearInService = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             Fid = fid;
             ImpactAreaID = impactAreaID;

@@ -125,7 +125,7 @@ namespace HEC.FDA.Model.structures
         {
             List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, terrainLayer);
             float[] groundelevs = Array.Empty<float>();
-            int defaultMissingValue = -999;
+            int defaultMissingValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
             PointMs pointMs = new PointMs(structureFeatureLayer.Points().Select(p => p.PointM()));
 
             if (updateGroundElevFromTerrain)
