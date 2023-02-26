@@ -89,7 +89,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
-            double tolerance = 0.05;
+            double tolerance = 0.01;
 
             double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
             double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
@@ -207,6 +207,24 @@ namespace HEC.FDA.ModelTest.unittests
                 testPasses = false;
             }
             Assert.True(testPasses);
+        }
+
+        /// <summary>
+        ///  The calculations for the below test can be found at https://docs.google.com/spreadsheets/d/1uY1tJBap-y7evLE5oK8-lx3pQUjSJ3go/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// </summary>
+        [Theory]
+        [InlineData(35000, 2023, 50000, 2072, 50, .07, 38835.3)]
+        [InlineData(0, 2023, 1000, 2072, 50, .07, 255.68)]
+        [InlineData(35000, 2023, 35000, 2072, 50, .07, 35000)]
+        [InlineData(35000, 2023, 50000, 2047, 50, .07, 41893.12)]
+        [InlineData(35000, 2023, 50000, 2072, 50, .03, 40680.87)]
+        [InlineData(0, 2023, 1000, 2072, 50, .03, 378.72)]
+        [InlineData(35000, 2023, 35000, 2072, 50, .03, 35000)]
+        [InlineData(35000, 2023, 50000, 2047, 50, .03, 44279.92)]
+        public void ComputeEEAD_Test(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate, double expected)
+        {
+            double actual = Alternative.ComputeEEAD(baseYearEAD, baseYear, mostLikelyFutureEAD, mostLikelyFutureYear, periodOfAnalysis, discountRate);
+            Assert.Equal(expected, actual, .01);
         }
     }
 }

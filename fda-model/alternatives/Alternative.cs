@@ -333,9 +333,10 @@ namespace HEC.FDA.Model.alternatives
         {
             double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear + 1);
             double[] interpolatedEADs = new double[periodOfAnalysis];
+            interpolatedEADs[0] = baseYearEAD;
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseYearEAD + i * (1 / yearsBetweenBaseAndMLFInclusive) * (mostLikelyFutureEAD - baseYearEAD);
+                interpolatedEADs[i] = baseYearEAD + (mostLikelyFutureEAD - baseYearEAD)*(i/(yearsBetweenBaseAndMLFInclusive - 1));
             }
             for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i < periodOfAnalysis; i++)
             {

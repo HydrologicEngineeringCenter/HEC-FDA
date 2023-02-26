@@ -103,11 +103,11 @@ namespace HEC.FDA.Model.compute
                 _impactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage, computeIsDeterministic: true));
             }
             CreateHistogramsForAssuranceOfThresholds();
-            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has been initiated"));
+            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has been initiated" + Environment.NewLine));
             ReportMessage(this, beginComputeMessageArgs);
             ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency, computeIsDeterministic);
             _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
-            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has completed"));
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has completed successfully" + Environment.NewLine));
             ReportMessage(this, endComputeMessageArgs);
             return _impactAreaScenarioResults;
         }
