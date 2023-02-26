@@ -6,6 +6,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Distributions;
 using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
@@ -292,9 +293,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (-999)
         /// <returns></returns>        
-        public IHistogram GetConsequencesHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetConsequencesDistribution(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            List<IHistogram> histograms = new List<IHistogram>();
+            List<Empirical> empiricalDistsToStack = new List<Empirical>();
 
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
             {
@@ -302,72 +303,70 @@ namespace HEC.FDA.Model.metrics
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                     {
-                        histograms.Add(consequenceResult.ConsequenceHistogram);
+                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                     if (damageCategory != null && assetCategory == null && impactAreaID == -999)
                     {
                         if (damageCategory.Equals(consequenceResult.DamageCategory))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory == null && assetCategory != null && impactAreaID == -999)
                     {
                         if (assetCategory.Equals(consequenceResult.AssetCategory))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory == null && assetCategory == null && impactAreaID != -999)
                     {
                         if (impactAreaID.Equals(consequenceResult.RegionID))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory != null && assetCategory != null && impactAreaID == -999)
                     {
                         if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory != null && assetCategory == null && impactAreaID != -999)
                     {
                         if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory == null && assetCategory != null && impactAreaID != -999)
                     {
                         if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                         {
-                            histograms.Add(consequenceResult.ConsequenceHistogram);
+                            empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                         }
                     }
                     if (damageCategory != null && assetCategory != null && impactAreaID != -999)
                     {
                         if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                         {
-                            return consequenceResult.ConsequenceHistogram;
+                            return Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram);
                         }
                     }
                 }
             }
-            IHistogram aggregateHistogram;
-            if (histograms.Count == 0)
+            if (empiricalDistsToStack.Count == 0)
             {
                 string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
                 ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
-                aggregateHistogram = new Histogram();
+                return new Empirical();
             }
             else
             {
-                aggregateHistogram = Histogram.CombineHistograms(histograms, Histogram.Sum);
+                return Empirical.StackEmpiricalDistributions(empiricalDistsToStack, Empirical.Sum);
             }
-            return aggregateHistogram;
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {

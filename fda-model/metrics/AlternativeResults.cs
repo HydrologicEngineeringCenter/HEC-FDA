@@ -4,6 +4,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using Statistics;
+using Statistics.Distributions;
 using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
@@ -240,9 +241,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetAAEQDamageHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetAAEQDamageDistribution(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return _aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return _aaeqResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of base year ead for the given damage category(ies), asset category(ies), and impact area(s)
@@ -254,9 +255,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetBaseYearEADHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetBaseYearEADDistribution(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return BaseYearScenarioResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+            return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of future year ead for the given damage category(ies), asset category(ies), and impact area(s)
@@ -268,9 +269,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetFutureYearEADHistogram(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetFutureYearEADDistribution(int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
-            return FutureYearScenarioResults.GetConsequencesHistogram(impactAreaID, damageCategory, assetCategory);
+            return FutureYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
         }
         internal void AddConsequenceResults(ConsequenceDistributionResult consequenceResultToAdd)
         {

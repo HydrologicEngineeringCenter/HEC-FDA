@@ -2,6 +2,7 @@
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using Statistics.Distributions;
 using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
@@ -248,10 +249,10 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults aaeqResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
-            return aaeqResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return aaeqResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of base year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -264,10 +265,10 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
-            return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of future year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -280,10 +281,10 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <returns></returns>
-        public IHistogram GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
+        public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = -999, string damageCategory = null, string assetCategory = null)
         {
             ConsequenceDistributionResults eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
-            return eadResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
         internal void AddAlternativeResults(ConsequenceDistributionResults consequenceDistributionResults, bool isEADResults = false, bool isBaseYearResults = false)
         {

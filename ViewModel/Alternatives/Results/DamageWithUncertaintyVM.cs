@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using Statistics.Distributions;
 using Statistics.Histograms;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,57 +105,57 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadHistogramData(AlternativeResults altResults, DamageMeasureYear damageMeasureYear)
         {
-            IHistogram histogram = null;
+            Empirical empirical = null;
 
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    histogram = altResults.GetBaseYearEADHistogram();
+                    empirical = altResults.GetBaseYearEADDistribution();
                     break;
                 case DamageMeasureYear.Future:
-                    histogram = altResults.GetFutureYearEADHistogram();
+                    empirical = altResults.GetFutureYearEADDistribution();
                     break;
                 case DamageMeasureYear.AAEQ:
-                    histogram = altResults.GetAAEQDamageHistogram();
+                    empirical = altResults.GetAAEQDamageDistribution();
                     break;
             }
 
-            CreateHistogramData(histogram);
+            CreateHistogramData(empirical);
 
         }
 
         private void LoadHistogramData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
         {
-            IHistogram histogram = null;
+            Empirical empirical = null;
 
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    histogram = altResults.GetBaseYearEADReducedResultsHistogram(altID);
+                    empirical = altResults.GetBaseYearEADReducedResultsHistogram(altID);
                     break;
                 case DamageMeasureYear.Future:
-                    histogram = altResults.GetFutureYearEADReducedResultsHistogram(altID);
+                    empirical = altResults.GetFutureYearEADReducedResultsHistogram(altID);
                     break;
                 case DamageMeasureYear.AAEQ:
-                    histogram = altResults.GetAAEQReducedResultsHistogram(altID);
+                    empirical = altResults.GetAAEQReducedResultsHistogram(altID);
                     break;
             }
 
-            CreateHistogramData(histogram);
+            CreateHistogramData(empirical);
         }
 
-        private void CreateHistogramData(IHistogram histogram)
+        private void CreateHistogramData(Empirical empirical)
         {
-            if (histogram != null)
+            if (empirical != null)
             {
-                double[] binValues = histogram.BinCounts.Select(i => (double)i / histogram.SampleSize).ToArray();
-                if (binValues.Length == 0 || binValues.Length == 1)
+                if (empirical.CumulativeProbabilities.Length <=1)
                 {
                     HistogramVisible = false;
                 }
                 else
                 {
-                    _data = new HistogramData2D(histogram.BinWidth, histogram.Min, binValues, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+                    (double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
+                    _data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
                     HistogramColor.SetHistogramColor(_data);
                     ChartViewModel.LineData.Add(_data);
                 }

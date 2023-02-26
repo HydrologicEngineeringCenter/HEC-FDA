@@ -196,63 +196,7 @@ namespace StatisticsTests.Histograms
             Assert.True(histogram.ConvergedIteration <= maxiter);
             Assert.True(err < errTol);
         }
-        //TODO: This test does not pass for distributions which have a non-negligible share below zero
-        [Fact]
-        public void HistogramsShouldAddCorrectly()
-        {
-                Normal normal1 = new Normal(300, 10);
-                Normal normal2 = new Normal(400, 20);
-                Normal normal3 = new Normal(200, 9);
-                double[] probabilities = new double[] {.25, .5, .75};
-                double[] expected = new double[probabilities.Length];
-                for (int i = 0; i < probabilities.Length; i++)
-                {
-                    expected[i] = normal1.InverseCDF(probabilities[i]);
-                    expected[i] += normal2.InverseCDF(probabilities[i]);
-                    expected[i] += normal3.InverseCDF(probabilities[i]);
-                }
-
-                double reallySmallProbability = 0.0001;
-                ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-                double binWidth = 0.01;
-                double min1 = normal1.InverseCDF(reallySmallProbability);
-                double min2 = normal2.InverseCDF(reallySmallProbability);
-                double min3 = normal3.InverseCDF(reallySmallProbability);
-
-                Histogram histogram1 = new Histogram(min1, binWidth, convergenceCriteria);
-                Histogram histogram2 = new Histogram(min2, binWidth, convergenceCriteria);
-                Histogram histogram3 = new Histogram(min3, binWidth, convergenceCriteria);
-
-                int seed = 8305;
-                Random random = new Random(seed);
-                int iterations = 10000;
-                for (int i = 0; i < iterations; i++)
-                {
-                    histogram1.AddObservationToHistogram(normal1.InverseCDF(random.NextDouble()));
-                    histogram2.AddObservationToHistogram(normal2.InverseCDF(random.NextDouble()));
-                    histogram3.AddObservationToHistogram(normal3.InverseCDF(random.NextDouble()));
-                }
-
-                    List<IHistogram> histograms = new List<IHistogram>();
-                    histograms.Add(histogram1);
-                    histograms.Add(histogram2);
-                    histograms.Add(histogram3);
-                    IHistogram histogramAddedUp = Histogram.CombineHistograms(histograms, Histogram.Sum);
-
-                    double[] actual = new double[probabilities.Length];
-                    for (int i = 0; i < probabilities.Length; i++)
-                    {
-                        actual[i] = histogramAddedUp.InverseCDF(probabilities[i]);
-                    }
-
-                    double tolerance = 0.05;
-                    for (int i = 0; i < probabilities.Length; i++)
-                    {
-                        double error = Math.Abs((actual[i] - expected[i]) / expected[i]);
-                        Assert.True(error < tolerance);
-                    }
-         
-        }
+       
         [Theory]
         [InlineData(10000, .1, .80)]
         public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile)
@@ -276,6 +220,31 @@ namespace StatisticsTests.Histograms
             Assert.True(histogramsAreTheSame);
         }
 
+        [Theory]
+        [InlineData(2,3)]
+        [InlineData(3,4)]
+        public void HistgramToEmpiricalAreEquivalentDistributions(double mean, double standardDeviation)
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            int sampleSize = 5000;
+            Normal normal = new Normal(mean, standardDeviation);
+            List<double> resultCollection = new List<double>();
+            Random random = new Random(Seed: 1234);
+            for  (int i = 0; i < sampleSize; i++)
+            {
+                resultCollection.Add(normal.InverseCDF(random.NextDouble()));
+            }
+            Histogram histogram = new Histogram(resultCollection, convergenceCriteria);
+            Empirical empirical = Histogram.ConvertToEmpiricalDistribution(histogram);
+            double meanDifference = Math.Abs(empirical.Mean - mean);
+            double meanRelativeDifference = meanDifference / mean;
+            double standardDeviationDifference = Math.Abs( empirical.StandardDeviation - standardDeviation);
+            double standardDeviationRelativeDifference = standardDeviationDifference / standardDeviation;
+            double tolerance = 0.03;
+            Assert.True(meanRelativeDifference < tolerance);
+            Assert.True(standardDeviationRelativeDifference < tolerance);
+            
+        }
 
         /*
          * TODO this test is left commented out because it takes a long time to run. 

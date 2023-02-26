@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Implementations;
+using Statistics.Distributions;
 
 namespace Statistics.Histograms
 {
@@ -567,105 +568,22 @@ namespace Statistics.Histograms
                 
             }
         }
-        /// <summary>
-        /// If using this method to subtract histograms, there should only be two, and the bottom histogram will get subtracted from the top. 
-        /// This method can be used to aggregate many histograms 
-        /// </summary>
-        /// <param name="histograms"></param> List of histograms - threadsafe or regular 
-        /// <param name="addOrSubtract"></param> Either be Histogram.Sum or Histogram.Subtract
-        /// <returns></returns>
-        public static IHistogram CombineHistograms(List<IHistogram> histograms, Func<double, double, double> addOrSubtract)
+
+
+        public static Empirical ConvertToEmpiricalDistribution(IHistogram histogram)
         {
-            double probabilitySteps = 2500;
-            IHistogram aggregatedHistogram;
-
-            if (histograms.Count > 0)
+            int probabilitySteps = 2500;
+            double[] cumulativeProbabilities = new double[probabilitySteps];
+            double[] invCDS = new double[probabilitySteps];
+            for (int i = 0; i < probabilitySteps; i++)
             {
-                if(histograms.Count == 1)
-                {
-                    aggregatedHistogram = histograms[0];
-                }
-                else
-                {
-                    //identify convergence criteria using the first histogram in the list 
-                    ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-
-                    //collect the combined value in a list 
-                    List<double> combinationCollection = new List<double>();
-                    List<Int64> combinationFrequencies = new List<Int64>();
-
-                    //walk across the probability domain of each histogram at equal probability intervals 
-                    for (int i = 0; i < probabilitySteps; i++)
-                    {
-                        double probabilityStep = (i + 0.5) / probabilitySteps;
-                        //Identify quantiles, add or subtract them, and multiply by summed frequency (bin counts) of quantiles
-                        (double combinedValue, Int64 summedBinCount) = CombineHistogramBin(histograms, probabilityStep, addOrSubtract);
-                        combinationFrequencies.Add(summedBinCount);
-                        combinationCollection.Add(combinedValue);
-                    }
-
-                    //Transform the combinations and their frequencies into a new sample of sample size 10,000
-                    int newSampleSize = 10000;
-                    Int64 totalBinCount = combinationFrequencies.Sum();
-                    List<double> transformedCollection = new List<double>();
-
-                    for (int i = 0; i < combinationFrequencies.Count; i++)
-                    {
-                        double relativeFrequency = combinationFrequencies[i] / totalBinCount;
-                        double newFrequency = newSampleSize * relativeFrequency;
-
-                        for (int j = 0; j < newFrequency; j++)
-                        {
-                            transformedCollection.Add(combinationCollection[i]);
-                        }
-                    }
-
-                    aggregatedHistogram = new Histogram(combinationCollection,convergenceCriteria);
-                }
+                double probabilityStep = (i + 0.5) / probabilitySteps;
+                cumulativeProbabilities[i] = probabilityStep;
+                invCDS[i] = histogram.InverseCDF(probabilityStep);
             }
-            else
-            {
-                aggregatedHistogram = new Histogram(0,1);
-            }
-            return aggregatedHistogram;
+            return new Empirical(cumulativeProbabilities, invCDS);
         }
 
-        private static (double combinedValue, Int64 summedBinCount) CombineHistogramBin(List<IHistogram> histograms, double probabilityStep, Func<double, double, double> addOrSubtract)
-        {
-            //collect quantiles to be summed or subtracted in a list 
-            List<double> valuesToCombine = new List<double>();
-            //collect bin counts for each quantile in the list 
-            List<Int64> binCountsToSum = new List<Int64>();
-
-            foreach (IHistogram histogramToSample in histograms)
-            {
-                histogramToSample.ForceDeQueue();
-
-                //get value of histogram at probability step 
-                double sampledValue = histogramToSample.InverseCDF(probabilityStep);
-                valuesToCombine.Add(sampledValue);
-                //get bin count of histogram at probability step 
-                Int64 sampledValueBinCount = histogramToSample.FindBinCount(sampledValue, false);
-                binCountsToSum.Add(sampledValueBinCount); 
-            }
-            double combinedValue = valuesToCombine[0];
-            Int64 summedBinCount = binCountsToSum[0];
-            for (int i = 1; i < valuesToCombine.Count; i++)
-            {
-                combinedValue = addOrSubtract(combinedValue, valuesToCombine[i]);
-                summedBinCount += binCountsToSum[i];
-            }
-            return (combinedValue, summedBinCount);
-        }
-
-        public static double Sum(double x1, double x2)
-        {
-            return x1 + x2;
-        }
-        public static double Subtract(double x1, double x2)
-        {
-            return x1 - x2;
-        }
         public XElement ToXML()
         {
             XElement masterElem = new XElement("Histogram");
